@@ -17,7 +17,8 @@ import teachersIcon from './icons/Teacher/teacher_1.svg'          //
 import studentsIcon from './icons/Student/student_profile_1.svg'  //
 import classesIcon from './icons/Classes/classes_1.svg'           //
 import settingsIcon from './icons/Settings/settings-gears.svg'    //
-import switchUserIcon from './icons/switch_user/logout.svg'    //no-icon
+import switchUserIcon from './icons/switch_user/logout.svg'
+import promotionIcon from './icons/Promotion/promotion.svg'
 
 import './style.css'
 
@@ -114,7 +115,11 @@ class Landing extends Component {
 							<Link to="/class" className="button purple-shadow" style={{backgroundImage: `url(${classesIcon})` }}>Classes</Link>
 							<Link to="/settings" className="button red-shadow" style={{backgroundImage: `url(${settingsIcon})` }}>Settings</Link>
 						</div>
+
+
+
 						<div className="row">
+							<Link to='/student-promotion' className="button green-shadow" style={{backgroundImage: `url(${promotionIcon})` }}>Promotion</Link>
 							<div className="button yellow-shadow" onClick={logout} style={{backgroundImage: `url(${switchUserIcon})` }}>Logout</div>
 						</div>
 					</div>

@@ -22,6 +22,7 @@ import SingleExam from 'modules/Marks/SingleExam'
 import Settings from 'modules/Settings'
 import Analytics from 'modules/Analytics'
 import ReportsMenu from 'modules/ReportsMenu'
+import Promotion from 'modules/Promotion'
 
 import AuthedRoute from 'components/AuthedRoute'
 
@@ -81,6 +82,8 @@ export default class Routes extends React.Component {
 					<AuthedRoute path="/analytics" component={Analytics} />
 
 					<AuthedRoute path="/reports-menu" component={ReportsMenu} />
+
+					<AuthedRoute path="/student-promotion" component={Promotion} />
 
 					<Route path="/school-login" component={SchoolLogin} />
 					<Route path="/login" component={Login} />

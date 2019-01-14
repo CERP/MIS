@@ -106,6 +106,30 @@ export const createEditClass = newClass => dispatch => {
 	))
 }
 
+
+export const promoteClass = (prevSectionId, newSectionId, filterOut) => (dispatch,getState) => {
+	const state = getState();
+	
+	let students = Object.values(state.db.students).filter(s => s.section_id === prevSectionId)
+
+	if(filterOut.length === 0){
+		students = students.map(s => (
+						{ path:["db","students",s.id,"section_id"], value: newSectionId }
+					))
+	}
+	else{		
+		students = students.filter(s => !filterOut.includes(s.id)).map(s => (
+			{ path:["db","students",s.id,"section_id"], value: newSectionId }
+		))
+	}
+	
+	dispatch(createMerges(students))
+	console.log("PROMOTED", prevSectionId, "TO", newSectionId)
+}
+
+
+
+
 export const deleteClass = (Class) => (dispatch, getState) => {
 	const state = getState();
 	
