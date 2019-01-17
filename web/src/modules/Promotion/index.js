@@ -3,10 +3,10 @@ import { connect } from 'react-redux'
 import Layout from 'components/Layout'
 import former from 'utils/former'
 import Banner from 'components/Banner'
-import {getSectionsFromClasses} from 'utils/getSectionsFromClasses';
-
+import { getSectionsFromClasses } from 'utils/getSectionsFromClasses';
 import { promoteClass } from 'actions'
 
+import "./style.css"
 
 class Promotion extends Component {
 
@@ -18,132 +18,104 @@ class Promotion extends Component {
             promoteTo: "",
             filterOut: [],   // Id's of students that are not getting promoted :D
             banner: {
-				active: false,
-				good: true,
-				text: "Saved!"
-			}
+                active: false,
+                good: true,
+                text: "Saved!"
+            }
         }
-        this.former = new former(this,[])
+        this.former = new former(this, [])
     }
 
     onCheck = (e) => {
-        if(!e.target.checked)
-        {
+        if (!e.target.checked) {
             const arr = this.state.filterOut;
             arr.push(e.target.value)
             this.setState({
-                filterOut : arr 
-            })        
+                filterOut: arr
+            })
         }
         else {
             const arr = this.state.filterOut.filter(s_id => s_id !== e.target.value);
             this.setState({
-                filterOut : arr 
+                filterOut: arr
             })
         }
     }
 
-    onSave = () =>{
+    onSave = () => {
 
         const sections = getSectionsFromClasses(this.props.classes)
-        .reduce( (obj, agg ) => {
-            return {
-                ...obj,
-                [agg.id] : agg,
-            }
-        }, {})
+            .reduce((obj, agg) => {
+                return {
+                    ...obj,
+                    [agg.id]: agg,
+                }
+            }, {})
 
-        if(this.state.promoteFrom === "" || this.state.promoteTo === ""){
+        if (this.state.promoteFrom === "" || this.state.promoteTo === "") {
             return this.setState({
                 banner: {
                     active: true,
                     good: false,
                     text: "Please Select both classes"
                 }
-            }), setTimeout(()=> {
+            }), setTimeout(() => {
                 this.setState({
-                    banner:{
-                        active:false
+                    banner: {
+                        active: false
                     }
                 })
-            },1000)
+            }, 1000)
         }
 
-        if(sections[this.state.promoteFrom].classYear > sections[this.state.promoteTo].classYear){
+        if (sections[this.state.promoteFrom].classYear > sections[this.state.promoteTo].classYear) {
             return this.setState({
                 banner: {
                     active: true,
                     good: false,
                     text: "Please Select a Higher order class to Promote"
                 }
-            }), setTimeout(()=> {
+            }), setTimeout(() => {
                 this.setState({
-                    banner:{
-                        active:false
+                    banner: {
+                        active: false
                     }
                 })
-            },1000)
+            }, 1000)
         }
-        console.log("Promoting", sections[this.state.promoteFrom], "To" , sections[this.state.promoteTo])
-
-        this.props.promote(this.state.promoteFrom, this.state.promoteTo, this.state.filterOut)
+        this.props.promote(sections[this.state.promoteFrom].class_id, this.state.promoteFrom, this.state.promoteTo, this.state.filterOut)
 
         this.setState({
-			banner: {
-				active: true,
-				good: true,
-				text: "Promoted"
-			}
-		})
+            banner: {
+                active: true,
+                good: true,
+                text: "Promoted"
+            }
+        })
 
-		setTimeout(() => {
-			this.setState({
-				banner: {
-					active: false
-				},
-			})
-		}, 2000);
+        setTimeout(() => {
+            this.setState({
+                banner: {
+                    active: false
+                },
+            })
+        }, 2000);
     }
     render() {
-        const {classes, students} = this.props;
+        const { classes, students } = this.props;
 
-        console.log("ENTRIES", 
-        
-        getSectionsFromClasses(classes)
-            .reduce( (obj, agg ) => {
-                return {
-                    ...obj,
-                    [agg.id] : agg,
-                }
-        }, {}))
 
         const items = Object.values(getSectionsFromClasses(classes))
             .sort((a, b) => (a.classYear || 0) - (b.classYear || 0))
-            
-        /* const sitems = getSectionsFromClasses(classes)
-        .reduce( (obj, agg ) => {
-            return {
-                ...obj,
-                [agg.id] : agg,
-            }
-        }, {})
-
-        console.log("ITEMS", items)
-         */
         const studentList = this.state.promoteFrom !== "" ? Object.values(students).filter(s => s.section_id === this.state.promoteFrom) : ""
-            
-        console.log("​render -> classes", classes)
-        console.log("Promote From",this.state.promoteFrom)
-        console.log("Promote To", this.state.promoteTo)        
-        console.log("RENDER -> FILTER OUT",this.state.filterOut)
 
         return <Layout history={this.props.history}>
-            <div className="promotion-module"> 
-            { this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false }  
-                
-                <div className="row">
+            <div className="promotion-module">
+                {this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
+
+                <div className="option row">
                     <div className="row">
-                        <label>From</label>
+                        <label className="label">From</label>
                         <select {...this.former.super_handle(["promoteFrom"])}>
                             <option value="" disabled>Select Class</option>
                             {items.map(s => {
@@ -151,18 +123,15 @@ class Promotion extends Component {
                             })}
                         </select>
                     </div>
- 
                     <div className="row">
-                        <label>-></label>
+                        <label className="label">To</label>
                         <select {...this.former.super_handle(["promoteTo"])}>
                             <option value="" disabled>Select Class</option>
-                            {items.map(s => 
-                            {
+                            {items.map(s => {
                                 return <option key={s.id} value={s.id}>{s.namespaced_name}</option>
                             })}
                         </select>
                     </div>
-
                     <div className="button blue" onClick={this.onSave}> Promote </div>
                 </div>
                 <div className="list">
@@ -171,17 +140,17 @@ class Promotion extends Component {
                             <div>{s.Name} </div>
                             <input type="checkbox" value={s.id} onClick={this.onCheck} defaultChecked />
                         </div>
-                    }): <div> Please Select a Class</div>}
+                    }) : <div> Please Select a Class</div>}
                 </div>
-
             </div>
         </Layout>
-        
+
     }
 }
 
 export default connect((state) => ({
     classes: state.db.classes,
-    students: state.db.students }), dispatch => ({ 
-    promote: ( prevSectionId, newSectionId, filterOut ) => dispatch(promoteClass( prevSectionId, newSectionId, filterOut ))
+    students: state.db.students
+}), dispatch => ({
+    promote: (prevClassId, prevSectionId, newSectionId, filterOut) => dispatch(promoteClass(prevClassId, prevSectionId, newSectionId, filterOut))
 }))(Promotion) 

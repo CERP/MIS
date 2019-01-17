@@ -9,17 +9,17 @@ const defaultTemplates = () => ({
 
 const initState = {
 	client_id: v4(),
-	queued: { },
+	queued: {},
 	acceptSnapshot: false,
 	lastSnapshot: 0,
 	db: {
-		faculty: { },
-		users: { }, // username: passwordhash, permissions, etc.  
-		students: { },
-		classes: { }, // id: { name, class, teacher_id, subjects: { name: 1 } },
+		faculty: {},
+		users: {}, // username: passwordhash, permissions, etc.  
+		students: {},
+		classes: {}, // id: { name, class, teacher_id, subjects: { name: 1 } },
 		sms_templates: defaultTemplates(),
-		exams: { }, // id: { name, total_score, subject, etc. rest of info is under student }
-		settings: { }
+		exams: {}, // id: { name, total_score, subject, etc. rest of info is under student }
+		settings: {},
 	},
 	// this part of the tree i want to obscure.
 	// but will get to that later
@@ -42,7 +42,7 @@ export const loadDB = () => {
 			console.log('null')
 			return initState;
 		}
-		
+
 		const prev = JSON.parse(serialized);
 		// but should we make sure that fields that are no longer in the initState db are deleted?
 		const merged = {
@@ -60,12 +60,12 @@ export const loadDB = () => {
 		const updatedDB = onLoadScripts.reduce((agg, curr) => {
 			try {
 				const next = curr(agg)
-				if(next === undefined) {
+				if (next === undefined) {
 					return agg;
 				}
 				return next;
 			}
-			catch(e) {
+			catch (e) {
 				console.error(e)
 				return agg;
 			}
@@ -73,7 +73,7 @@ export const loadDB = () => {
 
 		return updatedDB;
 	}
-	catch(err) {
+	catch (err) {
 		console.error(err)
 		return undefined;
 	}
@@ -84,14 +84,14 @@ export const saveDB = (db) => {
 		const json = JSON.stringify(db);
 		localStorage.setItem('db', json)
 	}
-	catch(err) {
+	catch (err) {
 		console.error(err)
 	}
 
 	try {
 		saveDbToFilesystem(db);
 	}
-	catch(e) {
+	catch (e) {
 		console.error(e)
 	}
 
@@ -111,7 +111,7 @@ const saveDbToFilesystem = (db) => {
 
 const checkPersistent = () => {
 	// check and request persistent storage
-	if(navigator.storage && navigator.storage.persist) {
+	if (navigator.storage && navigator.storage.persist) {
 		navigator.storage.persist()
 			.then(persist => {
 				console.log("PERSIST!!!!", persist)
@@ -120,17 +120,17 @@ const checkPersistent = () => {
 
 		navigator.storage.persisted()
 			.then(persistent => {
-				if(persistent) {
+				if (persistent) {
 					console.log('persistent storage activated')
 				}
 				else {
 					console.log('persistent storage denied')
 				}
 			})
-		
-			navigator.storage.estimate()
-				.then(estimate => console.log("ESTIMATE!!", estimate))
-				.catch(err => console.error(err))
+
+		navigator.storage.estimate()
+			.then(estimate => console.log("ESTIMATE!!", estimate))
+			.catch(err => console.error(err))
 	}
 	else {
 		console.log('no navigator.storage or navigator.storage.persist')
@@ -142,7 +142,7 @@ checkPersistent();
 // add faculty_id to the auth field if it doesn't exist.
 const addFacultyID = state => {
 
-	if(state.auth.faculty_id !== undefined) {
+	if (state.auth.faculty_id !== undefined) {
 		console.log("not running addFacultyID script")
 		return state;
 	}
@@ -156,24 +156,48 @@ const addFacultyID = state => {
 }
 
 const checkPermissions = state => {
-	if(state.db.settings.permissions !== undefined){
+	if (state.db.settings.permissions !== undefined) {
 		console.log("NOT Running Permission Scripts")
 		return state
 	}
 	console.log("Running Permissions Scripts");
+	const students = Object.values(state.db.students)
 
 	state.db.settings = {
 		...state.db.settings,
-		permissions:{
-			fee:{ teacher: true }
+		permissions: {
+			fee: { teacher: true }
 		}
 	}
 	return state;
+}
+
+const addClassHistoryField = state => {
+
+	let student_ids = Object.values(state.db.students)
+		.filter(s => s.classHistory === undefined)
+		.map(s => s.id)
+
+	if (student_ids.length === 0) {
+		console.log("Not RUNNING CLASS HISTORY SCRIPT")
+		return state
+	}
+
+	console.log("RUNNING CLASS HISTORY SCRIPT")
+
+	for (let s_id of student_ids) {
+		state.db.students[s_id] = {
+			...state.db.students[s_id],
+			classHistory: {}
+		}
+	}
+	return state
 }
 
 // this modifies db in case any schema changes have happened
 // which means i should maybe version the client db formally...
 const onLoadScripts = [
 	addFacultyID,
-	checkPermissions
+	checkPermissions,
+	addClassHistoryField
 ];

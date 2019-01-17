@@ -19,12 +19,14 @@ export const MERGE_FACULTY = "MERGE_FACULTY"
 export const createFacultyMerge = (faculty) => dispatch => {
 
 	dispatch(createMerges([
-		{path: ["db", "faculty", faculty.id], value: faculty},
-		{path: ["db", "users", faculty.id], value: {
-			name: faculty.Name,
-			password: faculty.Password,
-			type: faculty.Admin ? "admin" : "teacher"
-		}}
+		{ path: ["db", "faculty", faculty.id], value: faculty },
+		{
+			path: ["db", "users", faculty.id], value: {
+				name: faculty.Name,
+				password: faculty.Password,
+				type: faculty.Admin ? "admin" : "teacher"
+			}
+		}
 	]))
 }
 
@@ -87,44 +89,57 @@ export const createSchoolLogin = (school_id, password) => (dispatch, getState, s
 			client_id: getState().client_id
 		}
 	})
-	.then(res => {
-		console.log(res)
-		
-		dispatch(createLoginSucceed(school_id, res.db, res.token))
-	})
-	.catch(err => {
-		console.error(err)
-		dispatch(createLoginFail())
-	})
+		.then(res => {
+			console.log(res)
+
+			dispatch(createLoginSucceed(school_id, res.db, res.token))
+		})
+		.catch(err => {
+			console.error(err)
+			dispatch(createLoginFail())
+		})
 }
 
 
 export const createEditClass = newClass => dispatch => {
 	dispatch(createMerges([
-			{path: ["db", "classes", newClass.id], value: newClass}
-		]
+		{ path: ["db", "classes", newClass.id], value: newClass }
+	]
 	))
 }
 
 
-export const promoteClass = (prevSectionId, newSectionId, filterOut) => (dispatch,getState) => {
+export const promoteClass = (prevClassId, prevSectionId, newSectionId, filterOut, time = moment.now()) => (dispatch, getState) => {
 	const state = getState();
-	
-	let students = Object.values(state.db.students).filter(s => s.section_id === prevSectionId)
 
-	if(filterOut.length === 0){
-		students = students.map(s => (
-						{ path:["db","students",s.id,"section_id"], value: newSectionId }
-					))
-	}
-	else{		
-		students = students.filter(s => !filterOut.includes(s.id)).map(s => (
-			{ path:["db","students",s.id,"section_id"], value: newSectionId }
-		))
-	}
-	
-	dispatch(createMerges(students))
-	console.log("PROMOTED", prevSectionId, "TO", newSectionId)
+	const prevClass = state.db.classes[prevClassId]
+	let students = Object.values(state.db.students).filter(s => s.section_id === prevSectionId)
+	let history = students;
+
+	students = filterOut.length === 0 ? students : students.filter(s => !filterOut.includes(s.id))
+	history = students
+
+	const studentMerges = students.map(s => (
+		{ path: ["db", "students", s.id, "section_id"], value: newSectionId }
+	))
+	const historyMerges = history.map(s => (
+		{
+			path: ["db", "students", s.id, "classHistory"],
+			value: {
+				...s.classHistory,
+				[prevClassId]: {
+					"class_id": prevClassId,
+					"section_id": prevSectionId,
+					"className": prevClass.name,
+					"promotionDate": time,
+				}
+			}
+		}))
+
+	dispatch(createMerges([
+		...studentMerges,
+		...historyMerges
+	]))
 }
 
 
@@ -132,33 +147,33 @@ export const promoteClass = (prevSectionId, newSectionId, filterOut) => (dispatc
 
 export const deleteClass = (Class) => (dispatch, getState) => {
 	const state = getState();
-	
+
 	const students = Object.values(state.db.students)
-						.filter(student => Class.sections[student.section_id] !== undefined )
-						.map(student => (
-							{ path: ["db","students",student.id, "section_id"], value:"" }
-						))
-						
-	dispatch( createMerges(students) )
+		.filter(student => Class.sections[student.section_id] !== undefined)
+		.map(student => (
+			{ path: ["db", "students", student.id, "section_id"], value: "" }
+		))
+
+	dispatch(createMerges(students))
 
 	dispatch(createDeletes([
 		{
-			path:["db", "classes", Class.id]
+			path: ["db", "classes", Class.id]
 		}
-	])) 
+	]))
 }
 
 export const addStudentToSection = (section_id, student) => dispatch => {
 
 	dispatch(createMerges([
-		{path: ["db", "students", student.id, "section_id"], value: section_id}
+		{ path: ["db", "students", student.id, "section_id"], value: section_id }
 	]))
 }
 
 export const removeStudentFromSection = (student) => dispatch => {
 
 	dispatch(createMerges([
-		{path: ["db", "students", student.id, "section_id"], value: ""}
+		{ path: ["db", "students", student.id, "section_id"], value: "" }
 	]))
 }
 
@@ -188,24 +203,21 @@ export const markFaculty = (faculty, date, status, time = moment.now()) => dispa
 }
 
 export const undoFacultyAttendance = (faculty, date) => dispatch => {
-	console.log("BEFORE UNDOING FACULTY ATTENDANCE", faculty, moment(date).format("YYYY-MM-DD"))
-
 	dispatch(createDeletes([
 		{
-			path:["db", "faculty", faculty.id, "attendance", date]
+			path: ["db", "faculty", faculty.id, "attendance", date]
 		}
 	]))
 
-	console.log("AFTER UNDOING FACULTY ATTENDANCE", faculty, moment(date).format("YYYY-MM-DD"))
 
 
-} 
+}
 
 
 export const addPayment = (student, payment_id, amount, date = moment.now(), type = "SUBMITTED", fee_id = undefined, fee_name = "Fee") => dispatch => {
 	console.log('add payment', student.Name, 'amount', amount)
 
-	if(amount === undefined || amount === 0) {
+	if (amount === undefined || amount === 0) {
 		return {};
 	}
 
@@ -255,7 +267,7 @@ export const mergeExam = (exam, class_id, section_id) => dispatch => {
 	// exam is
 	// { id, name, subject, total_score, date, student_marks: { student_id, grade } }
 
-	const {id, name, subject, total_score, date, student_marks} = exam;
+	const { id, name, subject, total_score, date, student_marks } = exam;
 
 	// make sure date is a unix timestamp
 
@@ -263,9 +275,9 @@ export const mergeExam = (exam, class_id, section_id) => dispatch => {
 		.reduce((agg, [student_id, student_mark]) => ([
 			...agg,
 			{
-				path: ["db", "students", student_id, "exams", id ],
+				path: ["db", "students", student_id, "exams", id],
 				value: {
-					score: student_mark.score, 
+					score: student_mark.score,
 					grade: student_mark.grade
 				}
 			}

@@ -54,7 +54,8 @@ const blankStudent = () => ({
 	},
 	payments: {},
 	attendance: {},
-	section_id: ""
+	section_id: "",
+	classHistory: {},   //Previous Class history In case of promotion
 })
 // should be a dropdown of choices. not just teacher or admin.
 
@@ -89,8 +90,8 @@ class SingleStudent extends Component {
 
 		// verify 
 
-		let compulsory_paths = [ ["Name"] ];
-		if(student.Active) {
+		let compulsory_paths = [["Name"]];
+		if (student.Active) {
 			compulsory_paths.push(["section_id"])
 		} else {
 			student.section_id = ""
@@ -98,48 +99,45 @@ class SingleStudent extends Component {
 
 		const compulsoryFields = checkCompulsoryFields(this.state.profile, compulsory_paths);
 
-		if(compulsoryFields) 
-		{
+		if (compulsoryFields) {
 			const errorText = "Please fill " + compulsoryFields.map(x => x[0] === "section_id" ? "Section ID" : x[0]).join(", ");
-			
-				return this.setState({
-					banner: {
-						active : true,
-						good: false,
-						text: errorText
-					}
-				})
+
+			return this.setState({
+				banner: {
+					active: true,
+					good: false,
+					text: errorText
+				}
+			})
 		}
 
 
-		for(let student of Object.values(this.props.students))
-		{
+		for (let student of Object.values(this.props.students)) {
 			const RollNumber = student.section_id === this.state.profile.section_id && student.RollNumber !== undefined
-				&& student.id !== this.state.profile.id 
-				&& student.RollNumber !== "" 
+				&& student.id !== this.state.profile.id
+				&& student.RollNumber !== ""
 				&& student.RollNumber === this.state.profile.RollNumber
 
-			const AdmissionNumber = student.id !== this.state.profile.id 
-				&& student.AdmissionNumber !== undefined 
-				&& student.AdmissionNumber !== "" 
-				&& student.AdmissionNumber === this.state.profile.AdmissionNumber	
+			const AdmissionNumber = student.id !== this.state.profile.id
+				&& student.AdmissionNumber !== undefined
+				&& student.AdmissionNumber !== ""
+				&& student.AdmissionNumber === this.state.profile.AdmissionNumber
 
-			if(AdmissionNumber || RollNumber)
-			{
+			if (AdmissionNumber || RollNumber) {
 				return this.setState({
 					banner: {
-						active : true,
+						active: true,
 						good: false,
-						text: RollNumber ? "Roll Number Already Exists": "Admission Number Already Exists"
+						text: RollNumber ? "Roll Number Already Exists" : "Admission Number Already Exists"
 					}
 				})
 			}
 		}
 
-		for(let fee of Object.values(this.state.profile.fees)) {
+		for (let fee of Object.values(this.state.profile.fees)) {
 			console.log('fees', fee)
 
-			if(fee.type === "" || fee.amount === "" || fee.name === "" || fee.period === "") {
+			if (fee.type === "" || fee.amount === "" || fee.name === "" || fee.period === "") {
 				return this.setState({
 					banner: {
 						active: true,
@@ -150,10 +148,10 @@ class SingleStudent extends Component {
 			}
 		}
 
-		if(this.isNew()) {
+		if (this.isNew()) {
 			const payments = checkStudentDuesReturning(student)
-				.reduce((agg, p) => ({ 
-					...agg, 
+				.reduce((agg, p) => ({
+					...agg,
 					[p.payment_id]: {
 						amount: p.amount,
 						date: p.date,
@@ -167,7 +165,7 @@ class SingleStudent extends Component {
 		}
 
 		this.props.save(student);
-		
+
 		this.setState({
 			banner: {
 				active: true,
@@ -229,7 +227,7 @@ class SingleStudent extends Component {
 					...this.state.profile.fees,
 					[v4()]: {
 						name: "",
-						type: "FEE", 
+						type: "FEE",
 						amount: "",
 						period: "",
 					}
@@ -239,7 +237,7 @@ class SingleStudent extends Component {
 	}
 
 	removeFee = id => () => {
-		const {[id]: removed, ...nextFee} = this.state.profile.fees;
+		const { [id]: removed, ...nextFee } = this.state.profile.fees;
 
 		this.setState({
 			profile: {
@@ -260,14 +258,14 @@ class SingleStudent extends Component {
 	}
 
 	addHyphens = (path) => () => {
-		
+
 		const str = Dynamic.get(this.state, path);
 		this.setState(Dynamic.put(this.state, path, Hyphenator(str)))
 	}
 
 	render() {
 
-		if(this.state.redirect) {
+		if (this.state.redirect) {
 			console.log('redirecting....')
 			return <Redirect to={this.state.redirect} />
 		}
@@ -275,145 +273,143 @@ class SingleStudent extends Component {
 		const admin = this.props.user.Admin;
 
 		return <div className="single-student">
-				{ this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false }
+			{this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
 
-				<div className="title">Edit Student</div>
+			<div className="title">Edit Student</div>
+			<div className="form">
+				<div className="divider">Personal Information</div>
 
-
-				<div className="form">
-					<div className="divider">Personal Information</div>
-					
-					<div className="row">
-						<label>Full Name</label>
-						<input type="text" {...this.former.super_handle_flex(["Name"], { styles: (val) => { return val === "" ? { borderColor : "#fc6171" } : {} } })} placeholder="Full Name" disabled={!admin} />
-					</div>
-					
-					<div className="row">
-						<label>B-Form Number</label>
-						<input type="tel" {...this.former.super_handle(["BForm"], (val) => val.length <= 15, this.addHyphens(["profile", "BForm"]) )} placeholder="BForm" disabled={!admin}/>
-					</div>
-
-					<div className="row">
-						<label>Date of Birth</label>
-						<input type="date" onChange={this.former.handle(["Birthdate"])} value={moment(this.state.profile.Birthdate).format("YYYY-MM-DD")} placeholder="Date of Birth" disabled={!admin}/>
-					</div>
-
-					<div className="row">
-						<label>Gender</label>
-						<select {...this.former.super_handle(["Gender"])} disabled={!admin} >
-							<option value='' disabled>Please Set a Gender</option>
-							<option value="male">Male</option>
-							<option value="female">Female</option>
-						</select>
-					</div>
-
-					<div className="row">
-						<label>Father Name</label>
-						<input type="text" {...this.former.super_handle(["ManName"])} placeholder="Father Name"  disabled={!admin}/>
-					</div>
-
-					<div className="row">
-						<label>Father CNIC</label>
-						<input type="tel" {...this.former.super_handle(["ManCNIC"], (num) => num.length <= 15,this.addHyphens(["profile", "ManCNIC"]))} placeholder="Father CNIC"  disabled={!admin}/>
-					</div>
-
-					<div className="divider">Contact Information</div>
-
-					<div className="row">
-						<label>Phone Number</label>
-						<input type="tel" {...this.former.super_handle(["Phone"], (num) => num.length <= 11)} placeholder="Phone Number" disabled={!admin}/>
-					</div>
-
-					<div className="row">
-						<label>Address</label>
-						<input type="text" {...this.former.super_handle(["Address"])} placeholder="Address" disabled={!admin}/>
-					</div>
-
-					<div className="divider">School Information</div>
-
-					<div className="row">
-						<label>Active Status</label>
-						<select {...this.former.super_handle(["Active"])} disabled={!admin}>
-							<option value={true}>Student Currently goes to this School</option>
-							<option value={false}>Student No Longer goes to this School</option>
-						</select>
-					</div>
-
-					{ !this.state.profile.Active ? false : <div className="row">
-						<label>Class Section</label>
-						<select {...this.former.super_handle_flex(["section_id"], { styles: (val) => { return val === "" ? { borderColor : "#fc6171" } : {} } })} disabled={!admin}>
-							{
-								 [
-									<option key="" value="">Please Select a Section</option>,
-									 ...getSectionsFromClasses(this.props.classes)
-									 	.sort((a,b) => a.classYear - b.classYear )
-										.map(c => <option key={c.id} value={c.id}>{c.namespaced_name}</option>)
-								]
-							}
-						</select>
-					</div>
-					}
-
-					<div className="row">
-						<label>Roll No</label>
-						<input type="text" {...this.former.super_handle(["RollNumber"])} placeholder="Roll Number" disabled={!admin} />
-					</div>
-
-					<div className="row">
-						<label>Admission Date</label>
-						<input type="date" onChange={this.former.handle(["StartDate"])} value={moment(this.state.profile.StartDate).format("YYYY-MM-DD")} placeholder="Admission Date" disabled={!admin}/>
-					</div>
-
-					<div className="row">
-						<label>Admission Number</label>
-						<input type="text" {...this.former.super_handle(["AdmissionNumber"])} placeholder="Admission Number" disabled={!admin}/>
-					</div>
-
-					<div className="row">
-						<label>Notes</label>
-						<textarea {...this.former.super_handle(["Notes"])} placeholder="Notes" disabled={!admin}/>
-					</div>
-
-					{admin || this.props.permissions.fee.teacher ? <div className="divider">Payment</div> : false}
-					{admin || this.props.permissions.fee.teacher ? 
-						Object.entries(this.state.profile.fees).map(([id, fee]) => {
-							return <div className="section" key={id}>
-								{!admin ? false : <div className="click-label" onClick={this.removeFee(id)}>Remove Fee</div>}
-								<div className="row">
-									<label>Type</label>
-									<select {...this.former.super_handle(["fees", id, "type"])} disabled={!admin}>
-										<option value="" disabled>Select Fee or Scholarship</option>
-										<option value="FEE">Fee</option>
-										<option value="SCHOLARSHIP">Scholarship</option>
-									</select>
-								</div>
-								<div className="row">
-									<label>Name</label>
-									<input type="text" {...this.former.super_handle(["fees", id, "name"])} placeholder={this.state.profile.fees[id].type === "SCHOLARSHIP" ? "Scholarship Name" : "Fee Name"} disabled={!admin}/>
-								</div>
-								<div className="row">
-									<label>Amount</label>
-									<input type="number" {...this.former.super_handle_flex(["fees", id, "amount"],{ styles: (val) => { return val === "" ? { borderColor : "#fc6171" } : {} } })} placeholder="Amount" disabled={!admin}/>
-								</div>
-								<div className="row">
-									<label>Fee Period</label>
-									<select {...this.former.super_handle(["fees", id, "period"])} disabled={!admin}>
-										<option value="" disabled>Please Select a Time Period</option>
-										<option value="SINGLE">One Time</option>
-										<option value="MONTHLY">Every Month</option>
-									</select>
-								</div>
-							</div>
-						})
-					: false }
-					{ !admin ? false : <div className="button green" onClick={this.addFee}>Add Additional Fee or Scholarship</div> }
-					{ !admin ? false : <div className="save-delete">
-						<div className="button red" onClick={this.onDelete}>Delete</div>
-						<div className="button blue" onClick={this.onSave}>Save</div>
-					</div>
-					}
+				<div className="row">
+					<label>Full Name</label>
+					<input type="text" {...this.former.super_handle_flex(["Name"], { styles: (val) => { return val === "" ? { borderColor: "#fc6171" } : {} } })} placeholder="Full Name" disabled={!admin} />
 				</div>
+
+				<div className="row">
+					<label>B-Form Number</label>
+					<input type="tel" {...this.former.super_handle(["BForm"], (val) => val.length <= 15, this.addHyphens(["profile", "BForm"]))} placeholder="BForm" disabled={!admin} />
+				</div>
+
+				<div className="row">
+					<label>Date of Birth</label>
+					<input type="date" onChange={this.former.handle(["Birthdate"])} value={moment(this.state.profile.Birthdate).format("YYYY-MM-DD")} placeholder="Date of Birth" disabled={!admin} />
+				</div>
+
+				<div className="row">
+					<label>Gender</label>
+					<select {...this.former.super_handle(["Gender"])} disabled={!admin} >
+						<option value='' disabled>Please Set a Gender</option>
+						<option value="male">Male</option>
+						<option value="female">Female</option>
+					</select>
+				</div>
+
+				<div className="row">
+					<label>Father Name</label>
+					<input type="text" {...this.former.super_handle(["ManName"])} placeholder="Father Name" disabled={!admin} />
+				</div>
+
+				<div className="row">
+					<label>Father CNIC</label>
+					<input type="tel" {...this.former.super_handle(["ManCNIC"], (num) => num.length <= 15, this.addHyphens(["profile", "ManCNIC"]))} placeholder="Father CNIC" disabled={!admin} />
+				</div>
+
+				<div className="divider">Contact Information</div>
+
+				<div className="row">
+					<label>Phone Number</label>
+					<input type="tel" {...this.former.super_handle(["Phone"], (num) => num.length <= 11)} placeholder="Phone Number" disabled={!admin} />
+				</div>
+
+				<div className="row">
+					<label>Address</label>
+					<input type="text" {...this.former.super_handle(["Address"])} placeholder="Address" disabled={!admin} />
+				</div>
+
+				<div className="divider">School Information</div>
+
+				<div className="row">
+					<label>Active Status</label>
+					<select {...this.former.super_handle(["Active"])} disabled={!admin}>
+						<option value={true}>Student Currently goes to this School</option>
+						<option value={false}>Student No Longer goes to this School</option>
+					</select>
+				</div>
+
+				{!this.state.profile.Active ? false : <div className="row">
+					<label>Class Section</label>
+					<select {...this.former.super_handle_flex(["section_id"], { styles: (val) => { return val === "" ? { borderColor: "#fc6171" } : {} } })} disabled={!admin}>
+						{
+							[
+								<option key="" value="">Please Select a Section</option>,
+								...getSectionsFromClasses(this.props.classes)
+									.sort((a, b) => a.classYear - b.classYear)
+									.map(c => <option key={c.id} value={c.id}>{c.namespaced_name}</option>)
+							]
+						}
+					</select>
+				</div>
+				}
+
+				<div className="row">
+					<label>Roll No</label>
+					<input type="text" {...this.former.super_handle(["RollNumber"])} placeholder="Roll Number" disabled={!admin} />
+				</div>
+
+				<div className="row">
+					<label>Admission Date</label>
+					<input type="date" onChange={this.former.handle(["StartDate"])} value={moment(this.state.profile.StartDate).format("YYYY-MM-DD")} placeholder="Admission Date" disabled={!admin} />
+				</div>
+
+				<div className="row">
+					<label>Admission Number</label>
+					<input type="text" {...this.former.super_handle(["AdmissionNumber"])} placeholder="Admission Number" disabled={!admin} />
+				</div>
+
+				<div className="row">
+					<label>Notes</label>
+					<textarea {...this.former.super_handle(["Notes"])} placeholder="Notes" disabled={!admin} />
+				</div>
+
+				{admin || this.props.permissions.fee.teacher ? <div className="divider">Payment</div> : false}
+				{admin || this.props.permissions.fee.teacher ?
+					Object.entries(this.state.profile.fees).map(([id, fee]) => {
+						return <div className="section" key={id}>
+							{!admin ? false : <div className="click-label" onClick={this.removeFee(id)}>Remove Fee</div>}
+							<div className="row">
+								<label>Type</label>
+								<select {...this.former.super_handle(["fees", id, "type"])} disabled={!admin}>
+									<option value="" disabled>Select Fee or Scholarship</option>
+									<option value="FEE">Fee</option>
+									<option value="SCHOLARSHIP">Scholarship</option>
+								</select>
+							</div>
+							<div className="row">
+								<label>Name</label>
+								<input type="text" {...this.former.super_handle(["fees", id, "name"])} placeholder={this.state.profile.fees[id].type === "SCHOLARSHIP" ? "Scholarship Name" : "Fee Name"} disabled={!admin} />
+							</div>
+							<div className="row">
+								<label>Amount</label>
+								<input type="number" {...this.former.super_handle_flex(["fees", id, "amount"], { styles: (val) => { return val === "" ? { borderColor: "#fc6171" } : {} } })} placeholder="Amount" disabled={!admin} />
+							</div>
+							<div className="row">
+								<label>Fee Period</label>
+								<select {...this.former.super_handle(["fees", id, "period"])} disabled={!admin}>
+									<option value="" disabled>Please Select a Time Period</option>
+									<option value="SINGLE">One Time</option>
+									<option value="MONTHLY">Every Month</option>
+								</select>
+							</div>
+						</div>
+					})
+					: false}
+				{!admin ? false : <div className="button green" onClick={this.addFee}>Add Additional Fee or Scholarship</div>}
+				{!admin ? false : <div className="save-delete">
+					<div className="button red" onClick={this.onDelete}>Delete</div>
+					<div className="button blue" onClick={this.onSave}>Save</div>
+				</div>
+				}
 			</div>
+		</div>
 	}
 }
 
@@ -421,7 +417,8 @@ export default connect(state => ({
 	students: state.db.students,
 	classes: state.db.classes,
 	permissions: state.db.settings.permissions,
-	user: state.db.faculty[state.auth.faculty_id] }), dispatch => ({ 
+	user: state.db.faculty[state.auth.faculty_id]
+}), dispatch => ({
 	save: (student) => dispatch(createStudentMerge(student)),
 	delete: (student) => dispatch(deleteStudent(student))
- }))(SingleStudent);
+}))(SingleStudent);

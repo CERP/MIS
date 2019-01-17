@@ -38,7 +38,7 @@ class SingleExam extends Component {
 				...blankExam(),
 				student_marks
  			} : { 
-				 ...this.props.exams[this.exam_id()],
+				...this.props.exams[this.exam_id()],
 				student_marks: this.getGradesForExistingExam(this.exam_id())
 			},
 			sendSMS: false,
@@ -64,7 +64,7 @@ class SingleExam extends Component {
 				const exam = student.exams[exam_id]  
 				return {
 					...agg,
-					[id]: exam ? exam.score : ""
+					[id]: exam || { score:"", grade: "" }
 				}
 			}, {})
 	}
