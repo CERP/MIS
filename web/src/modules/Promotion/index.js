@@ -114,6 +114,7 @@ class Promotion extends Component {
                 {this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
 
                 <div className="option row">
+                    
                     <div className="row">
                         <label className="label">From</label>
                         <select {...this.former.super_handle(["promoteFrom"])}>
@@ -123,17 +124,20 @@ class Promotion extends Component {
                             })}
                         </select>
                     </div>
+                    
                     <div className="row">
                         <label className="label">To</label>
-                        <select {...this.former.super_handle(["promoteTo"])} disabled = {this.state.promoteFrom === "" ? true : false}>
+                        <select {...this.former.super_handle(["promoteTo"])} disabled={this.state.promoteFrom === "" ? true : false}>
                             <option value="" disabled>Select Class</option>
                             {items.map(s => {
                                 return <option key={s.id} value={s.id}>{s.namespaced_name}</option>
                             })}
                         </select>
                     </div>
+                    
                     <div className="button blue" onClick={this.onSave}> Promote </div>
                 </div>
+                
                 <div className="list">
                     {studentList !== "" ? studentList.length === 0 ? <div>No Students in Class</div> : studentList.map(s => {
                         return <div className="row" key={s.section_id + s.Name}>
