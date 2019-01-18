@@ -34,7 +34,8 @@ class ClassReportMenu extends Component {
 
 		for (let s of relevant_students) {
 			for (let e of Object.values(this.props.exams)) {
-				if (s.classHistory[e.class_id] === undefined && s.exams[e.id] !== undefined) {
+				
+				if (s.exams !== undefined && s.classHistory[e.class_id] === undefined && s.exams[e.id] !== undefined) {
 					subjects.add(e.subject)
 					exams.add(e.name)
 				}

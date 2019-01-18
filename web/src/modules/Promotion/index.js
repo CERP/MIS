@@ -125,7 +125,7 @@ class Promotion extends Component {
                     </div>
                     <div className="row">
                         <label className="label">To</label>
-                        <select {...this.former.super_handle(["promoteTo"])}>
+                        <select {...this.former.super_handle(["promoteTo"])} disabled = {this.state.promoteFrom === "" ? true : false}>
                             <option value="" disabled>Select Class</option>
                             {items.map(s => {
                                 return <option key={s.id} value={s.id}>{s.namespaced_name}</option>
@@ -144,7 +144,6 @@ class Promotion extends Component {
                 </div>
             </div>
         </Layout>
-
     }
 }
 
