@@ -139,9 +139,11 @@ class Promotion extends Component {
                 </div>
                 
                 <div className="list">
-                    {studentList !== "" ? studentList.length === 0 ? <div>No Students in Class</div> : studentList.map(s => {
-                        return <div className="row" key={s.section_id + s.Name}>
-                            <div>{s.Name} </div>
+                    {studentList !== "" ? studentList.length === 0 ? <div>No Students in Class</div> : 
+                    studentList.map(s => {
+                        return <div className="table row" key={s.section_id + s.Name}>
+                                <div>{s.Name}</div>
+                                <div>{s.ManName}</div>
                             <input type="checkbox" value={s.id} onClick={this.onCheck} defaultChecked />
                         </div>
                     }) : <div> Please Select a Class</div>}
