@@ -20,9 +20,20 @@ export default class ToFeeDefaulters extends Component {
 	
 	const messages = Object.values(students)
 	.filter(student => Object.values(student.payments)
-	.reduce((agg, curr) => agg - (curr.type === "SUBMITTED" || curr.type === "FORGIVEN" ? 1 : -1) * curr.amount, 0) > 0 && student.Phone!== undefined && student.Phone !== "" )
-	.map(S => ({ number: S.Phone, text : this.state.text }));
+											.reduce((agg, curr) => agg - (curr.type === "SUBMITTED" || curr.type === "FORGIVEN" ? 1 : -1) * curr.amount, 0) > 0 && student.Phone!== undefined && student.Phone !== "" )
+	.reduce((agg,student)=> {
+		const index  = agg.findIndex(s => s.number === student.Phone)		
+		if(index >= 0 ){
+			return agg
+		}
 
+		return [...agg,{
+			number: student.Phone,
+			text : this.state.text
+		}]
+	}, [])
+
+	console.log(messages)
 	return (
 			<div>
 				<div className="row">

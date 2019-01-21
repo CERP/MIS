@@ -19,9 +19,20 @@ export default class ToAllStudents extends Component {
 	const { students, sendBatchMessages, smsOption } = this.props;
 	console.log(smsOption)
 
-	const messages = Object.values(students).filter(student => student.Phone !== undefined && student.Phone !== "")
-		.map(S => ({ number: S.Phone, text : this.state.text }))
+	const messages = Object.values(students).filter(s => s.Phone !== undefined && s.Phone !== "")
+										.reduce((agg,student)=> {
+											const index  = agg.findIndex(s => s.number === student.Phone)		
+											if(index >= 0 ){
+												return agg
+											}
 
+											return [...agg,{
+												number: student.Phone,
+												text : this.state.text
+											}]
+										}, [])
+										
+	console.log(messages)
 	return (
 		<div>
 			<div className="row">
