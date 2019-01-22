@@ -23,18 +23,19 @@ export default class ToSingleClass extends Component {
 
 	const { classes, students, sendBatchMessages } = this.props;
 
-	const messages = Object.values(students).filter(s => s.section_id === this.state.selected_section_id && s.Phone !== undefined && s.Phone !== "")
-	.reduce((agg,student)=> {
-		const index  = agg.findIndex(s => s.number === student.Phone)		
-		if(index >= 0 ){
-			return agg
-		}
+	const messages = Object.values(students)
+		.filter(s => s.section_id === this.state.selected_section_id && s.Phone !== undefined && s.Phone !== "")
+		.reduce((agg,student)=> {
+			const index  = agg.findIndex(s => s.number === student.Phone)		
+			if(index >= 0 ){
+				return agg
+			}
 
-		return [...agg,{
-			number: student.Phone,
-			text : this.state.text
-		}]
-	}, [])
+			return [...agg,{
+				number: student.Phone,
+				text : this.state.text
+			}]
+		}, [])
 				
 	return (
 			<div>
