@@ -13,23 +13,10 @@ export const ClassReports = ({id, classes, students, exams, settings, sms_templa
 	const relevant_students = Object.values(students)
 		.filter(s => section_set.has(s.section_id))
 
-	const messages = relevant_students.filter(s => s.Phone !== "").reduce( (agg, s) => {
-
-		const report = reportStringForStudent(s, exams, start, end, examFilter, subjectFilter)
-		if(report === ""){
-			return agg
-		}
-		const index  = agg.findIndex(student => student.number === s.Phone)		
-		if(index >= 0 ){
-			agg[index].text = agg[index].text + "\n" + sms_templates.result.replace(/\$NAME/g, s.Name).replace(/\$REPORT/g, report)
-			return agg
-		}
-
-		return [...agg,{
-			number: s.Phone,
-			text: sms_templates.result.replace(/\$NAME/g, s.Name).replace(/\$REPORT/g, report)
-		}]
-	}, [] )
+	const messages = relevant_students.map(student => ({
+		number: student.Phone,
+		text: sms_templates.result.replace(/\$NAME/g, student.Name).replace(/\$REPORT/g, reportStringForStudent(student, exams, start, end, examFilter, subjectFilter))
+	}))
 
 	console.log(messages)
 

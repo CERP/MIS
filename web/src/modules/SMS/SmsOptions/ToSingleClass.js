@@ -8,18 +8,18 @@ import former from 'utils/former'
 
 export default class ToSingleClass extends Component {
 	constructor(props) {
-	  super(props)
+	super(props)
 	
-	  this.state = {
-		  selected_section_id: "",
-		  selected_student_number: "",
-		  text: ""
-	  }
-
-	  this.former = new former(this, [])
+	this.state = {
+		selected_section_id: "",
+		selected_student_number: "",
+		text: ""
 	}
 
-  	render() {
+	this.former = new former(this, [])
+	}
+
+	render() {
 
 	const { classes, students, sendBatchMessages } = this.props;
 
@@ -61,6 +61,6 @@ export default class ToSingleClass extends Component {
 							})} className="button blue">Send using Local SIM</a> }
 			</div>
 		)
-  }
+	}
 }
 

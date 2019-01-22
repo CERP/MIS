@@ -109,16 +109,11 @@ class Attendance extends Component {
 					return agg;
 				}
 
-				const index  = agg.findIndex(s => s.number === student.Phone)
-				if(index >= 0 ){
-					agg[index].text = agg[index].text + "\n" + this.props.attendance_message_template.replace(/\$NAME/g, student.Name).replace(/\$STATUS/g, att.status)
-					return agg
-				}
 				return [...agg, {
 					number: student.Phone,
 					text: this.props.attendance_message_template.replace(/\$NAME/g, student.Name).replace(/\$STATUS/g, att.status)
 				}]
-			
+
 			}, [])
 			
 		const url = smsIntentLink({
