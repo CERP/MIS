@@ -177,6 +177,10 @@ a.block {
 			width: 30%;
 		}
 
+		.login .form .row>* {
+			width: initial;
+		}
+
 		.form .row>*:last-child {
 			margin-left: auto;
 		}
