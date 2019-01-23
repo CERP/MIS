@@ -187,58 +187,12 @@ class SingleStudent extends Component {
 
 		/* console.log("FILTER",Object.keys(student.fees)
 		.filter(f_Id => student.payments[`${curr}-${f_Id}`] === undefined || student.fees[f_Id] === undefined)) */
-		console.log("reduced payments",
-		Object.values(student.payments).reduce((agg,p)=> {
-			return {
-				...agg,
-				[p.fee_id] : p
-			}
-		}, {} ))
-
-		
-
-		const payments = Object.keys(student.fees)
-							.map(f_Id => {
-								const idthing = `${curr}-${f_Id}`
-								console.log("id", `${curr}-${f_Id}`)
-								console.log("payments", student.payments, student.payments[idthing])
-								console.log("fees", student.fees[f_Id])
-
-								if(student.payments[f_Id].amount !== student.fees[f_Id].amount)
-								{
-									return  ({ [`${curr}-${f_Id}`]: student.fees[f_Id].amount })
-								}
-							})
-
-
-
-
-		console.log("payments to change", )
-/* 
+		/* 
 		if(payments.length > 0 ){
 			this.props.updatePayments(student, payments)
-		} 
- */
-	/* 	console.log("CHANGES", payments) */
-		
-		this.setState({
-			banner: {
-				active: true,
-				good: true,
-				text: "Saved!"
-			}
-		})
-
-		setTimeout(() => {
-			this.setState({
-				banner: {
-					active: false
-				},
-				redirect: this.isNew() ? `/student` : false
-			})
-		}, 2000);
+		} */ 
 	}
-
+ 
 	addSibling = (sibling) => {
 		console.log("ADD SIBLING", sibling)
 
