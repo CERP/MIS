@@ -12,7 +12,7 @@ import { checkStudentDuesReturning } from 'utils/checkStudentDues'
 import Hyphenator from 'utils/Hyphenator'
 
 
-import { createStudentMerge, deleteStudent } from 'actions'
+import { createStudentMerge, deleteStudent, updatePayments } from 'actions'
 
 import Banner from 'components/Banner'
 import Former from 'utils/former'
@@ -167,6 +167,59 @@ class SingleStudent extends Component {
 		}
 
 		this.props.save(student);
+
+		const curr = moment().format("MM/YYYY")
+
+		for(let p_id of Object.keys(student.payments)){
+			console.log("HI",p_id)
+			const current_payment = student.payments[p_id];
+
+			// you can only look at payments that are of this month. old months tell u nothing
+			// curr.unix() should give you the date for the first of this month.
+			// Object.values(payments).filter(x => x.date == curr.unix()) should filter this properly.
+
+			// if the payment for this month of fee_id fid
+			// has an amount different from this.state.profile.fees
+			// then update that payment amount
+
+		}
+
+
+		/* console.log("FILTER",Object.keys(student.fees)
+		.filter(f_Id => student.payments[`${curr}-${f_Id}`] === undefined || student.fees[f_Id] === undefined)) */
+		console.log("reduced payments",
+		Object.values(student.payments).reduce((agg,p)=> {
+			return {
+				...agg,
+				[p.fee_id] : p
+			}
+		}, {} ))
+
+		
+
+		const payments = Object.keys(student.fees)
+							.map(f_Id => {
+								const idthing = `${curr}-${f_Id}`
+								console.log("id", `${curr}-${f_Id}`)
+								console.log("payments", student.payments, student.payments[idthing])
+								console.log("fees", student.fees[f_Id])
+
+								if(student.payments[f_Id].amount !== student.fees[f_Id].amount)
+								{
+									return  ({ [`${curr}-${f_Id}`]: student.fees[f_Id].amount })
+								}
+							})
+
+
+
+
+		console.log("payments to change", )
+/* 
+		if(payments.length > 0 ){
+			this.props.updatePayments(student, payments)
+		} 
+ */
+	/* 	console.log("CHANGES", payments) */
 		
 		this.setState({
 			banner: {
@@ -273,6 +326,9 @@ class SingleStudent extends Component {
 		}
 
 		const admin = this.props.user.Admin;
+
+		console.log("FeeS", this.state.profile.fees)  //need to remove it
+		console.log("Payments", this.state.profile.payments)
 
 		return <div className="single-student">
 				{ this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false }
@@ -423,5 +479,6 @@ export default connect(state => ({
 	permissions: state.db.settings.permissions,
 	user: state.db.faculty[state.auth.faculty_id] }), dispatch => ({ 
 	save: (student) => dispatch(createStudentMerge(student)),
-	delete: (student) => dispatch(deleteStudent(student))
+	delete: (student) => dispatch(deleteStudent(student)),
+	updatePayments: (student, payments) => dispatch(updatePayments(student, payments))
  }))(SingleStudent);

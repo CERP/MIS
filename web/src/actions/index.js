@@ -217,6 +217,27 @@ export const addMultiplePayments = (payments) => dispatch => {
 	dispatch(createMerges(merges));
 }
 
+export const updatePayments = (student, payments) => dispatch => {
+	console.log('update payment', student.Name, 'payments', payments)
+
+	const merges = payments.map(p => {
+		const p_id = Object.keys(p)[0]
+		const amount = Object.values(p)[0]
+		
+		return ({
+			path: ["db", "students", student.id, "payments", p_id],
+			value: {
+				amount: amount,
+				date: student.payments[p_id].date,
+				type: student.payments[p_id].type,
+				fee_id: student.payments[p_id].fee_id,
+				fee_name: student.payments[p_id].fee_name
+			}
+	})})
+
+	dispatch(createMerges(merges))
+}
+
 export const createTemplateMerges = templates => dispatch => {
 
 	dispatch(createMerges([
