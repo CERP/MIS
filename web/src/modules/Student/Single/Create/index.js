@@ -12,7 +12,7 @@ import { checkStudentDuesReturning } from 'utils/checkStudentDues'
 import Hyphenator from 'utils/Hyphenator'
 
 
-import { createStudentMerge, deleteStudent, updatePayments } from 'actions'
+import { createStudentMerge, deleteStudent } from 'actions'
 
 import Banner from 'components/Banner'
 import Former from 'utils/former'
@@ -137,7 +137,7 @@ class SingleStudent extends Component {
 		}
 
 		for(let fee of Object.values(this.state.profile.fees)) {
-			console.log('fees', fee)
+			//console.log('fees', fee)
 
 			if(fee.type === "" || fee.amount === "" || fee.name === "" || fee.period === "") {
 				return this.setState({
@@ -165,10 +165,6 @@ class SingleStudent extends Component {
 
 			student.payments = payments;
 		}
-
-		this.props.save(student);
-
-		let payments = []
 		
 		for(let p_id of Object.keys(student.payments)){
 			
@@ -178,16 +174,47 @@ class SingleStudent extends Component {
 			const curr_payment_date = moment(current_payment.date).format("MM/YYYY")
 			const curr_month = moment().format("MM/YYYY")
 
-			if( curr_payment_date === curr_month && corresponding_fees.period === "MONTHLY" && current_payment.amount !== corresponding_fees.amount )
+			if( curr_payment_date === curr_month && 
+				corresponding_fees === undefined) 
 			{
-				payments.push({ [p_id] : corresponding_fees.amount })
+				const {[p_id]:removed, ...nextPayment} = student.payments
+				student.payments = nextPayment;
+			}
+			else if(curr_payment_date === curr_month && 
+				current_payment.type === "OWED" && 
+				corresponding_fees.period === "MONTHLY" &&
+				Math.abs(current_payment.amount) !== Math.abs(corresponding_fees.amount) )
+			{
+				student.payments[p_id] = {
+					amount: corresponding_fees.type !== "SCHOLARSHIP" ?  corresponding_fees.amount : (-1 * corresponding_fees.amount), // check if scholarship, then make negative (just like checkstudentdues function)
+					date: current_payment.date,
+					type: current_payment.type,
+					fee_id: current_payment.fee_id,
+					fee_name: corresponding_fees.name
+				}
 			}
 
 		}
 
-		if(payments.length > 0 ){
-			this.props.updatePayments(student, payments)
-		} 
+		this.props.save(student);
+
+		this.setState({
+			banner: {
+				active: true,
+				good: true,
+				text: "Saved!"
+			}
+		})
+
+		setTimeout(() => {
+			this.setState({
+				banner: {
+					active: false
+				},
+				redirect: this.isNew() ? `/student` : false
+			})
+		}, 2000);
+
 	}
 
 	addSibling = (sibling) => {
@@ -276,9 +303,6 @@ class SingleStudent extends Component {
 		}
 
 		const admin = this.props.user.Admin;
-
-		console.log("FeeS", this.state.profile.fees)  //need to remove it
-		console.log("Payments", this.state.profile.payments)
 
 		return <div className="single-student">
 				{ this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false }
@@ -430,5 +454,4 @@ export default connect(state => ({
 	user: state.db.faculty[state.auth.faculty_id] }), dispatch => ({ 
 	save: (student) => dispatch(createStudentMerge(student)),
 	delete: (student) => dispatch(deleteStudent(student)),
-	updatePayments: (student, payments) => dispatch(updatePayments(student, payments))
  }))(SingleStudent);
