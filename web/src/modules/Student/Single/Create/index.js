@@ -168,31 +168,28 @@ class SingleStudent extends Component {
 
 		this.props.save(student);
 
-		const curr = moment().format("MM/YYYY")
-
+		let payments = []
+		
 		for(let p_id of Object.keys(student.payments)){
-			console.log("HI",p_id)
+			
 			const current_payment = student.payments[p_id];
+			const corresponding_fees = student.fees[current_payment.fee_id]
 
-			// you can only look at payments that are of this month. old months tell u nothing
-			// curr.unix() should give you the date for the first of this month.
-			// Object.values(payments).filter(x => x.date == curr.unix()) should filter this properly.
+			const curr_payment_date = moment(current_payment.date).format("MM/YYYY")
+			const curr_month = moment().format("MM/YYYY")
 
-			// if the payment for this month of fee_id fid
-			// has an amount different from this.state.profile.fees
-			// then update that payment amount
+			if( curr_payment_date === curr_month && corresponding_fees.period === "MONTHLY" && current_payment.amount !== corresponding_fees.amount )
+			{
+				payments.push({ [p_id] : corresponding_fees.amount })
+			}
 
 		}
 
-
-		/* console.log("FILTER",Object.keys(student.fees)
-		.filter(f_Id => student.payments[`${curr}-${f_Id}`] === undefined || student.fees[f_Id] === undefined)) */
-		/* 
 		if(payments.length > 0 ){
 			this.props.updatePayments(student, payments)
-		} */ 
+		} 
 	}
- 
+
 	addSibling = (sibling) => {
 		console.log("ADD SIBLING", sibling)
 
@@ -203,7 +200,6 @@ class SingleStudent extends Component {
 		families: {
 			[id]: { 
 				name: "",
-
 				students: { [id]: true},
 				contact: { phone: number, address: string},
 				profile: {
