@@ -173,7 +173,8 @@ class SingleStudent extends Component {
 
 			const curr_payment_date = moment(current_payment.date).format("MM/YYYY")
 			const curr_month = moment().format("MM/YYYY")
-
+			const fee_amount =  parseFloat(corresponding_fees.amount,10)
+		
 			if( curr_payment_date === curr_month && 
 				corresponding_fees === undefined) 
 			{
@@ -183,10 +184,10 @@ class SingleStudent extends Component {
 			else if(curr_payment_date === curr_month && 
 				current_payment.type === "OWED" && 
 				corresponding_fees.period === "MONTHLY" &&
-				Math.abs(current_payment.amount) !== Math.abs(corresponding_fees.amount) )
+				Math.abs(current_payment.amount) !== Math.abs(fee_amount) )
 			{
 				student.payments[p_id] = {
-					amount: corresponding_fees.type !== "SCHOLARSHIP" ?  corresponding_fees.amount : (-1 * corresponding_fees.amount), // check if scholarship, then make negative (just like checkstudentdues function)
+					amount: corresponding_fees.type !== "SCHOLARSHIP" ?   fee_amount : (-1 * fee_amount), // check if scholarship, then make negative
 					date: current_payment.date,
 					type: current_payment.type,
 					fee_id: current_payment.fee_id,

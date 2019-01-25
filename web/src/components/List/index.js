@@ -21,7 +21,7 @@ class List extends Component {
 		
 		const filteredList = items
 			.filter(item => {
-				return toLabel(item).toLowerCase().includes(this.state.filterText.toLowerCase());
+				return toLabel(item) !== undefined && toLabel(item).toLowerCase().includes(this.state.filterText.toLowerCase());
 			})
 			.sort((a,b) => toLabel(b).localeCompare(this.state.filterText) - toLabel(a).localeCompare(this.state.filterText))
 
