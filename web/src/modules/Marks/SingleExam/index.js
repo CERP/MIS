@@ -13,7 +13,6 @@ import Former from 'utils/former'
 import Dropdown from 'components/Dropdown'
 
 import './style.css'
-import { inherits } from 'util';
 
 const blankExam = () => ({
 	id: v4(),
