@@ -6,7 +6,7 @@ import moment from 'moment'
 
 import checkCompulsoryFields from 'utils/checkCompulsoryFields'
 
-import { mergeExam } from 'actions'
+import { mergeExam, removeStudentFromExam } from 'actions'
 import Banner from 'components/Banner'
 import Layout from 'components/Layout'
 import Former from 'utils/former'
@@ -186,6 +186,8 @@ class SingleExam extends Component {
 				student_marks: rest
 			}
 		})
+
+		this.props.removeStudent(this.state.exam.id, student.id) //To remove exam from student
 	}
 
 	render() {
@@ -317,4 +319,5 @@ export default connect(state => ({
 	students: state.db.students
 }), dispatch => ({
 	saveExam: (exam, class_id, section_id) => dispatch(mergeExam(exam, class_id, section_id)),
+	removeStudent: (exam_id, student_id) => dispatch(removeStudentFromExam(exam_id,student_id)) 
 }) )(SingleExam)
