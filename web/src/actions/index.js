@@ -63,7 +63,7 @@ export const deleteFaculty = (faculty_id) => (dispatch, getState) => {
 			}
 		}
 	}
-
+	
  	dispatch(createDeletes([
 		{
 			path: ["db", "faculty", faculty_id]
@@ -78,12 +78,27 @@ export const promoteStudents = (promotion_map, section_metadata) => dispatch => 
 
 	// think about the case when someone promotes up and down repeatedly. 
 	// this will overwrite their history... instead of adding to it.
+	const setInactive = []
 	dispatch(createMerges([
 		...Object.entries(promotion_map)
-			.map(([student_id, { current, next }]) => ({
-				path: ["db", "students", student_id, "section_id"],
-				value: next
-			})),
+			.map(([student_id, { current, next }]) => {	
+				if(next === "FINISHED_SCHOOL"){
+					//to set finishing students status inactive
+					setInactive.push({ 
+						path: ["db","students", student_id, "Active"],
+						value: false
+					})
+					//and setting section_id to ""
+					return {
+						path: ["db", "students", student_id, "section_id"],
+						value: ""
+					}
+				}
+				return {
+					path: ["db", "students", student_id, "section_id"],
+					value: next
+				}
+			}),
 		...Object.entries(promotion_map)
 			.map(([student_id, { current, next }]) => ({
 				path: ["db", "students", student_id, "class_history", current, "end_date"],
@@ -92,6 +107,13 @@ export const promoteStudents = (promotion_map, section_metadata) => dispatch => 
 		...Object.entries(promotion_map)
 			.map(([student_id, { current, next }]) => {
 				const meta = section_metadata.find(x => x.id === next);
+				if(next === "FINISHED_SCHOOL"){
+					return {
+						//if finishing add FINIHED_SCHOOL tag
+						path:["db", "students", student_id, "tags", next],
+						value: true
+					}
+				}
 				return {
 					path: ["db", "students", student_id, "class_history", next],
 					value: {
@@ -101,7 +123,8 @@ export const promoteStudents = (promotion_map, section_metadata) => dispatch => 
 						namespaced_name: meta.namespaced_name
 					}
 				}
-			})
+			}),
+			...setInactive
 		]
 	))
 }
@@ -366,6 +389,18 @@ export const logSms = (history) => dispatch => {
 		{
 			path: ["db", "analytics", "sms_history", v4() ],
 			value : history
+		}
+	])) 
+}
+
+export const addTag = (path, tag) => dispatch => {
+	
+	//history is an object { date: "", type: "", count:"" }
+
+  	dispatch(createMerges([
+		{
+			path: path,
+			value : tag
 		}
 	])) 
 }
