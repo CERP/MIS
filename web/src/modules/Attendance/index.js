@@ -159,7 +159,7 @@ class Attendance extends Component {
 
 							return <div className="list-row" key={x.id}>
 								<input type="checkbox" {...this.Former.super_handle(["selected_students", x.id])}></input>
-								<Link className="student" to={`/student/${x.id}/attendance`}>{x.Name}</Link>
+								{this.props.settings.permissions.setupPage.teacher ?<Link className="student" to={`/student/${x.id}/attendance`}>{x.Name}</Link> : <div> {x.Name} </div>}
 								<div className="status">
 									<div className={`button ${status === "PRESENT" ? "green" : false}`} onClick={this.mark(x, "PRESENT")}>P</div>
 									<div className={`button ${status === "ABSENT" ? "red" : false}`} onClick={this.mark(x, "ABSENT")}>A</div>
@@ -183,7 +183,7 @@ export default connect(state => {
 		classes: state.db.classes,
 		settings: state.db.settings,
 		connected: state.connected,
-		attendance_message_template: (state.db.sms_templates || {}).attendance || ""
+		attendance_message_template: (state.db.sms_templates || {}).attendance || "",
 	}
 
 }, dispatch => ({

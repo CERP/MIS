@@ -105,15 +105,15 @@ class Landing extends Component {
 
 					<div className="page">
 						<div className="title">Setup</div>
-						<div className="row">
+						{ user.Admin || permissions.setupPage.teacher ? <div className="row">
 							<Link to="/teacher" className="button green-shadow" style={{backgroundImage: `url(${teachersIcon})`}}>Teachers</Link>
 							<Link to="/student" className="button blue-shadow" style={{backgroundImage: `url(${studentsIcon})` }}>Students</Link>
-						</div>
+						</div> : false}
 						
-						<div className="row">
+						{ user.Admin || permissions.setupPage.teacher ? <div className="row">
 							<Link to="/class" className="button purple-shadow" style={{backgroundImage: `url(${classesIcon})` }}>Classes</Link>
 							<Link to="/settings" className="button red-shadow" style={{backgroundImage: `url(${settingsIcon})` }}>Settings</Link>
-						</div>
+						</div> : false}
 						<div className="row">
 							<div className="button yellow-shadow" onClick={logout} style={{backgroundImage: `url(${switchUserIcon})` }}>Logout</div>
 						</div>
@@ -157,7 +157,7 @@ class Landing extends Component {
 						</div>
 					</div>
 
-					<div className="page">
+					{ user.Admin || permissions.dailyStats.teacher ? <div className="page">
 						<div className="title">Daily Statistics</div>
 						<div className="divider">Attendance</div>
 						<div className="row">
@@ -220,7 +220,7 @@ class Landing extends Component {
 							</div>
 						</div>
 
-					</div>
+					</div> : false }
 
 				</div>
 			</div>
@@ -229,7 +229,7 @@ class Landing extends Component {
 			<div className="scroll-indicator-container">
 				<div className={`scroll-indicator ${current_page === 0 ? "active" : ""}`} />
 				<div className={`scroll-indicator ${current_page === 1 ? "active" : ""}`} />
-				<div className={`scroll-indicator ${current_page === 2 ? "active" : ""}`} />
+				{user.Admin || permissions.dailyStats.teacher ? <div className={`scroll-indicator ${current_page === 2 ? "active" : ""}`} /> : false}
 			</div> }
 		</Layout>
 	}

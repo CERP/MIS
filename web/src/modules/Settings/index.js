@@ -10,6 +10,12 @@ import Banner from 'components/Banner'
 
 import './style.css'
 
+export const defaultPermissions = {
+	fee:  { teacher: false },
+	dailyStats: { teacher: false},
+	setupPage: {teacher: true }
+}
+
 const defaultSettings = {
 	shareData: true,
 	schoolName: "",
@@ -17,9 +23,7 @@ const defaultSettings = {
 	schoolPhoneNumber: "",
 	sendSMSOption: "SIM", // API
 	deviceName : "",
-	permissions: {
-		fee:  { teacher: false } //added
-	}
+	permissions: defaultPermissions
 }
 
 class Settings extends Component {
@@ -48,6 +52,20 @@ class Settings extends Component {
 			<div className="row">
 				<label> Allow teacher to view Fee Information ? </label>
 				<select {...this.former.super_handle(["settings", "permissions", "fee","teacher"])}>
+							<option value={true}>Yes</option>
+							<option value={false}>No</option>
+						</select>
+			</div>
+			<div className="row">
+				<label> Allow teacher to view Daily Statistics ? </label>
+				<select {...this.former.super_handle(["settings", "permissions", "dailyStats","teacher"])}>
+							<option value={true}>Yes</option>
+							<option value={false}>No</option>
+						</select>
+			</div>
+			<div className="row">
+				<label> Allow teacher to view Setup Page ? </label>
+				<select {...this.former.super_handle(["settings", "permissions", "setupPage","teacher"])}>
 							<option value={true}>Yes</option>
 							<option value={false}>No</option>
 						</select>
@@ -95,6 +113,22 @@ class Settings extends Component {
 
 	onSave = () => {
 
+		if( this.state.settings.permissions["fee"] === undefined || 
+			this.state.settings.permissions["dailyStats"] === undefined ||
+			this.state.settings.permissions["setupPage"] === undefined )
+		{
+			console.log("RUNNING PERMISSION Condition")
+			this.setState({
+				settings:{
+					...this.state.settings,
+					permissions:{
+						...defaultPermissions,
+						...this.state.settings.permissions
+					}
+				}
+			})
+		}
+		
 		this.props.saveSettings(this.state.settings);
 		this.props.saveTemplates(this.state.templates);
 		this.setState({templateMenu: false});
