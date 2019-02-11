@@ -78,55 +78,58 @@ export const promoteStudents = (promotion_map, section_metadata) => dispatch => 
 
 	// think about the case when someone promotes up and down repeatedly. 
 	// this will overwrite their history... instead of adding to it.
-	const setInactive = []
-	dispatch(createMerges([
-		...Object.entries(promotion_map)
-			.map(([student_id, { current, next }]) => {	
+
+
+	const merges = Object.entries(promotion_map).reduce((agg, [student_id, {current, next}]) => {
+
 				if(next === "FINISHED_SCHOOL"){
-					//to set finishing students status inactive
-					setInactive.push({ 
-						path: ["db","students", student_id, "Active"],
-						value: false
-					})
-					//and setting section_id to ""
-					return {
-						path: ["db", "students", student_id, "section_id"],
-						value: ""
-					}
+					return [...agg, 
+						{
+							path: ["db","students", student_id, "Active"],
+							value: false
+						},
+						{
+							path: ["db", "students", student_id, "section_id"],
+							value: ""
+						},
+						{
+							path: ["db", "students", student_id, "class_history", current, "end_date"],
+							value: new Date().getTime()
+						},
+						{
+							path:["db", "students", student_id, "tags", next],
+							value: true
+						}
+					]
 				}
-				return {
-					path: ["db", "students", student_id, "section_id"],
-					value: next
-				}
-			}),
-		...Object.entries(promotion_map)
-			.map(([student_id, { current, next }]) => ({
-				path: ["db", "students", student_id, "class_history", current, "end_date"],
-				value: new Date().getTime()
-			})),
-		...Object.entries(promotion_map)
-			.map(([student_id, { current, next }]) => {
+
 				const meta = section_metadata.find(x => x.id === next);
-				if(next === "FINISHED_SCHOOL"){
-					return {
-						//if finishing add FINIHED_SCHOOL tag
-						path:["db", "students", student_id, "tags", next],
-						value: true
+				return [...agg,
+					{
+						path: ["db", "students", student_id, "section_id"],
+						value: next
+					},
+					{
+						path: ["db", "students", student_id, "class_history", current, "end_date"],
+						value: new Date().getTime()
+					},
+					{
+						path: ["db", "students", student_id, "class_history", next],
+						value: {
+							start_date: new Date().getTime(),
+							class_id: meta.class_id, // class id
+							class_name: meta.className,
+							namespaced_name: meta.namespaced_name
+						}
 					}
-				}
-				return {
-					path: ["db", "students", student_id, "class_history", next],
-					value: {
-						start_date: new Date().getTime(),
-						class_id: meta.class_id, // class id
-						class_name: meta.className,
-						namespaced_name: meta.namespaced_name
-					}
-				}
-			}),
-			...setInactive
-		]
-	))
+				]
+			
+
+			}, [])
+
+			console.log(merges)
+
+	dispatch(createMerges(merges))
 }
 
 export const LOCAL_LOGOUT = "LOCAL_LOGOUT"
@@ -393,14 +396,14 @@ export const logSms = (history) => dispatch => {
 	])) 
 }
 
-export const addTag = (path, tag) => dispatch => {
-	
-	//history is an object { date: "", type: "", count:"" }
+export const addTag = (students, tag) => dispatch => {
+	//students is an array of single or multiple students
+	//tag is the text od tag
 
-  	dispatch(createMerges([
-		{
-			path: path,
-			value : tag
-		}
-	])) 
+	const merges = students.map(s => ({
+		path: ["db", "students", s.id, "tags", tag],
+		value : true
+	}))
+
+  	dispatch(createMerges(merges)) 
 }

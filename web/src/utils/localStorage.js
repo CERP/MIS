@@ -192,25 +192,10 @@ const checkPermissions = state => {
 	return state;
 }
 
-const addTags =  state => {
-	for(let s_id of Object.keys(state.db.students))
-	{
-		if( state.db.students[s_id].tags === undefined )
-		{
-			state.db.students[s_id] = {
-				...state.db.students[s_id],
-				tags: {}
-			}
-		}
-	} 
-	return state
-}
-
 // this modifies db in case any schema changes have happened
 // which means i should maybe version the client db formally...
 const onLoadScripts = [
 	addFacultyID,
 	checkPermissions,
 	addClientName,
-	addTags
 ];
