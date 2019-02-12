@@ -56,7 +56,6 @@ const blankStudent = () => ({
 	attendance: {},
 	section_id: "",
 	tags:{}
-})
 // should be a dropdown of choices. not just teacher or admin.
 
 class SingleStudent extends Component {
