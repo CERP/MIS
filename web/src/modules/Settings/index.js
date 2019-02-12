@@ -30,9 +30,17 @@ class Settings extends Component {
 
 	constructor(props){ 
 		super(props);
+		
+		const settings = {
+			...(props.settings || defaultSettings),
+			permissions: {
+				...defaultPermissions,
+				...(props.settings || defaultSettings).permissions
+			}
+		}
 		this.state = {
 			templates: this.props.sms_templates,
-			settings: props.settings || defaultSettings,
+			settings,
 			templateMenu: false,
 			permissionMenu: false,
 			banner: {
@@ -43,21 +51,6 @@ class Settings extends Component {
 			client_id : localStorage.getItem("client_id")
 		}
 
-		if( this.state.settings.permissions["fee"] === undefined || 
-			this.state.settings.permissions["dailyStats"] === undefined ||
-			this.state.settings.permissions["setupPage"] === undefined )
-		{
-			console.log("RUNNING PERMISSION Condition")
-			this.setState({
-				settings:{
-					...this.state.settings,
-					permissions:{
-						...defaultPermissions,
-						...this.state.settings.permissions
-					}
-				}
-			})
-		}
 		this.former = new Former(this, [])
 	}
 
