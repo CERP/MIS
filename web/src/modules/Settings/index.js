@@ -11,8 +11,8 @@ import Banner from 'components/Banner'
 import './style.css'
 
 export const defaultPermissions = {
-	fee:  { teacher: false },
-	dailyStats: { teacher: false},
+	fee:  { teacher: true },
+	dailyStats: { teacher: true },
 	setupPage: {teacher: true }
 }
 
@@ -43,6 +43,21 @@ class Settings extends Component {
 			client_id : localStorage.getItem("client_id")
 		}
 
+		if( this.state.settings.permissions["fee"] === undefined || 
+			this.state.settings.permissions["dailyStats"] === undefined ||
+			this.state.settings.permissions["setupPage"] === undefined )
+		{
+			console.log("RUNNING PERMISSION Condition")
+			this.setState({
+				settings:{
+					...this.state.settings,
+					permissions:{
+						...defaultPermissions,
+						...this.state.settings.permissions
+					}
+				}
+			})
+		}
 		this.former = new Former(this, [])
 	}
 
@@ -111,24 +126,7 @@ class Settings extends Component {
 		</div>
 	}
 
-	onSave = () => {
-
-		if( this.state.settings.permissions["fee"] === undefined || 
-			this.state.settings.permissions["dailyStats"] === undefined ||
-			this.state.settings.permissions["setupPage"] === undefined )
-		{
-			console.log("RUNNING PERMISSION Condition")
-			this.setState({
-				settings:{
-					...this.state.settings,
-					permissions:{
-						...defaultPermissions,
-						...this.state.settings.permissions
-					}
-				}
-			})
-		}
-		
+	onSave = () => {		
 		this.props.saveSettings(this.state.settings);
 		this.props.saveTemplates(this.state.templates);
 		this.setState({templateMenu: false});
