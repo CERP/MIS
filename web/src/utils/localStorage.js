@@ -41,7 +41,7 @@ const initState = {
 
 export const loadDB = () => {
 	try {
-		const serialized = localStorage.getItem('db');		
+		const serialized = localStorage.getItem('db');
 		if (serialized === null) {
 			console.log('null')
 			return initState;
@@ -49,7 +49,7 @@ export const loadDB = () => {
 
 		const prev = JSON.parse(serialized);
 		const client_id = localStorage.getItem('client_id') || prev.client_id || v4()
-		const client_name = localStorage.getItem('client_name')
+		const client_name = localStorage.getItem('client_name') || prev.client_name || ""
 		// but should we make sure that fields that are no longer in the initState db are deleted?
 		const merged = {
 			...initState,
@@ -164,18 +164,6 @@ const addFacultyID = state => {
 	return state;
 }
 
-const addClientName = state => {
-
-	if(state.db.settings.deviceName === undefined){
-		state.db.settings = {
-			...state.db.settings,
-			deviceName: ""
-		}
-	}
-	state.client_name = state.db.settings.deviceName
-	return state;
-}
-
 const checkPermissions = state => {
 	if(state.db.settings.permissions !== undefined){
 		console.log("NOT Running Permission Scripts")
@@ -197,5 +185,4 @@ const checkPermissions = state => {
 const onLoadScripts = [
 	addFacultyID,
 	checkPermissions,
-	addClientName,
 ];
