@@ -22,7 +22,8 @@ const defaultSettings = {
 	schoolAddress: "",
 	schoolPhoneNumber: "",
 	sendSMSOption: "SIM", // API
-	permissions: defaultPermissions
+	permissions: defaultPermissions,
+	devices:{}
 }
 
 class Settings extends Component {
@@ -35,6 +36,10 @@ class Settings extends Component {
 			permissions: {
 				...defaultPermissions,
 				...(props.settings || defaultSettings).permissions
+			},
+			devices:{
+				...defaultSettings.devices,
+				...(props.settings || defaultSettings).devices
 			}
 		}
 		this.state = {
@@ -48,7 +53,6 @@ class Settings extends Component {
 				text: "Saved!"
 			},
 			client_id : localStorage.getItem("client_id"),
-			client_name : localStorage.getItem("client_name")
 		}
 
 		this.former = new Former(this, [])
@@ -123,8 +127,7 @@ class Settings extends Component {
 		this.props.saveSettings(this.state.settings);
 		this.props.saveTemplates(this.state.templates);
 		this.setState({templateMenu: false});
-		localStorage.setItem('client_name', this.state.client_name)
-
+		
 		this.setState({
 			banner: {
 				active: true,
@@ -192,7 +195,7 @@ class Settings extends Component {
 
 					<div className="row">
 						<label>Device Name</label>
-						<input type="text" {...this.former.super_handle(["client_name"])} placeholder="Device Name" />
+						<input type="text" {...this.former.super_handle(["settings","devices", this.state.client_id ])} placeholder="Device Name" />
 					</div>
 
 					<div className="row">

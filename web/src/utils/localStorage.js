@@ -9,7 +9,6 @@ const defaultTemplates = () => ({
 
 const initState = {
 	client_id: v4(),
-	client_name: "",
 	queued: { },
 	acceptSnapshot: false,
 	lastSnapshot: 0,
@@ -49,13 +48,11 @@ export const loadDB = () => {
 
 		const prev = JSON.parse(serialized);
 		const client_id = localStorage.getItem('client_id') || prev.client_id || v4()
-		const client_name = localStorage.getItem('client_name') || prev.client_name || ""
 		// but should we make sure that fields that are no longer in the initState db are deleted?
 		const merged = {
 			...initState,
 			...prev,
 			client_id: client_id,
-			client_name: client_name,
 			db: {
 				...initState.db,
 				...prev.db
