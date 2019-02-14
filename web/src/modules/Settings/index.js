@@ -23,7 +23,7 @@ const defaultSettings = {
 	schoolPhoneNumber: "",
 	sendSMSOption: "SIM", // API
 	permissions: defaultPermissions,
-	devices:{}
+	devices: {}
 }
 
 class Settings extends Component {
@@ -37,10 +37,7 @@ class Settings extends Component {
 				...defaultPermissions,
 				...(props.settings || defaultSettings).permissions
 			},
-			devices:{
-				...defaultSettings.devices,
-				...(props.settings || defaultSettings).devices
-			}
+			devices: (props.settings ? (props.settings.devices || {}) : {})
 		}
 		this.state = {
 			templates: this.props.sms_templates,
