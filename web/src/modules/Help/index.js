@@ -27,15 +27,15 @@ class Help extends Component {
         count: 1,
         text: this.state.text
       }
-  
+      
       this.props.logSms(historyObj)
     }
     
   render() {
 
-    const { sendMessage, smsOption, auth } = this.props;
+    const { sendMessage, smsOption, auth , school_address} = this.props;
     const number = "03481112004"
-    const text = `School Name : ${auth.school_id}\nTeacher Name: ${auth.name}\nMessage: ${this.state.text}`
+    const text = `School Name : ${auth.school_id}\nSchool Address: ${school_address}\nTeacher Name: ${auth.name}\nMessage: ${this.state.text}`
     
     return (
       <Layout history={this.props.history}>
@@ -81,6 +81,7 @@ class Help extends Component {
 }
 export default connect(state => ({
   auth: state.auth,
+  school_address: state.db.settings.schoolAddress,
   faculty_id: state.auth.faculty_id,
 	connected: state.connected,
 	smsOption: state.db.settings.sendSMSOption
