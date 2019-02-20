@@ -407,3 +407,11 @@ export const addTag = (students, tag) => dispatch => {
 
   	dispatch(createMerges(merges)) 
 }
+
+export const addDiary = (diary) => dispatch => {
+
+  	dispatch(createMerges([{
+		path: ["db", "diary"],
+		value : diary
+	  }])) 
+}
