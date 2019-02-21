@@ -241,11 +241,9 @@ class StudentFees extends Component {
 					<div style={style}><b>{Math.abs(owed)}</b></div>
 				</div>
 			</div>
-			<div className="row">
-				<div className="button save" onClick={this.onSave}>Save</div>
-			</div>
 			<div className="form">
-				<div className={`button ${this.state.payment.active ? "orange" : "green"}`} onClick={this.newPayment}>{this.state.payment.active ? "Cancel" : "New Entry"}</div>
+			<div className="button save" onClick={this.onSave}>Save</div>
+				<div className={`button ${this.state.payment.active ? "orange" : "green"}`} onClick={this.newPayment} style={{marginTop:"10px"}}>{this.state.payment.active ? "Cancel" : "New Entry"}</div>
 
 				{ this.state.payment.active ? <div className="new-payment">
 					<div className="row">
