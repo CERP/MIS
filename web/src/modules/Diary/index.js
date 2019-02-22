@@ -13,7 +13,9 @@ import v4 from 'node-uuid'
 class Diary extends Component {
     constructor(props) {
       super(props)
-    
+
+      const curr_date = moment().format("DD/MM/YYYY")
+      
       this.state = {
         banner: {
             active: false,
@@ -21,7 +23,7 @@ class Diary extends Component {
             text: "Saved!"
         },
 		selected_section_id: "",
-        diary: props.diary || {}
+        diary: props.diary && props.diary.date === curr_date ? props.diary : {}
         }
         
         this.former = new former(this, [])
@@ -44,8 +46,12 @@ class Diary extends Component {
     }
 
     onSave = () => {
-
-        this.props.addDiary(this.state.diary)
+        const curr_date = moment().format("DD/MM/YYYY")
+        const diary = {
+            ...this.state.diary,
+            date: curr_date
+        }
+        this.props.addDiary(diary)
         this.setState({
 			banner: {
 				active: true,
@@ -73,7 +79,7 @@ class Diary extends Component {
         
         const diary_message = Object.entries(this.state.diary[this.state.selected_section_id])
                 .map( ([subject, homework]) => {
-                    return `${subject}: ${homework},\n`
+                    return `${subject}: ${homework},`
             })
         return curr_date + diary_message.join("\n")
     }
@@ -117,7 +123,7 @@ class Diary extends Component {
                 
                 <div className="section">
                     <div className="row">
-                        <label>Select Class/Section</label>		
+                        <label>Select Class/Section</label>
                             <select {...this.former.super_handle(["selected_section_id"])}>
                                 {
                                     [<option key="abcd" value="" disabled>Select Section</option>,
@@ -133,7 +139,7 @@ class Diary extends Component {
                 {
                     Array.from(subjects)
                         .map(s => {
-                            return <div className="table row" key={v4()}>
+                            return <div className="table row" key={s}>
                                     <div>{s}</div>
                                     <input type="text" {...this.former.super_handle(["diary", this.state.selected_section_id, s])} placeholder="Enter Homework"/>
                                 </div>})
