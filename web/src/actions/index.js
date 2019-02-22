@@ -410,9 +410,8 @@ export const addTag = (students, tag) => dispatch => {
 
 export const editPayment = (student, payments) => dispatch => {
 
-	// payments is an object with id as key and value is the amount 
- 	const merges = Object.entries(payments).reduce((agg, [p_id, amount]) => {
-		const fee_id = p_id.split(`${moment().format("MM/YYYY")}-`).pop()
+	// payments is an object with id as key and value is { amount, fee_id } 
+ 	const merges = Object.entries(payments).reduce((agg, [p_id, {amount,fee_id}]) => {
 		return [...agg,
 			{
 				path:["db", "students", student.id, "payments", p_id, "amount"],

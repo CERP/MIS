@@ -32,6 +32,19 @@ class StudentFees extends Component {
 	constructor(props) {
 		super(props);
 
+		const current_month = moment().format("MM/YYYY")
+		const edits = Object.entries(this.student().payments)
+			.filter(([id,payment]) => moment(payment.date).format("MM/YYYY") === current_month && payment.type !== "SUBMITTED")
+			.reduce((agg,[id,payment]) => {
+				return {
+					...agg,
+					[id]: {
+						amount: payment.amount,
+						fee_id: payment.fee_id
+					}
+				}
+			}, {})
+
 		this.state = {
 			payment: {
 				active: false,
@@ -41,11 +54,10 @@ class StudentFees extends Component {
 			},
 			month: "",
 			year: "",
-			edits: {}
+			edits
 		}
 
 		this.Former = new former(this, []);
-
 	}
 
 	student = () => {
@@ -230,8 +242,11 @@ class StudentFees extends Component {
 									<div>{moment(payment.date).format("DD/MM")}</div>
 									<div>{payment.type === "SUBMITTED" ? "Payed" : payment.type === "FORGIVEN" ? "Need Scholarship" : payment.fee_name || "Fee"}</div>
 									
-									{ moment(payment.date).format("MM/YYYY") === curr_month && payment.type !== "SUBMITTED" ? 
-										<input style={{border: "none"}} type="number" placeholder={payment.type === "OWED" ? `${payment.amount}` : `-${payment.amount}`} {...this.Former.super_handle(["edits", id])}/> 
+									{ this.state.edits[id] !== undefined ? 
+										<div className="row" style={{color:"rgb(94, 205, 185)"}}>
+											<input style={{textAlign:"right", border: "none"}} type="number" {...this.Former.super_handle(["edits", id, "amount"])} />
+											*
+										</div>
 									: <div> {payment.type === "OWED" ? `${payment.amount}` : `-${payment.amount}`}</div>}
 								</div>
 							</div> })
