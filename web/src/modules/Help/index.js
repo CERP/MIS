@@ -45,7 +45,6 @@ class Help extends Component {
             <div className="section">
               <div style={{width: "inherit"}}>
                 <h3>If you need any assistance, please call our customer representative or message us using the box below</h3>
-                <div>اگر آپ کو کسی بھی قسم کی مدد کی ضرورت ہو، تو برائے مہربانی ہمارے کسٹمر نمایندہ کو کال کریں یا نیچے دیے گئے باکس سے پیغام بھیجیں، شکریہ۔</div>
               </div>
 
               <div style={{marginTop: "30px"}}>
