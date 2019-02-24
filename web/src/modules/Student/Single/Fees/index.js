@@ -31,19 +31,19 @@ class StudentFees extends Component {
 
 	constructor(props) {
 		super(props);
-
+		
 		const current_month = moment().format("MM/YYYY")
 		const edits = Object.entries(this.student().payments)
-			.filter(([id,payment]) => moment(payment.date).format("MM/YYYY") === current_month && payment.type !== "SUBMITTED")
-			.reduce((agg,[id,payment]) => {
-				return {
-					...agg,
-					[id]: {
-						amount: payment.amount,
-						fee_id: payment.fee_id
-					}
+		.filter(([id,payment]) => moment(payment.date).format("MM/YYYY") === current_month && payment.type !== "SUBMITTED")
+		.reduce((agg,[id,payment]) => {
+			return {
+				...agg,
+				[id]: {
+					amount: payment.amount,
+					fee_id: payment.fee_id
 				}
-			}, {})
+			}
+		}, {})
 
 		this.state = {
 			payment: {
