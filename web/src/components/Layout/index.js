@@ -17,7 +17,8 @@ const Header = ({user, history}) => <div className="header">
 	{ user ? <Link className="profile" to={`/faculty/${user.id}/profile`}>{user.Name}</Link> : false }
 </div>
 
-export const PrintHeader = ({settings}) => <div className="print-only school-header">
+export const PrintHeader = ({settings, logo}) => <div className="print-only school-header">
+			{logo !== "" ?<img className="school logo" src={logo} alt="No Logo"/> : false}
 			<div className="title">{settings.schoolName}</div>
 			<div className="address">{settings.schoolAddress}</div>
 			<div className="phone-number">{settings.schoolPhoneNumber}</div>
@@ -33,5 +34,6 @@ const SpecialLayoutWrap = WrappedComponent => ({ user, ...props}) => <div classN
 </div>
 
 export const LayoutWrap = WrappedComponent => connect(state => ({
-	user: state.db.faculty[state.auth.faculty_id]
+	user: state.db.faculty[state.auth.faculty_id],
+	schoolLogo: state.db.assets.schoolLogo
 }))(SpecialLayoutWrap(WrappedComponent))

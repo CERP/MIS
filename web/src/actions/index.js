@@ -407,3 +407,14 @@ export const addTag = (students, tag) => dispatch => {
 
   	dispatch(createMerges(merges)) 
 }
+
+
+export const addLogo = (logo_string) => dispatch => {
+	//logo_string is a base64 string
+	dispatch(createMerges([
+		{
+			path : ["db", "assets", "schoolLogo"],
+			value: logo_string
+		}
+	])) 
+}
