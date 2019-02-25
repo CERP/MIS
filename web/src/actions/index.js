@@ -421,7 +421,7 @@ export const addDiary = (section_diary, section_id) => dispatch => {
 	  },
 	  {
 		path:["db", "diary", "date"],
-		value: moment().format("DD/MM/YYYY")
+		value: new Date().getTime()
 	  }
 	])) 
 }

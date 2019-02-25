@@ -52,7 +52,7 @@ class Diary extends Component {
             text: "Saved!"
         },
 		selected_section_id: "",
-        diary: props.diary && props.diary.date === curr_date ? props.diary : diary
+        diary: props.diary && moment(props.diary.date).format("DD/MM/YYYY") === curr_date ? props.diary : diary
         }
 
         this.former = new former(this, [])
