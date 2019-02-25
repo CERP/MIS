@@ -10,11 +10,40 @@ import former from 'utils/former'
 import moment from 'moment'
 import v4 from 'node-uuid'
 
+/** Structure of Diary
+ * diary:{
+ *    section_id:{
+ *        subject: { homework: ""},
+ *        ...
+ *    },
+ *    ...
+ * }
+ */
+      
 class Diary extends Component {
     constructor(props) {
       super(props)
 
       const curr_date = moment().format("DD/MM/YYYY")
+      const diary = Object.values(this.props.classes).reduce((agg, c) => {       
+        const sectionObj =  Object.keys(c.subjects).reduce((agg,s) => {
+            return {
+                ...agg,
+                [s]: { 
+                    homework:""
+                }
+            }
+        }, {})
+
+        const obj = Object.keys(c.sections).reduce((agg,sec_id) => 
+        {
+            return {
+                ...agg,
+                [sec_id] : sectionObj
+            }
+        },{})
+      return {...agg, ...obj}
+      }, {})
       
       this.state = {
         banner: {
@@ -23,9 +52,9 @@ class Diary extends Component {
             text: "Saved!"
         },
 		selected_section_id: "",
-        diary: props.diary && props.diary.date === curr_date ? props.diary : {}
+        diary: props.diary && props.diary.date === curr_date ? props.diary : diary
         }
-        
+
         this.former = new former(this, [])
 
     }
@@ -46,12 +75,7 @@ class Diary extends Component {
     }
 
     onSave = () => {
-        const curr_date = moment().format("DD/MM/YYYY")
-        const diary = {
-            ...this.state.diary,
-            date: curr_date
-        }
-        this.props.addDiary(diary)
+        this.props.addDiary(this.state.diary[this.state.selected_section_id], this.state.selected_section_id)
         this.setState({
 			banner: {
 				active: true,
@@ -86,10 +110,10 @@ class Diary extends Component {
 
 
 
-  render() {
+    render() {
 
     const { classes, students, sendBatchMessages, smsOption } = this.props;
-    
+
     const subjects = new Set()
     
     for(let c of Object.values(classes)){
@@ -102,7 +126,7 @@ class Diary extends Component {
                     .filter(s => s.section_id === this.state.selected_section_id && (s.tags === undefined || !s.tags["PROSPECTIVE"]) && s.Phone !== undefined && s.Phone !== "")
                     .reduce((agg,student)=> {
 
-                        const index  = agg.findIndex(s => s.number === student.Phone)		
+                        const index  = agg.findIndex(s => s.number === student.Phone)
                         if(index >= 0 ){
                             return agg
                         }
@@ -125,23 +149,22 @@ class Diary extends Component {
                     <div className="row">
                         <label>Select Class/Section</label>
                             <select {...this.former.super_handle(["selected_section_id"])}>
-                                {
-                                    [<option key="abcd" value="" disabled>Select Section</option>,
-                                    ...Object.entries(getSectionsFromClasses(classes))
-                                    .map(([id, C]) => <option key={id} value={C.id}>{C.namespaced_name}</option>)
-                                    ]
-                                }
+                                <option value="" disabled>Select Section</option>
+                                    {
+                                        Object.entries(getSectionsFromClasses(classes))
+                                        .map(([id, C]) => <option key={id} value={C.id}>{C.namespaced_name}</option>)
+                                    }
                             </select>
                     </div>
                 </div>
 
-                {this.state.selected_section_id !== "" ?<div className="section">
+                {this.state.selected_section_id !== "" ? <div className="section">
                 {
                     Array.from(subjects)
                         .map(s => {
                             return <div className="table row" key={s}>
                                     <div>{s}</div>
-                                    <input type="text" {...this.former.super_handle(["diary", this.state.selected_section_id, s])} placeholder="Enter Homework"/>
+                                    <input type="text" style={{textAlign: "left"}} {...this.former.super_handle(["diary", this.state.selected_section_id, s, "homework"])} placeholder="Enter Homework"/>
                                 </div>})
                 }
                 { Array.from(subjects).length === 0 ? false : <div className="button blue" onClick={this.onSave}>Save</div> }
@@ -169,5 +192,5 @@ export default connect(state => ({
 	sendMessage: (text, number) => dispatch(sendSMS(text, number)),
 	sendBatchMessages: (messages ) => dispatch(sendBatchSMS(messages)),
     logSms: (faculty_id, history) => dispatch(logSms(faculty_id, history)),
-    addDiary: (diary) => dispatch(addDiary(diary))
+    addDiary: (section_diary, section_id) => dispatch(addDiary(section_diary, section_id))
 }))(Diary);
