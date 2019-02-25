@@ -76,10 +76,11 @@ return <div className="section table" style={{margin: "20px 0"}}>
 
 export default connect(state => ({
 	students: state.db.students,
-	settings: state.db.settings
+	settings: state.db.settings,
+	schoolLogo: state.db.assets ? state.db.assets.schoolLogo || "" : "" 
 }), dispatch => ({
 	addPayments: payments => dispatch(addMultiplePayments(payments))
-}))(({ students, addPayments, settings }) => {
+}))(({ students, addPayments, settings, schoolLogo }) => {
 
 	// first make sure all students payments have been calculated... (this is for dues)
 
@@ -135,7 +136,7 @@ export default connect(state => ({
 
 	return <div className="fees-analytics">
 		
-		<PrintHeader settings={settings} />
+		<PrintHeader settings={settings} logo={schoolLogo} />
 		
 	
 		<div className="no-print">
