@@ -123,10 +123,10 @@ class Landing extends Component {
 						</div> : false}
 						<div className="row">
 						{ user.Admin || setupPage ?<Link to="/student?forwardTo=prospective-student" className="button yellow-shadow" style={{backgroundImage: `url(${prospective})` }}>Prospective</Link> : false}
-							<div className="button yellow-shadow" onClick={logout} style={{backgroundImage: `url(${switchUserIcon})` }}>Logout</div>
+							<div className="button green-shadow" onClick={logout} style={{backgroundImage: `url(${switchUserIcon})` }}>Logout</div>
 						</div>
 						<div className="row">
-							<Link to="/help" className="button yellow-shadow" style={{backgroundImage: `url(${Help})` }}>Help</Link>
+							<Link to="/help" className="button grey-shadow" style={{backgroundImage: `url(${Help})` }}>Help</Link>
 						</div>
 					</div>
 
