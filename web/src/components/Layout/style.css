@@ -529,7 +529,7 @@ input::-webkit-inner-spin-button {
 .header-logo {
 	max-width: 130px;
 	max-height: 130px;
-	margin: 0px 480px -160px 80px;
+	margin: 0px 480px -130px 80px;
 	left: 0;
 	display:inline;
 	border: none;
