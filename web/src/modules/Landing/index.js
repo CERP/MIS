@@ -168,7 +168,10 @@ class Landing extends Component {
 						</div>
 						<div className="row">
 							<Link to="/sms" className="button red-shadow" style={{backgroundImage: `url(${smsIcon})` }}>SMS</Link>
-							<Link to="/diary" className="button red-shadow" style={{backgroundImage: `url(${diary})` }}>Dairy</Link>
+							<div className="badge-container">
+								<img className="new-badge" src={newBadge}/>
+								<Link to="/diary" className="button red-shadow" style={{backgroundImage: `url(${diary})` }}>Dairy</Link>
+							</div>
 						</div>
 					</div>
 
