@@ -186,7 +186,7 @@ class FeeAnalytics extends Component {
 			/>
 		</div>
 		
-		<div style={{display:"flex", flexDirection:"row", justifyContent: "center"}}>
+		<div className="no-print" style={{display:"flex", flexDirection:"row", justifyContent: "center"}}>
 			
 			<div style={{ ...checkStyle, color:"#93d0c5" }}>
 				<input
@@ -231,7 +231,7 @@ class FeeAnalytics extends Component {
 		<div className="divider">Students with Payments Outstanding</div>
 		<div className="section">
 		
-		<div className="row">
+		<div className="no-print row">
 			<input type="text" {...this.former.super_handle(["filterText"])} placeholder = "search" style={{ width:"100%",height:"37px", paddingLeft:"10px", marginBottom:"10px" }}/>
 			<select {...this.former.super_handle(["classFilter"])}>
 				<option value=""> Select Class </option>
