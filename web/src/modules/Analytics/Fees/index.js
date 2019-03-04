@@ -10,7 +10,7 @@ import Former from 'utils/former'
 
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 
-import { ResponsiveContainer, Legend, XAxis, YAxis, Tooltip, LineChart, Line } from 'recharts'
+import { ResponsiveContainer, XAxis, YAxis, Tooltip, LineChart, Line } from 'recharts'
 
 	const MonthlyFeesChart = (props) => {
 		const filter = props.filter
@@ -41,7 +41,7 @@ import { ResponsiveContainer, Legend, XAxis, YAxis, Tooltip, LineChart, Line } f
 		const total = props.total_debts;
 		const monthly_payments = props.monthly_payments;
 	
-		return <div className="section table" style={{margin: "20px 0", backgroundColor:"#c2bbbb21" }}>
+		return <div className="section table" style={{margin: "20px 0", backgroundColor:"#c2bbbb21", overflowX: "scroll" }}>
 				<div className="table row heading">
 					<label style={{ backgroundColor: "#efecec", textAlign:"center" }}> <b> Date     </b></label>
 					<label style={{ backgroundColor: "#bedcff", textAlign:"center" }}> <b> Total    </b> </label>
@@ -78,6 +78,7 @@ import { ResponsiveContainer, Legend, XAxis, YAxis, Tooltip, LineChart, Line } f
 			</div> 
 				
 	}
+
 class FeeAnalytics extends Component {
 
 	constructor(props) {
@@ -95,7 +96,6 @@ class FeeAnalytics extends Component {
 	  }
 
 	  this.former = new Former(this, [])
-
 	}
 
 	calculateDebt = ({SUBMITTED, FORGIVEN, OWED}) => SUBMITTED + FORGIVEN - OWED;
@@ -158,18 +158,13 @@ class FeeAnalytics extends Component {
 	}
 
 	const items = Object.values(total_student_debts)
-		.filter(({student, debt}) => (this.state.classFilter === "" || student.section_id === this.state.classFilter) && student.Name.toUpperCase().includes(this.state.filterText.toUpperCase()))
-				
-	const checkStyle = {
-		display: 'flex',
-		flexDirection: 'row',
-		fontSize: "15px",
-		height: "40px"
-	}
+		.filter(({student, debt}) => (
+			this.state.classFilter === "" || 
+			student.section_id === this.state.classFilter) && 
+			student.Name.toUpperCase().includes(this.state.filterText.toUpperCase())
+		)
 
 	const sections = Object.values(getSectionsFromClasses(this.props.classes))
-
-	console.log('TCL: FeeAnalytics -> sections', sections)
 
 	return <div className="fees-analytics">
 
@@ -178,7 +173,7 @@ class FeeAnalytics extends Component {
 			logo={schoolLogo}
 		/>
 		
-		<div className="no-print" style={{marginRight:"10px"}}>
+		<div className="no-print" style={{ marginRight:"10px" }}>
 			<div className="divider">Payments over Time</div>
 			<MonthlyFeesChart 
 				monthly_payments={monthly_payments} 
@@ -186,43 +181,39 @@ class FeeAnalytics extends Component {
 			/>
 		</div>
 		
-		<div className="no-print" style={{display:"flex", flexDirection:"row", justifyContent: "center"}}>
+		<div className="no-print checkbox-container">
 			
-			<div style={{ ...checkStyle, color:"#93d0c5" }}>
+			<div className="chart-checkbox" style={{ color:"#93d0c5" }}>
 				<input
 					type="checkbox" 
 					{...this.former.super_handle([ "chartFilter", "paid" ])}
-					style={{height:"20px"}}
 				/>
 				Paid 
 			</div>
 
-			<div style={{ ...checkStyle, color:"#939292" }}>
+			<div className="chart-checkbox" style={{ color:"#939292" }}>
 				<input
 					type="checkbox"
 					{...this.former.super_handle([ "chartFilter", "forgiven" ])}
-					style={{height:"20px"}}
-					/>
-					Forgiven
+				/>
+				Forgiven
 			</div>
 
-			<div style={{ ...checkStyle, color:"#ff6b68" }}>
+			<div className="chart-checkbox" style={{ color:"#ff6b68" }}>
 				<input
 					type="checkbox"
 					{...this.former.super_handle([ "chartFilter", "pending" ])}
-					style={{height:"20px"}}
-					/> 
+				/> 
 				Pending
 			</div>
 
-			<div style={{ ...checkStyle, color:"#74aced" }}>
-		<input
-			type="checkbox"
-			{...this.former.super_handle([ "chartFilter", "total" ])}
-			style={{height:"20px"}}
-			/> 
-		Total
-	</div>
+			<div className="chart-checkbox" style={{ color:"#74aced" }}>
+				<input
+					type="checkbox"
+					{...this.former.super_handle([ "chartFilter", "total" ])}
+				/> 
+				Total
+			</div>
 		
 		</div>
 
@@ -232,7 +223,12 @@ class FeeAnalytics extends Component {
 		<div className="section">
 		
 		<div className="no-print row">
-			<input type="text" {...this.former.super_handle(["filterText"])} placeholder = "search" style={{ width:"100%",height:"37px", paddingLeft:"10px", marginBottom:"10px" }}/>
+			<input
+				className="search-bar"
+				type="text"
+				{...this.former.super_handle(["filterText"])}
+				placeholder = "search"
+			/>
 			<select {...this.former.super_handle(["classFilter"])}>
 				<option value=""> Select Class </option>
 				{
