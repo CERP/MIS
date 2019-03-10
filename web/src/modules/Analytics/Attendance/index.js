@@ -87,16 +87,20 @@ class AttendanceAnalytics extends Component {
 		let totals = { PRESENT: 0, LEAVE: 0, ABSENT: 0 };
 		let monthly_attendance = { } // [mm/yyyy]: { present / absent / leave }
 		let student_attendance = { } // [id]: { absents, presents, leaves }
-	
+
 		for(let [sid, student] of Object.entries(students)) {
 	
+			if(student.Name === undefined || student.attendance === undefined) {
+				continue;
+			}
+
 			let s_record = { PRESENT: 0, LEAVE: 0, ABSENT: 0 }
-	
+
 			for(let [date, record] of Object.entries(student.attendance)) {
-	
+
 				totals[record.status] += 1;
 				s_record[record.status] += 1;
-	
+
 				const month_key = moment(date).format('MM/YYYY');
 				const m_status = monthly_attendance[month_key] || { PRESENT: 0, LEAVE: 0, ABSENT: 0}
 				m_status[record.status] += 1;

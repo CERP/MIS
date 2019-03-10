@@ -127,11 +127,11 @@ class Diary extends Component {
 			console.log("Not running diary")
 			return []
 		}
-		const curr_date = `Date: ${moment().format("DD/MM")}\n`
+		const curr_date = `Date: ${moment().format("DD MMMM YYYY")}\n`
 		
 		const diary_message = Object.entries(this.state.diary[this.state.selected_section_id])
 				.map( ([ subject, { homework }]) => {
-					return `${subject}: ${homework},`
+					return `${subject}: ${homework}`
 			})
 		return curr_date + diary_message.join("\n")
 	}
@@ -178,7 +178,7 @@ class Diary extends Component {
 
 			<div className="title">Diary</div>
 				<div className="form">
-					<div className="divider">Send Diary for {moment().format("DD/MM/YYYY")}</div>
+					<div className="divider">Send Diary for {moment().format("DD-MMMM-YYYY")}</div>
 
 					<div className="section">
 						<div className="row">
