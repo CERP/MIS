@@ -544,6 +544,7 @@ class SingleStudent extends Component {
 						<datalist id="tags">
 						{
 							[...this.uniqueTags().keys()]
+							.filter(tag => tag !== "FINISHED_SCHOOL" && tag !== "PROSPECTIVE")
 							.map(tag => <option key={tag} value={tag} />)
 						}
 						</datalist>
