@@ -69,7 +69,7 @@ import { ResponsiveContainer, XAxis, YAxis, Tooltip, LineChart, Line } from 'rec
 							<label style={{ backgroundColor: "#efecec", textAlign:"center" }}><b>Total</b></label>
 							<label style={{ backgroundColor: "#bedcff", textAlign:"center" }}><b>{total.OWED}</b></label>
 							<label style={{ backgroundColor: "#93d0c5", textAlign:"center" }}><b>{total.PAID}</b></label>
-							<label style={{ backgroundColor: "#e0e0e0", textAlign:"center" }}><b>{total.FORGIVEN }</b></label>
+							<label style={{ backgroundColor: "#e0e0e0", textAlign:"center" }}><b>{total.FORGIVEN + total.SCHOLARSHIP}</b></label>
 							<label style={{ backgroundColor: "#fc6171", textAlign:"center"}}><b>{Math.abs(total.OWED - (total.PAID + total.FORGIVEN))}</b></label>
 						</div>
 					]
@@ -158,7 +158,7 @@ class FeeAnalytics extends Component {
 
 		total_student_debts[sid] = { student, debt };
 
-		total_debts = { PAID: total_paid, OWED: total_owed, FORGIVEN: total_forgiven + total_scholarship}
+		total_debts = { PAID: total_paid, OWED: total_owed, FORGIVEN: total_forgiven, SCHOLARSHIP: total_scholarship }
 	}
 
 	const items = Object.values(total_student_debts)
