@@ -192,8 +192,7 @@ class SingleStudent extends Component {
 				const fee_amount =  corresponding_fees !== undefined ? parseFloat(corresponding_fees.amount,10) : ""
 				
 				if( curr_payment_date === curr_month &&
-					current_payment.type !== "OWED" &&
-					current_payment.type !== "FORGIVEN" && 
+					current_payment.type === "OWED" &&
 					corresponding_fees === undefined) 
 				{
 					const {[p_id]:removed, ...nextPayment} = student.payments

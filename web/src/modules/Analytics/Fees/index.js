@@ -61,7 +61,7 @@ import { ResponsiveContainer, XAxis, YAxis, Tooltip, LineChart, Line } from 'rec
 								<div style={{ backgroundColor: "#bedcff", textAlign:"center" }}>{OWED}</div>
 								<div style={{ backgroundColor: "#93d0c5", textAlign:"center" }}>{SUBMITTED}</div>
 								<div style={{ backgroundColor: "#e0e0e0", textAlign:"center" }}>{FORGIVEN + SCHOLARSHIP}</div>
-								<div style={{ backgroundColor: red, textAlign:"center" }}>{ OWED - (SUBMITTED + FORGIVEN)}</div>
+								<div style={{ backgroundColor: red, textAlign:"center" }}>{ OWED - (SUBMITTED + FORGIVEN + SCHOLARSHIP)}</div>
 							</div>
 						}),
 						<div className="table row footing" style={{borderTop: '1.5px solid #333'}} key={Math.random()}>
