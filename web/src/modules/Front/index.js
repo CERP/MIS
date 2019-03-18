@@ -52,7 +52,7 @@ export default class Front extends Component {
                     <img className="cv-image" src={home}/>
                 </div>
                 :
-                <iframe src='https://www.youtube.com/embed/E7wJTI-1dvQ'
+                <iframe src='https://youtube.com/embed/cm73XDWTiNQ'
                   height = "300px"
                   width ="100%"
                   frameBorder ='0'
@@ -72,14 +72,10 @@ export default class Front extends Component {
             <div className="info" >
               <h2 className="card-title">What is MISchool?</h2>
               <p className="para">
-                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-                when an unknown printer took a galley of type and scrambled it to make a type 
-                specimen book. It has survived not only five centuries, but also the leap into 
-                electronic typesetting, remaining essentially unchanged. It was popularised in 
-                the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, 
-                and more recently with desktop publishing software like Aldus PageMaker including 
-                versions of Lorem Ipsum.
+                MISchool is a management information system for schools. MISchool enables school to collect,
+                organize, and store records giving your school full control of all academic, 
+                finance, wellbeing, and administrative information. It consists of almost everything that is 
+                required by the school administration.
               </p>
             </div>
           </div>
@@ -91,7 +87,7 @@ export default class Front extends Component {
             justifyContent:"center",
             color:"#fc6171",
             
-          }}> What are we Offering? </h1>
+          }}> What is MISchool Offering? </h1>
 
 
           {/** =========================================== */}
@@ -101,14 +97,7 @@ export default class Front extends Component {
             <div className="info" >
               <h2 className="card-title"> Actions </h2>
               <p className="para">
-                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-                when an unknown printer took a galley of type and scrambled it to make a type 
-                specimen book. It has survived not only five centuries, but also the leap into 
-                electronic typesetting, remaining essentially unchanged. It was popularised in 
-                the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, 
-                and more recently with desktop publishing software like Aldus PageMaker including 
-                versions of Lorem Ipsum.
+                Actions provides the user easy access to daily used modules such as,
               </p>
 
               <div className="icard-row">
@@ -120,7 +109,7 @@ export default class Front extends Component {
                   </div>
       
                   <p className="icard-para">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                  Easy and fast student’s attendance module lets the user send daily attendance directly to parents.
                   </p>
 
                 </div>
@@ -132,8 +121,7 @@ export default class Front extends Component {
                   </div>
       
                   <p className="icard-para">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                  </p>
+                  MISchool teacher attendance module keeps the record of teachers attendance and timings as well.                  </p>
 
                 </div>
                 
@@ -148,7 +136,12 @@ export default class Front extends Component {
                   </div>
       
                   <p className="icard-para">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                  Fees record of all students, 
+                  Payment information 
+                  Printable voucher 
+                  Fees receipt can be directly send to parents through sms.
+                  Charges on all student or on one class can be added in one click.
+
                   </p>
 
                 </div>
@@ -160,7 +153,7 @@ export default class Front extends Component {
                   </div>
       
                   <p className="icard-para">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                  The exam module keeps a record of all the tests, exams,to be compiled in result card.
                   </p>
 
                 </div>
@@ -188,7 +181,7 @@ export default class Front extends Component {
                   </div>
       
                   <p className="icard-para">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                  The result card module prints or send sms result card of all students of a class in one click.
                   </p>
 
                 </div>
@@ -204,7 +197,7 @@ export default class Front extends Component {
                   </div>
       
                   <p className="icard-para">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                  SMS module is the most significant module especially made for schools convenience. It allows sending all kinds of SMS to parents, students and staff right to their mobile phones directly from the cloud system.
                   </p>
 
                 </div>
@@ -242,14 +235,8 @@ export default class Front extends Component {
 
               <h2 className="card-title"> Setup </h2>
               <p className="para">
-                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-                when an unknown printer took a galley of type and scrambled it to make a type 
-                specimen book. It has survived not only five centuries, but also the leap into 
-                electronic typesetting, remaining essentially unchanged. It was popularised in 
-                the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, 
-                and more recently with desktop publishing software like Aldus PageMaker including 
-                versions of Lorem Ipsum.
+              It is the section through which school would setup the system according to their school,
+              add/make/maintain record of the profiles of their teachers and students.
               </p>
 
               <div className="icard-row">
@@ -379,7 +366,7 @@ export default class Front extends Component {
             </div>
           </div>
 
-          {/** =========================================== */}
+          {/** ===================> Packages <======================== */}
 
           <div className="package-container" >
               <h2 style={{ color: "#fc6171" }}>Packages</h2>
@@ -412,7 +399,40 @@ export default class Front extends Component {
                 </div>
 
               </div>
+          </div>
+
+          {/**======================> About Us <============================== */}
+          <h1 style={{
+            display:"flex",
+            flexDirection:"row",
+            justifyContent:"center",
+            color:"#fc6171",
+            
+          }}> About Us </h1>
+
+          {/** ==========================> CARD-4 <======================================== */}
+          <div className="card">
+            <div className="info" >
+              <h2 className="card-title"> Who are we?</h2>
+              <p className="para">
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                when an unknown printer took a galley of type and scrambled it to make a type 
+                specimen book. It has survived not only five centuries, but also the leap into 
+                electronic typesetting, remaining essentially unchanged. It was popularised in 
+                the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, 
+                and more recently with desktop publishing software like Aldus PageMaker including 
+                versions of Lorem Ipsum.
+              </p>
+              
             </div>
+            {/* <div className="img-container">
+              <img className="image" src={dail_stats} style={{ width:"200px"}}/>
+            </div> */}
+          </div>
+
+
+
 
         </div>
         
