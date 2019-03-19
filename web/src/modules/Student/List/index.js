@@ -92,7 +92,8 @@ export const StudentList = ({ classes, students, settings, forwardTo, schoolLogo
 			Component = {StudentItem}
 			create = {create} 
 			createText = {createText} 
-			toLabel = {toLabel} /> 
+			toLabel = {toLabel} 
+			students= {students}/> 
 
 		<div className="print button" onClick={() => window.print()}>Print</div>
 	</div>

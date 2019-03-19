@@ -13,7 +13,29 @@
 		width: 90%;
 		margin-top: 15px;
 		border-radius: 5px;
+		padding-left: 5px;
+		margin-bottom: 10px;
 	}
+
+	.filter-container{
+		width: 90%;
+		align-items: center;
+	}
+		.filter-container .checkbox-container{
+			width:70%;
+			align-items:center;
+		}
+		.filter-container .checkbox-container .checkbox{
+			display: flex;
+			align-items: center;
+			margin-right: 4px;
+		}
+
+	.list-select {
+		width: 30%; 
+		height: 40px
+	}
+
 	.list-wrap .button {
 		align-self: flex-end;
 		margin-right: 5%;
