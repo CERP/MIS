@@ -50,8 +50,8 @@ class StudentList extends Component {
 	  super(props)
 	
 	  this.state = {
-		activeCheck: true,
-		inActiveCheck: false,
+		showActiveStudent: true,
+		showInactiveStudent: false,
 		tag:""
 	  }
 	  this.former = new Former(this, [])
@@ -73,29 +73,29 @@ class StudentList extends Component {
 	getListFilterCondition = (item) => {
 
 		//Active is checked and inactive is unchecked
-		if( this.state.activeCheck && !this.state.inActiveCheck && this.state.tag === "" ){
+		if( this.state.showActiveStudent && !this.state.showInactiveStudent && this.state.tag === "" ){
 			return item.Active
 			//Show only Active
 		}
 
 		//Active is checked and inactive is unchecked
-		if( this.state.activeCheck && !this.state.inActiveCheck && this.state.tag !== "" ){
+		if( this.state.showActiveStudent && !this.state.showInactiveStudent && this.state.tag !== "" ){
 
 			if(item.tags === undefined){
 				return false
 			}
 			return item.Active && Object.keys(item.tags).includes(this.state.tag)
-			//Show activeCheck with selected tag
+			//Show showActiveStudent with selected tag
 		}
 
 		//Active is checked and inactive is checked
-		if( this.state.activeCheck && this.state.inActiveCheck && this.state.tag === "" ){
+		if( this.state.showActiveStudent && this.state.showInactiveStudent && this.state.tag === "" ){
 			return true
 			//show All
 		}
 		
 		//Active is checked and inactive is checked
-		if( this.state.activeCheck && this.state.inActiveCheck && this.state.tag !== "" ){
+		if( this.state.showActiveStudent && this.state.showInactiveStudent && this.state.tag !== "" ){
 
 			if(item.tags === undefined){
 				return false
@@ -105,13 +105,13 @@ class StudentList extends Component {
 		}
 
 		//Active is unchecked and inactive is checked
-		if( !this.state.activeCheck && this.state.inActiveCheck && this.state.tag === "" ){
+		if( !this.state.showActiveStudent && this.state.showInactiveStudent && this.state.tag === "" ){
 			return !item.Active
 			//show only InActive
 		}
 
 		//Active is unchecked and inactive is checked
-		if( !this.state.activeCheck && this.state.inActiveCheck && this.state.tag !== "" ){
+		if( !this.state.showActiveStudent && this.state.showInactiveStudent && this.state.tag !== "" ){
 
 			if(item.tags === undefined){
 				return false
@@ -180,11 +180,11 @@ class StudentList extends Component {
 				<div className="row filter-container">
 					<div className="row checkbox-container">
 						<div className="checkbox">
-							<input type="checkbox" {...this.former.super_handle(["activeCheck"])} style={{height:"20px"}}/>
+							<input type="checkbox" {...this.former.super_handle(["showActiveStudent"])} style={{height:"20px"}}/>
 								Active
 						</div>
 						<div className="checkbox">
-							<input type="checkbox" {...this.former.super_handle(["inActiveCheck"])} style={{height:"20px"}} />
+							<input type="checkbox" {...this.former.super_handle(["showInactiveStudent"])} style={{height:"20px"}} />
 								InActive
 						</div>
 					</div>
