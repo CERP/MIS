@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+
 import Layout from "components/Layout"
 import logo from './favicon.ico'
 import play from './images/play.svg'
@@ -46,29 +47,21 @@ export default class Front extends Component {
         <div className="body">
           
             <div className="card-video" onClick={()=> this.setState({ iframe: true })}>
-                
-              {!this.state.iframe ?
-                <div className="cv-img-container" style={{ backgroundImage: `url(${play})`}}>
-                    <img className="cv-image" src={home}/>
-                </div>
-                :
                 <iframe src='https://youtube.com/embed/cm73XDWTiNQ'
-                  height = "300px"
+                  height = "290px"
                   width ="100%"
                   frameBorder ='0'
-                  allow ='autoplay; encrypted-media'
                   allowFullScreen
                   title='video'
                 />
-              }
             </div>
 
           {/** ==========================> CARD-1 <======================================== */}
           <div className="card">
             
-            <div className="img-container">
+{/*             <div className="img-container">
                 <img className="image" src={action} />
-            </div>
+            </div> */}
             <div className="info" >
               <h2 className="card-title">What is MISchool?</h2>
               <p className="para">
@@ -109,7 +102,7 @@ export default class Front extends Component {
                   </div>
       
                   <p className="icard-para">
-                  Easy and fast student’s attendance module lets the user send daily attendance directly to parents.
+                  Instant and easy access, One click process
                   </p>
 
                 </div>
@@ -121,7 +114,7 @@ export default class Front extends Component {
                   </div>
       
                   <p className="icard-para">
-                  MISchool teacher attendance module keeps the record of teachers attendance and timings as well.                  </p>
+                    MISchool teacher attendance module keeps the record of teachers attendance and timings as well.                  </p>
 
                 </div>
                 
@@ -136,12 +129,9 @@ export default class Front extends Component {
                   </div>
       
                   <p className="icard-para">
-                  Fees record of all students, 
-                  Payment information 
-                  Printable voucher 
-                  Fees receipt can be directly send to parents through sms.
-                  Charges on all student or on one class can be added in one click.
-
+                    Computerized vouchers
+                    Automatic calculations 
+                    Safe record keeping
                   </p>
 
                 </div>
@@ -153,7 +143,8 @@ export default class Front extends Component {
                   </div>
       
                   <p className="icard-para">
-                  The exam module keeps a record of all the tests, exams,to be compiled in result card.
+                  Automatic grade calculations.
+                  Print result card of all your students in one click
                   </p>
 
                 </div>
@@ -169,7 +160,8 @@ export default class Front extends Component {
                   </div>
       
                   <p className="icard-para">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                  Graphical representation of your data
+                  Informed decision by comparing old and new data                  
                   </p>
 
                 </div>
@@ -181,7 +173,7 @@ export default class Front extends Component {
                   </div>
       
                   <p className="icard-para">
-                  The result card module prints or send sms result card of all students of a class in one click.
+                    The result card module prints or send sms result card of all students of a class in one click.
                   </p>
 
                 </div>
@@ -197,7 +189,7 @@ export default class Front extends Component {
                   </div>
       
                   <p className="icard-para">
-                  SMS module is the most significant module especially made for schools convenience. It allows sending all kinds of SMS to parents, students and staff right to their mobile phones directly from the cloud system.
+                  Connects you with parents, faculty and staff efficiently 
                   </p>
 
                 </div>
@@ -209,7 +201,7 @@ export default class Front extends Component {
                   </div>
       
                   <p className="icard-para">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                  A bonus module connecting faculty, students and parents
                   </p>
 
                 </div>
@@ -248,7 +240,7 @@ export default class Front extends Component {
                   </div>
       
                   <p className="icard-para">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                  Teacher’s profile module facilitates schools to keep a detailed record of all teachers. 
                   </p>
 
                 </div>
@@ -260,7 +252,7 @@ export default class Front extends Component {
                   </div>
       
                   <p className="icard-para">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                  Student’s profile module saves all required information of students. 
                   </p>
 
                 </div>
@@ -276,7 +268,7 @@ export default class Front extends Component {
                   </div>
       
                   <p className="icard-para">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                  Schools can add classes or sections according to their system.
                   </p>
 
                 </div>
@@ -288,7 +280,8 @@ export default class Front extends Component {
                   </div>
       
                   <p className="icard-para">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                  Settings let the user setup basic things in MISchool such as teacher’s permission,
+                  logo, school information for header in printing etc.
                   </p>
 
                 </div>
@@ -304,8 +297,9 @@ export default class Front extends Component {
                   </div>
       
                   <p className="icard-para">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                  </p>
+                  Prospective students is especially made for schools marketing so through this
+                  schools can send a message to
+                  the parents that inquired about fees/school but didn’t come back for admission.                  </p>
 
                 </div>
 
@@ -316,7 +310,7 @@ export default class Front extends Component {
                   </div>
       
                   <p className="icard-para">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                  Help button connects the user instantly to our customer service.
                   </p>
 
                 </div>
@@ -332,7 +326,7 @@ export default class Front extends Component {
                   </div>
       
                   <p className="icard-para">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                  Switch users with just a click
                   </p>
 
                 </div>
@@ -350,14 +344,9 @@ export default class Front extends Component {
             <div className="info" >
               <h2 className="card-title">Daily Statistics</h2>
               <p className="para">
-                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-                when an unknown printer took a galley of type and scrambled it to make a type 
-                specimen book. It has survived not only five centuries, but also the leap into 
-                electronic typesetting, remaining essentially unchanged. It was popularised in 
-                the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, 
-                and more recently with desktop publishing software like Aldus PageMaker including 
-                versions of Lorem Ipsum.
+              Daily statistics lets the owner get daily updates about no. 
+              of students present, no. of teachers present, status of fee 
+              collection
               </p>
               
             </div>
@@ -373,27 +362,30 @@ export default class Front extends Component {
               <div className="pcard-container">
                 <div className="pcard"> 
                   
-                  <h4>Starter</h4>
-                  <div>
-                    <li>asdasjkajkl 100</li>
+                  <h4 className="bg-blue">Taleem-1</h4>
+                  <div className="para">
+                    <li>Student capacity - 150 </li>
+                    <li>Price: Rs 7500</li>
                   </div>
 
                 </div>
 
                 <div className="pcard">
                   
-                  <h4>Standard</h4>
-                  <div>
-                    <li>asdasjkajkl 100</li>
+                  <h4 className="bg-green">Taleem-2</h4>
+                  <div className="para">
+                    <li>Student capacity - 150 </li>
+                    <li>Price: Rs 10500</li>
                   </div>
 
                 </div>
 
                 <div className="pcard">
                   
-                  <h4>Pro</h4>
-                  <div>
-                    <li>asdasjkajkl 100</li>
+                  <h4 className="bg-red">Taleem-3</h4>
+                  <div className="para">
+                    <li>Student capacity - 150 </li>
+                    <li>Price: Rs 14500</li>
                   </div>
 
                 </div>
@@ -411,18 +403,14 @@ export default class Front extends Component {
           }}> About Us </h1>
 
           {/** ==========================> CARD-4 <======================================== */}
-          <div className="card">
+          <div className="card" style={{ justifyContent:"center"}}>
             <div className="info" >
               <h2 className="card-title"> Who are we?</h2>
               <p className="para">
-                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-                when an unknown printer took a galley of type and scrambled it to make a type 
-                specimen book. It has survived not only five centuries, but also the leap into 
-                electronic typesetting, remaining essentially unchanged. It was popularised in 
-                the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, 
-                and more recently with desktop publishing software like Aldus PageMaker including 
-                versions of Lorem Ipsum.
+              MISchool is developed by the <a href="https://cerp.org.pk">Centre for Economic Research in Pakistan (CERP)</a>. 
+              CERP, is a leading independent nonpartisan policy institution that, 
+              amongst other areas, has been working towards the betterment of private schools 
+              since the last 15 years.
               </p>
               
             </div>
