@@ -2,11 +2,11 @@ import React, { Component } from 'react'
 
 import Layout from "components/Layout"
 import logo from './favicon.ico'
-import play from './images/play.svg'
+import cerpLogo from './images/cerp-logo.jpg'
 import setup from "./images/setup1.png"
 import action from "./images/action.png"
 import dail_stats from "./images/daily_stats2.png"
-import home from "./images/home.png"
+import bg from "./images/home.png"
 
 import attendanceIcon from '../Landing/icons/attendance/checklist_1.svg'
 import teacherAttendanceIcon from '../Landing/icons/attendance/Attendance.svg'
@@ -27,26 +27,40 @@ import prospective from '../Landing/icons/Prospective/prospective.svg'
 import './style.css'
 
 export default class Front extends Component {
-    constructor(props) {
-      super(props)
-    
-      this.state = {
-         iframe: false
-      }
-    }
     
   render() {
     return <Layout history={this.props.history}>
       <div className="mischool-resume">
         {/*Header*/}
         <div className="headers bg-red">
-            <img src={logo} className="logo"/> 
+            <div style={{
+               width:"20%",
+               display:"flex",
+               flexDirection:"column",
+               alignItems:"center",
+               borderRight: "1px solid #fafafa"
+            }}>
+              <img src={logo} className="logo"/>
+            </div>
+            <div style={{ width:"60%", marginLeft:"10px", display:"flex", alignItems:"center", justifyContent:"center" }}>
+            اسی ایک پل کی تلاش میں
+شب و روز میں ماہ و سال میں </div>
+            <div style={{
+               width:"20%",
+               display:"flex",
+               flexDirection:"column",
+               alignItems:"center",
+               borderLeft: "1px solid #fafafa"
+            }}>
+              <img src={cerpLogo} className="logo" style={{ borderRadius:"0px", animation:"none"}}/>
+            </div>
         </div>
+
 
         {/**BODY */}
         <div className="body">
           
-            <div className="card-video" onClick={()=> this.setState({ iframe: true })}>
+            <div className="card-video">
                 <iframe src='https://youtube.com/embed/cm73XDWTiNQ'
                   height = "290px"
                   width ="100%"
@@ -365,7 +379,7 @@ export default class Front extends Component {
                   <h4 className="bg-blue">Taleem-1</h4>
                   <div className="para">
                     <li>Student capacity - 150 </li>
-                    <li>Price: Rs 7500</li>
+                    <li>Price: <strong>7,500 Pkr</strong></li>
                   </div>
 
                 </div>
@@ -375,7 +389,7 @@ export default class Front extends Component {
                   <h4 className="bg-green">Taleem-2</h4>
                   <div className="para">
                     <li>Student capacity - 150 </li>
-                    <li>Price: Rs 10500</li>
+                    <li>Price: <strong>10,500 Pkr</strong></li>
                   </div>
 
                 </div>
@@ -385,10 +399,21 @@ export default class Front extends Component {
                   <h4 className="bg-red">Taleem-3</h4>
                   <div className="para">
                     <li>Student capacity - 150 </li>
-                    <li>Price: Rs 14500</li>
+                    <li>Price: <strong>14,500 Pkr</strong></li>
                   </div>
 
                 </div>
+
+                <div className="pcard">
+                  
+                  <h4 className="bg-purple">Special offer </h4>
+                  <div className="para">
+                    <li>Free 15 days Trial</li>
+                    <li>Free data entry</li>
+                    <li>Free staff training</li>
+                  </div>
+
+                </div> 
 
               </div>
           </div>
@@ -404,6 +429,8 @@ export default class Front extends Component {
 
           {/** ==========================> CARD-4 <======================================== */}
           <div className="card" style={{ justifyContent:"center"}}>
+
+
             <div className="info" >
               <h2 className="card-title"> Who are we?</h2>
               <p className="para">
@@ -412,11 +439,11 @@ export default class Front extends Component {
               amongst other areas, has been working towards the betterment of private schools 
               since the last 15 years.
               </p>
-              
             </div>
-            {/* <div className="img-container">
-              <img className="image" src={dail_stats} style={{ width:"200px"}}/>
-            </div> */}
+
+            <div className="img-container">
+              <img className="image" src={cerpLogo} style={{ width:"200px"}}/>
+            </div>
           </div>
 
 
