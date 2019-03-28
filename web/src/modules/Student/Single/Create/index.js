@@ -372,6 +372,7 @@ class SingleStudent extends Component {
 		const tags = new Set();
 
 		Object.values(this.props.students)
+			.filter(s => s.id && s.Name)
 			.forEach(s => {
 				Object.keys(s.tags || {})
 					.forEach(tag => tags.add(tag))
@@ -530,6 +531,11 @@ class SingleStudent extends Component {
 						<input type="text" {...this.former.super_handle(["AdmissionNumber"])} placeholder="Admission Number" disabled={!admin}/>
 					</div> : false}
 
+					<div className="row">
+						<label>Notes</label>
+						<textarea {...this.former.super_handle(["Notes"])} placeholder="Notes" disabled={!admin}/>
+					</div>
+
 					{!prospective && <div className="divider"> Tags </div>}
 					{!prospective && <div className="tag-container">
 						{
@@ -553,11 +559,6 @@ class SingleStudent extends Component {
 						</datalist>
 						<div className="button green" style={{ width: "initial", marginLeft:"auto" }} onClick={this.addTag}>+</div>
 					</div>}
-
-					<div className="row">
-						<label>Notes</label>
-						<textarea {...this.former.super_handle(["Notes"])} placeholder="Notes" disabled={!admin}/>
-					</div>
 
 					{(admin || this.props.permissions.fee.teacher) && !prospective ? <div className="divider">Payment</div> : false }
 					{(admin || this.props.permissions.fee.teacher) && !prospective ?
