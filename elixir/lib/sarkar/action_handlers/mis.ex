@@ -11,6 +11,19 @@ defmodule Sarkar.ActionHandler.Mis do
 		end
 	end
 
+	def handle_action(%{"type"=> "SIGN_UP", "sign_up_id" => sign_up_id, "payload" => payload}, state) do
+		IO.puts "handling action"
+		IO.inspect payload
+		
+		{:ok, resp} = Postgrex.query(Sarkar.School.DB, 
+		"INSERT INTO mischool_sign_ups (id,form) VALUES ($1, $2)",
+		[sign_up_id, payload])
+
+		{:reply, succeed(), state}
+	end
+
+
+
 	def handle_action(%{"type" => "VERIFY", "payload" => %{"school_id" => school_id, "token" => token, "client_id" => client_id}}, state) do
 		case Sarkar.Auth.verify({school_id, client_id, token}) do
 			{:ok, _} ->

@@ -2,12 +2,10 @@ import React, { Component } from 'react'
 
 import Layout from "components/Layout"
 import logo from './favicon.ico'
-import cerpLogo from './images/cerp-logo.jpg'
+import cerpLogo from './images/cerp-logo1.png'
 import setup from "./images/setup1.png"
 import action from "./images/action.png"
 import dail_stats from "./images/daily_stats2.png"
-import bg from "./images/home.png"
-
 import attendanceIcon from '../Landing/icons/attendance/checklist_1.svg'
 import teacherAttendanceIcon from '../Landing/icons/attendance/Attendance.svg'
 import feesIcon from '../Landing/icons/fees/accounting.svg'
@@ -24,42 +22,47 @@ import settingsIcon from '../Landing/icons/Settings/settings-gears.svg'
 import switchUserIcon from '../Landing/icons/switch_user/logout.svg'
 import prospective from '../Landing/icons/Prospective/prospective.svg'
 
+import SignUp from './SignUp'
+
 import './style.css'
 
-export default class Front extends Component {
+class Front extends Component {
+
+  constructor(props) {
+    super(props)
+  
+    this.state = {
+       signUp: false,
+       packageName: ""
+    }
+  }
+
+  setPackage = (packageName) =>{
+    this.setState({
+      signUp: !this.state.signUp,
+      packageName
+    })
+  }
+  
     
   render() {
     return <Layout history={this.props.history}>
       <div className="mischool-resume">
         {/*Header*/}
         <div className="headers bg-red">
-            <div style={{
-               width:"20%",
-               display:"flex",
-               flexDirection:"column",
-               alignItems:"center",
-               borderRight: "1px solid #fafafa"
-            }}>
+            <div className="logo-container" to="/">
               <img src={logo} className="logo"/>
-            </div>
-            <div style={{ width:"60%", marginLeft:"10px", display:"flex", alignItems:"center", justifyContent:"center" }}>
-            اسی ایک پل کی تلاش میں
-شب و روز میں ماہ و سال میں </div>
-            <div style={{
-               width:"20%",
-               display:"flex",
-               flexDirection:"column",
-               alignItems:"center",
-               borderLeft: "1px solid #fafafa"
-            }}>
-              <img src={cerpLogo} className="logo" style={{ borderRadius:"0px", animation:"none"}}/>
             </div>
         </div>
 
 
         {/**BODY */}
+                
         <div className="body">
-          
+
+        <div className="logo-container-cerp" style={{ backgroundColor:"#fafafa"}}>
+              <img src={cerpLogo} className="logo-cerp"/>
+        </div>
             <div className="card-video">
                 <iframe src='https://youtube.com/embed/cm73XDWTiNQ'
                   height = "290px"
@@ -77,7 +80,7 @@ export default class Front extends Component {
                 <img className="image" src={action} />
             </div> */}
             <div className="info" >
-              <h2 className="card-title">What is MISchool?</h2>
+              <div className="card-title">What is MISchool?</div>
               <p className="para">
                 MISchool is a management information system for schools. MISchool enables school to collect,
                 organize, and store records giving your school full control of all academic, 
@@ -88,13 +91,7 @@ export default class Front extends Component {
           </div>
           
           {/**======================> what are we offering? <============================== */}
-          <h1 style={{
-            display:"flex",
-            flexDirection:"row",
-            justifyContent:"center",
-            color:"#fc6171",
-            
-          }}> What is MISchool Offering? </h1>
+          <div className="card-heading"> What is MISchool Offering? </div>
 
 
           {/** =========================================== */}
@@ -102,7 +99,7 @@ export default class Front extends Component {
           {/** ==========================> CARD-1 <======================================== */}
           <div className="card">
             <div className="info" >
-              <h2 className="card-title"> Actions </h2>
+              <div className="card-title"> Actions </div>
               <p className="para">
                 Actions provides the user easy access to daily used modules such as,
               </p>
@@ -233,13 +230,13 @@ export default class Front extends Component {
 
 
           {/** ==========================> CARD-2 <======================================== */}
-          <div className="card">
+          <div className="card setup">
             <div className="img-container">
               <img className="image" src={setup} />
             </div>
             <div className="info" >
 
-              <h2 className="card-title"> Setup </h2>
+              <div className="card-title"> Setup </div>
               <p className="para">
               It is the section through which school would setup the system according to their school,
               add/make/maintain record of the profiles of their teachers and students.
@@ -356,7 +353,7 @@ export default class Front extends Component {
           {/** ==========================> CARD-3 <======================================== */}
           <div className="card">
             <div className="info" >
-              <h2 className="card-title">Daily Statistics</h2>
+              <div className="card-title">Daily Statistics</div>
               <p className="para">
               Daily statistics lets the owner get daily updates about no. 
               of students present, no. of teachers present, status of fee 
@@ -372,41 +369,38 @@ export default class Front extends Component {
           {/** ===================> Packages <======================== */}
 
           <div className="package-container" >
-              <h2 style={{ color: "#fc6171" }}>Packages</h2>
-              <div className="pcard-container">
-                <div className="pcard"> 
+              <div className="card-heading" style={{ color: "#fc6171" }}>Packages</div>
+              <div className="pcard-container slider">
+                <div className="pcard slide"> 
                   
-                  <h4 className="bg-blue">Taleem-1</h4>
-                  <div className="para">
-                    <li>Student capacity - 150 </li>
+                  <div className="bg-blue pcard-title" >Taleem-1</div>
+                  <div className="para" >
+                    <li>150 Students </li>
                     <li>Price: <strong>7,500 Pkr</strong></li>
                   </div>
-
                 </div>
 
-                <div className="pcard">
+                <div className="pcard slide">
                   
-                  <h4 className="bg-green">Taleem-2</h4>
+                  <div className="bg-green pcard-title" >Taleem-2</div>
                   <div className="para">
-                    <li>Student capacity - 150 </li>
+                    <li>300 Students</li>
                     <li>Price: <strong>10,500 Pkr</strong></li>
                   </div>
-
                 </div>
 
-                <div className="pcard">
+                <div className="pcard slide">
                   
-                  <h4 className="bg-red">Taleem-3</h4>
+                  <div className="bg-red pcard-title" >Taleem-3</div>
                   <div className="para">
-                    <li>Student capacity - 150 </li>
+                    <li>Unlimited Students</li>
                     <li>Price: <strong>14,500 Pkr</strong></li>
                   </div>
-
                 </div>
 
-                <div className="pcard">
+                <div className="pcard slide">
                   
-                  <h4 className="bg-purple">Special offer </h4>
+                  <div className="bg-purple pcard-title">Special offer </div>
                   <div className="para">
                     <li>Free 15 days Trial</li>
                     <li>Free data entry</li>
@@ -418,21 +412,19 @@ export default class Front extends Component {
               </div>
           </div>
 
+          <div className="card-heading"> Sign Up</div>
+
+          <SignUp/>
+
           {/**======================> About Us <============================== */}
-          <h1 style={{
-            display:"flex",
-            flexDirection:"row",
-            justifyContent:"center",
-            color:"#fc6171",
-            
-          }}> About Us </h1>
+          <div className="card-heading"> About Us </div>
 
           {/** ==========================> CARD-4 <======================================== */}
           <div className="card" style={{ justifyContent:"center"}}>
 
 
             <div className="info" >
-              <h2 className="card-title"> Who are we?</h2>
+              <div className="card-title"> Who are we?</div>
               <p className="para">
               MISchool is developed by the <a href="https://cerp.org.pk">Centre for Economic Research in Pakistan (CERP)</a>. 
               CERP, is a leading independent nonpartisan policy institution that, 
@@ -442,7 +434,7 @@ export default class Front extends Component {
             </div>
 
             <div className="img-container">
-              <img className="image" src={cerpLogo} style={{ width:"200px"}}/>
+              <img className="image" src={cerpLogo} style={{ width:"200px", minHeight:"auto"}}/>
             </div>
           </div>
 
@@ -454,11 +446,11 @@ export default class Front extends Component {
         {/**FOOTER */}
         <div className="footer bg-red">
 
-          <div>
-            <h2>Contact Us</h2>
-            <li>Phone: +92 123 4567891</li>
-            <li>Phone: +92 123 4567891</li>
-            <li>Phone: +92 123 4567891</li>
+          <div className="contact-us">
+            <div className="title">Contact Us</div>
+            <div>Phone: +92 348 111 2004</div>
+            <div>Email: mischool@cerp.org.pk</div>
+            <div>Address: 19-A FCC Syed Maratib Ali Road, Lahore</div>
           </div>
 
           
@@ -469,3 +461,4 @@ export default class Front extends Component {
     </Layout>
   }
 }
+export default Front

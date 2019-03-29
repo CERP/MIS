@@ -152,6 +152,25 @@ export const createLogin = (name, password) => (dispatch) => {
 		})
 }
 
+export const createSignUp = (profile) => (dispatch, getState, syncr) => {
+
+ 	syncr.send({
+		type: "SIGN_UP",
+		client_type,
+		sign_up_id: v4(),
+		payload:{
+			...profile,
+		}
+	})
+	.then(res => {
+		console.log(res)
+	})
+	.catch(err => {
+		console.error(err)
+	})
+
+ }
+
 export const SCHOOL_LOGIN = "SCHOOL_LOGIN"
 export const createSchoolLogin = (school_id, password) => (dispatch, getState, syncr) => {
 
