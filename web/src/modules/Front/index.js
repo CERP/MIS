@@ -4,6 +4,11 @@ import Layout from "components/Layout"
 import logo from './favicon.ico'
 import cerpLogo from './images/cerp-logo1.png'
 import setup from "./images/setup1.png"
+import cloudIcon from "./images/cloud.svg"
+import mdsupportIcon from "./images/mdsupport.svg"
+import syncIcon from "./images/sync.svg"
+import coinsIcon from "./images/coins.svg"
+import supportIcon from "./images/support.svg"
 import action from "./images/action.png"
 import dail_stats from "./images/daily_stats2.png"
 import attendanceIcon from '../Landing/icons/attendance/checklist_1.svg'
@@ -81,17 +86,17 @@ class Front extends Component {
             </div> */}
             <div className="info" >
               <div className="card-title">What is MISchool?</div>
-              <p className="para">
+              <div className="para">
                 MISchool is a management information system for schools. MISchool enables school to collect,
                 organize, and store records giving your school full control of all academic, 
                 finance, wellbeing, and administrative information. It consists of almost everything that is 
                 required by the school administration.
-              </p>
+              </div>
             </div>
           </div>
           
           {/**======================> what are we offering? <============================== */}
-          <div className="card-heading"> What is MISchool Offering? </div>
+          <div className="card-heading"> </div>
 
 
           {/** =========================================== */}
@@ -100,9 +105,9 @@ class Front extends Component {
           <div className="card">
             <div className="info" >
               <div className="card-title"> Actions </div>
-              <p className="para">
+              <div className="para">
                 Actions provides the user easy access to daily used modules such as,
-              </p>
+              </div>
 
               <div className="icard-row">
                 
@@ -110,11 +115,12 @@ class Front extends Component {
                   
                   <div className="icard-image-container">
                     <img className="icard-image" src={attendanceIcon}/>
+                    <div className="image-title">Attendance</div>
                   </div>
       
-                  <p className="icard-para">
+                  <div className="icard-para">
                   Instant and easy access, One click process
-                  </p>
+                  </div>
 
                 </div>
 
@@ -122,10 +128,12 @@ class Front extends Component {
                   
                   <div className="icard-image-container">
                     <img className="icard-image" src={teacherAttendanceIcon}/>
+                    <div className="image-title">Teacher Attendance</div>
+
                   </div>
       
-                  <p className="icard-para">
-                    MISchool teacher attendance module keeps the record of teachers attendance and timings as well.                  </p>
+                  <div className="icard-para">
+                    MISchool teacher attendance module keeps the record of teachers attendance and timings as well.                  </div>
 
                 </div>
                 
@@ -137,13 +145,15 @@ class Front extends Component {
                   
                   <div className="icard-image-container">
                     <img className="icard-image" src={feesIcon}/>
+                    <div className="image-title">Fees</div>
+
                   </div>
       
-                  <p className="icard-para">
+                  <div className="icard-para">
                     Computerized vouchers
                     Automatic calculations 
                     Safe record keeping
-                  </p>
+                  </div>
 
                 </div>
 
@@ -151,12 +161,14 @@ class Front extends Component {
                   
                   <div className="icard-image-container">
                     <img className="icard-image" src={marksIcon}/>
+                    <div className="image-title">Marks</div>
+
                   </div>
       
-                  <p className="icard-para">
+                  <div className="icard-para">
                   Automatic grade calculations.
                   Print result card of all your students in one click
-                  </p>
+                  </div>
 
                 </div>
                 
@@ -168,12 +180,14 @@ class Front extends Component {
                   
                   <div className="icard-image-container">
                     <img className="icard-image" src={analyticsIcon}/>
+                    <div className="image-title">Analytics</div>
+
                   </div>
       
-                  <p className="icard-para">
+                  <div className="icard-para">
                   Graphical representation of your data
                   Informed decision by comparing old and new data                  
-                  </p>
+                  </div>
 
                 </div>
 
@@ -181,11 +195,12 @@ class Front extends Component {
                   
                   <div className="icard-image-container">
                     <img className="icard-image" src={resultIcon}/>
+                    <div>Result</div>
                   </div>
       
-                  <p className="icard-para">
+                  <div className="icard-para">
                     The result card module prints or send sms result card of all students of a class in one click.
-                  </p>
+                  </div>
 
                 </div>
                 
@@ -197,11 +212,13 @@ class Front extends Component {
                   
                   <div className="icard-image-container">
                     <img className="icard-image" src={smsIcon}/>
+                    <div className="image-title">SMS</div>
+
                   </div>
       
-                  <p className="icard-para">
+                  <div className="icard-para">
                   Connects you with parents, faculty and staff efficiently 
-                  </p>
+                  </div>
 
                 </div>
 
@@ -209,11 +226,13 @@ class Front extends Component {
                   
                   <div className="icard-image-container">
                     <img className="icard-image" src={diary}/>
+                    <div className="image-title">Diary</div>
+
                   </div>
       
-                  <p className="icard-para">
+                  <div className="icard-para">
                   A bonus module connecting faculty, students and parents
-                  </p>
+                  </div>
 
                 </div>
                 
@@ -237,10 +256,10 @@ class Front extends Component {
             <div className="info" >
 
               <div className="card-title"> Setup </div>
-              <p className="para">
+              <div className="para">
               It is the section through which school would setup the system according to their school,
               add/make/maintain record of the profiles of their teachers and students.
-              </p>
+              </div>
 
               <div className="icard-row">
                 
@@ -248,11 +267,12 @@ class Front extends Component {
                   
                   <div className="icard-image-container">
                     <img className="icard-image" src={teachersIcon}/>
+                    <div className="image-title">Teacher Setup</div>
                   </div>
       
-                  <p className="icard-para">
+                  <div className="icard-para">
                   Teacher’s profile module facilitates schools to keep a detailed record of all teachers. 
-                  </p>
+                  </div>
 
                 </div>
 
@@ -260,11 +280,12 @@ class Front extends Component {
                   
                   <div className="icard-image-container">
                     <img className="icard-image" src={studentsIcon}/>
+                    <div className="image-title">Student Setup</div>
                   </div>
       
-                  <p className="icard-para">
+                  <div className="icard-para">
                   Student’s profile module saves all required information of students. 
-                  </p>
+                  </div>
 
                 </div>
                 
@@ -276,11 +297,12 @@ class Front extends Component {
                   
                   <div className="icard-image-container">
                     <img className="icard-image" src={classesIcon}/>
+                    <div className="image-title">Classes</div>
                   </div>
       
-                  <p className="icard-para">
+                  <div className="icard-para">
                   Schools can add classes or sections according to their system.
-                  </p>
+                  </div>
 
                 </div>
 
@@ -288,12 +310,13 @@ class Front extends Component {
                   
                   <div className="icard-image-container">
                     <img className="icard-image" src={settingsIcon}/>
+                    <div className="image-title">Settings</div>
                   </div>
       
-                  <p className="icard-para">
+                  <div className="icard-para">
                   Settings let the user setup basic things in MISchool such as teacher’s permission,
                   logo, school information for header in printing etc.
-                  </p>
+                  </div>
 
                 </div>
                 
@@ -305,12 +328,13 @@ class Front extends Component {
                   
                   <div className="icard-image-container">
                     <img className="icard-image" src={prospective}/>
+                    <div className="image-title">Prospective Student</div>
                   </div>
       
-                  <p className="icard-para">
+                  <div className="icard-para">
                   Prospective students is especially made for schools marketing so through this
                   schools can send a message to
-                  the parents that inquired about fees/school but didn’t come back for admission.                  </p>
+                  the parents that inquired about fees/school but didn’t come back for admission.                  </div>
 
                 </div>
 
@@ -318,11 +342,12 @@ class Front extends Component {
                   
                   <div className="icard-image-container">
                     <img className="icard-image" src={Help}/>
+                    <div className="image-title">Help</div>
                   </div>
       
-                  <p className="icard-para">
+                  <div className="icard-para">
                   Help button connects the user instantly to our customer service.
-                  </p>
+                  </div>
 
                 </div>
                 
@@ -334,11 +359,12 @@ class Front extends Component {
                   
                   <div className="icard-image-container">
                     <img className="icard-image" src={switchUserIcon}/>
+                    <div className="image-title">Logout</div>
                   </div>
       
-                  <p className="icard-para">
+                  <div className="icard-para">
                   Switch users with just a click
-                  </p>
+                  </div>
 
                 </div>
                 
@@ -354,17 +380,88 @@ class Front extends Component {
           <div className="card">
             <div className="info" >
               <div className="card-title">Daily Statistics</div>
-              <p className="para">
+              <div className="para">
               Daily statistics lets the owner get daily updates about no. 
               of students present, no. of teachers present, status of fee 
               collection
-              </p>
+              </div>
               
             </div>
             <div className="img-container">
               <img className="image" src={dail_stats} style={{ width:"200px"}}/>
             </div>
           </div>
+
+          {/**======================> what makes us different? <============================== */}
+          <div className="card-heading"> What makes us Different? </div>
+
+          {/** ==========================> CARD-4 <======================================== */}
+          <div className="card diff">
+
+            <div className="info" >                
+                <div className="icon-card">
+                  
+                  <div className="icard-image-container">
+                    <img className="icard-image" src={syncIcon}/>
+                  </div>
+                  <div className="card-title"> Auto-Synchronization </div>
+                  <div className="icard-para">
+                  Graphical representation of your data
+                  Informed decision by comparing old and new data                  
+                  </div>
+
+                </div>
+
+                <div className="icon-card">
+                  
+                  <div className="icard-image-container">
+                    <img className="icard-image" src={mdsupportIcon}/>
+                  </div>
+                  <div className="card-title"> Multiple Device Support </div>
+                  <div className="icard-para">
+                    The result card module prints or send sms result card of all students of a class in one click.
+                  </div>
+
+                </div>
+                <div className="icon-card">
+                  
+                  <div className="icard-image-container">
+                    <img className="icard-image" src={cloudIcon}/>
+                  </div>
+                  <div className="card-title"> Cloud-Backup </div>
+                  <div className="icard-para">
+                    The result card module prints or send sms result card of all students of a class in one click.
+                  </div>
+
+                </div>
+                <div className="icon-card">
+                  
+                  <div className="icard-image-container">
+                    <img className="icard-image" src={supportIcon}/>
+                  </div>
+                  <div className="card-title"> Excellent Customer Service </div>
+                  <div className="icard-para">
+                    The result card module prints or send sms result card of all students of a class in one click.
+                  </div>
+
+                </div>
+                <div className="icon-card">
+                  
+                  <div className="icard-image-container">
+                    <img className="icard-image" src={coinsIcon}/>
+                  </div>
+                  <div className="card-title"> Best Price </div>
+                  <div className="icard-para">
+                    The result card module prints or send sms result card of all students of a class in one click.
+                  </div>
+
+                </div>
+                
+              </div>
+                
+          </div>
+
+          {/** =========================================== */}
 
           {/** ===================> Packages <======================== */}
 
@@ -425,12 +522,12 @@ class Front extends Component {
 
             <div className="info" >
               <div className="card-title"> Who are we?</div>
-              <p className="para">
+              <div className="para">
               MISchool is developed by the <a href="https://cerp.org.pk">Centre for Economic Research in Pakistan (CERP)</a>. 
               CERP, is a leading independent nonpartisan policy institution that, 
               amongst other areas, has been working towards the betterment of private schools 
               since the last 15 years.
-              </p>
+              </div>
             </div>
 
             <div className="img-container">
@@ -448,9 +545,9 @@ class Front extends Component {
 
           <div className="contact-us">
             <div className="title">Contact Us</div>
-            <div>Phone: +92 348 111 2004</div>
-            <div>Email: mischool@cerp.org.pk</div>
-            <div>Address: 19-A FCC Syed Maratib Ali Road, Lahore</div>
+            <div>+92 348 111 2004</div>
+            <div>mischool@cerp.org.pk</div>
+            <div>19-A FCC Syed Maratib Ali Road, Lahore</div>
           </div>
 
           
