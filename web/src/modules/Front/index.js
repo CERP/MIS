@@ -7,10 +7,11 @@ import setup from "./images/setup1.png"
 import cloudIcon from "./images/cloud.svg"
 import mdsupportIcon from "./images/mdsupport.svg"
 import syncIcon from "./images/sync.svg"
+import phoneIcon from "./images/phone.png"
 import coinsIcon from "./images/coins.svg"
 import supportIcon from "./images/support.svg"
 import action from "./images/action.png"
-import dail_stats from "./images/daily_stats2.png"
+import dail_stats from "./images/daily-stats.png"
 import attendanceIcon from '../Landing/icons/attendance/checklist_1.svg'
 import teacherAttendanceIcon from '../Landing/icons/attendance/Attendance.svg'
 import feesIcon from '../Landing/icons/fees/accounting.svg'
@@ -65,9 +66,9 @@ class Front extends Component {
                 
         <div className="body">
 
-        <div className="logo-container-cerp" style={{ backgroundColor:"#fafafa"}}>
-              <img src={cerpLogo} className="logo-cerp"/>
-        </div>
+            <div className="logo-container-cerp" style={{ backgroundColor:"#fafafa"}}>
+                  <img src={cerpLogo} className="logo-cerp"/>
+            </div>
             <div className="card-video">
                 <iframe src='https://youtube.com/embed/cm73XDWTiNQ'
                   height = "290px"
@@ -77,13 +78,9 @@ class Front extends Component {
                   title='video'
                 />
             </div>
-
+          
           {/** ==========================> CARD-1 <======================================== */}
           <div className="card">
-            
-{/*             <div className="img-container">
-                <img className="image" src={action} />
-            </div> */}
             <div className="info" >
               <div className="card-title">What is MISchool?</div>
               <div className="para">
@@ -241,7 +238,7 @@ class Front extends Component {
 
             </div>
             <div className="img-container">
-              <img className="image" src={action} />
+              <img className="image" src={action} style={{borderImage: `url(${phoneIcon}) 7% 10% 5% 10% stretch`}}/>
             </div>
           </div>
 
@@ -251,7 +248,7 @@ class Front extends Component {
           {/** ==========================> CARD-2 <======================================== */}
           <div className="card setup">
             <div className="img-container">
-              <img className="image" src={setup} />
+              <img className="image" src={setup} style={{borderImage: `url(${phoneIcon}) 7% 10% 5% 10% stretch`}}/>
             </div>
             <div className="info" >
 
@@ -388,7 +385,7 @@ class Front extends Component {
               
             </div>
             <div className="img-container">
-              <img className="image" src={dail_stats} style={{ width:"200px"}}/>
+              <img className="image" src={dail_stats} style={{ borderImage: `url(${phoneIcon}) 7% 10% 5% 10% stretch`}}/>
             </div>
           </div>
 
@@ -398,7 +395,7 @@ class Front extends Component {
           {/** ==========================> CARD-4 <======================================== */}
           <div className="card diff">
 
-            <div className="info" >                
+            <div className="info" >
                 <div className="icon-card">
                   
                   <div className="icard-image-container">
@@ -406,8 +403,8 @@ class Front extends Component {
                   </div>
                   <div className="card-title"> Auto-Synchronization </div>
                   <div className="icard-para">
-                  Graphical representation of your data
-                  Informed decision by comparing old and new data                  
+                  Sync your MIS features to all your devices so that you can always access 
+                  your important data
                   </div>
 
                 </div>
@@ -419,7 +416,8 @@ class Front extends Component {
                   </div>
                   <div className="card-title"> Multiple Device Support </div>
                   <div className="icard-para">
-                    The result card module prints or send sms result card of all students of a class in one click.
+                  Various platforms support MIS application with its features 
+                  adapting to the screen you are viewing through.
                   </div>
 
                 </div>
@@ -430,7 +428,7 @@ class Front extends Component {
                   </div>
                   <div className="card-title"> Cloud-Backup </div>
                   <div className="icard-para">
-                    The result card module prints or send sms result card of all students of a class in one click.
+                  Cloud backup system keeps your information safe on cloud for years and years. 
                   </div>
 
                 </div>
@@ -441,7 +439,8 @@ class Front extends Component {
                   </div>
                   <div className="card-title"> Excellent Customer Service </div>
                   <div className="icard-para">
-                    The result card module prints or send sms result card of all students of a class in one click.
+                  Our team is equipped to handle software issues in an efficient friendly
+                  manner to your satisfaction.
                   </div>
 
                 </div>
@@ -452,8 +451,8 @@ class Front extends Component {
                   </div>
                   <div className="card-title"> Best Price </div>
                   <div className="icard-para">
-                    The result card module prints or send sms result card of all students of a class in one click.
-                  </div>
+                  You can use the MIS application with just a one time payment and
+                   we assure you that there are no hidden fees such has monthly and annual charges.                  </div>
 
                 </div>
                 
@@ -531,7 +530,7 @@ class Front extends Component {
             </div>
 
             <div className="img-container">
-              <img className="image" src={cerpLogo} style={{ width:"200px", minHeight:"auto"}}/>
+              <img className="image-cerp" src={cerpLogo}/>
             </div>
           </div>
 
@@ -545,9 +544,9 @@ class Front extends Component {
 
           <div className="contact-us">
             <div className="title">Contact Us</div>
-            <div>+92 348 111 2004</div>
-            <div>mischool@cerp.org.pk</div>
-            <div>19-A FCC Syed Maratib Ali Road, Lahore</div>
+            <a href="tel:+923481112004">+92 348 111 2004</a>
+            <a href="mailto:mischool@cer.org.pk" >mischool@cerp.org.pk</a>
+            <a href="https://maps.app.goo.gl/iR1Zx">19-A FCC Syed Maratib Ali Road, Lahore</a>
           </div>
 
           
