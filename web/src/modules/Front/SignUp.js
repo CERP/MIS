@@ -51,28 +51,63 @@ class SignUp extends Component {
       }
 
       this.props.createSignUp(this.state.profile)
-
-      this.setState({
-        banner:{
-          active: true,
-          good: true,
-          text: "Thanks for signing up, We'll get back to you shortly"
-        }
-      })
-      setTimeout(()=>{
-        this.setState({
-          banner:{
-            active: false,
-            good: true,
-          },
-        })
-      }, 1000)
     }
     
+    componentWillReceiveProps(props) {
+      const sign_up_form = props.sign_up_form
+
+      if( sign_up_form.loading === false &&
+        sign_up_form.succeed === false &&
+        sign_up_form.reason !== "" ) 
+      { 
+        this.setState({
+          banner:{
+            active:true,
+            good: false,
+            text:"SignUp Failed, Please try again."
+          }
+        })
+      }
+      if( sign_up_form.loading === true) 
+      { 
+        this.setState({
+          banner:{
+            active:true,
+            good: true,
+            text:"LOADING"
+          }
+        })
+      }
+      if( sign_up_form.loading === false &&
+        sign_up_form.succeed === true &&
+        sign_up_form.reason === "" ) 
+      { 
+        this.setState({
+          banner:{
+            active:true,
+            good: true,
+            text:"Thanks for SigningUp,We will get back to you"
+          }
+        })
+
+        setTimeout(()=>{
+          this.setState({
+            banner:{
+              active: false,
+              good: true,
+            }
+          })
+        }, 1000)
+      }
+    }
+
+
   render() {
+    
+
     return (
       <div className="card section sign-up" style={{display:"flex", flexDirection:"column", maxWidth: "1000px"}}>
-      		{ this.state.banner.active ? <Banner style={{color:"blue"}} isGood={this.state.banner.good} text={this.state.banner.text} /> : false }
+	  	{ this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false }
           <div className="row">
             <label> Name </label>
             <input type="text" {...this.former.super_handle(["profile","name"])}></input>
@@ -103,6 +138,8 @@ class SignUp extends Component {
     )
   }
 }
-export default connect(state => ({}), dispatch => ({
+export default connect(state => ({
+  sign_up_form: state.sign_up_form
+}), dispatch => ({
 	createSignUp: (profile) => dispatch(createSignUp(profile)),
  }))(SignUp);
