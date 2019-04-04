@@ -11,10 +11,7 @@ defmodule Sarkar.ActionHandler.Mis do
 		end
 	end
 
-	def handle_action(%{"type"=> "SIGN_UP", "sign_up_id" => sign_up_id, "payload" => payload}, state) do
-		IO.puts "handling action"
-		IO.inspect payload
-		
+	def handle_action(%{"type"=> "SIGN_UP", "sign_up_id" => sign_up_id, "payload" => payload}, state) do		
 		{:ok, resp} = Postgrex.query(Sarkar.School.DB, 
 		"INSERT INTO mischool_sign_ups (id,form) VALUES ($1, $2)",
 		[sign_up_id, payload])

@@ -7,7 +7,6 @@ import setup from "./images/setup1.png"
 import cloudIcon from "./images/cloud.svg"
 import mdsupportIcon from "./images/mdsupport.svg"
 import syncIcon from "./images/sync.svg"
-import phoneIcon from "./images/phone.png"
 import coinsIcon from "./images/coins.svg"
 import supportIcon from "./images/support.svg"
 import action from "./images/action.png"
@@ -66,23 +65,22 @@ class Front extends Component {
                 
         <div className="body">
 
-            <div className="logo-container-cerp" style={{ backgroundColor:"#fafafa"}}>
-                  <img src={cerpLogo} className="logo-cerp"/>
-            </div>
-            <div className="card-video">
-                <iframe src='https://youtube.com/embed/cm73XDWTiNQ'
-                  height = "290px"
-                  width ="100%"
-                  frameBorder ='0'
-                  allowFullScreen
-                  title='video'
-                />
-            </div>
+          <div className="logo-container-cerp" style={{ backgroundColor:"#fafafa"}}>
+            <img src={cerpLogo} className="logo-cerp"/>
+          </div>
+          <div className="card-video">
+            <iframe src='https://youtube.com/embed/cm73XDWTiNQ'
+              height = "290px"
+              width ="100%"
+              frameBorder ='0'
+              allowFullScreen
+              title='video'
+            />
+          </div>
           
-          {/** ==========================> CARD-1 <======================================== */}
           <div className="card">
-            <div className="info" >
-              <div className="card-title">What is MISchool?</div>
+            <div className="info" style={{width:"100%", alignItems:"center"}}>
+              <div className="card-title intro">What is MISchool?</div>
               <div className="para">
                 MISchool is a management information system for schools. MISchool enables school to collect,
                 organize, and store records giving your school full control of all academic, 
@@ -92,13 +90,8 @@ class Front extends Component {
             </div>
           </div>
           
-          {/**======================> what are we offering? <============================== */}
           <div className="card-heading"> </div>
 
-
-          {/** =========================================== */}
-
-          {/** ==========================> CARD-1 <======================================== */}
           <div className="card">
             <div className="info" >
               <div className="card-title"> Actions </div>
@@ -189,18 +182,17 @@ class Front extends Component {
                 </div>
 
                 <div className="icon-card">
-                  
+
                   <div className="icard-image-container">
                     <img className="icard-image" src={resultIcon}/>
                     <div>Result</div>
                   </div>
-      
+
                   <div className="icard-para">
                     The result card module prints or send sms result card of all students of a class in one click.
                   </div>
 
                 </div>
-                
               </div>
 
               <div className="icard-row">
@@ -210,7 +202,6 @@ class Front extends Component {
                   <div className="icard-image-container">
                     <img className="icard-image" src={smsIcon}/>
                     <div className="image-title">SMS</div>
-
                   </div>
       
                   <div className="icard-para">
@@ -220,35 +211,28 @@ class Front extends Component {
                 </div>
 
                 <div className="icon-card">
-                  
+
                   <div className="icard-image-container">
                     <img className="icard-image" src={diary}/>
                     <div className="image-title">Diary</div>
-
                   </div>
-      
+
                   <div className="icard-para">
                   A bonus module connecting faculty, students and parents
                   </div>
 
                 </div>
-                
               </div>
-              {/**============>_icard_<============== */}
 
             </div>
             <div className="img-container">
-              <img className="image" src={action} style={{borderImage: `url(${phoneIcon}) 7% 10% 5% 10% stretch`}}/>
+              <img className="image" src={action}/>
             </div>
           </div>
 
-          {/** =========================================== */}
-
-
-          {/** ==========================> CARD-2 <======================================== */}
           <div className="card setup">
             <div className="img-container">
-              <img className="image" src={setup} style={{borderImage: `url(${phoneIcon}) 7% 10% 5% 10% stretch`}}/>
+              <img className="image" src={setup}/>
             </div>
             <div className="info" >
 
@@ -366,14 +350,9 @@ class Front extends Component {
                 </div>
                 
               </div>
-              {/**============>_icard_<============== */}
-
             </div>
           </div>
 
-          {/** =========================================== */}
-
-          {/** ==========================> CARD-3 <======================================== */}
           <div className="card">
             <div className="info" >
               <div className="card-title">Daily Statistics</div>
@@ -385,14 +364,12 @@ class Front extends Component {
               
             </div>
             <div className="img-container">
-              <img className="image" src={dail_stats} style={{ borderImage: `url(${phoneIcon}) 7% 10% 5% 10% stretch`}}/>
+              <img className="image" src={dail_stats}/>
             </div>
           </div>
 
-          {/**======================> what makes us different? <============================== */}
           <div className="card-heading"> What makes us Different? </div>
 
-          {/** ==========================> CARD-4 <======================================== */}
           <div className="card diff">
 
             <div className="info" >
@@ -460,10 +437,6 @@ class Front extends Component {
                 
           </div>
 
-          {/** =========================================== */}
-
-          {/** ===================> Packages <======================== */}
-
           <div className="package-container" >
               <div className="card-heading" style={{ color: "#fc6171" }}>Packages</div>
               <div className="pcard-container slider">
@@ -512,13 +485,9 @@ class Front extends Component {
 
           <SignUp/>
 
-          {/**======================> About Us <============================== */}
           <div className="card-heading"> About Us </div>
 
-          {/** ==========================> CARD-4 <======================================== */}
           <div className="card" style={{ justifyContent:"center"}}>
-
-
             <div className="info" >
               <div className="card-title"> Who are we?</div>
               <div className="para">

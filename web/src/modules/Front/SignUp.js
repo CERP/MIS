@@ -40,7 +40,7 @@ class SignUp extends Component {
       if(compulsoryFields)
       {
         const errorText = "Please Fill " + compulsoryFields  + " !!!";
-  
+
         return this.setState({
           banner:{
             active: true,
@@ -86,7 +86,7 @@ class SignUp extends Component {
           banner:{
             active:true,
             good: true,
-            text:"Thanks for SigningUp,We will get back to you"
+            text:"Thanks for Signing-Up,We will get back to you"
           }
         })
 
@@ -106,7 +106,7 @@ class SignUp extends Component {
     
 
     return (
-      <div className="card section sign-up" style={{display:"flex", flexDirection:"column", maxWidth: "1000px"}}>
+      <div className=" section card-sign-up">
 	  	{ this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false }
           <div className="row">
             <label> Name </label>

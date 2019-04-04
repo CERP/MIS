@@ -132,12 +132,12 @@
                     color: #fc6171;
                     font-size: 1.3rem;
                     font-weight: bold;
-                    margin-left: 5px;
+                    margin: 15px;
                 }
                 .mischool-resume .body .card .info .para{
                     text-align: justify;
                     padding: 5px;
-                    margin-bottom: 10px;
+                    margin: 10px;
                 }
 
                 .mischool-resume .body .card .info .icard-row {
@@ -157,6 +157,7 @@
                 margin: 5px;
                 align-items: center;
                 justify-content: center;
+                height: 150px;
             }
                 .mischool-resume .body .card .info .icon-card .icard-image-container {
                     display: flex;
@@ -203,6 +204,7 @@
                     width: 150px;
                     max-height:300px;
                     min-height: 100px;
+                    border-image: url("./images/phone.png") 7% 10% 5% 10% stretch;
                 }
                 .mischool-resume .body .card .img-container .image-cerp{
                     border: none;
@@ -300,32 +302,41 @@
             font-weight: bold;
         }
 
-    .card.sign-up{
+    .card-sign-up{
+        margin: 10px auto;
+        padding: 30px;
+        align-items: center;
+        display: flex;
+        flex-direction: column; 
+        max-width:  60%;
         box-shadow: 1px 1px 5px 2px #eaeaea;
         border: none;
     }
-    .card.sign-up label{
+    .card-sign-up label{
         color:#fc6171
     }
 
-    .card.sign-up .row {
+    .card-sign-up .row {
         width: 100%;
         align-items: center;
         justify-content: center;
     }
-    .card.sign-up .row label{
+    .card-sign-up .row label{
         width: 30%;
     }
-    .card.sign-up .row input{
+    .card-sign-up .row input{
         width: 70%;
-        margin-bottom: 5px;
+        margin: 5px;
     }
-    .card.card.sign-up .row select{
+    .card-sign-up .row select{
         width: 70%;
     }
-    .card.card.sign-up .button{
-        margin-top: 10px;
+    .card-sign-up .button{
+        margin: 10px;
         width: 100%
+    }
+    .mischool-resume .body .card .info .card-title.intro{
+        font-size: 1.8rem;
     }
 
     .mischool-resume .card.diff .info{
@@ -369,6 +380,13 @@
 
 
 @media screen and (max-width : 768px){
+
+    .card-title.intro{
+        font-size: 1.3rem
+    }
+    .mischool-resume .card-heading{
+        font-size: 1.5rem;
+    }
     .mischool-resume .body .card{
         margin:20px auto;
         padding: 30px;
@@ -383,6 +401,7 @@
     .mischool-resume .body .card .info .icon-card {
         display: flex;
         flex-direction: column;
+        height: 260px;
     }
     .mischool-resume .body .card .info{
         display:inherit;
@@ -397,7 +416,7 @@
     .mischool-resume .card.diff .info .icon-card{
         display: flex;
         flex-direction: column;
-        width: 100%
+        width: 100%;
     }
 
     .mischool-resume .body .package-container .pcard-container {
