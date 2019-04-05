@@ -68,7 +68,7 @@ class Front extends Component {
           <div className="logo-container-cerp" style={{ backgroundColor:"#fafafa"}}>
             <img src={cerpLogo} className="logo-cerp"/>
           </div>
-          <div className="card-video">
+          <div className="card video">
             <iframe src='https://youtube.com/embed/cm73XDWTiNQ'
               height = "290px"
               width ="100%"
@@ -89,8 +89,6 @@ class Front extends Component {
               </div>
             </div>
           </div>
-          
-          <div className="card-heading"> </div>
 
           <div className="card">
             <div className="info" >
@@ -377,8 +375,8 @@ class Front extends Component {
                   
                   <div className="icard-image-container">
                     <img className="icard-image" src={syncIcon}/>
+                    <div className="image-title"> Auto-Synchronization </div>
                   </div>
-                  <div className="card-title"> Auto-Synchronization </div>
                   <div className="icard-para">
                   Sync your MIS features to all your devices so that you can always access 
                   your important data
@@ -390,8 +388,8 @@ class Front extends Component {
                   
                   <div className="icard-image-container">
                     <img className="icard-image" src={mdsupportIcon}/>
+                    <div className="image-title"> Multiple Device Support </div>
                   </div>
-                  <div className="card-title"> Multiple Device Support </div>
                   <div className="icard-para">
                   Various platforms support MIS application with its features 
                   adapting to the screen you are viewing through.
@@ -402,8 +400,8 @@ class Front extends Component {
                   
                   <div className="icard-image-container">
                     <img className="icard-image" src={cloudIcon}/>
+                    <div className="image-title"> Cloud-Backup </div>
                   </div>
-                  <div className="card-title"> Cloud-Backup </div>
                   <div className="icard-para">
                   Cloud backup system keeps your information safe on cloud for years and years. 
                   </div>
@@ -413,8 +411,8 @@ class Front extends Component {
                   
                   <div className="icard-image-container">
                     <img className="icard-image" src={supportIcon}/>
+                    <div className="image-title"> Excellent Customer Service </div>
                   </div>
-                  <div className="card-title"> Excellent Customer Service </div>
                   <div className="icard-para">
                   Our team is equipped to handle software issues in an efficient friendly
                   manner to your satisfaction.
@@ -425,8 +423,8 @@ class Front extends Component {
                   
                   <div className="icard-image-container">
                     <img className="icard-image" src={coinsIcon}/>
+                    <div className="image-title"> Best Price </div>
                   </div>
-                  <div className="card-title"> Best Price </div>
                   <div className="icard-para">
                   You can use the MIS application with just a one time payment and
                    we assure you that there are no hidden fees such has monthly and annual charges.                  </div>
@@ -438,7 +436,7 @@ class Front extends Component {
           </div>
 
           <div className="package-container" >
-              <div className="card-heading" style={{ color: "#fc6171" }}>Packages</div>
+              <div className="card-heading">Packages</div>
               <div className="pcard-container slider">
                 <div className="pcard slide"> 
                   

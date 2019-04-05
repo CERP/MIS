@@ -9,7 +9,6 @@ import './style.css'
 
 class SignUp extends Component {
 
-
     constructor(props) {
       super(props)
     
@@ -106,7 +105,7 @@ class SignUp extends Component {
     
 
     return (
-      <div className=" section card-sign-up">
+      <div className=" section card sign-up">
 	  	{ this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false }
           <div className="row">
             <label> Name </label>
