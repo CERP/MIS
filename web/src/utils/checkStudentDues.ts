@@ -1,6 +1,16 @@
 import moment from 'moment'
 
-export function checkStudentDuesReturning(student: MISStudent) {
+interface payment {
+    student: MISStudent
+    payment_id: string
+    amount: number
+    date: number
+    type: string
+    fee_id: string
+    fee_name: string
+}
+
+export function checkStudentDuesReturning(student: MISStudent) : payment[] {
 	const curr = moment().format("MM/YYYY")
 
 	let payments = []

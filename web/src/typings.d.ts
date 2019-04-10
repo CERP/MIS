@@ -191,7 +191,7 @@ interface MISTeacher {
 	StructuredQualification: string
 	Qualification: string
 	Experience: string
-	HireDate: moment
+	HireDate: string
 	Admin: boolean
 
 	attendance:  MISTeacherAttendance

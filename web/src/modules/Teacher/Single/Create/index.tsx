@@ -40,7 +40,7 @@ const blankTeacher = (isFirst = false) : MISTeacher => ({
 	StructuredQualification: "",
 	Qualification: "",
 	Experience: "",
-	HireDate: moment(),
+	HireDate: `${moment()}`,
 	Admin: isFirst,
 
 	attendance: { } 

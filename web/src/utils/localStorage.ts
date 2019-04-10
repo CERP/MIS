@@ -172,10 +172,10 @@ const checkPermissions = (state: RootReducerState) => {
 	state.db.settings = {
 		...state.db.settings,
 		permissions:{
-			...state.db.settings.permissions,
 			fee: { teacher: true },
 			dailyStats: {teacher: true },
-			setupPage: {teacher: true}
+			setupPage: {teacher: true},
+			...state.db.settings.permissions
 		}
 	}
 	return state;
