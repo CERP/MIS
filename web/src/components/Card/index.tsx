@@ -4,14 +4,8 @@ import Former from '../../utils/former'
 
 import './style.css'
 
-type ListItem = {
-	Name : string
-	header : boolean
-	forwardTo : string
-} & MISStudent
-
 interface P {
-	items: ListItem[]
+	items: MISStudent[]
 	Component: Function
 	create: string
 	createText: string
@@ -56,13 +50,11 @@ export default class Card extends Component <propTypes, S> {
 			})
 			.sort((a,b) => toLabel(b).localeCompare(this.state.filterText) - toLabel(a).localeCompare(this.state.filterText))
 
-		const header = filteredList.some(i => i.header)
-
 		return <div className="card-wrap">
 
 			<div className="total">
 				<div className="label">
-					Total: <strong> { header ? filteredList.length -1 : filteredList.length } </strong>
+					Total: <strong> {filteredList.length} </strong>
 				</div>
 				{ this.props.create ? <this.create to={this.props.create} text={this.props.createText} /> : false }
 			</div>
