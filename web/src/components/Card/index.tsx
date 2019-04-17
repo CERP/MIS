@@ -5,7 +5,7 @@ import Former from '../../utils/former'
 import './style.css'
 
 interface P {
-	items: MISStudent[]
+	items: Array<any>
 	Component: Function
 	create: string
 	createText: string
