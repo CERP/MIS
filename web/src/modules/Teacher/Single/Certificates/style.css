@@ -22,6 +22,10 @@
     border-top: 1px solid #bebebe;
 }
 
+.certificate .head .divider {
+    font-family: 'Dancing Script', sans-serif;
+}
+
 .certificate .head .sub-divider {
     display: flex;
     justify-content: center;
@@ -35,6 +39,7 @@
     line-height: 30px;
     text-indent: 20%;
     word-spacing: 5px;
+    font-family: 'Dancing Script', sans-serif;
 }
 
 .certificate .footer {

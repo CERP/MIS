@@ -123,7 +123,7 @@ const ExperienceCertificate: React.FC <CertificateProps> = ({ curr_teacher }) =>
     </div>
 
     <div className="body-para">
-      This is to certify that <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_teacher.Name ? curr_teacher.Name : "_____________"}</span>, 
+      This is to certify that <span style={{fontWeight:"bold", textDecoration:"underline"}}> {curr_teacher.Name ? curr_teacher.Name : "_____________"}</span>, 
       Son/Daughter of <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_teacher.ManName ? curr_teacher.ManName : "_____________"}</span>, is a
       bonafide teacher of this school and bears a good moral character. His/her behaviour
       was good with teachers and students. He/she has neither displayed persistent violent
