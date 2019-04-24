@@ -1,6 +1,7 @@
 import React, { Component, FC } from 'react'
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
+import moment from 'moment'
 
 import './style.css'
 import Former from '../../../../utils/former';
@@ -99,12 +100,36 @@ const CharacterCertificate: React.FC <CertificateProps> = ({ curr_student }) => 
       <div className="sub-divider"> To Whom it May Concern</div>
     </div>
 
-    <div className="body-para">
-      This is to certify that <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.Name}</span>, 
-      Son/Daughter of <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.ManName}</span>, is a
-      bonafide student of this school and bears a good moral character. His/her behaviour
-      was good with teachers and students. He/she has neither displayed persistent violent
-      or aggressive behavior nor any desire to harm other. 
+    <div className="body">
+      <div className="para">
+        This is to certify that <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.Name}</span>, 
+        Son/Daughter of <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.ManName}</span>, is a
+        bonafide student of this school and bears a good moral character. His/her behaviour
+        was good with teachers and students. He/she has neither displayed persistent violent
+        or aggressive behavior nor any desire to harm other. 
+      </div>
+
+      <div className="cert-row"> His/her data according to our record is as follows;</div>
+      <div className="cert-row">
+        <label>Admission Number: </label>
+        <div>
+          { curr_student.AdmissionNumber ? `${curr_student.AdmissionNumber}`: "" }
+        </div>
+      </div>
+      <div className="cert-row">
+        <label>Roll Number: </label>
+        <div>
+          { curr_student.RollNumber ? `${curr_student.RollNumber}`: ""}
+        </div>
+      </div>
+      <div className="cert-row">
+        <label>Class: </label>
+        <div></div>
+      </div>
+      <div className="cert-row">
+        <label>Batch: </label>
+        <div></div>
+      </div>
     </div>
 
     <div className="footer">
@@ -126,18 +151,57 @@ const SchoolLeavingCertificate: React.FC <CertificateProps> = ({ curr_student })
       <div className="sub-divider"> To Whom it May Concern</div>
     </div>
 
-    <div className="body-para">
-      This is to certify that <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.Name}</span>, 
-      Son/Daughter of <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.ManName}</span>, is a
-      bonafide student of this school and bears a good moral character. His/her behaviour
-      was good with teachers and students. He/she has neither displayed persistent violent
-      or aggressive behavior nor any desire to harm other. 
+    <div className="body">
+      <div className="para">
+        This is to certify that <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.Name}</span>,
+        Son/Daughter of <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.ManName}</span>, has
+        Passed/Failed the Annual Examination held in ________________ for promotion to Class ____________________.
+      </div>
+
+      <div className="cert-row"> His/her data according to our record is as follows;</div>
+
+      <div className="cert-row">
+        <label>Admission Number: </label>
+        <div>
+          { curr_student.AdmissionNumber ? `${curr_student.AdmissionNumber}`: "" }
+        </div>
+      </div>
+      <div className="cert-row">
+        <label>Roll Number: </label>
+        <div>
+          { curr_student.RollNumber ? `${curr_student.RollNumber}`: ""}
+        </div>
+      </div>
+      <div className="cert-row">
+        <label>Date of Admission: </label>
+        <div>
+          { curr_student.AdmissionNumber ? `${moment( curr_student.StartDate).format("DD-MM-YYYY")}`: "" }
+        </div>
+      </div>
+      <div className="cert-row">
+        <label>Class/Section: </label>
+        <div></div>
+      </div>
+      <div className="cert-row">
+        <label>Batch: </label>
+        <div></div>
+      </div>
+      <div className="cert-row">
+        <label>Conduct: </label>
+        <div></div>
+      </div>
+      <div className="cert-row">
+        <label>Remarks:</label>
+        <div></div>
+      </div>
     </div>
 
     <div className="footer">
+
       <div className="left">
         <div> Issuance Date</div>
       </div>
+
       <div className="right">
         <div> Principal Signature</div>
       </div>
@@ -153,12 +217,24 @@ const SportsCertificate: React.FC <CertificateProps> = ({ curr_student }) => {
       <div className="sub-divider"> To Whom it May Concern</div>
     </div>
 
-    <div className="body-para">
-      This is to certify that <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.Name}</span>, 
-      Son/Daughter of <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.ManName}</span>, is a
-      bonafide student of this school and bears a good moral character. His/her behaviour
-      was good with teachers and students. He/she has neither displayed persistent violent
-      or aggressive behavior nor any desire to harm other. 
+    <div className="body">
+      <div className="para">
+      This certificate is awarded to <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.Name}</span>, 
+      Son/Daughter of <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.ManName}</span>, for his/her
+      excellent athletic performance in ____________________ at our school.
+      </div>
+
+      <div className="cert-row">
+        <label>Admission Number: </label>
+        <div>
+          { curr_student.AdmissionNumber ? `${curr_student.AdmissionNumber}`: "" }
+        </div>
+      </div>
+
+      <div className="cert-row">
+        <label>Class/Section: </label>
+        <div></div>
+      </div>
     </div>
 
     <div className="footer">

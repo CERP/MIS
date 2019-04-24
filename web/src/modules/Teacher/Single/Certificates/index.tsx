@@ -2,9 +2,9 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 
-import './style.css'
 import Former from '../../../../utils/former';
 import { PrintHeader } from '../../../../components/Layout';
+import moment from 'moment';
 
 interface P {
     students: RootDBState['students']
@@ -44,8 +44,6 @@ class TeacherCertificates extends Component < propTypes, S > {
     switch(this.state.selectedCertificate){
       case "EXPERIENCE":
         return <ExperienceCertificate curr_teacher={this.teacher()} />
-      case "CHARACTER":
-        return <CharacterCertificate curr_teacher={this.teacher()} />
     }
   }
     
@@ -64,7 +62,6 @@ class TeacherCertificates extends Component < propTypes, S > {
                 <label>Type</label>
                 <select {...this.former.super_handle(["selectedCertificate"])}>
                     <option value="EXPERIENCE">Experience</option>
-                    <option value="CHARACTER"> Character</option>
                 </select>
             </div>
             <div className="button blue" onClick={()=> window.print()}>Print</div>
@@ -87,34 +84,10 @@ interface CertificateProps {
   curr_teacher: MISTeacher
 }
 
-const CharacterCertificate: React.FC <CertificateProps> = ({ curr_teacher }) => {
-  return <div className="certificate-page">
-
-    <div className="head">
-      <div className="divider">CHARACTER CERTIFICATE</div>
-      <div className="sub-divider"> To Whom it May Concern</div>
-    </div>
-
-    <div className="body-para">
-      This is to certify that <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_teacher.Name}</span>, 
-      Son/Daughter of <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_teacher.ManName}</span>, is a
-      bonafide teacher of this school and bears a good moral character. His/her behaviour
-      was good with teachers and students. He/she has neither displayed persistent violent
-      or aggressive behavior nor any desire to harm other. 
-    </div>
-
-    <div className="footer">
-      <div className="left">
-        <div> Issuance Date</div>
-      </div>
-      <div className="right">
-        <div> Principal Signature</div>
-      </div>
-    </div>
-  </div>
-}
 
 const ExperienceCertificate: React.FC <CertificateProps> = ({ curr_teacher }) => {
+
+  const curr_date : number = new Date().getTime()
   return <div className="certificate-page">
 
     <div className="head">
@@ -122,12 +95,32 @@ const ExperienceCertificate: React.FC <CertificateProps> = ({ curr_teacher }) =>
       <div className="sub-divider"> To Whom it May Concern</div>
     </div>
 
-    <div className="body-para">
-      This is to certify that <span style={{fontWeight:"bold", textDecoration:"underline"}}> {curr_teacher.Name ? curr_teacher.Name : "_____________"}</span>, 
-      Son/Daughter of <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_teacher.ManName ? curr_teacher.ManName : "_____________"}</span>, is a
-      bonafide teacher of this school and bears a good moral character. His/her behaviour
-      was good with teachers and students. He/she has neither displayed persistent violent
-      or aggressive behavior nor any desire to harm other. 
+    <div className="body">
+      <div className="para">
+        This is to certify that <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_teacher.Name}</span>, 
+        Son/Daughter of <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_teacher.ManName ? curr_teacher.ManName : "________________"}</span>, has
+        worked as a teacher of the following subjects in our school from <b style={{textDecoration:"underline"}}>{`${moment(curr_teacher.HireDate).format("DD-MM-YYYY")} `}</b>
+        to <b style={{textDecoration:"underline"}}>{moment(curr_date).format("DD-MM-YYYY")} </b>
+        </div>
+
+      <div className="cert-row">
+        <label>Subjects: </label>
+        <div></div>
+      </div>
+      <div className="cert-row">
+        <label>Class: </label>
+        <div></div>
+      </div>
+      <div className="cert-row">
+        <label>Remarks: </label>
+        <div></div>
+      </div>
+
+      <div className="para">
+      We found him/her responsible, enthusiastic and hardworking during her working tenure. 
+      She can prove to be an asset for any organization. We wish him/her success in his/her 
+      future endeavors.
+      </div>
     </div>
 
     <div className="footer">
