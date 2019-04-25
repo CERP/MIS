@@ -72,9 +72,7 @@ class StudentCertificates extends Component < propTypes, S > {
             </div>
             <div className="button blue" onClick={()=> window.print()}>Print</div>
           </div>
-          {
-            <this.getSelectedCertificate/>
-          }
+          {this.getSelectedCertificate()}
           
       </div>
     )
@@ -124,11 +122,11 @@ const CharacterCertificate: React.FC <CertificateProps> = ({ curr_student }) => 
       </div>
       <div className="cert-row">
         <label>Class: </label>
-        <div></div>
+        <div/>
       </div>
       <div className="cert-row">
         <label>Batch: </label>
-        <div></div>
+        <div/>
       </div>
     </div>
 
@@ -180,19 +178,19 @@ const SchoolLeavingCertificate: React.FC <CertificateProps> = ({ curr_student })
       </div>
       <div className="cert-row">
         <label>Class/Section: </label>
-        <div></div>
+        <div/>
       </div>
       <div className="cert-row">
         <label>Batch: </label>
-        <div></div>
+        <div/>
       </div>
       <div className="cert-row">
         <label>Conduct: </label>
-        <div></div>
+        <div/>
       </div>
       <div className="cert-row">
         <label>Remarks:</label>
-        <div></div>
+        <div/>
       </div>
     </div>
 
@@ -233,7 +231,7 @@ const SportsCertificate: React.FC <CertificateProps> = ({ curr_student }) => {
 
       <div className="cert-row">
         <label>Class/Section: </label>
-        <div></div>
+        <div/>
       </div>
     </div>
 

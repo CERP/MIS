@@ -66,9 +66,7 @@ class TeacherCertificates extends Component < propTypes, S > {
             </div>
             <div className="button blue" onClick={()=> window.print()}>Print</div>
           </div>
-          {
-            <this.getSelectedCertificate/>
-          }
+          {this.getSelectedCertificate()}
       </div>
     )
   }
@@ -105,15 +103,15 @@ const ExperienceCertificate: React.FC <CertificateProps> = ({ curr_teacher }) =>
 
       <div className="cert-row">
         <label>Subjects: </label>
-        <div></div>
+        <div/>
       </div>
       <div className="cert-row">
         <label>Class: </label>
-        <div></div>
+        <div/>
       </div>
       <div className="cert-row">
         <label>Remarks: </label>
-        <div></div>
+        <div/>
       </div>
 
       <div className="para">
