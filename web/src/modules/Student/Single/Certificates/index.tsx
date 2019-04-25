@@ -2,6 +2,8 @@ import React, { Component, FC } from 'react'
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 import moment from 'moment'
+import {capitalize} from '../../../../utils/capitalize'
+import { getGenderSpecificText } from "../../../../utils/getGenderSpecificText"
 
 import './style.css'
 import Former from '../../../../utils/former';
@@ -91,6 +93,8 @@ interface CertificateProps {
 }
 
 const CharacterCertificate: React.FC <CertificateProps> = ({ curr_student }) => {
+
+  const gender = curr_student.Gender
   return <div className="certificate-page">
 
     <div className="head">
@@ -100,14 +104,10 @@ const CharacterCertificate: React.FC <CertificateProps> = ({ curr_student }) => 
 
     <div className="body">
       <div className="para">
-        This is to certify that <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.Name}</span>, 
-        Son/Daughter of <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.ManName}</span>, is a
-        bonafide student of this school and bears a good moral character. His/her behaviour
-        was good with teachers and students. He/she has neither displayed persistent violent
-        or aggressive behavior nor any desire to harm other. 
+        This is to certify that <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.Name}</span>, {`${getGenderSpecificText("son/daughter", gender)}`} of <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.ManName}</span>, is a bonafide student of this school and bears a good moral character. {`${capitalize(getGenderSpecificText("his/her", gender))}`} behaviour was good with teachers and students. {`${capitalize(getGenderSpecificText("he/she", gender))}`} has neither displayed persistent violent or aggressive behavior nor any desire to harm other. 
       </div>
 
-      <div className="cert-row"> His/her data according to our record is as follows;</div>
+      <div className="cert-row"> {`${capitalize(getGenderSpecificText("his/her", gender))}`} data according to our record is as follows;</div>
       <div className="cert-row">
         <label>Admission Number: </label>
         <div>
@@ -142,6 +142,8 @@ const CharacterCertificate: React.FC <CertificateProps> = ({ curr_student }) => 
 }
 
 const SchoolLeavingCertificate: React.FC <CertificateProps> = ({ curr_student }) => {
+  const gender = curr_student.Gender
+  
   return <div className="certificate-page">
 
     <div className="head">
@@ -151,12 +153,10 @@ const SchoolLeavingCertificate: React.FC <CertificateProps> = ({ curr_student })
 
     <div className="body">
       <div className="para">
-        This is to certify that <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.Name}</span>,
-        Son/Daughter of <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.ManName}</span>, has
-        Passed/Failed the Annual Examination held in ________________ for promotion to Class ____________________.
+        This is to certify that <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.Name}</span>, {`${getGenderSpecificText("son/daughter", gender)}`} of <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.ManName}</span>, has Passed/Failed the Annual Examination held in ________________ for promotion to Class ____________________.
       </div>
 
-      <div className="cert-row"> His/her data according to our record is as follows;</div>
+      <div className="cert-row"> {`${capitalize(getGenderSpecificText("his/her", gender))}`} data according to our record is as follows;</div>
 
       <div className="cert-row">
         <label>Admission Number: </label>
@@ -208,6 +208,9 @@ const SchoolLeavingCertificate: React.FC <CertificateProps> = ({ curr_student })
 }
 
 const SportsCertificate: React.FC <CertificateProps> = ({ curr_student }) => {
+
+  const gender = curr_student.Gender
+
   return <div className="certificate-page">
 
     <div className="head">
@@ -217,9 +220,7 @@ const SportsCertificate: React.FC <CertificateProps> = ({ curr_student }) => {
 
     <div className="body">
       <div className="para">
-      This certificate is awarded to <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.Name}</span>, 
-      Son/Daughter of <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.ManName}</span>, for his/her
-      excellent athletic performance in ____________________ at our school.
+      This certificate is awarded to <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.Name}</span>, {` ${getGenderSpecificText("son/daughter", gender)}`} of <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.ManName}</span>, for {`${getGenderSpecificText("his/her", gender)}`} excellent athletic performance in ____________________ at our school.
       </div>
 
       <div className="cert-row">
