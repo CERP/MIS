@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { withRouter, RouteComponentProps } from 'react-router-dom'
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom'
 import moment from 'moment'
 import {v4} from 'node-uuid'
 
@@ -386,7 +386,7 @@ class StudentFees extends Component <propTypes, S> {
 					</div>
 					<div className="button save" onClick={this.addPayment}>Add Payment</div>
 				</div> }
-				<div className="print button" onClick={() => window.print()}>Print</div>
+				<Link className="print button" to={`/student/${this.props.match.params.id}/fee-print-preview?month=${this.state.month}&year=${this.state.year}`}>Print Preview</Link>
 			</div>
 
 		</div>

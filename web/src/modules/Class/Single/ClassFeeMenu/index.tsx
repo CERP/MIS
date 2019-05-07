@@ -33,7 +33,7 @@ interface RouteInfo {
 
 type propTypes = RouteComponentProps<RouteInfo> & P
 
-const numberWithCommas = ( x : number) => x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+export const numberWithCommas = ( x : number) => x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
 class ClassFeeMenu extends Component <propTypes, S> {
 
