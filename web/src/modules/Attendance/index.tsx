@@ -187,6 +187,7 @@ class Attendance extends Component <propTypes, S> {
 							const x = students[sid]
 
 							const current_attendance = (x.attendance || {})[moment(this.state.date).format("YYYY-MM-DD")];
+							
 							const status = current_attendance ? current_attendance.status : "n/a"
 
 							return <div className="list-row" key={x.id}>

@@ -1,3 +1,6 @@
+a {
+	text-decoration: none;
+}
 :root {
 	--blue: #74aced;
 	--offwhite: #fafafa;
@@ -278,15 +281,13 @@ a.block {
 
 
 .title {
-	margin: 20px 0;
+	margin: 20px 10px 5px;
 	font-size: 2.0rem;
-	/*color: #777;*/
 }
 
 .divider {
-	/*color: #aaa;*/
-	margin: 20px auto;
-	font-size: 1.8rem;
+	margin: 15px auto;
+	font-size: 1.4rem;
 	text-align: center;
 }
 
@@ -328,7 +329,6 @@ textarea {
 	}
 
 	.form .button.save-old {
-		/*background-color: #95B8D1;*/
 		background-color: #4DA2DF;
 		color: #fafafa;
 		border: 1px solid black;
@@ -536,7 +536,9 @@ input::-webkit-inner-spin-button {
 	}
 
 .logo-container{
-    display: flex;
+	margin-top: 15px;
+	padding: 10px 5px;      
+	display: block;
     justify-content: center;
 	align-items: center;
 }
@@ -618,4 +620,17 @@ input::-webkit-inner-spin-button {
 :hover.cross{
 	background-color: #ff6b68;
 	color: #fafafa;
+}
+
+.school-code p{	
+	color: black;
+	font-weight: 800;
+}
+.address {
+	font-size: 1.2rem;
+	font-weight: 800;
+	margin-bottom: 4px;
+}
+.text-center {
+	text-align: center;
 }

@@ -6,6 +6,7 @@ import v4 from "node-uuid"
 const client_type = "mis";
 
 export const MERGE_SETTINGS = "MERGE_SETTINGS"
+
 export const mergeSettings = (settings) => dispatch => {
 	console.log(settings)
 	dispatch(createMerges([
@@ -287,6 +288,7 @@ export const markStudent = (student, date, status, time = moment.now()) => dispa
 		}
 	]))
 }
+
 
 export const markFaculty = (faculty, date, status, time = moment.now()) => dispatch => {
 	console.log('mark faculty', faculty, 'as', status);

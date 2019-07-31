@@ -27,8 +27,14 @@ const StudentItem = (S) => {
 					{ S.forwardTo !== "prospective-student" && <div className="para-row"><b></b> {cname /*+ "/" + sname */}</div> }
 					{ S.forwardTo !== "prospective-student" && S.AdmissionNumber && 
 						<div className="para-row">
-							<b>{`Adm #: `}</b>{S.AdmissionNumber}
-						</div>}
+							<p style={{padding:"0px", margin:"0px"}}><b>{`Adm #: `}</b>{S.AdmissionNumber}</p>
+						</div>
+					}
+					{
+						<div classNam="para-row">
+							<p style={{padding:"0px", margin:"0px"}}><strong>{`Phone:`}</strong>{(S.Phone).substr(0,10)}</p>
+						</div>
+					}
 					{ tags && 
 						<div className="tags row">
 						{
@@ -46,8 +52,9 @@ const toLabel = (S) => {
 	
 	const cname = S.relevant_section ? S.relevant_section.className : "no class";
 	const admissionNumber = S.AdmissionNumber ? `a${S.AdmissionNumber}` : ""
+	const Phone =  S.Phone;
 
-	return S.Name + S.ManName + cname + admissionNumber;
+	return S.Name + S.ManName + cname + admissionNumber + Phone;
 
 }
 

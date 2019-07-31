@@ -4,6 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import moment from 'moment'
 import {capitalize} from '../../../../utils/capitalize'
 import { getGenderSpecificText } from "../../../../utils/getGenderSpecificText"
+import {getSectionsFromClasses} from '../../../../utils/getSectionsFromClasses';
 
 import './style.css'
 import Former from '../../../../utils/former';
@@ -14,6 +15,7 @@ interface P {
   teachers: RootDBState["faculty"]
   settings: RootDBState["settings"]
   schoolLogo: RootDBState["assets"]["schoolLogo"]
+  classes: RootDBState["classes"]
 }
 
 interface S {
@@ -44,24 +46,31 @@ class StudentCertificates extends Component < propTypes, S > {
       return this.props.students[id]
     }
 
-    getSelectedCertificate = () =>{
+
+
+    getSelectedCertificate = ( relvSection: any) =>
+    {
       switch(this.state.selectedCertificate){
         case "CHARACTER":
-          return <CharacterCertificate curr_student={this.student()} />
+          return <CharacterCertificate curr_student={this.student()} relevant_section={relvSection} />
         case "SCHOOL_LEAVING":
-          return <SchoolLeavingCertificate curr_student={this.student()} />
+          return <SchoolLeavingCertificate curr_student={this.student()} relevant_section={relvSection} />
         case "SPORTS":
-          return <SportsCertificate curr_student={this.student()} />
+          return <SportsCertificate curr_student={this.student()} relevant_section={relvSection} />
       }
     }
+
   render() {
-    const { settings, schoolLogo} = this.props
+    const {settings, schoolLogo, classes} = this.props
+    const sections = getSectionsFromClasses(classes);
+    const relevant_section = sections.find(section => this.student().section_id === section.id);
 
     return (
       <div className="certificate">
           <PrintHeader settings={settings} logo={schoolLogo}/>
-
-          <div className="divider no-print">Certificates</div>
+          <div className="no-print">
+            <h2 className="text-center">Certificates</h2>
+          </div>
 
           <div className="cert-Info no-print">
             <div className="row">
@@ -74,7 +83,7 @@ class StudentCertificates extends Component < propTypes, S > {
             </div>
             <div className="button blue" onClick={()=> window.print()}>Print</div>
           </div>
-          {this.getSelectedCertificate()}
+          {this.getSelectedCertificate(relevant_section)}
 
       </div>
     )
@@ -84,21 +93,25 @@ export default connect ((state : RootReducerState) => ({
   students: state.db.students,
   teachers: state.db.faculty,
   settings: state.db.settings,
+  classes: state.db.classes,
   schoolLogo: state.db.assets ? state.db.assets.schoolLogo || "" : ""
 }))(StudentCertificates)
 
 interface CertificateProps {
-  curr_student: MISStudent
+  curr_student: MISStudent,
+  relevant_section: any
 }
-
-const CharacterCertificate: React.FC <CertificateProps> = ({ curr_student }) => {
+const CharacterCertificate: React.FC <CertificateProps> = ({ curr_student , relevant_section}) => {
 
   const gender = curr_student.Gender
-  return <div className="certificate-page">
+  
+  const stdClass = typeof(relevant_section)==="undefined"? "":relevant_section.className;
+
+  return(<div className="certificate-page">
 
     <div className="head">
-      <div className="divider">CHARACTER CERTIFICATE</div>
-      <div className="sub-divider"> To Whom it May Concern</div>
+      <div className="divider" style={{textDecoration:"underline"}}>CHARACTER CERTIFICATE</div>
+      <div className="sub-divider"> To whom it may concern</div>
     </div>
 
     <div className="body">
@@ -108,136 +121,197 @@ const CharacterCertificate: React.FC <CertificateProps> = ({ curr_student }) => 
 
       <div className="cert-row"> {capitalize(getGenderSpecificText("his/her", gender))} data according to our record is as follows;</div>
       <div className="cert-row">
-        <label>Admission Number: </label>
+        <label>Admission No.: </label>
         <div>
           { curr_student.AdmissionNumber ? `${curr_student.AdmissionNumber}`: "" }
         </div>
       </div>
       <div className="cert-row">
-        <label>Roll Number: </label>
+        <label>Roll No.: </label>
         <div>
           { curr_student.RollNumber ? `${curr_student.RollNumber}`: ""}
         </div>
       </div>
       <div className="cert-row">
         <label>Class: </label>
-        <div/>
+        <div>
+          { stdClass ? `${stdClass}`: ""}
+        </div>
       </div>
+      <div className="cert-row">
+        <label>Date of Birth: </label>
+        <div>
+          { curr_student.Birthdate ? `${moment( curr_student.Birthdate).format("DD-MM-YYYY") }`: ""}
+        </div>
+      </div>
+      <div className="cert-row">
+        <label>Exam Board: </label>
+        <div>
+          
+        </div>
+      </div>
+      <div className="cert-row">
+        <label>Marks: </label>
+        <div>
+          
+        </div>
+      </div>
+      <div className="cert-row">
+        <label>Session: </label>
+        <div>
+          
+        </div>
+      </div>
+
     </div>
 
     <div className="footer">
       <div className="left">
-        <div> Issuance Date</div>
+        <div> Date of Issue</div>
       </div>
       <div className="right">
         <div> Principal Signature</div>
       </div>
     </div>
   </div>
+  );
 }
 
-const SchoolLeavingCertificate: React.FC <CertificateProps> = ({ curr_student }) => {
-  const gender = curr_student.Gender
+const SchoolLeavingCertificate: React.FC <CertificateProps> = ({ curr_student , relevant_section}) => {
   
-  return <div className="certificate-page">
+  const gender = curr_student.Gender
+  const stdClass = typeof(relevant_section)==="undefined"? "":relevant_section.className;
 
+  return (
+  <div className="certificate-page">
+    
     <div className="head">
       <div className="divider">SCHOOL LEAVING CERTIFICATE</div>
-      <div className="sub-divider"> To Whom it May Concern</div>
+      <div className="sub-divider"> To whom it may concern</div>
     </div>
 
     <div className="body">
+      
       <div className="para">
         This is to certify that <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.Name}</span>, {`${getGenderSpecificText("son/daughter", gender)}`} of <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.ManName}</span>, has Passed/Failed the Annual Examination held in ________________ for promotion to Class ____________________.
       </div>
 
-      <div className="cert-row"> {capitalize(getGenderSpecificText("his/her", gender))} data according to our record is as follows;</div>
+      <div className="cert-row"> {capitalize(getGenderSpecificText("his/her", gender))} data according to our record is as follows;
+      </div>
 
       <div className="cert-row">
-        <label>Admission Number: </label>
+        <label>Admission No.: </label>
         <div>
           { curr_student.AdmissionNumber ? `${curr_student.AdmissionNumber}`: "" }
         </div>
       </div>
+
       <div className="cert-row">
-        <label>Roll Number: </label>
+        <label>Roll No.: </label>
         <div>
           { curr_student.RollNumber ? `${curr_student.RollNumber}`: ""}
         </div>
       </div>
+      
       <div className="cert-row">
-        <label>Date of Admission: </label>
+        <label>Admission Date: </label>
         <div>
-          { curr_student.AdmissionNumber ? `${moment( curr_student.StartDate).format("DD-MM-YYYY")}`: "" }
+          { curr_student.StartDate ? `${moment( curr_student.StartDate).format("DD-MM-YYYY")}`: "" }
         </div>
       </div>
+
       <div className="cert-row">
-        <label>Class/Section: </label>
-        <div/>
+        <label>Class of admission: </label>
+        <div>
+          
+        </div>
       </div>
+
       <div className="cert-row">
-        <label>Batch: </label>
-        <div/>
+        <label className="slc-label">Class of leaving: </label>
+        <div>
+          {stdClass? stdClass : ""}
+        </div>
       </div>
+      
+      <div className="cert-row">
+        <label>Session: </label>
+        <div>
+        </div>
+      </div>
+
       <div className="cert-row">
         <label>Conduct: </label>
-        <div/>
+        <div>
+        </div>
       </div>
+
       <div className="cert-row">
         <label>Remarks:</label>
         <div/>
       </div>
-    </div>
 
+    </div>
+    
     <div className="footer">
 
       <div className="left">
-        <div> Issuance Date</div>
+        <div> Date of Issue</div>
       </div>
 
       <div className="right">
         <div> Principal Signature</div>
       </div>
+
     </div>
-  </div>
+  </div>)
 }
 
-const SportsCertificate: React.FC <CertificateProps> = ({ curr_student }) => {
+const SportsCertificate: React.FC <CertificateProps> = ({ curr_student, relevant_section }) => {
 
   const gender = curr_student.Gender
+  const stdClass = typeof(relevant_section)==="undefined"? "":relevant_section.className;
 
   return <div className="certificate-page">
 
     <div className="head">
       <div className="divider">SPORTS CERTIFICATE</div>
-      <div className="sub-divider"> To Whom it May Concern</div>
+      <div className="sub-divider"> To whom it may concern</div>
     </div>
 
     <div className="body">
       <div className="para">
-      This certificate is awarded to <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.Name}</span>, {` ${getGenderSpecificText("son/daughter", gender)}`} of <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.ManName}</span>, for {getGenderSpecificText("his/her", gender)} excellent athletic performance in ____________________ at our school.
+      This certificate is awarded to <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.Name}</span>, {` ${getGenderSpecificText("son/daughter", gender)}`} of <span style={{fontWeight:"bold", textDecoration:"underline"}}>{curr_student.ManName}</span>, for {getGenderSpecificText("his/her", gender)} excellent athletics performance in ____________________ at our school.
       </div>
 
       <div className="cert-row">
-        <label>Admission Number: </label>
+        <label>Admission No.: </label>
         <div>
           { curr_student.AdmissionNumber ? `${curr_student.AdmissionNumber}`: "" }
         </div>
       </div>
-
+      <div className="cert-row">
+        <label>Admission Date: </label>
+        <div>
+          { curr_student.StartDate ? `${moment( curr_student.StartDate).format("DD-MM-YYYY")}`: "" }
+        </div>
+      </div>
       <div className="cert-row">
         <label>Class/Section: </label>
+        <div>
+          {stdClass? stdClass:""}
         <div/>
       </div>
     </div>
 
     <div className="footer">
       <div className="left">
-        <div> Issuance Date</div>
+        <div> Date of Issue</div>
       </div>
       <div className="right">
         <div> Principal Signature</div>
       </div>
     </div>
+  </div>
   </div>
 } 
