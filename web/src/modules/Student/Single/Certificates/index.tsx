@@ -105,13 +105,13 @@ const CharacterCertificate: React.FC <CertificateProps> = ({ curr_student , rele
 
   const gender = curr_student.Gender
   
-  const stdClass = typeof(relevant_section)==="undefined"? "":relevant_section.className;
+  const stdClass = relevant_section ? relevant_section.className : ""
 
   return(<div className="certificate-page">
 
     <div className="head">
       <div className="divider" style={{textDecoration:"underline"}}>CHARACTER CERTIFICATE</div>
-      <div className="sub-divider"> To whom it may concern</div>
+      <div className="sub-divider"> To Whom it May Concern</div>
     </div>
 
     <div className="body">
@@ -135,7 +135,7 @@ const CharacterCertificate: React.FC <CertificateProps> = ({ curr_student , rele
       <div className="cert-row">
         <label>Class: </label>
         <div>
-          { stdClass ? `${stdClass}`: ""}
+          { stdClass }
         </div>
       </div>
       <div className="cert-row">
@@ -180,7 +180,7 @@ const CharacterCertificate: React.FC <CertificateProps> = ({ curr_student , rele
 const SchoolLeavingCertificate: React.FC <CertificateProps> = ({ curr_student , relevant_section}) => {
   
   const gender = curr_student.Gender
-  const stdClass = typeof(relevant_section)==="undefined"? "":relevant_section.className;
+  const stdClass = relevant_section ? relevant_section.className : ""
 
   return (
   <div className="certificate-page">
@@ -202,14 +202,14 @@ const SchoolLeavingCertificate: React.FC <CertificateProps> = ({ curr_student , 
       <div className="cert-row">
         <label>Admission No.: </label>
         <div>
-          { curr_student.AdmissionNumber ? `${curr_student.AdmissionNumber}`: "" }
+          { curr_student.AdmissionNumber ? curr_student.AdmissionNumber: "" }
         </div>
       </div>
 
       <div className="cert-row">
         <label>Roll No.: </label>
         <div>
-          { curr_student.RollNumber ? `${curr_student.RollNumber}`: ""}
+          { curr_student.RollNumber ? curr_student.RollNumber: ""}
         </div>
       </div>
       
@@ -221,16 +221,16 @@ const SchoolLeavingCertificate: React.FC <CertificateProps> = ({ curr_student , 
       </div>
 
       <div className="cert-row">
-        <label>Class of admission: </label>
+        <label>Class of Admission: </label>
         <div>
           
         </div>
       </div>
 
       <div className="cert-row">
-        <label className="slc-label">Class of leaving: </label>
+        <label className="slc-label">Class of Leaving: </label>
         <div>
-          {stdClass? stdClass : ""}
+          { stdClass } 
         </div>
       </div>
       
@@ -270,13 +270,13 @@ const SchoolLeavingCertificate: React.FC <CertificateProps> = ({ curr_student , 
 const SportsCertificate: React.FC <CertificateProps> = ({ curr_student, relevant_section }) => {
 
   const gender = curr_student.Gender
-  const stdClass = typeof(relevant_section)==="undefined"? "":relevant_section.className;
+  const stdClass = relevant_section ? relevant_section.className : ""
 
   return <div className="certificate-page">
 
     <div className="head">
       <div className="divider">SPORTS CERTIFICATE</div>
-      <div className="sub-divider"> To whom it may concern</div>
+      <div className="sub-divider"> To Whom it May Concern</div>
     </div>
 
     <div className="body">
@@ -287,7 +287,7 @@ const SportsCertificate: React.FC <CertificateProps> = ({ curr_student, relevant
       <div className="cert-row">
         <label>Admission No.: </label>
         <div>
-          { curr_student.AdmissionNumber ? `${curr_student.AdmissionNumber}`: "" }
+          { curr_student.AdmissionNumber ? curr_student.AdmissionNumber: "" }
         </div>
       </div>
       <div className="cert-row">
@@ -299,7 +299,7 @@ const SportsCertificate: React.FC <CertificateProps> = ({ curr_student, relevant
       <div className="cert-row">
         <label>Class/Section: </label>
         <div>
-          {stdClass? stdClass:""}
+          {stdClass}
         <div/>
       </div>
     </div>

@@ -76,6 +76,7 @@ interface MISSMSHistory {
 interface MISSettings {
 	shareData: boolean
 	schoolName: string
+	schoolCode: string
 	schoolAddress: string
 	schoolPhoneNumber: string
 	sendSMSOption: "SIM" | "API"

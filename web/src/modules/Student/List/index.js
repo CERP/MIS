@@ -27,12 +27,12 @@ const StudentItem = (S) => {
 					{ S.forwardTo !== "prospective-student" && <div className="para-row"><b></b> {cname /*+ "/" + sname */}</div> }
 					{ S.forwardTo !== "prospective-student" && S.AdmissionNumber && 
 						<div className="para-row">
-							<p style={{padding:"0px", margin:"0px"}}><b>{`Adm #: `}</b>{S.AdmissionNumber}</p>
+							<b>{`Adm #: `}</b>{S.AdmissionNumber}
 						</div>
 					}
 					{
-						<div classNam="para-row">
-							<p style={{padding:"0px", margin:"0px"}}><strong>{`Phone:`}</strong>{(S.Phone).substr(0,10)}</p>
+						<div className="para-row">
+							<b>{`Phone:`}</b>{S.Phone?S.Phone.substr(0,10):""}
 						</div>
 					}
 					{ tags && 
