@@ -101,6 +101,7 @@
     @media print {
         .certificate {
             margin-top: 50px;
+            border: 10px double rgba(0,0,0,0.3);
         }
         .certificate-page{
             border-top: none;

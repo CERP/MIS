@@ -31,7 +31,7 @@ const StudentItem = (S) => {
 						</div>}
 					{
 						<div className="para-row">
-							<b>{`Phone:`}</b>{S.Phone?S.Phone.substr(0,10):""}
+							<b>{`Phone:`}</b>{S.Phone}
 						</div>
 					}	
 					{ tags && 
