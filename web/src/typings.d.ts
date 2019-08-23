@@ -189,7 +189,7 @@ interface BaseMISExpense {
 	amount: number
 	label: string
 	type: string
-	category: string
+	category: "SALARY" | "BILLS" | "STATIONERY" | "REPAIRS" | "RENT" | "ACTIVITY" | "DAILY" | "PETTY_CASH" | ""   
 	date: number
 	time: number
 }
@@ -210,9 +210,10 @@ interface MISSalaryExpense extends BaseMISExpense {
 	deduction_reason: string
 }
 
+
 interface MISStudentAttendanceEntry {
 	date: string
-	status: "PRESENT" | "ABSENT" | "LEAVE"
+	status: "PRESENT" | "ABSENT" | "LEAVE" | "SHORT_LEAVE" | "SICK_LEAVE" | "CASUAL_LEAVE"
 	time: number
 }
 
@@ -257,4 +258,12 @@ interface MISSms {
 interface MISSmsPayload {
 	messages: MISSms[]
 	return_link: string
+}
+
+interface MISDiary{
+	[section_id: string]: {
+		[subject: string]: {
+			homework: string
+		}
+	}
 }

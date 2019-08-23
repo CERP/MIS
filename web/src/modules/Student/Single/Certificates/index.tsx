@@ -177,6 +177,9 @@ const CharacterCertificate: React.FC <CertificateProps> = ({ curr_student, relev
 		<div className="right">
 			<div> Principal Signature</div>
 		</div>
+		<div className="right">
+			<div> Principal Signature</div>
+		</div>
 	</div>
 
 	</div>
@@ -243,11 +246,6 @@ const SchoolLeavingCertificate: React.FC <CertificateProps> = ({ curr_student, r
 
 			<div className="cert-row">
 				<label>Remarks:</label>
-				<div>	
-				</div>
-			</div>
-			<div className="cert-row">
-				<label>&nbsp;</label>
 				<div>	
 				</div>
 			</div>
