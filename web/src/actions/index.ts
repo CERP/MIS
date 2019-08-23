@@ -529,6 +529,21 @@ export const addMultipleFees = (fees: FeeAddItem[]) => (dispatch: Function) => {
 	dispatch(createMerges(merges))
 }
 
+type FeeDeleteItem = {
+	[id: string]: string
+}
+
+export const deleteMultipleFees = (stds_fees_id: FeeDeleteItem) => (dispatch: Function) => {
+	
+	// stds_fees_id is an object that contains fee id as key and student id as value
+	
+	const merges = Object.entries(stds_fees_id).map(([f_id,s_id]) => ({
+		path: ["db","students", s_id, "fees", f_id]
+	}))
+	
+	dispatch(createDeletes(merges))
+}
+
 export const createTemplateMerges = (templates: RootDBState["sms_templates"]) => (dispatch: Function) => {
 
 	dispatch(createMerges([

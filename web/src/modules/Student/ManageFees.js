@@ -4,7 +4,7 @@ import { v4 } from 'node-uuid'
 
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses';
 
-import { addMultipleFees } from 'actions'
+import { addMultipleFees, deleteMultipleFees } from 'actions'
 
 import former from 'utils/former'
 import Layout from 'components/Layout'
@@ -38,9 +38,20 @@ class ManageFees extends Component {
 	delete = (stds_fees_id) => {
 
 		if(window.confirm("Are you sure you want to undo added fees?")){
-			// console.log(stds_fees_id)
-		}
 
+			setTimeout(() => this.setState({ banner: { active: false } }), 3000);
+			
+			this.props.deleteMultipleFees(stds_fees_id)
+
+			this.setState({
+				banner: {
+					active: true,
+					good: true,
+					text: "Bulk fees removed"
+				}
+			})	
+		
+		}
 	}
 	save = () => {
 
@@ -91,8 +102,7 @@ class ManageFees extends Component {
 
 		if (window.confirm("Are you sure you want to add fee to whole class/all students?")) {
 
-			//this.props.addMultipleFees(fees)
-
+			this.props.addMultipleFees(fees)
 
 			this.setState({
 				banner: {
@@ -114,10 +124,8 @@ class ManageFees extends Component {
 		const reduced_fees = Object.values(this.props.students)
 			.filter(x => x.Name && x.fees && x.payments)
 			.reduce((agg, curr) => {
-
-				const payments = curr.payments;
+				
 				const fees = curr.fees;
-
 
 				Object.entries(fees)
 					.forEach(([f_id, fee]) => {
@@ -127,7 +135,7 @@ class ManageFees extends Component {
 
 						if (current_fee_value === undefined) {
 							agg[fee_key] = {
-								count: 0,
+								count: 0, 
 								stds_fees_id: {
 									[f_id]: curr.id
 								}
@@ -137,10 +145,6 @@ class ManageFees extends Component {
 						if(agg[fee_key]) {
 							agg[fee_key] = {
 								count: (agg[fee_key].count || 0) + 1,
-								// stds_fees_id_arr: [...agg[fee_key].stds_fees_id_arr, {
-								// 	student_id: curr.id,
-								// 	fee_id: f_id
-								// }]
 								stds_fees_id: {
 									...agg[fee_key].stds_fees_id,
 									[f_id]: curr.id,
@@ -152,8 +156,7 @@ class ManageFees extends Component {
 				return agg;
 
 			}, {})
-
-
+			
 		const fee_counts = Object.keys(reduced_fees)
 								.sort()
 								.reduce((agg, curr) => (agg[curr] = reduced_fees[curr], agg), {})
@@ -220,7 +223,7 @@ class ManageFees extends Component {
 				<div className="divider">Recent Added Fees</div>
 				<div className="section">
 				{ Object.entries(fee_counts)
-					.filter(([,val]) => val.count>2 )
+					.filter(([, val]) => val.count > 2 )
 					.map(([key, val]) => 
 						<div className="row" key={key}>
 							<label style={{ 'width' : "80%" }}>{ key }</label>
@@ -239,5 +242,5 @@ export default connect(state => ({
 	classes: state.db.classes,
 }), dispatch => ({
 	addMultipleFees: (fees) => dispatch(addMultipleFees(fees)),
-	// deleteMultipleFees: (stds_fees_id) => dispatch(deleteMultipleFees(stds_fees_id))
+	deleteMultipleFees: (stds_fees_id) => dispatch(deleteMultipleFees(stds_fees_id))
 }))(ManageFees);
