@@ -10,10 +10,10 @@ import { ResponsiveContainer, Line, XAxis, YAxis, LineChart, Tooltip } from 'rec
 
 import './style.css'
 
-const MonthlyAttendanceChart = ({monthly_attendance, filter}) => {		
+const AttendanceChart = ({attendance, filter}) => {		
 		return <ResponsiveContainer width="100%" height={200}>
 					<LineChart 
-						data={Object.entries(monthly_attendance)
+						data={Object.entries(attendance)
 						.sort(([month, ], [m2, ]) => month.localeCompare(m2))
 						.map(([month, { student, PRESENT, LEAVE, ABSENT }]) => ({
 							month, PRESENT, LEAVE, ABSENT, percent: (1 - ABSENT / (PRESENT + LEAVE)) * 100
@@ -31,7 +31,7 @@ const MonthlyAttendanceChart = ({monthly_attendance, filter}) => {
 					</LineChart>
 			</ResponsiveContainer>
 }
-const MonthlyAttendanceTable = ({monthly_attendance, totals}) =>{
+const AttendanceTable = ({attendance, totals}) =>{
 	return <div className="section table line" style={{margin: "20px 0", backgroundColor:"#c2bbbb21" }}>
 				<div className="table row heading">
 					<label style={{ backgroundColor: "#efecec"}}><b>Date</b></label>
@@ -41,7 +41,7 @@ const MonthlyAttendanceTable = ({monthly_attendance, totals}) =>{
 					<label style={{ backgroundColor: "#bedcff"}}><b>Absentee(%)</b></label>
 				</div>
 				{
-					[...Object.entries(monthly_attendance)
+					[...Object.entries(attendance)
 						.sort(([month, ], [m2, ]) => month.localeCompare(m2))
 						.map(([month, {student ,PRESENT, LEAVE, ABSENT} ]) =>
 						
@@ -78,22 +78,45 @@ class AttendanceAnalytics extends Component {
 			 leave: true,
 			 percentage: true
 		 },
-		 classFilter: ""
+		 classFilter: "",
+		 selected_section_id:"",
+		 selected_period: "Monthly",
+		 start_date: moment().subtract(365,'day'),
+		 end_date:moment()
 	  }
 	  this.former = new Former(this, [])
 	}
-	
+
+	onPeriodChange = () => {
+
+		if( this.state.selected_period==="Monthly" )
+		{
+			this.setState({
+				start_date: moment().subtract(365,'days').format("YYYY-MM-DD"),
+				end_date: moment().format("YYYY-MM-DD")
+			})
+		}
+	}
+
+
 	render()
 	{
 		const { students, classes, settings, schoolLogo } = this.props
 
 		let totals = { PRESENT: 0, LEAVE: 0, ABSENT: 0 };
-		let monthly_attendance = { } // [mm/yyyy]: { present / absent / leave }
+		let attendance = { } // [mm/yyyy]: { present / absent / leave }
 		let student_attendance = { } // [id]: { absents, presents, leaves }
+		
+		const selected_section = this.state.selected_section_id;
 
-		for(let [sid, student] of Object.entries(students)) {
-	
-			if(student.Name === undefined || student.attendance === undefined) {
+		for(let [sid, student] of Object.entries(students)){
+			
+			
+			if( selected_section !=="" && student.section_id !== selected_section){
+				continue;
+			}
+			
+			if(student.Name === undefined || student.attendance === undefined ) {
 				continue;
 			}
 
@@ -103,11 +126,24 @@ class AttendanceAnalytics extends Component {
 
 				totals[record.status] += 1;
 				s_record[record.status] += 1;
+				
+				const temp_date = moment(date).format("YYYY-MM-DD");
+				const temp_sd = moment(this.state.start_date).format("YYYY-MM-DD");
+				const temp_ed = moment(this.state.end_date).format("YYYY-MM-DD");
+				
+				if( temp_date < temp_sd  && temp_date < temp_ed )
+				{
+					console.log("HELLO HELLO")
+					continue
+				}
 
-				const month_key = moment(date).format('MM/YYYY');
-				const m_status = monthly_attendance[month_key] || { PRESENT: 0, LEAVE: 0, ABSENT: 0}
+				const period_format = this.state.selected_period === 'Monthly' ? 'MM/YYYY' : 'DD/MM/YYYY'
+				
+				const period_key = moment(date).format(period_format);
+				
+				const m_status = attendance[period_key] || { PRESENT: 0, LEAVE: 0, ABSENT: 0}
 				m_status[record.status] += 1;
-				monthly_attendance[month_key] = m_status;
+				attendance[period_key] = m_status;
 			}
 			student_attendance[sid] = {student, ...s_record}
 		}
@@ -127,7 +163,47 @@ class AttendanceAnalytics extends Component {
 			settings={settings} 
 			logo={schoolLogo}
 		/>
-		
+		<dvi>
+			<div className="row">
+				
+				<div style={{marginRight: "auto"}}>
+
+					<label> From </label>
+					<input type="date" 
+						   onChange={this.former.handle(["start_date"])} 
+						   value={moment(this.state.start_date).format("YYYY-MM-DD")} 
+						   placeholder="Current Date"
+						/>
+					
+					<label> To </label>
+					<input type="date" 
+						   onChange={this.former.handle(["end_date"])} 
+						   value={moment(this.state.end_date).format("YYYY-MM-DD")} />
+				</div>
+
+				<select {...this.former.super_handle(
+							["selected_section_id"])} 
+							style={{ marginLeft: "auto"}
+						}>
+						<option disabled value="">Select class</option>
+						<option value="">All classes </option>
+						{
+							getSectionsFromClasses(this.props.classes)
+								.map(s => <option key={s.id} value={s.id}>{s.namespaced_name}</option>)
+						}
+				</select>
+
+				<select {...this.former.super_handle(
+							["selected_period"], 
+							() => true, 
+							this.onPeriodChange)
+						}>
+						<option disabled value="">Select period</option>
+						<option value="Daily">Daily</option>
+						<option value="Monthly" selected>Monthly</option>
+				</select>
+			</div>
+		</dvi>
 		<div className="table row">
 			<label>Total Present</label>
 			<div>{totals.PRESENT}</div>
@@ -145,11 +221,11 @@ class AttendanceAnalytics extends Component {
 			<div>{(totals.ABSENT/totals.PRESENT * 100).toFixed(2)}%</div>
 		</div>
 
-		<div className="divider">Monthly Attendance</div>
+		<div className="divider">{this.state.selected_period} Attendance</div>
 		
 		<div className="no-print">
-			<MonthlyAttendanceChart
-				monthly_attendance = { monthly_attendance }
+			<AttendanceChart
+				attendance = { attendance }
 				filter = { this.state.chartFilter }
 			/>
 		</div>
@@ -188,8 +264,8 @@ class AttendanceAnalytics extends Component {
 			</div>
 		</div>
 		
-		<MonthlyAttendanceTable
-			monthly_attendance={monthly_attendance}
+		<AttendanceTable
+			attendance={attendance}
 			totals={totals}
 		/>
 
@@ -203,7 +279,7 @@ class AttendanceAnalytics extends Component {
 					placeholder="search"
 				/>
 				<select {...this.former.super_handle(["classFilter"])}>
-					<option value="">Select Class</option>
+					<option disabled value="">Select class</option>
 					{
 						sections
 							.map(s => {
