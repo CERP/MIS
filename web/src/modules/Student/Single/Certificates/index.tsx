@@ -177,9 +177,6 @@ const CharacterCertificate: React.FC <CertificateProps> = ({ curr_student, relev
 		<div className="right">
 			<div> Principal Signature</div>
 		</div>
-		<div className="right">
-			<div> Principal Signature</div>
-		</div>
 	</div>
 
 	</div>
