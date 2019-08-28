@@ -12,7 +12,6 @@ interface S {
 	importedStudents: MISStudent[]
 
 	loadingStudentImport: boolean
-	loadingAmount: number
 }
 
 type P = {
@@ -43,7 +42,6 @@ class ExcelImport extends React.Component<P, S> {
 		this.state = {
 			importedStudents: [],
 			loadingStudentImport: false,
-			loadingAmount: 0
 		}
 	}
 
@@ -61,14 +59,10 @@ class ExcelImport extends React.Component<P, S> {
 			const text = reader.result as string
 
 			this.setState({
-				loadingStudentImport: false
+				loadingStudentImport: false,
+				importedStudents: convertCSVToStudents(text)
 			})
 
-			const students = convertCSVToStudents(text)
-		}
-
-		reader.onprogress = ev => {
-			console.log(ev.total)
 		}
 
 		reader.onloadstart = () => {
@@ -81,6 +75,8 @@ class ExcelImport extends React.Component<P, S> {
 	}
 
 	render() {
+
+		let student = this.state.importedStudents[0]
 
 		return <Layout history={this.props.history}>
 			<div className="excel-import">
@@ -96,6 +92,85 @@ class ExcelImport extends React.Component<P, S> {
 						<label>Upload Student Data CSV</label>
 						<input type="file" onChange={this.importStudentData}/>
 					</div>
+
+					{ this.state.loadingStudentImport && <div>Loading student import sheet....</div> }
+
+					{ this.state.importedStudents.length > 0 && <div className="section">
+						<div className="divider"> Student Preview </div>
+
+						<div className="row">
+							<label>Total Number of Students</label>
+							<div>{this.state.importedStudents.length}</div>
+						</div>
+
+						<div style={{textAlign: "center", fontSize: "1.1rem"}}>Example Student</div>
+
+						<div className="row">
+							<label>Name</label>
+							<div>{student.Name}</div>
+						</div>
+
+						<div className="row">
+							<label>Roll Number</label>
+							<div>{student.RollNumber}</div>
+						</div>
+
+						<div className="row">
+							<label>BForm</label>
+							<div>{student.BForm}</div>
+						</div>
+
+						<div className="row">
+							<label>Gender</label>
+							<div>{student.Gender}</div>
+						</div>
+
+						<div className="row">
+							<label>Phone</label>
+							<div>{student.Phone}</div>
+						</div>
+
+						<div className="row">
+							<label>Active</label>
+							<div>{student.Active}</div>
+						</div>
+
+						<div className="row">
+							<label>Father CNIC</label>
+							<div>{student.ManCNIC}</div>
+						</div>
+
+						<div className="row">
+							<label>Father Name</label>
+							<div>{student.ManName}</div>
+						</div>
+
+						<div className="row">
+							<label>Birthdate</label>
+							<div>{student.Birthdate}</div>
+						</div>
+
+						<div className="row">
+							<label>Address</label>
+							<div>{student.Address}</div>
+						</div>
+
+						<div className="row">
+							<label>Notes</label>
+							<div>{student.Notes}</div>
+						</div>
+
+						<div className="row">
+							<label>Start Date</label>
+							<div>{moment(student.StartDate).format("DD/MM/YYYY")}</div>
+						</div>
+
+						<div className="row">
+							<label>Admission Number</label>
+							<div>{student.AdmissionNumber}</div>
+						</div>
+
+					</div>}
 				</div>
 			</div>
 		</Layout>
@@ -120,9 +195,9 @@ const convertCSVToStudents = (studentImportCSV : string ) => {
 			Name,
 			RollNumber,
 			BForm,
-			Gender,
+			Gender: Gender.toLowerCase() == "m" ? "male" : ( Gender.toLowerCase() == "f" ? "female" : ""),
 			Phone,
-			Active: Active.toLowerCase() == "y" || Active.toLowerCase() == "yes" || Active.toLowerCase() == "true",
+			Active: Active.toLowerCase() == "y" || Active.toLowerCase() == "yes" || Active.toLowerCase() == "true" || Active.toLowerCase() == "",
 			ManCNIC,
 			ManName,
 			Birthdate,
