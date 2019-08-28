@@ -132,7 +132,7 @@ interface MISStudent {
 	Birthdate: string
 	Address: string
 	Notes: string
-	StartDate: string 
+	StartDate: number 
 	AdmissionNumber: string
 
 	section_id: string

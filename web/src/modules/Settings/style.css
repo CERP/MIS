@@ -46,19 +46,21 @@ div.settings .new-badge {
 }
 
 .settings .button.grey {
-	margin-bottom: 2px
+	margin: 10px 0;
+	border-width: 1px;
+	border-radius: 2px;
 }
 
 .settings .grade-menu .button.green {
 	width: auto;
-    align-self: flex-end;
+	align-self: flex-end;
 }
 
 .settings .grade-menu .editable-row {
 	flex-direction: row;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
 }
 	.settings .editable-row input[type=number] {
 		width: 90%;
