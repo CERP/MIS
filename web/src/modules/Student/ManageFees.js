@@ -121,23 +121,43 @@ class ManageFees extends Component {
 
 		const { classes } = this.props;
 
+		let payment_id = ""
+
 		const reduced_fees = Object.values(this.props.students)
 			.filter(x => x.Name && x.fees && x.payments)
 			.reduce((agg, curr) => {
 				
 				const fees = curr.fees;
+				const payments = curr.payments
 
 				Object.entries(fees)
 					.forEach(([f_id, fee]) => {
 
+						// if the fee id is empty string, just return
+						if(f_id === "") return;
+
 						const fee_key = `${fee.name}-${fee.period}-${fee.type}-${fee.amount}`
 						const current_fee_value = agg[fee_key]
 
+						const payment_arr = Object.entries(payments)
+												.filter(([payment_id,payment]) => payment && payment.fee_id === f_id && payment.type === "OWED" )
+						
+						
+						// if fee id exist but the payment id not exist
+						payment_id = ""
+						if(payment_arr[0] !== undefined){
+							payment_id = payment_arr[0][0]
+						}
+
 						if (current_fee_value === undefined) {
+							
 							agg[fee_key] = {
 								count: 0, 
 								stds_fees_id: {
-									[f_id]: curr.id
+									[f_id]: { 
+										std_id: curr.id,
+										p_id: payment_id
+									}
 								}
 							}
 						}
@@ -147,7 +167,10 @@ class ManageFees extends Component {
 								count: (agg[fee_key].count || 0) + 1,
 								stds_fees_id: {
 									...agg[fee_key].stds_fees_id,
-									[f_id]: curr.id,
+									[f_id]: { 
+										std_id: curr.id,
+										p_id: payment_id
+									}
 								}
 							}
 						}
@@ -160,7 +183,7 @@ class ManageFees extends Component {
 		const fee_counts = Object.keys(reduced_fees)
 								.sort()
 								.reduce((agg, curr) => (agg[curr] = reduced_fees[curr], agg), {})
-
+		
 		return <Layout history={this.props.history}>
 			<div className="form sms-page">
 
@@ -174,7 +197,7 @@ class ManageFees extends Component {
 						<div className="row">
 							<label>Add To</label>
 							<select {...this.former.super_handle(["feeFilter"], () => true, this.filterCallBack)}>
-								<option value="" disabled>Select Students</option>
+								<option value="">Select Students</option>
 								<option value="to_all_students">All Students</option>
 								<option value="to_single_class">Single Class</option>
 							</select>
@@ -184,7 +207,7 @@ class ManageFees extends Component {
 							<div className="row">
 								<label>Select Class</label>
 								<select {...this.former.super_handle(["section_id"])}>
-									<option value="" disabled>Select class</option>
+									<option value="">Select class</option>
 									{Object.entries(getSectionsFromClasses(classes))
 										.map(([id, S]) => <option key={id} value={S.id}>{S.namespaced_name}</option>)
 									}
@@ -195,7 +218,7 @@ class ManageFees extends Component {
 						<div className="row">
 							<label>Fee Type</label>
 							<select {...this.former.super_handle(["fee", "type"])}>
-								<option value="" disabled>Select type</option>
+								<option value="">Select type</option>
 								<option value="FEE">Fee</option>
 								<option value="SCHOLARSHIP">Scholarship</option>
 							</select>
@@ -211,7 +234,7 @@ class ManageFees extends Component {
 						<div className="row">
 							<label>Fee Period</label>
 							<select {...this.former.super_handle(["fee", "period"])}>
-								<option value="" disabled>Select period</option>
+								<option value="">Select period</option>
 								<option value="MONTHLY">Monthly</option>
 								<option value="SINGLE">One Time</option>
 							</select>
