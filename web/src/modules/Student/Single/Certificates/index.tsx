@@ -246,6 +246,13 @@ const SchoolLeavingCertificate: React.FC <CertificateProps> = ({ curr_student, r
 				<div>	
 				</div>
 			</div>
+
+			<div className="cert-row">
+				<label>&nbsp;</label>
+				<div>	
+				</div>
+			</div>
+
 		</div>
 
 		<div className="footer">
