@@ -487,5 +487,4 @@ class Front extends Component {
 
 export default connect(state => ({ 
 	auth: state.auth,
-	users: state.db.users
 }))(Front);

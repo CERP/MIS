@@ -11,10 +11,11 @@ import { ResponsiveContainer, Line, XAxis, YAxis, LineChart, Tooltip } from 'rec
 import './style.css'
 
 const AttendanceChart = ({attendance, filter}) => {		
-		return <ResponsiveContainer width="100%" height={200}>
+
+	return <ResponsiveContainer width="100%" height={200}>
 					<LineChart 
 						data={Object.entries(attendance)
-						.sort(([month, ], [m2, ]) => month.localeCompare(m2))
+						.sort(([month, ], [m2, ]) => moment(month).isBefore(m2))
 						.map(([month, { student, PRESENT, LEAVE, ABSENT }]) => ({
 							month, PRESENT, LEAVE, ABSENT, percent: (1 - ABSENT / (PRESENT + LEAVE)) * 100
 						}))}>
@@ -42,7 +43,7 @@ const AttendanceTable = ({attendance, totals}) =>{
 				</div>
 				{
 					[...Object.entries(attendance)
-						.sort(([month, ], [m2, ]) => month.localeCompare(m2))
+						.sort(([month, ], [m2, ]) =>moment(month).isBefore(m2))
 						.map(([month, {student ,PRESENT, LEAVE, ABSENT} ]) =>
 						
 							<div className="table row">
@@ -92,8 +93,8 @@ class AttendanceAnalytics extends Component {
 		if( this.state.selected_period==="Monthly" )
 		{
 			this.setState({
-				start_date: moment().subtract(365,'days').format("YYYY-MM-DD"),
-				end_date: moment().format("YYYY-MM-DD")
+				start_date: moment().subtract(365,'days'),
+				end_date: moment.now()
 			})
 		}
 	}
@@ -108,13 +109,14 @@ class AttendanceAnalytics extends Component {
 		let student_attendance = { } // [id]: { absents, presents, leaves }
 		
 		const selected_section = this.state.selected_section_id;
+		const temp_sd = moment(this.state.start_date)
+		const temp_ed = moment(this.state.end_date)
 
 		for(let [sid, student] of Object.entries(students)){
 			
 			
-			if( selected_section !=="" && student.section_id !== selected_section){
-				continue;
-			}
+			if( selected_section !=="" && student.section_id !== selected_section)
+				continue
 			
 			if(student.Name === undefined || student.attendance === undefined ) {
 				continue;
@@ -127,20 +129,11 @@ class AttendanceAnalytics extends Component {
 				totals[record.status] += 1;
 				s_record[record.status] += 1;
 				
-				const temp_date = moment(date).format("YYYY-MM-DD");
-				const temp_sd = moment(this.state.start_date).format("YYYY-MM-DD");
-				const temp_ed = moment(this.state.end_date).format("YYYY-MM-DD");
-				
-				if( temp_date < temp_sd  && temp_date < temp_ed )
-				{
-					console.log("HELLO HELLO")
+				if( moment(date).isBefore(temp_sd) && moment(date).isBefore(temp_ed) )
 					continue
-				}
 
 				const period_format = this.state.selected_period === 'Monthly' ? 'MM/YYYY' : 'DD/MM/YYYY'
-				
 				const period_key = moment(date).format(period_format);
-				
 				const m_status = attendance[period_key] || { PRESENT: 0, LEAVE: 0, ABSENT: 0}
 				m_status[record.status] += 1;
 				attendance[period_key] = m_status;
@@ -185,7 +178,7 @@ class AttendanceAnalytics extends Component {
 							["selected_section_id"])} 
 							style={{ marginLeft: "auto"}
 						}>
-						<option disabled value="">Select class</option>
+						<option value="">Select class</option>
 						<option value="">All classes </option>
 						{
 							getSectionsFromClasses(this.props.classes)
@@ -198,7 +191,7 @@ class AttendanceAnalytics extends Component {
 							() => true, 
 							this.onPeriodChange)
 						}>
-						<option disabled value="">Select period</option>
+						<option value="">Select period</option>
 						<option value="Daily">Daily</option>
 						<option value="Monthly" selected>Monthly</option>
 				</select>
@@ -279,7 +272,7 @@ class AttendanceAnalytics extends Component {
 					placeholder="search"
 				/>
 				<select {...this.former.super_handle(["classFilter"])}>
-					<option disabled value="">Select class</option>
+					<option value="">Select class</option>
 					{
 						sections
 							.map(s => {
