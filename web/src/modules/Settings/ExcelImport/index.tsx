@@ -6,6 +6,7 @@ import { v4 } from 'node-uuid';
 
 import Layout from '../../../components/Layout'
 import downloadCSV from '../../../utils/downloadCSV'
+import { createStudentMerges } from '../../../actions';
 
 interface S {
 
@@ -15,7 +16,7 @@ interface S {
 }
 
 type P = {
-
+	saveStudents: (student : MISStudent[]) => void
 } & RouteComponentProps
 
 const studentCSVHeaders = [
@@ -58,11 +59,12 @@ class ExcelImport extends React.Component<P, S> {
 		reader.onloadend = () => {
 			const text = reader.result as string
 
+			// should check if admission numbers are unique
+			// check RollNumber
 			this.setState({
 				loadingStudentImport: false,
 				importedStudents: convertCSVToStudents(text)
 			})
-
 		}
 
 		reader.onloadstart = () => {
@@ -72,6 +74,16 @@ class ExcelImport extends React.Component<P, S> {
 		}
 
 		reader.readAsText(file)
+	}
+
+	onSave = () => {
+		
+		this.props.saveStudents(this.state.importedStudents)
+
+		this.setState({
+			importedStudents: []
+		})
+
 	}
 
 	render() {
@@ -90,13 +102,13 @@ class ExcelImport extends React.Component<P, S> {
 
 					<div className="row">
 						<label>Upload Student Data CSV</label>
-						<input type="file" onChange={this.importStudentData}/>
+						<input type="file" accept=".csv" onChange={this.importStudentData}/>
 					</div>
 
 					{ this.state.loadingStudentImport && <div>Loading student import sheet....</div> }
 
 					{ this.state.importedStudents.length > 0 && <div className="section">
-						<div className="divider"> Student Preview </div>
+						<div className="divider">Student Preview</div>
 
 						<div className="row">
 							<label>Total Number of Students</label>
@@ -170,7 +182,9 @@ class ExcelImport extends React.Component<P, S> {
 							<div>{student.AdmissionNumber}</div>
 						</div>
 
-					</div>}
+					</div> }
+
+					<div className="save button" onClick={this.onSave}>Save</div>
 				</div>
 			</div>
 		</Layout>
@@ -230,4 +244,6 @@ const convertCSVToStudents = (studentImportCSV : string ) => {
 
 export default connect(state => ({
 
+}), (dispatch : Function) => ({
+	saveStudents: (students: MISStudent[]) => dispatch(createStudentMerges(students))
 }))(withRouter(ExcelImport))
