@@ -22,7 +22,6 @@
 .fileContainer {
 	border-radius: .5em;
 	float: left;
-	padding: .5em;
 }
 
 .fileContainer [type=file] {

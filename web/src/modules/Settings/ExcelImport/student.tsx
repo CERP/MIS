@@ -170,12 +170,15 @@ class ExcelImport extends React.Component<P, S> {
 
 				<div className="row">
 					<label>Student Template CSV</label>
-					<div className="button grey" onClick={this.onStudentImportTemplateClick}>Download</div>
+					<div className="button grey" onClick={this.onStudentImportTemplateClick}>Download Template</div>
 				</div>
 
 				<div className="row">
 					<label>Upload Student Data CSV</label>
-					<input type="file" accept=".csv" onChange={this.importStudentData}/>
+					<div className="fileContainer button green">
+						<div>Upload CSV</div>
+						<input type="file" accept=".csv" onChange={this.importStudentData}/>
+					</div>
 				</div>
 
 				{ this.state.loadingStudentImport && <div>Loading student import sheet....</div> }
