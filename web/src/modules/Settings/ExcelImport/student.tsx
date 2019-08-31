@@ -69,7 +69,7 @@ class ExcelImport extends React.Component<P, S> {
 
 		const reader = new FileReader();
 
-		reader.onloadend = (q) => {
+		reader.onloadend = () => {
 			const text = reader.result as string
 
 			const importedStudents = convertCSVToStudents(text)
