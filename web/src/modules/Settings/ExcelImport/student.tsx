@@ -39,7 +39,7 @@ const studentCSVHeaders = [
 	"AdmissionNumber"
 ]
 
-class ExcelImport extends React.Component<P, S> {
+class StudentExcelImport extends React.Component<P, S> {
 
 	constructor(props : P) {
 		super(props)
@@ -323,4 +323,4 @@ export default connect((state : RootReducerState) => ({
 	students: state.db.students
 }), (dispatch : Function) => ({
 	saveStudents: (students: MISStudent[]) => dispatch(createStudentMerges(students))
-}))(ExcelImport)
+}))(StudentExcelImport)
