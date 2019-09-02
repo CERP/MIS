@@ -80,10 +80,11 @@ class AttendanceAnalytics extends Component {
 			 percentage: true
 		 },
 		 classFilter: "",
-		 selected_section_id:"",
+		 selected_section_id: "",
 		 selected_period: "Monthly",
-		 start_date: moment().subtract(365,'day'),
-		 end_date:moment()
+		 start_date: moment().subtract(1,'year'),
+		 end_date: moment(),
+		 isAttendanceFilterActive: false,
 	  }
 	  this.former = new Former(this, [])
 	}
@@ -93,7 +94,7 @@ class AttendanceAnalytics extends Component {
 		if( this.state.selected_period==="Monthly" )
 		{
 			this.setState({
-				start_date: moment().subtract(365,'days'),
+				start_date: moment().subtract(1,'year'),
 				end_date: moment.now()
 			})
 		}
@@ -129,7 +130,7 @@ class AttendanceAnalytics extends Component {
 				totals[record.status] += 1;
 				s_record[record.status] += 1;
 				
-				if( moment(date).isBefore(temp_sd) && moment(date).isBefore(temp_ed) )
+				if( moment(date).isBefore(temp_sd) && moment(date).isAfter(temp_ed) )
 					continue
 
 				const period_format = this.state.selected_period === 'Monthly' ? 'MM/YYYY' : 'DD/MM/YYYY'
@@ -156,47 +157,7 @@ class AttendanceAnalytics extends Component {
 			settings={settings} 
 			logo={schoolLogo}
 		/>
-		<dvi>
-			<div className="row">
-				
-				<div style={{marginRight: "auto"}}>
 
-					<label> From </label>
-					<input type="date" 
-						   onChange={this.former.handle(["start_date"])} 
-						   value={moment(this.state.start_date).format("YYYY-MM-DD")} 
-						   placeholder="Current Date"
-						/>
-					
-					<label> To </label>
-					<input type="date" 
-						   onChange={this.former.handle(["end_date"])} 
-						   value={moment(this.state.end_date).format("YYYY-MM-DD")} />
-				</div>
-
-				<select {...this.former.super_handle(
-							["selected_section_id"])} 
-							style={{ marginLeft: "auto"}
-						}>
-						<option value="">Select class</option>
-						<option value="">All classes </option>
-						{
-							getSectionsFromClasses(this.props.classes)
-								.map(s => <option key={s.id} value={s.id}>{s.namespaced_name}</option>)
-						}
-				</select>
-
-				<select {...this.former.super_handle(
-							["selected_period"], 
-							() => true, 
-							this.onPeriodChange)
-						}>
-						<option value="">Select period</option>
-						<option value="Daily">Daily</option>
-						<option value="Monthly" selected>Monthly</option>
-				</select>
-			</div>
-		</dvi>
 		<div className="table row">
 			<label>Total Present</label>
 			<div>{totals.PRESENT}</div>
@@ -213,6 +174,47 @@ class AttendanceAnalytics extends Component {
 			<label>Absentee Percent</label>
 			<div>{(totals.ABSENT/totals.PRESENT * 100).toFixed(2)}%</div>
 		</div>
+
+		<div className="no-print row" style={{justifyContent: "flex-end", margin: "5px 0px 5px"}}>
+			<div className="button green" onClick={ () => this.setState({isAttendanceFilterActive: !this.state.isAttendanceFilterActive})}>Show Filters
+			</div>
+		</div>
+		{ this.state.isAttendanceFilterActive && <div className="no-print section form">				
+				<div className="row">
+					<label> Start Date </label>
+					<input type="date" 
+						   onChange={this.former.handle(["start_date"])} 
+						   value={moment(this.state.start_date).format("YYYY-MM-DD")} 
+						   placeholder="Current Date"
+						/>
+				</div>
+				<div className="row">	
+					<label> End Date </label>
+					<input type="date" 
+						   onChange={this.former.handle(["end_date"])} 
+						   value={moment(this.state.end_date).format("YYYY-MM-DD")} />
+				</div>
+
+				<div className="row">	
+					<label> Class </label>
+					<select {...this.former.super_handle(["selected_section_id"])}>
+							<option value="">Select class</option>
+							<option value="">All classes </option> {
+								getSectionsFromClasses(this.props.classes)
+										.map(s => <option key={s.id} value={s.id}>{s.namespaced_name}</option>)
+							}
+					</select>
+				</div>
+				
+				<div className="row">
+					<label> Attendance Period </label>
+					<select {...this.former.super_handle(["selected_period"], () => true, this.onPeriodChange)}>
+							<option value="Daily">Daily</option>
+							<option value="Monthly" selected>Monthly</option>
+					</select>
+				</div>
+		</div>}
+
 
 		<div className="divider">{this.state.selected_period} Attendance</div>
 		

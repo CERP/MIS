@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { v4 } from 'node-uuid'
+import moment from 'moment'
 
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses';
 
@@ -37,7 +38,7 @@ class ManageFees extends Component {
 
 	delete = (stds_fees_id) => {
 
-		if(window.confirm("Are you sure you want to undo added fees?")){
+		if(window.confirm("Are you sure you want to undo added students fees?")){
 
 			setTimeout(() => this.setState({ banner: { active: false } }), 3000);
 			
@@ -57,7 +58,7 @@ class ManageFees extends Component {
 
 		const { students } = this.props;
 
-		setTimeout(() => this.setState({ banner: { active: false } }), 3000);
+		setTimeout(() => this.setState({ banner: { active: false } }), 4000);
 
 		if (this.state.fee.name === "" ||
 			this.state.fee.amount === "" ||
@@ -99,8 +100,11 @@ class ManageFees extends Component {
 				}
 			})
 		}
-
-		if (window.confirm("Are you sure you want to add fee to whole class/all students?")) {
+		
+		const temp = this.state.feeFilter === "to_all_students" ? 'school' : 'class';
+		const alert_message = `Are you sure you want to add fee to whole ${temp} students?` 
+		
+		if (window.confirm(alert_message)) {
 
 			this.props.addMultipleFees(fees)
 
@@ -116,12 +120,9 @@ class ManageFees extends Component {
 	}
 
 	filterCallBack = () => this.state.feeFilter === "to_all_students" ? this.setState({ section_id: "" }) : true
-
 	render() {
 
 		const { classes } = this.props;
-
-		let payment_id = ""
 
 		const reduced_fees = Object.values(this.props.students)
 			.filter(x => x.Name && x.fees && x.payments)
@@ -129,24 +130,33 @@ class ManageFees extends Component {
 				
 				const fees = curr.fees;
 				const payments = curr.payments
-
+		
 				Object.entries(fees)
-					.forEach(([f_id, fee]) => {
+					.forEach(([fee_id, fee]) => {
 
 						// if the fee id is empty string, just return
-						if(f_id === "") return;
+						if(fee_id === "") return;
 
 						const fee_key = `${fee.name}-${fee.period}-${fee.type}-${fee.amount}`
 						const current_fee_value = agg[fee_key]
 
+						const curr_date = moment().format("MM/YYYY")
+
 						const payment_arr = Object.entries(payments)
-												.filter(([payment_id,payment]) => payment && payment.fee_id === f_id && payment.type === "OWED" )
+							.filter(([payment_id, payment]) => payment && 
+								payment.type === "OWED" &&
+								moment(payment.date).format("MM/YYYY") === curr_date &&
+								payment.fee_id === fee_id
+							)
+					
+						let paymentIdArr = new Array();
 						
-						
-						// if fee id exist but the payment id not exist
-						payment_id = ""
+						// if fee id exist but the payment id  doesn't exist
 						if(payment_arr[0] !== undefined){
-							payment_id = payment_arr[0][0]
+							payment_arr[0].forEach(elem => {
+								if(typeof(elem)==="string")
+									paymentIdArr.push(elem);
+							});
 						}
 
 						if (current_fee_value === undefined) {
@@ -154,9 +164,9 @@ class ManageFees extends Component {
 							agg[fee_key] = {
 								count: 0, 
 								stds_fees_id: {
-									[f_id]: { 
-										std_id: curr.id,
-										p_id: payment_id
+									[fee_id]: { 
+										student_id: curr.id,
+										payment_id_arr: paymentIdArr
 									}
 								}
 							}
@@ -167,9 +177,9 @@ class ManageFees extends Component {
 								count: (agg[fee_key].count || 0) + 1,
 								stds_fees_id: {
 									...agg[fee_key].stds_fees_id,
-									[f_id]: { 
-										std_id: curr.id,
-										p_id: payment_id
+									[fee_id]: { 
+										student_id: curr.id,
+										payment_id_arr: paymentIdArr
 									}
 								}
 							}
@@ -246,7 +256,18 @@ class ManageFees extends Component {
 				<div className="divider">Recent Added Fees</div>
 				<div className="section">
 				{ Object.entries(fee_counts)
-					.filter(([, val]) => val.count > 2 )
+					.filter(([k, val]) => {
+						if(this.state.feeFilter === "to_all_students") {
+							// get size of all students
+							const total_students = Object.values(this.props.students).length
+							return val.count > .9 * total_students;
+						}
+						else if(this.state.feeFilter === "to_single_class" && this.state.section_id != "") {
+							// get size of class with section_id this.state.section_id
+							const size_of_class = Object.values(this.props.students).filter( s => s.section_id === this.state.section_id).length;
+							return val > .9 * size_of_class
+						}
+					})
 					.map(([key, val]) => 
 						<div className="row" key={key}>
 							<label style={{ 'width' : "80%" }}>{ key }</label>

@@ -531,25 +531,26 @@ export const addMultipleFees = (fees: FeeAddItem[]) => (dispatch: Function) => {
 
 type FeeDeleteItem = {
 	[id: string]: {
-		std_id: string
-		p_id: string
+		student_id: string
+		payment_id_arr: []
 	}
 }
 
 export const deleteMultipleFees = (stds_fees_id: FeeDeleteItem) => (dispatch: Function) => {
 	
-	// stds_fees_id is an object that contains fee id as key and object { std_id: string, p_id: string } as value
-	
-	const deletes = Object.entries(stds_fees_id).reduce((agg, [fee_id, {std_id, p_id}]) =>{
+	// stds_fees_id is an object that contains fee id as key and object { student_id: string, payment_id: [] } as value
 
-		return [...agg, 
+	const deletes = Object.entries(stds_fees_id).reduce((agg, [fee_id, {student_id, payment_id_arr}]) =>{
+
+		const pay_deletes = payment_id_arr.map(pid => ({ path: ["db", "students", student_id, "payments", pid]}))
+		
+		return [
+			...agg, 
 			{
-				path: ["db","students", std_id, "fees", fee_id]
+				path: ["db","students", student_id, "fees", fee_id]
 			},
-			{
-				path: ["db", "students", std_id, "payments", p_id]
-			},
-		]}, [])	
+			...pay_deletes
+		]}, [])
 
 	dispatch(createDeletes(deletes))
 }
