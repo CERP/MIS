@@ -4,11 +4,12 @@ import { v4 } from 'node-uuid'
 
 import {getSectionsFromClasses} from 'utils/getSectionsFromClasses';
 
-import { addMultipleFees } from 'actions'
+import { addMultipleFees, addFee, addPayment } from 'actions'
 
 import former from 'utils/former'
 import Layout from 'components/Layout'
 import Banner from 'components/Banner'
+import moment from 'moment'
 
 
 class ManageFees extends Component {
@@ -24,6 +25,7 @@ class ManageFees extends Component {
 			},
 			feeFilter: "to_all_students",
 			section_id: "",
+			selected_student_id: "",
 			fee: {
 					name: "",
 					type: "",
@@ -44,52 +46,81 @@ class ManageFees extends Component {
 			this.state.fee.period === "" || 
 			this.state.fee.type === ""
 			){
+				setTimeout(() => this.setState({ banner: { active: false } }), 3000);
 				return this.setState({
 					banner:
 					{
 						active: true,
 						good:false,
-						text: "Please Fill All of the Information "
+						text: "Please fill all of the information"
 					}
 				})
 			}
 		
-		const fees = Object.values(students)
-			.filter( s => s.Active && this.state.section_id === "" ? true : s.section_id === this.state.section_id)
-			.map(student => {
-				const fee_id = v4()
-				const {name, amount, type, period } = this.state.fee
-				return {
-						student,
-						fee_id,
-						name,
-						amount,
-						type,
-						period
+		if(this.state.feeFilter === "to_all_students" || this.state.feeFilter === "to_single_class") {
+		
+			const fees = Object.values(students)
+				.filter( s => s.Active && this.state.section_id === "" ? true : s.section_id === this.state.section_id)
+				.map(student => {
+					const fee_id = v4()
+					const {name, amount, type, period } = this.state.fee
+					return {
+							student,
+							fee_id,
+							name,
+							amount,
+							type,
+							period
+						}
+					})
+
+			if(fees === undefined){
+				return this.setState({
+					banner:
+					{
+						active: true,
+						good:false,
+						text: "There are no students for this Class"
 					}
 				})
-
-		if(fees === undefined){
-			return this.setState({
-				banner:
-				{
-					active: true,
-					good:false,
-					text: "There are no students for this Class"
-				}
-			})
+			}
+			
+			// invoking multiple method
+			this.props.addMultipleFees(fees)
 		}
 
-		this.props.addMultipleFees(fees)
-		
+		if(this.state.feeFilter === "to_single_student" && this.state.selected_student_id !=="") {
+			
+			const fee_id = v4()
+			const student_fee = {
+				student_id: this.state.selected_student_id,
+				fee_id: fee_id,
+				...this.state.fee
+			}
+
+			const student = {
+				id: this.state.selected_student_id
+			}
+			const payment_id = fee_id
+			const amount = parseFloat(this.state.fee.amount)
+			const name  = this.state.fee.name
+			const date = moment.now()
+			const type = "SUBMITTED"
+			
+			// add fee
+			this.props.addFee(student_fee)
+			// add payment
+			this.props.addPayment(student, payment_id, amount, date, type, fee_id, name);
+
+		}
+
 		this.setState({
 			banner: {
 				active: true,
 				good: true,
-				text: "Saved!"
+				text: "Fee added successfully"
 			}
 		})
-
 		setTimeout(() => this.setState({ banner: { active: false } }), 3000);
 	}
 
@@ -106,7 +137,6 @@ class ManageFees extends Component {
 
 				<div className="title">Fee Management</div>
 				<div className="form">
-
 					<div className="divider">Add Fees</div>
 					<div className="section">
 						<div className="row"> 
@@ -115,20 +145,34 @@ class ManageFees extends Component {
 								<option value="">Select Students</option>
 								<option value="to_all_students">All Students</option>
 								<option value="to_single_class">Single Class</option>
+								<option value="to_single_student">Single Student</option>
 							</select>
 						</div>
 
-						{this.state.feeFilter === "to_single_class" ?  //Section Wise
+						{this.state.feeFilter === "to_single_class" || this.state.feeFilter === "to_single_student" ?  //Section Wise
                         <div className="row"> 
 							<label>Select Class</label>		
 							<select {...this.former.super_handle(["section_id"])}>
-								<option value="" >Select</option>
+								<option value="" >Select class</option>
 								{
 									sortedSections.map( s => <option key={s.id} value={s.id}>{s.namespaced_name}</option>)
 								}
 							</select>
 						</div> : false}
+						{this.state.feeFilter === "to_single_student" && this.state.section_id != "" ?
+						<div className = "row">
+							<label>Select student</label>
+							<select {...this.former.super_handle(["selected_student_id"])}>
+								<option value = "">Select student</option>
+								{
+									Object.values(this.props.students)
+										  .filter(  s => s.Active && s.section_id === this.state.section_id)
+										  .map(s => <option key={s.id} value={s.id}>{s.Name}</option>)
+								}
+							</select>
+						</div> : false}
 					</div>
+
 					<div className="section">
                         <div className="row"> 
 							<label>Fee Type</label>		
@@ -167,4 +211,6 @@ export default connect(state => ({
 	classes: state.db.classes,
 }), dispatch => ({
 	addMultipleFees: (fees) => dispatch(addMultipleFees(fees)),
+	addFee: (fee) => dispatch(addFee(fee)),
+	addPayment: (student, payment_id, amount, date, type, fee_id, fee_name) => dispatch(addPayment(student, payment_id, amount, date, type, fee_id, fee_name)) 
 }))(ManageFees);
