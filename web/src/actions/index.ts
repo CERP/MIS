@@ -514,7 +514,7 @@ type FeeAddItem  = MISStudentFee & {
 
 export const addMultipleFees = (fees: FeeAddItem[]) => (dispatch: Function) => {
 	
-	//fees is an array of { student, fee_id, amount, type, period, name}
+	// fees is an array of { student, fee_id, amount, type, period, name}
 	
 	const merges = fees.map(f => ({
 		path: ["db","students", f.student.id, "fees", f.fee_id],
@@ -532,18 +532,16 @@ export const addMultipleFees = (fees: FeeAddItem[]) => (dispatch: Function) => {
 type FeeDeleteItem = {
 	[id: string]: {
 		student_id: string
-		payment_id_arr: []
+		paymentIds: []
 	}
 }
 
-export const deleteMultipleFees = (stds_fees_id: FeeDeleteItem) => (dispatch: Function) => {
+export const deleteMultipleFees = (students_fees: FeeDeleteItem) => (dispatch: Function) => {
 	
-	// stds_fees_id is an object that contains fee id as key and object { student_id: string, payment_id: [] } as value
-
-	const deletes = Object.entries(stds_fees_id).reduce((agg, [fee_id, {student_id, payment_id_arr}]) =>{
-
-		const pay_deletes = payment_id_arr.map(pid => ({ path: ["db", "students", student_id, "payments", pid]}))
+	// students_fees is an object that contains fee id as key and object { student_id: string, payment_id: [] } as value
+	const deletes = Object.entries(students_fees).reduce((agg, [fee_id, {student_id, paymentIds}]) =>{
 		
+		const pay_deletes = paymentIds ? paymentIds.map(pid => ({ path: ["db", "students", student_id, "payments", pid]})) : []
 		return [
 			...agg, 
 			{

@@ -36,19 +36,21 @@ class ManageFees extends Component {
 		this.former = new former(this, [])
 	}
 
-	delete = (stds_fees_id) => {
+	delete = (students_fees) => {
 
-		if(window.confirm("Are you sure you want to undo added students fees?")){
+		const effect_count = Object.values(students_fees).length
+
+		if(window.confirm(effect_count+" student records will be effected! Are you sure you want to Delete Added Fees?")){
 
 			setTimeout(() => this.setState({ banner: { active: false } }), 3000);
 			
-			this.props.deleteMultipleFees(stds_fees_id)
+			this.props.deleteMultipleFees(students_fees)
 
 			this.setState({
 				banner: {
 					active: true,
 					good: true,
-					text: "Bulk fees removed"
+					text: "Bulk fees removed successfully"
 				}
 			})	
 		
@@ -101,8 +103,9 @@ class ManageFees extends Component {
 			})
 		}
 		
-		const temp = this.state.feeFilter === "to_all_students" ? 'school' : 'class';
-		const alert_message = `Are you sure you want to add fee to whole ${temp} students?` 
+		const temp = this.state.feeFilter === "to_all_students" ? 'All' : 'Class';
+		const effect_count = Object.values(fees).length
+		const alert_message = `${effect_count} student records will be effected! Are you sure you want to add fee to whole ${temp} Students?`
 		
 		if (window.confirm(alert_message)) {
 
@@ -120,6 +123,7 @@ class ManageFees extends Component {
 	}
 
 	filterCallBack = () => this.state.feeFilter === "to_all_students" ? this.setState({ section_id: "" }) : true
+
 	render() {
 
 		const { classes } = this.props;
@@ -129,7 +133,7 @@ class ManageFees extends Component {
 			.reduce((agg, curr) => {
 				
 				const fees = curr.fees;
-				const payments = curr.payments
+				const curr_payments = curr.payments
 		
 				Object.entries(fees)
 					.forEach(([fee_id, fee]) => {
@@ -138,48 +142,38 @@ class ManageFees extends Component {
 						if(fee_id === "") return;
 
 						const fee_key = `${fee.name}-${fee.period}-${fee.type}-${fee.amount}`
-						const current_fee_value = agg[fee_key]
-
 						const curr_date = moment().format("MM/YYYY")
 
-						const payment_arr = Object.entries(payments)
+						const payments = Object.entries(curr_payments)
 							.filter(([payment_id, payment]) => payment && 
 								payment.type === "OWED" &&
 								moment(payment.date).format("MM/YYYY") === curr_date &&
 								payment.fee_id === fee_id
 							)
-					
-						let paymentIdArr = new Array();
-						
-						// if fee id exist but the payment id  doesn't exist
-						if(payment_arr[0] !== undefined){
-							payment_arr[0].forEach(elem => {
-								if(typeof(elem)==="string")
-									paymentIdArr.push(elem);
-							});
-						}
 
-						if (current_fee_value === undefined) {
-							
-							agg[fee_key] = {
-								count: 0, 
-								stds_fees_id: {
-									[fee_id]: { 
-										student_id: curr.id,
-										payment_id_arr: paymentIdArr
-									}
-								}
-							}
-						}
+						// need to check if payment exists or not
+						const paymentIds =  new Array()
+						if(payments !== undefined)
+							payments.map(([pid, ]) => pid)
 
 						if(agg[fee_key]) {
 							agg[fee_key] = {
-								count: (agg[fee_key].count || 0) + 1,
-								stds_fees_id: {
-									...agg[fee_key].stds_fees_id,
-									[fee_id]: { 
+								count: agg[fee_key].count + 1,
+								students_fees: {
+									...agg[fee_key].students_fees,
+									[fee_id]: {
 										student_id: curr.id,
-										payment_id_arr: paymentIdArr
+										paymentIds: paymentIds
+									}
+								}
+							}
+						} else {
+							agg[fee_key] = {
+								count: 1,
+								students_fees: {
+									[fee_id]: {
+										student_id: curr.id,
+										payment_id_arr: paymentIds
 									}
 								}
 							}
@@ -189,10 +183,9 @@ class ManageFees extends Component {
 				return agg;
 
 			}, {})
-			
-		const fee_counts = Object.keys(reduced_fees)
-								.sort()
-								.reduce((agg, curr) => (agg[curr] = reduced_fees[curr], agg), {})
+		
+		// sorting fees by value
+		const fee_counts = Object.keys(reduced_fees).sort().reduce((agg, curr) => (agg[curr] = reduced_fees[curr], agg), {})
 		
 		return <Layout history={this.props.history}>
 			<div className="form sms-page">
@@ -228,7 +221,7 @@ class ManageFees extends Component {
 						<div className="row">
 							<label>Fee Type</label>
 							<select {...this.former.super_handle(["fee", "type"])}>
-								<option value="">Select type</option>
+								<option value="">Select Fee Type</option>
 								<option value="FEE">Fee</option>
 								<option value="SCHOLARSHIP">Scholarship</option>
 							</select>
@@ -244,7 +237,7 @@ class ManageFees extends Component {
 						<div className="row">
 							<label>Fee Period</label>
 							<select {...this.former.super_handle(["fee", "period"])}>
-								<option value="">Select period</option>
+								<option value="">Select Period</option>
 								<option value="MONTHLY">Monthly</option>
 								<option value="SINGLE">One Time</option>
 							</select>
@@ -254,7 +247,7 @@ class ManageFees extends Component {
 				</div>
 
 				<div className="divider">Recent Added Fees</div>
-				<div className="section">
+				<div className="section form">
 				{ Object.entries(fee_counts)
 					.filter(([k, val]) => {
 						if(this.state.feeFilter === "to_all_students") {
@@ -270,8 +263,8 @@ class ManageFees extends Component {
 					})
 					.map(([key, val]) => 
 						<div className="row" key={key}>
-							<label style={{ 'width' : "80%" }}>{ key }</label>
-							<div className={ `button red` } style={{ padding : "5px 2px" }} onClick={ () => this.delete (val.stds_fees_id) }>Undo</div>
+							<label>{ key }</label>
+							<div className="button red" style={{ padding : "5px 2px" }} onClick={ () => this.delete (val.students_fees) }>Delete</div>
 						</div>
 				)}
 				</div>
@@ -286,5 +279,5 @@ export default connect(state => ({
 	classes: state.db.classes,
 }), dispatch => ({
 	addMultipleFees: (fees) => dispatch(addMultipleFees(fees)),
-	deleteMultipleFees: (stds_fees_id) => dispatch(deleteMultipleFees(stds_fees_id))
+	deleteMultipleFees: (students_fees) => dispatch(deleteMultipleFees(students_fees))
 }))(ManageFees);

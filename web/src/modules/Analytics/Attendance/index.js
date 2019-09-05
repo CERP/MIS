@@ -127,11 +127,11 @@ class AttendanceAnalytics extends Component {
 
 			for(let [date, record] of Object.entries(student.attendance)) {
 
-				totals[record.status] += 1;
-				s_record[record.status] += 1;
-				
 				if( moment(date).isBefore(temp_sd) && moment(date).isAfter(temp_ed) )
 					continue
+
+				totals[record.status] += 1;
+				s_record[record.status] += 1;
 
 				const period_format = this.state.selected_period === 'Monthly' ? 'MM/YYYY' : 'DD/MM/YYYY'
 				const period_key = moment(date).format(period_format);
@@ -175,7 +175,7 @@ class AttendanceAnalytics extends Component {
 			<div>{(totals.ABSENT/totals.PRESENT * 100).toFixed(2)}%</div>
 		</div>
 
-		<div className="no-print row" style={{justifyContent: "flex-end", margin: "5px 0px 5px"}}>
+		<div className="no-print btn-filter-toggle row">
 			<div className="button green" onClick={ () => this.setState({isAttendanceFilterActive: !this.state.isAttendanceFilterActive})}>Show Filters
 			</div>
 		</div>
@@ -198,8 +198,8 @@ class AttendanceAnalytics extends Component {
 				<div className="row">	
 					<label> Class </label>
 					<select {...this.former.super_handle(["selected_section_id"])}>
-							<option value="">Select class</option>
-							<option value="">All classes </option> {
+							<option value="">All Classes </option> 
+							{
 								getSectionsFromClasses(this.props.classes)
 										.map(s => <option key={s.id} value={s.id}>{s.namespaced_name}</option>)
 							}
@@ -274,7 +274,7 @@ class AttendanceAnalytics extends Component {
 					placeholder="search"
 				/>
 				<select {...this.former.super_handle(["classFilter"])}>
-					<option value="">Select class</option>
+					<option value="">Select Class</option>
 					{
 						sections
 							.map(s => {
