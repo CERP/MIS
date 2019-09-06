@@ -1,23 +1,61 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, RouteComponentProps } from 'react-router-dom'
 import { connect } from 'react-redux'
 import moment from 'moment'
-import { PrintHeader } from 'components/Layout'
-import Former from "utils/former"
-import getSectionsFromClasses from 'utils/getSectionsFromClasses'
+import { PrintHeader } from '../../../components/Layout'
+import Former from "../../../utils/former"
+import getSectionsFromClasses from '../../../utils/getSectionsFromClasses'
 
 import { ResponsiveContainer, Line, XAxis, YAxis, LineChart, Tooltip } from 'recharts'
 
 import './style.css'
 
-const AttendanceChart = ({attendance, filter}) => {		
+interface Attendance {
+	PRESENT: number
+	ABSENT: number
+	LEAVE: number
+	SICK_LEAVE: number
+	SHORT_LEAVE: number
+	CASUAL_LEAVE: number
+}
 
-	return <ResponsiveContainer width="100%" height={200}>
+interface Filter {
+		present: boolean
+		absent: boolean
+		leave: boolean
+		percentage: boolean
+}
+
+type SAttendance = Attendance & { student: MISStudent }
+
+interface ChartData {
+	attendance: {
+		[id: string]: Attendance
+	}
+	filter: Filter
+}
+
+interface TableData {
+	attendance: {
+		[id: string]: Attendance
+	}
+	totals: {
+		PRESENT: number;
+		LEAVE: number;
+		ABSENT: number;
+		SICK_LEAVE: number;
+		SHORT_LEAVE: number;
+		CASUAL_LEAVE: number;
+	}
+}
+
+const AttendanceChart = ({attendance, filter}: ChartData) => {		
+		return <ResponsiveContainer width="100%" height={200}>
 					<LineChart 
 						data={Object.entries(attendance)
-						.sort(([month, ], [m2, ]) => moment(month).isBefore(m2))
-						.map(([month, { student, PRESENT, LEAVE, ABSENT }]) => ({
-							month, PRESENT, LEAVE, ABSENT, percent: (1 - ABSENT / (PRESENT + LEAVE)) * 100
+						.sort(([month, ], [m2, ]) => moment(month).isBefore(m2) ? 1 : 0)
+						.map(([month, { PRESENT, LEAVE, ABSENT, CASUAL_LEAVE, SHORT_LEAVE, SICK_LEAVE }]) => ({
+							month, PRESENT, LEAVE: (LEAVE + CASUAL_LEAVE + SHORT_LEAVE + SICK_LEAVE), ABSENT, percent: (1 - ABSENT / (PRESENT + LEAVE)) * 100
 						}))}>
 
 						<XAxis dataKey="month"/>
@@ -25,14 +63,14 @@ const AttendanceChart = ({attendance, filter}) => {
 
 						<Tooltip />
 						
-						{ filter.present && <Line dataKey="PRESENT" stackId="a" stroke="#93d0c5" strokeWidth={3} name="Present"/> }
-						{ filter.absent && <Line dataKey="ABSENT" stackId="a" stroke="#ff6b68" strokeWidth={3} name="Absent" />}
-						{ filter.leave && <Line dataKey="LEAVE" stackId="a" stroke="#807f7f" strokeWidth={3} name="Leave" />}
+						{ filter.present && <Line dataKey="PRESENT" stroke="#93d0c5" strokeWidth={3} name="Present"/> }
+						{ filter.absent && <Line dataKey="ABSENT" stroke="#ff6b68" strokeWidth={3} name="Absent" />}
+						{ filter.leave && <Line dataKey="LEAVE" stroke="#807f7f" strokeWidth={3} name="Leave" />}
 						{ filter.percentage && <Line dataKey="percent" stroke="#74aced" strokeWidth={3} name="Percentage" />}
 					</LineChart>
 			</ResponsiveContainer>
 }
-const AttendanceTable = ({attendance, totals}) =>{
+const AttendanceTable = ({attendance, totals}:TableData) =>{
 	return <div className="section table line" style={{margin: "20px 0", backgroundColor:"#c2bbbb21" }}>
 				<div className="table row heading">
 					<label style={{ backgroundColor: "#efecec"}}><b>Date</b></label>
@@ -43,32 +81,59 @@ const AttendanceTable = ({attendance, totals}) =>{
 				</div>
 				{
 					[...Object.entries(attendance)
-						.sort(([month, ], [m2, ]) =>moment(month).isBefore(m2))
-						.map(([month, {student ,PRESENT, LEAVE, ABSENT} ]) =>
+						.sort(([month, ], [m2, ]) => moment(month).isBefore(m2) ? 1 : 0)
+						.map(([month, {PRESENT, LEAVE, ABSENT, CASUAL_LEAVE, SHORT_LEAVE, SICK_LEAVE} ]) =>
 						
 							<div className="table row">
 								<div style={{ backgroundColor: "#efecec"}}>{month }</div>
 								<div style={{ backgroundColor: "#93d0c5"}}>{PRESENT}</div>
 								<div style={{ backgroundColor: "#fc6171"}}>{ABSENT}</div>
-								<div style={{ backgroundColor: "#e0e0e0"}}>{LEAVE}</div>
-								<div style={{ backgroundColor: "#bedcff"}}>{ Math.round((ABSENT / (PRESENT + LEAVE)) * 100)}%</div>
+								<div style={{ backgroundColor: "#e0e0e0"}}>{LEAVE + CASUAL_LEAVE + SHORT_LEAVE + SICK_LEAVE}</div>
+								<div style={{ backgroundColor: "#bedcff"}}>{ Math.round((ABSENT / (PRESENT + (LEAVE + CASUAL_LEAVE + SHORT_LEAVE + SICK_LEAVE) )) * 100)}%</div>
 							</div>
 						),
 						<div className="table row footing" style={{borderTop: '1.5px solid #333'}} key={Math.random()}>   
 							<label style={{ backgroundColor: "#efecec"}}><b>Total</b></label>
 							<label style={{ backgroundColor: "#93d0c5"}}><b>{totals.PRESENT}</b></label>
 							<label style={{ backgroundColor: "#fc6171"}}><b>{totals.ABSENT}</b></label>
-							<label style={{ backgroundColor: "#e0e0e0"}}><b>{totals.LEAVE}</b></label>
-							<label style={{ backgroundColor: "#bedcff"}}><b>{Math.round((1 - totals.ABSENT / (totals.PRESENT + totals.LEAVE)) * 100)}%</b></label>
+							<label style={{ backgroundColor: "#e0e0e0"}}><b>{totals.LEAVE + totals.CASUAL_LEAVE + totals.SHORT_LEAVE + totals.SICK_LEAVE}</b></label>
+							<label style={{ backgroundColor: "#bedcff"}}><b>{Math.round((1 - totals.ABSENT / (totals.PRESENT + (totals.LEAVE + totals.CASUAL_LEAVE + totals.SHORT_LEAVE + totals.SICK_LEAVE))) * 100)}%</b></label>
 						</div>
 					]
 				}
 			</div> 
 }
 
-class AttendanceAnalytics extends Component {
+interface P {
+	students: RootDBState["students"]
+	classes: RootDBState["classes"]
+	settings: RootDBState["settings"]
+	schoolLogo: RootDBState["assets"]["schoolLogo"]
+}
 
-	constructor(props) {
+interface S {
+	filterText: string
+	chartFilter: {
+		present: boolean
+		absent: boolean
+		leave: boolean
+		percentage: boolean
+	},
+	classFilter: string,
+	selected_section_id: string,
+	selected_period: string,
+	start_date: string,
+	end_date: string,
+	isAttendanceFilterActive: boolean,
+}
+
+type propTypes = RouteComponentProps & P
+	
+	
+class AttendanceAnalytics extends Component < propTypes, S > {
+
+	former: Former
+	constructor(props: propTypes) {
 	  super(props)
 	
 	  this.state = {
@@ -82,8 +147,8 @@ class AttendanceAnalytics extends Component {
 		 classFilter: "",
 		 selected_section_id: "",
 		 selected_period: "Monthly",
-		 start_date: moment().subtract(1,'year'),
-		 end_date: moment(),
+		 start_date: moment().subtract(1,'year').format("YYYY-MM-DD"),
+		 end_date: moment().format("YYYY-MM-DD"),
 		 isAttendanceFilterActive: false,
 	  }
 	  this.former = new Former(this, [])
@@ -94,8 +159,8 @@ class AttendanceAnalytics extends Component {
 		if( this.state.selected_period==="Monthly" )
 		{
 			this.setState({
-				start_date: moment().subtract(1,'year'),
-				end_date: moment.now()
+				start_date: moment().subtract(1,'year').format("YYYY-MM-DD"),
+				end_date: moment().format("YYYY-MM-DD")
 			})
 		}
 	}
@@ -105,13 +170,14 @@ class AttendanceAnalytics extends Component {
 	{
 		const { students, classes, settings, schoolLogo } = this.props
 
-		let totals = { PRESENT: 0, LEAVE: 0, ABSENT: 0 };
-		let attendance = { } // [mm/yyyy]: { present / absent / leave }
-		let student_attendance = { } // [id]: { absents, presents, leaves }
-		
+
 		const selected_section = this.state.selected_section_id;
-		const temp_sd = moment(this.state.start_date)
-		const temp_ed = moment(this.state.end_date)
+		const temp_sd = moment(this.state.start_date).format("YYYY-MM-DD")
+		const temp_ed = moment(this.state.end_date).format("YYYY-MM-DD")
+
+		let totals = { PRESENT: 0, LEAVE: 0, ABSENT: 0, SICK_LEAVE: 0, SHORT_LEAVE: 0, CASUAL_LEAVE: 0 };
+		let attendance : {[id: string]: Attendance } = { } // [mm/yyyy]: { present / absent / leave }
+		let student_attendance : {[id: string]: SAttendance } = { } // [id]: { absents, presents, leaves }
 
 		for(let [sid, student] of Object.entries(students)){
 			
@@ -123,19 +189,20 @@ class AttendanceAnalytics extends Component {
 				continue;
 			}
 
-			let s_record = { PRESENT: 0, LEAVE: 0, ABSENT: 0 }
+			let s_record = { PRESENT: 0, LEAVE: 0, ABSENT: 0, SICK_LEAVE: 0, SHORT_LEAVE: 0, CASUAL_LEAVE: 0 }
 
 			for(let [date, record] of Object.entries(student.attendance)) {
 
-				if( moment(date).isBefore(temp_sd) && moment(date).isAfter(temp_ed) )
+				if(!( moment(date).isAfter(temp_sd) && moment(date).isBefore(temp_ed) )){
 					continue
+				}
 
 				totals[record.status] += 1;
 				s_record[record.status] += 1;
 
 				const period_format = this.state.selected_period === 'Monthly' ? 'MM/YYYY' : 'DD/MM/YYYY'
 				const period_key = moment(date).format(period_format);
-				const m_status = attendance[period_key] || { PRESENT: 0, LEAVE: 0, ABSENT: 0}
+				const m_status = attendance[period_key] || { PRESENT: 0, LEAVE: 0, ABSENT: 0, SHORT_LEAVE:0 , CASUAL_LEAVE: 0, SICK_LEAVE:0 }
 				m_status[record.status] += 1;
 				attendance[period_key] = m_status;
 			}
@@ -167,7 +234,7 @@ class AttendanceAnalytics extends Component {
 			<div>{totals.ABSENT}</div>
 		</div>
 		<div className="table row">
-			<label>Total Present</label>
+			<label>Total Leave</label>
 			<div>{totals.LEAVE}</div>
 		</div>
 		<div className="table row">
@@ -301,7 +368,7 @@ class AttendanceAnalytics extends Component {
 	</div>
 	}
 }
-export default connect(state =>({
+export default connect((state : RootReducerState ) =>({
 	students: state.db.students,
 	classes: state.db.classes,
 	settings: state.db.settings,

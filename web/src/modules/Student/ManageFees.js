@@ -125,8 +125,9 @@ class ManageFees extends Component {
 	filterCallBack = () => this.state.feeFilter === "to_all_students" ? this.setState({ section_id: "" }) : true
 
 	render() {
-
+		
 		const { classes } = this.props;
+		const sortedSections = getSectionsFromClasses(classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0));
 
 		const reduced_fees = Object.values(this.props.students)
 			.filter(x => x.Name && x.fees && x.payments)
@@ -207,15 +208,15 @@ class ManageFees extends Component {
 						</div>
 
 						{this.state.feeFilter === "to_single_class" ?  //Section Wise
-							<div className="row">
-								<label>Select Class</label>
-								<select {...this.former.super_handle(["section_id"])}>
-									<option value="">Select class</option>
-									{Object.entries(getSectionsFromClasses(classes))
-										.map(([id, S]) => <option key={id} value={S.id}>{S.namespaced_name}</option>)
-									}
-								</select>
-							</div> : false}
+                        <div className="row"> 
+							<label>Select Class</label>		
+							<select {...this.former.super_handle(["section_id"])}>
+								<option value="" >Select Class</option>
+								{
+									sortedSections.map( s => <option key={s.id} value={s.id}>{s.namespaced_name}</option>)
+								}
+							</select>
+						</div> : false}
 					</div>
 					<div className="section">
 						<div className="row">

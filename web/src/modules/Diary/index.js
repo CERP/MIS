@@ -55,7 +55,7 @@ class Diary extends Component {
 				text: "Saved!"
 			},
 			selected_section_id: "",
-			diary: props.diary && moment(props.diary.date).format("DD/MM/YYYY") === curr_date ? props.diary : diary
+			diary: props.diary && moment(props.diary.date).format("DD/MM/YYYY") === curr_date ? JSON.parse(JSON.stringify(props.diary)) : diary
 		}
 
 		this.former = new former(this, [])
@@ -83,13 +83,29 @@ class Diary extends Component {
 		const curr_date = moment().format("DD/MM/YYYY")
 
 		this.setState({
-			diary: newProps.diary && moment(newProps.diary.date).format("DD/MM/YYYY") === curr_date ? newProps.diary : this.props.diary
+			diary: newProps.diary && moment(newProps.diary.date).format("DD/MM/YYYY") === curr_date ? JSON.parse(JSON.stringify(newProps.diary)) : JSON.parse(JSON.stringify(this.props.diary))
 		})
 	}
 
 	onSave = () => {
+		//Here need to send subjects rather then the whole section's diary
 
-		const diary = this.state.diary[this.state.selected_section_id]
+		const diary = Object.entries(this.state.diary[this.state.selected_section_id] || {})
+			.filter(([subject, d]) => 
+				(this.props.diary === undefined) || 
+				(this.props.diary[this.state.selected_section_id] === undefined) ||
+				(this.props.diary[this.state.selected_section_id][subject] === undefined) ||
+				d.homework !== this.props.diary[this.state.selected_section_id][subject].homework
+			)
+			.reduce((agg, [s, diary]) => {
+
+				return {
+					...agg,
+					[s]: diary
+				}
+
+			}, {})
+
 		if(diary === undefined) {
 			this.setState({
 				banner: {
@@ -150,6 +166,8 @@ class Diary extends Component {
 
 		const { classes, students, sendBatchMessages, smsOption } = this.props;
 
+		const sortedSections = getSectionsFromClasses(classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0));
+
 		const subjects = new Set()
 		
 		for(let c of Object.values(classes)){
@@ -178,7 +196,7 @@ class Diary extends Component {
 					}
 				]
 			}, [])
-	
+
 	return <Layout history={this.props.history}>
 		<div className="sms-page">
 
@@ -194,8 +212,7 @@ class Diary extends Component {
 							<select {...this.former.super_handle(["selected_section_id"])}>
 								<option value="" disabled>Select Section</option>
 								{
-									Object.entries(getSectionsFromClasses(classes))
-										.map(([id, C]) => <option key={id} value={C.id}>{C.namespaced_name}</option>)
+									sortedSections.map( s => <option key={s.id} value={s.id}>{s.namespaced_name}</option>)	
 								}
 							</select>
 						</div>
@@ -245,8 +262,8 @@ export default connect(state => ({
 	classes: state.db.classes,
 	smsOption: state.db.settings.sendSMSOption
 }), dispatch => ({
-	sendMessage: (text, number) => dispatch(sendSMS(text, number)),
+	sendMessage : (text, number) => dispatch(sendSMS(text, number)),
 	sendBatchMessages: (messages ) => dispatch(sendBatchSMS(messages)),
 	logSms: (faculty_id, history) => dispatch(logSms(faculty_id, history)),
 	addDiary: (section_diary, section_id) => dispatch(addDiary(section_diary, section_id))
-}))(Diary);
+	}))(Diary);
