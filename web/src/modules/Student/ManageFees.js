@@ -153,7 +153,7 @@ class ManageFees extends Component {
 							)
 
 						// need to check if payment exists or not
-						const paymentIds =  new Array()
+						const paymentIds =  []
 						if(payments !== undefined)
 							payments.map(([pid, ]) => pid)
 
@@ -256,7 +256,7 @@ class ManageFees extends Component {
 							const total_students = Object.values(this.props.students).length
 							return val.count > .9 * total_students;
 						}
-						else if(this.state.feeFilter === "to_single_class" && this.state.section_id != "") {
+						else if(this.state.feeFilter === "to_single_class" && this.state.section_id !== "") {
 							// get size of class with section_id this.state.section_id
 							const size_of_class = Object.values(this.props.students).filter( s => s.section_id === this.state.section_id).length;
 							return val > .9 * size_of_class

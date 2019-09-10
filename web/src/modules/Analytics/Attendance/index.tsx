@@ -26,7 +26,7 @@ interface Filter {
 		percentage: boolean
 }
 
-type SAttendance = Attendance & { student: MISStudent }
+type StudentAttendance = Attendance & { student: MISStudent }
 
 interface ChartData {
 	attendance: {
@@ -34,6 +34,7 @@ interface ChartData {
 	}
 	filter: Filter
 }
+
 
 interface TableData {
 	attendance: {
@@ -55,7 +56,8 @@ const AttendanceChart = ({attendance, filter}: ChartData) => {
 						data={Object.entries(attendance)
 						.sort(([month, ], [m2, ]) => moment(month).isBefore(m2) ? 1 : 0)
 						.map(([month, { PRESENT, LEAVE, ABSENT, CASUAL_LEAVE, SHORT_LEAVE, SICK_LEAVE }]) => ({
-							month, PRESENT, LEAVE: (LEAVE + CASUAL_LEAVE + SHORT_LEAVE + SICK_LEAVE), ABSENT, percent: (1 - ABSENT / (PRESENT + LEAVE)) * 100
+							month, PRESENT, LEAVE: (LEAVE + CASUAL_LEAVE + SHORT_LEAVE + SICK_LEAVE), ABSENT, 
+							percent: (1 - ABSENT / (PRESENT + LEAVE + CASUAL_LEAVE + SHORT_LEAVE + SICK_LEAVE)) * 100
 						}))}>
 
 						<XAxis dataKey="month"/>
@@ -70,7 +72,7 @@ const AttendanceChart = ({attendance, filter}: ChartData) => {
 					</LineChart>
 			</ResponsiveContainer>
 }
-const AttendanceTable = ({attendance, totals}:TableData) =>{
+const AttendanceTable = ({attendance, totals}: TableData) =>{
 	return <div className="section table line" style={{margin: "20px 0", backgroundColor:"#c2bbbb21" }}>
 				<div className="table row heading">
 					<label style={{ backgroundColor: "#efecec"}}><b>Date</b></label>
@@ -122,9 +124,9 @@ interface S {
 	classFilter: string,
 	selected_section_id: string,
 	selected_period: string,
-	start_date: string,
-	end_date: string,
-	isAttendanceFilterActive: boolean,
+	start_date: number,
+	end_date: number,
+	isStudentAttendanceFilter: boolean,
 }
 
 type propTypes = RouteComponentProps & P
@@ -147,9 +149,9 @@ class AttendanceAnalytics extends Component < propTypes, S > {
 		 classFilter: "",
 		 selected_section_id: "",
 		 selected_period: "Monthly",
-		 start_date: moment().subtract(1,'year').format("YYYY-MM-DD"),
-		 end_date: moment().format("YYYY-MM-DD"),
-		 isAttendanceFilterActive: false,
+		 start_date: moment().subtract(1,'year').unix() * 1000,
+		 end_date: moment().unix() * 1000,
+		 isStudentAttendanceFilter: false,
 	  }
 	  this.former = new Former(this, [])
 	}
@@ -159,17 +161,16 @@ class AttendanceAnalytics extends Component < propTypes, S > {
 		if( this.state.selected_period==="Monthly" )
 		{
 			this.setState({
-				start_date: moment().subtract(1,'year').format("YYYY-MM-DD"),
-				end_date: moment().format("YYYY-MM-DD")
+				start_date: moment().subtract(1,'year').unix() * 1000,
+				end_date: moment().unix() * 1000
 			})
 		}
 	}
 
-
 	render()
 	{
 		const { students, classes, settings, schoolLogo } = this.props
-
+		const sortedSections = getSectionsFromClasses(classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0));
 
 		const selected_section = this.state.selected_section_id;
 		const temp_sd = moment(this.state.start_date).format("YYYY-MM-DD")
@@ -177,7 +178,7 @@ class AttendanceAnalytics extends Component < propTypes, S > {
 
 		let totals = { PRESENT: 0, LEAVE: 0, ABSENT: 0, SICK_LEAVE: 0, SHORT_LEAVE: 0, CASUAL_LEAVE: 0 };
 		let attendance : {[id: string]: Attendance } = { } // [mm/yyyy]: { present / absent / leave }
-		let student_attendance : {[id: string]: SAttendance } = { } // [id]: { absents, presents, leaves }
+		let student_attendance : {[id: string]: StudentAttendance } = { } // [id]: { absents, presents, leaves }
 
 		for(let [sid, student] of Object.entries(students)){
 			
@@ -189,7 +190,7 @@ class AttendanceAnalytics extends Component < propTypes, S > {
 				continue;
 			}
 
-			let s_record = { PRESENT: 0, LEAVE: 0, ABSENT: 0, SICK_LEAVE: 0, SHORT_LEAVE: 0, CASUAL_LEAVE: 0 }
+			let attendance_status_count = { PRESENT: 0, LEAVE: 0, ABSENT: 0, SICK_LEAVE: 0, SHORT_LEAVE: 0, CASUAL_LEAVE: 0 }
 
 			for(let [date, record] of Object.entries(student.attendance)) {
 
@@ -198,7 +199,7 @@ class AttendanceAnalytics extends Component < propTypes, S > {
 				}
 
 				totals[record.status] += 1;
-				s_record[record.status] += 1;
+				attendance_status_count[record.status] += 1;
 
 				const period_format = this.state.selected_period === 'Monthly' ? 'MM/YYYY' : 'DD/MM/YYYY'
 				const period_key = moment(date).format(period_format);
@@ -206,10 +207,9 @@ class AttendanceAnalytics extends Component < propTypes, S > {
 				m_status[record.status] += 1;
 				attendance[period_key] = m_status;
 			}
-			student_attendance[sid] = {student, ...s_record}
+			student_attendance[sid] = {student, ...attendance_status_count}
 		}
 
-		const sections = getSectionsFromClasses(classes)
 		const items = Object.entries(student_attendance)
 			.filter(([ sid, { student } ]) => 
 				( (student.tags === undefined || !student.tags["PROSPECTIVE"]) && 
@@ -235,18 +235,18 @@ class AttendanceAnalytics extends Component < propTypes, S > {
 		</div>
 		<div className="table row">
 			<label>Total Leave</label>
-			<div>{totals.LEAVE}</div>
+			<div>{totals.LEAVE + totals.CASUAL_LEAVE + totals.SHORT_LEAVE + totals.SICK_LEAVE }</div>
 		</div>
 		<div className="table row">
 			<label>Absentee Percent</label>
-			<div>{(totals.ABSENT/totals.PRESENT * 100).toFixed(2)}%</div>
+			<div>{(totals.ABSENT/(totals.PRESENT + totals.LEAVE + totals.CASUAL_LEAVE + totals.SHORT_LEAVE + totals.SICK_LEAVE) * 100).toFixed(2)}%</div>
 		</div>
 
 		<div className="no-print btn-filter-toggle row">
-			<div className="button green" onClick={ () => this.setState({isAttendanceFilterActive: !this.state.isAttendanceFilterActive})}>Show Filters
+			<div className="button green" onClick={ () => this.setState({isStudentAttendanceFilter: !this.state.isStudentAttendanceFilter})}>Show Filters
 			</div>
 		</div>
-		{ this.state.isAttendanceFilterActive && <div className="no-print section form">				
+		{ this.state.isStudentAttendanceFilter && <div className="no-print section form">				
 				<div className="row">
 					<label> Start Date </label>
 					<input type="date" 
@@ -267,8 +267,7 @@ class AttendanceAnalytics extends Component < propTypes, S > {
 					<select {...this.former.super_handle(["selected_section_id"])}>
 							<option value="">All Classes </option> 
 							{
-								getSectionsFromClasses(this.props.classes)
-										.map(s => <option key={s.id} value={s.id}>{s.namespaced_name}</option>)
+								sortedSections.map(s => <option key={s.id} value={s.id}>{s.namespaced_name}</option>)
 							}
 					</select>
 				</div>
@@ -343,10 +342,7 @@ class AttendanceAnalytics extends Component < propTypes, S > {
 				<select {...this.former.super_handle(["classFilter"])}>
 					<option value="">Select Class</option>
 					{
-						sections
-							.map(s => {
-								return <option value={s.id} key={s.id}>{s.namespaced_name}</option>
-							})
+						sortedSections.map(s => <option key={s.id} value={s.id}>{s.namespaced_name}</option>)
 					}
 				</select>
 			</div>
