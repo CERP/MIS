@@ -145,17 +145,12 @@ class ManageFees extends Component {
 						const fee_key = `${fee.name}-${fee.period}-${fee.type}-${fee.amount}`
 						const curr_date = moment().format("MM/YYYY")
 
-						const payments = Object.entries(curr_payments)
+						const paymentIds = Object.entries(curr_payments)
 							.filter(([payment_id, payment]) => payment && 
 								payment.type === "OWED" &&
 								moment(payment.date).format("MM/YYYY") === curr_date &&
 								payment.fee_id === fee_id
-							)
-
-						// need to check if payment exists or not
-						const paymentIds =  []
-						if(payments !== undefined)
-							payments.map(([pid, ]) => pid)
+							).map(([pid, ]) => pid)
 
 						if(agg[fee_key]) {
 							agg[fee_key] = {
