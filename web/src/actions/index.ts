@@ -571,7 +571,8 @@ export const deleteMultipleFees = (students_fees: FeeDeleteItem) => (dispatch: F
 	// students_fees is an object that contains fee id as key and object { student_id: string, payment_id: [] } as value
 	const deletes = Object.entries(students_fees).reduce((agg, [fee_id, {student_id, paymentIds}]) =>{
 		
-		const pay_deletes = paymentIds ? paymentIds.map(pid => ({ path: ["db", "students", student_id, "payments", pid]})) : []
+		const pay_deletes = paymentIds.map(pid => ({ path: ["db", "students", student_id, "payments", pid]}))
+		
 		return [
 			...agg, 
 			{

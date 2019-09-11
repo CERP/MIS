@@ -169,7 +169,7 @@ class ManageFees extends Component {
 								students_fees: {
 									[fee_id]: {
 										student_id: curr.id,
-										payment_id_arr: paymentIds
+										paymentIds: paymentIds
 									}
 								}
 							}
