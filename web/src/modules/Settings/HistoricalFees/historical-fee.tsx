@@ -12,6 +12,7 @@ import { StudentLedgerPage } from '../../Student/Single/Fees/StudentLedgerPage';
 import getFilteredPayments from '../../../utils/getFilteredPayments';
 import Banner from '../../../components/Banner';
 
+
 export type historicalPayment = {
 	date: number
 	name: string
@@ -112,7 +113,7 @@ class historicalFee extends Component <propTypes, S > {
 
 		const { students, classes, settings } = this.props
 
-		const class_Items = getSectionsFromClasses(classes)
+		const sortedSections = getSectionsFromClasses(classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0));
 
 		const student_items = Object.values(students)
 			.filter(s => s.Name && this.state.selected_class !== "" ? s.section_id === this.state.selected_class : true)
@@ -120,7 +121,7 @@ class historicalFee extends Component <propTypes, S > {
 		const selected_student = students[this.state.selected_student]
 		
 		let filteredPayments = selected_student ? getFilteredPayments(selected_student, this.state.yearFilter, this.state.monthFilter) : false
-		const curr_class_name = this.state.selected_class ? class_Items.find( s => s.id === this.state.selected_class).namespaced_name : "None Selected"
+		const curr_class_name = this.state.selected_class ? sortedSections.find( s => s.id === this.state.selected_class).namespaced_name : "None Selected"
 		
 		const Months = new Set<string>()
 		const Years = new Set<string>()
@@ -153,7 +154,7 @@ class historicalFee extends Component <propTypes, S > {
 						<select {...this.former.super_handle(["selected_class"])}>
 							<option value="">Select Class</option>
 							{
-								class_Items.map(c => <option value={c.id} key={c.id}>{c.namespaced_name}</option>)
+								sortedSections.map(c => <option value={c.id} key={c.id}>{c.namespaced_name}</option>)
 							}
 						</select>
 					</div>
