@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { v4 } from 'node-uuid'
 import moment from 'moment'
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses';
-import { addMultipleFees, addFee, addPayment, deleteMultipleFees } from 'actions'
+import { addMultipleFees, addFee, deleteMultipleFees } from 'actions'
 import former from 'utils/former'
 import Layout from 'components/Layout'
 import Banner from 'components/Banner'
@@ -77,26 +77,14 @@ class ManageFees extends Component {
 		
 		if(this.state.feeFilter === "to_single_student" && this.state.selected_student_id !=="") {
 		
-			const fee_id = v4()
 			const student_fee = {
 				student_id: this.state.selected_student_id,
-				fee_id: fee_id,
+				fee_id: v4(),
 				...this.state.fee
 			}
 
-			const student = {
-				id: this.state.selected_student_id
-			}
-			const payment_id = fee_id
-			const amount = parseFloat(this.state.fee.amount)
-			const name  = this.state.fee.name
-			const date = moment.now()
-			const type = "OWED"
-			
 			// add fee
 			this.props.addFee(student_fee)
-			// add payment
-			this.props.addPayment(student, payment_id, amount, date, type, fee_id, name);
 			
 			this.setState({
 				banner: {
@@ -329,6 +317,5 @@ export default connect(state => ({
 }), dispatch => ({
 	addMultipleFees: (fees) => dispatch(addMultipleFees(fees)),
 	addFee: (fee) => dispatch(addFee(fee)),
-	addPayment: (student, payment_id, amount, date, type, fee_id, fee_name) => dispatch(addPayment(student, payment_id, amount, date, type, fee_id, fee_name)), 
 	deleteMultipleFees: (students_fees) => dispatch(deleteMultipleFees(students_fees))
 }))(ManageFees);
