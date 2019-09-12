@@ -36,12 +36,11 @@ class ManageFees extends Component {
 
 	delete = (students_fees) => {
 
-		const effected_student_count = Object.values(students_fees).length
+		const effected_students = Object.values(students_fees).length // no. of fees == no. of effected students
 
-		if(window.confirm(effected_student_count+" student records will be effected! Are you sure you want to Delete Added Fees?")){
-
-			setTimeout(() => this.setState({ banner: { active: false } }), 3000);
+		if(window.confirm(effected_students + " students records will be effected! Are you sure you want to Delete Added Fees?")){
 			
+			// deleting multiple fees and generated payments
 			this.props.deleteMultipleFees(students_fees)
 
 			this.setState({
@@ -50,8 +49,9 @@ class ManageFees extends Component {
 					good: true,
 					text: "Bulk fees removed successfully"
 				}
-			})	
-		
+			})
+			
+			setTimeout(() => this.setState({ banner: { active: false } }), 3000);		
 		}
 	}
 
@@ -91,7 +91,7 @@ class ManageFees extends Component {
 			const amount = parseFloat(this.state.fee.amount)
 			const name  = this.state.fee.name
 			const date = moment.now()
-			const type = "SUBMITTED"
+			const type = "OWED"
 			
 			// add fee
 			this.props.addFee(student_fee)
