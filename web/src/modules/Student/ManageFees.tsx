@@ -3,32 +3,33 @@ import { connect } from 'react-redux'
 import { RouteComponentProps } from 'react-router';
 import { v4 } from 'node-uuid'
 import moment from 'moment'
-import { addMultipleFees, addFee, deleteMultipleFees } from '../../actions'
 import Banner from '../../components/Banner'
 import Layout from '../../components/Layout'
 import former from "../../utils/former"
 import getSectionsFromClasses from '../../utils/getSectionsFromClasses'
-
+import { addMultipleFees, addFee, deleteMultipleFees } from '../../actions'
 interface  P {
 	students: RootDBState["students"]
     classes: RootDBState["classes"]   
 
     addMultipleFees: (fees: FeeAddItem[]) => any,
 	addFee: (fee: FeeSingleItem) => any,
-    deleteMultipleFees: (students_fees: FeeDeleteItem) => any,
+    deleteMultipleFees: (students_fees: FeeDeleteMap) => any,
 }
+
 interface S {
 	banner: {
 		active: boolean
-		good: boolean
-		text: string
+		good?: boolean
+		text?: string
     }
 	fee : MISStudentFee
 	selected_section_id: string
 	selected_student_id: string
 	fee_filter: string
 }
-interface FeeDeleteItem {
+
+interface FeeDeleteMap {
 	[id: string]: {
 		student_id: string
 		paymentIds: string[]
@@ -45,10 +46,10 @@ type FeeSingleItem = MISStudentFee & {
     fee_id: string
 }
 
-type ReducedFee = { 
+type ReducedFeeMap = { 
 	[id:string]: {
 		count: number
-		students_fees: FeeDeleteItem 
+		students_fees: FeeDeleteMap 
 	}
 }
 
@@ -80,7 +81,7 @@ class ManageFees extends Component <propTypes,S> {
 		this.former = new former(this, [])
 	}
 
-	delete = (students_fees: FeeDeleteItem) => {
+	delete = (students_fees: FeeDeleteMap) => {
 
 		const effected_students = Object.values(students_fees).length // no. of fees == no. of effected students
 
@@ -108,7 +109,7 @@ class ManageFees extends Component <propTypes,S> {
 			this.state.fee.period === "" ||
 			this.state.fee.type === ""
 			){
-				setTimeout(() => this.setState({ banner: { ...this.state.banner, active: false } }), 3000);
+				setTimeout(() => this.setState({ banner: { active: false } }), 3000);
 				return this.setState({
 					banner:
 					{
@@ -185,12 +186,12 @@ class ManageFees extends Component <propTypes,S> {
 			})
 		}
 
-		setTimeout(() => this.setState({ banner: { ...this.state.banner, active: false } }), 3000);
+		setTimeout(() => this.setState({ banner: { active: false } }), 3000);
 	}
 
 	getSelectedSectionStudents = ()  => {
 		return	Object.values(this.props.students)
-					.filter(  s => s.Active && s.section_id === this.state.selected_section_id)
+					.filter(  s => s.Name && s.Active && s.section_id === this.state.selected_section_id)
 					.sort( (a, b) => a.Name.localeCompare(b.Name))
 	}
 
@@ -200,8 +201,7 @@ class ManageFees extends Component <propTypes,S> {
 		const sortedSections = getSectionsFromClasses(classes).sort((a, b) => ( a.classYear || 0 ) - ( b.classYear || 0 ));
 
 		const fee_undo_students =  this.state.fee_filter === "to_all_students" ? 
-										Object.values(this.props.students) 
-										: 
+										Object.values(this.props.students): 
 										this.getSelectedSectionStudents();
 
 		const reduced_fees = fee_undo_students
@@ -254,12 +254,7 @@ class ManageFees extends Component <propTypes,S> {
 
 				return agg;
 
-			}, {} as ReducedFee )
-		
-		// sorting fees by keys
-		const fee_counts = Object.keys(reduced_fees)
-			.sort()
-			.reduce((agg, curr) => ( agg[curr] = reduced_fees[curr], agg), {} as ReducedFee )
+			}, {} as ReducedFeeMap )
 		
 		return <Layout history={this.props.history}>
 			<div className="form sms-page">
@@ -333,7 +328,7 @@ class ManageFees extends Component <propTypes,S> {
 
 				<div className="divider">Recent Added Fees</div>
 				<div className="section form">
-				{ Object.entries(fee_counts)
+				{ Object.entries(reduced_fees)
 					.filter(([k, val]) => {
 						if(this.state.fee_filter === "to_all_students") {
 							// get size of all students
@@ -346,6 +341,7 @@ class ManageFees extends Component <propTypes,S> {
 							return val.count > .9 * size_of_class
 						}
 					})
+					.sort(([a, ], [b, ]) => a.localeCompare(b))
 					.map(([key, val]) => 
 						<div className="row" key={key}>
 							<label>{ key }</label>
@@ -366,5 +362,5 @@ export default connect(( state: RootReducerState) => ({
 }), (dispatch: Function) => ({
 	addMultipleFees: (fees: FeeAddItem[]) => dispatch(addMultipleFees(fees)),
 	addFee: (fee: FeeSingleItem) => dispatch(addFee(fee)),
-	deleteMultipleFees: (students_fees: FeeDeleteItem) => dispatch(deleteMultipleFees(students_fees))
+	deleteMultipleFees: (students_fees: FeeDeleteMap) => dispatch(deleteMultipleFees(students_fees))
 }))(ManageFees);
