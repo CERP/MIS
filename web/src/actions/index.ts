@@ -582,7 +582,7 @@ export const addFee = (student_fee: SingleFeeItem) => (dispatch: Function) => {
 type FeeDeleteItem = {
 	[id: string]: {
 		student_id: string
-		paymentIds: []
+		paymentIds: string[]
 	}
 }
 

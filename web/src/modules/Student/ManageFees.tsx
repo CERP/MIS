@@ -1,17 +1,63 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { RouteComponentProps } from 'react-router';
 import { v4 } from 'node-uuid'
 import moment from 'moment'
-import { getSectionsFromClasses } from 'utils/getSectionsFromClasses';
-import { addMultipleFees, addFee, deleteMultipleFees } from 'actions'
-import former from 'utils/former'
-import Layout from 'components/Layout'
-import Banner from 'components/Banner'
+import { addMultipleFees, addFee, deleteMultipleFees } from '../../actions'
+import Banner from '../../components/Banner'
+import Layout from '../../components/Layout'
+import former from "../../utils/former"
+import getSectionsFromClasses from '../../utils/getSectionsFromClasses'
 
+interface  P {
+	students: RootDBState["students"]
+    classes: RootDBState["classes"]   
 
-class ManageFees extends Component {
+    addMultipleFees: (fees: FeeAddItem[]) => any,
+	addFee: (fee: FeeSingleItem) => any,
+    deleteMultipleFees: (students_fees: FeeDeleteItem) => any,
+}
+interface S {
+	banner: {
+		active: boolean
+		good: boolean
+		text: string
+    }
+	fee : MISStudentFee
+	selected_section_id: string
+	selected_student_id: string
+	fee_filter: string
+}
+interface FeeDeleteItem {
+	[id: string]: {
+		student_id: string
+		paymentIds: string[]
+	}
+}
 
-	constructor(props) {
+type FeeAddItem = MISStudentFee & {
+	student: MISStudent 
+	fee_id: string
+}
+
+type FeeSingleItem = MISStudentFee & {
+    student_id: string
+    fee_id: string
+}
+
+type ReducedFee = { 
+	[id:string]: {
+		count: number
+		students_fees: FeeDeleteItem 
+	}
+}
+
+type propTypes = RouteComponentProps & P
+
+class ManageFees extends Component <propTypes,S> {
+    
+    former: former
+	constructor(props: propTypes) {
 		super(props);
 
 		this.state = {
@@ -20,8 +66,8 @@ class ManageFees extends Component {
 				good: true,
 				text: "Saved!"
 			},
-			feeFilter: "to_all_students",
-			section_id: "",
+			fee_filter: "to_all_students",
+			selected_section_id: "",
 			selected_student_id: "",
 			fee: {
 				name: "",
@@ -34,7 +80,7 @@ class ManageFees extends Component {
 		this.former = new former(this, [])
 	}
 
-	delete = (students_fees) => {
+	delete = (students_fees: FeeDeleteItem) => {
 
 		const effected_students = Object.values(students_fees).length // no. of fees == no. of effected students
 
@@ -49,9 +95,7 @@ class ManageFees extends Component {
 					good: true,
 					text: "Bulk fees removed successfully"
 				}
-			})
-			
-			setTimeout(() => this.setState({ banner: { active: false } }), 3000);		
+			})	
 		}
 	}
 
@@ -64,7 +108,7 @@ class ManageFees extends Component {
 			this.state.fee.period === "" ||
 			this.state.fee.type === ""
 			){
-				setTimeout(() => this.setState({ banner: { active: false } }), 3000);
+				setTimeout(() => this.setState({ banner: { ...this.state.banner, active: false } }), 3000);
 				return this.setState({
 					banner:
 					{
@@ -75,7 +119,7 @@ class ManageFees extends Component {
 				})
 			}
 		
-		if(this.state.feeFilter === "to_single_student" && this.state.selected_student_id !=="") {
+		if(this.state.fee_filter === "to_single_student" && this.state.selected_student_id !=="") {
 		
 			const student_fee = {
 				student_id: this.state.selected_student_id,
@@ -93,14 +137,12 @@ class ManageFees extends Component {
 					text: "Saved!"
 				}
 			})
-
-			setTimeout(() => this.setState({ banner: { active: false } }), 3000);
 		}
 		
-		if(this.state.feeFilter === "to_all_students" || (this.state.feeFilter === "to_single_class")) {
+		if(this.state.fee_filter === "to_all_students" || (this.state.fee_filter === "to_single_class" && this.state.selected_section_id !== "")) {
 		
 			const fees = Object.values(students)
-				.filter( s => s.Active && this.state.section_id === "" ? true : s.section_id === this.state.section_id)
+				.filter( s => s.Name && s.Active && this.state.selected_section_id === "" ? true : s.section_id === this.state.selected_section_id)
 				.map(student => {
 						const fee_id = v4()
 						const {name, amount, type, period } = this.state.fee
@@ -113,19 +155,8 @@ class ManageFees extends Component {
 								period
 							}
 					})
-
-			if(fees === undefined){
-				return this.setState({
-					banner:
-					{
-						active: true,
-						good:false,
-						text: "There are no students for this Class"
-					}
-				})
-			}
 			
-			const temp = this.state.feeFilter === "to_all_students" ? 'All' : 'Class';
+			const temp = this.state.fee_filter === "to_all_students" ? 'All' : 'Class';
 			const effected_students = Object.values(fees).length  // no. of fees == no. of effected students
 			const alert_message = `${effected_students} Students Records will be effected! Are you sure you want to add fee to whole ${temp} Students?`
 
@@ -141,21 +172,39 @@ class ManageFees extends Component {
 						text: "Saved!"
 					}
 				})
-
-				setTimeout(() => this.setState({ banner: { active: false } }), 3000);
 			}
 		}
 
+		else {
+			this.setState({
+				banner: {
+					active: true,
+					good: false,
+					text: "Please select Class to Add Fee"
+				}
+			})
+		}
+
+		setTimeout(() => this.setState({ banner: { ...this.state.banner, active: false } }), 3000);
 	}
 
-	filterCallBack = () => this.state.feeFilter === "to_all_students" ? this.setState({ section_id: "" }) : true
+	getSelectedSectionStudents = ()  => {
+		return	Object.values(this.props.students)
+					.filter(  s => s.Active && s.section_id === this.state.selected_section_id)
+					.sort( (a, b) => a.Name.localeCompare(b.Name))
+	}
 
 	render() {
 		
 		const { classes } = this.props;
-		const sortedSections = getSectionsFromClasses(classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0));
+		const sortedSections = getSectionsFromClasses(classes).sort((a, b) => ( a.classYear || 0 ) - ( b.classYear || 0 ));
 
-		const reduced_fees = Object.values(this.props.students)
+		const fee_undo_students =  this.state.fee_filter === "to_all_students" ? 
+										Object.values(this.props.students) 
+										: 
+										this.getSelectedSectionStudents();
+
+		const reduced_fees = fee_undo_students
 			.filter(x => x.Name && x.fees && x.payments)
 			.reduce((agg, curr) => {
 				
@@ -205,10 +254,12 @@ class ManageFees extends Component {
 
 				return agg;
 
-			}, {})
+			}, {} as ReducedFee )
 		
 		// sorting fees by keys
-		const fee_counts = Object.keys(reduced_fees).sort().reduce((agg, curr) => (agg[curr] = reduced_fees[curr], agg), {})
+		const fee_counts = Object.keys(reduced_fees)
+			.sort()
+			.reduce((agg, curr) => ( agg[curr] = reduced_fees[curr], agg), {} as ReducedFee )
 		
 		return <Layout history={this.props.history}>
 			<div className="form sms-page">
@@ -221,7 +272,7 @@ class ManageFees extends Component {
 					<div className="section">
 						<div className="row">
 							<label>Add To</label>
-							<select {...this.former.super_handle(["feeFilter"], () => true, this.filterCallBack)}>
+							<select {...this.former.super_handle(["fee_filter"])}>
 								<option value="">Select Students</option>
 								<option value="to_all_students">All Students</option>
 								<option value="to_single_class">Single Class</option>
@@ -229,25 +280,23 @@ class ManageFees extends Component {
 							</select>
 						</div>
 
-						{this.state.feeFilter === "to_single_class" || this.state.feeFilter === "to_single_student" ?  //Section Wise
+						{this.state.fee_filter === "to_single_class" || this.state.fee_filter === "to_single_student" ?  //Section Wise
                         <div className="row"> 
 							<label>Select Class</label>		
-							<select {...this.former.super_handle(["section_id"])}>
+							<select {...this.former.super_handle(["selected_section_id"])}>
 								<option value="" >Select Class</option>
 								{
 									sortedSections.map( s => <option key={s.id} value={s.id}>{s.namespaced_name}</option>)
 								}
 							</select>
 						</div> : false}
-						{this.state.feeFilter === "to_single_student" && this.state.section_id !== "" ?
+						{this.state.fee_filter === "to_single_student" && this.state.selected_section_id !== "" ?
 						<div className = "row">
 							<label>Select Student</label>
 							<select {...this.former.super_handle(["selected_student_id"])}>
 								<option value = "">Select Student</option>
 								{
-									Object.values(this.props.students)
-										  .filter(  s => s.Active && s.section_id === this.state.section_id)
-										  .map(s => <option key={s.id} value={s.id}>{s.Name}</option>)
+									this.getSelectedSectionStudents().map(s => <option key={s.id} value={s.id}>{s.Name}</option>)
 								}
 							</select>
 						</div> : false}
@@ -286,15 +335,15 @@ class ManageFees extends Component {
 				<div className="section form">
 				{ Object.entries(fee_counts)
 					.filter(([k, val]) => {
-						if(this.state.feeFilter === "to_all_students") {
+						if(this.state.fee_filter === "to_all_students") {
 							// get size of all students
 							const total_students = Object.values(this.props.students).length
 							return val.count > .9 * total_students;
 						}
-						else if(this.state.feeFilter === "to_single_class" && this.state.section_id !== "") {
-							// get size of class with section_id this.state.section_id
-							const size_of_class = Object.values(this.props.students).filter( s => s.section_id === this.state.section_id).length;
-							return val > .9 * size_of_class
+						else if(this.state.fee_filter === "to_single_class" && this.state.selected_section_id !== "") {
+							// get size of class with section_id this.state.selected_section_id
+							const size_of_class = Object.values(this.props.students).filter( s => s.section_id === this.state.selected_section_id).length;
+							return val.count > .9 * size_of_class
 						}
 					})
 					.map(([key, val]) => 
@@ -311,11 +360,11 @@ class ManageFees extends Component {
 	}
 }
 
-export default connect(state => ({
+export default connect(( state: RootReducerState) => ({
 	students: state.db.students,
-	classes: state.db.classes,
-}), dispatch => ({
-	addMultipleFees: (fees) => dispatch(addMultipleFees(fees)),
-	addFee: (fee) => dispatch(addFee(fee)),
-	deleteMultipleFees: (students_fees) => dispatch(deleteMultipleFees(students_fees))
+    classes: state.db.classes,
+}), (dispatch: Function) => ({
+	addMultipleFees: (fees: FeeAddItem[]) => dispatch(addMultipleFees(fees)),
+	addFee: (fee: FeeSingleItem) => dispatch(addFee(fee)),
+	deleteMultipleFees: (students_fees: FeeDeleteItem) => dispatch(deleteMultipleFees(students_fees))
 }))(ManageFees);
