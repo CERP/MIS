@@ -279,9 +279,11 @@ interface MISSmsPayload {
 }
 
 interface MISDiary{
-	[section_id: string]: {
-		[subject: string]: {
-			homework: string
+	[date: string]: {
+		[section_id: string]: {
+			[subject: string]: {
+				homework: string
+			}
 		}
 	}
 }
