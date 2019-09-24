@@ -53,10 +53,11 @@ class Diary extends Component {
 	diaryFilterCallback = () => {
 		
 		const curr_date = moment(this.state.selected_date).format("DD-MM-YYYY")
-
+		
+		// get selected date diary from previous props, else empty diary
 		const selected_date_diary = this.props.diary && this.props.diary[curr_date] ? 
 										JSON.parse(JSON.stringify(this.props.diary[curr_date])): {}
-
+		// updating the diary state
 		this.setState({
 			diary: selected_date_diary
 		})
@@ -66,12 +67,14 @@ class Diary extends Component {
 	componentWillReceiveProps(nextProps) {
 
 		const curr_date = moment(this.state.selected_date).format("DD-MM-YYYY")
-
+		
+		// check diary in selected date diary nextProps and get, otherwise look for previous props else empty diary
+		const selected_date_diary = nextProps.diary && nextProps.diary[curr_date] ?
+									JSON.parse(JSON.stringify(nextProps.diary[curr_date])) :
+											this.props.diary && this.props.diary[curr_date] ?
+											JSON.parse(JSON.stringify(this.props.diary[curr_date])) : {}
 		this.setState({
-			diary: nextProps.diary && nextProps.diary[curr_date] ?
-					JSON.parse(JSON.stringify(nextProps.diary[curr_date])) :
-						this.props.diary && this.props.diary[curr_date] ?
-							JSON.parse(JSON.stringify(this.props.diary[curr_date])) : {} 
+			diary: selected_date_diary
 		})
 	}
 
@@ -79,7 +82,7 @@ class Diary extends Component {
 
 		const curr_date = moment(this.state.selected_date).format("DD-MM-YYYY")
 
-		// Here need to send subjects rather then the whole section's diary
+		// Here need to send selected section subjects for selected date rather then the whole section's diary
 		const diary = Object.entries(this.state.diary)
 			.filter(([section_id, subjects]) => 
 				this.state.selected_section_id === section_id && (
