@@ -124,7 +124,7 @@ interface S {
 	},
 	classFilter: string,
 	selected_section_id: string,
-	selected_period: string | string[],
+	selected_period: string | String [],
 	start_date: number,
 	end_date: number,
 	isStudentAttendanceFilter: boolean,
@@ -136,11 +136,13 @@ class AttendanceAnalytics extends Component < propTypes, S > {
 
 	former: Former
 	constructor(props: propTypes) {
-	 	super(props)
-		
-		const start_date = queryString.parse(this.props.location.search)["?start_date"] || ""
-		const end_date = queryString.parse(this.props.location.search)["end_date"] || ""
-		const period = queryString.parse(this.props.location.search)["period"] || ""
+		super(props)
+		 
+		const parsed_query = queryString.parse(this.props.location.search);
+
+		const start_date = parsed_query["?start_date"] || ""
+		const end_date = parsed_query["end_date"] || ""
+		const period = parsed_query["period"] || ""
 
 		this.state = {
 			filterText: "",
@@ -171,9 +173,11 @@ class AttendanceAnalytics extends Component < propTypes, S > {
 
 	componentWillReceiveProps(nextProps : propTypes) { 
 
-		const start_date = queryString.parse(nextProps.location.search)["?start_date"] || ""
-		const end_date = queryString.parse(nextProps.location.search)["end_date"] || ""
-		const period = queryString.parse(nextProps.location.search)["period"] || ""
+		const parsed_query = queryString.parse(nextProps.location.search);
+
+		const start_date = parsed_query["?start_date"] || ""
+		const end_date = parsed_query["end_date"] || ""
+		const period = parsed_query["period"] || ""
 
 		this.setState({
 			start_date: moment(start_date, "MM-DD-YYYY").unix() * 1000,
@@ -254,7 +258,7 @@ class AttendanceAnalytics extends Component < propTypes, S > {
 			<div>{totals.LEAVE + totals.CASUAL_LEAVE + totals.SHORT_LEAVE + totals.SICK_LEAVE }</div>
 		</div>
 		<div className="table row">
-			<label>Absentee Percent</label>
+			<label>Absentee (%)</label>
 			<div>{(totals.ABSENT / (totals.ABSENT + totals.PRESENT + totals.LEAVE + totals.CASUAL_LEAVE + totals.SHORT_LEAVE + totals.SICK_LEAVE) * 100).toFixed(2)}%</div>
 		</div>
 
@@ -268,14 +272,14 @@ class AttendanceAnalytics extends Component < propTypes, S > {
 					<input type="date" 
 						   onChange={this.former.handle(["start_date"], () => true, this.onStateChange)} 
 						   value={moment(this.state.start_date).format("YYYY-MM-DD")} 
-						   placeholder="Current Date"
-						/>
+						   max = {moment().format("YYYY-MM-DD")}/>
 				</div>
 				<div className="row">	
 					<label> End Date </label>
 					<input type="date" 
 						   onChange={this.former.handle(["end_date"], () => true, this.onStateChange)} 
-						   value={moment(this.state.end_date).format("YYYY-MM-DD")} />
+						   value={moment(this.state.end_date).format("YYYY-MM-DD")} 
+						   max = {moment().format("YYYY-MM-DD")}/>
 				</div>
 
 				<div className="row">	
@@ -365,12 +369,14 @@ class AttendanceAnalytics extends Component < propTypes, S > {
 
 			<div className="table row">
 				<label><b>Name</b></label>
+				<label><b>Phone</b></label>
 				<label><b>Days Absent</b></label>
 			</div>
 			{
 				items
 					.map(([ sid, { student, PRESENT, ABSENT, LEAVE } ]) => <div className="table row">
 						<Link to={`/student/${sid}/attendance`}>{student.Name}</Link>
+						<div>{student.Phone}</div> 
 						<div style={ ABSENT === 0 ? { color:"#5ecdb9" } : { color:"#fc6171" }}>{ABSENT}</div>
 					</div>)
 			}
