@@ -56,7 +56,7 @@ class Diary extends Component {
 		
 		// get selected date diary from previous props, else empty diary
 		const selected_date_diary = this.props.diary && this.props.diary[curr_date] ? 
-										JSON.parse(JSON.stringify(this.props.diary[curr_date])): {}
+			JSON.parse(JSON.stringify(this.props.diary[curr_date])): {}
 		// updating the diary state
 		this.setState({
 			diary: selected_date_diary
@@ -70,9 +70,9 @@ class Diary extends Component {
 		
 		// check diary in selected date diary nextProps and get, otherwise look for previous props else empty diary
 		const selected_date_diary = nextProps.diary && nextProps.diary[curr_date] ?
-									JSON.parse(JSON.stringify(nextProps.diary[curr_date])) :
-											this.props.diary && this.props.diary[curr_date] ?
-											JSON.parse(JSON.stringify(this.props.diary[curr_date])) : {}
+			JSON.parse(JSON.stringify(nextProps.diary[curr_date])) :
+				this.props.diary && this.props.diary[curr_date] ? JSON.parse(JSON.stringify(this.props.diary[curr_date])) : {}
+
 		this.setState({
 			diary: selected_date_diary
 		})
@@ -82,26 +82,27 @@ class Diary extends Component {
 
 		const curr_date = moment(this.state.selected_date).format("DD-MM-YYYY")
 
-		// Here need to send selected section subjects for selected date rather then the whole section's diary
-		const diary = Object.entries(this.state.diary)
-			.filter(([section_id, subjects]) => 
-				this.state.selected_section_id === section_id && (
-				this.props.diary === undefined ||
+		// Here need to save modified section subjects for selected date rather then the whole section's diary
+		const diary = Object.entries(this.state.diary[this.state.selected_section_id])
+			.filter(([subject, { homework }]) => {
+				return (this.props.diary === undefined ||
 				this.props.diary[curr_date] === undefined ||
-				this.props.diary[curr_date][this.state.selected_section_id][subjects] === undefined)
+				this.props.diary[curr_date][this.state.selected_section_id][subject].homework !== homework)}
 			)
-			.reduce((agg, [s, diary]) => {
+			.reduce((agg, [subject, homework]) => {
 				return {
 					...agg,
-					[s]: diary
+					[subject]: homework
 				}
 
 			}, {})
-		
+
 		// preparing diary for selected date
 		const section_diary = {
 			[curr_date]: {
-				 ...diary
+				[this.state.selected_section_id]: {
+					 ...diary
+				}
 			}
 		}
 
