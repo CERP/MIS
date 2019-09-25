@@ -168,12 +168,12 @@ class Diary extends Component {
 
 	getSelectedSectionName = () => getSectionsFromClasses(this.props.classes)
 										.filter(s => s.id === this.state.selected_section_id)
-										.map (s => s.namespaced_name)
+										.map (s => s.namespaced_name)[0]
 
 	render() {
 
 		const { classes, sendBatchMessages, settings, schoolLogo } = this.props;
-
+		
 		// ascending order of classes/sections
 		const sortedSections = getSectionsFromClasses(classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0));
 
