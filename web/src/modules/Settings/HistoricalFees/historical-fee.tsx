@@ -132,23 +132,23 @@ class historicalFee extends Component <propTypes, S > {
 
 		const sorted_sections = getSectionsFromClasses(classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0));
 
-		const selected_student_id = students[this.state.selected_student_id]
+		const selected_student = students[this.state.selected_student_id]
 		
-		let filteredPayments = selected_student_id ? getFilteredPayments(selected_student_id, this.state.year_filter, this.state.month_filter) : false
-		const curr_class_name = this.state.selected_section_id ? sorted_sections.find( s => s.id === this.state.selected_section_id).namespaced_name : "None Selected"
+		// get payments against the selected student
+		let filteredPayments = selected_student && selected_student.Name ? 
+			getFilteredPayments(selected_student, this.state.year_filter, this.state.month_filter) : false
+		
+		// get current selected class name
+		const curr_class_name = this.state.selected_section_id ? 
+			sorted_sections.find( s => s && s.id === this.state.selected_section_id)
+			.namespaced_name : "None Selected"
 		
 		const Months = new Set<string>()
 		const Years = new Set<string>()
 
-		if(selected_student_id){
+		if(selected_student && selected_student.Name){
 
-			if(this.state.selected_section_id && selected_student_id.section_id !== this.state.selected_section_id){
-				this.setState({
-					selected_student_id: ""
-				})
-			}
-
-			Object.entries(selected_student_id.payments || {})
+			Object.entries(selected_student.payments || {})
 				.sort(([, a_payment], [, b_payment]) => a_payment.date - b_payment.date)
 				.map(([id, payment]) => { 
 					Months.add(moment(payment.date).format("MMMM"))
@@ -161,7 +161,6 @@ class historicalFee extends Component <propTypes, S > {
 		
 		// Sorting payments Months names using index of sample array
 		// To avoid sort function negative result (0-1 => -1), added 1 so indexOf("January") will be 0 to 1 and indexOf("February") will be 1 to 2	
-		
 		const sorted_months = Array.from(Months).sort((a,b) => months.indexOf(a) + 1 - months.indexOf(b) + 1)
 	
 		return <Layout history={this.props.history}>
@@ -218,7 +217,7 @@ class historicalFee extends Component <propTypes, S > {
 					</div>
 					<div className="button blue" onClick={() => this.save()}> Add Historical Fee</div>
 				</div>}
-				{selected_student_id && this.state.selected_section_id !=="" && <div className="section">
+				{selected_student && selected_student.Name && this.state.selected_section_id !=="" && <div className="section">
 					<div className="row">
 						<select {...this.former.super_handle(["month_filter"])}>
 							<option value=""> Select Month</option>
@@ -242,7 +241,7 @@ class historicalFee extends Component <propTypes, S > {
 				<StudentLedgerPage 
 					payments = {filteredPayments}
 					settings = {settings}
-					student = {selected_student_id}
+					student = {selected_student}
 					class_name = {curr_class_name}
 				/>
 			</div>}
