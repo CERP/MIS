@@ -52,6 +52,7 @@ class TeacherAttendance extends Component {
 				{
 					Object.values(this.props.faculty)
 						.filter(f => f.Active)
+						.sort((a, b) => a.Name.localeCompare(b.Name))
 						.map(f => {
 							const current_attendance = ((f.attendance || {})[moment(this.state.date).format("YYYY-MM-DD")]) || { }
 
