@@ -33,6 +33,7 @@ interface RootDBState {
 		schoolLogo : string
 	}
 	max_limit: number
+	diary : MISDiary
 }
 
 interface RootReducerState {
@@ -72,6 +73,7 @@ interface MISSMSHistory {
 	type: string
 	count: number
 }
+
 
 interface MISSettings {
 	shareData: boolean

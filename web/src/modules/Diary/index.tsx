@@ -1,19 +1,50 @@
 import React, { Component } from 'react'
-import Layout from 'components/Layout'
-import {PrintHeader} from 'components/Layout'
+import Layout from '../../components/Layout'
+import {PrintHeader} from '../../components/Layout'
 import {connect} from 'react-redux'
-import { sendSMS, sendBatchSMS } from 'actions/core'
-import { logSms, addDiary } from 'actions'
-import Banner from 'components/Banner'
-import { smsIntentLink } from 'utils/intent'
-import {getSectionsFromClasses} from 'utils/getSectionsFromClasses';
-import former from 'utils/former'
+import { sendSMS, sendBatchSMS } from '../../actions/core'
+import { logSms, addDiary } from '../../actions'
+import Banner from '../../components/Banner'
+import { smsIntentLink } from '../../utils/intent'
+import {getSectionsFromClasses} from '../../utils/getSectionsFromClasses'
+import { RouteComponentProps } from 'react-router-dom'
+import former from '../../utils/former'
 import moment from 'moment'
 
 import './style.css'
+
+interface P {
+	students: RootDBState["students"]
+	classes: RootDBState["classes"]
+	settings: RootDBState["settings"]
+	schoolLogo: RootDBState["assets"]["schoolLogo"]
+	faculty_id: string,
+	diary: MISDiary,
+
+	addDiary: (date: string, section_id: string , diary: MISDiary) => any,
+	sendMessage: (text: string, number: string) => any,
+	sendBatchMessages: (messages: MISSms[]) => any,
+	logSms: (history: MISSMSHistory) => any
+}
+
+interface S {
+	banner: {
+		active: boolean,
+		good?: boolean,
+		text?: string
+	},
+	selected_date: number,
+	selected_section_id: string,
+	students_filter: string,
+	diary: MISDiary
+}
+
+type propTypes = RouteComponentProps & P
 	  
-class Diary extends Component {
-	constructor(props) {
+class Diary extends Component <propTypes,S> {
+
+	former: former
+	constructor(props: propTypes) {
 		super(props)
 
 		const curr_date = moment().format("DD-MM-YYYY")	
@@ -33,7 +64,7 @@ class Diary extends Component {
 		this.former = new former(this, [])
 	}
 	
-	logSms = (messages) => {
+	logSms = (messages: MISSms[]) => {
 
 		if(messages.length === 0){
 			console.log("No Messaged to Log")
@@ -64,7 +95,7 @@ class Diary extends Component {
 	}
 
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps(nextProps: propTypes) {
 
 		const curr_date = moment(this.state.selected_date).format("DD-MM-YYYY")
 		
@@ -87,7 +118,7 @@ class Diary extends Component {
 			.filter(([subject, { homework }]) => {
 				return (this.props.diary === undefined ||
 				this.props.diary[curr_date] === undefined ||
-				this.props.diary[curr_date][this.state.selected_section_id][subject].homework !== homework)}
+				this.props.diary[curr_date][this.state.selected_section_id][subject].homework !== homework.homework)}
 			)
 			.reduce((agg, [subject, homework]) => {
 				return {
@@ -117,7 +148,7 @@ class Diary extends Component {
 		}, 1000);
 	}
 	
-	diaryString = () => {
+	diaryString = (): string | [] => {
 
 		if(this.state.selected_section_id === "" || this.state.diary[this.state.selected_section_id] === undefined ) {
 			console.log("Not running diary")
@@ -140,9 +171,9 @@ class Diary extends Component {
 					s.Phone !== undefined && s.Phone !== "")	
 	}
 
-	getFilterCondition = (s) => {
+	getFilterCondition = (s: MISStudent) => {
 		
-		const curr_attendance = s.attendance[moment(this.state.date).format("YYYY-MM-DD")]
+		const curr_attendance = s.attendance[moment(this.state.selected_date).format("YYYY-MM-DD")]
 
 		switch (this.state.students_filter) {
 			case "absent_students":
@@ -250,7 +281,7 @@ class Diary extends Component {
 					this.state.selected_section_id !== "" && <div className="section">
 						{
 							Array.from(subjects)
-								.map(s => <div className="table row" key={`${this.state.selected_section_id}-${s}`}>
+								.map((s: any) => <div className="table row" key={`${this.state.selected_section_id}-${s}`}>
 									<div>{s}:</div>
 									<input 
 										type="text"
@@ -297,16 +328,16 @@ class Diary extends Component {
 	</Layout>
   }
 }
-export default connect(state => ({
+export default connect((state: RootReducerState) => ({
 	faculty_id: state.auth.faculty_id,
 	diary: state.db.diary,
 	students: state.db.students,
 	classes: state.db.classes,
 	settings: state.db.settings,
 	schoolLogo: state.db.assets ? state.db.assets.schoolLogo || "" : "", 
-}), dispatch => ({
-	sendMessage : (text, number) => dispatch(sendSMS(text, number)),
-	sendBatchMessages: (messages ) => dispatch(sendBatchSMS(messages)),
-	logSms: (faculty_id, history) => dispatch(logSms(faculty_id, history)),
-	addDiary: (date, section_id, diary) => dispatch(addDiary(date, section_id, diary))
+}), (dispatch: Function) => ({
+	sendMessage : (text:string, number: string) => dispatch(sendSMS(text, number)),
+	sendBatchMessages: (messages: MISSms[]) => dispatch(sendBatchSMS(messages)),
+	logSms: (history: MISSMSHistory) => dispatch(logSms(history)),
+	addDiary: (date: string, section_id: string , diary: MISDiary) => dispatch(addDiary(date, section_id, diary))
 	}))(Diary);
