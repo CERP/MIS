@@ -97,17 +97,8 @@ class Diary extends Component {
 
 			}, {})
 
-		// preparing diary for selected date
-		const section_diary = {
-			[curr_date]: {
-				[this.state.selected_section_id]: {
-					 ...diary
-				}
-			}
-		}
-
 		// adding diary
-		this.props.addDiary(section_diary)
+		this.props.addDiary(curr_date, this.state.selected_section_id, diary)
 
 		this.setState({
 			banner: {
@@ -317,5 +308,5 @@ export default connect(state => ({
 	sendMessage : (text, number) => dispatch(sendSMS(text, number)),
 	sendBatchMessages: (messages ) => dispatch(sendBatchSMS(messages)),
 	logSms: (faculty_id, history) => dispatch(logSms(faculty_id, history)),
-	addDiary: (section_diary) => dispatch(addDiary(section_diary))
+	addDiary: (date, section_id, diary) => dispatch(addDiary(date, section_id, diary))
 	}))(Diary);
