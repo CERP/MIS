@@ -19,9 +19,9 @@ interface P {
 	settings: RootDBState["settings"]
 	schoolLogo: RootDBState["assets"]["schoolLogo"]
 	faculty_id: string,
-	diary: MISDiary,
+	diary: RootDBState["diary"],
 
-	addDiary: (date: string, section_id: string , diary: MISDiary) => any,
+	addDiary: (date: string, section_id: string , diary: MISDiary["section_id"]) => any,
 	sendMessage: (text: string, number: string) => any,
 	sendBatchMessages: (messages: MISSms[]) => any,
 	logSms: (history: MISSMSHistory) => any
@@ -36,7 +36,7 @@ interface S {
 	selected_date: number,
 	selected_section_id: string,
 	students_filter: string,
-	diary: MISDiary
+	diary: MISDiary["date"]
 }
 
 type propTypes = RouteComponentProps & P
@@ -48,7 +48,7 @@ class Diary extends Component <propTypes,S> {
 		super(props)
 
 		const curr_date = moment().format("DD-MM-YYYY")	
-		
+	
 		this.state = {
 			banner: {
 				active: false,
@@ -58,10 +58,36 @@ class Diary extends Component <propTypes,S> {
 			selected_date: moment.now(),
 			selected_section_id: "",
 			students_filter: "all_students",
-			diary: this.props.diary && this.props.diary[curr_date] ? JSON.parse(JSON.stringify(props.diary[curr_date])) : {}
+			diary: this.props.diary && this.props.diary[curr_date] ? { ...this.getDiaryTemplate(), ...JSON.parse(JSON.stringify(this.props.diary[curr_date]))} : this.getDiaryTemplate()
 		}
 
 		this.former = new former(this, [])
+	}
+
+	getDiaryTemplate = () => {
+		return Object.values(this.props.classes)
+			.reduce((agg, c) => {
+				
+				const sectionObj =  Object.keys(c.subjects)
+					.reduce((agg,s) => {
+						return {
+							...agg,
+							[s]: { 
+								homework:""
+							}
+						}
+					}, {})
+
+				const obj = Object.keys(c.sections)
+					.reduce((agg,sec_id) => {
+						return {
+							...agg,
+							[sec_id] : sectionObj
+						}
+					}, {})
+
+				return {...agg, ...obj}
+			}, {})
 	}
 	
 	logSms = (messages: MISSms[]) => {
@@ -87,7 +113,7 @@ class Diary extends Component <propTypes,S> {
 		
 		// get selected date diary from previous props, else empty diary
 		const selected_date_diary = this.props.diary && this.props.diary[curr_date] ? 
-			JSON.parse(JSON.stringify(this.props.diary[curr_date])): {}
+			JSON.parse(JSON.stringify(this.props.diary[curr_date])): this.getDiaryTemplate()
 		// updating the diary state
 		this.setState({
 			diary: selected_date_diary
@@ -102,7 +128,7 @@ class Diary extends Component <propTypes,S> {
 		// check diary in selected date diary nextProps and get, otherwise look for previous props else empty diary
 		const selected_date_diary = nextProps.diary && nextProps.diary[curr_date] ?
 			JSON.parse(JSON.stringify(nextProps.diary[curr_date])) :
-				this.props.diary && this.props.diary[curr_date] ? JSON.parse(JSON.stringify(this.props.diary[curr_date])) : {}
+				this.props.diary && this.props.diary[curr_date] ? JSON.parse(JSON.stringify(this.props.diary[curr_date])) : this.getDiaryTemplate()
 
 		this.setState({
 			diary: selected_date_diary
@@ -116,10 +142,12 @@ class Diary extends Component <propTypes,S> {
 		// Here need to save modified section subjects for selected date rather then the whole section's diary
 		const diary = Object.entries(this.state.diary[this.state.selected_section_id])
 			.filter(([subject, { homework }]) => {
-				return (this.props.diary === undefined ||
-				this.props.diary[curr_date] === undefined ||
-				this.props.diary[curr_date][this.state.selected_section_id][subject].homework !== homework.homework)}
-			)
+				
+				return this.props.diary[curr_date] === undefined || 
+					this.props.diary[curr_date][this.state.selected_section_id] ? 
+					this.props.diary[curr_date][this.state.selected_section_id][subject].homework !== homework : true
+				
+			})
 			.reduce((agg, [subject, homework]) => {
 				return {
 					...agg,
@@ -339,5 +367,5 @@ export default connect((state: RootReducerState) => ({
 	sendMessage : (text:string, number: string) => dispatch(sendSMS(text, number)),
 	sendBatchMessages: (messages: MISSms[]) => dispatch(sendBatchSMS(messages)),
 	logSms: (history: MISSMSHistory) => dispatch(logSms(history)),
-	addDiary: (date: string, section_id: string , diary: MISDiary) => dispatch(addDiary(date, section_id, diary))
+	addDiary: (date: string, section_id: string , diary: MISDiary["section_id"]) => dispatch(addDiary(date, section_id, diary))
 	}))(Diary);

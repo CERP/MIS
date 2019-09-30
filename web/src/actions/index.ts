@@ -751,7 +751,7 @@ export const addLogo = (logo_string: string) => (dispatch: Function) => {
 	]))
 }
 
-export const addDiary = (date: string, section_id:string, diary: MISDiary) => (dispatch: Function) => {
+export const addDiary = (date: string, section_id:string, diary: MISDiary["section_id"]) => (dispatch: Function) => {
 
 	const merges = Object.entries(diary)
 		.map(([subject, homework]) => ({
