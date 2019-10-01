@@ -83,7 +83,7 @@ const MonthlyAttendanceTable = ({monthly_attendance, totals}: TableData) =>{
 								<div style={{ backgroundColor: "#93d0c5"}}>{PRESENT}</div>
 								<div style={{ backgroundColor: "#fc6171"}}>{ABSENT}</div>
 								<div style={{ backgroundColor: "#e0e0e0"}}>{LEAVE}</div>
-								<div style={{ backgroundColor: "#bedcff"}}>{ isFinite(ABSENT / (ABSENT + PRESENT + LEAVE) * 100) ? (ABSENT / (ABSENT + PRESENT + LEAVE) * 100).toFixed(2) : "0"}%</div>
+								<div style={{ backgroundColor: "#bedcff"}}>{(ABSENT / (ABSENT + PRESENT + LEAVE) * 100) ? (ABSENT / (ABSENT + PRESENT + LEAVE) * 100).toFixed(2) : "0"}%</div>
 							</div>
 						),
 						<div className="table row footing" style={{borderTop: '1.5px solid #333'}} key={Math.random()}>   
@@ -91,7 +91,7 @@ const MonthlyAttendanceTable = ({monthly_attendance, totals}: TableData) =>{
 							<label style={{ backgroundColor: "#93d0c5"}}><b>{totals.PRESENT}</b></label>
 							<label style={{ backgroundColor: "#fc6171"}}><b>{totals.ABSENT}</b></label>
 							<label style={{ backgroundColor: "#e0e0e0"}}><b>{totals.LEAVE}</b></label>
-							<label style={{ backgroundColor: "#bedcff"}}><b>{ (totals.ABSENT / (totals.ABSENT + totals.PRESENT + totals.LEAVE) * 100).toFixed(2)}%</b></label>
+							<label style={{ backgroundColor: "#bedcff"}}><b>{(totals.ABSENT / (totals.ABSENT + totals.PRESENT + totals.LEAVE) * 100).toFixed(2)}%</b></label>
 						</div>
 					]
 				}

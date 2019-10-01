@@ -124,7 +124,7 @@ interface S {
 	},
 	classFilter: string,
 	selected_section_id: string,
-	selected_period: string | String [],
+	selected_period: string | string [],
 	start_date: number,
 	end_date: number,
 	isStudentAttendanceFilter: boolean,
@@ -140,10 +140,13 @@ class AttendanceAnalytics extends Component < propTypes, S > {
 		 
 		const parsed_query = queryString.parse(this.props.location.search);
 
-		const start_date = parsed_query["?start_date"] || ""
-		const end_date = parsed_query["end_date"] || ""
+		const sd_param = parsed_query["?start_date"] || ""
+		const ed_param = parsed_query["end_date"] || ""
 		const period = parsed_query["period"] || ""
 
+		const start_date =  sd_param !== "" ? moment(sd_param, "MM-DD-YYYY").unix() * 1000 : moment().subtract(1,'year').unix() * 1000
+		const end_date = ed_param !=="" ? moment(ed_param, "MM-DD-YYYY").unix() * 1000 : moment().unix() * 1000
+		
 		this.state = {
 			filterText: "",
 			chartFilter: {
@@ -155,8 +158,8 @@ class AttendanceAnalytics extends Component < propTypes, S > {
 			classFilter: "",
 			selected_section_id: "",
 			selected_period: period !== "" ? period : "Monthly",
-			start_date: start_date !== "" ? moment(start_date, "MM-DD-YYYY").unix() * 1000 : moment().subtract(1,'year').unix() * 1000,
-			end_date: end_date !== "" ? moment(end_date, "MM-DD-YYYY").unix() * 1000 : moment().unix() * 1000,
+			start_date: start_date,
+			end_date: end_date,
 			isStudentAttendanceFilter: false,
 		}
 	  	this.former = new Former(this, [])
