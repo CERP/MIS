@@ -1,0 +1,27 @@
+.inventory {
+	display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.inventory .section {
+	width: 80%;
+}
+
+	.newtable-row .newtable-input {
+		width: 100%;
+		text-align: start;
+		background-color: #fafafa;
+		border: none;
+		padding-left: 2px;
+		margin-left: -2px;
+	}
+
+	.newtable-row .button-cell {
+		justify-content: center;
+	}
+
+	.newtable-row .button {
+		justify-content: center;
+		min-width: 70%;
+	}

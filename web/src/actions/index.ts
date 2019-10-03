@@ -815,3 +815,101 @@ export const issueCertificate = (type: string, student_id: string, faculty_id: s
 		}
 	}]))
 }
+
+export const addInventoryItem = (item: MISInventoryItem) => ( dispatch: Function) => {
+
+	const expense: MISExpense = {
+		expense: "MIS_EXPENSE",
+		amount: item.cost * item.quantity,
+		label: item.name,
+		type: "PAYMENT_GIVEN",
+		category: "INVENTORY",
+		date: item.date,
+		time: moment.now(),
+		quantity: item.quantity,
+	}
+
+	const merge = [
+		{
+			path: ["db", "inventory", v4()],
+			value: item,
+
+		},
+		{
+			path: ["db", "expenses", item.expense_id],
+			value: expense
+		}
+	]
+	
+	dispatch(createMerges(merge))
+}
+
+export const deleteInventoryItem = (id: string) => ( dispatch: Function) => {
+
+	const deletes = [{
+		path: ["db","inventory",id],
+	}]
+	
+	dispatch(createDeletes(deletes))
+}
+
+export const editInventoryItems = (merges: MISMerge[]) => ( dispatch: Function) => {
+
+	if (merges.length === 0) {
+		return
+	}
+
+	dispatch(createMerges(merges))
+}
+
+export const sellInventoryItem = (sale: MISItemSale, item: MISInventoryItem) => ( dispatch: Function) => {
+	
+	const curr_date = moment.now()
+	const fee_id = v4()
+	const merges = [
+		{
+			path: ["db", "inventory", sale.item_id, "quantity" ],
+			value: item.quantity - sale.quantity,
+		},
+		{
+			path: ["db", "inventory", sale.item_id, "sales", `${curr_date}` ],
+			value: {
+				cost: item.cost,
+				quantity: sale.quantity,
+				date: curr_date,
+				price: item.price,
+				discount: sale.discount
+			}
+		},
+		{
+			path: ["db", "students", sale.student_id, "fees", fee_id],
+			value: {
+				amount: (item.price - sale.discount) * sale.quantity,
+				name: `${item.name} (${sale.quantity})`,
+				period: "SINGLE",
+				type: "FEE"
+			}
+		},
+		{
+			path: ["db", "students", sale.student_id, "payments", fee_id],
+			value: {
+				amount: (item.price - sale.discount) * sale.quantity,
+				date: curr_date,
+				fee_name: `${item.name} (${sale.quantity})`,
+				fee_id,
+				type: "OWED"
+			}
+		},
+		{
+			path: ["db", "students", sale.student_id, "payments", v4()],
+			value: {
+				amount: sale.paid_amount,
+				date: curr_date,
+				fee_name: `${item.name} (${sale.quantity})`,
+				type: "SUBMITTED"
+			}
+		}
+	]
+
+	dispatch(createMerges(merges))
+}

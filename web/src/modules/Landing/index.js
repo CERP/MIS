@@ -25,6 +25,7 @@ import cerificate from './icons/Certificate/certificate1.svg'
 import expense from './icons/Expense/expense.svg'
 import newBadge from "./icons/New/new.svg";
 import family from "./icons/family/family.svg"
+import inventory from "./icons/Inventory/inventory.svg"
 
 import Help from './icons/Help/help.svg'
 import diary from './icons/Diary/diary.svg'
@@ -150,7 +151,18 @@ class Landing extends Component {
 									Certificates
 								</Link> 
 						}
-							<div className="button yellow-shadow" onClick={logout} style={{backgroundImage: `url(${switchUserIcon})` }}>Logout</div>
+						{
+							user.Admin && <div className="badge-container">
+								<img className="new-badge" src={newBadge} alt=""/>
+								<Link 
+									to="/inventory"
+									className="button green-shadow"
+									style={{backgroundImage: `url(${inventory})`}}
+								>
+									Inventory
+								</Link> 
+							</div>
+						}	
 						</div>
 						<div className="row">
                             <div className="badge-container">
@@ -160,7 +172,8 @@ class Landing extends Component {
                                     style={{ backgroundImage: `url(${family})`}}>
                                     Families
                                 </Link>
-                            </div>
+							</div>
+							<div className="button yellow-shadow" onClick={logout} style={{backgroundImage: `url(${switchUserIcon})` }}>Logout</div>
 						</div>
 					</div>
 
@@ -172,7 +185,6 @@ class Landing extends Component {
 						</div>
 						
 						<div className="row">
-
 							<div className="badge-container">
 								<Link
 									to="/diary"
@@ -345,6 +357,6 @@ export default connect(state => ({
 		lastSnapshot: state.lastSnapshot,
 		unsyncd: Object.keys(state.queued).length
 	}), 
-	dispatch => ({
-		logout: () => dispatch(createLogout())
-	}))(Landing)
+dispatch => ({
+	logout: () => dispatch(createLogout())
+}))(Landing)

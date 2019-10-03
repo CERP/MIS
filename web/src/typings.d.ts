@@ -32,6 +32,9 @@ interface RootDBState {
 	assets : {
 		schoolLogo : string
 	}
+	inventory: {
+		[id: string] : MISInventoryItem
+	}
 	max_limit: number
 }
 
@@ -207,7 +210,7 @@ interface BaseMISExpense {
 	amount: number
 	label: string
 	type: string
-	category: "SALARY" | "BILLS" | "STATIONERY" | "REPAIRS" | "RENT" | "ACTIVITY" | "DAILY" | "PETTY_CASH" | ""   
+	category: "SALARY" | "BILLS" | "STATIONERY" | "REPAIRS" | "RENT" | "ACTIVITY" | "DAILY" | "PETTY_CASH" | "INVENTORY" | ""   
 	date: number
 	time: number
 }
@@ -284,4 +287,35 @@ interface MISDiary{
 			homework: string
 		}
 	}
+}
+
+interface MISInventoryItem {
+	name: string
+	date: number
+	quantity: number
+	price: number
+	cost: number
+	expense_id: string
+	sales: {
+		[id: string]: {
+			cost: number
+			quantity: number,
+			date: number,
+			price: number,
+			discount: number
+		}
+	}
+}
+
+interface MISItemSale {
+	student_id: string
+	item_id: string
+	quantity: number
+	discount: number
+	paid_amount: number
+}
+
+interface MISMerge {
+	path: string[],
+	value: any
 }
