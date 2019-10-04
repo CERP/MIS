@@ -124,7 +124,7 @@ interface S {
 	},
 	classFilter: string,
 	selected_section_id: string,
-	selected_period: string | string [],
+	selected_period: string
 	start_date: number,
 	end_date: number,
 	isStudentAttendanceFilter: boolean,
@@ -157,7 +157,7 @@ class AttendanceAnalytics extends Component < propTypes, S > {
 			},
 			classFilter: "",
 			selected_section_id: "",
-			selected_period: period !== "" ? period : "Monthly",
+			selected_period: period !== "" ? period.toString() : "Monthly",
 			start_date: start_date,
 			end_date: end_date,
 			isStudentAttendanceFilter: false,
@@ -185,7 +185,7 @@ class AttendanceAnalytics extends Component < propTypes, S > {
 		this.setState({
 			start_date: moment(start_date, "MM-DD-YYYY").unix() * 1000,
 			end_date: moment(end_date, 'MM-DD-YYYY').unix() * 1000,
-			selected_period: period
+			selected_period: period.toString()
 		})
 		
 	}
