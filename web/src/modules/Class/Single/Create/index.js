@@ -306,7 +306,7 @@ class SingleClass extends Component {
 										<option disabled selected value>select teacher</option>
 										{
 											Object.values(this.props.faculty)
-												.filter( f => f && f.Active && f.Name !=="")
+												.filter( f => f && f.Active && f.Name)
 												.sort((a, b) => a.Name.localeCompare(b.Name))
 												.map(faculty => <option value={faculty.id} key={faculty.id}>{faculty.Name}</option>)
 										}
