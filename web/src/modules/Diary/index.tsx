@@ -48,7 +48,7 @@ class Diary extends Component <propTypes,S> {
 		super(props)
 
 		const curr_date = moment().format("DD-MM-YYYY")	
-	
+		const diary = this.props.diary && this.props.diary[curr_date] ? { ...this.getDiaryTemplate(), ...JSON.parse(JSON.stringify(this.props.diary[curr_date]))} : this.getDiaryTemplate()
 		this.state = {
 			banner: {
 				active: false,
@@ -58,7 +58,7 @@ class Diary extends Component <propTypes,S> {
 			selected_date: moment.now(),
 			selected_section_id: "",
 			students_filter: "all_students",
-			diary: this.props.diary && this.props.diary[curr_date] ? { ...this.getDiaryTemplate(), ...JSON.parse(JSON.stringify(this.props.diary[curr_date]))} : this.getDiaryTemplate()
+			diary
 		}
 
 		this.former = new former(this, [])
@@ -139,11 +139,15 @@ class Diary extends Component <propTypes,S> {
 
 		const curr_date = moment(this.state.selected_date).format("DD-MM-YYYY")
 
+		// console.log(this.props.diary)
+
+		// return;
+
 		// Here need to save modified section subjects for selected date rather then the whole section's diary
 		const diary = Object.entries(this.state.diary[this.state.selected_section_id])
 			.filter(([subject, { homework }]) => {
 				
-				return this.props.diary[curr_date] === undefined || 
+				return this.props.diary[curr_date] && 
 					this.props.diary[curr_date][this.state.selected_section_id] ? 
 					this.props.diary[curr_date][this.state.selected_section_id][subject].homework !== homework : true
 				
@@ -218,8 +222,8 @@ class Diary extends Component <propTypes,S> {
 	}
 
 	getSelectedSectionName = () => getSectionsFromClasses(this.props.classes)
-										.filter(s => s.id === this.state.selected_section_id)
-										.map (s => s.namespaced_name)[0]
+		.filter(s => s.id === this.state.selected_section_id)
+		.map (s => s.namespaced_name)[0]
 
 	render() {
 
@@ -361,7 +365,7 @@ export default connect((state: RootReducerState) => ({
 	diary: state.db.diary,
 	students: state.db.students,
 	classes: state.db.classes,
-	settings: state.db.settings,
+	settings: state.db.settings,	
 	schoolLogo: state.db.assets ? state.db.assets.schoolLogo || "" : "", 
 }), (dispatch: Function) => ({
 	sendMessage : (text:string, number: string) => dispatch(sendSMS(text, number)),
