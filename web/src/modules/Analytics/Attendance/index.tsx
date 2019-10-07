@@ -157,7 +157,7 @@ class AttendanceAnalytics extends Component < propTypes, S > {
 			},
 			classFilter: "",
 			selected_section_id: "",
-			selected_period: period !== "" ? period.toString() : "Monthly",
+			selected_period: period !== "" ? period[0] : "Monthly",
 			start_date: start_date,
 			end_date: end_date,
 			isStudentAttendanceFilter: false,
@@ -185,7 +185,7 @@ class AttendanceAnalytics extends Component < propTypes, S > {
 		this.setState({
 			start_date: moment(start_date, "MM-DD-YYYY").unix() * 1000,
 			end_date: moment(end_date, 'MM-DD-YYYY').unix() * 1000,
-			selected_period: period.toString()
+			selected_period: period[0]
 		})
 		
 	}
