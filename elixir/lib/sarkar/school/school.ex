@@ -20,7 +20,7 @@ defmodule Sarkar.School do
 	# API 
 
 	def sync_changes(school_id, client_id, changes, last_sync_date) do
-		GenServer.call(via(school_id), {:sync_changes, client_id, changes, last_sync_date})
+		GenServer.call(via(school_id), {:sync_changes, client_id, changes, last_sync_date}, 30000)
 	end
 
 	def get_db(school_id) do
@@ -136,16 +136,15 @@ defmodule Sarkar.School do
 									Map.put(agg_new_writes, p_key, write),
 									max(date, max_date)
 								}
-							%{"date" => prev_date, "value" => prev_value} when prev_date <= date ->
+							%{"date" => prev_date, "value" => prev_value} when prev_date < date ->
 								{
 									Dynamic.put(agg_db, p, value),
 									Map.put(agg_writes, p_key, write),
 									Map.put(agg_new_writes, p_key, write),
 									max(date, max_date)
 								}
-							%{"date" => prev_date, "value" => prev_value} when prev_date > date ->
-								IO.puts "#{school_id}: #{prev_date} is more recent than #{date}. current time is #{:os.system_time(:millisecond)}"
-								IO.puts "#{school_id}: #{p_key}"
+							%{"date" => prev_date, "value" => prev_value} when prev_date >= date ->
+								# IO.puts "#{school_id}: #{prev_date} is more recent than #{date}. current time is #{:os.system_time(:millisecond)}"
 								# IO.inspect write
 								{
 									agg_db,
@@ -173,14 +172,14 @@ defmodule Sarkar.School do
 									Map.put(agg_new_writes, p_key, write),
 									max(date, max_date)
 								}
-							%{"date" => prev_date} when prev_date <= date ->
+							%{"date" => prev_date} when prev_date < date ->
 								{
 									Dynamic.delete(agg_db, p),
 									Map.put(agg_writes, p_key, write),
 									Map.put(agg_new_writes, p_key, write),
 									max(date, max_date)
 								}
-							%{"date" => prev_date} when prev_date > date ->
+							%{"date" => prev_date} when prev_date >= date ->
 								{
 									agg_db,
 									agg_writes,
@@ -230,7 +229,7 @@ defmodule Sarkar.School do
 			_ -> 
 				#broadcast(school_id, client_id, snapshot(nextDb))
 				broadcast(school_id, client_id, snapshot_diff(new_writes))
-				Sarkar.Store.School.save(school_id, nextDb, new_writes)
+				Sarkar.Store.School.save(school_id, new_writes)
 				# what do we do about attendance?? there are so many paths...
 				# {:reply, confirm_sync(last_date, nextDb), {school_id, nextWrites, nextDb}}
 				{:reply, confirm_sync_diff(last_date, relevant), {school_id, nextWrites, nextDb}}

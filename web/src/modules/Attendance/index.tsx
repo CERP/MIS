@@ -43,7 +43,7 @@ const deriveSelectedStudents = (selected_section: string, students: RootDBState[
 	.reduce((agg, curr) => ({...agg, [curr.id]: true}), {})
 
 const getStudentsForSection = (section_id: string, students: RootDBState["students"]) => Object.values(students)
-	.filter(s => s.section_id === section_id)
+	.filter(s => s.Name && s.section_id === section_id)
 
 class Attendance extends Component <propTypes, S> {
 
@@ -282,7 +282,7 @@ class Attendance extends Component <propTypes, S> {
 					placeholder="Current Date" />
 				
 				<div className="selectors">
-					<div className="row">
+					<div className="row" style = {{flexWrap : "wrap"}}>
 						<div className="button select-all" onClick={this.selectAllOrNone}>{Object.values(this.state.selected_students).every(x => x) ? "Select None" : "Select All"}</div>
 						<div className="button select-all" onClick={this.selectPresentOrNone}>P</div>
 						<div className="button select-all" onClick={this.selectAbsentOrNone}>A</div>

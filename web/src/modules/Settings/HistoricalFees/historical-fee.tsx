@@ -125,6 +125,22 @@ class historicalFee extends Component <propTypes, S > {
 					.filter(  s => s.Name && s.Active && this.state.selected_section_id !=="" && s.section_id === this.state.selected_section_id)
 					.sort( (a, b) => a.Name.localeCompare(b.Name))
 	}
+
+	mergedPaymentsForStudent = (student : MISStudent) => {
+		if(student.FamilyID) {
+			const siblings = Object.values(this.props.students)
+				.filter(s => s.Name && s.FamilyID && s.FamilyID === student.FamilyID)
+
+			const merged_payments = siblings.reduce((agg, curr) => ({
+				...agg,
+				...curr.payments
+			}), {} as { [id: string]: MISStudentPayment})
+
+			return merged_payments
+		}
+
+		return student.payments
+	}
 	
 	render() {
 
@@ -136,7 +152,7 @@ class historicalFee extends Component <propTypes, S > {
 		
 		// get payments against the selected student
 		let filteredPayments = selected_student && selected_student.Name ? 
-			getFilteredPayments(selected_student, this.state.year_filter, this.state.month_filter) : false
+			getFilteredPayments(this.mergedPaymentsForStudent(selected_student), this.state.year_filter, this.state.month_filter) : false
 		
 		// get current selected class name
 		const curr_class_name = this.state.selected_section_id ? 
