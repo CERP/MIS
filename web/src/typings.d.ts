@@ -33,10 +33,12 @@ interface RootDBState {
 		schoolLogo : string
 	}
 	max_limit: number
+	diary : MISDiary
 }
 
 interface RootReducerState {
 	client_id: string
+	initialized: boolean
 	queued: {
 		[path: string]: {
 			action: {
@@ -72,6 +74,7 @@ interface MISSMSHistory {
 	type: string
 	count: number
 }
+
 
 interface MISSettings {
 	shareData: boolean
@@ -279,9 +282,11 @@ interface MISSmsPayload {
 }
 
 interface MISDiary{
-	[section_id: string]: {
-		[subject: string]: {
-			homework: string
+	[date: string]: {
+		[section_id: string]: {
+			[subject: string]: {
+				homework: string
+			}
 		}
 	}
 }
