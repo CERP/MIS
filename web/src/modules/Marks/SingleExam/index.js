@@ -366,6 +366,7 @@ class SingleExam extends Component {
 											<option value="Fail">Fail</option>
 											<option value="Better">Better</option>
 											<option value="Shown Improvement">Shown Improvement</option>
+											<option value="Absent"> Absent</option>
 										</select>
 									</div>
 							</div>
