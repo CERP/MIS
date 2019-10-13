@@ -24,7 +24,7 @@ interface Filter {
 }
 
 interface ChartData {
-	monthly_attendance: {
+	attendance: {
 		[id: string]: Attendance
 	}
 	filter: Filter
@@ -32,7 +32,7 @@ interface ChartData {
 }
 
 interface TableData {
-	monthly_attendance: {
+	attendance: {
 		[id: string]: Attendance
 	}
 	totals: {
@@ -43,15 +43,14 @@ interface TableData {
 	date_format: string
 }
 
-const AttendanceChart = ({monthly_attendance, filter, date_format}: ChartData) => {		
+const AttendanceChart = ({attendance, filter, date_format}: ChartData) => {		
 		return <ResponsiveContainer width="100%" height={200}>
-					<LineChart data={Object.entries(monthly_attendance)
+					<LineChart data={Object.entries(attendance)
 						.sort(([d1, ], [d2, ]) => moment(d1, date_format).unix() - moment(d2, date_format).unix())
-						.map(([month, { PRESENT, LEAVE, ABSENT }]) => {
-							
-						const percent = ( ABSENT / (ABSENT + PRESENT + LEAVE) * 100)
-							return { month, PRESENT, LEAVE, ABSENT, percent: isFinite(percent) ? percent : 1 }
-						})}>
+						.map(([month, { PRESENT, LEAVE, ABSENT }]) => ({
+							month, PRESENT, LEAVE, ABSENT, 
+							percent: ( ABSENT / (ABSENT + PRESENT + LEAVE) * 100).toFixed(2)
+						}))}>
 
 						<XAxis dataKey="month"/>
 						<YAxis />
@@ -66,7 +65,7 @@ const AttendanceChart = ({monthly_attendance, filter, date_format}: ChartData) =
 			</ResponsiveContainer>
 }
 
-const AttendanceTable = ({monthly_attendance, totals, date_format}: TableData) =>{
+const AttendanceTable = ({attendance, totals, date_format}: TableData) =>{
 	return <div className="section table line" style={{margin: "20px 0", backgroundColor:"#c2bbbb21" }}>
 				<div className="table row heading">
 					<label style={{ backgroundColor: "#efecec"}}><b>Date</b></label>
@@ -76,7 +75,7 @@ const AttendanceTable = ({monthly_attendance, totals, date_format}: TableData) =
 					<label style={{ backgroundColor: "#bedcff"}}><b>Absentee(%)</b></label>
 				</div>
 				{
-					[...Object.entries(monthly_attendance)
+					[...Object.entries(attendance)
 						.sort(([d1, ], [d2, ]) => moment(d1, date_format).unix() - moment(d2, date_format).unix())
 						.map(([month, {PRESENT, LEAVE, ABSENT} ]) =>
 						
@@ -200,7 +199,7 @@ class TeacherAttendanceAnalytics extends Component < propTypes, S > {
 		const { teachers, settings, schoolLogo } = this.props
 
 		let totals = { PRESENT: 0, LEAVE: 0, ABSENT: 0 };
-		let monthly_attendance : {[id: string]: Attendance } = { }
+		let attendance : {[id: string]: Attendance } = { }
 		let teacher_attendance : {[id: string]: TAttendance } = { }
 
 		const temp_sd = moment(this.state.start_date).format("YYYY-MM-DD")
@@ -231,9 +230,9 @@ class TeacherAttendanceAnalytics extends Component < propTypes, S > {
 				const period_format = this.state.selected_period === 'Monthly' ? 'MM/YYYY' : 'DD/MM/YYYY'
 				const period_key = moment(date).format(period_format);
 
-				const m_status = monthly_attendance[period_key] || { PRESENT: 0, LEAVE: 0, ABSENT: 0}
+				const m_status = attendance[period_key] || { PRESENT: 0, LEAVE: 0, ABSENT: 0}
 				m_status[key] += 1;
-				monthly_attendance[period_key] = m_status;
+				attendance[period_key] = m_status;
 			}
 			teacher_attendance[tid] = { teacher ,...t_record }
 		}
@@ -314,7 +313,7 @@ class TeacherAttendanceAnalytics extends Component < propTypes, S > {
 		
 		<div className="no-print">
 			<AttendanceChart
-				monthly_attendance = { monthly_attendance }
+				attendance = { attendance }
 				filter = { this.state.chartFilter }
 				date_format = { date_format }
 			/>
@@ -355,7 +354,7 @@ class TeacherAttendanceAnalytics extends Component < propTypes, S > {
 		</div>
 		
 		<AttendanceTable
-			monthly_attendance={monthly_attendance}
+			attendance={attendance}
 			totals={totals}
 			date_format = { date_format }
 		/>
