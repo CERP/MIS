@@ -56,7 +56,7 @@ const AttendanceChart = ({attendance, filter, date_format}: ChartData) => {
 		return <ResponsiveContainer width="100%" height={200}>
 					<LineChart 
 						data={Object.entries(attendance)
-							.sort(([d1 ], [d2, ]) => moment(d1, date_format).unix() - moment(d2, date_format).unix())
+							.sort(([d1 ], [d2, ]) => moment(d1, date_format).diff(moment(d2, date_format)))
 							.map(([month, { PRESENT, LEAVE, ABSENT, CASUAL_LEAVE, SHORT_LEAVE, SICK_LEAVE }]) => ({
 								month, PRESENT, LEAVE: (LEAVE + CASUAL_LEAVE + SHORT_LEAVE + SICK_LEAVE), ABSENT, 
 								percent: (ABSENT / ( ABSENT + PRESENT + LEAVE + CASUAL_LEAVE + SHORT_LEAVE + SICK_LEAVE) * 100).toFixed(2)
@@ -86,7 +86,7 @@ const AttendanceTable = ({attendance, totals, date_format}: TableData) =>{
 				</div>
 				{
 					[...Object.entries(attendance)
-						.sort(([d1 ], [d2, ]) => moment(d1, date_format).unix() - moment(d2, date_format).unix())
+						.sort(([d1 ], [d2, ]) => moment(d1, date_format).diff(moment(d2, date_format)))
 						.map(([month, {PRESENT, LEAVE, ABSENT, CASUAL_LEAVE, SHORT_LEAVE, SICK_LEAVE} ]) =>
 						
 							<div className="table row" key={month}>
@@ -200,6 +200,7 @@ class AttendanceAnalytics extends Component < propTypes, S > {
 		const selected_section = this.state.selected_section_id;
 		const temp_sd = moment(this.state.start_date).format("YYYY-MM-DD")
 		const temp_ed = moment(this.state.end_date).format("YYYY-MM-DD")
+		const period_format = this.state.selected_period === 'Monthly' ? 'MM/YYYY' : 'DD/MM/YYYY'
 
 		let totals = { PRESENT: 0, LEAVE: 0, ABSENT: 0, SICK_LEAVE: 0, SHORT_LEAVE: 0, CASUAL_LEAVE: 0 };
 		let attendance : {[id: string]: Attendance } = { } // [mm/yyyy] || [dd/mm/yyyy]: { present / absent / leave }
@@ -226,7 +227,6 @@ class AttendanceAnalytics extends Component < propTypes, S > {
 				totals[record.status] += 1;
 				attendance_status_count[record.status] += 1;
 
-				const period_format = this.state.selected_period === 'Monthly' ? 'MM/YYYY' : 'DD/MM/YYYY'
 				const period_key = moment(date).format(period_format);
 				const m_status = attendance[period_key] || { PRESENT: 0, LEAVE: 0, ABSENT: 0, SHORT_LEAVE:0 , CASUAL_LEAVE: 0, SICK_LEAVE:0 }
 				m_status[record.status] += 1;
@@ -242,8 +242,6 @@ class AttendanceAnalytics extends Component < propTypes, S > {
 				(student.Name.toUpperCase().includes(this.state.filterText.toUpperCase()))
 			)
 			.sort(([, { ABSENT: a1 }], [, {ABSENT: a2}]) => a2 - a1)
-
-		const date_format = this.state.selected_period === "Daily" ? "DD/MM/YYYY" : "MM/YYYY"
 
 		return <div className="attendance-analytics">
 
@@ -315,7 +313,7 @@ class AttendanceAnalytics extends Component < propTypes, S > {
 			<AttendanceChart
 				attendance = { attendance }
 				filter = { this.state.chartFilter }
-				date_format = { date_format }
+				date_format = { period_format }
 			/>
 		</div>
 
@@ -356,7 +354,7 @@ class AttendanceAnalytics extends Component < propTypes, S > {
 		<AttendanceTable
 			attendance={attendance}
 			totals={totals}
-			date_format = { date_format }
+			date_format = { period_format}
 		/>
 
 		<div className="divider">Student Attendance</div>
