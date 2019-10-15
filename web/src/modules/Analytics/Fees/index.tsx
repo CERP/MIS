@@ -1,19 +1,43 @@
 import React, {Component} from 'react'
-import { Link } from 'react-router-dom'
+import { Link, RouteComponentProps } from 'react-router-dom'
 import { connect } from 'react-redux'
 import moment from 'moment'
-
-import { checkStudentDuesReturning } from 'utils/checkStudentDues'
-import { addMultiplePayments } from 'actions'
-import { PrintHeader } from 'components/Layout'
-import Former from 'utils/former'
+import { addMultiplePayments } from '../../../actions'
+import { PrintHeader } from '../../../components/Layout'
+import Former from '../../../utils/former'
+import { checkStudentDuesReturning } from '../../../utils/checkStudentDues'
 import { numberWithCommas } from '../../../utils/numberWithCommas'
-
-import getSectionsFromClasses from 'utils/getSectionsFromClasses'
+import { getSectionsFromClasses } from '../../../utils/getSectionsFromClasses'
 
 import { ResponsiveContainer, XAxis, YAxis, Tooltip, LineChart, Line } from 'recharts'
 
-	const MonthlyFeesChart = (props) => {
+interface Filters {
+	total : boolean
+	paid: boolean
+	forgiven: boolean
+	pending: boolean
+}
+
+interface Payment {
+	SUBMITTED: number
+	SCHOLARSHIP: number
+	OWED: number
+	FORGIVEN: number
+}
+
+interface ChartProps {
+	monthly_payments: {
+		[is: string]: Payment
+	}
+	filter: Filters
+}
+
+type PaymentAddItem = {
+	student: MISStudent
+	payment_id: string
+} & MISStudentPayment
+
+	const MonthlyFeesChart = (props: ChartProps) => {
 		const filter = props.filter
 		return <ResponsiveContainer width="100%" height={200}>
 					<LineChart 
@@ -29,15 +53,27 @@ import { ResponsiveContainer, XAxis, YAxis, Tooltip, LineChart, Line } from 'rec
 						<Tooltip />
 						
 						{ filter.total && <Line dataKey='OWED' name="Total" stroke="#74aced" strokeWidth={3} /> }
-						{ filter.paid && <Line dataKey="SUBMITTED" stackId="a" stroke="#93d0c5" name="Paid" strokeWidth={3}/> }
-						{ filter.forgiven && <Line dataKey="FORGIVEN" stackId="a" stroke="#939292" name="Forgiven" strokeWidth={3}/>}
+						{ filter.paid && <Line dataKey="SUBMITTED" stroke="#93d0c5" name="Paid" strokeWidth={3}/> }
+						{ filter.forgiven && <Line dataKey="FORGIVEN" stroke="#939292" name="Forgiven" strokeWidth={3}/>}
 						{ filter.pending  && <Line dataKey='net' name="Pending" strokeWidth={3} stroke="#ff6b68" />}
 
 					</LineChart>
 				</ResponsiveContainer> 
 	}
+
+	interface TableProps {
+		monthly_payments: {
+			[id: string]: Payment
+		}
+		total_debts: {
+			PAID: number
+			SCHOLARSHIP: number
+			OWED: number
+			FORGIVEN: number
+		}
+	}
 	
-	const MonthlyFeesTable = (props) => {
+	const MonthlyFeesTable = (props: TableProps) => {
 		
 		const total = props.total_debts;
 		const monthly_payments = props.monthly_payments;
@@ -78,9 +114,42 @@ import { ResponsiveContainer, XAxis, YAxis, Tooltip, LineChart, Line } from 'rec
 				
 	}
 
-class FeeAnalytics extends Component {
+interface P {
+	students: RootDBState["students"]
+	classes: RootDBState["classes"]
+	settings: RootDBState["settings"]
+	schoolLogo: RootDBState["assets"]["schoolLogo"]
+	addPayments: (payments: PaymentAddItem[]) => void,
+}
 
-	constructor(props) {
+interface S {
+	filterText: string
+	chartFilter: Filters,
+	classFilter: string,
+}
+
+interface routeInfo {
+
+}
+
+type StudentDebtMap = {
+	[id: string]: {
+		student: MISStudent
+		debt: Payment
+		familyId?: string
+	} 
+}
+
+type PaymentSingleMap = {
+	[id: string]: Payment
+}
+
+type propTypes = RouteComponentProps<routeInfo> & P
+
+class FeeAnalytics extends Component<propTypes, S> {
+
+	former: Former
+	constructor(props: propTypes) {
 	  super(props)
 	
 	  this.state = {
@@ -97,7 +166,7 @@ class FeeAnalytics extends Component {
 	  this.former = new Former(this, [])
 	}
 
-	calculateDebt = ({ SUBMITTED, FORGIVEN, OWED, SCHOLARSHIP }) => SUBMITTED + FORGIVEN + SCHOLARSHIP - OWED;
+	calculateDebt = ({ SUBMITTED, FORGIVEN, OWED, SCHOLARSHIP }: Payment) => SUBMITTED + FORGIVEN + SCHOLARSHIP - OWED;
 
 	componentDidMount() {
 		// first update fees
@@ -111,7 +180,7 @@ class FeeAnalytics extends Component {
 		}
 	}
 
-	componentWillReceiveProps(newProps) {
+	componentWillReceiveProps(newProps: propTypes) {
 		const { students, addPayments } = newProps
 		const nextPayments = Object.values(students)
 		.reduce((agg, student) => ([...agg, ...checkStudentDuesReturning(student)]), []);
@@ -136,8 +205,8 @@ class FeeAnalytics extends Component {
 	let total_owed = 0;
 	let total_forgiven = 0;
 	let total_scholarship = 0;
-	let monthly_payments = {}; // [MM-DD-YYYY]: { due, paid, forgiven }
-	let total_student_debts = {}; // [id]: { due, paid, forgiven }
+	let monthly_payments = {} as ChartProps["monthly_payments"] | TableProps["monthly_payments"]; // [MM-DD-YYYY]: { due, paid, forgiven }
+	let total_student_debts = {} as StudentDebtMap; // [id]: { due, paid, forgiven }
 	let total_debts = { PAID: total_paid, OWED: total_owed, FORGIVEN: total_forgiven, SCHOLARSHIP: total_scholarship }; //Need a default otherwise throws an error when logged in for the first time
 
 	for(let sid in students) {
@@ -148,8 +217,10 @@ class FeeAnalytics extends Component {
 		for(let pid in student.payments || {}) {
 			const payment = student.payments[pid];
 
-			const amount = parseFloat(payment.amount)
-
+			// some payment.amount has type string
+			// @ts-ignore 
+			const amount =  typeof(payment.amount) === "string" ? parseFloat(payment.amount) : payment.amount
+			
 			// totals
 			amount < 0 ? debt["SCHOLARSHIP"] += Math.abs(amount) : debt[payment.type] += amount;
 
@@ -295,11 +366,11 @@ class FeeAnalytics extends Component {
 	</div>
   }
 }
-export default connect(state => ({
+export default connect((state: RootReducerState) => ({
 	students: state.db.students,
 	settings: state.db.settings,
 	classes: state.db.classes,
 	schoolLogo: state.db.assets ? state.db.assets.schoolLogo || "" : "" 
-}), dispatch => ({
-	addPayments: payments => dispatch(addMultiplePayments(payments))
+}), (dispatch: Function) => ({
+	addPayments: (payments: PaymentAddItem[]) => dispatch(addMultiplePayments(payments))
 }))(FeeAnalytics)
