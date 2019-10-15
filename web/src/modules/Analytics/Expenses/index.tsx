@@ -21,7 +21,7 @@ interface ChartProps {
 	date_format: string
 }
 
-	const MonthlyExpenseChart : React.SFC <ChartProps> = ({collective_obj, chartFilter, date_format}) => {
+	const ExpenseChart : React.SFC <ChartProps> = ({collective_obj, chartFilter, date_format}) => {
 		return <ResponsiveContainer width="100%" height={200}>
 			<LineChart
 				data={
@@ -168,7 +168,7 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 
 	const {students, expenses ,settings, schoolLogo} = this.props
 
-	const stu_payments = Object.entries(students)
+	const students_payments = Object.entries(students)
 		.filter(([id, s]) => s.Name)
 		.reduce((prev,[id, s]) => {
 
@@ -196,14 +196,17 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 			}
 		}, {} as { [id:string]: MISExpense | MISSalaryExpense})
 
-	const income_exp = {...stu_payments, ...filtered_expense}
+	const income_exp = {...students_payments, ...filtered_expense}
 
 	let total_income = 0
 	let total_expense = 0
 
+	const temp_sd = moment(this.state.start_date)
+	const temp_ed = moment(this.state.end_date)
 	const period_format = this.state.selected_period === "Daily" ? "DD/MM/YYYY" : "MM/YYYY"
 
 	const collective_obj = Object.values(income_exp)
+		.filter( curr => moment(curr.date).isSameOrAfter(temp_sd) && moment(curr.date).isSameOrBefore(temp_ed))
 		.reduce((agg, curr) => {
 			const pay_month = moment(curr.date).format(period_format)
 
@@ -228,8 +231,8 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 
 		<PrintHeader 
 			settings={settings}
-			logo={schoolLogo}
-		/>
+			logo={schoolLogo}/>
+
 		<div className="divider">Payments over Time</div>
 
 		<div className="no-print btn-filter-toggle row">
@@ -251,7 +254,6 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 					value={moment(this.state.end_date).format("YYYY-MM-DD")} 
 					max = {moment().format("YYYY-MM-DD")}/>
 			</div>
-			
 			<div className="row">
 				<label> Payments Period </label>
 				<select {...this.former.super_handle(["selected_period"], () => true, this.onStateChange)}>
@@ -262,14 +264,13 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 		</div>}
 
 		<div className="no-print">
-		<MonthlyExpenseChart 
+		<ExpenseChart 
 			collective_obj={collective_obj}
 			chartFilter={this.state.chartFilter}
 			date_format={period_format}/>
 		</div>
 		
 		<div className="no-print checkbox-container">
-			
 			<div className="chart-checkbox" style={{ color:"#bedcff" }}>
 				<input
 					type="checkbox" 
@@ -277,7 +278,6 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 				/>
 				Income 
 			</div>
-
 			<div className="chart-checkbox" style={{ color:"#e0e0e0" }}>
 				<input
 					type="checkbox"
@@ -285,7 +285,6 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 				/>
 				Expense
 			</div>
-
 			<div className="chart-checkbox" style={{ color:"#93d0c5" }}>
 				<input
 					type="checkbox"
@@ -293,14 +292,13 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 				/> 
 				Profit
 			</div>
-
 		</div>
-
-	<ExpenseTable collective_obj={collective_obj}
-		total_income={total_income}
-		total_expense={total_expense}
-		date_format={period_format}/>
-		
+		<ExpenseTable 
+			collective_obj={collective_obj}
+			total_income={total_income}
+			total_expense={total_expense}
+			date_format={period_format}/>
+			
 		<div className="print button" onClick={() => window.print()} style={{ marginTop: "10px" }}>Print</div>
 
 	</div>
