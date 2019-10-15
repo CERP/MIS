@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import { Link, RouteComponentProps } from 'react-router-dom'
 import { connect } from 'react-redux'
 import moment from 'moment'
+import queryString from 'querystring'
 import { addMultiplePayments } from '../../../actions'
 import { PrintHeader } from '../../../components/Layout'
 import Former from '../../../utils/former'
@@ -30,89 +31,91 @@ interface ChartProps {
 		[is: string]: Payment
 	}
 	filter: Filters
+	date_format: string
+}
+
+const MonthlyFeesChart = (props: ChartProps) => {
+	const filter = props.filter
+	return <ResponsiveContainer width="100%" height={200}>
+				<LineChart 
+					data={
+						Object.entries(props.monthly_payments)
+							.sort(([m1,], [m2,]) => moment(m1, props.date_format).diff(moment(m2, props.date_format)))
+							.map(([month, { OWED, SUBMITTED, FORGIVEN }]) => ({
+								month, OWED, SUBMITTED, FORGIVEN, net: Math.abs(SUBMITTED - OWED) 
+							}))}>
+					
+					<XAxis dataKey="month" />
+					<YAxis />
+					<Tooltip />
+					
+					{ filter.total && <Line dataKey='OWED' name="Total" stroke="#74aced" strokeWidth={3} /> }
+					{ filter.paid && <Line dataKey="SUBMITTED" stroke="#93d0c5" name="Paid" strokeWidth={3}/> }
+					{ filter.forgiven && <Line dataKey="FORGIVEN" stroke="#939292" name="Forgiven" strokeWidth={3}/>}
+					{ filter.pending  && <Line dataKey='net' name="Pending" strokeWidth={3} stroke="#ff6b68" />}
+
+				</LineChart>
+			</ResponsiveContainer> 
+}
+
+interface TableProps {
+	monthly_payments: {
+		[id: string]: Payment
+	}
+	total_debts: {
+		PAID: number
+		SCHOLARSHIP: number
+		OWED: number
+		FORGIVEN: number
+	}
+	date_format: string
+}
+
+const MonthlyFeesTable = (props: TableProps) => {
+	
+	const total = props.total_debts;
+	const monthly_payments = props.monthly_payments;
+
+	return <div className="section table" style={{margin: "20px 0", backgroundColor:"#c2bbbb21", overflowX: "scroll" }}>
+			<div className="table row heading">
+				<label style={{ backgroundColor: "#efecec", textAlign:"center" }}> <b> Date     </b></label>
+				<label style={{ backgroundColor: "#bedcff", textAlign:"center" }}> <b> Total    </b> </label>
+				<label style={{ backgroundColor: "#93d0c5", textAlign:"center" }}> <b> Paid     </b> </label>
+				<label style={{ backgroundColor: "#e0e0e0", textAlign:"center" }}> <b> Forgiven </b> </label>
+				<label style={{ backgroundColor: "#fc6171", textAlign:"center" }}> <b> Pending  </b> </label>
+			</div>
+			{
+				[...Object.entries(monthly_payments)
+					.sort(([m1, ], [m2, ]) => moment(m1, props.date_format).diff(moment(m2, props.date_format)))
+					.map(([month, { OWED, SUBMITTED, FORGIVEN, SCHOLARSHIP }]) => {
+
+						const red = "#fc6171"
+						return <div className="table row" key={month}>
+							<div style={{ backgroundColor: "#efecec", textAlign:"center" }}>{month}</div>
+							<div style={{ backgroundColor: "#bedcff", textAlign:"center" }}>{numberWithCommas(OWED)}</div>
+							<div style={{ backgroundColor: "#93d0c5", textAlign:"center" }}>{numberWithCommas(SUBMITTED)}</div>
+							<div style={{ backgroundColor: "#e0e0e0", textAlign:"center" }}>{numberWithCommas(FORGIVEN + SCHOLARSHIP)}</div>
+							<div style={{ backgroundColor: red, textAlign:"center" }}>{numberWithCommas(OWED - (SUBMITTED + FORGIVEN + SCHOLARSHIP))}</div>
+						</div>
+					}),
+					<div className="table row footing" style={{borderTop: '1.5px solid #333'}} key={Math.random()}>
+					<br/> 
+						<label style={{ backgroundColor: "#efecec", textAlign:"center" }}><b>Total</b></label>
+						<label style={{ backgroundColor: "#bedcff", textAlign:"center" }}><b>{numberWithCommas(total.OWED)}</b></label>
+						<label style={{ backgroundColor: "#93d0c5", textAlign:"center" }}><b>{numberWithCommas(total.PAID)}</b></label>
+						<label style={{ backgroundColor: "#e0e0e0", textAlign:"center" }}><b>{numberWithCommas(total.FORGIVEN + total.SCHOLARSHIP)}</b></label>
+						<label style={{ backgroundColor: "#fc6171", textAlign:"center"}}><b>{numberWithCommas(Math.abs(total.OWED - (total.PAID + total.FORGIVEN)))}</b></label>
+					</div>
+				]
+			}
+		</div> 
+			
 }
 
 type PaymentAddItem = {
 	student: MISStudent
 	payment_id: string
 } & MISStudentPayment
-
-	const MonthlyFeesChart = (props: ChartProps) => {
-		const filter = props.filter
-		return <ResponsiveContainer width="100%" height={200}>
-					<LineChart 
-						data={
-							Object.entries(props.monthly_payments)
-								.sort(([m1,], [m2,]) => moment(m1, "MM/YYYY").diff(moment(m2, "MM/YYYY")))
-								.map(([month, { OWED, SUBMITTED, FORGIVEN }]) => ({
-									month, OWED, SUBMITTED, FORGIVEN, net: Math.abs(SUBMITTED - OWED) 
-								}))}>
-						
-						<XAxis dataKey="month" />
-						<YAxis />
-						<Tooltip />
-						
-						{ filter.total && <Line dataKey='OWED' name="Total" stroke="#74aced" strokeWidth={3} /> }
-						{ filter.paid && <Line dataKey="SUBMITTED" stroke="#93d0c5" name="Paid" strokeWidth={3}/> }
-						{ filter.forgiven && <Line dataKey="FORGIVEN" stroke="#939292" name="Forgiven" strokeWidth={3}/>}
-						{ filter.pending  && <Line dataKey='net' name="Pending" strokeWidth={3} stroke="#ff6b68" />}
-
-					</LineChart>
-				</ResponsiveContainer> 
-	}
-
-	interface TableProps {
-		monthly_payments: {
-			[id: string]: Payment
-		}
-		total_debts: {
-			PAID: number
-			SCHOLARSHIP: number
-			OWED: number
-			FORGIVEN: number
-		}
-	}
-	
-	const MonthlyFeesTable = (props: TableProps) => {
-		
-		const total = props.total_debts;
-		const monthly_payments = props.monthly_payments;
-	
-		return <div className="section table" style={{margin: "20px 0", backgroundColor:"#c2bbbb21", overflowX: "scroll" }}>
-				<div className="table row heading">
-					<label style={{ backgroundColor: "#efecec", textAlign:"center" }}> <b> Date     </b></label>
-					<label style={{ backgroundColor: "#bedcff", textAlign:"center" }}> <b> Total    </b> </label>
-					<label style={{ backgroundColor: "#93d0c5", textAlign:"center" }}> <b> Paid     </b> </label>
-					<label style={{ backgroundColor: "#e0e0e0", textAlign:"center" }}> <b> Forgiven </b> </label>
-					<label style={{ backgroundColor: "#fc6171", textAlign:"center" }}> <b> Pending  </b> </label>
-				</div>
-				{
-					[...Object.entries(monthly_payments)
-						.sort(([m1, ], [m2, ]) => moment(m1, "MM/YYYY").diff(moment(m2, "MM/YYYY")))
-						.map(([month, { OWED, SUBMITTED, FORGIVEN, SCHOLARSHIP }]) => {
-
-							const red = "#fc6171"
-							return <div className="table row" key={month}>
-								<div style={{ backgroundColor: "#efecec", textAlign:"center" }}>{month}</div>
-								<div style={{ backgroundColor: "#bedcff", textAlign:"center" }}>{numberWithCommas(OWED)}</div>
-								<div style={{ backgroundColor: "#93d0c5", textAlign:"center" }}>{numberWithCommas(SUBMITTED)}</div>
-								<div style={{ backgroundColor: "#e0e0e0", textAlign:"center" }}>{numberWithCommas(FORGIVEN + SCHOLARSHIP)}</div>
-								<div style={{ backgroundColor: red, textAlign:"center" }}>{numberWithCommas(OWED - (SUBMITTED + FORGIVEN + SCHOLARSHIP))}</div>
-							</div>
-						}),
-						<div className="table row footing" style={{borderTop: '1.5px solid #333'}} key={Math.random()}>
-						<br/> 
-							<label style={{ backgroundColor: "#efecec", textAlign:"center" }}><b>Total</b></label>
-							<label style={{ backgroundColor: "#bedcff", textAlign:"center" }}><b>{numberWithCommas(total.OWED)}</b></label>
-							<label style={{ backgroundColor: "#93d0c5", textAlign:"center" }}><b>{numberWithCommas(total.PAID)}</b></label>
-							<label style={{ backgroundColor: "#e0e0e0", textAlign:"center" }}><b>{numberWithCommas(total.FORGIVEN + total.SCHOLARSHIP)}</b></label>
-							<label style={{ backgroundColor: "#fc6171", textAlign:"center"}}><b>{numberWithCommas(Math.abs(total.OWED - (total.PAID + total.FORGIVEN)))}</b></label>
-						</div>
-					]
-				}
-			</div> 
-				
-	}
 
 interface P {
 	students: RootDBState["students"]
@@ -124,8 +127,12 @@ interface P {
 
 interface S {
 	filterText: string
-	chartFilter: Filters,
-	classFilter: string,
+	chartFilter: Filters
+	classFilter: string
+	is_fee_filter: boolean
+	selected_period: string
+	start_date: number
+	end_date: number
 }
 
 interface routeInfo {
@@ -150,18 +157,31 @@ class FeeAnalytics extends Component<propTypes, S> {
 
 	former: Former
 	constructor(props: propTypes) {
-	  super(props)
+	  	super(props)
 	
-	  this.state = {
-		 filterText: "",
-		 chartFilter: {
-			 paid: true,
-			 forgiven: true,
-			 pending: true,
-			 total: true
-		 },
-		 classFilter: ""
-	  }
+	 	 const parsed_query = queryString.parse(this.props.location.search);
+
+		const sd_param = parsed_query["?start_date"] || ""
+		const ed_param = parsed_query["end_date"] || ""
+		const period = parsed_query["period"] || ""
+
+		const start_date =  sd_param !== "" ? moment(sd_param, "MM-DD-YYYY").unix() * 1000 : moment().subtract(1,'year').unix() * 1000
+		const end_date = ed_param !=="" ? moment(ed_param, "MM-DD-YYYY").unix() * 1000 : moment().unix() * 1000
+
+		this.state = {
+			filterText: "",
+			chartFilter: {
+				paid: true,
+				forgiven: true,
+				pending: true,
+				total: true
+			},
+			classFilter: "",
+			is_fee_filter: false,
+			selected_period: period !== "" ? period.toString() : "Monthly",
+			start_date,
+			end_date,
+		}
 
 	  this.former = new Former(this, [])
 	}
@@ -180,13 +200,34 @@ class FeeAnalytics extends Component<propTypes, S> {
 		}
 	}
 
-	componentWillReceiveProps(newProps: propTypes) {
-		const { students, addPayments } = newProps
+	onStateChange = () => {
+
+		this.props.history.push({
+			pathname: '/analytics/fees',
+			search: `?start_date=${moment(this.state.start_date).format("MM-DD-YYYY")}&end_date=${moment(this.state.end_date).format("MM-DD-YYYY")}&period=${this.state.selected_period}`
+		})
+
+	}
+
+	componentWillReceiveProps(nextProps: propTypes) {
+
+		const parsed_query = queryString.parse(nextProps.location.search);
+
+		const start_date = parsed_query["?start_date"] || ""
+		const end_date = parsed_query["end_date"] || ""
+		const period = parsed_query["period"] || ""
+
+		this.setState({
+			start_date: moment(start_date, "MM-DD-YYYY").unix() * 1000,
+			end_date: moment(end_date, 'MM-DD-YYYY').unix() * 1000,
+			selected_period: period.toString()
+		})
+
+		const { students, addPayments } = nextProps
 		const nextPayments = Object.values(students)
 		.reduce((agg, student) => ([...agg, ...checkStudentDuesReturning(student)]), []);
 
 		if(nextPayments.length > 0) {
-			console.log(nextPayments)
 			addPayments(nextPayments)
 		}
 	}
@@ -208,6 +249,10 @@ class FeeAnalytics extends Component<propTypes, S> {
 	let monthly_payments = {} as ChartProps["monthly_payments"] | TableProps["monthly_payments"]; // [MM-DD-YYYY]: { due, paid, forgiven }
 	let total_student_debts = {} as StudentDebtMap; // [id]: { due, paid, forgiven }
 	let total_debts = { PAID: total_paid, OWED: total_owed, FORGIVEN: total_forgiven, SCHOLARSHIP: total_scholarship }; //Need a default otherwise throws an error when logged in for the first time
+	
+	const temp_sd = moment(this.state.start_date)
+	const temp_ed = moment(this.state.end_date)
+	const period_format = this.state.selected_period === "Daily" ? "DD/MM/YYYY" : "MM/YYYY"
 
 	for(let sid in students) {
 		const student = students[sid];
@@ -217,6 +262,10 @@ class FeeAnalytics extends Component<propTypes, S> {
 		for(let pid in student.payments || {}) {
 			const payment = student.payments[pid];
 
+			if(!( moment(payment.date).isSameOrAfter(temp_sd) && moment(payment.date).isSameOrBefore(temp_ed) )){
+				continue
+			}
+
 			// some payment.amount has type string
 			// @ts-ignore 
 			const amount =  typeof(payment.amount) === "string" ? parseFloat(payment.amount) : payment.amount
@@ -225,7 +274,7 @@ class FeeAnalytics extends Component<propTypes, S> {
 			amount < 0 ? debt["SCHOLARSHIP"] += Math.abs(amount) : debt[payment.type] += amount;
 
 			// monthly
-			const month_key = moment(payment.date).format("MM/YYYY");
+			const month_key = moment(payment.date).format(period_format);
 			const month_debt = monthly_payments[month_key] || { OWED: 0, SUBMITTED: 0, FORGIVEN: 0, SCHOLARSHIP: 0}
 			
 			amount < 0 ? month_debt["SCHOLARSHIP"] += Math.abs(amount) : month_debt[payment.type] += amount;
@@ -235,7 +284,7 @@ class FeeAnalytics extends Component<propTypes, S> {
 
 		total_paid += debt.SUBMITTED;
 		total_owed += debt.OWED;
-		total_forgiven += debt.FORGIVEN;
+		total_forgiven += debt.FORGIVEN; 	
 		total_scholarship += debt.SCHOLARSHIP;
 		
 
@@ -276,15 +325,43 @@ class FeeAnalytics extends Component<propTypes, S> {
 
 		<PrintHeader 
 			settings={settings} 
-			logo={schoolLogo}
-		/>
+			logo={schoolLogo}/>
 		
 		<div className="no-print" style={{ marginRight:"10px" }}>
 			<div className="divider">Payments over Time</div>
+
+			<div className="no-print btn-filter-toggle row">
+				<div className="button green" onClick={ () => this.setState({is_fee_filter: !this.state.is_fee_filter})}>Show Filters</div>
+			</div>
+			{ this.state.is_fee_filter && <div className="no-print section form">				
+				<div className="row">
+					<label> Start Date </label>
+					<input type="date" 
+						   onChange={this.former.handle(["start_date"], () => true, this.onStateChange)} 
+						   value={moment(this.state.start_date).format("YYYY-MM-DD")} 
+						   max = {moment().format("YYYY-MM-DD")}/>
+				</div>
+				<div className="row">	
+					<label> End Date </label>
+					<input type="date" 
+						   onChange={this.former.handle(["end_date"], () => true, this.onStateChange)} 
+						   value={moment(this.state.end_date).format("YYYY-MM-DD")} 
+						   max = {moment().format("YYYY-MM-DD")}/>
+				</div>
+				
+				<div className="row">
+					<label> Fees Period </label>
+					<select {...this.former.super_handle(["selected_period"], () => true, this.onStateChange)}>
+							<option value="Daily">Daily</option>
+							<option value="Monthly" selected>Monthly</option>
+					</select>
+				</div>
+			</div>}
+
 			<MonthlyFeesChart 
 				monthly_payments={monthly_payments} 
 				filter={this.state.chartFilter}
-			/>
+				date_format={period_format}/>
 		</div>
 		
 		<div className="no-print checkbox-container">
@@ -323,7 +400,10 @@ class FeeAnalytics extends Component<propTypes, S> {
 		
 		</div>
 
-		<MonthlyFeesTable monthly_payments={monthly_payments} total_debts={total_debts}/>
+		<MonthlyFeesTable 
+			monthly_payments={monthly_payments} 
+			total_debts={total_debts}
+			date_format={period_format}/>
 
 		<div className="divider">Students with Payments Outstanding</div>
 		<div className="section">
