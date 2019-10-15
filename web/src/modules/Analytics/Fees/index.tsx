@@ -27,20 +27,20 @@ interface Payment {
 }
 
 interface ChartProps {
-	monthly_payments: {
+	payments: {
 		[is: string]: Payment
 	}
 	filter: Filters
 	date_format: string
 }
 
-const MonthlyFeesChart = (props: ChartProps) => {
+const FeesChart = (props: ChartProps) => {
 	const filter = props.filter
 	return <ResponsiveContainer width="100%" height={200}>
 				<LineChart 
 					data={
-						Object.entries(props.monthly_payments)
-							.sort(([m1,], [m2,]) => moment(m1, props.date_format).diff(moment(m2, props.date_format)))
+						Object.entries(props.payments)
+							.sort(([d1,], [d2,]) => moment(d1, props.date_format).diff(moment(d2, props.date_format)))
 							.map(([month, { OWED, SUBMITTED, FORGIVEN }]) => ({
 								month, OWED, SUBMITTED, FORGIVEN, net: Math.abs(SUBMITTED - OWED) 
 							}))}>
@@ -59,7 +59,7 @@ const MonthlyFeesChart = (props: ChartProps) => {
 }
 
 interface TableProps {
-	monthly_payments: {
+	payments: {
 		[id: string]: Payment
 	}
 	total_debts: {
@@ -71,10 +71,10 @@ interface TableProps {
 	date_format: string
 }
 
-const MonthlyFeesTable = (props: TableProps) => {
+const FeesTable = (props: TableProps) => {
 	
 	const total = props.total_debts;
-	const monthly_payments = props.monthly_payments;
+	const payments = props.payments;
 
 	return <div className="section table" style={{margin: "20px 0", backgroundColor:"#c2bbbb21", overflowX: "scroll" }}>
 			<div className="table row heading">
@@ -85,8 +85,8 @@ const MonthlyFeesTable = (props: TableProps) => {
 				<label style={{ backgroundColor: "#fc6171", textAlign:"center" }}> <b> Pending  </b> </label>
 			</div>
 			{
-				[...Object.entries(monthly_payments)
-					.sort(([m1, ], [m2, ]) => moment(m1, props.date_format).diff(moment(m2, props.date_format)))
+				[...Object.entries(payments)
+					.sort(([d1, ], [d2, ]) => moment(d1, props.date_format).diff(moment(d2, props.date_format)))
 					.map(([month, { OWED, SUBMITTED, FORGIVEN, SCHOLARSHIP }]) => {
 
 						const red = "#fc6171"
@@ -195,7 +195,6 @@ class FeeAnalytics extends Component<propTypes, S> {
 			.reduce((agg, student) => ([...agg, ...checkStudentDuesReturning(student)]), []);
 
 		if(nextPayments.length > 0) {
-			console.log(nextPayments)
 			addPayments(nextPayments)
 		}
 	}
@@ -246,8 +245,8 @@ class FeeAnalytics extends Component<propTypes, S> {
 	let total_owed = 0;
 	let total_forgiven = 0;
 	let total_scholarship = 0;
-	let monthly_payments = {} as ChartProps["monthly_payments"] | TableProps["monthly_payments"]; // [MM-DD-YYYY]: { due, paid, forgiven }
-	let total_student_debts = {} as StudentDebtMap; // [id]: { due, paid, forgiven }
+	let payments = {} as ChartProps["payments"];
+	let total_student_debts = {} as StudentDebtMap;
 	let total_debts = { PAID: total_paid, OWED: total_owed, FORGIVEN: total_forgiven, SCHOLARSHIP: total_scholarship }; //Need a default otherwise throws an error when logged in for the first time
 	
 	const temp_sd = moment(this.state.start_date)
@@ -273,12 +272,11 @@ class FeeAnalytics extends Component<propTypes, S> {
 			// totals
 			amount < 0 ? debt["SCHOLARSHIP"] += Math.abs(amount) : debt[payment.type] += amount;
 
-			// monthly
-			const month_key = moment(payment.date).format(period_format);
-			const month_debt = monthly_payments[month_key] || { OWED: 0, SUBMITTED: 0, FORGIVEN: 0, SCHOLARSHIP: 0}
+			const period_key = moment(payment.date).format(period_format);
+			const month_debt = payments[period_key] || { OWED: 0, SUBMITTED: 0, FORGIVEN: 0, SCHOLARSHIP: 0}
 			
 			amount < 0 ? month_debt["SCHOLARSHIP"] += Math.abs(amount) : month_debt[payment.type] += amount;
-			monthly_payments[month_key] = month_debt;
+			payments[period_key] = month_debt;
 
 		}
 
@@ -330,10 +328,10 @@ class FeeAnalytics extends Component<propTypes, S> {
 		<div className="no-print" style={{ marginRight:"10px" }}>
 			<div className="divider">Payments over Time</div>
 
-			<div className="no-print btn-filter-toggle row">
+			<div className="btn-filter-toggle row">
 				<div className="button green" onClick={ () => this.setState({is_fee_filter: !this.state.is_fee_filter})}>Show Filters</div>
 			</div>
-			{ this.state.is_fee_filter && <div className="no-print section form">				
+			{ this.state.is_fee_filter && <div className="section form">				
 				<div className="row">
 					<label> Start Date </label>
 					<input type="date" 
@@ -350,7 +348,7 @@ class FeeAnalytics extends Component<propTypes, S> {
 				</div>
 				
 				<div className="row">
-					<label> Fees Period </label>
+					<label> Fee Period </label>
 					<select {...this.former.super_handle(["selected_period"], () => true, this.onStateChange)}>
 							<option value="Daily">Daily</option>
 							<option value="Monthly" selected>Monthly</option>
@@ -358,8 +356,8 @@ class FeeAnalytics extends Component<propTypes, S> {
 				</div>
 			</div>}
 
-			<MonthlyFeesChart 
-				monthly_payments={monthly_payments} 
+			<FeesChart 
+				payments={payments} 
 				filter={this.state.chartFilter}
 				date_format={period_format}/>
 		</div>
@@ -400,8 +398,8 @@ class FeeAnalytics extends Component<propTypes, S> {
 		
 		</div>
 
-		<MonthlyFeesTable 
-			monthly_payments={monthly_payments} 
+		<FeesTable 
+			payments={payments} 
 			total_debts={total_debts}
 			date_format={period_format}/>
 
