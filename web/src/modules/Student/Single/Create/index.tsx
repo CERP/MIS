@@ -777,7 +777,7 @@ class SingleStudent extends Component<propTypes, S> {
 						<div className="button green" style={{ width: "initial", marginLeft:"auto" }} onClick={this.addTag}>+</div>
 					</div>}
 
-					{!prospective && Object.keys(this.state.profile.certificates).length > 0 && <div className="divider"> Certificates </div>}
+					{!prospective && Object.keys(this.state.profile.certificates || {}).length > 0 && <div className="divider"> Certificates </div>}
 					{!prospective && <div>
 						{
 							Object.entries(this.state.profile.certificates || {})
