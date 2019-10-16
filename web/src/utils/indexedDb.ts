@@ -60,9 +60,30 @@ export const loadDb = async () => {
 				db.createObjectStore('root-state')
 			}
 		})
-		
-		const serialized = await db.get('root-state', 'db') //|| localStorage.getItem('db')
-		
+
+		const localData = localStorage.getItem('db')
+
+		let serialized = await db.get('root-state', 'db')
+
+		if (!serialized && localData) {
+			
+			console.log("Tranferring Local Data to IDB")
+			
+			db.put('root-state', localData, 'db')
+				.then((res) => {
+					console.log("REMOVING LOCAL DATA")
+					localStorage.removeItem('db')
+				})
+				.catch((err) => {
+					console.error("ERROR WHILE TRANFERING LOCAL DATA TO IDB", err)
+				})
+			
+			serialized = await db.get('root-state', 'db')
+
+		} else {
+			console.log("Not Tranferring Local Data to IDB")
+		}
+
 		if (!serialized) {
 			return {
 				...initState,
@@ -162,7 +183,7 @@ export const saveDb = (state: RootReducerState) => {
 	})
 
 	try {
-		localStorage.setItem('db', json)
+		localStorage.setItem('backup', json)
 	}
 	catch (err) {
 		console.error("LOCALSTORAGE FAIURE !!!", err )
