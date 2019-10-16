@@ -71,8 +71,13 @@ export const loadDb = async () => {
 			
 			db.put('root-state', localData, 'db')
 				.then((res) => {
-					console.log("REMOVING LOCAL DATA")
-					localStorage.removeItem('db')
+					console.log("CREATING BACKUP")
+					try {
+						localStorage.setItem('backup', localData)
+					}
+					catch (err) {
+						console.error("BACK UP TO LOCALSTORAGE FAIURE !!!", err )
+					}
 				})
 				.catch((err) => {
 					console.error("ERROR WHILE TRANFERING LOCAL DATA TO IDB", err)
@@ -181,13 +186,6 @@ export const saveDb = (state: RootReducerState) => {
 		console.error(err)
 		alert("Error saving database. Please contact helpline")
 	})
-
-	try {
-		localStorage.setItem('backup', json)
-	}
-	catch (err) {
-		console.error("LOCALSTORAGE FAIURE !!!", err )
-	}
 }
 
 const addFacultyID = (state : RootReducerState) => {
