@@ -274,14 +274,20 @@ class FeeAnalytics extends Component<propTypes, S> {
 			// @ts-ignore 
 			const amount =  typeof(payment.amount) === "string" ? parseFloat(payment.amount) : payment.amount
 			
-			// totals
-			amount < 0 ? debt["SCHOLARSHIP"] += Math.abs(amount) : debt[payment.type] += amount;
-
 			const period_key = moment(payment.date).format(period_format);
-			const month_debt = payments[period_key] || { OWED: 0, SUBMITTED: 0, FORGIVEN: 0, SCHOLARSHIP: 0}
+			const period_debt = payments[period_key] || { OWED: 0, SUBMITTED: 0, FORGIVEN: 0, SCHOLARSHIP: 0}
 			
-			amount < 0 ? month_debt["SCHOLARSHIP"] += Math.abs(amount) : month_debt[payment.type] += amount;
-			payments[period_key] = month_debt;
+			// for 'scholarship', payment has also type OWED and negative amount
+			if(amount < 0) {
+				const new_amount = Math.abs(amount)
+				debt["SCHOLARSHIP"] += new_amount
+				period_debt["SCHOLARSHIP"] += new_amount
+			} else {
+				debt[payment.type] += amount
+				period_debt[payment.type] += amount
+			}
+
+			payments[period_key] = period_debt;
 
 		}
 
@@ -315,10 +321,8 @@ class FeeAnalytics extends Component<propTypes, S> {
 	}
 
 	const items = Object.values(total_student_debts)
-		.filter(({student, debt}) => (
-			student.id && student.Name) &&
-			(this.state.classFilter === "" || 
-			student.section_id === this.state.classFilter ) &&
+		.filter(({student, debt}) => (student.id && student.Name) &&
+			(this.state.classFilter === "" || student.section_id === this.state.classFilter ) &&
 			student.Name.toUpperCase().includes(this.state.filterText.toUpperCase())
 		)
 
@@ -440,7 +444,7 @@ class FeeAnalytics extends Component<propTypes, S> {
 			.map(({ student, debt, familyId }) => <div className="table row" key={student.id}>
 					<Link to={`/student/${student.id}/payment`}>{ familyId ? familyId : student.Name}</Link>
 					<div>{ student.Phone }</div>
-					<div  style={ (-1 * this.calculateDebt(debt)) < 1 ? {color:"#5ecdb9"} : {color:"#fc6171" } } > {numberWithCommas(-1 * this.calculateDebt(debt))}</div>
+					<div  style={ this.calculateDebt(debt) >= 1 ? {color:"#5ecdb9"} : {color:"#fc6171" } } > {numberWithCommas(-1 * this.calculateDebt(debt))}</div>
 				</div>)
 		}
 		<div className="print button" onClick={() => window.print()} style={{ marginTop: "10px" }}>Print</div>
