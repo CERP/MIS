@@ -107,7 +107,7 @@ class Login extends Component {
 					</div>
 					<div className="row">
 						<label>Password</label>
-						<input type="password" {...this.former.super_handle(["password"])} placeholder="Password" autoCapitalize="off" onKeyDown={this.handleKeyDown}/>
+						<input type="text" {...this.former.super_handle(["password"])} placeholder="Password" autoCapitalize="off" onKeyDown={this.handleKeyDown}/>
 					</div>
 					<div className="button save" onClick={this.onLogin}>Login</div>
 				</div>
