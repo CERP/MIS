@@ -143,10 +143,14 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 
 	onStateChange = () => {
 
-		this.props.history.push({
-			pathname: '/analytics/expenses',
-			search: `?start_date=${moment(this.state.start_date).format("MM-DD-YYYY")}&end_date=${moment(this.state.end_date).format("MM-DD-YYYY")}&period=${this.state.selected_period}`
-		})
+		const start_date = moment(this.state.start_date).format("MM-DD-YYYY")
+		const end_date = moment(this.state.end_date).format("MM-DD-YYYY")
+		const period = this.state.selected_period
+
+		const url = '/analytics/expenses'
+		const params = `start_date=${start_date}&end_date=${end_date}&period=${period}`
+
+		window.history.replaceState(this.state, "Fee Analytics", `${url}?${params}`)
 	}
 
 	componentWillReceiveProps(nextProps : propTypes) { 
