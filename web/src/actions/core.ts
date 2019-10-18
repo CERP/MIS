@@ -1,5 +1,6 @@
 import { Dispatch, AnyAction } from 'redux'
 import Syncr from '../syncr';
+import { loadDb } from '../utils/indexedDb';
 
 const SYNC = "SYNC"
 const client_type = "mis";
@@ -52,7 +53,14 @@ export const createMerges= (merges : Merge[]) => (dispatch : (a: any) => any, ge
 
 	syncr.send(payload)
 		.then(dispatch)
-		.catch(err => dispatch(QueueUp(new_merges)))
+		.catch(err => {
+
+			dispatch(QueueUp(new_merges))
+
+			if(err !== "timeout") {
+				alert("Syncing Error: " + err)
+			}
+		})
 }
 
 export const SMS = "SMS"
@@ -163,7 +171,13 @@ export const createDeletes = (paths : Delete[]) => (dispatch : Dispatch<AnyActio
 		payload: rationalized_deletes
 	})
 	.then(dispatch)
-	.catch((err : Error) => dispatch(QueueUp(payload)))
+	.catch(err => {
+		dispatch(QueueUp(payload))
+
+		if(err !== "timeout") {
+			alert("Syncing Error: " + err)
+		}
+	})
 
 }
 
@@ -280,3 +294,45 @@ export const createLoginSucceed = (school_id : string, db: RootReducerState['db'
 	token,
 	db
 })
+
+export const loadDB = () => (dispatch: Function, getState: () => RootReducerState, syncr: Syncr) => {
+
+	loadDb().then(res => {
+		dispatch({
+			type: "LOAD_DB",
+			res
+		})
+
+		const state = res;
+		
+		if(syncr.ready && state.auth.school_id && state.auth.token) {
+			syncr
+				.send({
+					type: "VERIFY",
+					client_type: client_type,
+					payload: {
+						school_id: state.auth.school_id,
+						token: state.auth.token,
+						client_id: state.client_id,
+					}
+				})
+				.then(res => {
+					return syncr.send({
+						type: SYNC,
+						client_type: client_type,
+						school_id: state.auth.school_id,
+						payload: state.queued,
+						lastSnapshot: state.lastSnapshot
+					})
+				})
+				.then(resp => {
+					dispatch(resp)
+				})
+				.catch(err => {
+					console.error(err)
+					alert("Authorization Failed. Log out and Log in again.")
+				})
+		}
+
+	})
+}

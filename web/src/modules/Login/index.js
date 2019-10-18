@@ -7,6 +7,7 @@ import Former from 'utils/former'
 import Layout from 'components/Layout'
 
 import './style.css'
+import { openDB } from 'idb'
 
 // login is a different kind of action.
 // first time they do it, no schools are syncd.
@@ -31,6 +32,13 @@ class Login extends Component {
 		this.props.login(this.state.login)
 	}
 
+	handleKeyDown = (e) => {
+		// check 'enter' key pressed
+		if(e.keyCode === 13) {
+			this.onLogin()
+		}
+	}
+
 	onSwitchSchool = () => {
 
 		if(this.props.unsyncd_changes > 0) {
@@ -40,9 +48,24 @@ class Login extends Component {
 			}
 		}
 
-		localStorage.removeItem("db");
-		this.props.history.push("/landing")
-		window.location.reload()
+		openDB('db', 1, {
+			upgrade(db) {
+				db.createObjectStore('root-state')
+			}
+		}).then(db => {
+			db.delete('root-state', 'db')
+				.then(res => {
+					localStorage.removeItem("db");
+					this.props.history.push("/landing")
+					window.location.reload()
+				})
+				.catch(err => console.error(err))
+		})
+		.catch(err => console.error(err))
+
+		// localStorage.removeItem("db");
+		// this.props.history.push("/landing")
+		// window.location.reload()
 	}
 
 	componentWillReceiveProps(newProps) {
@@ -52,7 +75,11 @@ class Login extends Component {
 	}
 
 	render() {
-
+		
+		if (!this.props.initialized && this.props.auth.token !== undefined ) {
+			return <div>Loading Database....</div>
+		}
+		
 		if(!this.props.auth.token) {
 			return <Redirect to="/school-login" />
 		}
@@ -81,7 +108,7 @@ class Login extends Component {
 					</div>
 					<div className="row">
 						<label>Password</label>
-						<input type="text" {...this.former.super_handle(["password"])} placeholder="Password" autoCapitalize="off"/>
+						<input type="text" {...this.former.super_handle(["password"])} placeholder="Password" autoCapitalize="off" onKeyDown={this.handleKeyDown}/>
 					</div>
 					<div className="button save" onClick={this.onLogin}>Login</div>
 				</div>
@@ -95,6 +122,7 @@ class Login extends Component {
 
 export default connect(state => ({ 
 	auth: state.auth,
+	initialized: state.initialized,
 	users: state.db.users,
 	num_users: Object.keys(state.db.users).length,
 	connected: state.connected,
