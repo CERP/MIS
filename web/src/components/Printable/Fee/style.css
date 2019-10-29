@@ -1,0 +1,23 @@
+
+@media print { 
+    
+    .row-sr {
+        width: 10%;
+    }
+    .row-roll {
+        width: 14%;
+    }
+    .row-amount {
+        width: 16%;
+    }
+    .row-class {
+        width: 16%;
+    }
+    .row-phone {
+        width: 20%
+    }
+    .row-name {
+        width: 24%;
+    }
+
+}
