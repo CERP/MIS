@@ -1,4 +1,5 @@
 import React from "react"
+import "./../print.css"
 import "./style.css"
 
 type PropsTypes = {
