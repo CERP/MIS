@@ -350,9 +350,9 @@ class Expenses extends Component <propTypes, S> {
 				if(curr.type === "PAYMENT_GIVEN")
 				{
 					if(this.getFilterCondition(this.state.yearFilter, this.state.monthFilter, curr) && (this.state.categoryFilter !== "" ? this.state.categoryFilter === curr.category: true)){
-						total_filtered_expense += curr.amount - ( curr.expense === "SALARY_EXPENSE" && curr.deduction || 0)
+						total_filtered_expense += curr.amount - ( (curr.expense === "SALARY_EXPENSE" && curr.deduction) || 0)
 					}
-					return agg + (curr.amount - (curr.expense === "SALARY_EXPENSE" && curr.deduction || 0))
+					return agg + (curr.amount - ((curr.expense === "SALARY_EXPENSE" && curr.deduction) || 0))
 				}
 				else
 					return agg
@@ -429,26 +429,29 @@ class Expenses extends Component <propTypes, S> {
 								<label> {e.category}</label>
 								<label> {`-`} </label>
 								<label> {`${e.deduction}`}{ e.deduction_reason ? `(${e.deduction_reason})` : "" } </label>
-								{ this.state.edits[id] && <div className="row" style={{color: "rgb(94, 205, 185)", justifyContent:"space-between"}}>
-									<input style={{ textAlign: "right", border: "none", borderBottom: "1px solid #bbb", width: "70%"}} type="number" {...this.former.super_handle(["edits", id, "amount"])} />
-									<div className="button red" style={{ padding: "0px", textAlign:"center", width: "15px", lineHeight: "15px" }} onClick={() => this.onDelete(id)}>x</div>
-								</div> || <label> {`${numberWithCommas(e.amount - e.deduction)} Rs`}</label>}
+									{ (this.state.edits[id] && <div className="row" style={{color: "rgb(94, 205, 185)", justifyContent:"space-between"}}>
+										<input style={{ textAlign: "right", border: "none", borderBottom: "1px solid #bbb", width: "70%"}} type="number" {...this.former.super_handle(["edits", id, "amount"])} />
+										<div className="button red" style={{ padding: "0px", textAlign:"center", width: "15px", lineHeight: "15px" }} onClick={() => this.onDelete(id)}>x</div>
+									</div>) 
+									|| <label> {`${numberWithCommas(e.amount - e.deduction)} Rs`}</label>
+								}
 							</div>
 						}
-						else if (e.expense === "MIS_EXPENSE")
-						{
-							return <div key={id} className="table row">
-								<label> {moment(e.date).format("DD-MM-YY")} </label>
-								<label> {e.label}</label>
-								<label> {e.category}</label>
-								<label> {e.quantity } </label>
-								<label> {`-`} </label>
-								{ this.state.edits[id] && <div className="row" style={{color: "rgb(94, 205, 185)", justifyContent:"space-between"}}>
+
+						return <div key={id} className="table row">
+							<label> {moment(e.date).format("DD-MM-YY")} </label>
+							<label> {e.label}</label>
+							<label> {e.category}</label>
+							<label> {e.quantity } </label>
+							<label> {`-`} </label>
+							{ 
+								(this.state.edits[id] && <div className="row" style={{color: "rgb(94, 205, 185)", justifyContent:"space-between"}}>
 									<input style={{ textAlign: "right", border: "none", width: "70%"}} type="number" {...this.former.super_handle(["edits", id, "amount"])}/>
 									<div className="button red" style={{ padding: "0px", textAlign:"center", width: "15px", lineHeight: "15px"}} onClick={() => this.onDelete(id)} >x</div>
-								</div> || <label> {`${numberWithCommas(e.amount)} Rs`}</label>}
-						</div>
+								</div>) 
+								|| <label> {`${numberWithCommas(e.amount)} Rs`}</label>
 						}
+					</div>
 					})
 				}
 				<div className="table row last">
