@@ -8,26 +8,26 @@ import Banner from 'components/Banner';
 import { PrintHeader } from 'components/Layout';
 
 interface P {
-	teachers: RootDBState["faculty"]
-	expenses: RootDBState["expenses"]
-	settings: RootDBState["settings"]
-	students: RootDBState["students"]
-	schoolLogo: RootDBState["assets"]["schoolLogo"]
+	teachers: RootDBState["faculty"];
+	expenses: RootDBState["expenses"];
+	settings: RootDBState["settings"];
+	students: RootDBState["students"];
+	schoolLogo: RootDBState["assets"]["schoolLogo"];
 }
 
 interface S {
 	banner: {
-		active: boolean
-		good: boolean
-		text: string
-	}
-	monthFilter: string
-	yearFilter: string
-	categoryFilter: string
+		active: boolean;
+		good: boolean;
+		text: string;
+	};
+	monthFilter: string;
+	yearFilter: string;
+	categoryFilter: string;
 }
 
 interface Routeinfo {
-	id: string
+	id: string;
 }
 
 type propTypes = RouteComponentProps<Routeinfo> & P
@@ -94,7 +94,7 @@ class IncomeExpenditure extends Component <propTypes, S> {
 					...curr_pay
 					}
 
-			}, {} as { [id:string]: MISStudentPayment })
+			}, {} as { [id: string]: MISStudentPayment })
 
 		const filtered_expense = Object.entries(expenses)
 			.filter(([id,e]) => e.type === "PAYMENT_GIVEN")
@@ -105,14 +105,14 @@ class IncomeExpenditure extends Component <propTypes, S> {
 					[id]: curr
 				}
 
-			}, {} as { [id:string]: MISExpense | MISSalaryExpense})
+			}, {} as { [id: string]: MISExpense | MISSalaryExpense})
 
 		const income_exp = {...stu_payments, ...filtered_expense}
 
-		let Months  = new Set([])
-		let Years = new Set([])
+		const Months  = new Set([])
+		const Years = new Set([])
 
-		for(let s of Object.values(income_exp)){
+		for(const s of Object.values(income_exp)){
 			Months.add(moment(s.date).format("MMMM"))
 			Years.add(moment(s.date).format("YYYY"))
 		}

@@ -13,26 +13,26 @@ import { sendBatchSMS } from 'actions/core';
 import './style.css'
 
 interface P {
-	students: RootDBState["students"]
-	classes: RootDBState["classes"]
-	settings: RootDBState['settings']
-	schoolLogo: RootDBState['assets']['schoolLogo']
-	faculty_id: string
-	logSms: (history: any) => any
-	sendBatchMessages: (messages: MISSms[]) => any
+	students: RootDBState["students"];
+	classes: RootDBState["classes"];
+	settings: RootDBState['settings'];
+	schoolLogo: RootDBState['assets']['schoolLogo'];
+	faculty_id: string;
+	logSms: (history: any) => any;
+	sendBatchMessages: (messages: MISSms[]) => any;
 }
 
 interface S {
-	selected_task : string
-	dateSheet : {[subject : string]: { date: number, time: string} }
-	selected_student_number: string
-	newSubject: string
-	notes: string
+	selected_task: string;
+	dateSheet: {[subject: string]: { date: number; time: string} };
+	selected_student_number: string;
+	newSubject: string;
+	notes: string;
 }
 
 interface RouteInfo {
-	class_id : string
-	section_id: string
+	class_id: string;
+	section_id: string;
 }
 
 type propTypes = P & RouteComponentProps<RouteInfo>
@@ -74,7 +74,7 @@ class Planner extends Component <propTypes, S> {
 	section_id = () => this.props.match.params.section_id
 	class_id = () => this.props.match.params.class_id
 
-	logSms = (messages : any) =>{
+	logSms = (messages: any) =>{
 		if(messages.length === 0){
 			console.log("No Messaged to Log")
 			return
@@ -109,7 +109,7 @@ class Planner extends Component <propTypes, S> {
 		this.props.sendBatchMessages(messages);
 	}
 
-	dateSheetString = () : string => {
+	dateSheetString = (): string => {
 		
 		const header = `Date: ${moment().format("DD MMMM YYYY")}\nDate Sheet of ${this.props.classes[this.class_id()].name}\n`
 		

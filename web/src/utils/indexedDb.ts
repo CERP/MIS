@@ -9,7 +9,7 @@ const defaultTemplates = () => ({
 	result: "Report is ready for $NAME:\n $REPORT"
 })
 
-export const initState : RootReducerState = {
+export const initState: RootReducerState = {
 	client_id: localStorage.getItem("client_id") || v4(),
 	queued: { },
 	acceptSnapshot: false,
@@ -197,7 +197,7 @@ export const saveDb = (state: RootReducerState) => {
 	})
 }
 
-const addFacultyID = (state : RootReducerState) => {
+const addFacultyID = (state: RootReducerState) => {
 
 	if(state.auth.faculty_id !== undefined) {
 		//console.log("not running addFacultyID script")

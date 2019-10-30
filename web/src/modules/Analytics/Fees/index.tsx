@@ -13,25 +13,25 @@ import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
 import { ResponsiveContainer, XAxis, YAxis, Tooltip, LineChart, Line } from 'recharts'
 
 interface Filters {
-	total : boolean
-	paid: boolean
-	forgiven: boolean
-	pending: boolean
+	total: boolean;
+	paid: boolean;
+	forgiven: boolean;
+	pending: boolean;
 }
 
 interface Payment {
-	SUBMITTED: number
-	SCHOLARSHIP: number
-	OWED: number
-	FORGIVEN: number
+	SUBMITTED: number;
+	SCHOLARSHIP: number;
+	OWED: number;
+	FORGIVEN: number;
 }
 
 interface ChartProps {
 	payments: {
-		[is: string]: Payment
-	}
-	filter: Filters
-	date_format: string
+		[is: string]: Payment;
+	};
+	filter: Filters;
+	date_format: string;
 }
 
 const FeesChart = (props: ChartProps) => {
@@ -60,15 +60,15 @@ const FeesChart = (props: ChartProps) => {
 
 interface TableProps {
 	payments: {
-		[id: string]: Payment
-	}
+		[id: string]: Payment;
+	};
 	total_debts: {
-		PAID: number
-		SCHOLARSHIP: number
-		OWED: number
-		FORGIVEN: number
-	}
-	date_format: string
+		PAID: number;
+		SCHOLARSHIP: number;
+		OWED: number;
+		FORGIVEN: number;
+	};
+	date_format: string;
 }
 
 const FeesTable = (props: TableProps) => {
@@ -113,36 +113,36 @@ const FeesTable = (props: TableProps) => {
 }
 
 type PaymentAddItem = {
-	student: MISStudent
-	payment_id: string
+	student: MISStudent;
+	payment_id: string;
 } & MISStudentPayment
 
 interface P {
-	students: RootDBState["students"]
-	classes: RootDBState["classes"]
-	settings: RootDBState["settings"]
-	schoolLogo: RootDBState["assets"]["schoolLogo"]
-	addPayments: (payments: PaymentAddItem[]) => void,
+	students: RootDBState["students"];
+	classes: RootDBState["classes"];
+	settings: RootDBState["settings"];
+	schoolLogo: RootDBState["assets"]["schoolLogo"];
+	addPayments: (payments: PaymentAddItem[]) => void;
 }
 
 interface S {
-	filterText: string
-	chartFilter: Filters
-	classFilter: string
-	is_fee_filter: boolean
-	selected_period: string
-	start_date: number
-	end_date: number
+	filterText: string;
+	chartFilter: Filters;
+	classFilter: string;
+	is_fee_filter: boolean;
+	selected_period: string;
+	start_date: number;
+	end_date: number;
 
-	loading: boolean
-	payments: ChartProps["payments"]
-	total_student_debts: StudentDebtMap
+	loading: boolean;
+	payments: ChartProps["payments"];
+	total_student_debts: StudentDebtMap;
 	total_debts: {
-		PAID: number
-		OWED: number
-		FORGIVEN: number
-		SCHOLARSHIP: number
-	}
+		PAID: number;
+		OWED: number;
+		FORGIVEN: number;
+		SCHOLARSHIP: number;
+	};
 
 }
 
@@ -152,14 +152,14 @@ interface routeInfo {
 
 type StudentDebtMap = {
 	[id: string]: {
-		student: MISStudent
-		debt: Payment
-		familyId?: string
-	} 
+		student: MISStudent;
+		debt: Payment;
+		familyId?: string;
+	}; 
 }
 
 type PaymentSingleMap = {
-	[id: string]: Payment
+	[id: string]: Payment;
 }
 
 type propTypes = RouteComponentProps<routeInfo> & P
@@ -290,8 +290,8 @@ class FeeAnalytics extends Component<propTypes, S> {
 		let total_owed = 0;
 		let total_forgiven = 0;
 		let total_scholarship = 0;
-		let payments = {} as ChartProps["payments"];
-		let total_student_debts = {} as StudentDebtMap;
+		const payments = {} as ChartProps["payments"];
+		const total_student_debts = {} as StudentDebtMap;
 		let total_debts = { PAID: total_paid, OWED: total_owed, FORGIVEN: total_forgiven, SCHOLARSHIP: total_scholarship }; //Need a default otherwise throws an error when logged in for the first time
 		
 		const temp_sd = moment(this.state.start_date)
@@ -323,9 +323,9 @@ class FeeAnalytics extends Component<propTypes, S> {
 			i += 1;
 			console.log('processing student', i)
 
-			let debt = { OWED: 0, SUBMITTED: 0, FORGIVEN: 0, SCHOLARSHIP: 0}
+			const debt = { OWED: 0, SUBMITTED: 0, FORGIVEN: 0, SCHOLARSHIP: 0}
 			
-			for(let pid in student.payments || {}) {
+			for(const pid in student.payments || {}) {
 				const payment = student.payments[pid];
 
 				if(!( moment(payment.date).isSameOrAfter(temp_sd) && moment(payment.date).isSameOrBefore(temp_ed) )){

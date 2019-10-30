@@ -11,20 +11,20 @@ import { addStudentToFamily, saveFamilyInfo } from 'actions';
 import Hyphenator from 'utils/Hyphenator';
 
 type P = {
-	students: RootDBState['students']
-	addStudentToFamily: (s : MISStudent, famId: string) => void
-	saveFamilyInfo: (siblings: MISStudent[], familyInfo: MISFamilyInfo) => void
+	students: RootDBState['students'];
+	addStudentToFamily: (s: MISStudent, famId: string) => void;
+	saveFamilyInfo: (siblings: MISStudent[], familyInfo: MISFamilyInfo) => void;
 } & RouteComponentProps<RouteInfo>
 
 interface RouteInfo {
-	id: string
+	id: string;
 }
 
 interface S {
-	Phone: string
-	ManName: string
-	ManCNIC: string
-	Address: string
+	Phone: string;
+	ManName: string;
+	ManCNIC: string;
+	Address: string;
 }
 
 class SingleFamily extends React.Component<P, S> {
@@ -61,7 +61,7 @@ class SingleFamily extends React.Component<P, S> {
 		this.props.addStudentToFamily(student, this.props.match.params.id)
 	}
 
-	addHyphens = (path : string[]) => () => {
+	addHyphens = (path: string[]) => () => {
 		
 		const str = Dynamic.get(this.state, path) as string;
 		this.setState(Dynamic.put(this.state, path, Hyphenator(str)) as S)
@@ -146,9 +146,9 @@ class SingleFamily extends React.Component<P, S> {
 						<div>Add Sibling</div>
 						<Dropdown
 							items={Object.values(this.props.students)}
-							toLabel={(s : MISStudent) => s.Name}
+							toLabel={(s: MISStudent) => s.Name}
 							onSelect={this.addStudent}
-							toKey={(s : MISStudent) => s.id}
+							toKey={(s: MISStudent) => s.id}
 							placeholder="Student Name" />
 					</div>
 
@@ -161,9 +161,9 @@ class SingleFamily extends React.Component<P, S> {
 	}
 }
 
-export default connect((state : RootReducerState) => ({
+export default connect((state: RootReducerState) => ({
 	students: state.db.students
-}), (dispatch : Function) => ({
-	addStudentToFamily: (s : MISStudent, famId: string) => dispatch(addStudentToFamily(s, famId)),
+}), (dispatch: Function) => ({
+	addStudentToFamily: (s: MISStudent, famId: string) => dispatch(addStudentToFamily(s, famId)),
 	saveFamilyInfo: (siblings: MISStudent[], info: MISFamilyInfo) => dispatch(saveFamilyInfo(siblings, info))
 }))(SingleFamily)

@@ -13,7 +13,7 @@ type P = RouteComponentProps
 
 class ExcelImport extends React.Component<P, S> {
 
-	constructor(props : P) {
+	constructor(props: P) {
 		super(props)
 
 		this.state = {
@@ -41,6 +41,6 @@ class ExcelImport extends React.Component<P, S> {
 	}
 }
 
-export default connect((state : RootReducerState) => ({
-}), (dispatch : Function) => ({
+export default connect((state: RootReducerState) => ({
+}), (dispatch: Function) => ({
 }))(withRouter(ExcelImport))

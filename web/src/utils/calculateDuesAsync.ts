@@ -1,16 +1,16 @@
 import moment from 'moment'
 
 type payment = {
-	student: MISStudent
-	payment_id: string
+	student: MISStudent;
+	payment_id: string;
 } & MISStudentPayment
 
 
-export default function checkMultipleStudentsDuesReturning(students: MISStudent[]) : Promise<payment[]> {
+export default function checkMultipleStudentsDuesReturning(students: MISStudent[]): Promise<payment[]> {
 
 	return new Promise((resolve, reject) => {
 		let i = 0;
-		let payments : payment[] = [];
+		let payments: payment[] = [];
 
 		const checkNextStudent = () => {
 
@@ -32,12 +32,12 @@ export default function checkMultipleStudentsDuesReturning(students: MISStudent[
 
 }
 
-function checkStudentDuesReturning(student: MISStudent) : payment[] {
+function checkStudentDuesReturning(student: MISStudent): payment[] {
 	const curr = moment().format("MM/YYYY")
 
-	let payments : payment[] = []
+	const payments: payment[] = []
 
-	for(let [id, fee] of Object.entries(student.fees || {})) {
+	for(const [id, fee] of Object.entries(student.fees || {})) {
 		if(fee.period === "MONTHLY" && student.Active) {
 			// check if this fee exists in "owed" column.
 

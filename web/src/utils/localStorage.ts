@@ -8,7 +8,7 @@ const defaultTemplates = () => ({
 	result: "Report is ready for $NAME:\n $REPORT"
 })
 
-const initState : RootReducerState = {
+const initState: RootReducerState = {
 	client_id: v4(),
 	initialized: false,
 	queued: { },
@@ -164,7 +164,7 @@ const checkPersistent = () => {
 checkPersistent();
 
 // add faculty_id to the auth field if it doesn't exist.
-const addFacultyID = (state : RootReducerState) => {
+const addFacultyID = (state: RootReducerState) => {
 
 	if(state.auth.faculty_id !== undefined) {
 		console.log("not running addFacultyID script")

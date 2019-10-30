@@ -10,14 +10,14 @@ import Banner from 'components/Banner';
 import { PrintHeader } from 'components/Layout';
 
 interface P {
-	teachers: RootDBState["faculty"]
-	expenses: RootDBState["expenses"]
-	settings: RootDBState["settings"]
-	schoolLogo: RootDBState["assets"]["schoolLogo"]
-	addExpense: (amount: number, label: string, type: MISExpense["type"], category: MISExpense["category"], quantity: number, date: number ) => any
-	addSalaryExpense: (id: string, amount: number, label: string, type: MISSalaryExpense["type"], faculty_id: string, date: number, advance: number, deduction: number, deduction_reason: string ) => any
-	editExpense: ( edits: {[id: string]:{ amount: number }}) => any
-	deleteExpense: ( deletes: string) => any
+	teachers: RootDBState["faculty"];
+	expenses: RootDBState["expenses"];
+	settings: RootDBState["settings"];
+	schoolLogo: RootDBState["assets"]["schoolLogo"];
+	addExpense: (amount: number, label: string, type: MISExpense["type"], category: MISExpense["category"], quantity: number, date: number ) => any;
+	addSalaryExpense: (id: string, amount: number, label: string, type: MISSalaryExpense["type"], faculty_id: string, date: number, advance: number, deduction: number, deduction_reason: string ) => any;
+	editExpense: ( edits: {[id: string]: { amount: number }}) => any;
+	deleteExpense: ( deletes: string) => any;
 }
 /**
  * need to do something to show expense deduction 
@@ -28,32 +28,32 @@ interface P {
 
 interface S {
 	banner: {
-		active: boolean
-		good: boolean
-		text: string
-	}
+		active: boolean;
+		good: boolean;
+		text: string;
+	};
 	payment: {
-		active: boolean
-		amount: string
-		type: string
-		category: MISExpense["category"]
-		faculty_id: string
-		quantity: string
-		label: string
-		deduction: string
-		deduction_reason: string
-		date: number
-	}
-	monthFilter: string
-	yearFilter: string
-	categoryFilter: string
+		active: boolean;
+		amount: string;
+		type: string;
+		category: MISExpense["category"];
+		faculty_id: string;
+		quantity: string;
+		label: string;
+		deduction: string;
+		deduction_reason: string;
+		date: number;
+	};
+	monthFilter: string;
+	yearFilter: string;
+	categoryFilter: string;
 	edits: {
-		[id: string]: { amount :number }
-	}
+		[id: string]: { amount: number };
+	};
 }
 
 interface Routeinfo {
-	id: string
+	id: string;
 }
 
 type propTypes = RouteComponentProps<Routeinfo> & P
@@ -334,10 +334,10 @@ class Expenses extends Component <propTypes, S> {
 
 		const { expenses, teachers, settings, schoolLogo } = this.props
 
-		let Months  = new Set([])
-		let Years = new Set([])
+		const Months  = new Set([])
+		const Years = new Set([])
 
-		for(let e of Object.values(expenses))
+		for(const e of Object.values(expenses))
 		{
 			Months.add(moment(e.date).format("MMMM"))
 			Years.add(moment(e.date).format("YYYY"))
@@ -539,9 +539,9 @@ export default connect ( (state: RootReducerState) => ({
 	expenses: state.db.expenses,
 	settings : state.db.settings,
 	schoolLogo: state.db.assets ? state.db.assets.schoolLogo || "" : ""
-}), ( dispatch : Function ) => ({
+}), ( dispatch: Function ) => ({
 	addExpense: (amount: number, label: string, type: MISExpense["type"], category: MISExpense["category"], quantity: number, date: number ) => dispatch(addExpense(amount, label, type, category, quantity, date )),
 	addSalaryExpense: (id: string, amount: number, label: string, type: MISSalaryExpense["type"], faculty_id: string, date: number, advance: number, deduction: number, deduction_reason: string) => dispatch(addSalaryExpense(id, amount, label, type, faculty_id, date, advance, deduction, deduction_reason)),
-	editExpense: ( edits: {[id: string]:{ amount: number }}) => dispatch(editExpense(edits)),
+	editExpense: ( edits: {[id: string]: { amount: number }}) => dispatch(editExpense(edits)),
 	deleteExpense: ( id: string) => dispatch(deleteExpense(id))
 }))( Expenses )

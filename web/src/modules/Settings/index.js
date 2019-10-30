@@ -306,8 +306,8 @@ class Settings extends Component {
 
 	logoHandler = (e) => {
 
-		var file = e.target.files[0];
-		var reader = new FileReader();
+		const file = e.target.files[0];
+		const reader = new FileReader();
 		
 		reader.onloadend = () => {
 			this.setState({

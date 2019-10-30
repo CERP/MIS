@@ -7,14 +7,14 @@ import List from 'components/List'
 import Layout from 'components/Layout'
 
 interface Families {
-	[family_id: string]: Family
+	[family_id: string]: Family;
 }
 
 interface Family {
-	id: string,
+	id: string;
 	students: {
-		[id: string]: MISStudent
-	}
+		[id: string]: MISStudent;
+	};
 }
 
 interface S {
@@ -22,7 +22,7 @@ interface S {
 }
 
 type P = {
-	students: RootDBState['students']
+	students: RootDBState['students'];
 } & RouteComponentProps
 
 class FamilyModule extends React.Component<P, S> {
@@ -30,7 +30,7 @@ class FamilyModule extends React.Component<P, S> {
 	render() {
 		// here 
 
-		const reduced : Families = Object.values(this.props.students)
+		const reduced: Families = Object.values(this.props.students)
 			.reduce((agg, curr) => {
 
 				if(!curr.FamilyID) {
@@ -81,18 +81,18 @@ class FamilyModule extends React.Component<P, S> {
 				<List 
 					items={Object.values(families)}
 					Component={FamilyItem}
-					toLabel={(fam : Family) => fam.id}
+					toLabel={(fam: Family) => fam.id}
 				/>
 			</div>
 		</Layout>
 	}
 }
 
-const FamilyItem : React.SFC<Family> = ({ id, students }) => {
+const FamilyItem: React.SFC<Family> = ({ id, students }) => {
 
 	return <Link key={id} to={`/families/${id}`}>{id}</Link>
 }
 
-export default connect((state : RootReducerState) => ({
+export default connect((state: RootReducerState) => ({
 	students: state.db.students
 }))(FamilyModule)

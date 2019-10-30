@@ -12,21 +12,21 @@ import { PrintHeader } from 'components/Layout';
 import { issueCertificate } from 'actions';
 
 interface P {
-	students: RootDBState['students']
-	teachers: RootDBState["faculty"]
-	settings: RootDBState["settings"]
-	schoolLogo: RootDBState["assets"]["schoolLogo"]
-	classes: RootDBState["classes"]
-	curr_teacher: string
-	issueCertificate: (type: string, student_id: string, faculty_id: string) => any
+	students: RootDBState['students'];
+	teachers: RootDBState["faculty"];
+	settings: RootDBState["settings"];
+	schoolLogo: RootDBState["assets"]["schoolLogo"];
+	classes: RootDBState["classes"];
+	curr_teacher: string;
+	issueCertificate: (type: string, student_id: string, faculty_id: string) => any;
 }
 
 interface S {
-	selectedCertificate: string
+	selectedCertificate: string;
 }
 
 interface RouteInfo {
-	id: string
+	id: string;
 }
 
 type propTypes = RouteComponentProps < RouteInfo > & P 
@@ -44,7 +44,7 @@ class StudentCertificates extends Component < propTypes, S > {
 		this.former = new Former(this,[])
 	}
 
-	student = () : MISStudent => {
+	student = (): MISStudent => {
 		const id = this.props.match.params.id
 		return this.props.students[id]
 	}
@@ -132,8 +132,8 @@ export default connect((state: RootReducerState) => ({
 }))(StudentCertificates)
 
 interface CertificateProps {
-	curr_student: MISStudent,
-	relevant_section: any
+	curr_student: MISStudent;
+	relevant_section: any;
 }
 
 const CharacterCertificate: React.FC <CertificateProps> = ({ curr_student, relevant_section }) => {

@@ -1,18 +1,18 @@
 import moment from 'moment'
 
 type payment = {
-	student: MISStudent
-	payment_id: string
+	student: MISStudent;
+	payment_id: string;
 } & MISStudentPayment
 
 // i want this function wrapped in comlink
 
-export function checkStudentDuesReturning(student: MISStudent) : payment[] {
+export function checkStudentDuesReturning(student: MISStudent): payment[] {
 	const curr = moment().format("MM/YYYY")
 
-	let payments : payment[] = []
+	const payments: payment[] = []
 
-	for(let [id, fee] of Object.entries(student.fees || {})) {
+	for(const [id, fee] of Object.entries(student.fees || {})) {
 		if(fee.period === "MONTHLY" && student.Active) {
 			// check if this fee exists in "owed" column.
 
