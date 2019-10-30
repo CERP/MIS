@@ -81,7 +81,8 @@ interface MISSettings {
 	schoolName: string
 	schoolAddress: string
 	schoolPhoneNumber: string
-	schoolPhoneNumber: string
+	schoolCode: string
+	vouchersPerPage: string
 	sendSMSOption: "SIM" | "API"
 	permissions: {
 		fee: { teacher: boolean }
