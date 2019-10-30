@@ -312,7 +312,7 @@ interface RemoveState {
 
 }
 
-class RemoveFeesComponent extends React.Component<RemoveProps, RemoveState> {
+class RemoveFeesComponent extends React.PureComponent<RemoveProps, RemoveState> {
 
 	background_calculation: NodeJS.Timeout
 
@@ -442,17 +442,20 @@ class RemoveFeesComponent extends React.Component<RemoveProps, RemoveState> {
 
 		return <div className="section form">
 			{ Object.entries(reduced_fees)
-				.filter(([k, val]) => {
+				.filter(([, val]) => {
 					if(this.props.fee_filter === "to_all_students") {
 						// get size of all students
 						const total_students = Object.values(this.props.students).length
 						return val.count > .9 * total_students;
 					}
+
 					else if(this.props.fee_filter === "to_single_class" && this.props.selected_section_id !== "") {
 						// get size of class with section_id this.state.selected_section_id
 						const size_of_class = Object.values(this.props.students).filter( s => s.section_id === this.props.selected_section_id).length;
 						return val.count > .9 * size_of_class
 					}
+
+					return false;
 				})
 				.sort(([a, ], [b, ]) => a.localeCompare(b))
 				.map(([key, val]) => 

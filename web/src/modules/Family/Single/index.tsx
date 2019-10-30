@@ -36,10 +36,10 @@ class SingleFamily extends React.Component<P, S> {
 		const siblings = this.siblings()
 
 		this.state = {
-			Phone: (siblings.find(s => s.Phone != "") || { Phone: ""}).Phone,
-			ManName: (siblings.find(s => s.ManName!= "") || { ManName: ""}).ManName,
-			ManCNIC: (siblings.find(s => s.ManCNIC != "") || { ManCNIC: ""}).ManCNIC,
-			Address: (siblings.find(s => s.Address != "") || { Address: ""}).Address
+			Phone: (siblings.find(s => s.Phone !== "") || { Phone: ""}).Phone,
+			ManName: (siblings.find(s => s.ManName!== "") || { ManName: ""}).ManName,
+			ManCNIC: (siblings.find(s => s.ManCNIC !== "") || { ManCNIC: ""}).ManCNIC,
+			Address: (siblings.find(s => s.Address !== "") || { Address: ""}).Address
 		}
 
 		this.former = new Former(this, [])

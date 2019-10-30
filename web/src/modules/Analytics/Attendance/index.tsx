@@ -315,7 +315,7 @@ class AttendanceAnalytics extends Component < propTypes, S > {
 
 	render()
 	{
-		const { students, classes, settings, schoolLogo } = this.props
+		const { classes, settings, schoolLogo } = this.props
 		const { student_attendance, totals, attendance } = this.state;
 
 		const sortedSections = getSectionsFromClasses(classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0));

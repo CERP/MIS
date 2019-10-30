@@ -1,6 +1,6 @@
 import { v4 } from 'node-uuid'
 
-import { openDB, deleteDB } from 'idb'
+import { openDB } from 'idb'
 import { defaultExams } from '../modules/Settings';
 
 const defaultTemplates = () => ({

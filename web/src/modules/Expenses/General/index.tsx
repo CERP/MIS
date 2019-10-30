@@ -361,7 +361,7 @@ class Expenses extends Component <propTypes, S> {
 			}, 0)
 
 		const filtered_expenses = Object.entries(expenses)
-			.filter(([id, e]) => this.getFilterCondition(this.state.yearFilter, this.state.monthFilter, e) && (this.state.categoryFilter !== "" ? this.state.categoryFilter === e.category: true))
+			.filter(([, e]) => this.getFilterCondition(this.state.yearFilter, this.state.monthFilter, e) && (this.state.categoryFilter !== "" ? this.state.categoryFilter === e.category : true))
 			.sort(([,a],[,b]) => a.date -b.date)
 
 		return <div className="expenses">
@@ -432,7 +432,7 @@ class Expenses extends Component <propTypes, S> {
 								<label> {`-`} </label>
 								<label> {`${e.deduction}`}{ e.deduction_reason ? `(${e.deduction_reason})` : "" } </label>
 								{ this.state.edits[id] && <div className="row" style={{color: "rgb(94, 205, 185)", justifyContent:"space-between"}}>
-									<input style={{ textAlign: "right", border: "none", borderBottom: "1px solid #bbb", width: "70%"}} type="number" {...this.former.super_handle(["edits", id, "amount"])}/>
+									<input style={{ textAlign: "right", border: "none", borderBottom: "1px solid #bbb", width: "70%"}} type="number" {...this.former.super_handle(["edits", id, "amount"])} />
 									<div className="button red" style={{ padding: "0px", textAlign:"center", width: "15px", lineHeight: "15px" }} onClick={() => this.onDelete(id)}>x</div>
 								</div> || <label> {`${numberWithCommas(e.amount - e.deduction)} Rs`}</label>}
 							</div>

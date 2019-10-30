@@ -220,7 +220,7 @@ class IncomeExpenditure extends Component <propTypes, S> {
 					return <div key={id} className="table row">
 						<label> { moment(e.date).format("DD-MM-YY")} </label>
 						<label> { e.type === "PAYMENT_GIVEN" ? e.label : e.type === "SUBMITTED" ? "PAID": "-" }</label>
-						<label> { e.type === "PAYMENT_GIVEN" ? e.category : e.type === "SUBMITTED" && e.fee_name || "-"}</label>
+						<label> { e.type === "PAYMENT_GIVEN" ? e.category : (e.type === "SUBMITTED" && e.fee_name) || "-"}</label>
 						<label> { e.type === "PAYMENT_GIVEN" ? e.expense === "MIS_EXPENSE" && e.quantity : "1"} </label>
 						<label> { e.type === "PAYMENT_GIVEN" ? -1 * (e.amount - (e.expense === "SALARY_EXPENSE" ? e.deduction : 0)) : e.amount}</label>
 					</div>

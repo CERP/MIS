@@ -88,5 +88,5 @@ export default class Former {
 }
 
 const isChecked = (event : React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): event is React.ChangeEvent<HTMLInputElement> => {
-	return (<React.ChangeEvent<HTMLInputElement>>event).target.type === "checkbox"
+	return (event as React.ChangeEvent<HTMLInputElement>).target.type === "checkbox"
 }

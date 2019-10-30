@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { Link, RouteComponentProps } from 'react-router-dom'
+import { RouteComponentProps } from 'react-router-dom'
 import { connect } from 'react-redux'
 import moment from 'moment'
 import queryString from 'querystring'
@@ -63,7 +63,6 @@ interface ChartProps {
 					.sort(([d1, ], [d2, ]) => moment(d1, date_format).diff(moment(d2, date_format)))
 					.map(([month, { income, expense }]) => {
 
-						const red = "#fc6171"
 						return <div className="table row" key={month}>
 							<div style={{ backgroundColor: "#efecec" }}>{month}</div>
 							<div style={{ backgroundColor: "#bedcff" }}>{numberWithCommas(income)}</div>

@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { withRouter, RouteComponentProps, Route, Link} from 'react-router-dom'
+import { withRouter, RouteComponentProps, Route } from 'react-router-dom'
 
 import Layout from '../../../components/Layout'
 import Students from './student'
@@ -22,7 +22,7 @@ class ExcelImport extends React.Component<P, S> {
 
 	render() {
 
-		const loc = this.props.location.pathname.split('/').slice(-1).pop();
+		// const loc = this.props.location.pathname.split('/').slice(-1).pop();
 
 		return <Layout history={this.props.history}>
 			<div className="excel-import">

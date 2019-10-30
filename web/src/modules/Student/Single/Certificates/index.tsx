@@ -396,7 +396,6 @@ const PerformanceCertificate: React.FC <CertificateProps> = ({ curr_student, rel
 const CompletionCertificate: React.FC <CertificateProps> = ({ curr_student, relevant_section }) => {
 
 	const gender = curr_student.Gender
-	const stdClass = relevant_section ? relevant_section.className : "";
 	
 	return( 
 	<div className="certificate-page">

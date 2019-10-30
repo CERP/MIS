@@ -44,7 +44,7 @@ class Planner extends Component <propTypes, S> {
 	constructor(props: propTypes) {
 		super(props)
 		
-		const { class_id, section_id } = this.props.match.params
+		const { class_id } = this.props.match.params
 		const curr_class = this.props.classes[class_id]
 		
 		const date = moment.now()

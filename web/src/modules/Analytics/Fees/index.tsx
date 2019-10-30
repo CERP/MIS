@@ -6,7 +6,6 @@ import queryString from 'querystring'
 import { addMultiplePayments } from '../../../actions'
 import { PrintHeader } from '../../../components/Layout'
 import Former from '../../../utils/former'
-import { checkStudentDuesReturning } from '../../../utils/checkStudentDues'
 import checkDuesAsync from '../../../utils/calculateDuesAsync'
 import { numberWithCommas } from '../../../utils/numberWithCommas'
 import { getSectionsFromClasses } from '../../../utils/getSectionsFromClasses'
@@ -397,7 +396,7 @@ class FeeAnalytics extends Component<propTypes, S> {
 	// who owes it, and how much
 	// graph of paid vs due per month.
 
-	const {students, settings, schoolLogo} = this.props
+	const { settings, schoolLogo} = this.props
 
 	const period_format = this.state.selected_period === "Daily" ? "DD/MM/YYYY" : "MM/YYYY"
 

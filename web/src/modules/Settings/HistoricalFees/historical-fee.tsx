@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import Layout from '../../../components/Layout';
 
 import './style.css'
-import moment, { min } from 'moment'
+import moment from 'moment'
 import getSectionsFromClasses from '../../../utils/getSectionsFromClasses';
 import { addHistoricalPayment } from '../../../actions';
 import { StudentLedgerPage } from '../../Student/Single/Fees/StudentLedgerPage';
@@ -166,7 +166,7 @@ class historicalFee extends Component <propTypes, S > {
 
 			Object.entries(selected_student.payments || {})
 				.sort(([, a_payment], [, b_payment]) => a_payment.date - b_payment.date)
-				.map(([id, payment]) => { 
+				.forEach(([, payment]) => { 
 					Months.add(moment(payment.date).format("MMMM"))
 					Years.add(moment(payment.date).format("YYYY"))
 					}

@@ -143,7 +143,6 @@ const ExperienceCertificate: React.FC <CertificateProps> = ({ curr_teacher }) =>
 
 const PerformanceCertificate: React.FC <CertificateProps> = ({ curr_teacher }) => {
 
-	const curr_date : number = new Date().getTime()
 	const gender = curr_teacher.Gender
 
 	return <div className="certificate-page">
