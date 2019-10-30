@@ -6,10 +6,10 @@ import { Redirect, RouteComponentProps, Link} from 'react-router-dom';
 import Dynamic from '@ironbay/dynamic'
 
 
-import getSectionsFromClasses from '../../../../utils/getSectionsFromClasses'
-import { checkStudentDuesReturning } from '../../../../utils/checkStudentDues'
+import getSectionsFromClasses from 'utils/getSectionsFromClasses'
+import { checkStudentDuesReturning } from 'utils/checkStudentDues'
 
-import checkCompulsoryFields from '../../../../utils/checkCompulsoryFields'
+import checkCompulsoryFields from 'utils/checkCompulsoryFields'
 import getStudentLimit from '../../../../utils/getStudentLimit'
 
 import Hyphenator from '../../../../utils/Hyphenator'
