@@ -1,7 +1,7 @@
 import { v4 } from 'node-uuid'
 
 import { openDB } from 'idb'
-import { defaultExams } from '../modules/Settings';
+import { defaultExams } from 'modules/Settings';
 
 const defaultTemplates = () => ({
 	attendance: "$NAME has been marked $STATUS",

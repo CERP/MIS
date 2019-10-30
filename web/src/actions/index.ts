@@ -1,9 +1,9 @@
-import { hash } from '../utils'
+import { hash } from 'utils'
 import { createMerges, createDeletes, createLoginSucceed, createLoginFail } from './core'
 import moment from 'moment'
 import {v4} from "node-uuid"
-import Syncr from '../syncr';
-import { historicalPayment } from '../modules/Settings/HistoricalFees/historical-fee';
+import Syncr from 'syncr';
+import { historicalPayment } from 'modules/Settings/HistoricalFees/historical-fee';
 
 const client_type = "mis";
 

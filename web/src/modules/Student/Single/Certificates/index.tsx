@@ -2,14 +2,14 @@ import React, { Component, FC } from 'react'
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 import moment from 'moment'
-import {capitalize} from '../../../../utils/capitalize'
-import { getGenderSpecificText } from "../../../../utils/getGenderSpecificText"
-import {getSectionsFromClasses} from '../../../../utils/getSectionsFromClasses';
+import {capitalize} from 'utils/capitalize'
+import { getGenderSpecificText } from "utils/getGenderSpecificText"
+import {getSectionsFromClasses} from 'utils/getSectionsFromClasses';
 
 import './style.css'
-import Former from '../../../../utils/former';
-import { PrintHeader } from '../../../../components/Layout';
-import { issueCertificate } from '../../../../actions';
+import Former from 'utils/former';
+import { PrintHeader } from 'components/Layout';
+import { issueCertificate } from 'actions';
 
 interface P {
 	students: RootDBState['students']

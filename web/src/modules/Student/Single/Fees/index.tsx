@@ -4,17 +4,17 @@ import { withRouter, RouteComponentProps, Link } from 'react-router-dom'
 import moment from 'moment'
 import {v4} from 'node-uuid'
 
-import former from '../../../.../../../utils/former';
+import former from 'utils/former';
 
-import { PrintHeader } from '../../../../components/Layout'
-import Banner from '../../../../components/Banner'
-import { addMultiplePayments, addPayment, logSms, editPayment } from '../../../../actions'
-import { sendSMS } from '../../../../actions/core'
-import { checkStudentDuesReturning } from '../../../../utils/checkStudentDues'
-import { smsIntentLink } from '../../../../utils/intent'
-import { numberWithCommas } from '../../../../utils/numberWithCommas'
-import { getFeeLabel } from '../../../../utils/getFeeLabel'
-import { getFilteredPayments } from '../../../../utils/getFilteredPayments'
+import { PrintHeader } from 'components/Layout'
+import Banner from 'components/Banner'
+import { addMultiplePayments, addPayment, logSms, editPayment } from 'actions'
+import { sendSMS } from 'actions/core'
+import { checkStudentDuesReturning } from 'utils/checkStudentDues'
+import { smsIntentLink } from 'utils/intent'
+import { numberWithCommas } from 'utils/numberWithCommas'
+import { getFeeLabel } from 'utils/getFeeLabel'
+import { getFilteredPayments } from 'utils/getFilteredPayments'
 
 import './style.css'
 

@@ -9,7 +9,7 @@ import Layout from 'components/Layout'
 import Banner from 'components/Banner'
 import moment from 'moment'
 import { openDB } from 'idb'
-//import newBadge from "../Landing/icons/New/new.svg";
+//import newBadge from "Landing/icons/New/new.svg";
 
 import './style.css'
 

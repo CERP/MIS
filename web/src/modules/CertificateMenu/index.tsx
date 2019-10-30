@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import Layout from '../../components/Layout'
-import { StudentList } from '../../modules/Student/List'
-import { TeacherList } from '../../modules/Teacher/List'
+import Layout from 'components/Layout'
+import { StudentList } from 'modules/Student/List'
+import { TeacherList } from 'modules/Teacher/List'
 
-import former from '../../utils/former'
+import former from 'utils/former'
 import { RouteComponentProps } from 'react-router';
 
 // give option to select student list or class list, with forwardTo ---> reports.

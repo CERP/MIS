@@ -1,13 +1,11 @@
 import React, { Component } from 'react'
 import { RouteComponentProps } from 'react-router';
-import Former from '../../../utils/former';
+import Former from 'utils/former';
 import { connect } from 'react-redux';
-import numberWithCommas from '../../../utils/numberWithCommas';
+import numberWithCommas from 'utils/numberWithCommas';
 import moment from 'moment'
-import Banner from '../../../components/Banner';
-import { PrintHeader } from '../../../components/Layout';
-
-import '../style.css'
+import Banner from 'components/Banner';
+import { PrintHeader } from 'components/Layout';
 
 interface P {
 	teachers: RootDBState["faculty"]

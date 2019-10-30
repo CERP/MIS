@@ -1,16 +1,16 @@
 import React, { Component } from 'react'
 import { RouteComponentProps } from 'react-router';
-import former from '../../../utils/former';
+import former from 'utils/former';
 import { connect } from 'react-redux'
-import Layout from '../../../components/Layout';
+import Layout from 'components/Layout';
 
 import './style.css'
 import moment from 'moment'
-import getSectionsFromClasses from '../../../utils/getSectionsFromClasses';
-import { addHistoricalPayment } from '../../../actions';
-import { StudentLedgerPage } from '../../Student/Single/Fees/StudentLedgerPage';
-import getFilteredPayments from '../../../utils/getFilteredPayments';
-import Banner from '../../../components/Banner';
+import getSectionsFromClasses from 'utils/getSectionsFromClasses';
+import { addHistoricalPayment } from 'actions';
+import { StudentLedgerPage } from 'modules/Student/Single/Fees/StudentLedgerPage';
+import getFilteredPayments from 'utils/getFilteredPayments';
+import Banner from 'components/Banner';
 
 
 export type historicalPayment = {

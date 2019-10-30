@@ -3,9 +3,9 @@ import { RouteComponentProps } from 'react-router-dom'
 import { connect } from 'react-redux'
 import moment from 'moment'
 import queryString from 'querystring'
-import { PrintHeader } from '../../../components/Layout'
-import Former from '../../../utils/former'
-import { numberWithCommas } from '../../../utils/numberWithCommas'
+import { PrintHeader } from 'components/Layout'
+import Former from 'utils/former'
+import { numberWithCommas } from 'utils/numberWithCommas'
 
 import { ResponsiveContainer, XAxis, YAxis, Tooltip, LineChart, Line } from "recharts"
 

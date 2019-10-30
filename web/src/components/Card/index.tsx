@@ -1,6 +1,6 @@
 import React,{Component} from 'react'
 import { Link, RouteComponentProps } from 'react-router-dom'
-import Former from '../../utils/former'
+import Former from 'utils/former'
 
 import './style.css'
 

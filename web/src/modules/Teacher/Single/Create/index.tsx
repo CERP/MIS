@@ -6,17 +6,17 @@ import { Redirect, RouteComponentProps } from 'react-router-dom';
 import Dynamic from '@ironbay/dynamic'
 
 
-import { createFacultyMerge, deleteFaculty } from '../../../../actions'
-import { hash } from '../../../../utils'
-import Hyphenator from '../../../../utils/Hyphenator'
+import { createFacultyMerge, deleteFaculty } from 'actions'
+import { hash } from 'utils'
+import Hyphenator from 'utils/Hyphenator'
 
 
 
-import Banner from '../../../../components/Banner'
-import checkCompulsoryFields from '../../../../utils/checkCompulsoryFields'
+import Banner from 'components/Banner'
+import checkCompulsoryFields from 'utils/checkCompulsoryFields'
 
 import './style.css'
-import Former from '../../../../utils/former';
+import Former from 'utils/former';
 
 // this page will have all the profile info for a teacher.
 // all this data will be editable.

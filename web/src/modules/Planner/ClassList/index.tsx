@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Link, RouteComponentProps } from 'react-router-dom'
-import getSectionsFromClasses  from '../../../utils/getSectionsFromClasses';
-import Layout from '../../../components/Layout'
-import List from '../../../components/List'
+import getSectionsFromClasses  from 'utils/getSectionsFromClasses';
+import Layout from 'components/Layout'
+import List from 'components/List'
 
 interface P {
 	classes: RootDBState["classes"]

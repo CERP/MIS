@@ -1,8 +1,8 @@
 import React from 'react'
-import { PrintHeader } from "../../../../components/Layout";
-import numberWithCommas from "../../../../utils/numberWithCommas";
+import { PrintHeader } from "components/Layout";
+import numberWithCommas from "utils/numberWithCommas";
 import moment from "moment";
-import getFeeLabel from "../../../../utils/getFeeLabel";
+import getFeeLabel from "utils/getFeeLabel";
 
 interface LedgerPageProp {
 	relevant_payments: { [id: string]: { filteredPayments : [string, MISStudentPayment][], owed: number, totalOwed: number }}

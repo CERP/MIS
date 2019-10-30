@@ -2,10 +2,10 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 
-import Former from '../../../../utils/former';
-import { PrintHeader } from '../../../../components/Layout';
-import { capitalize } from '../../../../utils/capitalize'
-import { getGenderSpecificText } from '../../../../utils/getGenderSpecificText'
+import Former from 'utils/former';
+import { PrintHeader } from 'components/Layout';
+import { capitalize } from 'utils/capitalize'
+import { getGenderSpecificText } from 'utils/getGenderSpecificText'
 import moment from 'moment';
 
 interface P {

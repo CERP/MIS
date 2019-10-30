@@ -2,10 +2,10 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 import moment from 'moment'
-import former from '../../../../utils/former';
-import { addMultiplePayments } from '../../../../actions'
-import { checkStudentDuesReturning } from '../../../../utils/checkStudentDues'
-import { getFilteredPayments } from '../../../../utils/getFilteredPayments'
+import former from 'utils/former';
+import { addMultiplePayments } from 'actions'
+import { checkStudentDuesReturning } from 'utils/checkStudentDues'
+import { getFilteredPayments } from 'utils/getFilteredPayments'
 
 import './style.css'
 import { LedgerPage } from './LedgerPage';

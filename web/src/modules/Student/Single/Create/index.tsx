@@ -10,17 +10,17 @@ import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { checkStudentDuesReturning } from 'utils/checkStudentDues'
 
 import checkCompulsoryFields from 'utils/checkCompulsoryFields'
-import getStudentLimit from '../../../../utils/getStudentLimit'
+import getStudentLimit from 'utils/getStudentLimit'
 
-import Hyphenator from '../../../../utils/Hyphenator'
+import Hyphenator from 'utils/Hyphenator'
 
-import { createStudentMerge, deleteStudent } from '../../../../actions'
+import { createStudentMerge, deleteStudent } from 'actions'
 
-import Banner from '../../../../components/Banner'
-import Former from '../../../../utils/former'
+import Banner from 'components/Banner'
+import Former from 'utils/former'
 
 import './style.css'
-import { PrintHeader } from '../../../../components/Layout';
+import { PrintHeader } from 'components/Layout';
 
 // this page will have all the profile info for a student.
 // all this data will be editable.

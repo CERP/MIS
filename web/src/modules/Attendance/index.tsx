@@ -2,14 +2,14 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Link, RouteComponentProps } from 'react-router-dom'
 
-import getSectionsFromClasses from '../../utils/getSectionsFromClasses'
+import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 
-import { smsIntentLink } from '../../utils/intent'
-import Layout from '../../components/Layout'
-import { markStudent, markAllStudents, logSms } from '../../actions'
+import { smsIntentLink } from 'utils/intent'
+import Layout from 'components/Layout'
+import { markStudent, markAllStudents, logSms } from 'actions'
 
 import moment from 'moment'
-import Former from '../../utils/former'
+import Former from 'utils/former'
 
 import './style.css'
 

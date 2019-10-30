@@ -3,11 +3,11 @@ import { connect } from 'react-redux'
 import moment from 'moment';
 import { v4 } from 'node-uuid';
 
-import Former from '../../../utils/former'
-import getSectionsFromClasses from '../../../utils/getSectionsFromClasses';
-import downloadCSV from '../../../utils/downloadCSV'
-import { createStudentMerges } from '../../../actions';
-import Banner from '../../../components/Banner'
+import Former from 'utils/former'
+import getSectionsFromClasses from 'utils/getSectionsFromClasses';
+import downloadCSV from 'utils/downloadCSV'
+import { createStudentMerges } from 'actions';
+import Banner from 'components/Banner'
 
 interface S {
 

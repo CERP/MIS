@@ -1,6 +1,6 @@
 import { Dispatch, AnyAction } from 'redux'
-import Syncr from '../syncr';
-import { loadDb } from '../utils/indexedDb';
+import Syncr from 'syncr';
+import { loadDb } from 'utils/indexedDb';
 
 const SYNC = "SYNC"
 const client_type = "mis";

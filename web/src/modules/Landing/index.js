@@ -5,7 +5,7 @@ import moment from 'moment'
 
 import { createLogout } from 'actions'
 import Layout from 'components/Layout'
-import { numberWithCommas } from '../../utils/numberWithCommas'
+import { numberWithCommas } from 'utils/numberWithCommas'
 
 import attendanceIcon from './icons/attendance/checklist_1.svg'            //
 import teacherAttendanceIcon from './icons/attendance/Attendance.svg'    //

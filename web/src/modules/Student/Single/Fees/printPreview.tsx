@@ -2,8 +2,8 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 import qs from 'querystring'
-import { getSectionsFromClasses } from '../../../../utils/getSectionsFromClasses';
-import { getFilteredPayments } from '../../../../utils/getFilteredPayments'
+import { getSectionsFromClasses } from 'utils/getSectionsFromClasses';
+import { getFilteredPayments } from 'utils/getFilteredPayments'
 import { StudentLedgerPage } from './StudentLedgerPage';
 
 interface P {

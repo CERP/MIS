@@ -2,9 +2,9 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom'
-import List from '../../components/List'
+import List from 'components/List'
 
-import Layout from '../../components/Layout'
+import Layout from 'components/Layout'
 
 interface Families {
 	[family_id: string]: Family

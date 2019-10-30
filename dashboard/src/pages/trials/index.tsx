@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import { createSchoolLogin, updateReferralInformation, getReferralsInfo } from '../../actions/index'
+import { createSchoolLogin, updateReferralInformation, getReferralsInfo } from 'actions/index'
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 import Former from 'former';
-import checkCompulsoryFields from '../../utils/checkCompulsoryFields';
+import checkCompulsoryFields from 'utils/checkCompulsoryFields';
 
 import './style.css'
 import moment from 'moment';

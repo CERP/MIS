@@ -1,14 +1,14 @@
 import React, { Component } from 'react'
 import { RouteComponentProps } from 'react-router';
 import { connect } from 'react-redux';
-import Layout from '../../components/Layout' 
-import { PrintHeader } from '../../components/Layout'
-import Former from '../../utils/former'
+import Layout from 'components/Layout' 
+import { PrintHeader } from 'components/Layout'
+import Former from 'utils/former'
 import moment from 'moment';
 
-import { logSms } from '../../actions'
-import { smsIntentLink } from '../../utils/intent';
-import { sendBatchSMS } from '../../actions/core';
+import { logSms } from 'actions'
+import { smsIntentLink } from 'utils/intent';
+import { sendBatchSMS } from 'actions/core';
 
 import './style.css'
 

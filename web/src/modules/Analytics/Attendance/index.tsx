@@ -3,9 +3,9 @@ import { Link, RouteComponentProps } from 'react-router-dom'
 import { connect } from 'react-redux'
 import moment from 'moment'
 import queryString from 'querystring'
-import { PrintHeader } from '../../../components/Layout'
-import Former from "../../../utils/former"
-import getSectionsFromClasses from '../../../utils/getSectionsFromClasses'
+import { PrintHeader } from 'components/Layout'
+import Former from "utils/former"
+import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 
 import { ResponsiveContainer, Line, XAxis, YAxis, LineChart, Tooltip } from 'recharts'
 

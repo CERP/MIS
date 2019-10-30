@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import moment from 'moment'
-import former from '../../../../utils/former'
+import former from 'utils/former'
 
-import { PrintHeader } from '../../../../components/Layout'
+import { PrintHeader } from 'components/Layout'
 
 import './style.css'
 import { RouteComponentProps } from 'react-router';

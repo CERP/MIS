@@ -1,14 +1,14 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import Layout from '../../../components/Layout';
+import Layout from 'components/Layout';
 import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom'
 import Dynamic from '@ironbay/dynamic'
 
-import Former from '../../../utils/former';
-import Dropdown from '../../../components/Dropdown';
-import { addStudentToFamily, saveFamilyInfo } from '../../../actions';
-import Hyphenator from '../../../utils/Hyphenator';
+import Former from 'utils/former';
+import Dropdown from 'components/Dropdown';
+import { addStudentToFamily, saveFamilyInfo } from 'actions';
+import Hyphenator from 'utils/Hyphenator';
 
 type P = {
 	students: RootDBState['students']

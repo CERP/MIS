@@ -3,8 +3,8 @@ import { Link, RouteComponentProps } from 'react-router-dom'
 import queryString from 'querystring'
 import { connect } from 'react-redux'
 import moment from 'moment'
-import { PrintHeader } from '../../../components/Layout'
-import Former from "../../../utils/former"
+import { PrintHeader } from 'components/Layout'
+import Former from "utils/former"
 
 import { ResponsiveContainer, Line, XAxis, YAxis, LineChart, Tooltip } from 'recharts'
 

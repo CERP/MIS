@@ -1,15 +1,13 @@
 import React, { Component } from 'react'
 import { RouteComponentProps } from 'react-router';
-import Former from '../../../utils/former';
+import Former from 'utils/former';
 import { connect } from 'react-redux';
-import checkCompulsoryFields from '../../../utils/checkCompulsoryFields'
-import numberWithCommas from '../../../utils/numberWithCommas';
-import { addExpense, addSalaryExpense, deleteExpense, editExpense } from '../../../actions'
+import checkCompulsoryFields from 'utils/checkCompulsoryFields'
+import numberWithCommas from 'utils/numberWithCommas';
+import { addExpense, addSalaryExpense, deleteExpense, editExpense } from 'actions'
 import moment from 'moment'
-import Banner from '../../../components/Banner';
-import { PrintHeader } from '../../../components/Layout';
-
-import '../style.css'
+import Banner from 'components/Banner';
+import { PrintHeader } from 'components/Layout';
 
 interface P {
 	teachers: RootDBState["faculty"]

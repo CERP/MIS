@@ -3,11 +3,11 @@ import { connect } from 'react-redux'
 import { RouteComponentProps } from 'react-router';
 import { v4 } from 'node-uuid'
 import moment from 'moment'
-import Banner from '../../components/Banner'
-import Layout from '../../components/Layout'
-import former from "../../utils/former"
-import getSectionsFromClasses from '../../utils/getSectionsFromClasses'
-import { addMultipleFees, addFee, deleteMultipleFees } from '../../actions'
+import Banner from 'components/Banner'
+import Layout from 'components/Layout'
+import former from "utils/former"
+import getSectionsFromClasses from 'utils/getSectionsFromClasses'
+import { addMultipleFees, addFee, deleteMultipleFees } from 'actions'
 
 interface  P {
 	students: RootDBState["students"]

@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { withRouter, RouteComponentProps, Route } from 'react-router-dom'
 
-import Layout from '../../../components/Layout'
+import Layout from 'components/Layout'
 import Students from './student'
 
 interface S {
