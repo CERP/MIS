@@ -7,9 +7,10 @@ import numberWithCommas from '../../../utils/numberWithCommas';
 import { addExpense, addSalaryExpense, deleteExpense, editExpense } from '../../../actions'
 import moment from 'moment'
 import Banner from '../../../components/Banner';
-import { PrintHeader } from '../../../components/Layout';
 
 import '../style.css'
+import chunkify from '../../../utils/chunkify';
+import { GeneralExpensePrintableList } from '../../../components/Printable/Expense/General/list';
 
 interface P {
 	teachers: RootDBState["faculty"]
@@ -336,6 +337,8 @@ class Expenses extends Component <propTypes, S> {
 
 		const { expenses, teachers, settings, schoolLogo } = this.props
 
+		const chunkSize = 32 // records per table
+
 		let Months  = new Set([])
 		let Years = new Set([])
 
@@ -361,23 +364,23 @@ class Expenses extends Component <propTypes, S> {
 			}, 0)
 
 		const filtered_expenses = Object.entries(expenses)
-			.filter(([id, e]) => this.getFilterCondition(this.state.yearFilter, this.state.monthFilter, e) && (this.state.categoryFilter !== "" ? this.state.categoryFilter === e.category: true))
-			.sort(([,a],[,b]) => a.date -b.date)
+			.filter(([id, e]) => this.getFilterCondition(this.state.yearFilter, this.state.monthFilter, e) && 
+				(this.state.categoryFilter !== "" ? this.state.categoryFilter === e.category: true) &&
+				e.type !== 'PAYMENT_DUE')
+			.sort(([,a],[,b]) => a.date - b.date)
 
 		return <div className="expenses">
 
 			{ this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false }
 
-			<PrintHeader settings={settings} logo={schoolLogo}/>
-
-			<div className="divider">Expense Information</div>
+			<div className="divider no-print">Expense Information</div>
 
 			<div className="table row">
 				<label>Total Expense:</label>
 				<div>{numberWithCommas(total_expense)}</div>
 			</div>
 
-			<div className="divider">Ledger</div>
+			<div className="divider no-print">Ledger</div>
 
 			<div className="filter row no-print" style={{marginBottom:"10px", flexWrap:"wrap"}}>
 				<select {...this.former.super_handle(["monthFilter"])}>
@@ -411,7 +414,7 @@ class Expenses extends Component <propTypes, S> {
 				</select>
 			</div>
 
-			<div className="payment-history section">
+			<div className="payment-history no-print section">
 				<div className="table row heading">
 					<label><b> Date   </b></label>
 					<label><b> Label  </b></label>
@@ -422,7 +425,7 @@ class Expenses extends Component <propTypes, S> {
 				</div>
 				{
 					filtered_expenses
-					.map( ([id,e]) => {
+					.map(([id, e]) => {
 						if(e.expense === "SALARY_EXPENSE")
 						{
 							return <div key={id} className={ e.type === "PAYMENT_DUE"? "table row no-print" : "table row"}>
@@ -494,7 +497,7 @@ class Expenses extends Component <propTypes, S> {
 								<option value=""> SELECT</option>
 								{
 									Object.values(teachers)
-									.sort((a,b) => a.Name.localeCompare(b.Name))
+									.sort((a, b) => a.Name.localeCompare(b.Name))
 									.map(t => {
 										return <option key={t.id} value={t.id}> {t.Name} </option>
 									})
@@ -526,6 +529,15 @@ class Expenses extends Component <propTypes, S> {
 					<div className="button save" onClick={this.addPayment}>Add Payment</div>
 				</div> 
 				}
+
+				{
+					chunkify(filtered_expenses, chunkSize)
+						.map((itemsChunk: any, index: number) => <GeneralExpensePrintableList key={index}
+							items={itemsChunk}
+							chunkSize={index === 0 ? 0 : chunkSize * index}
+							schoolName={settings.schoolName}/>)
+				}
+
 				<div className="print button" style={{marginTop:"5px"}} onClick={() => window.print()}> Print </div>
 			</div>
 		</div>
