@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import moment from 'moment'
 
-import { createLogout } from 'actions'
+import { createLogout, resetTrial, markPurchased } from 'actions'
 import Layout from 'components/Layout'
 import { numberWithCommas } from '../../utils/numberWithCommas'
 
@@ -47,13 +47,44 @@ class Landing extends Component {
 		}
 	}
 
+	checkMagicWord = (word) => {
+
+		const { date } = this.props.package_info
+
+		if (word === `res${moment(date).format("MMDDYYYY")}`)
+		{
+			//this.props.resetTrial()
+			return true
+		}
+		else if (word === `${this.props.school_id}${moment(date).format("MMDDYYYY")}`) {
+			//this.props.markPurchased()
+			return true
+		}
+		else {
+			return false
+		}
+	}
 
 	componentDidMount() {
+
+		const { paid, date } = this.props.package_info
+		
 		const container = document.querySelector(".landing .horizontal-scroll-container");
 
 		container.onscroll = () => this.setState({ scroll: container.scrollLeft })
 		container.scrollTo(window.innerWidth, 0)
+		
+		if ( !paid && (15 - moment().diff(date, "days")) > 16) {
 
+			const word = window.prompt("Your Trial has ended.Please Enter Purchase or Reset Code or Contact Help Line at.(+923481112004)","")
+
+			if ( word && this.checkMagicWord(word)) {
+				window.alert("Accepted !!")
+			}
+			else {
+				window.location.reload()
+			}
+		}
 
 		this.setState({
 			scroll: container.scrollLeft
@@ -67,10 +98,27 @@ class Landing extends Component {
 	getDailyStatsRoute = (stats_type) => {
 		return `/analytics/${stats_type}?start_date=${moment().format('MM-DD-YYYY')}&end_date=${moment().format('MM-DD-YYYY')}&period=Daily`
 	}
+	askForPassword = () => {
+		
+		const magic_word = window.prompt("Please Enter Purchase or Reset Code.", "")
+
+		if (this.checkMagicWord(magic_word)) {
+			console.log("ACCEPTED")
+		}
+	}
+
+	getWarningMessage = (daysLeft) => {
+		if (daysLeft > 0) {
+			return `Trial ${daysLeft} day(s) left`
+		}
+		else {
+			return "Trial Period Ended, Please Contact helpline or You will not be able to use MISchool."
+		}
+	}
 
 	render() {
 
-		const { logout, user, students, faculty, lastSnapshot, unsyncd, permissions } = this.props;
+		const { logout, user, students, faculty, lastSnapshot, unsyncd, permissions, package_info } = this.props;
 
 		const current_page = Math.floor(this.state.scroll / window.innerWidth);
 
@@ -123,8 +171,14 @@ class Landing extends Component {
 			}
 		}
 
+		const days_left_till_trial_ends = 15 - moment().diff(package_info.date, "days")
+
 		return <Layout history={this.props.history}>
 			<div className="landing">
+				{!package_info.paid && <div onClick={() => this.askForPassword()} className="trial-bar">
+					{ this.getWarningMessage(days_left_till_trial_ends)}
+				</div>}
+				
 				<div className="horizontal-scroll-container">
 
 					<div className="page">
@@ -157,14 +211,14 @@ class Landing extends Component {
 							<div className="button yellow-shadow" onClick={logout} style={{backgroundImage: `url(${switchUserIcon})` }}>Logout</div>
 						</div>
 						<div className="row">
-                            <div className="badge-container">
-                                <img className="new-badge" src={newBadge} alt=""/>
-                                <Link to="/families"
-                                    className="button green-shadow"
-                                    style={{ backgroundImage: `url(${family})`}}>
-                                    Families
-                                </Link>
-                            </div>
+							<div className="badge-container">
+								<img className="new-badge" src={newBadge} alt=""/>
+								<Link to="/families"
+									className="button green-shadow"
+									style={{ backgroundImage: `url(${family})`}}>
+									Families
+								</Link>
+							</div>
 						</div>
 					</div>
 
@@ -342,13 +396,16 @@ class Landing extends Component {
 
 
 export default connect(state => ({ 
-		user: state.db.faculty[state.auth.faculty_id],
-		students: state.db.students,
-		faculty: state.db.faculty,
-		permissions: state.db.settings.permissions,
-		lastSnapshot: state.lastSnapshot,
-		unsyncd: Object.keys(state.queued).length
-	}), 
-	dispatch => ({
-		logout: () => dispatch(createLogout())
-	}))(Landing)
+	user: state.db.faculty[state.auth.faculty_id],
+	students: state.db.students,
+	faculty: state.db.faculty,
+	permissions: state.db.settings.permissions,
+	lastSnapshot: state.lastSnapshot,
+	unsyncd: Object.keys(state.queued).length,
+	package_info: state.db.package_info,
+	school_id: state.auth.school_id
+}), dispatch => ({
+	resetTrial: () => dispatch(resetTrial()),
+	markPurchased: () => dispatch(markPurchased()),
+	logout: () => dispatch(createLogout())
+}))(Landing)

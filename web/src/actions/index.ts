@@ -797,3 +797,20 @@ export const issueCertificate = (type: string, student_id: string, faculty_id: s
 		}
 	}]))
 }
+
+export const resetTrial = () => (dispatch: Function) => {
+	const date = moment.now()
+
+	dispatch(createMerges([{
+		path: ["db", "package_info", "date"],
+		value: date
+	}]))
+}
+
+export const markPurchased = () => (dispatch: Function) => {
+
+	dispatch(createMerges([{
+		path: ["db", "package_info", "paid"],
+		value: true
+	}]))
+}

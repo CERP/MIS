@@ -1,6 +1,7 @@
 import { v4 } from 'node-uuid'
 import requestFS from './requestFS'
 import { defaultExams } from '../modules/Settings';
+import moment from "moment"
 
 const defaultTemplates = () => ({
 	attendance: "$NAME has been marked $STATUS",
@@ -28,6 +29,10 @@ const initState : RootReducerState = {
 		},
 		assets:{
 			schoolLogo:""
+		},
+		package_info: {
+			date: moment().subtract(3,"days").unix() * 1000,
+			paid: false
 		},
 		max_limit: -1,
 		diary: {} as MISDiary

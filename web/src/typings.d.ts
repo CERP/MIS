@@ -33,6 +33,10 @@ interface RootDBState {
 		schoolLogo : string
 	}
 	max_limit: number
+	package_info: {
+		date: number
+		paid: boolean
+	}
 	diary : MISDiary
 }
 

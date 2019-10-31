@@ -32,6 +32,10 @@ export const initState : RootReducerState = {
 			schoolLogo:""
 		},
 		max_limit: -1,
+		package_info: {
+			date: moment().subtract(13,"days").unix() * 1000, //THIS IS THE PROBLEM 
+			paid: false
+		},
 		diary: {} as MISDiary
 	},
 	auth: {
@@ -131,6 +135,7 @@ export const loadDb = async () => {
 				return agg
 			}
 		}, merged)
+		console.log("UDB",updatedDB)
 
 		return updatedDB
 
