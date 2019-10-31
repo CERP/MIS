@@ -5,9 +5,10 @@ import { connect } from 'react-redux';
 import numberWithCommas from '../../../utils/numberWithCommas';
 import moment from 'moment'
 import Banner from '../../../components/Banner';
-import { PrintHeader } from '../../../components/Layout';
 
 import '../style.css'
+import chunkify from '../../../utils/chunkify';
+import { IncomeExpenditurePrintableList } from '../../../components/Printable/Expense/Other/list';
 
 interface P {
 	teachers: RootDBState["faculty"]
@@ -78,6 +79,8 @@ class IncomeExpenditure extends Component <propTypes, S> {
 
 		const { expenses, students, settings, schoolLogo } = this.props
 
+		const chunkSize = 32 // records per table
+
 		const stu_payments = Object.entries(students)
 			.filter(([id, s]) => s.Name)
 			.reduce((prev,[id, s]) => {
@@ -120,7 +123,8 @@ class IncomeExpenditure extends Component <propTypes, S> {
 		}
 
 		const income_exp_sorted = Object.values(income_exp)
-			.filter(e => this.getFilterCondition(this.state.yearFilter, this.state.monthFilter, e)  && ( e.type === "PAYMENT_GIVEN" && this.state.categoryFilter !== "" ? this.state.categoryFilter === e.category: true))
+			.filter(e => this.getFilterCondition(this.state.yearFilter, this.state.monthFilter, e) &&
+				( e.type === "PAYMENT_GIVEN" && this.state.categoryFilter !== "" ? this.state.categoryFilter === e.category: true))
 			.sort((a, b) => a.date - b.date)
 
 		let total_income = 0
@@ -152,26 +156,24 @@ class IncomeExpenditure extends Component <propTypes, S> {
 
 		{ this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false }
 
-		<PrintHeader settings={settings} logo={schoolLogo}/>
-
-		<div className="divider">Income and Expenditure</div>
+		<div className="divider no-print">Income and Expenditure</div>
 		
-		<div className="table row">
+		<div className="table row no-print">
 			<label>Total Income:</label>
 			<div><b>{numberWithCommas(total_income)}</b></div>
 		</div>
 		
-		<div className="table row">
+		<div className="table row no-print">
 			<label>Total Expense:</label>
 				<div><b>{numberWithCommas(total_expense)}</b></div>
 		</div>
 
-		<div className="table row">
+		<div className="table row no-print">
 			<label>Profit:</label>
 			<div><b>{numberWithCommas(total_income-total_expense)}</b></div>
 		</div>
 
-		<div className="divider">Ledger</div>
+		<div className="divider no-print">Ledger</div>
 
 		<div className="filter row no-print" style={{marginBottom:"10px", flexWrap:"wrap"}}>
 			<select {...this.former.super_handle(["monthFilter"])}>
@@ -206,7 +208,7 @@ class IncomeExpenditure extends Component <propTypes, S> {
 			</select>
 		</div>
 
-		<div className="payment-history section">
+		<div className="payment-history no-print section">
 			<div className="table row heading">
 				<label><b> Date </b></label>
 				<label><b> Label </b></label>
@@ -216,7 +218,7 @@ class IncomeExpenditure extends Component <propTypes, S> {
 			</div>
 			{
 				Object.entries(income_exp_sorted)
-				.map(([id,e]) => {
+				.map(([id, e]) => {
 					return <div key={id} className="table row">
 						<label> { moment(e.date).format("DD-MM-YY")} </label>
 						<label> { e.type === "PAYMENT_GIVEN" ? e.label : e.type === "SUBMITTED" ? "PAID": "-" }</label>
@@ -239,7 +241,13 @@ class IncomeExpenditure extends Component <propTypes, S> {
 				<div><b>{numberWithCommas(total_monthly_income - total_monthly_expense)}</b></div>
 			</div>
 		</div>
-
+		{
+			chunkify(Object.entries(income_exp_sorted), chunkSize)
+						.map((itemsChunk: any, index: number) => <IncomeExpenditurePrintableList key={index}
+							items={itemsChunk}
+							chunkSize={index === 0 ? 0 : chunkSize * index}
+							schoolName={settings.schoolName}/>)
+		}
 		<div className="print button" style={{marginTop:"5px"}} onClick={() => window.print()} >Print</div>
 	</div>
 	}
