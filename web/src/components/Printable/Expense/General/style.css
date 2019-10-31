@@ -1,0 +1,24 @@
+@media print {
+    .print-table {
+        width: 100%;
+        margin: auto;
+    }
+    .row-quantity {
+        width: 10%;
+    }
+    .row-date {
+        width: 15%;
+    }
+    .row-deduction {
+        width: 15%;
+    }
+    .row-amount {
+        width: 15%;
+    }
+    .row-category {
+        width: 20%
+    }
+    .row-label {
+        width: 25%;
+    }
+}
