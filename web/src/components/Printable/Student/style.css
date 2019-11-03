@@ -1,5 +1,8 @@
 @media print { 
-    
+    .print-table {
+        width: 90% !important;
+        margin: auto;
+    }
     .row-sr {
         width: 10%;
     }

@@ -4,21 +4,21 @@
         margin: auto;
     }
     .row-quantity {
-        width: 10%;
+        width: 10% !important;
     }
     .row-date {
-        width: 15%;
+        width: 15% !important;
     }
     .row-deduction {
-        width: 15%;
+        width: 15% !important;
     }
     .row-amount {
-        width: 15%;
+        width: 15% !important;
     }
     .row-category {
-        width: 20%
+        width: 20% !important;
     }
     .row-label {
-        width: 25%;
+        width: 25% !important;
     }
 }
