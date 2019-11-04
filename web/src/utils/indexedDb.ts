@@ -32,7 +32,8 @@ export const initState: RootReducerState = {
 		},
 		max_limit: -1,
 		package_info: {
-			date: moment().subtract(13,"days").unix() * 1000, //THIS IS THE PROBLEM 
+			date: -1,
+			trial_period: 15,
 			paid: false
 		},
 		diary: {} as MISDiary

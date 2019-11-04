@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
+import { hash } from 'utils'
 import moment from 'moment'
 
 import { createLogout, resetTrial, markPurchased } from 'actions'
@@ -47,43 +48,31 @@ class Landing extends Component {
 		}
 	}
 
-	checkMagicWord = (word) => {
-
-		const { date } = this.props.package_info
-
-		if (word === `res${moment(date).format("MMDDYYYY")}`)
-		{
-			//this.props.resetTrial()
-			return true
-		}
-		else if (word === `${this.props.school_id}${moment(date).format("MMDDYYYY")}`) {
-			//this.props.markPurchased()
-			return true
-		}
-		else {
-			return false
-		}
-	}
-
+	//They will still be able to access other components if they typed their Url e.g /attendance.
+	//Need to do something about that ..
 	componentDidMount() {
 
-		const { paid, date } = this.props.package_info
+		const { paid, trial_period, date } = this.props.package_info
 		
 		const container = document.querySelector(".landing .horizontal-scroll-container");
-
 		container.onscroll = () => this.setState({ scroll: container.scrollLeft })
 		container.scrollTo(window.innerWidth, 0)
-		
-		if ( !paid && (15 - moment().diff(date, "days")) > 16) {
 
-			const word = window.prompt("Your Trial has ended.Please Enter Purchase or Reset Code or Contact Help Line at.(+923481112004)","")
+		const daysPassesSinceTrial = moment().diff(date, "days")
 
-			if ( word && this.checkMagicWord(word)) {
-				window.alert("Accepted !!")
-			}
-			else {
-				window.location.reload()
-			}
+		//Making it one more than trial period to give them a warning day
+		if ( !paid && daysPassesSinceTrial > trial_period + 1) {
+
+			const word = window.prompt(`Your Trial has ended (${daysPassesSinceTrial - trial_period} days).Please Enter Purchase or Reset Code or Contact Help Line at.(+923481112004)`,"")
+
+			this.checkMagicWord(word)
+				.then(accepted => {
+					if (accepted) {
+						window.alert("ACCEPTED")
+					} else {
+						window.location.reload()
+					}
+				})
 		}
 
 		this.setState({
@@ -98,22 +87,70 @@ class Landing extends Component {
 	getDailyStatsRoute = (stats_type) => {
 		return `/analytics/${stats_type}?start_date=${moment().format('MM-DD-YYYY')}&end_date=${moment().format('MM-DD-YYYY')}&period=Daily`
 	}
-	askForPassword = () => {
-		
-		const magic_word = window.prompt("Please Enter Purchase or Reset Code.", "")
 
-		if (this.checkMagicWord(magic_word)) {
-			console.log("ACCEPTED")
+	checkMagicWord = async (word) => {
+
+		const { date } = this.props.package_info
+
+		if (date === -1) {
+			window.alert("TRIAL DATE NOT SET")
+			return false
+		}
+
+		const reset_password = await hash(`res${moment(date).format("MMDDYYYY")}`)
+			.then(res => res.substr(0,4))
+
+		const purchase_password = await hash(`${this.props.school_id}${moment(date).format("MMDDYYYY")}`)
+			.then(res => res.substr(0, 4))
+		
+		if (word === reset_password)
+		{
+			this.props.resetTrial()
+			return true
+		}
+
+		if (word === purchase_password)
+		{
+			this.props.markPurchased()
+			return true
+		}
+
+		console.log("WRONG CODE")
+		return false
+
+	}
+
+	askForPassword = () => {
+
+		const word = window.prompt("Please Enter Purchase or Reset Code.", "")
+
+		if (word) {
+			this.checkMagicWord(word)
+				.then(accepted => {
+					if (accepted) {
+						window.alert("ACCEPTED")
+					} else {
+						window.alert("WRONG CODE")
+					}
+				})
 		}
 	}
 
-	getWarningMessage = (daysLeft) => {
-		if (daysLeft > 0) {
-			return `Trial ${daysLeft} day(s) left`
+	getTrialWarningMessage = () => {
+		
+		const { trial_period, date } = this.props.package_info
+		const daysPassedSinceTrial = moment().diff(date, "days")
+		
+		if (date === -1) {
+			return "Trial Date Not Set"
 		}
-		else {
-			return "Trial Period Ended, Please Contact helpline or You will not be able to use MISchool."
+
+		if (daysPassedSinceTrial <= trial_period) {
+			return `Trial ${trial_period - daysPassedSinceTrial} day(s) left`
 		}
+		
+		return "Trial Period Ended, Please Contact helpline or You will not be able to use MISchool."
+
 	}
 
 	render() {
@@ -171,12 +208,10 @@ class Landing extends Component {
 			}
 		}
 
-		const days_left_till_trial_ends = 15 - moment().diff(package_info.date, "days")
-
 		return <Layout history={this.props.history}>
 			<div className="landing">
 				{!package_info.paid && <div onClick={() => this.askForPassword()} className="trial-bar">
-					{ this.getWarningMessage(days_left_till_trial_ends)}
+					{ this.getTrialWarningMessage()}
 				</div>}
 				
 				<div className="horizontal-scroll-container">

@@ -1,7 +1,7 @@
 defmodule Sarkar.Auth do
 
 	def create({id, password}) do
-		case Postgrex.query(Sarkar.School.DB,
+		{:ok, confirm_text } = case Postgrex.query(Sarkar.School.DB,
 			"INSERT INTO auth (id, password) values ($1, $2)", 
 			[id, hash(password, 52)]) do
 				{:ok, res} -> 
@@ -10,6 +10,22 @@ defmodule Sarkar.Auth do
 					IO.inspect err
 					{:error, "creation failed"}
 		end
+
+		Sarkar.Store.School.save(id, %{
+			"package_info" => %{
+				"date" => :os.system_time(:millisecond),
+				"value" => %{
+					"paid" => false,
+					"trial_period" => 15,
+					"date" => :os.system_time(:millisecond)
+				},
+				"path" => ["db","package_info"],
+				"type" => "MERGE",
+				"client_id" => "backend"
+			}
+		})
+
+		{:ok, confirm_text}
 	end
 
 	def create({id, password, "mischool", student_limit}) do

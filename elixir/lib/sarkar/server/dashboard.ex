@@ -39,8 +39,8 @@ defmodule Sarkar.Server.Dashboard do
 	def init(%{bindings: %{type: "school_list"}} = req, state) do
 		{:ok, resp} = Postgrex.query(Sarkar.School.DB,
 		"SELECT
-			school_id
-		FROM backup",[])
+			DISTINCT school_id
+		FROM flattened_schools",[])
 
 		school_list = resp.rows
 			|> Enum.map(fn [row] -> row end)

@@ -31,7 +31,8 @@ const initState: RootReducerState = {
 			schoolLogo:""
 		},
 		package_info: {
-			date: moment().subtract(3,"days").unix() * 1000,
+			date: -1,
+			trial_period: 15,
 			paid: false
 		},
 		max_limit: -1,

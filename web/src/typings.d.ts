@@ -35,6 +35,7 @@ interface RootDBState {
 	max_limit: number
 	package_info: {
 		date: number
+		trial_period: number
 		paid: boolean
 	}
 	diary : MISDiary

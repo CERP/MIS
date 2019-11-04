@@ -798,8 +798,8 @@ export const issueCertificate = (type: string, student_id: string, faculty_id: s
 	}]))
 }
 
-export const resetTrial = () => (dispatch: Function) => {
-	const date = moment.now()
+export const resetTrial = (days: number = 7) => (dispatch: Function) => {
+	const date = moment().subtract(days,"days")
 
 	dispatch(createMerges([{
 		path: ["db", "package_info", "date"],

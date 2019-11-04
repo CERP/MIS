@@ -37,6 +37,39 @@ defmodule Mix.Tasks.Migrate do
 
 	end
 
+	def assign_trial_info() do 
+		
+		{:ok, ref_schools} = Postgrex.query(Sarkar.School.DB,
+			"SELECT
+				school_id,
+				MIN(time) as time 
+			FROM writes
+			GROUP BY school_id",[])
+
+		ref_sch = ref_schools.rows
+			|> Enum.map(
+				fn [school_id, time] ->
+					start_school(school_id)
+					Sarkar.School.sync_changes(school_id, "backend", %{
+						"package_info" => %{
+							"date" => :os.system_time(:millisecond),
+							"action" => %{
+								"path" => ["db","package_info"],
+								"type" => "MERGE",
+								"value" => %{
+									"paid" => false,
+									"trial_period" => 15,
+									"date" => time
+								}
+							}
+						}
+					},:os.system_time(:millisecond))
+				end
+			)
+
+		{:ok, "COMPLETED"}
+	end
+
 	def run(args) do
 		Application.ensure_all_started(:sarkar)
 		case Postgrex.query(Sarkar.School.DB, "SELECT school_id, db from backup", []) do
