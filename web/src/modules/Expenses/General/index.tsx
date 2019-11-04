@@ -422,10 +422,10 @@ class Expenses extends Component<propTypes, S> {
 									<label> {e.category}</label>
 									<label> {`-`} </label>
 									<label> {`${e.deduction}`}{e.deduction_reason ? `(${e.deduction_reason})` : ""} </label>
-									{this.state.edits[id] && <div className="row" style={{ color: "rgb(94, 205, 185)", justifyContent: "space-between" }}>
+									{(this.state.edits[id] && <div className="row" style={{ color: "rgb(94, 205, 185)", justifyContent: "space-between" }}>
 										<input style={{ textAlign: "right", border: "none", borderBottom: "1px solid #bbb", width: "70%" }} type="number" {...this.former.super_handle(["edits", id, "amount"])} />
 										<div className="button red" style={{ padding: "0px", textAlign: "center", width: "15px", lineHeight: "15px" }} onClick={() => this.onDelete(id)}>x</div>
-									</div> || <label>{numberWithCommas(e.amount - e.deduction)}</label>}
+									</div>) || <label>{numberWithCommas(e.amount - e.deduction)}</label>}
 								</div>
 							}
 
@@ -436,10 +436,10 @@ class Expenses extends Component<propTypes, S> {
 								<label> {e.quantity} </label>
 								<label> {`-`} </label>
 								{
-									this.state.edits[id] && <div className="row" style={{ color: "rgb(94, 205, 185)", justifyContent: "space-between" }}>
+									(this.state.edits[id] && <div className="row" style={{ color: "rgb(94, 205, 185)", justifyContent: "space-between" }}>
 										<input style={{ textAlign: "right", border: "none", width: "70%" }} type="number" {...this.former.super_handle(["edits", id, "amount"])} />
 										<div className="button red" style={{ padding: "0px", textAlign: "center", width: "15px", lineHeight: "15px" }} onClick={() => this.onDelete(id)}>x</div>
-									</div> || <label>{numberWithCommas(e.amount)}</label>}
+									</div>) || <label>{numberWithCommas(e.amount)}</label>}
 							</div>
 						})
 				}
