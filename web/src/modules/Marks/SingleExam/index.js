@@ -239,7 +239,7 @@ class SingleExam extends Component {
 			let prev_grade = 0
 			const highest_grade = sorted_grades[0]
 
-			for( let e of sorted_grades)
+			for( const e of sorted_grades)
 			{
 				if(prev_grade !== 0 && percent_score >= parseFloat(highest_grade[1])){
 					return highest_grade[0]
@@ -333,6 +333,7 @@ class SingleExam extends Component {
 						// 	.filter(([id, student]) => student.section_id === this.section_id())
 						Object.keys(this.state.exam.student_marks || {})
 							.map(xid => this.props.students[xid])
+							.filter( s => s !== undefined && s.id !==undefined)
 							.sort((a, b) => (a.RollNumber !== undefined && b.RollNumber !== undefined) ? (parseFloat(a.RollNumber) - parseFloat(b.RollNumber)) : -1 )
 							.map(student => (
 								<div className="section" key={student.id}>
