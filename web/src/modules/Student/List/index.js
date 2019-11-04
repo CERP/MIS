@@ -5,8 +5,9 @@ import qs from 'querystring'
 import {getSectionsFromClasses} from 'utils/getSectionsFromClasses';
 import Former from 'utils/former'
 import getStudentLimt from 'utils/getStudentLimit';
-import { LayoutWrap } from '../../../components/Layout';
-import { StudentPrintableList } from '../../../components/Printable/Student/list';
+import getStudentLimt from 'utils/getStudentLimit';
+import { LayoutWrap } from 'components/Layout';
+import { StudentPrintableList } from 'components/Printable/Student/list';
 import {chunkify} from 'utils/chunkify'
 import Card from 'components/Card'
 

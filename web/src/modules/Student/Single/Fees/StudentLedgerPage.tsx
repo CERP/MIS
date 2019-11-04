@@ -1,18 +1,18 @@
 import React from 'react'
-import { PrintHeader } from "../../../../components/Layout";
-import numberWithCommas from "../../../../utils/numberWithCommas";
+import { PrintHeader } from "components/Layout";
+import numberWithCommas from "utils/numberWithCommas";
 import moment from "moment";
-import getFeeLabel from "../../../../utils/getFeeLabel";
+import getFeeLabel from "utils/getFeeLabel";
 
 
 interface StudentLedgerPageProp {
-	payments: [string, MISStudentPayment][] 
-	student: MISStudent
-	class_name: string
-	settings: RootDBState["settings"]
+	payments: [string, MISStudentPayment][]; 
+	student: MISStudent;
+	class_name: string;
+	settings: RootDBState["settings"];
 }
 
-export const StudentLedgerPage : React.SFC < StudentLedgerPageProp > = ({ payments, student, settings, class_name }) => {
+export const StudentLedgerPage: React.SFC < StudentLedgerPageProp > = ({ payments, student, settings, class_name }) => {
 
 	const owed = payments.reduce((agg, [,curr]) => agg - (curr.type === "SUBMITTED" || curr.type === "FORGIVEN" ? 1 : -1) * curr.amount, 0)
 
@@ -72,7 +72,7 @@ export const StudentLedgerPage : React.SFC < StudentLedgerPageProp > = ({ paymen
 
 			<div className="table row last">
 				<label style={{ color: owed <= 0 ? "#5ECDB9" : "#FC6171" }}><b>{owed <= 0 ? "Advance:" : "Pending:"}</b></label>
-				<div style={{ color: owed <= 0 ? "#5ECDB9" : "#FC6171" }}><b>{numberWithCommas( Math.abs(owed))}</b></div>
+				<div style={{ color: owed <= 0 ? "#5ECDB9" : "#FC6171" }}><b>Rs. {numberWithCommas( Math.abs(owed))}</b></div>
 			</div>
 	</div>
 }
