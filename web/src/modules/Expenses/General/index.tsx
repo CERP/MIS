@@ -14,10 +14,10 @@ interface P {
 	expenses: RootDBState["expenses"];
 	settings: RootDBState["settings"];
 	schoolLogo: RootDBState["assets"]["schoolLogo"];
-	addExpense: (amount: number, label: string, type: MISExpense["type"], category: MISExpense["category"], quantity: number, date: number ) => any;
-	addSalaryExpense: (id: string, amount: number, label: string, type: MISSalaryExpense["type"], faculty_id: string, date: number, advance: number, deduction: number, deduction_reason: string ) => any;
-	editExpense: ( edits: {[id: string]: { amount: number }}) => any;
-	deleteExpense: ( deletes: string) => any;
+	addExpense: (amount: number, label: string, type: MISExpense["type"], category: MISExpense["category"], quantity: number, date: number) => any;
+	addSalaryExpense: (id: string, amount: number, label: string, type: MISSalaryExpense["type"], faculty_id: string, date: number, advance: number, deduction: number, deduction_reason: string) => any;
+	editExpense: (edits: { [id: string]: { amount: number } }) => any;
+	deleteExpense: (deletes: string) => any;
 }
 /**
  * need to do something to show expense deduction 
@@ -58,15 +58,15 @@ interface Routeinfo {
 
 type propTypes = RouteComponentProps<Routeinfo> & P
 
-class Expenses extends Component <propTypes, S> {
+class Expenses extends Component<propTypes, S> {
 
 	former: Former
 	constructor(props: propTypes) {
 		super(props)
-		
+
 		const current_month = moment().format("MM-YYYY")
 		const edits = Object.entries(props.expenses)
-			.filter(([id,e]) => moment( e.time ).format("MM-YYYY") === current_month && e.type === "PAYMENT_GIVEN" )
+			.filter(([id, e]) => moment(e.time).format("MM-YYYY") === current_month && e.type === "PAYMENT_GIVEN")
 			.reduce((agg, [id, curr]) => {
 				return {
 					...agg,
@@ -74,7 +74,7 @@ class Expenses extends Component <propTypes, S> {
 						amount: curr.amount
 					}
 				}
-			},{} as {[id: string]: { amount: number }})
+			}, {} as { [id: string]: { amount: number } })
 
 		this.state = {
 			banner: {
@@ -82,10 +82,10 @@ class Expenses extends Component <propTypes, S> {
 				good: true,
 				text: "Saved!"
 			},
-			payment:{
+			payment: {
 				active: false,
 				amount: "",
-				label:"",
+				label: "",
 				type: "PAYMENT_GIVEN",
 				category: "",
 				faculty_id: "",
@@ -99,10 +99,10 @@ class Expenses extends Component <propTypes, S> {
 			categoryFilter: "",
 			edits,
 		}
-		this.former = new Former (this,[])
+		this.former = new Former(this, [])
 	}
 
-	componentDidMount () {
+	componentDidMount() {
 		/*  
 			//In case we change it to automatic
 		 console.log("LOADED Expenses")
@@ -120,12 +120,12 @@ class Expenses extends Component <propTypes, S> {
 			}) */
 	}
 
-	componentWillReceiveProps(newProps: propTypes){
+	componentWillReceiveProps(newProps: propTypes) {
 		//Making sure to get latest changes
 
 		const current_month = moment().format("MM-YYYY")
 		const edits = Object.entries(newProps.expenses)
-			.filter(([id,e]) => moment(e.time).format("MM-YYYY") === current_month && e.type === "PAYMENT_GIVEN" )
+			.filter(([id, e]) => moment(e.time).format("MM-YYYY") === current_month && e.type === "PAYMENT_GIVEN")
 			.reduce((agg, [id, curr]) => {
 				return {
 					...agg,
@@ -133,7 +133,7 @@ class Expenses extends Component <propTypes, S> {
 						amount: curr.amount
 					}
 				}
-			},{} as {[id: string]: { amount: number }})
+			}, {} as { [id: string]: { amount: number } })
 
 		this.setState({
 			edits
@@ -142,12 +142,12 @@ class Expenses extends Component <propTypes, S> {
 	}
 
 	newPayment = () => {
-		this.setState({ 
+		this.setState({
 			payment: {
 				...this.state.payment,
 				active: !this.state.payment.active,
 				amount: "",
-				label:"",
+				label: "",
 				type: "PAYMENT_GIVEN",
 				category: "",
 				faculty_id: "",
@@ -164,13 +164,12 @@ class Expenses extends Component <propTypes, S> {
 		const id = `${moment().format("MM-YYYY")}-${payment.faculty_id}`
 
 		let compulsoryFields
-		if(this.state.payment.category && this.state.payment.category === "SALARY")
-		{
+		if (this.state.payment.category && this.state.payment.category === "SALARY") {
 			compulsoryFields = checkCompulsoryFields(this.state.payment, [
 				["amount"], ["type"], ["faculty_id"],
 			])
 		}
-		else if (this.state.payment.category){
+		else if (this.state.payment.category) {
 			compulsoryFields = checkCompulsoryFields(this.state.payment, [
 				["amount"], ["label"], ["type"], ["quantity"]
 			])
@@ -181,11 +180,11 @@ class Expenses extends Component <propTypes, S> {
 			])
 		}
 
-		if(compulsoryFields){
+		if (compulsoryFields) {
 			const erroText = `Please Fill ${(compulsoryFields as string[][]).map(x => x[0] === "faculty_id" ? "Teacher" : x[0]).join(", ")} !`
 
 			return this.setState({
-				banner:{
+				banner: {
 					active: true,
 					good: false,
 					text: erroText
@@ -193,9 +192,9 @@ class Expenses extends Component <propTypes, S> {
 			})
 		}
 
-		if(payment.category === "SALARY"){
+		if (payment.category === "SALARY") {
 
-			this.props.addSalaryExpense( id, parseFloat(payment.amount), this.props.teachers[payment.faculty_id].Name, "PAYMENT_GIVEN", payment.faculty_id, payment.date,0,parseFloat(payment.deduction), payment.deduction_reason)
+			this.props.addSalaryExpense(id, parseFloat(payment.amount), this.props.teachers[payment.faculty_id].Name, "PAYMENT_GIVEN", payment.faculty_id, payment.date, 0, parseFloat(payment.deduction), payment.deduction_reason)
 
 			this.setState({
 				banner: {
@@ -207,7 +206,7 @@ class Expenses extends Component <propTypes, S> {
 
 			setTimeout(() => {
 				this.setState({
-					banner:{
+					banner: {
 						...this.state.banner,
 						active: false
 					}
@@ -218,7 +217,7 @@ class Expenses extends Component <propTypes, S> {
 			return
 		}
 
-		this.props.addExpense( parseFloat(payment.amount), payment.label, "PAYMENT_GIVEN", payment.category, parseFloat(payment.quantity), payment.date)
+		this.props.addExpense(parseFloat(payment.amount), payment.label, "PAYMENT_GIVEN", payment.category, parseFloat(payment.quantity), payment.date)
 
 		this.setState({
 			banner: {
@@ -230,7 +229,7 @@ class Expenses extends Component <propTypes, S> {
 
 		setTimeout(() => {
 			this.setState({
-				banner:{
+				banner: {
 					...this.state.banner,
 					active: false
 				}
@@ -241,10 +240,10 @@ class Expenses extends Component <propTypes, S> {
 	}
 
 	onSave = () => {
-		
+
 		const filtered_edits = Object.entries(this.state.edits)
-			.filter(([id, exp])=> this.props.expenses[id].amount !== exp.amount)
-			.reduce((agg, [id, curr])=> {
+			.filter(([id, exp]) => this.props.expenses[id].amount !== exp.amount)
+			.reduce((agg, [id, curr]) => {
 				return {
 					...agg,
 					[id]: {
@@ -256,7 +255,7 @@ class Expenses extends Component <propTypes, S> {
 		this.props.editExpense(filtered_edits)
 
 		this.setState({
-			banner:{
+			banner: {
 				active: true,
 				good: true,
 				text: "Saved!"
@@ -265,7 +264,7 @@ class Expenses extends Component <propTypes, S> {
 
 		setTimeout(() => {
 			this.setState({
-				banner:{
+				banner: {
 					...this.state.banner,
 					active: false
 				}
@@ -273,14 +272,14 @@ class Expenses extends Component <propTypes, S> {
 		}, 1000)
 	}
 
-	onDelete = ( id: string) => {
-		if(!window.confirm("Are you sure you want to Delete this entry permanently?")){
+	onDelete = (id: string) => {
+		if (!window.confirm("Are you sure you want to Delete this entry permanently?")) {
 			return
 		}
 		this.props.deleteExpense(id)
 
 		this.setState({
-			banner:{
+			banner: {
 				active: true,
 				good: false,
 				text: "Deleted!"
@@ -289,37 +288,34 @@ class Expenses extends Component <propTypes, S> {
 
 		setTimeout(() => {
 			this.setState({
-				banner:{
+				banner: {
 					...this.state.banner,
 					active: false
 				}
 			})
 		}, 1000)
 	}
-	getFilterCondition = (year: string, month: string, payment: any) =>
-	{
+	getFilterCondition = (year: string, month: string, payment: any) => {
 		//when both are empty
-		if(month === "" && year === "") {
+		if (month === "" && year === "") {
 			return true
 		}
 		//when month is empty	
-		if(month === "" && year !== ""){
-			return  moment(payment.date).format("YYYY") === year;
+		if (month === "" && year !== "") {
+			return moment(payment.date).format("YYYY") === year;
 		}
 		//when year is empty
-		if(month !== "" && year === ""){
+		if (month !== "" && year === "") {
 			return moment(payment.date).format("MMMM") === month
 		}
 		//when both are not empty
-		if(month !== "" && year !== "")
-		{
+		if (month !== "" && year !== "") {
 			return moment(payment.date).format("MMMM") === month && moment(payment.date).format("YYYY") === year;
 		}
 	}
 
 	onTeacherSelect = (e: { target: { value: any } }) => {
-		if(this.props.teachers[e.target.value])
-		{
+		if (this.props.teachers[e.target.value]) {
 			this.setState({
 				payment: {
 					...this.state.payment,
@@ -334,11 +330,10 @@ class Expenses extends Component <propTypes, S> {
 
 		const { expenses, teachers, settings, schoolLogo } = this.props
 
-		const Months  = new Set([])
+		const Months = new Set([])
 		const Years = new Set([])
 
-		for(const e of Object.values(expenses))
-		{
+		for (const e of Object.values(expenses)) {
 			Months.add(moment(e.date).format("MMMM"))
 			Years.add(moment(e.date).format("YYYY"))
 		}
@@ -347,10 +342,9 @@ class Expenses extends Component <propTypes, S> {
 
 		const total_expense = Object.values(expenses)
 			.reduce((agg, curr) => {
-				if(curr.type === "PAYMENT_GIVEN")
-				{
-					if(this.getFilterCondition(this.state.yearFilter, this.state.monthFilter, curr) && (this.state.categoryFilter !== "" ? this.state.categoryFilter === curr.category: true)){
-						total_filtered_expense += curr.amount - ( (curr.expense === "SALARY_EXPENSE" && curr.deduction) || 0)
+				if (curr.type === "PAYMENT_GIVEN") {
+					if (this.getFilterCondition(this.state.yearFilter, this.state.monthFilter, curr) && (this.state.categoryFilter !== "" ? this.state.categoryFilter === curr.category : true)) {
+						total_filtered_expense += curr.amount - ((curr.expense === "SALARY_EXPENSE" && curr.deduction) || 0)
 					}
 					return agg + (curr.amount - ((curr.expense === "SALARY_EXPENSE" && curr.deduction) || 0))
 				}
@@ -360,29 +354,29 @@ class Expenses extends Component <propTypes, S> {
 
 		const filtered_expenses = Object.entries(expenses)
 			.filter(([, e]) => this.getFilterCondition(this.state.yearFilter, this.state.monthFilter, e) && (this.state.categoryFilter !== "" ? this.state.categoryFilter === e.category : true))
-			.sort(([,a],[,b]) => a.date -b.date)
+			.sort(([, a], [, b]) => a.date - b.date)
 
 		return <div className="expenses">
 
-			{ this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false }
+			{this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
 
-			<PrintHeader settings={settings} logo={schoolLogo}/>
+			<PrintHeader settings={settings} logo={schoolLogo} />
 
 			<div className="divider">Expense Information</div>
 
 			<div className="table row">
 				<label>Total Expense:</label>
-				<div>{numberWithCommas(total_expense)}</div>
+				<div>Rs. {numberWithCommas(total_expense)}</div>
 			</div>
 
 			<div className="divider">Ledger</div>
 
-			<div className="filter row no-print" style={{marginBottom:"10px", flexWrap:"wrap"}}>
+			<div className="filter row no-print" style={{ marginBottom: "10px", flexWrap: "wrap" }}>
 				<select {...this.former.super_handle(["monthFilter"])}>
 					<option value="">Select Month</option>
 					{
-						[...Months].map( Month => {
-							return <option key={Month} value={Month}>{Month}</option>	
+						[...Months].map(Month => {
+							return <option key={Month} value={Month}>{Month}</option>
 						})
 					}
 				</select>
@@ -390,7 +384,7 @@ class Expenses extends Component <propTypes, S> {
 				<select {...this.former.super_handle(["yearFilter"])}>
 					<option value="">Select Year</option>
 					{
-						[...Years].map( year => {
+						[...Years].map(year => {
 							return <option key={year} value={year}> {year} </option>
 						})
 					}
@@ -420,49 +414,45 @@ class Expenses extends Component <propTypes, S> {
 				</div>
 				{
 					filtered_expenses
-					.map( ([id,e]) => {
-						if(e.expense === "SALARY_EXPENSE")
-						{
-							return <div key={id} className={ e.type === "PAYMENT_DUE"? "table row no-print" : "table row"}>
+						.map(([id, e]) => {
+							if (e.expense === "SALARY_EXPENSE") {
+								return <div key={id} className={e.type === "PAYMENT_DUE" ? "table row no-print" : "table row"}>
+									<label> {moment(e.date).format("DD-MM-YY")} </label>
+									<label> {e.label}</label>
+									<label> {e.category}</label>
+									<label> {`-`} </label>
+									<label> {`${e.deduction}`}{e.deduction_reason ? `(${e.deduction_reason})` : ""} </label>
+									{this.state.edits[id] && <div className="row" style={{ color: "rgb(94, 205, 185)", justifyContent: "space-between" }}>
+										<input style={{ textAlign: "right", border: "none", borderBottom: "1px solid #bbb", width: "70%" }} type="number" {...this.former.super_handle(["edits", id, "amount"])} />
+										<div className="button red" style={{ padding: "0px", textAlign: "center", width: "15px", lineHeight: "15px" }} onClick={() => this.onDelete(id)}>x</div>
+									</div> || <label>{numberWithCommas(e.amount - e.deduction)}</label>}
+								</div>
+							}
+
+							return <div key={id} className="table row">
 								<label> {moment(e.date).format("DD-MM-YY")} </label>
 								<label> {e.label}</label>
 								<label> {e.category}</label>
+								<label> {e.quantity} </label>
 								<label> {`-`} </label>
-								<label> {`${e.deduction}`}{ e.deduction_reason ? `(${e.deduction_reason})` : "" } </label>
-									{ (this.state.edits[id] && <div className="row" style={{color: "rgb(94, 205, 185)", justifyContent:"space-between"}}>
-										<input style={{ textAlign: "right", border: "none", borderBottom: "1px solid #bbb", width: "70%"}} type="number" {...this.former.super_handle(["edits", id, "amount"])} />
-										<div className="button red" style={{ padding: "0px", textAlign:"center", width: "15px", lineHeight: "15px" }} onClick={() => this.onDelete(id)}>x</div>
-									</div>) 
-									|| <label> {`${numberWithCommas(e.amount - e.deduction)} Rs`}</label>
-								}
+								{
+									this.state.edits[id] && <div className="row" style={{ color: "rgb(94, 205, 185)", justifyContent: "space-between" }}>
+										<input style={{ textAlign: "right", border: "none", width: "70%" }} type="number" {...this.former.super_handle(["edits", id, "amount"])} />
+										<div className="button red" style={{ padding: "0px", textAlign: "center", width: "15px", lineHeight: "15px" }} onClick={() => this.onDelete(id)}>x</div>
+									</div> || <label>{numberWithCommas(e.amount)}</label>}
 							</div>
-						}
-
-						return <div key={id} className="table row">
-							<label> {moment(e.date).format("DD-MM-YY")} </label>
-							<label> {e.label}</label>
-							<label> {e.category}</label>
-							<label> {e.quantity } </label>
-							<label> {`-`} </label>
-							{ 
-								(this.state.edits[id] && <div className="row" style={{color: "rgb(94, 205, 185)", justifyContent:"space-between"}}>
-									<input style={{ textAlign: "right", border: "none", width: "70%"}} type="number" {...this.former.super_handle(["edits", id, "amount"])}/>
-									<div className="button red" style={{ padding: "0px", textAlign:"center", width: "15px", lineHeight: "15px"}} onClick={() => this.onDelete(id)} >x</div>
-								</div>) 
-								|| <label> {`${numberWithCommas(e.amount)} Rs`}</label>
-						}
-					</div>
-					})
+						})
 				}
 				<div className="table row last">
 					<label><b> Total Paid:</b></label>
-					<div><b>{numberWithCommas(total_filtered_expense)}</b></div>
+					<div><b>Rs. {numberWithCommas(total_filtered_expense)}</b></div>
 				</div>
 			</div>
-			<div className="button save" style={{marginTop:"5px"}} onClick={() => this.onSave()}> Save </div>
+
+			<div className="button save" style={{ marginTop: "5px" }} onClick={() => this.onSave()}> Save </div>
 
 			<div className="form">
-				<div className={`button ${this.state.payment.active ? "orange" : "green"}`} style={{marginTop:"10px"}} onClick={this.newPayment}>{this.state.payment.active ? "Cancel" : "New Entry"}</div>
+				<div className={`button ${this.state.payment.active ? "orange" : "green"}`} style={{ marginTop: "10px" }} onClick={this.newPayment}>{this.state.payment.active ? "Cancel" : "New Entry"}</div>
 
 				{this.state.payment.active && <div className="new-payment">
 					<div className="row">
@@ -470,7 +460,7 @@ class Expenses extends Component <propTypes, S> {
 						<input
 							type="date"
 							value={moment(this.state.payment.date).format("YYYY-MM-DD")}
-							onChange={this.former.handle(["payment","date"])}
+							onChange={this.former.handle(["payment", "date"])}
 						/>
 					</div>
 
@@ -489,21 +479,21 @@ class Expenses extends Component <propTypes, S> {
 						</select>
 					</div>
 
-					{ this.state.payment.category === "SALARY" && <div className="row">
-							<label> Teacher </label>
-							<select onChange={(e) => this.onTeacherSelect(e)}>
-								<option value=""> SELECT</option>
-								{
-									Object.values(teachers)
-									.sort((a,b) => a.Name.localeCompare(b.Name))
+					{this.state.payment.category === "SALARY" && <div className="row">
+						<label> Teacher </label>
+						<select onChange={(e) => this.onTeacherSelect(e)}>
+							<option value=""> SELECT</option>
+							{
+								Object.values(teachers)
+									.sort((a, b) => a.Name.localeCompare(b.Name))
 									.map(t => {
 										return <option key={t.id} value={t.id}> {t.Name} </option>
 									})
-								}
-							</select>
-						</div>
+							}
+						</select>
+					</div>
 					}
-					
+
 					{this.state.payment.category !== "SALARY" && <div className="row">
 						<label>Label</label>
 						<input type="text" {...this.former.super_handle(["payment", "label"])} placeholder="Enter Name" />
@@ -525,23 +515,22 @@ class Expenses extends Component <propTypes, S> {
 						<input type="text" {...this.former.super_handle(["payment", "deduction_reason"])} placeholder="If any" />
 					</div>}
 					<div className="button save" onClick={this.addPayment}>Add Payment</div>
-				</div> 
+				</div>
 				}
-				<div className="print button" style={{marginTop:"5px"}} onClick={() => window.print()}> Print </div>
+				<div className="print button" style={{ marginTop: "5px" }} onClick={() => window.print()}> Print </div>
 			</div>
 		</div>
 	}
 }
 
-
-export default connect ( (state: RootReducerState) => ({
+export default connect((state: RootReducerState) => ({
 	teachers: state.db.faculty,
 	expenses: state.db.expenses,
-	settings : state.db.settings,
+	settings: state.db.settings,
 	schoolLogo: state.db.assets ? state.db.assets.schoolLogo || "" : ""
-}), ( dispatch: Function ) => ({
-	addExpense: (amount: number, label: string, type: MISExpense["type"], category: MISExpense["category"], quantity: number, date: number ) => dispatch(addExpense(amount, label, type, category, quantity, date )),
+}), (dispatch: Function) => ({
+	addExpense: (amount: number, label: string, type: MISExpense["type"], category: MISExpense["category"], quantity: number, date: number) => dispatch(addExpense(amount, label, type, category, quantity, date)),
 	addSalaryExpense: (id: string, amount: number, label: string, type: MISSalaryExpense["type"], faculty_id: string, date: number, advance: number, deduction: number, deduction_reason: string) => dispatch(addSalaryExpense(id, amount, label, type, faculty_id, date, advance, deduction, deduction_reason)),
-	editExpense: ( edits: {[id: string]: { amount: number }}) => dispatch(editExpense(edits)),
-	deleteExpense: ( id: string) => dispatch(deleteExpense(id))
-}))( Expenses )
+	editExpense: (edits: { [id: string]: { amount: number } }) => dispatch(editExpense(edits)),
+	deleteExpense: (id: string) => dispatch(deleteExpense(id))
+}))(Expenses)
