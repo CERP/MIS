@@ -60,8 +60,7 @@ class Landing extends Component {
 
 		const daysPassesSinceTrial = moment().diff(date, "days")
 
-		//Making it one more than trial period to give them a warning day
-		if ( !paid && daysPassesSinceTrial > trial_period + 1) {
+		if ( date !== -1 && !paid && daysPassesSinceTrial > trial_period + 1) {
 
 			const word = window.prompt(`Your Trial has ended (${daysPassesSinceTrial - trial_period} days).Please Enter Purchase or Reset Code or Contact Help Line at.(+923481112004)`,"")
 
@@ -93,7 +92,6 @@ class Landing extends Component {
 		const { date } = this.props.package_info
 
 		if (date === -1) {
-			window.alert("TRIAL DATE NOT SET")
 			return false
 		}
 
@@ -140,10 +138,6 @@ class Landing extends Component {
 		
 		const { trial_period, date } = this.props.package_info
 		const daysPassedSinceTrial = moment().diff(date, "days")
-		
-		if (date === -1) {
-			return "Trial Date Not Set"
-		}
 
 		if (daysPassedSinceTrial <= trial_period) {
 			return `Trial ${trial_period - daysPassedSinceTrial} day(s) left`
@@ -210,7 +204,7 @@ class Landing extends Component {
 
 		return <Layout history={this.props.history}>
 			<div className="landing">
-				{!package_info.paid && <div onClick={() => this.askForPassword()} className="trial-bar">
+				{!package_info.paid && package_info.date !== -1 && <div onClick={() => this.askForPassword()} className="trial-bar">
 					{ this.getTrialWarningMessage()}
 				</div>}
 				
