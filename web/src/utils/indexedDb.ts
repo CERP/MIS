@@ -135,7 +135,6 @@ export const loadDb = async () => {
 				return agg
 			}
 		}, merged)
-		console.log("UDB",updatedDB)
 
 		return updatedDB
 

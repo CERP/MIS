@@ -97,11 +97,11 @@ class Landing extends Component {
 			return false
 		}
 
-		const reset_password = await hash(`res${moment(date).format("MMDDYYYY")}`)
-			.then(res => res.substr(0,4))
+		const reset_password = await hash(`reset-${this.props.school_id}-${moment().format("MMDDYYYY")}`)
+			.then(res => res.substr(0,4).toLowerCase())
 
-		const purchase_password = await hash(`${this.props.school_id}${moment(date).format("MMDDYYYY")}`)
-			.then(res => res.substr(0, 4))
+		const purchase_password = await hash(`buy-${this.props.school_id}-${moment().format("MMDDYYYY")}`)
+			.then(res => res.substr(0, 4).toLowerCase())
 		
 		if (word === reset_password)
 		{
@@ -437,7 +437,7 @@ export default connect(state => ({
 	permissions: state.db.settings.permissions,
 	lastSnapshot: state.lastSnapshot,
 	unsyncd: Object.keys(state.queued).length,
-	package_info: state.db.package_info,
+	package_info: state.db.package_info || { date: -1, trial_period: 15, paid: false}, //If package info is undefined
 	school_id: state.auth.school_id
 }), dispatch => ({
 	resetTrial: () => dispatch(resetTrial()),
