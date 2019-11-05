@@ -6,8 +6,8 @@ import checkCompulsoryFields from 'utils/checkCompulsoryFields'
 import numberWithCommas from 'utils/numberWithCommas';
 import { addExpense, addSalaryExpense, deleteExpense, editExpense } from 'actions';
 import moment from 'moment';
-import Banner from '../../../components/Banner';
-import chunkify from '../../../utils/chunkify';
+import Banner from 'components/Banner';
+import chunkify from 'utils/chunkify';
 import { GeneralExpensePrintableList } from 'components/Printable/Expense/General/list';
 
 import '../style.css';
@@ -331,7 +331,7 @@ class Expenses extends Component<propTypes, S> {
 
 	render() {
 
-		const { expenses, teachers, settings, schoolLogo } = this.props
+		const { expenses, teachers, settings } = this.props
 
 		const chunkSize = 32 // records per table
 
@@ -422,16 +422,16 @@ class Expenses extends Component<propTypes, S> {
 					.map(([id, e]) => {
 						if(e.expense === "SALARY_EXPENSE")
 						{
-							return <div key={id} className={ e.type === "PAYMENT_DUE"? "table row no-print" : "table row"}>
+							return <div key={id} className={ e.type === "PAYMENT_DUE" ? "table row no-print" : "table row"}>
 								<label> {moment(e.date).format("DD-MM-YY")} </label>
 								<label> {e.label}</label>
 								<label> {e.category}</label>
 								<label> {`-`} </label>
 								<label> {`${e.deduction}`}{ e.deduction_reason ? `(${e.deduction_reason})` : "" } </label>
-								{ this.state.edits[id] && <div className="row" style={{color: "rgb(94, 205, 185)", justifyContent:"space-between"}}>
+								{ this.state.edits[id] !== undefined ? (<div className="row" style={{color: "rgb(94, 205, 185)", justifyContent:"space-between"}}>
 									<input style={{ textAlign: "right", border: "none", borderBottom: "1px solid #bbb", width: "70%"}} type="number" {...this.former.super_handle(["edits", id, "amount"])}/>
 									<div className="button red" style={{ padding: "0px", textAlign:"center", width: "15px", lineHeight: "15px" }} onClick={() => this.onDelete(id)}>x</div>
-								</div> || <label> {`${numberWithCommas(e.amount - e.deduction)} Rs`}</label>}
+								</div>) : (<label> {`${numberWithCommas(e.amount - e.deduction)} Rs`}</label>)}
 							</div>
 						}
 						else if (e.expense === "MIS_EXPENSE")
@@ -446,10 +446,13 @@ class Expenses extends Component<propTypes, S> {
 									(this.state.edits[id] && <div className="row" style={{ color: "rgb(94, 205, 185)", justifyContent: "space-between" }}>
 										<input style={{ textAlign: "right", border: "none", width: "70%" }} type="number" {...this.former.super_handle(["edits", id, "amount"])} />
 										<div className="button red" style={{ padding: "0px", textAlign: "center", width: "15px", lineHeight: "15px" }} onClick={() => this.onDelete(id)}>x</div>
-									</div>) || <label>{numberWithCommas(e.amount)}</label>}
+									</div>) || <label>{numberWithCommas(e.amount)}</label>
+								}
 							</div>
-						})
-				}
+						}
+						return null
+				})
+			}
 				<div className="table row last">
 					<label><b> Total Paid:</b></label>
 					<div><b>Rs. {numberWithCommas(total_filtered_expense)}</b></div>

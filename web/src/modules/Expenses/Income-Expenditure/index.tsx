@@ -77,7 +77,7 @@ class IncomeExpenditure extends Component <propTypes, S> {
 
 	render() {
 
-		const { expenses, students, settings, schoolLogo } = this.props
+		const { expenses, students, settings } = this.props
 
 		const chunkSize = 32 // records per table
 

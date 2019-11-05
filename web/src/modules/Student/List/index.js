@@ -5,7 +5,6 @@ import qs from 'querystring'
 import {getSectionsFromClasses} from 'utils/getSectionsFromClasses';
 import Former from 'utils/former'
 import getStudentLimt from 'utils/getStudentLimit';
-import getStudentLimt from 'utils/getStudentLimit';
 import { LayoutWrap } from 'components/Layout';
 import { StudentPrintableList } from 'components/Printable/Student/list';
 import {chunkify} from 'utils/chunkify'
@@ -39,7 +38,7 @@ const StudentItem = (S) => {
 						{
 							 tags
 							 .filter(t => t !== "FINISHED_SCHOOL") 
-							 .map(t => <div className="tag"> {t}</div>) 
+							 .map((t, i) => <div className="tag" key={i}> {t}</div>) 
 						}
 						</div>
 					}
@@ -138,7 +137,7 @@ export class StudentList extends Component {
 
 	render (){
 		
-		const { classes, students, settings, forwardTo, schoolLogo, max_limit } = this.props
+		const { classes, students, settings, forwardTo, max_limit } = this.props
 
 		const sections = getSectionsFromClasses(classes) 
 		const chunkSize = 32 // students per table on printsheet
@@ -219,7 +218,7 @@ export class StudentList extends Component {
 				// here's "index" representing table number
 
 				chunkify(items, chunkSize)
-					.map((chunkItems, index) => <StudentPrintableList students={chunkItems} 
+					.map((chunkItems, index) => <StudentPrintableList students={chunkItems} key={index} 
 						chunkSize={ index === 0 ? 0 : chunkSize * index }
 						schoolName={ settings.schoolName }/>)
 			}
