@@ -217,7 +217,7 @@ export const StudentMarks = ({student, exams, settings, startDate=0, endDate=mom
 			
 			<div className="student-info">
 				<div className="row">
-					<div><b>Class:</b> {curr_section.name === 'DEFAULT' ? curr_section.namespaced_name : `${curr_section.namespaced_name}, ${curr_section.name}` }</div>
+					<div><b>Class:</b> {curr_section.namespaced_name}</div>
 					<div><b>Session:</b> {moment().format("YYYY")}</div>
 				</div>
 				<div className="row">

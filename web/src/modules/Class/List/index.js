@@ -11,7 +11,7 @@ import {getSectionsFromClasses} from 'utils/getSectionsFromClasses';
 
 const ClassItem = (section) => 
 	<Link key={section.id} to={`/class/${section.class_id}/${section.id}/${section.forwardTo}`} className="">
-		{section.name === 'DEFAULT' ? section.namespaced_name : section.namespaced_name - section.name}
+		{section.namespaced_name}
 	</Link>
 
 export const ClassListModule = ({ classes, forwardTo }) => {

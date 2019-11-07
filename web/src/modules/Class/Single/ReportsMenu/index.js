@@ -81,7 +81,7 @@ class ClassReportMenu extends Component {
 
 
 		return <div className="class-report-menu" style={{ width: "100%" }}>
-			<div className="title no-print">Print Result Card for {curr_section.name === 'DEFAULT' ? `${curr_section.namespaced_name}` : `${curr_section.namespaced_name - curr_section.name}`}</div>
+			<div className="title no-print">Print Result Card for {curr_section.namespaced_name}</div>
 			<div className="form no-print">
 				<div className="row">
 					<label>Start Date</label>
