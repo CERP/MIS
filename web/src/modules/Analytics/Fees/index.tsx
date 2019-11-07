@@ -531,7 +531,8 @@ class FeeAnalytics extends Component<propTypes, S> {
 			chunkify(items, chunkSize)
 				.map((itemsChunk: any, index: number) => <OutstandingFeePrintableList items={ itemsChunk }
 					chunkSize={ index === 0 ? 0 : chunkSize * index }
-					schoolName={ this.props.settings.schoolName }/>)
+					schoolName={ this.props.settings.schoolName }
+					sections={ sections }/>)
 		}
 
 	</div>
