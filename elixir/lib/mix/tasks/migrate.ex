@@ -51,7 +51,7 @@ defmodule Mix.Tasks.Migrate do
 				fn [school_id, time] ->
 					start_school(school_id)
 					Sarkar.School.sync_changes(school_id, "backend", %{
-						"package_info" => %{
+						"db,package_info" => %{
 							"date" => :os.system_time(:millisecond),
 							"action" => %{
 								"path" => ["db","package_info"],
