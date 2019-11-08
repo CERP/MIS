@@ -1,6 +1,5 @@
 import React from "react"
 import "./../print.css"
-import "./style.css"
 
 type PropsTypes = {
     students: MISStudent[]
@@ -11,7 +10,7 @@ type PropsTypes = {
 export const StudentPrintableList = (props: PropsTypes) => {
 
     return (
-        <div className="print-only print-table">
+        <div className="print-only print-table" style={{width: "90%"}}>
             <table>
                 <caption>
                     <div>{ props.schoolName ? props.schoolName.toUpperCase() : "" }</div>

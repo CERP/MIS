@@ -1,6 +1,5 @@
 import React from "react"
 import "../../print.css"
-import "./style.css"
 import moment from "moment"
 
 type PropsTypes = {
