@@ -20,11 +20,6 @@ defmodule Sarkar.School do
 	def init_trial (school_id) do
 		curr_time = :os.system_time(:millisecond)
 
-		case Registry.lookup(Sarkar.SchoolRegistry, school_id) do
-			[{_, _}] -> {:ok}
-			[] -> DynamicSupervisor.start_child(Sarkar.SchoolSupervisor, {Sarkar.School, {school_id}})
-		end
-
 		sync_changes(school_id, "backend", %{
 			"db,package_info" => %{
 				"date" => curr_time,

@@ -11,6 +11,7 @@ defmodule Sarkar.Auth do
 					{:error, "creation failed"}
 		end
 
+		start_school(id)
 		Sarkar.School.init_trial(id)
 
 		{:ok, confirm_text}
@@ -122,6 +123,13 @@ defmodule Sarkar.Auth do
 			{:error, err} -> 
 				IO.inspect err
 				{:error, "error generating token"}
+		end
+	end
+
+	defp start_school(school_id) do
+		case Registry.lookup(Sarkar.SchoolRegistry, school_id) do
+			[{_, _}] -> {:ok}
+			[] -> DynamicSupervisor.start_child(Sarkar.SchoolSupervisor, {Sarkar.School, {school_id}})
 		end
 	end
 
