@@ -70,7 +70,7 @@ class printPreview extends Component <propTypes, S>{
 		
 		let vouchers  = [];
 		
-		for (let i = 0; i <parseInt(settings.vouchersPerPage); i++) {
+		for (let i = 0; i <parseInt(settings.vouchersPerPage || "1"); i++) {
 			vouchers.push(<StudentLedgerPage key={i} 
 				payments = {filteredPayments} 
 				settings = {settings}
