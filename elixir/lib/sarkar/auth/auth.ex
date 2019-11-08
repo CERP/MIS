@@ -11,19 +11,7 @@ defmodule Sarkar.Auth do
 					{:error, "creation failed"}
 		end
 
-		Sarkar.Store.School.save(id, %{
-			"package_info" => %{
-				"date" => :os.system_time(:millisecond),
-				"value" => %{
-					"paid" => false,
-					"trial_period" => 15,
-					"date" => :os.system_time(:millisecond)
-				},
-				"path" => ["db","package_info"],
-				"type" => "MERGE",
-				"client_id" => "backend"
-			}
-		})
+		Sarkar.School.init_trial(id)
 
 		{:ok, confirm_text}
 	end

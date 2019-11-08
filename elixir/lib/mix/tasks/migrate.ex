@@ -37,22 +37,23 @@ defmodule Mix.Tasks.Migrate do
 
 	end
 
-	def assign_trial_info() do 
+	def assign_trial_info() do
+		curr_time = :os.system_time(:millisecond)
 		
 		{:ok, ref_schools} = Postgrex.query(Sarkar.School.DB,
 			"SELECT
-				school_id,
+				id,
 				MIN(time) as time 
-			FROM writes
-			GROUP BY school_id",[])
+			FROM mischool_referrals
+			GROUP BY id",[])
 
 		ref_sch = ref_schools.rows
-			|> Enum.map(
+			|> Enum.each(
 				fn [school_id, time] ->
 					start_school(school_id)
 					Sarkar.School.sync_changes(school_id, "backend", %{
 						"db,package_info" => %{
-							"date" => :os.system_time(:millisecond),
+							"date" => curr_time,
 							"action" => %{
 								"path" => ["db","package_info"],
 								"type" => "MERGE",
@@ -63,7 +64,7 @@ defmodule Mix.Tasks.Migrate do
 								}
 							}
 						}
-					},:os.system_time(:millisecond))
+					},curr_time)
 				end
 			)
 
