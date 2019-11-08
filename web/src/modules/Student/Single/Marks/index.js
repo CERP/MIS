@@ -44,7 +44,7 @@ class StudentMarksContainer extends Component {
 		const student = students[id];
 
 		const curr_section = getSectionsFromClasses(classes)
-			.filter( section  => student.section_id !==undefined && student.section_id === section.id)[0]
+			.filter(section => student.section_id !== undefined && student.section_id === section.id)[0]
 		
 		const subjectSet = new Set(); 
 		const examSet = new Set();   
