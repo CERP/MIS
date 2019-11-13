@@ -68,14 +68,17 @@ class printPreview extends Component <propTypes, S>{
 		const curr_class = sections.find(x => x.id === student.section_id ).namespaced_name
 		const filteredPayments = getFilteredPayments(this.mergedPaymentsForStudent(student), this.year(), this.month())
 		
+		// generate random voucher number
+		const voucherNo = Math.floor(100000 + Math.random() * 900000)
 		let vouchers  = [];
 		
-		for (let i = 0; i <parseInt(settings.vouchersPerPage || "1"); i++) {
+		for (let i = 0; i <parseInt(settings.vouchersPerPage || "3"); i++) {
 			vouchers.push(<StudentLedgerPage key={i} 
 				payments = {filteredPayments} 
 				settings = {settings}
 				student = {student}
-				class_name = {curr_class}/>)		
+				class_name = {curr_class}
+				voucherNo = {voucherNo}/>)
 		}
 
 	return	<div className="student-fees-ledger">

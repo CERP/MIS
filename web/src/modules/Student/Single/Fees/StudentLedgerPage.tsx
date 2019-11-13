@@ -6,20 +6,23 @@ import getFeeLabel from "utils/getFeeLabel";
 
 
 interface StudentLedgerPageProp {
-	payments: [string, MISStudentPayment][]; 
-	student: MISStudent;
-	class_name: string;
-	settings: RootDBState["settings"];
+	payments: [string, MISStudentPayment][] 
+	student: MISStudent
+	class_name: string
+	settings: RootDBState["settings"]
+	voucherNo: number
 }
 
-export const StudentLedgerPage: React.SFC < StudentLedgerPageProp > = ({ payments, student, settings, class_name }) => {
+export const StudentLedgerPage : React.SFC < StudentLedgerPageProp > = ({ payments, student, settings, class_name, voucherNo }) => {
 
 	const owed = payments.reduce((agg, [,curr]) => agg - (curr.type === "SUBMITTED" || curr.type === "FORGIVEN" ? 1 : -1) * curr.amount, 0)
 
+	/*
 	const totalOwed = Object.entries(student.payments || {})
 		.sort(([, a_payment], [, b_payment]) => a_payment.date - b_payment.date)
 		.reduce((agg, [,curr]) => agg - (curr.type === "SUBMITTED" || curr.type === "FORGIVEN" ? 1 : -1) * curr.amount, 0)
-
+	*/
+ 
 	return <div className="payment-history section print-page" >
 			<PrintHeader settings={settings} logo={""}/>
 
@@ -33,7 +36,7 @@ export const StudentLedgerPage: React.SFC < StudentLedgerPageProp > = ({ payment
 					<div>{student.ManName}</div>
 				</div>
 				<div className="row info">
-					<label> Class:</label>
+					<label>Class:</label>
 					<div>{class_name}</div>
 				</div>
 				<div className="row info">
@@ -41,12 +44,12 @@ export const StudentLedgerPage: React.SFC < StudentLedgerPageProp > = ({ payment
 					<div>{student.RollNumber}</div>
 				</div>
 				<div className="row info">
-					<label> Adm # :</label>
+					<label> Adm #:</label>
 					<div>{student.AdmissionNumber}</div>
 				</div>
 				<div className="row info">
-					<label style={{ color: owed <= 0 ? "#5ECDB9" : "#FC6171" }}> {owed <= 0 ? "Total Advance:" : "Total Pending:"}</label>
-					<div style={{ color: owed <= 0 ? "#5ECDB9" : "#FC6171" }}>{`Rs. ${numberWithCommas(Math.abs(totalOwed))}`}</div>
+					<label> Voucher no:</label>
+					<div>{voucherNo}</div>
 				</div>
 
 			<div className="divider">Payment Information</div>
@@ -74,5 +77,14 @@ export const StudentLedgerPage: React.SFC < StudentLedgerPageProp > = ({ payment
 				<label style={{ color: owed <= 0 ? "#5ECDB9" : "#FC6171" }}><b>{owed <= 0 ? "Advance:" : "Pending:"}</b></label>
 				<div style={{ color: owed <= 0 ? "#5ECDB9" : "#FC6171" }}><b>Rs. {numberWithCommas( Math.abs(owed))}</b></div>
 			</div>
+			<div className="row voucher-signature line">
+				<div>___________________</div>
+				<div>___________________</div>
+			</div>	
+			<div className="row voucher-signature">
+				<div>Principal Signature</div>
+				<div>Accountant Signature</div>
+			</div>
 	</div>
+	
 }

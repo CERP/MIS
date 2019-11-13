@@ -44,21 +44,21 @@ class ReportsMenu extends Component <propTypes, S> {
 
 		return <Layout history={this.props.history}>
 			<div className="reports-menu">
-				<div className="title">Reports</div>
+				<div className="title">Result Card Menu</div>
 
 				<div className="form" style={{ width: "90%" }}>
 					<div className="row">
-						<label>View Reports For</label>
+						<label>View Result Cards For</label>
 						<select {...this.Former.super_handle(["report_for"])}>
 							<option value="CLASS">Class</option>
 							<option value="STUDENT">Student</option>
 						</select>
-					</div>
-				</div>
-
-				<div className="sub-list" style={{width: "100%"}}>
-				{ this.state.report_for === "CLASS" ? 
-					<ClassListModule {...this.props} forwardTo="report-menu" /> : <StudentList {...this.props} forwardTo="marks" /> }
+						</div>
+						
+						<div className="sub-list" style={{width: "100%"}}>
+						{ this.state.report_for === "CLASS" ? 
+						<ClassListModule {...this.props} forwardTo="report-menu" /> : <StudentList {...this.props} forwardTo="marks" /> }
+						</div>
 				</div>
 
 			</div>
