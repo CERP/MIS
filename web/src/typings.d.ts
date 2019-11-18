@@ -26,14 +26,19 @@ interface RootDBState {
 	};
 	analytics: {
 		sms_history: {
-			[id: string]: MISSMSHistory;
-		};
-	};
-	assets: {
-		schoolLogo: string;
-	};
-	max_limit: number;
-	diary: MISDiary;
+			[id: string]: MISSMSHistory
+		}
+	}
+	assets : {
+		schoolLogo : string
+	}
+	max_limit: number
+	package_info: {
+		date: number
+		trial_period: number
+		paid: boolean
+	}
+	diary : MISDiary
 }
 
 interface RootReducerState {
@@ -77,12 +82,13 @@ interface MISSMSHistory {
 
 
 interface MISSettings {
-	shareData: boolean;
-	schoolName: string;
-	schoolAddress: string;
-	schoolPhoneNumber: string;
-	schoolPhoneNumber: string;
-	sendSMSOption: "SIM" | "API";
+	shareData: boolean
+	schoolName: string
+	schoolAddress: string
+	schoolPhoneNumber: string
+	schoolCode: string
+	vouchersPerPage: string
+	sendSMSOption: "SIM" | "API"
 	permissions: {
 		fee: { teacher: boolean };
 		dailyStats: { teacher: boolean };

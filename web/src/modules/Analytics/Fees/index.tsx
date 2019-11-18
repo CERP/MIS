@@ -4,11 +4,12 @@ import { connect } from 'react-redux'
 import moment from 'moment'
 import queryString from 'querystring'
 import { addMultiplePayments } from 'actions'
-import { PrintHeader } from 'components/Layout'
 import Former from 'utils/former'
 import checkDuesAsync from 'utils/calculateDuesAsync'
 import { numberWithCommas } from 'utils/numberWithCommas'
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
+import { chunkify } from 'utils/chunkify'
+import { OutstandingFeePrintableList } from 'components/Printable/Fee/list'
 
 import { ResponsiveContainer, XAxis, YAxis, Tooltip, LineChart, Line } from 'recharts'
 
@@ -170,14 +171,14 @@ class FeeAnalytics extends Component<propTypes, S> {
 	background_calculation: NodeJS.Timeout
 
 	constructor(props: propTypes) {
-	  	super(props)
+		super(props)
 	
 	 	 const parsed_query = queryString.parse(this.props.location.search);
 
 		const sd_param = parsed_query["?start_date"] || ""
 		const ed_param = parsed_query["end_date"] || ""
 		const period = parsed_query["period"] || ""
-
+		
 		const start_date =  sd_param !== "" ? moment(sd_param, "MM-DD-YYYY").unix() * 1000 : moment().subtract(1,'year').unix() * 1000
 		const end_date = ed_param !=="" ? moment(ed_param, "MM-DD-YYYY").unix() * 1000 : moment().unix() * 1000
 
@@ -321,14 +322,13 @@ class FeeAnalytics extends Component<propTypes, S> {
 			const sid = student.id;
 
 			i += 1;
-			console.log('processing student', i)
 
 			const debt = { OWED: 0, SUBMITTED: 0, FORGIVEN: 0, SCHOLARSHIP: 0}
 			
 			for(const pid in student.payments || {}) {
 				const payment = student.payments[pid];
 
-				if(!( moment(payment.date).isSameOrAfter(temp_sd) && moment(payment.date).isSameOrBefore(temp_ed) )){
+				if (!(moment(payment.date).isSameOrAfter(temp_sd,"day") && moment(payment.date).isSameOrBefore(temp_ed,"day"))) {
 					continue
 				}
 
@@ -390,13 +390,13 @@ class FeeAnalytics extends Component<propTypes, S> {
 
 	render() {
 
+	const chunkSize = 32
+
 	// first make sure all students payments have been calculated... (this is for dues)
 
 	// outstanding money
 	// who owes it, and how much
 	// graph of paid vs due per month.
-
-	const { settings, schoolLogo} = this.props
 
 	const period_format = this.state.selected_period === "Daily" ? "DD/MM/YYYY" : "MM/YYYY"
 
@@ -405,16 +405,11 @@ class FeeAnalytics extends Component<propTypes, S> {
 			(this.state.classFilter === "" || student.section_id === this.state.classFilter ) &&
 			student.Name.toUpperCase().includes(this.state.filterText.toUpperCase())
 		)
+		.sort((a, b) => this.calculateDebt(a.debt) - this.calculateDebt(b.debt))
 
 	const sections = Object.values(getSectionsFromClasses(this.props.classes))
 
 	return <div className="fees-analytics">
-
-		<PrintHeader 
-			settings={settings} 
-			logo={schoolLogo}/>
-
-		{ this.state.loading && <div>Calculating...</div> }
 		
 		<div className="no-print" style={{ marginRight:"10px" }}>
 			<div className="divider">Payments over Time</div>
@@ -483,7 +478,7 @@ class FeeAnalytics extends Component<propTypes, S> {
 				<input
 					type="checkbox"
 					{...this.former.super_handle([ "chartFilter", "total" ])}
-				/> 
+				/>
 				Total
 			</div>
 		
@@ -494,8 +489,8 @@ class FeeAnalytics extends Component<propTypes, S> {
 			total_debts={this.state.total_debts}
 			date_format={period_format}/>
 
-		<div className="divider">Students with Payments Outstanding</div>
-		<div className="section">
+		<div className="divider no-print">Students with Payments Outstanding</div>
+		<div className="section no-print">
 		
 		<div className="no-print row">
 			<input
@@ -520,10 +515,7 @@ class FeeAnalytics extends Component<propTypes, S> {
 				<label><b>Amount</b></label>
 		</div>
 		{
-			items
-			.filter(({ student, debt }) => (student.tags === undefined ) || (!student.tags["PROSPECTIVE"]))
-			.sort((a, b) => this.calculateDebt(a.debt) - this.calculateDebt(b.debt))
-			.map(({ student, debt, familyId }) => <div className="table row" key={student.id}>
+			items.map(({ student, debt, familyId }) => <div className="table row" key={student.id}>
 					<Link to={`/student/${student.id}/payment`}>{ familyId ? familyId : student.Name}</Link>
 					<div>{ student.Phone }</div>
 					<div  style={ this.calculateDebt(debt) >= 1 ? {color:"#5ecdb9"} : {color:"#fc6171" } } > {numberWithCommas(-1 * this.calculateDebt(debt))}</div>
@@ -531,6 +523,16 @@ class FeeAnalytics extends Component<propTypes, S> {
 		}
 		<div className="print button" onClick={() => window.print()} style={{ marginTop: "10px" }}>Print</div>
 		</div>
+
+		{	// for first table, Sr. no will start from 1,
+			// for other tables, Sr. no will start from chunkSize * index
+			// here's "index" representing table (chunk) no.
+			chunkify(items, chunkSize)
+				.map((itemsChunk: any, index: number) => <OutstandingFeePrintableList items={ itemsChunk }
+					chunkSize={ index === 0 ? 0 : chunkSize * index }
+					schoolName={ this.props.settings.schoolName }
+					sections={ sections }/>)
+		}
 
 	</div>
   }
