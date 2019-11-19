@@ -73,6 +73,7 @@
     .row-label {
         width: 20%;
     }
+    
     /* result sheet rules*/
     .row-marks {
         width: 10%;
@@ -84,7 +85,30 @@
         font-size: .65em !important;
         text-transform: capitalize !important;
     }
-    .result-sheet .row-name {
-        width: 15%;
-    } 
+    .cell-center {
+        text-align: center !important;
+    }
+    .outer-space {
+        width: 98% !important;
+        margin: auto;
+    }
+}
+
+/* print preview result sheet rules*/
+.row-marks {
+    width: 10%;
+}
+.row-grade {
+    width: 5%;
+}
+.result-sheet {
+    font-size: .65em !important;
+    text-transform: capitalize !important;
+}
+.cell-center {
+    text-align: center !important;
+}
+.outer-space {
+    width: 90%;
+    margin: auto;
 }

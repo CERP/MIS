@@ -1,5 +1,6 @@
 import React from "react"
 import "./../print.css"
+import moment from "moment"
 
 type studentMarksMap = {
     id: string
@@ -11,7 +12,7 @@ type studentMarksMap = {
 }
 
 type ExamsMap = MISExam & {
-    obtained_marks: {
+    stats: {
         score: number 
         remarks: string
         grade: string
@@ -20,7 +21,7 @@ type ExamsMap = MISExam & {
 
 type PropsTypes = {
     students: studentMarksMap[]
-    examSubjectsMarks: Set<string>
+    examSubjectsWithMarks: Set<string>
     chunkSize: number
     sectionName: string
     examName: string
@@ -28,21 +29,24 @@ type PropsTypes = {
 }
 
 export const ClassResultSheet = (props: PropsTypes) => {
+    
+    // 70% is the remaining width for dynamic subjects
+    // tested with 9 subjects, output is fine
+    const widthForSubjectName = 70 / props.examSubjectsWithMarks.size
 
     return (
-        <div className="print-table print-only">
-            <table>
+        <div className="print-table print-page">
+            <table className="outer-space">
                 <caption>
                     <div>{ props.schoolName ? props.schoolName.toUpperCase() : "" }</div>
-                    <div>Class: {props.sectionName} | Exam: { props.examName } - 2019</div>
-                    <div></div>
+                    <div>Class: {props.sectionName} | Exam: { props.examName } - {moment().format('YYYY')}</div>
                 </caption>
                 <thead>
                     <tr>
-                        <th className="result-sheet">Name</th>
+                        <th className="result-sheet" style={{width: "15%"}}>Name</th>
                         {
-                            Array.from(props.examSubjectsMarks)
-								.map((subject, index) => <th className="result-sheet" style={{width: `${70/props.examSubjectsMarks.size}%`}} key={index}> {subject} </th>)
+                            Array.from(props.examSubjectsWithMarks)
+								.map((subject, index) => <th className="result-sheet" style={{width: `${widthForSubjectName}}%`}} key={index}> {subject} </th>)
                         }
                         <th className="result-sheet row-marks">Obt./total</th>
                         <th className="result-sheet row-grade">Grade</th>
@@ -50,8 +54,17 @@ export const ClassResultSheet = (props: PropsTypes) => {
                 </thead>
                 <tbody>
                    {
-                        // content would be rendered here
-                   }
+                    props.students
+                        .map((student, index) => { 
+                            return <tr key={index}>
+                                <td>{student.name}</td>
+                                {
+                                    student.exams.map((exam, i) => <td key={i} className="cell-center"> {exam.stats ? exam.stats.score : 0 } </td>)
+                                }
+                                <td className="cell-center">{`${student.marks ? student.marks.obtained : 0}/${student.marks ? student.marks.total : 0}`}</td>
+                                <td>{ student.grade }</td>
+                        </tr>})
+                    }
                 </tbody>
             </table>
         </div>

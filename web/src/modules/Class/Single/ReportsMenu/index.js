@@ -10,6 +10,7 @@ import chunkify from 'utils/chunkify'
 import { ClassResultSheet } from 'components/Printable/ResultCard/classResultSheet'
 
 import './style.css'
+import calculateGrade from 'utils/calculateGrade'
 
 class ClassReportMenu extends Component {
 
@@ -24,7 +25,7 @@ class ClassReportMenu extends Component {
 				examFilterText: "",
 				subjectFilterText: "",
 				dateOrSerial: "Date",
-				is_class_printable: false
+				printable_type: "Class Result Cards"
 			}
 		}
 		this.report_former = new Former(this, ["report_filters"])
@@ -45,28 +46,14 @@ class ClassReportMenu extends Component {
 		this.props.logSms(historyObj)
 	}
 
-	printableClassResultSheet = () => {
-		// to print only class result sheet
-		this.setState({
-			is_class_printable: true
-		})
-		window.print()
-	}
-
-	printableClassResultCard = () => {
-		// to print only class result cards
-		this.setState({
-			is_class_printable: false
-		})
-		window.print()
-	}
-
 	render() {
 
 		const { students, exams, classes, settings, sms_templates, curr_section_id, curr_class_id } = this.props
 
 		const curr_section = getSectionsFromClasses(classes).filter( section  => section.id === curr_section_id)[0]
 
+		// no. of records per chunk
+		const chunkSize = 10;
 		const relevant_students = Object.values(students)
 			.filter(s => s.Name && s.exams && s.section_id !== undefined && s.section_id === curr_section_id)
 			.sort((a, b) => (a.RollNumber || 0) - (b.RollNumber || 0))
@@ -76,14 +63,14 @@ class ClassReportMenu extends Component {
 				e.section_id !== undefined &&
 				e.section_id === curr_section_id)
 		
-		const examSubjectsMarks = new Set()
+		const examSubjectsWithMarks = new Set()
 		const examSet = new Set()
 		const subjects = new Set()
 
 		for (const e of Object.values(relevant_exams)) {
 			// show only subjects and marks for selected exam else all subjects
 			if( this.state.report_filters.examFilterText !== "" ? e.name === this.state.report_filters.examFilterText : true) {
-				examSubjectsMarks.add(`${e.subject} ( ${e.total_score} )`)
+				examSubjectsWithMarks.add(`${e.subject} ( ${e.total_score} )`)
 				subjects.add(e.subject)
 			}
 			// exams list
@@ -120,9 +107,8 @@ class ClassReportMenu extends Component {
 						id: curr.id,
 						name: curr.Name,
 						roll: curr.RollNumber ? curr.RollNumber : "",
-						total_marks: temp_marks.total,
-						marks_obtained: temp_marks.obtained,
-						grade: "A",
+						marks: temp_marks,
+						grade: calculateGrade(temp_marks.obtained, temp_marks.total, this.props.grades),
 						position: 0,
 						exams: new_exams
 					}
@@ -183,6 +169,14 @@ class ClassReportMenu extends Component {
 					</select>
 				</div>
 				<div className="row">
+					<label>Print</label>
+					<select {...this.report_former.super_handle(["printable_type"])}>
+						<option value="">Select Print</option>
+						<option value="Class Result Cards">Class Result Cards</option>
+						<option value="Class Result Sheet"> Class Result Sheet</option>
+					</select>
+				</div>
+				<div className="row">
 					<label>Show Date/Serial No.</label>
 					<select {...this.report_former.super_handle(["dateOrSerial"])}>
 						<option value="Date">Date</option>
@@ -194,36 +188,34 @@ class ClassReportMenu extends Component {
 
 			<div className="table btn-section">
 				{settings.sendSMSOption === "SIM" ? <a className="row button blue sms" onClick={() => this.logSms(messages)} href={url}>Send Reports using SMS</a> : false}
-				<div className="row print button" onClick={() => this.printableClassResultCard()} style={{ marginTop: " 10px" }}>Print</div>
-				<div className="row print button" onClick={() => this.printableClassResultSheet()} style={{ marginTop: " 10px" }}>Print Class Result Sheet</div>
+				<div className="row print button" onClick={() => window.print()} style={{ marginTop: " 10px" }}>Print {this.state.report_filters.printable_type}</div>
 			</div>
 
-			<div className="class-report" style={{ height: "100%" }}>
-				{ this.state.is_class_printable && <ClassResultSheet
-					sectionName={curr_section.namespaced_name}
-					examSubjectsMarks={examSubjectsMarks}
-					examName={this.state.report_filters.examFilterText}
-					schoolName={this.props.settings.schoolName}
-					students={chunkify(marksSheet, 15)}
-					chunkSize={15}/>
-				}
-				{
-					//TODO: put in total marks, grade, signature, and remarks.
-					relevant_students.map(s =>
-						<div className="print-page student-report" key={s.id} style={{ height: "100%" }}>
+			<div className="class-report print-page" style={{ height: "100%" }}>
+				{ 	
+					this.state.report_filters.printable_type === "Class Result Sheet" ? 
+						chunkify(marksSheet, chunkSize)
+							.map((chunkItems, index) => <ClassResultSheet key={index}
+								sectionName={ curr_section.namespaced_name }
+								examSubjectsWithMarks={ examSubjectsWithMarks }
+								examName={ this.state.report_filters.examFilterText }
+								schoolName={ this.props.settings.schoolName }
+								students={ chunkItems }
+								chunkSize={ index === 0 ? 0 : chunkSize * index }/>) :
+								
+						relevant_students.map(s => <div className="student-report" key={s.id} style={{ height: "100%" }}>
 							<StudentMarks
 								student={s}
-								exams={this.props.exams}
 								settings={this.props.settings}
 								startDate={this.state.report_filters.start}
 								endDate={this.state.report_filters.end}
+								exams={this.props.exams}
 								examFilter={this.state.report_filters.examFilterText}
 								subjectFilter={this.state.report_filters.subjectFilterText}
 								curr_section={curr_section}
 								logo={this.props.schoolLogo}
 								grades={this.props.grades}
-								dateOrSerial={this.state.report_filters.dateOrSerial}
-							/>
+								dateOrSerial={this.state.report_filters.dateOrSerial}/>
 						</div>)
 				}
 			</div>
