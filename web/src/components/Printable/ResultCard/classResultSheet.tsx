@@ -30,7 +30,7 @@ type PropsTypes = {
 
 export const ClassResultSheet = (props: PropsTypes) => {
     
-    // 70% is the remaining width for dynamic section subjects
+    // 66% is the remaining width for dynamic section subjects
     // tested with 9 subjects, output is fine
     const widthForSubjectName = 66 / props.examSubjectsWithMarks.size
 

@@ -196,7 +196,7 @@ class ClassReportMenu extends Component {
 
 			<div className="class-report print-page" style={{ height: "100%" }}>
 				{ 	
-					this.state.report_filters.printable_type === "Class Result Sheet" ?
+					this.state.report_filters.printable_type === "Class Result Sheet" && this.state.report_filters.examFilterText !== "" ?
 						chunkify(marksSheet, chunkSize)
 							.map((chunkItems, index) => <ClassResultSheet key={index}
 								sectionName={ curr_section.namespaced_name }
