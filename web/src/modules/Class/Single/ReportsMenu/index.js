@@ -53,7 +53,8 @@ class ClassReportMenu extends Component {
 		const curr_section = getSectionsFromClasses(classes).filter( section  => section.id === curr_section_id)[0]
 
 		// no. of records per chunk
-		const chunkSize = 10;
+		const chunkSize = 22;
+
 		const relevant_students = Object.values(students)
 			.filter(s => s.Name && s.exams && s.section_id !== undefined && s.section_id === curr_section_id)
 			.sort((a, b) => (a.RollNumber || 0) - (b.RollNumber || 0))
@@ -77,6 +78,7 @@ class ClassReportMenu extends Component {
 			examSet.add(e.name)
 		}
 
+		// sorted marks sheet
 		const marksSheet = relevant_students
 			.reduce((agg, curr) => { 
 
@@ -114,6 +116,7 @@ class ClassReportMenu extends Component {
 					}
 				]
 			}, [])
+			.sort((a, b) => b.marks.obtained - a.marks.obtained)
 
 		const messages = relevant_students
 			.filter(s => s.Phone !== "")
@@ -131,7 +134,7 @@ class ClassReportMenu extends Component {
 
 
 		return <div className="class-report-menu" style={{ width: "100%" }}>
-			<div className="title no-print">Print Result Card for {curr_section.namespaced_name}</div>
+			<div className="title no-print">Print {this.state.report_filters.printable_type} for {curr_section.namespaced_name}</div>
 			<div className="form no-print">
 				<div className="row">
 					<label>Start Date</label>
@@ -193,7 +196,7 @@ class ClassReportMenu extends Component {
 
 			<div className="class-report print-page" style={{ height: "100%" }}>
 				{ 	
-					this.state.report_filters.printable_type === "Class Result Sheet" ? 
+					this.state.report_filters.printable_type === "Class Result Sheet" ?
 						chunkify(marksSheet, chunkSize)
 							.map((chunkItems, index) => <ClassResultSheet key={index}
 								sectionName={ curr_section.namespaced_name }

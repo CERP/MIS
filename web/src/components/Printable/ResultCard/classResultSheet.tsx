@@ -30,9 +30,9 @@ type PropsTypes = {
 
 export const ClassResultSheet = (props: PropsTypes) => {
     
-    // 70% is the remaining width for dynamic subjects
+    // 70% is the remaining width for dynamic section subjects
     // tested with 9 subjects, output is fine
-    const widthForSubjectName = 70 / props.examSubjectsWithMarks.size
+    const widthForSubjectName = 66 / props.examSubjectsWithMarks.size
 
     return (
         <div className="print-table print-page">
@@ -43,6 +43,7 @@ export const ClassResultSheet = (props: PropsTypes) => {
                 </caption>
                 <thead>
                     <tr>
+                        <th className="result-sheet" style={{width: "4%"}}>Sr No.</th>
                         <th className="result-sheet" style={{width: "15%"}}>Name</th>
                         {
                             Array.from(props.examSubjectsWithMarks)
@@ -55,13 +56,14 @@ export const ClassResultSheet = (props: PropsTypes) => {
                 <tbody>
                    {
                     props.students
-                        .map((student, index) => { 
+                        .map((student, index) => {
                             return <tr key={index}>
+                                <td>{props.chunkSize + index + 1}</td>
                                 <td>{student.name}</td>
                                 {
                                     student.exams.map((exam, i) => <td key={i} className="cell-center"> {exam.stats ? exam.stats.score : 0 } </td>)
                                 }
-                                <td className="cell-center">{`${student.marks ? student.marks.obtained : 0}/${student.marks ? student.marks.total : 0}`}</td>
+                                <td className="cell-center">{`${ student.marks.obtained }/${ student.marks.total }`}</td>
                                 <td>{ student.grade }</td>
                         </tr>})
                     }
