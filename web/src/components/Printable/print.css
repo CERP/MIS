@@ -56,13 +56,13 @@
     }
     /* expense module css rules*/
     .row-quantity {
-        width: 15%;
+        width: 10%;
     }
     .row-date {
-        width: 15%;
+        width: 10%;
     }
     .row-deduction {
-        width: 15%;
+        width: 25%;
     }
     .row-amount {
         width: 15%;
