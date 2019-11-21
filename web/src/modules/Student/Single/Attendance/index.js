@@ -24,19 +24,21 @@ class StudentAttendance extends Component {
 
 	getFilterCondition = (time, month, year) => {
 
-		let flag = true
-
 		if(month === "" && year === "") {
-			flag = true
-		} else if(month === "" && year !== "") {
-			flag = moment(time).format("YYYY") === year
-		} else if(month !== "" && year === "") {
-			flag = moment(time).format("MMMM") === month
-		} else if(month !== "" && year !== "") {
-			flag = moment(time).format("MMMM") === month && moment(time).format("YYYY") === year;
+			return true
+		} 
+		
+		if(month === "" && year !== "") {
+			return moment(time).format("YYYY") === year
 		}
 		
-		return flag
+		if(month !== "" && year === "") {
+			return moment(time).format("MMMM") === month
+		} 
+		
+		if(month !== "" && year !== "") {
+			return moment(time).format("MMMM") === month && moment(time).format("YYYY") === year;
+		}
 	}
 
 	render() {
