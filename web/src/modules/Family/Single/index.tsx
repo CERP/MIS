@@ -87,6 +87,11 @@ class SingleFamily extends React.Component<P, S> {
 
 		return <Layout history={this.props.history}>
 			<div className="single-family">
+				{
+				<div className="row tabs">
+					<Link className="button" to={`/families/${this.famId()}/payments`} replace={true}>Payments</Link>
+				</div>
+				}
 				<div className="title">Family Page</div>
 
 				<div className="form" style={{ width: "90%" }}>
