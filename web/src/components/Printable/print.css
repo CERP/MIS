@@ -81,13 +81,6 @@
     .row-grade {
         width: 5%;
     }
-    .result-sheet {
-        font-size: .65em !important;
-        text-transform: capitalize !important;
-    }
-    .cell-center {
-        text-align: center !important;
-    }
     .outer-space {
         width: 98% !important;
         margin: auto;
@@ -103,7 +96,7 @@
 }
 .result-sheet {
     font-size: .65em !important;
-    text-transform: capitalize !important;
+    text-transform: capitalize;
 }
 .cell-center {
     text-align: center !important;

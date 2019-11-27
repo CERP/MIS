@@ -2,16 +2,16 @@ import React from "react"
 import "./../print.css"
 import moment from "moment"
 
-type studentMarksMap = {
+type studentMarks = {
     id: string
     name: string
     roll: string
     marks: { obtained: number, total: number}
     grade: string
-    exams: ExamsMap[]
+    exams: Exams[]
 }
 
-type ExamsMap = MISExam & {
+type Exams = MISExam & {
     stats: {
         score: number 
         remarks: string
@@ -20,7 +20,7 @@ type ExamsMap = MISExam & {
 }
 
 type PropsTypes = {
-    students: studentMarksMap[]
+    students: studentMarks[]
     examSubjectsWithMarks: Set<string>
     chunkSize: number
     sectionName: string

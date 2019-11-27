@@ -68,7 +68,7 @@ class ClassReportMenu extends Component {
 		const examSet = new Set()
 		const subjects = new Set()
 
-		for (const e of Object.values(relevant_exams)) {
+		for (const e of relevant_exams) {
 			// show only subjects and marks for selected exam else all subjects
 			if( this.state.report_filters.examFilterText !== "" ? e.name === this.state.report_filters.examFilterText : true) {
 				examSubjectsWithMarks.add(`${e.subject} ( ${e.total_score} )`)
@@ -84,7 +84,19 @@ class ClassReportMenu extends Component {
 
 				let new_exams = []
 				let temp_marks = { total: 0, obtained: 0}
-
+				/**
+				 *  check the relevant exam exists in student.exams, if exists create a new object
+				 *  with all information of relevant exam from this.props.exams and also containing
+				 * 	student.exam {score, remarks, grades}
+				 * 	
+				 * 	if the relevant exam doesn't exist in student.exams, create a new object with all information
+				 * 	of relevant exam from this.props.exams and stats, containing default stats : {score: 0, remarks: "", grade: ""} 
+				 * 	which is make sure, if a student didn't attempt the exam so that he must have default value to avoid calculations
+				 * 	error or property accessing issues while printing record of student
+				 * 
+				 * 	for the else part, no need to calculate obtained marks of student because he didn't attempt
+				 * 	the exam so obtained marks for the exam will always be zero
+				 */
 				for (const e of relevant_exams) {
 					if (curr.exams[e.id]) {
 						new_exams.push({
@@ -100,6 +112,8 @@ class ClassReportMenu extends Component {
 							...exams[e.id],
 							stats: { score: 0, remarks: "", grade:""}
 						})
+						// no need to calculate obtained marks, because no score in the exam
+						temp_marks.total = temp_marks.total + parseFloat(e.total_score || 0)
 					}
 				}
 
