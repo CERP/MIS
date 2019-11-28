@@ -3,9 +3,7 @@ import { connect } from 'react-redux'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 import moment from 'moment'
 import {v4} from 'node-uuid'
-
 import former from 'utils/former';
-
 import Banner from 'components/Banner'
 import { addMultiplePayments, addPayment, logSms, editPayment } from 'actions'
 import { sendSMS } from 'actions/core'
@@ -15,6 +13,8 @@ import { numberWithCommas } from 'utils/numberWithCommas'
 import { getFeeLabel } from 'utils/getFeeLabel'
 import { getFilteredPayments } from 'utils/getFilteredPayments'
 import { sortYearMonths } from 'utils/sortUtils'
+
+import './style.css'
 
 type payment = {
 	student: MISStudent
@@ -176,7 +176,7 @@ class FamilyFees extends Component <propTypes, S> {
         // need to add check here, so sibling must select first to add payment
         if(this.state.sibling === "")
         {
-            alert("Please select sibling first to add payment")
+            alert("Please select sibling first to add new payment")
             return
         }
 
@@ -271,11 +271,11 @@ class FamilyFees extends Component <propTypes, S> {
     
         const sibling_payments = this.getSiblings(this.famId())
 				.reduce((agg, curr) => {
-					const curr_student_payments = checkStudentDuesReturning(curr)
-					if (curr_student_payments.length > 0) {
+					const curr_sibling_payments = checkStudentDuesReturning(curr)
+					if (curr_sibling_payments.length > 0) {
 						return [
 							...agg,
-							...curr_student_payments
+							...curr_sibling_payments
 						]
 					}
 					return agg
@@ -337,7 +337,7 @@ class FamilyFees extends Component <propTypes, S> {
 
         const style = { color: owed <= 0 ? "#5ECDB9" : "#FC6171" }
 
-        return <div style={{width: "90%", margin: "auto"}}>
+        return <div className="family-ledger">
 			{ this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false }
 			<div className="divider">Payments Information</div>
 			<div className="table row">
@@ -351,9 +351,9 @@ class FamilyFees extends Component <propTypes, S> {
 			</div>
 			<div className="divider">Family Ledger</div>
 
-			<div className="filter row no-print"  style={{marginBottom:"10px"}}>
-                <select className="" {...this.Former.super_handle(["sibling"])}>
-                    <option value="">Select Subling</option>
+			<div className="row no-print filter-container">
+                <select {...this.Former.super_handle(["sibling"])}>
+                    <option value="">Select Sibling</option>
                     {
                         siblings
                             .sort((a, b) => a.Name.localeCompare(b.Name))
@@ -361,7 +361,7 @@ class FamilyFees extends Component <propTypes, S> {
                     }
                 </select>
 
-                <select className="" {...this.Former.super_handle(["month"])} style={{ width: "150px" }}>
+                <select {...this.Former.super_handle(["month"])}>
                     <option value="">Select Month</option>
                     {
                         sortYearMonths(months).map(month => {
@@ -369,7 +369,8 @@ class FamilyFees extends Component <propTypes, S> {
                         })
                     }
 				</select>
-				<select className="" {...this.Former.super_handle(["year"])}>
+
+				<select {...this.Former.super_handle(["year"])}>
                     <option value="">Select Year</option>
                     { 
                         Array.from(years).map(year => {
@@ -385,20 +386,21 @@ class FamilyFees extends Component <propTypes, S> {
 					<label>Label</label>
 					<label>Amount</label>
 				</div>
-				{filteredPayments
-                    .map(([id, payment]) => {
-                        return <div className="payment" key={id}>
-                            <div className="table row">
-                                <div>{moment(payment.date).format("DD/MM")}</div>
-                                <div>{getFeeLabel(payment)}</div>
-                                { this.state.edits[id] !== undefined ? 
-                                    <div className="row" style={{color:"rgb(94, 205, 185)"}}>
-                                        <input style={{textAlign:"right", border: "none"}} type="number" {...this.Former.super_handle(["edits", id, "amount"])} />
-                                        <span className="no-print" style={{ width:"min-content" }}>*</span>
-                                    </div>
-                                : <div> {numberWithCommas(payment.amount)}</div>}
-                            </div>
-                        </div>})
+				{
+					filteredPayments
+						.map(([id, payment]) => {
+							return <div className="payment" key={id}>
+								<div className="table row">
+									<div>{moment(payment.date).format("DD/MM")}</div>
+									<div>{getFeeLabel(payment)}</div>
+									{ this.state.edits[id] !== undefined ? 
+										<div className="row editable-item">
+											<input type="number" {...this.Former.super_handle(["edits", id, "amount"])} />
+											<span className="no-print">*</span>
+										</div>
+									: <div> {numberWithCommas(payment.amount)}</div>}
+								</div>
+							</div>})
                 }
             <div className="table row last">
                 <label style={style}><b>{owed <= 0 ? "Advance:" : "Pending:"}</b></label>
@@ -407,7 +409,7 @@ class FamilyFees extends Component <propTypes, S> {
 			</div>
 			<div className="form">
                 <div className="button save" onClick={() => this.onSave(selected_sibling)}>Save</div>
-                <div className={`button ${this.state.payment.active ? "orange" : "green"}`} onClick={this.newPayment} style={{margin:"10px 0px"}}>{this.state.payment.active ? "Cancel" : "New Entry"}</div>
+                <div className={`button ${this.state.payment.active ? "orange" : "green"}`} onClick={this.newPayment}>{this.state.payment.active ? "Cancel" : "New Entry"}</div>
 
 				{ this.state.payment.active && <div className="new-payment">
 					<div className="row">
@@ -429,8 +431,8 @@ class FamilyFees extends Component <propTypes, S> {
 						</select>
 					</div>
 					<div className="button save" onClick={() => this.addPayment(selected_sibling)}>Add Payment</div>
-                </div> }
-                <button className="print button" style={{marginBottom: "10px"}}>Print Preview</button>
+				</div> }
+                <button className="print button">Print Preview</button>
                 
 			</div>
 

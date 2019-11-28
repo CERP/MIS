@@ -1,0 +1,23 @@
+.filter-container {
+    margin-bottom: 10px;
+}
+.family-ledger {
+    width: 90%;
+    margin: auto;
+}
+.family-ledger .heading label {
+    font-weight: bold;
+}
+.family-ledger .editable-item {
+    color: rgb(94, 205, 185);
+}
+.family-ledger .editable-item input {
+    text-align: right !important;
+    border: none;
+}
+.family-ledger .editable-item span {
+    width: min-content;
+}
+.family-ledger .button {
+    margin-bottom: 10px;
+}
