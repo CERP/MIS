@@ -87,34 +87,18 @@ class ClassReportMenu extends Component {
 				/**
 				 *  check the relevant exam exists in student.exams, if exists create a new object
 				 *  with all information of relevant exam from this.props.exams and also containing
-				 * 	student.exam {score, remarks, grades}
+				 * 	student.exam {score, remarks, grades} and add to new_exams array
 				 * 	
 				 * 	if the relevant exam doesn't exist in student.exams, create a new object with all information
 				 * 	of relevant exam from this.props.exams and stats, containing default stats : {score: 0, remarks: "", grade: ""} 
 				 * 	which is make sure, if a student didn't attempt the exam so that he must have default value to avoid calculations
 				 * 	error or property accessing issues while printing record of student
-				 * 
-				 * 	for the else part, no need to calculate obtained marks of student because he didn't attempt
-				 * 	the exam so obtained marks for the exam will always be zero
 				 */
 				for (const e of relevant_exams) {
-					if (curr.exams[e.id]) {
-						new_exams.push({
-							...exams[e.id],
-							stats: curr.exams[e.id]
-						})
-
-						temp_marks.obtained = temp_marks.obtained + parseFloat(curr.exams[e.id].score || 0)
-						temp_marks.total = temp_marks.total + parseFloat(e.total_score || 0)
-
-					} else {
-						new_exams.push({
-							...exams[e.id],
-							stats: { score: 0, remarks: "", grade:""}
-						})
-						// no need to calculate obtained marks, because no score in the exam
-						temp_marks.total = temp_marks.total + parseFloat(e.total_score || 0)
-					}
+					const stats = curr.exams[e.id] || { score: 0, remarks: "", grade: "" }
+					new_exams.push({ ...exams[e.id], stats })
+					temp_marks.obtained += parseFloat(stats.score || 0)
+					temp_marks.total += parseFloat(e.total_score || 0)
 				}
 
 				return [

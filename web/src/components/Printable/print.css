@@ -94,12 +94,12 @@
 .row-grade {
     width: 5%;
 }
-.result-sheet {
-    font-size: .65em !important;
+.outer-space .result-sheet {
+    font-size: .65em;
     text-transform: capitalize;
 }
-.cell-center {
-    text-align: center !important;
+table td.cell-center {
+    text-align: center;
 }
 .outer-space {
     width: 90%;
