@@ -3,9 +3,7 @@ import { connect } from 'react-redux'
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom'
 import moment from 'moment'
 import {v4} from 'node-uuid'
-
 import former from 'utils/former';
-
 import { PrintHeader } from 'components/Layout'
 import Banner from 'components/Banner'
 import { addMultiplePayments, addPayment, logSms, editPayment } from 'actions'
@@ -63,7 +61,6 @@ interface RouteInfo {
 
 type propTypes = RouteComponentProps<RouteInfo> & P
 
-
 class StudentFees extends Component <propTypes, S> {
 
 	Former: former
@@ -108,9 +105,7 @@ class StudentFees extends Component <propTypes, S> {
 		return this.props.students[id];
 	}
 
-	familyID = () => {
-		return this.props.match.params.famId
-	}
+	familyID = ():string =>  this.props.match.params.famId
 
 	siblings = () => {
 
@@ -148,7 +143,6 @@ class StudentFees extends Component <propTypes, S> {
 	getFees = () => {
 		
 		const siblings = this.siblings()
-
 		if(siblings.length > 0) {
 			const agg_fees = siblings
 				.reduce((agg, curr) => ({
@@ -326,12 +320,13 @@ class StudentFees extends Component <propTypes, S> {
 	}
 
 	getOwedAmountStyle = (owed_amount: number): string => {
-		return owed_amount <= 0 ? "advance-amount" : "pending-amount"
+		const style_class = owed_amount <= 0 ? "advance-amount" : "pending-amount"
+		return style_class
 	}
 
 	render() {
 		
-		const merged_payments = this.mergedPayments() || {}
+		const merged_payments = this.mergedPayments()
 		
 		const Months =  new Set(
 			Object.entries(merged_payments)
@@ -391,8 +386,6 @@ class StudentFees extends Component <propTypes, S> {
 				</select>
 			</div>
 
-			{//<div className="student-name print-only" style={{ textAlign: "left", fontWeight: "normal" }}><b>Student Name:</b> {this.student().Name}</div>}
-			}
 			<div className="payment-history section">
 				<div className="table row heading">
 					<label><b>Date</b></label>
