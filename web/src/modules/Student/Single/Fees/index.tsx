@@ -4,32 +4,20 @@ import { withRouter, RouteComponentProps, Link } from 'react-router-dom'
 import moment from 'moment'
 import {v4} from 'node-uuid'
 
-import former from '../../../.../../../utils/former';
+import former from 'utils/former';
 
-import { PrintHeader } from '../../../../components/Layout'
-import Banner from '../../../../components/Banner'
-import { addMultiplePayments, addPayment, logSms, editPayment } from '../../../../actions'
-import { sendSMS } from '../../../../actions/core'
-import { checkStudentDuesReturning } from '../../../../utils/checkStudentDues'
-import { smsIntentLink } from '../../../../utils/intent'
-import { numberWithCommas } from '../../../../utils/numberWithCommas'
-import { getFeeLabel } from '../../../../utils/getFeeLabel'
-import { getFilteredPayments } from '../../../../utils/getFilteredPayments'
-import { sortYearMonths } from '../../../../utils/sortUtils'
+import { PrintHeader } from 'components/Layout'
+import Banner from 'components/Banner'
+import { addMultiplePayments, addPayment, logSms, editPayment } from 'actions'
+import { sendSMS } from 'actions/core'
+import { checkStudentDuesReturning } from 'utils/checkStudentDues'
+import { smsIntentLink } from 'utils/intent'
+import { numberWithCommas } from 'utils/numberWithCommas'
+import { getFeeLabel } from 'utils/getFeeLabel'
+import { getFilteredPayments } from 'utils/getFilteredPayments'
+import { sortYearMonths } from 'utils/sortUtils'
 
 import './style.css'
-
-/*
-
-	Write a payment has been received
-	Forgive a fee
-	View past payments
-	Compare to the expected amount
-
-	Multiple students will have the same payer (parent)
-	We need to know when the school year starts and ends (fee period)
-
-*/
 
 type payment = {
 	student: MISStudent;
@@ -70,9 +58,11 @@ interface S {
 
 interface RouteInfo {
 	id: string;
+	famId: string
 }
 
 type propTypes = RouteComponentProps<RouteInfo> & P
+
 
 class StudentFees extends Component <propTypes, S> {
 
@@ -81,7 +71,7 @@ class StudentFees extends Component <propTypes, S> {
 		super(props);
 		
 		const current_month = moment().format("MM/YYYY")
-		const edits = Object.entries(this.student().payments)
+		const edits = Object.entries(this.mergedPayments())
 			.filter(([id,payment]) => moment(payment.date).format("MM/YYYY") === current_month && payment.type !== "SUBMITTED")
 			.reduce((agg,[id,payment]) => {
 				return {
@@ -102,7 +92,7 @@ class StudentFees extends Component <propTypes, S> {
 			payment: {
 				active: false,
 				amount: "",
-				type: "SUBMITTED", // submitted or owed
+				type: "SUBMITTED", // submditted or owed
 				sendSMS: false
 			},
 			month: "",
@@ -118,13 +108,16 @@ class StudentFees extends Component <propTypes, S> {
 		return this.props.students[id];
 	}
 
+	familyID = () => {
+		return this.props.match.params.famId
+	}
+
 	siblings = () => {
 
-		const student = this.student();
+		const familyID = this.student() !== undefined ? this.student().FamilyID : this.familyID();
 
 		return Object.values(this.props.students)
-			.filter(s => s.Name && s.FamilyID && s.FamilyID === student.FamilyID)
-
+			.filter(s => s && s.Name && s.FamilyID && s.FamilyID === familyID)
 	}
 
 	mergedPayments = () => {
@@ -151,6 +144,31 @@ class StudentFees extends Component <propTypes, S> {
 
 		return this.student().payments
 	}
+	
+	getFees = () => {
+		
+		const siblings = this.siblings()
+
+		if(siblings.length > 0) {
+			const agg_fees = siblings
+				.reduce((agg, curr) => ({
+					...agg,
+					...Object.entries(curr.fees)
+						.reduce((agg, [fid, f]) => { 
+							return {
+								...agg,
+								[fid]: {
+									...f
+								}
+							}
+						}, {} as MISStudent['fees'])
+				}), {} as { [id: string]: MISStudentFee})
+
+			return agg_fees;
+		}
+		
+		return this.student().fees
+    }
 
 	newPayment = () => {
 		this.setState({ 
@@ -176,8 +194,11 @@ class StudentFees extends Component <propTypes, S> {
 			date: new Date().getTime()
 		}
 
-		const balance = [...Object.values(this.student().payments), payment]
+		const balance = [...Object.values(this.mergedPayments()), payment]
 					.reduce((agg, curr) => agg - (curr.type === "SUBMITTED" || curr.type === "FORGIVEN" ? 1 : -1) * curr.amount, 0)
+
+		// if single student ledger, get the student else look for sibling for family ledger
+		const student = this.student() || this.siblings()[0]
 
 		if(this.state.payment.sendSMS) {
 			// send SMS with replace text for regex etc.
@@ -185,15 +206,13 @@ class StudentFees extends Component <propTypes, S> {
 			const message = this.props.feeSMSTemplate
 					.replace(/\$BALANCE/g, `${balance}`)
 					.replace(/\$AMOUNT/g, `${payment.amount}`)
-					.replace(/\$NAME/g, this.student().Name)
+					.replace(/\$NAME/g, student.Name)
 
 			
 			if(this.props.settings.sendSMSOption !== "SIM") {
 				alert("can only send messages from local SIM");
-			}
-
-			else {
-				const url = smsIntentLink({ messages: [{ text: message, number: this.student().Phone }], return_link: window.location.href })
+			} else {
+				const url = smsIntentLink({ messages: [{ text: message, number: student.Phone }], return_link: window.location.href })
 				
 				const historyObj = {
 					faculty: this.props.faculty_id,
@@ -208,7 +227,7 @@ class StudentFees extends Component <propTypes, S> {
 			}
 		}
 
-		this.props.addPayment(this.student(), id, payment.amount, payment.date, payment.type, payment.fee_id)
+		this.props.addPayment(student, id, payment.amount, payment.date, payment.type, payment.fee_id)
 
 		this.setState({
 			payment: {
@@ -220,10 +239,12 @@ class StudentFees extends Component <propTypes, S> {
 
 	componentDidMount() {
 		// loop through fees, check if we have added 
-		const owedPayments = checkStudentDuesReturning(this.student());
-		
-		if (owedPayments.length > 0) {
-			this.props.addMultiplePayments(owedPayments);
+		// check in case of family ledger
+		if(this.student() !== undefined){
+			const owedPayments = checkStudentDuesReturning(this.student());
+			if (owedPayments.length > 0) {
+				this.props.addMultiplePayments(owedPayments);
+			}
 		}
 
 		if (this.siblings().length > 0) {
@@ -243,10 +264,13 @@ class StudentFees extends Component <propTypes, S> {
 		}
 	}
 
-	componentWillReceiveProps(newProps: propTypes) {
-		//This will make we get the lates changes
+	componentWillReceiveProps(nextProps: propTypes) {
+		// This will make we get the lates changes
 		const id = this.props.match.params.id;
-		const student =  newProps.students[id];
+		const famId = this.props.match.params.famId
+
+		// if single student ledger, get the student else look for sibling for family ledger
+		const student =  nextProps.students[id] || Object.values(nextProps.students).find(student => student && student.FamilyID && student.FamilyID === famId);
 
 		const current_month = moment().format("MM/YYYY")
 		const edits = Object.entries(student.payments)
@@ -295,8 +319,10 @@ class StudentFees extends Component <propTypes, S> {
 				}
 			}, {})
 
-		this.props.editPayment(this.student(), next_edits)
-
+		// if single student ledger, get the student else look for sibling for family ledger
+		const student = this.student() || this.siblings()[0] 
+		
+		this.props.editPayment(student, next_edits)
 	}
 
 	getOwedAmountStyle = (owed_amount: number): string => {
@@ -304,42 +330,44 @@ class StudentFees extends Component <propTypes, S> {
 	}
 
 	render() {
-
+		
+		const merged_payments = this.mergedPayments() || {}
+		
 		const Months =  new Set(
-			Object.entries(this.student().payments || {})
+			Object.entries(merged_payments)
 				.sort(([, a_payment], [, b_payment]) => a_payment.date - b_payment.date)
 				.map(([id, payment]) => moment(payment.date).format("MMMM"))
 			)
 		const Years = [...new Set(
-			Object.entries(this.student().payments)
+			Object.entries(merged_payments)
 				.sort(([,a_payment],[,b_payment]) => a_payment.date - b_payment.date)
 				.map(([id,payment]) => moment(payment.date).format("YYYY"))
 			)]
 			
-		const filteredPayments = getFilteredPayments(this.mergedPayments(), this.state.year, this.state.month)
+		const filteredPayments = getFilteredPayments(merged_payments, this.state.year, this.state.month)
 
 		const filtered_owed = filteredPayments.reduce((agg, [,curr]) => agg - (curr.type === "SUBMITTED" || curr.type === "FORGIVEN" ? 1 : -1) * curr.amount, 0)
 		
-		const total_owed = Object.entries(this.mergedPayments())
+		const total_owed = Object.entries(merged_payments)
 			.reduce((agg, [, curr]) => agg - (curr.type === "SUBMITTED" || curr.type === "FORGIVEN" ? 1 : -1) * curr.amount, 0)
 
 		return <div className="student-fees">
 			{ this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false }
 			<PrintHeader settings={this.props.settings} logo={this.props.schoolLogo}/>
-			<div className="divider">Payment Information</div>
+			<div className="divider">Payments Information</div>
 			<div className="table row">
 				<label>Total Monthly Fees:</label>
-				<div>Rs. {Object.values(this.student().fees).reduce((agg, curr) => curr.type === "FEE" && curr.period === "MONTHLY" ? agg + parseFloat(curr.amount) : agg, 0)}</div>
+				<div>Rs. {Object.values(this.getFees()).reduce((agg, curr) => curr.type === "FEE" && curr.period === "MONTHLY" ? agg + parseFloat(curr.amount) : agg, 0)}</div>
 			</div>
 
 			<div className="table row">
 				<label>Total One-Time Fees:</label>
 				<div>Rs. {
-					Object.values(this.student().fees)
+					Object.values(this.getFees())
 						.reduce((agg, curr) => curr.type === "FEE" && curr.period === "SINGLE" ? agg + parseFloat(curr.amount) : agg, 0)
 				}</div>
 			</div>
-			<div className="divider">Ledger</div>
+			<div className="divider">{this.familyID() !== undefined ? "Family Ledger" : "Student Ledger"}</div>
 
 			<div className="filter row no-print"  style={{marginBottom:"10px"}}>
 				<select className="" {...this.Former.super_handle(["month"])} style={{ width: "150px" }}>
@@ -363,8 +391,8 @@ class StudentFees extends Component <propTypes, S> {
 				</select>
 			</div>
 
-			<div className="student-name print-only" style={{ textAlign: "left", fontWeight: "normal" }}><b>Student Name:</b> {this.student().Name}</div>
-			
+			{//<div className="student-name print-only" style={{ textAlign: "left", fontWeight: "normal" }}><b>Student Name:</b> {this.student().Name}</div>}
+			}
 			<div className="payment-history section">
 				<div className="table row heading">
 					<label><b>Date</b></label>

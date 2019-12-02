@@ -33,7 +33,7 @@ import CertificateMenu from 'modules/CertificateMenu'
 import historicalFee from './modules/Settings/HistoricalFees/historical-fee';
 import FamilyModule from './modules/Family'
 import SingleFamily from './modules/Family/Single'
-
+import StudentFees from './modules/Student/Single/Fees/index'
 import ManageFees from 'modules/Student/ManageFees'
 
 import AuthedRoute from 'components/AuthedRoute'
@@ -104,8 +104,9 @@ export default class Routes extends React.Component {
 					<AuthedRoute path="/reports-menu" component={ReportsMenu} />
 					<AuthedRoute path="/expenses" component={ExpensePage} />
 
-					<AuthedRoute path="/families/:id" component={SingleFamily} />
-					<AuthedRoute path="/families" component={FamilyModule} />
+					<AuthedRoute exact path="/families/:id" component={SingleFamily} />
+					<AuthedRoute exact path="/families" component={FamilyModule} />
+					<AuthedRoute exact path="/families/:famId/payments" component={StudentFees}/>
 					
 					<AuthedRoute path="/ClassList" component={PlannerList} />
 					<AuthedRoute path="/planner/:class_id/:section_id" component={Planner} />
