@@ -12,7 +12,10 @@ const defaultTemplates = () => ({
 const initState: RootReducerState = {
 	client_id: v4(),
 	initialized: false,
-	queued: { },
+	queued: { 
+		"MUTATION": {},
+		"ANALYTICS": {}
+	},
 	acceptSnapshot: false,
 	lastSnapshot: 0,
 	db: {

@@ -1,5 +1,5 @@
 import { hash } from 'utils'
-import { createMerges, createDeletes, createLoginFail } from './core'
+import { createMerges, createDeletes, createLoginFail, createAnalyticsMerges } from './core'
 import moment from 'moment'
 import {v4} from "node-uuid"
 import Syncr from 'syncr';
@@ -816,5 +816,18 @@ export const markPurchased = () => (dispatch: Function) => {
 	dispatch(createMerges([{
 		path: ["db", "package_info", "paid"],
 		value: true
+	}]))
+}
+
+export const trackRoute = (route: string) => (dispatch: Function) => {
+	const time = moment.now()
+	
+	dispatch(createAnalyticsMerges([{
+		path: [`${time}`],
+		value: {
+			type:"ROUTE",
+			time,
+			route
+		}
 	}]))
 }

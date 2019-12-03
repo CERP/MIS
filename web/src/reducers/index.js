@@ -7,6 +7,18 @@ const rootReducer = (state, action) => {
 	console.log(action)
 	switch (action.type) {
 
+		case "CONFIRM_ANALYTICS_SYNC": {
+			return {
+				...state,
+				queued: {
+					...state.queued,
+					"ANALYTICS": {}
+				},
+				acceptSnapshot: true,
+				lastSnapshot: new Date().getTime()
+			}
+		}
+
 		case SIGN_UP_LOADING:
 			{
 				return {
@@ -76,7 +88,10 @@ const rootReducer = (state, action) => {
 					...state,
 					queued: {
 						...state.queued,
-						...action.payload
+						[action.queue_type] : {
+							...state.queued[action.queue_type],
+							...action.payload
+						}
 					},
 					acceptSnapshot: false
 				}

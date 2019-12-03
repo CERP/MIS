@@ -18,6 +18,48 @@ export interface MergeAction {
 	merges: Merge[];
 }
 
+export const createAnalyticsMerges = (merges: Merge[]) => (dispatch: (a: any) => any, getState: () => RootReducerState, syncr: Syncr) => {
+
+	const new_merges = merges.reduce((agg, curr) => ({
+		...agg,
+		[curr.path.join(',')]: {
+			action: {
+				type: "ANALYTICS_MERGE",
+				path: curr.path.map(p => p === undefined ? "" : p),
+				value: curr.value
+			},
+			date: new Date().getTime()
+		}
+	}), {})
+
+	const state = getState();
+
+	const rationalized_merges = {
+		...state.queued,
+		"ANALYTICS": {
+			...state.queued["ANALYTICS"],
+			...new_merges
+		}
+	}
+
+	const payload = {
+		type: SYNC,
+		school_id: state.auth.school_id,
+		client_type: client_type,
+		lastSnapshot: state.lastSnapshot,
+		payload: rationalized_merges
+	}
+
+	syncr.send(payload)
+		.then(res => dispatch(res["ANALYTICS"]))
+		.catch(err => {
+			dispatch(QueueUp(new_merges,"ANALYTICS"))
+			if( state.connected && err !== "timeout") {
+				alert("Syncing Error: " + err)
+			}
+		})
+}
+
 export const createMerges= (merges: Merge[]) => (dispatch: (a: any) => any, getState: () => RootReducerState, syncr: Syncr) => {
 	// merges is a list of path, value
 
@@ -41,7 +83,13 @@ export const createMerges= (merges: Merge[]) => (dispatch: (a: any) => any, getS
 	}), {})
 
 	const state = getState();
-	const rationalized_merges = {...state.queued, ...new_merges}
+	const rationalized_merges = {
+		...state.queued,
+		"MUTATION": {
+			...state.queued["MUTATION"],
+			...new_merges
+		}
+	}
 
 	const payload = {
 		type: SYNC,
@@ -52,10 +100,16 @@ export const createMerges= (merges: Merge[]) => (dispatch: (a: any) => any, getS
 	}
 
 	syncr.send(payload)
-		.then(dispatch)
+		.then(res => {
+			for(let [key,action] of Object.entries(res)){
+				if (key !== "ANALYTICS" && action) {
+					dispatch(action)
+				}
+			}
+		})
 		.catch(err => {
 
-			dispatch(QueueUp(new_merges))
+			dispatch(QueueUp(new_merges, "MUTATION"))
 
 			if( state.connected && err !== "timeout") {
 				alert("Syncing Error: " + err)
@@ -161,7 +215,13 @@ export const createDeletes = (paths: Delete[]) => (dispatch: Dispatch<AnyAction>
 			}
 		}), {})
 	
-	const rationalized_deletes = {...state.queued, ...payload}
+	const rationalized_deletes = {
+		...state.queued,
+		"MUTATION": {
+			...state.queued["MUTATION"],
+			...payload
+		}
+	}
 
 	syncr.send({
 		type: SYNC,
@@ -170,9 +230,9 @@ export const createDeletes = (paths: Delete[]) => (dispatch: Dispatch<AnyAction>
 		lastSnapshot: state.lastSnapshot,
 		payload: rationalized_deletes
 	})
-	.then(dispatch)
+	.then(res => dispatch(res["MUTATION"]))
 	.catch(err => {
-		dispatch(QueueUp(payload))
+		dispatch(QueueUp(payload, "MUTATION"))
 
 		if( state.connected && err !== "timeout") {
 			alert("Syncing Error: " + err)
@@ -217,7 +277,7 @@ export const QUEUE = "QUEUE"
 interface Queuable {
 	[path: string]: {
 		action: {
-			type: "MERGE" | "DELETE";
+			type: "MERGE" | "DELETE" | "ANALYTICS_MERGE";
 			path: string[];
 			value?: any;
 		};
@@ -230,10 +290,11 @@ export interface QueueAction {
 	payload: Queuable;
 }
 
-export const QueueUp = (action: Queuable) => {
+export const QueueUp = (action: Queuable, type: "MUTATION" | "ANALYTICS") => {
 	return {
 		type: QUEUE,
-		payload: action
+		payload: action,
+		queue_type: type
 	}
 }
 
@@ -267,7 +328,11 @@ export const connected = () => (dispatch: (a: any) => any, getState: () => RootR
 				})
 			})
 			.then(resp => {
-				dispatch(resp)
+				for (let [key, action] of Object.entries(resp)) {
+					if (action) {
+						dispatch(action)
+					}
+				}
 			})
 			.catch(err => {
 				console.error(err)

@@ -54,7 +54,39 @@ defmodule Sarkar.ActionHandler.Mis do
 	end
 
 	def handle_action(%{"type" => "SYNC", "payload" => payload, "lastSnapshot" => last_sync_date}, %{school_id: school_id, client_id: client_id} = state) do
-		res = Sarkar.School.sync_changes(school_id, client_id, payload, last_sync_date)
+
+		old_syncs = payload 
+			|> Map.drop(["ANALYTICS","MUTATION"])
+
+		old_res = if map_size(old_syncs || %{}) > 0 do
+			IO.puts "Got OLD SYNCS from #{school_id}"
+			Sarkar.School.sync_changes(school_id, client_id, old_syncs, last_sync_date)
+		end
+
+		mutations = payload
+		|> Map.get("MUTATION")
+
+		mutation_res = if map_size(mutations || %{}) > 0 do
+			IO.puts "Got mutations SYNCS"
+			res = Sarkar.School.sync_changes(school_id, client_id, mutations, last_sync_date)
+		end
+
+		analytics = payload
+		|> Map.get("ANALYTICS")
+
+		analytics_res = if map_size(analytics || %{}) > 0 do
+			IO.puts "Got analytics SYNCS"
+			res = Sarkar.Analytics.add_writes(school_id, client_id, analytics, last_sync_date)
+		end
+
+		res = %{
+			"MUTATION" => mutation_res,
+			"ANALYTICS" => analytics_res,
+			"OLD" => old_res
+		}
+
+		IO.inspect res
+		
 		{:reply, succeed(res), state}
 	end
 
