@@ -619,7 +619,7 @@ export const addFee = (student_fee: SingleFeeItem) => (dispatch: Function) => {
 			}
 		}]
 	
-		dispatch(createMerges(merges))
+	dispatch(createMerges(merges))
 }
 
 type FeeDeleteItem = {
