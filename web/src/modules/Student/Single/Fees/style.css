@@ -51,6 +51,25 @@
 			display: block;
 			width: 100%;
 		}
+		.voucher.table.row * {
+			font-weight: normal;
+			line-height: 1.5rem;
+			font-size: 0.8rem;
+			width: 100%;
+		}
+		.voucher.table.row .date {
+			text-align: left;
+			width: 20%;
+		}
+		.voucher.table.row .amount {
+			text-align: right;
+			width: 20%;
+		}
+		.voucher.table.row .label {
+			text-align: center;
+			width: 60%;
+			word-wrap: normal;
+		}
 
 		.voucher-signature div {
 			font-size: 0.5rem;
