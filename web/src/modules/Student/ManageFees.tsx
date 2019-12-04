@@ -124,10 +124,10 @@ class ManageFees extends Component <propTypes,S> {
 			})
 		}
 
-		// check if scholarship and validate entered amount and make it Postive
-		// (if intentionally entered amount is negative) because we make Scholarship Negative
-		// Amount while generating every payment from fees having type SCHOLARSHIP against any student,
-		// to differentiate between other types of generated payments, so it must be a Postive Amount here
+		// check if scholarship and validate entered amount and make it absolute
+		// (if intentionally entered amount is negative) because we make Amount
+		// Negative while generating every payment from fees having type SCHOLARSHIP against any student,
+		// to differentiate between other types of generated payments, so it must be a Absolute Amount here
 		
 		let temp_amount = amount;
 
@@ -135,7 +135,7 @@ class ManageFees extends Component <propTypes,S> {
 			const parsed_amount = parseFloat(temp_amount)
 
 			if(!isNaN(parsed_amount)) {
-				temp_amount = (parsed_amount < 0 ? (-1 * parsed_amount) : parsed_amount).toString()
+				temp_amount = Math.abs(parsed_amount).toString()
 			} else {
 				alert("Please Enter Valid Amount")
 				return
