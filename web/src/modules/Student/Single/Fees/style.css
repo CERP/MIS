@@ -51,6 +51,13 @@
 			display: block;
 			width: 100%;
 		}
+		.payment-history.section .row.info * {
+			font-weight: normal;
+			font-size: 0.7rem;
+		}
+		.payment-history {
+			margin: 10px 5px;
+		}
 		.voucher.table.row * {
 			font-weight: normal;
 			line-height: 1.5rem;
@@ -59,15 +66,15 @@
 		}
 		.voucher.table.row .date {
 			text-align: left;
-			width: 20%;
+			max-width: 20%;
 		}
 		.voucher.table.row .amount {
 			text-align: right;
-			width: 20%;
+			max-width: 20%;
 		}
 		.voucher.table.row .label {
 			text-align: center;
-			width: 60%;
+			max-width: 60%;
 			word-wrap: normal;
 		}
 
@@ -78,11 +85,11 @@
 			margin-bottom: 2mm;
 		}
 	}
-.pending-amount{
-	color: #FC6171;
-	font-weight: bold;
-}
-.advance-amount{
-	color: #5ECDB9;
-	font-weight: bold;
-}
+	.pending-amount{
+		color: #FC6171;
+		font-weight: bold;
+	}
+	.advance-amount{
+		color: #5ECDB9;
+		font-weight: bold;
+	}

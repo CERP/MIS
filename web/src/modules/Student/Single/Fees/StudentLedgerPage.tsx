@@ -58,8 +58,8 @@ export const StudentLedgerPage : React.SFC < StudentLedgerPageProp > = ({ paymen
 
 			{payments
 				.map(([id, payment]) => {
-
 					return <div className="payment" key={id} >
+
 						<div className="voucher table row">
 							<div className="date">{moment(payment.date).format("DD/MM")}</div>
 							<div className="label">{getFeeLabel(payment)}</div>
@@ -73,14 +73,18 @@ export const StudentLedgerPage : React.SFC < StudentLedgerPageProp > = ({ paymen
 				<label className={owed <= 0 ? "advance-amount" : "pending-amount"}><b>{owed <= 0 ? "Advance:" : "Pending:"}</b></label>
 				<div className={owed <= 0 ? "advance-amount" : "pending-amount"}><b>Rs. {numberWithCommas(Math.abs(owed))}</b></div>
 			</div>
-			<div className="row voucher-signature line">
-				<div>___________________</div>
-				<div>___________________</div>
-			</div>	
-			<div className="row voucher-signature">
-				<div>Principal Signature</div>
-				<div>Accountant Signature</div>
-			</div>
+			{ // don't show if student ledger rendered in historical fee module, Voucher No. hard coded in this case
+				voucherNo !== 777 && <>
+					<div className="row voucher-signature line">
+						<div>___________________</div>
+						<div>___________________</div>
+					</div>	
+					<div className="row voucher-signature">
+						<div>Principal Signature</div>
+						<div>Accountant Signature</div>
+					</div>
+				</>
+			}
 	</div>
 	
 }
