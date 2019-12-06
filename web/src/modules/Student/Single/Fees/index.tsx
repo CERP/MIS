@@ -63,6 +63,7 @@ type propTypes = RouteComponentProps<RouteInfo> & P
 
 class StudentFees extends Component <propTypes, S> {
 
+	mutations: Set<string>
 	Former: former
 	constructor(props: propTypes) {
 		super(props);
@@ -96,7 +97,7 @@ class StudentFees extends Component <propTypes, S> {
 			year: moment().format("YYYY"),
 			edits
 		}
-
+		this.mutations = new Set()
 		this.Former = new former(this, []);
 	}
 
@@ -114,6 +115,10 @@ class StudentFees extends Component <propTypes, S> {
 		const famId = this.familyID()
 		return Object.values(this.props.students)
 			.filter(s => s && s.Name && s.FamilyID && s.FamilyID === famId)
+	}
+
+	paymentEditTracker = (pid: string) => () => {
+		this.mutations.add(pid)
 	}
 
 	mergedPayments = () => {
@@ -260,7 +265,9 @@ class StudentFees extends Component <propTypes, S> {
 					return agg
 				}, [])
 
-			this.props.addMultiplePayments(sibling_payments)
+			if(sibling_payments.length > 0) {
+				this.props.addMultiplePayments(sibling_payments)	
+			}			
 		}
 	}
 
@@ -344,13 +351,18 @@ class StudentFees extends Component <propTypes, S> {
 
 		const next_edits = Object.entries(this.state.edits)
 			.reduce((agg, [payment_id, { fee_id, amount }]) => {
-				return {
-					...agg,
-					[payment_id]: {
-						fee_id,
-						amount
+				if(this.mutations.has(payment_id)) {
+					return {
+						...agg,
+						[payment_id]: {
+							fee_id,
+							amount
+						}
 					}
+				} else {
+					return agg
 				}
+				
 			}, {})
 
 		// if single student ledger, get the student else look for sibling for family ledger
@@ -440,7 +452,7 @@ class StudentFees extends Component <propTypes, S> {
 									
 									{ this.state.edits[id] !== undefined ? 
 										<div className="row" style={{color:"rgb(94, 205, 185)"}}>
-											<input style={{textAlign:"right", border: "none"}} type="number" {...this.Former.super_handle(["edits", id, "amount"])} />
+											<input style={{textAlign:"right", border: "none"}} type="number" {...this.Former.super_handle(["edits", id, "amount"], () => true, this.paymentEditTracker(id))} />
 											<span className="no-print" style={{ width:"min-content" }}>*</span>
 										</div>
 									: <div> {numberWithCommas(payment.amount)}</div>}
