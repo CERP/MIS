@@ -66,7 +66,7 @@ class StudentFees extends Component <propTypes, S> {
 	Former: former
 	constructor(props: propTypes) {
 		super(props);
-		
+
 		const current_month = moment().format("MM/YYYY")
 		const edits = Object.entries(this.mergedPayments())
 			.filter(([id,payment]) => moment(payment.date).format("MM/YYYY") === current_month && payment.type !== "SUBMITTED")
@@ -89,7 +89,7 @@ class StudentFees extends Component <propTypes, S> {
 			payment: {
 				active: false,
 				amount: "",
-				type: "SUBMITTED", // submditted or owed
+				type: "SUBMITTED", // submitted or owed
 				sendSMS: false
 			},
 			month: "",
@@ -100,19 +100,20 @@ class StudentFees extends Component <propTypes, S> {
 		this.Former = new former(this, []);
 	}
 
-	student = () => {
+	student = (): MISStudent => {
 		const id = this.props.match.params.id;
-		return this.props.students[id];
+		return this.props.students[id] || this.siblings()[0];
 	}
 
-	familyID = ():string =>  this.props.match.params.famId
+	familyID = (): string =>  {
+		const famId = this.props.match.params.famId || this.student().FamilyID
+		return famId;
+	}
 
-	siblings = () => {
-
-		const familyID = this.student() !== undefined ? this.student().FamilyID : this.familyID();
-
+	siblings = (): MISStudent[] => {
+		const famId = this.familyID()
 		return Object.values(this.props.students)
-			.filter(s => s && s.Name && s.FamilyID && s.FamilyID === familyID)
+			.filter(s => s && s.Name && s.FamilyID && s.FamilyID === famId)
 	}
 
 	mergedPayments = () => {
@@ -191,8 +192,7 @@ class StudentFees extends Component <propTypes, S> {
 		const balance = [...Object.values(this.mergedPayments()), payment]
 					.reduce((agg, curr) => agg - (curr.type === "SUBMITTED" || curr.type === "FORGIVEN" ? 1 : -1) * curr.amount, 0)
 
-		// if single student ledger, get the student else look for sibling for family ledger
-		const student = this.student() || this.siblings()[0]
+		const student = this.student()
 
 		if(this.state.payment.sendSMS) {
 			// send SMS with replace text for regex etc.
@@ -200,9 +200,9 @@ class StudentFees extends Component <propTypes, S> {
 			const message = this.props.feeSMSTemplate
 					.replace(/\$BALANCE/g, `${balance}`)
 					.replace(/\$AMOUNT/g, `${payment.amount}`)
-					.replace(/\$NAME/g, student.Name)
+					.replace(/\$NAME/g, student.FamilyID || student.Name)
 
-			
+			// console.log("MESSAGE DATA", message)
 			if(this.props.settings.sendSMSOption !== "SIM") {
 				alert("can only send messages from local SIM");
 			} else {
@@ -232,17 +232,23 @@ class StudentFees extends Component <propTypes, S> {
 	}
 
 	componentDidMount() {
-		// loop through fees, check if we have added 
-		// check in case of family ledger
-		if(this.student() !== undefined){
+		// loop through fees, check if we have added
+		if(this.familyID() === undefined) {
 			const owedPayments = checkStudentDuesReturning(this.student());
 			if (owedPayments.length > 0) {
 				this.props.addMultiplePayments(owedPayments);
 			}
 		}
+		if(this.familyID() !== undefined) {
+			const siblings = this.siblings()
+			this.generateSiblingsPayments(siblings)
+		}
+	}
 
-		if (this.siblings().length > 0) {
-			const sibling_payments = this.siblings()
+	generateSiblingsPayments = (siblings: MISStudent[]) => {
+		
+		if (siblings.length > 0) {
+			const sibling_payments = siblings
 				.reduce((agg, curr) => {
 					const curr_student_payments = checkStudentDuesReturning(curr)
 					if (curr_student_payments.length > 0) {
@@ -260,16 +266,50 @@ class StudentFees extends Component <propTypes, S> {
 
 	componentWillReceiveProps(nextProps: propTypes) {
 		// This will make we get the lates changes
-		const id = this.props.match.params.id;
-		const famId = this.props.match.params.famId
+		const id = nextProps.match.params.id
+		const student = nextProps.students[id]
+		const famId = nextProps.match.params.famId || student.FamilyID
 
-		// if single student ledger, get the student else look for sibling for family ledger
-		const student =  nextProps.students[id] || Object.values(nextProps.students).find(student => student && student.FamilyID && student.FamilyID === famId);
+		let siblings: MISStudent[]
+		let payments: MISStudent["payments"]
+
+		if(famId !== undefined) {
+		 	siblings = Object.values(nextProps.students)
+				.filter(s => s && s.Name && s.FamilyID && s.FamilyID === famId)
+		}
+
+		// generating payments from fees if any
+		if(famId === undefined) {
+			const owedPayments = checkStudentDuesReturning(student);
+			if (owedPayments.length > 0) {
+				this.props.addMultiplePayments(owedPayments);
+				console.log(owedPayments)
+			}
+		}
+		this.generateSiblingsPayments(siblings)
+
+		// getting editable payments if against any single student or siblings
+		if(famId === undefined) {
+			payments = student.payments
+		} else {
+			payments = siblings.reduce((agg, curr) => ({
+				...agg,
+				...Object.entries(curr.payments).reduce((agg, [pid, p]) => { 
+					return {
+						...agg,
+						[pid]: {
+							...p,
+							fee_name: p.fee_name
+						}
+					}
+				}, {} as MISStudent['payments'])
+			}), {} as { [id: string]: MISStudentPayment})
+		}
 
 		const current_month = moment().format("MM/YYYY")
-		const edits = Object.entries(student.payments)
-			.filter(([id,payment]) => moment(payment.date).format("MM/YYYY") === current_month && payment.type !== "SUBMITTED")
-			.reduce((agg,[id,payment]) => {
+		const edits = Object.entries(payments)
+			.filter(([id, payment]) => moment(payment.date).format("MM/YYYY") === current_month && payment.type !== "SUBMITTED")
+			.reduce((agg, [id, payment]) => {
 				return {
 					...agg,
 					[id]: {
@@ -314,7 +354,7 @@ class StudentFees extends Component <propTypes, S> {
 			}, {})
 
 		// if single student ledger, get the student else look for sibling for family ledger
-		const student = this.student() || this.siblings()[0] 
+		const student = this.student()
 		
 		this.props.editPayment(student, next_edits)
 	}
@@ -323,9 +363,8 @@ class StudentFees extends Component <propTypes, S> {
 		const style_class = owed_amount <= 0 ? "advance-amount" : "pending-amount"
 		return style_class
 	}
-
 	render() {
-		
+
 		const merged_payments = this.mergedPayments()
 		
 		const Months =  new Set(
