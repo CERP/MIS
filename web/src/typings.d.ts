@@ -45,7 +45,7 @@ interface RootReducerState {
 	client_id: string;
 	initialized: boolean;
 	queued: {
-		"MUTATION": {
+		"mutations": {
 			[path: string]: {
 				action: {
 					path: string[];
@@ -55,16 +55,14 @@ interface RootReducerState {
 				date: number; 
 			}
 		},
-		"ANALYTICS": {
-			[path: string]: {
-				action: {
-					path: string[];
-					value?: any;
-					type: "ANALYTICS_MERGE"
-				};
-				date: number
+		"analytics": Array<{
+			type: "ANALYTICS_EVENT",
+			value: {
+				type: "ROUTE"
+				meta: any
 			}
-		}
+			date: number
+		}>
 	};
 	acceptSnapshot: boolean;
 	lastSnapshot: number;

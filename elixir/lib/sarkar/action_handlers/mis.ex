@@ -53,41 +53,43 @@ defmodule Sarkar.ActionHandler.Mis do
 		{:reply, succeed(), state}
 	end
 
-	def handle_action(%{"type" => "SYNC", "payload" => payload, "lastSnapshot" => last_sync_date}, %{school_id: school_id, client_id: client_id} = state) do
+	def handle_action(
+		%{
+			"type" => "SYNC",
+			"payload" => %{"analytics" => analytics, "mutations" => mutations },
+			"lastSnapshot" => last_sync_date
+		},
+		%{
+			school_id: school_id,
+			client_id: client_id
+		} = state
+	) do
 
-		old_syncs = payload 
-			|> Map.drop(["ANALYTICS","MUTATION"])
-
-		old_res = if map_size(old_syncs || %{}) > 0 do
-			IO.puts "Got OLD SYNCS from #{school_id}"
-			Sarkar.School.sync_changes(school_id, client_id, old_syncs, last_sync_date)
-		end
-
-		mutations = payload
-		|> Map.get("MUTATION")
-
+		IO.puts "RuNNING NEW SYNC"
 		mutation_res = if map_size(mutations || %{}) > 0 do
-			IO.puts "Got mutations SYNCS"
-			res = Sarkar.School.sync_changes(school_id, client_id, mutations, last_sync_date)
+			Sarkar.School.sync_changes(school_id, client_id, mutations, last_sync_date)
 		end
 
-		analytics = payload
-		|> Map.get("ANALYTICS")
-
-		analytics_res = if map_size(analytics || %{}) > 0 do
-			IO.puts "Got analytics SYNCS"
-			res = Sarkar.Analytics.add_writes(school_id, client_id, analytics, last_sync_date)
-		end
+		analytics_res = Sarkar.Analytics.record(school_id, client_id, analytics, last_sync_date)
 
 		res = %{
-			"MUTATION" => mutation_res,
-			"ANALYTICS" => analytics_res,
-			"OLD" => old_res
+			"mutations" => mutation_res,
+			"analytics" => analytics_res,
 		}
 
 		IO.inspect res
-		
 		{:reply, succeed(res), state}
+	end
+
+	def handle_action(%{"type" => "SYNC", "payload" => payload, "lastSnapshot" => last_sync_date}, %{school_id: school_id, client_id: client_id} = state) do
+
+		IO.puts "Got OLD SYNCS from #{school_id}"
+		IO.inspect payload
+
+		res = Sarkar.School.sync_changes(school_id, client_id, payload, last_sync_date)
+
+		{:reply, succeed(res), state}
+
 	end
 
 	def handle_action(%{"type" => "SMS", "payload" => payload}, %{school_id: school_id, client_id: client_id} = state) do

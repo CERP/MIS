@@ -174,7 +174,7 @@ export default connect(state => ({
 	users: state.db.users,
 	num_users: Object.keys(state.db.users).length,
 	connected: state.connected,
-	unsyncd_changes: Object.keys(state.queued["MUTATION"] || {}).length + Object.keys(state.queued["ANALYTICS"] || {}).length
+	unsyncd_changes: Object.keys(state.queued.mutations || {}).length
 }), dispatch => ({
 	login: (login) => {
 		dispatch(createLogin(login.name, login.password))

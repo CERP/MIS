@@ -12,10 +12,8 @@ const rootReducer = (state, action) => {
 				...state,
 				queued: {
 					...state.queued,
-					"ANALYTICS": {}
-				},
-				acceptSnapshot: true,
-				lastSnapshot: new Date().getTime()
+					analytics: []
+				}
 			}
 		}
 
@@ -84,6 +82,19 @@ const rootReducer = (state, action) => {
 
 		case QUEUE:
 			{
+				if (action.queue_type === "analytics") {
+					return {
+						...state,
+						queued: {
+							...state.queued,
+							[action.queue_type]: [
+								...state.queued.analytics,
+								...action.payload
+							]
+						},
+						acceptSnapshot: false
+					}
+				}
 				return {
 					...state,
 					queued: {
@@ -103,13 +114,17 @@ const rootReducer = (state, action) => {
 				// action = {db: {}, date: number}
 
 				// remove all queued writes less than this last date.
-				const newQ = Object.keys(state.queued)
-					.filter(t => state.queued[t].date > last)
+				const newM = Object.keys(state.queued.mutations)
+					.filter(t => state.queued.mutations[t].date > last)
 					.reduce((agg, curr_key) => {
-						return { ...agg, [curr_key]: state.queued[curr_key] }
+						return { ...agg, [curr_key]: state.queued.mutations[curr_key] }
 					}, {})
+				const newQ = {
+					...state.queued,
+					mutations: newM
+				}
 
-				let next = Dynamic.put(state, ["queued"], newQ);
+				let next = Dynamic.put(state, ["queued"], newQ);				
 
 				if (Object.keys(action.db).length > 0) {
 					next = Dynamic.put(next, ["db"], { ...state.db, ...action.db }) // this way if we add new fields on client which arent on db it wont null them. only top level tho....
@@ -128,14 +143,20 @@ const rootReducer = (state, action) => {
 					Object.keys(action.new_writes).length,
 					" changes synced")
 
-				const newQ = Object.keys(state.queued)
+				const newM = Object.keys(state.queued.mutations)
 					.filter(t => {
-						console.log(state.queued[t].date, action.date, state.queued[t].date - action.date);
-						return state.queued[t].date > action.date
+						console.log(state.queued.mutations[t].date, action.date, state.queued.mutations[t].date - action.date);
+						return state.queued.mutations[t].date > action.date
 					})
 					.reduce((agg, curr) => {
-						return Dynamic.put(agg, ["queued", state.queued[curr].action.path], state.queud[curr].action)
+						return Dynamic.put(agg,
+							["queued", state.queued.mutations[curr].action.path], state.queued.mutations[curr].action)
 					}, {})
+
+				const newQ = {
+					...state.queued,
+					mutations: newM,
+				}
 
 				if (Object.keys(action.new_writes).length > 0) {
 					// remove queued items
