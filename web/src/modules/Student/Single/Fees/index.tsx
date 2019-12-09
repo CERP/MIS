@@ -33,7 +33,7 @@ interface P {
 	addMultiplePayments: (payments: payment[] ) => any;
 	sendSMS: (text: string, number: string) => any;
 	logSms: (history: any) => any;
-	editPayment: (payments: EditedPayments) => any;
+	editPayment: (payments: AugmentedMISPaymentMap) => any;
  }
 
 interface S {
@@ -50,7 +50,7 @@ interface S {
 	};
 	month: string;
 	year: string;
-	edits: EditedPayments
+	edits: AugmentedMISPaymentMap
 }
 
 interface RouteInfo {
@@ -60,20 +60,7 @@ interface RouteInfo {
 
 type propTypes = RouteComponentProps<RouteInfo> & P
 
-interface EditedPayments {
-	[pid : string]: {
-		amount: number,
-		fee_id: string,
-		student_id: string,
-		edited?: boolean
-	}
-}
 
-type AugmentedMISPayment = MISStudentPayment & { student_id: string }
-
-type AugmentedMISPaymentMap = {
-	[pid: string] : AugmentedMISPayment
-}
 
 class StudentFees extends Component <propTypes, S> {
 
@@ -88,13 +75,12 @@ class StudentFees extends Component <propTypes, S> {
 				return {
 					...agg,
 					[id]: {
-						amount: payment.amount,
-						fee_id: payment.fee_id,
+						...payment,
 						student_id: payment.student_id,
 						edited: false
 					}
 				}
-			}, {} as EditedPayments)
+			}, {} as AugmentedMISPaymentMap)
 
 		this.state = {
 			banner: {
@@ -172,7 +158,8 @@ class StudentFees extends Component <propTypes, S> {
 				...agg,
 				[pid]: {
 					...curr,
-					student_id: this.student().id
+					student_id: this.student().id,
+					edited: false
 				}
 			}), {} as AugmentedMISPaymentMap)
 	}
@@ -333,7 +320,8 @@ class StudentFees extends Component <propTypes, S> {
 					...agg,
 					[pid]: {
 						...curr,
-						student_id: student.id
+						student_id: student.id,
+						edited: false
 					}
 				}), {} as AugmentedMISPaymentMap)
 
@@ -345,6 +333,7 @@ class StudentFees extends Component <propTypes, S> {
 						[pid]: {
 							...payment,
 							student_id: curr.id,
+							edited: false
 						}
 					}), {} as AugmentedMISPaymentMap)
 			}), {})
@@ -357,13 +346,12 @@ class StudentFees extends Component <propTypes, S> {
 				return {
 					...agg,
 					[id]: {
-						amount: payment.amount,
-						fee_id: payment.fee_id,
+						...payment,
 						student_id: payment.student_id,
-						editted: false
+						edited: false
 					}
 				}
-			}, {} as EditedPayments)
+			}, {} as AugmentedMISPaymentMap)
 
 			this.setState({
 				edits
@@ -391,6 +379,7 @@ class StudentFees extends Component <propTypes, S> {
 					return {
 						...agg,
 						[payment_id]: {
+							...payment,
 							amount: parsed_amount,
 							fee_id,
 							student_id: payment.student_id
@@ -400,7 +389,7 @@ class StudentFees extends Component <propTypes, S> {
 
 				return agg
 
-			}, {} as EditedPayments)
+			}, {} as AugmentedMISPaymentMap)
 		
 		if(edit_flag) {
 			alert("Please enter valid input")
@@ -571,5 +560,5 @@ export default connect((state: RootReducerState) => ({
 	addMultiplePayments: (payments: payment[]) => dispatch(addMultiplePayments(payments)),
 	sendSMS: (text: string, number: string) => dispatch(sendSMS(text, number)),
 	logSms: (history: any) => dispatch(logSms(history)),
-	editPayment: (payments: EditedPayments) => dispatch(editPayment(payments)),
+	editPayment: (payments: AugmentedMISPaymentMap) => dispatch(editPayment(payments)),
 }))(withRouter(StudentFees))
