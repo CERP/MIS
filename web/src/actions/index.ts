@@ -783,10 +783,38 @@ export const editPayment = (student: MISStudent, payments: EditedPayments) => (d
 			},
 			{
 				path:["db", "students", student.id, "fees", fee_id, "amount"],
-				value: amount
+				value: Math.abs(amount)
 			}
 		]
 	}, [])
+	dispatch(createMerges(merges))
+}
+
+type MultipleStudentsEdits = {
+	student_id: string
+	payment : {
+		payment_id: string
+		fee_id: string
+		amount: number
+	}
+}
+
+export const editMultipleStudentsPayments = (payments: MultipleStudentsEdits[]) => (dispatch: Function) => {
+
+	const merges = payments.reduce((agg, {student_id, payment}) => {
+		return [
+			...agg,
+			{
+				path:["db", "students", student_id, "payments", payment.payment_id, "amount"],
+				value: payment.amount
+			},
+			{
+				path:["db", "students", student_id, "fees", payment.fee_id, "amount"],
+				value: Math.abs(payment.amount)
+			}
+		]
+	}, [])
+
 	dispatch(createMerges(merges))
 }
 

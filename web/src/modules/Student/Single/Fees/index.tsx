@@ -6,7 +6,7 @@ import {v4} from 'node-uuid'
 import former from 'utils/former';
 import { PrintHeader } from 'components/Layout'
 import Banner from 'components/Banner'
-import { addMultiplePayments, addPayment, logSms, editPayment } from 'actions'
+import { addMultiplePayments, addPayment, logSms, editPayment, editMultipleStudentsPayments } from 'actions'
 import { sendSMS } from 'actions/core'
 import { checkStudentDuesReturning } from 'utils/checkStudentDues'
 import { smsIntentLink } from 'utils/intent'
@@ -34,7 +34,8 @@ interface P {
 	sendSMS: (text: string, number: string) => any;
 	logSms: (history: any) => any;
 	editPayment: (student: MISStudent, payments: EditedPayments) => any;
-}
+	editMultipleStudentsPayments: (payments: MultipleStudentEditedPayments[]) => any
+ }
 
 interface S {
 	banner: {
@@ -64,6 +65,15 @@ interface EditedPayments {
 	[pid : string]: {
 		amount: number,
 		fee_id: string
+	}
+}
+
+type MultipleStudentEditedPayments = {
+	student_id: string
+	payment: {
+		payment_id: string
+		fee_id: string
+		amount: number
 	}
 }
 
@@ -338,7 +348,7 @@ class StudentFees extends Component <propTypes, S> {
 	}
 
 	onSave = () => {
-		
+
 		const modified_payments = this.state.edits
 		let edit_flag = false
 
@@ -381,8 +391,35 @@ class StudentFees extends Component <propTypes, S> {
 			}
 		})
 
-		this.props.editPayment(this.student(), next_edits)
+		if(this.familyID() === undefined) {
+			this.props.editPayment(this.student(), next_edits)
+		} else {
+			
+			let sibling_edits = []
 
+			// find all those modified payments against siblings, this will make
+			// sure if the ledger for a single student or family which has siblings, so each edit
+			// will be saved against the respective sibling
+			for(const sibling of this.siblings()) {
+				
+				const payments = sibling.payments
+				
+				for(const pid of [...this.mutations]) {
+					if(payments[pid] !== undefined) {
+						sibling_edits.push({
+							student_id: sibling.id,
+							payment: {
+								payment_id: pid,
+								...next_edits[pid]
+							}
+						} as MultipleStudentEditedPayments)
+					}
+				}
+			}
+			
+			this.props.editMultipleStudentsPayments(sibling_edits)
+		}
+			
 		setTimeout(() => {
 			this.setState({
 				banner: {
@@ -537,5 +574,6 @@ export default connect((state: RootReducerState) => ({
 	addMultiplePayments: (payments: payment[]) => dispatch(addMultiplePayments(payments)),
 	sendSMS: (text: string, number: string) => dispatch(sendSMS(text, number)),
 	logSms: (history: any) => dispatch(logSms(history)),
-	editPayment: (student: MISStudent, payments: EditedPayments) => dispatch(editPayment(student,payments))
+	editPayment: (student: MISStudent, payments: EditedPayments) => dispatch(editPayment(student,payments)),
+	editMultipleStudentsPayments: (payments: MultipleStudentEditedPayments[]) => dispatch(editMultipleStudentsPayments(payments))
 }))(withRouter(StudentFees))
