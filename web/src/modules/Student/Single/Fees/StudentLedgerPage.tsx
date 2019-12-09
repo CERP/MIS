@@ -11,7 +11,7 @@ interface StudentLedgerPageProp {
 	class_name: string
 	settings: RootDBState["settings"]
 	voucherNo: number
-	css_style: string
+	css_style?: "print-only" | "no-print" | ""
 }
 
 export const StudentLedgerPage : React.SFC < StudentLedgerPageProp > = ({ payments, student, settings, class_name, voucherNo, css_style }) => {
