@@ -44,7 +44,7 @@ export const PrintHeader = ({settings, logo}) => <div className="print-only scho
 
 export const PrintHeaderSmall = ({settings}) => <div className="print-only small-school-header">
 			<div className="small-title">{settings.schoolName ? settings.schoolName : ""}</div>
-			<div className="small-address" style={{marginBottom:"4px"}}>{settings.schoolAddress}</div>
+			<div className="small-address">{settings.schoolAddress}</div>
 			<div className="small-phone-number"> Tel:{settings.schoolPhoneNumber} </div>
 	</div>
 

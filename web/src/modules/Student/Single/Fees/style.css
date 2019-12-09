@@ -58,6 +58,9 @@
 		.payment-history {
 			margin: 10px 5px;
 		}
+		.payment-history .divider {
+			margin: 10px
+		}
 		.voucher.table.row * {
 			font-weight: normal;
 			line-height: 1.5rem;
