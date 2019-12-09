@@ -6,11 +6,11 @@ import {v4} from 'node-uuid'
 import former from 'utils/former';
 import { PrintHeader } from 'components/Layout'
 import Banner from 'components/Banner'
-import { addMultiplePayments, addPayment, logSms, editPayment, editMultipleStudentsPayments } from 'actions'
+import { addMultiplePayments, addPayment, logSms, editPayment } from 'actions'
 import { sendSMS } from 'actions/core'
 import { checkStudentDuesReturning } from 'utils/checkStudentDues'
 import { smsIntentLink } from 'utils/intent'
-import { numberWithCommas } from 'utils/numberWithCommas'
+import { numberWithCommas } from 'utils/numberWithCommas'	
 import { getFeeLabel } from 'utils/getFeeLabel'
 import { getFilteredPayments } from 'utils/getFilteredPayments'
 import { sortYearMonths } from 'utils/sortUtils'
@@ -33,8 +33,7 @@ interface P {
 	addMultiplePayments: (payments: payment[] ) => any;
 	sendSMS: (text: string, number: string) => any;
 	logSms: (history: any) => any;
-	editPayment: (student: MISStudent, payments: EditedPayments) => any;
-	editMultipleStudentsPayments: (payments: MultipleStudentEditedPayments[]) => any
+	editPayment: (payments: EditedPayments) => any;
  }
 
 interface S {
@@ -64,22 +63,20 @@ type propTypes = RouteComponentProps<RouteInfo> & P
 interface EditedPayments {
 	[pid : string]: {
 		amount: number,
-		fee_id: string
+		fee_id: string,
+		student_id: string,
+		edited?: boolean
 	}
 }
 
-type MultipleStudentEditedPayments = {
-	student_id: string
-	payment: {
-		payment_id: string
-		fee_id: string
-		amount: number
-	}
+type AugmentedMISPayment = MISStudentPayment & { student_id: string }
+
+type AugmentedMISPaymentMap = {
+	[pid: string] : AugmentedMISPayment
 }
 
 class StudentFees extends Component <propTypes, S> {
 
-	mutations: Set<string>
 	Former: former
 	constructor(props: propTypes) {
 		super(props);
@@ -92,10 +89,12 @@ class StudentFees extends Component <propTypes, S> {
 					...agg,
 					[id]: {
 						amount: payment.amount,
-						fee_id: payment.fee_id
+						fee_id: payment.fee_id,
+						student_id: payment.student_id,
+						edited: false
 					}
 				}
-			}, {})
+			}, {} as EditedPayments)
 
 		this.state = {
 			banner: {
@@ -113,7 +112,7 @@ class StudentFees extends Component <propTypes, S> {
 			year: moment().format("YYYY"),
 			edits
 		}
-		this.mutations = new Set()
+
 		this.Former = new former(this, []);
 	}
 
@@ -134,7 +133,15 @@ class StudentFees extends Component <propTypes, S> {
 	}
 
 	paymentEditTracker = (pid: string) => () => {
-		this.mutations.add(pid)
+		this.setState({
+			edits: {
+				...this.state.edits,
+				[pid]: {
+					...this.state.edits[pid],
+					edited: true
+				}
+			}
+		})
 	}
 
 	mergedPayments = () => {
@@ -149,17 +156,25 @@ class StudentFees extends Component <propTypes, S> {
 						...agg,
 						[pid]: {
 							...p,
-							fee_name: p.fee_name && `${curr.Name}-${p.fee_name}`
+							fee_name: p.fee_name && `${curr.Name}-${p.fee_name}`,
+							student_id: curr.id
 						}
 					}
-				}, {} as MISStudent['payments'])
-			}), {} as { [id: string]: MISStudentPayment})
+				}, {})
+			}), {} as AugmentedMISPaymentMap)
 
 			return merged_payments;
 
 		}
 
-		return this.student().payments
+		return Object.entries(this.student().payments)
+			.reduce((agg, [pid, curr]) => ({
+				...agg,
+				[pid]: {
+					...curr,
+					student_id: this.student().id
+				}
+			}), {} as AugmentedMISPaymentMap)
 	}
 	
 	getFees = () => {
@@ -294,7 +309,7 @@ class StudentFees extends Component <propTypes, S> {
 		const famId = nextProps.match.params.famId || student.FamilyID
 
 		let siblings: MISStudent[]
-		let payments: MISStudent["payments"]
+		let payments
 
 		if(famId !== undefined) {
 		 	siblings = Object.values(nextProps.students)
@@ -311,22 +326,28 @@ class StudentFees extends Component <propTypes, S> {
 		}
 		this.generateSiblingsPayments(siblings)
 
-		// getting editable payments if against any single student or siblings
+		// getting payments if against any single student or siblings
 		if(famId === undefined) {
-			payments = student.payments
+			payments = Object.entries(student.payments)
+				.reduce((agg, [pid, curr]) => ({
+					...agg,
+					[pid]: {
+						...curr,
+						student_id: student.id
+					}
+				}), {} as AugmentedMISPaymentMap)
+
 		} else {
 			payments = siblings.reduce((agg, curr) => ({
 				...agg,
-				...Object.entries(curr.payments).reduce((agg, [pid, p]) => { 
-					return {
+				...Object.entries(curr.payments).reduce((agg, [pid, payment]) => ({
 						...agg,
 						[pid]: {
-							...p,
-							fee_name: p.fee_name
+							...payment,
+							student_id: curr.id,
 						}
-					}
-				}, {} as MISStudent['payments'])
-			}), {} as { [id: string]: MISStudentPayment})
+					}), {} as AugmentedMISPaymentMap)
+			}), {})
 		}
 
 		const current_month = moment().format("MM/YYYY")
@@ -337,10 +358,12 @@ class StudentFees extends Component <propTypes, S> {
 					...agg,
 					[id]: {
 						amount: payment.amount,
-						fee_id: payment.fee_id
+						fee_id: payment.fee_id,
+						student_id: payment.student_id,
+						editted: false
 					}
 				}
-			}, {})
+			}, {} as EditedPayments)
 
 			this.setState({
 				edits
@@ -354,7 +377,7 @@ class StudentFees extends Component <propTypes, S> {
 
 		const next_edits = Object.entries(modified_payments)
 			.reduce((agg, [payment_id, payment]) => {
-				if(this.mutations.has(payment_id)) {
+				if(payment.edited) {
 
 					const { fee_id, amount } = payment
 					const parsed_amount = parseFloat(amount.toString())
@@ -369,12 +392,13 @@ class StudentFees extends Component <propTypes, S> {
 						...agg,
 						[payment_id]: {
 							amount: parsed_amount,
-							fee_id
+							fee_id,
+							student_id: payment.student_id
 						}
-					} as EditedPayments
-			}
+					}
+				}
 
-			return agg
+				return agg
 
 			}, {} as EditedPayments)
 		
@@ -391,34 +415,7 @@ class StudentFees extends Component <propTypes, S> {
 			}
 		})
 
-		if(this.familyID() === undefined) {
-			this.props.editPayment(this.student(), next_edits)
-		} else {
-			
-			let sibling_edits = []
-
-			// find all those modified payments against siblings, this will make
-			// sure if the ledger for a single student or family which has siblings, so each edit
-			// will be saved against the respective sibling
-			for(const sibling of this.siblings()) {
-				
-				const payments = sibling.payments
-				
-				for(const pid of [...this.mutations]) {
-					if(payments[pid] !== undefined) {
-						sibling_edits.push({
-							student_id: sibling.id,
-							payment: {
-								payment_id: pid,
-								...next_edits[pid]
-							}
-						} as MultipleStudentEditedPayments)
-					}
-				}
-			}
-			
-			this.props.editMultipleStudentsPayments(sibling_edits)
-		}
+		this.props.editPayment(next_edits)
 			
 		setTimeout(() => {
 			this.setState({
@@ -574,6 +571,5 @@ export default connect((state: RootReducerState) => ({
 	addMultiplePayments: (payments: payment[]) => dispatch(addMultiplePayments(payments)),
 	sendSMS: (text: string, number: string) => dispatch(sendSMS(text, number)),
 	logSms: (history: any) => dispatch(logSms(history)),
-	editPayment: (student: MISStudent, payments: EditedPayments) => dispatch(editPayment(student,payments)),
-	editMultipleStudentsPayments: (payments: MultipleStudentEditedPayments[]) => dispatch(editMultipleStudentsPayments(payments))
+	editPayment: (payments: EditedPayments) => dispatch(editPayment(payments)),
 }))(withRouter(StudentFees))

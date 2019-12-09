@@ -767,54 +767,27 @@ export const addDiary = (date: string, section_id: string, diary: MISDiary["sect
 
 interface EditedPayments {
 	[pid : string]: {
-		amount: number,
+		amount: number
 		fee_id: string
+		student_id: string
 	}
 }
 
-export const editPayment = (student: MISStudent, payments: EditedPayments) => (dispatch: Function) => {
+export const editPayment = (payments: EditedPayments) => (dispatch: Function) => {
 
 	// payments is an object with id as key and value is { amount, fee_id } 
- 	const merges = Object.entries(payments).reduce((agg, [p_id, {amount,fee_id}]) => {
+ 	const merges = Object.entries(payments).reduce((agg, [p_id, {student_id, amount,fee_id}]) => {
 		return [...agg,
 			{
-				path:["db", "students", student.id, "payments", p_id, "amount"],
+				path:["db", "students", student_id, "payments", p_id, "amount"],
 				value: amount
 			},
 			{
-				path:["db", "students", student.id, "fees", fee_id, "amount"],
+				path:["db", "students", student_id, "fees", fee_id, "amount"],
 				value: Math.abs(amount)
 			}
 		]
 	}, [])
-	dispatch(createMerges(merges))
-}
-
-type MultipleStudentsEdits = {
-	student_id: string
-	payment : {
-		payment_id: string
-		fee_id: string
-		amount: number
-	}
-}
-
-export const editMultipleStudentsPayments = (payments: MultipleStudentsEdits[]) => (dispatch: Function) => {
-
-	const merges = payments.reduce((agg, {student_id, payment}) => {
-		return [
-			...agg,
-			{
-				path:["db", "students", student_id, "payments", payment.payment_id, "amount"],
-				value: payment.amount
-			},
-			{
-				path:["db", "students", student_id, "fees", payment.fee_id, "amount"],
-				value: Math.abs(payment.amount)
-			}
-		]
-	}, [])
-
 	dispatch(createMerges(merges))
 }
 
