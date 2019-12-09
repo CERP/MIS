@@ -1,6 +1,7 @@
 import { Dispatch, AnyAction } from 'redux'
 import Syncr from 'syncr';
 import { loadDb } from 'utils/indexedDb';
+import { v4 } from 'node-uuid';
 
 const SYNC = "SYNC"
 const client_type = "mis";
@@ -23,30 +24,26 @@ export interface AnalyticsEvent {
 	meta: any
 }
 
-export const analyticsEvent = (event: AnalyticsEvent[]) => (dispatch: (a: any) => any, getState: () => RootReducerState, syncr: Syncr) => {
-	const key = "analytics"
+export const analyticsEvent = (event: AnalyticsEvent[]) => (dispatch: Dispatch, getState: () => RootReducerState, syncr: Syncr) => {
 
 	const event_payload = event.reduce((agg, curr) => {
-		return [
+		return {
 			...agg,
-			{
-				type: "ANALYTICS_EVENT",
-				value: {
-					type: curr.type,
-					meta: curr.meta
-				},
+			[v4()]: {
+				type: curr.type,
+				meta: curr.meta,
 				time: new Date().getTime()
-			}]
-	}, [])
+			}
+		}
+	}, {})
 
-	
 	const state = getState();
-	const rationalized_event_payoad = {
+	const rationalized_event_payload = {
 		...state.queued,
-		[key]: [
+		analytics: {
 			...state.queued.analytics,
 			...event_payload
-		]
+		}
 	}
 
 	const payload = {
@@ -54,14 +51,18 @@ export const analyticsEvent = (event: AnalyticsEvent[]) => (dispatch: (a: any) =
 		school_id: state.auth.school_id,
 		client_type: client_type,
 		lastSnapshot: state.lastSnapshot,
-		payload: rationalized_event_payoad
+		payload: rationalized_event_payload
 	}
 
 	syncr.send(payload)
-		.then(res => triActionCaller(res, dispatch))
+		.then(res => {
+			dispatch(QueueAnalytics(event_payload, "analytics"))
+			dispatch(multiAction(res))
+		})
 		.catch(err => {
-			dispatch(QueueAnalytics(event_payload, key))
-			
+			if (!state.connected) {
+				dispatch(QueueAnalytics(event_payload, "analytics"))
+			}
 			if (state.connected && err !== "timeout") {
 				alert("Syncing Error: " + err)
 			}
@@ -110,11 +111,14 @@ export const createMerges= (merges: Merge[]) => (dispatch: (a: any) => any, getS
 	}
 
 	syncr.send(payload)
-		.then(res => triActionCaller(res,dispatch))
-		.catch(err => {
-
+		.then(res => {
 			dispatch(QueueUp(new_merges, key))
-
+			dispatch(multiAction(res))
+		})
+		.catch(err => {
+			if (!state.connected) {
+				dispatch(QueueUp(new_merges, key))
+			}
 			if( state.connected && err !== "timeout") {
 				alert("Syncing Error: " + err)
 			}
@@ -235,10 +239,14 @@ export const createDeletes = (paths: Delete[]) => (dispatch: Dispatch<AnyAction>
 		lastSnapshot: state.lastSnapshot,
 		payload: rationalized_deletes
 	})
-	.then(res => triActionCaller(res,dispatch))
-	.catch(err => {
+	.then(res => {
 		dispatch(QueueUp(payload, key))
-
+		dispatch(multiAction(res))
+	})
+	.catch(err => {
+		if (!state.connected) {
+			dispatch(QueueUp(payload, key))
+		}
 		if( state.connected && err !== "timeout") {
 			alert("Syncing Error: " + err)
 		}
@@ -282,7 +290,7 @@ export const QUEUE = "QUEUE"
 interface Queuable { 
 	[path: string]: {
 		action: {
-			type: "MERGE" | "DELETE" | "ANALYTICS_EVENT";
+			type: "MERGE" | "DELETE";
 			path: string[];
 			value?: any;
 		};
@@ -340,18 +348,11 @@ export const connected = () => (dispatch: (a: any) => any, getState: () => RootR
 					lastSnapshot: state.lastSnapshot
 				})
 			})
-			.then(resp => triActionCaller(resp,dispatch))		
+			.then(resp => dispatch(multiAction(resp)))
 			.catch(err => {
 				console.error(err)
 				alert("Authorization Failed. Log out and Log in again.")
 			})
-	}
-}
-
-export const triActionCaller = (resp: { key: string, val: any },dispatch: Dispatch) => {
-	for (let [key, action] of Object.entries(resp)) {
-		if(action)
-			dispatch(action)
 	}
 }
 
@@ -414,4 +415,11 @@ export const loadDB = () => (dispatch: Function, getState: () => RootReducerStat
 		}
 
 	})
+}
+
+export const multiAction = (resp: { key: string, val: any }) => {
+	for (let [key, action] of Object.entries(resp)) {
+		if(action)
+			return (action)
+	}
 }

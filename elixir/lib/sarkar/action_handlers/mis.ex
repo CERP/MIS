@@ -65,7 +65,6 @@ defmodule Sarkar.ActionHandler.Mis do
 		} = state
 	) do
 
-		IO.puts "RuNNING NEW SYNC"
 		mutation_res = if map_size(mutations || %{}) > 0 do
 			Sarkar.School.sync_changes(school_id, client_id, mutations, last_sync_date)
 		end
@@ -77,14 +76,10 @@ defmodule Sarkar.ActionHandler.Mis do
 			"analytics" => analytics_res,
 		}
 
-		IO.inspect res
 		{:reply, succeed(res), state}
 	end
 
 	def handle_action(%{"type" => "SYNC", "payload" => payload, "lastSnapshot" => last_sync_date}, %{school_id: school_id, client_id: client_id} = state) do
-
-		IO.puts "Got OLD SYNCS from #{school_id}"
-		IO.inspect payload
 
 		res = Sarkar.School.sync_changes(school_id, client_id, payload, last_sync_date)
 

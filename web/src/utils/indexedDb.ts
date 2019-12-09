@@ -12,8 +12,8 @@ const defaultTemplates = () => ({
 export const initState: RootReducerState = {
 	client_id: localStorage.getItem("client_id") || v4(),
 	queued: {
-		"mutations": {},
-		"analytics": []
+		mutations: {},
+		analytics: {}
 	},
 	acceptSnapshot: false,
 	lastSnapshot: 0,
@@ -109,23 +109,14 @@ export const loadDb = async () => {
 		let prev: RootReducerState = JSON.parse(serialized)
 		const client_id = localStorage.getItem('client_id') || prev.client_id || v4()
 
-		if ((!prev.queued.mutations || !prev.queued.analytics)) {
+		if ( prev.queued && (!prev.queued.mutations || !prev.queued.analytics)) {
 			console.log("MOVING FROM OLD QUEUE")
 
-			if (Object.keys(prev.queued).length > 0) {
-				
-				prev.queued = {
-					analytics: [],
-					//@ts-ignore
-					mutations: {
-						...prev.queued
-					}
-				}
-			}
-			else {
-				prev.queued = {
-					analytics: [],
-					mutations: {}
+			prev.queued = {
+				analytics: {},
+				//@ts-ignore
+				mutations: {
+					...prev.queued
 				}
 			}
 		}

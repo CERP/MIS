@@ -7,12 +7,24 @@ const rootReducer = (state, action) => {
 	console.log(action)
 	switch (action.type) {
 
-		case "CONFIRM_ANALYTICS_SYNC": {
+		case "CONFIRM_ANALYTICS_SYNC":
+		{
+			const newA = Object.entries(state.queued.analytics)
+				.reduce((agg, [key,val]) => {
+					if (val.time > action.time) {
+						return {
+							...agg,
+							[key]: val
+						}
+					}
+					return agg
+				},{})
+
 			return {
 				...state,
 				queued: {
 					...state.queued,
-					analytics: []
+					analytics: newA
 				}
 			}
 		}
@@ -87,10 +99,10 @@ const rootReducer = (state, action) => {
 						...state,
 						queued: {
 							...state.queued,
-							[action.queue_type]: [
+							[action.queue_type]: {
 								...state.queued.analytics,
 								...action.payload
-							]
+							}
 						},
 						acceptSnapshot: false
 					}
@@ -105,35 +117,6 @@ const rootReducer = (state, action) => {
 						}
 					},
 					acceptSnapshot: false
-				}
-			}
-
-		case CONFIRM_SYNC:
-			{
-				const last = action.date;
-				// action = {db: {}, date: number}
-
-				// remove all queued writes less than this last date.
-				const newM = Object.keys(state.queued.mutations)
-					.filter(t => state.queued.mutations[t].date > last)
-					.reduce((agg, curr_key) => {
-						return { ...agg, [curr_key]: state.queued.mutations[curr_key] }
-					}, {})
-				const newQ = {
-					...state.queued,
-					mutations: newM
-				}
-
-				let next = Dynamic.put(state, ["queued"], newQ);				
-
-				if (Object.keys(action.db).length > 0) {
-					next = Dynamic.put(next, ["db"], { ...state.db, ...action.db }) // this way if we add new fields on client which arent on db it wont null them. only top level tho....
-				}
-
-				return {
-					...next,
-					acceptSnapshot: true,
-					lastSnapshot: new Date().getTime()
 				}
 			}
 

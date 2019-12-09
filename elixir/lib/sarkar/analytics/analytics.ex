@@ -1,24 +1,69 @@
 
 defmodule Sarkar.Analytics do
 
-	def record(school_id, client_id, changes, last_sync_date) do
-		res = changes
-			|> Enum.each(
-				fn (%{"time" => time, "value" => %{"meta" => meta, "type" => type}}) -> 
+	def record(school_id, client_id, events, _last_sync_date) do
 
-					case Postgrex.query(Sarkar.School.DB,
-						"INSERT INTO mischool_analytics ( school_id, value, time, type, client_id) VALUES ($1, $2, $3, $4, $5)",
-					[school_id, meta, time, type, client_id]) do
-					{:ok, resp} ->
-						{:ok, resp}
-					{:error, err} -> 
-						IO.puts "ERROR PUTTING IN DB"
-						IO.inspect err
+		if map_size(events) > 0 do
+			latest_time = events
+				|> Enum.map(fn ({ _key, %{"time" => time}})-> time end)
+				|> Enum.max()
+	
+			chunk_size = 100
+
+			args = events
+				|> Enum.map(
+					fn({id, %{"time" => time, "meta" => meta, "type" => type}}) -> 
+						[id, school_id, meta, time, type, client_id]
 					end
-				end
-			)
-		IO.inspect res
+				)
+	
+			case Postgrex.transaction(
+				Sarkar.School.DB,
+				fn (conn)->
+	
+					args
+						|> Enum.chunk_every(chunk_size)
+						|> Enum.each(
+							fn(arg_chunk) -> 
 
-		%{"type" => "CONFIRM_ANALYTICS_SYNC"}
+								value_string = 1..length(arg_chunk)
+									|> Enum.map(
+										fn (i) ->
+											x = (i - 1) * 6 + 1
+											"($#{x}, $#{x + 1}, $#{x + 2}, $#{x + 3}, $#{x + 4}, $#{x + 5})"
+										end
+									)
+									|> Enum.join(",")
+	
+								arguments = arg_chunk
+									|> Enum.reduce(
+										[],
+										fn (curr, acc) ->
+											Enum.concat(acc, curr)
+										end
+									)
+	
+								query_string = "INSERT INTO mischool_analytics ( id, school_id, value, time, type, client_id) VALUES #{value_string} ON CONFLICT DO NOTHING"
+	
+								{:ok, _resp} = Postgrex.query(
+									conn,
+									query_string,
+									arguments
+								)
+							end
+						)
+				end
+			) do
+				{:ok,resp} ->
+					%{"type" => "CONFIRM_ANALYTICS_SYNC", "time" => latest_time}
+				{:error, err} ->
+					IO.puts "ANALYTICS -> ERROR PUTTING IN DB"
+					IO.inspect err
+					%{ "type" => "ANALYTICS_SYNC_FAILED" }
+			end
+		else
+			%{"type" => "CONFIRM_ANALYTICS_SYNC", "time" => 0}
+		end
+
 	end
 end

@@ -13,8 +13,8 @@ const initState: RootReducerState = {
 	client_id: v4(),
 	initialized: false,
 	queued: { 
-		"mutations": {},
-		"analytics": []
+		mutations: {},
+		analytics: {}
 	},
 	acceptSnapshot: false,
 	lastSnapshot: 0,

@@ -41,11 +41,17 @@ interface RootDBState {
 	diary : MISDiary
 }
 
+interface AnalyticsQueue {
+	type: string;
+	meta: any;
+	time: number;
+}
+
 interface RootReducerState {
 	client_id: string;
 	initialized: boolean;
 	queued: {
-		"mutations": {
+		mutations: {
 			[path: string]: {
 				action: {
 					path: string[];
@@ -55,14 +61,9 @@ interface RootReducerState {
 				date: number; 
 			}
 		},
-		"analytics": Array<{
-			type: "ANALYTICS_EVENT",
-			value: {
-				type: "ROUTE"
-				meta: any
-			}
-			date: number
-		}>
+		analytics: {
+			[id: string]: AnalyticsQueue
+		}
 	};
 	acceptSnapshot: boolean;
 	lastSnapshot: number;
