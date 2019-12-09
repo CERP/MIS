@@ -80,7 +80,7 @@ defmodule Mix.Tasks.Migrate do
 		#	IO.puts "#{k}: #{Enum.count(v)}"
 		#end)
 
-		# this is to be replaced by a loop over all schools
+		# TODO: this is to be replaced by a loop over all schools
 		example_sid = "ittehadschool"
 		IO.inspect example_sid
 
@@ -111,6 +111,28 @@ defmodule Mix.Tasks.Migrate do
 			end)
 
 			IO.inspect relevant
+
+			fixed_writes = relevant
+				|> Enum.map(fn {payment_id, payment} -> 
+
+					fixed_path = ["db", "students", sid, "payments", payment_id, "amount"]
+					fixed_value = -value
+
+					%{
+						"type" => "MERGE",
+						"path" => fixed_path,
+						"value" => fixed_value
+					}
+
+				end)
+			
+			fixed_writes = [%{
+				"type" => "MERGE",
+				"path" => ["db", "students", sid, "fees", fee_id, "amount"],
+				"value" => -value
+			} | fixed_writes]
+
+			# sync these changes and it will reverse all incorrect payments and set the fee correctly
 
 			agg + Enum.count(relevant)
 			# now check how many of the relevant are equal to the NEGATIVE of the messed up write
