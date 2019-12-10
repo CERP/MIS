@@ -33,7 +33,7 @@ import CertificateMenu from 'modules/CertificateMenu'
 import historicalFee from './modules/Settings/HistoricalFees/historical-fee';
 import FamilyModule from './modules/Family'
 import SingleFamily from './modules/Family/Single'
-
+import StudentFees from './modules/Student/Single/Fees/index'
 import ManageFees from 'modules/Student/ManageFees'
 
 import TrackedRoute from 'components/TrackedRoute'
@@ -105,6 +105,7 @@ export default class Routes extends React.Component {
 					<TrackedRoute path="/reports-menu" component={ReportsMenu} />
 					<TrackedRoute path="/expenses" component={ExpensePage} />
 
+					<TrackedRoute path="/families/:famId/payments" component={StudentFees}/>
 					<TrackedRoute path="/families/:id" component={SingleFamily} />
 					<TrackedRoute path="/families" component={FamilyModule} />
 					
