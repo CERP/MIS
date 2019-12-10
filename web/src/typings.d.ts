@@ -41,7 +41,7 @@ interface RootDBState {
 	diary : MISDiary
 }
 
-interface AnalyticsQueue {
+interface BaseAnalyticsEvent {
 	type: string;
 	meta: any;
 	time: number;
@@ -62,7 +62,7 @@ interface RootReducerState {
 			}
 		},
 		analytics: {
-			[id: string]: AnalyticsQueue
+			[id: string]: BaseAnalyticsEvent
 		}
 	};
 	acceptSnapshot: boolean;

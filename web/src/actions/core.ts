@@ -24,7 +24,7 @@ export interface AnalyticsEvent {
 	meta: any
 }
 
-export const analyticsEvent = (event: AnalyticsEvent[]) => (dispatch: Dispatch, getState: () => RootReducerState, syncr: Syncr) => {
+export const analyticsEvent = (event: AnalyticsEvent[]) => (dispatch: Function, getState: () => RootReducerState, syncr: Syncr) => {
 
 	const event_payload = event.reduce((agg, curr) => {
 		return {
@@ -54,15 +54,15 @@ export const analyticsEvent = (event: AnalyticsEvent[]) => (dispatch: Dispatch, 
 		payload: rationalized_event_payload
 	}
 
+	dispatch(QueueAnalytics(event_payload))
+
 	syncr.send(payload)
 		.then(res => {
-			dispatch(QueueAnalytics(event_payload, "analytics"))
 			dispatch(multiAction(res))
 		})
 		.catch(err => {
-			if (!state.connected) {
-				dispatch(QueueAnalytics(event_payload, "analytics"))
-			}
+			dispatch(QueueAnalytics(event_payload))
+
 			if (state.connected && err !== "timeout") {
 				alert("Syncing Error: " + err)
 			}
@@ -71,8 +71,6 @@ export const analyticsEvent = (event: AnalyticsEvent[]) => (dispatch: Dispatch, 
 
 export const createMerges= (merges: Merge[]) => (dispatch: (a: any) => any, getState: () => RootReducerState, syncr: Syncr) => {
 	// merges is a list of path, value
-
-	const key = "mutations"
 
 	const action = {
 		type: MERGES,
@@ -96,8 +94,8 @@ export const createMerges= (merges: Merge[]) => (dispatch: (a: any) => any, getS
 	const state = getState();
 	const rationalized_merges = {
 		...state.queued,
-		[key]: {
-			...state.queued[key],
+		mutations: {
+			...state.queued.mutations,
 			...new_merges
 		}
 	}
@@ -110,15 +108,15 @@ export const createMerges= (merges: Merge[]) => (dispatch: (a: any) => any, getS
 		payload: rationalized_merges
 	}
 
+	dispatch(QueueUp(new_merges))
+
 	syncr.send(payload)
 		.then(res => {
-			dispatch(QueueUp(new_merges, key))
 			dispatch(multiAction(res))
 		})
 		.catch(err => {
-			if (!state.connected) {
-				dispatch(QueueUp(new_merges, key))
-			}
+			dispatch(QueueUp(new_merges))
+			
 			if( state.connected && err !== "timeout") {
 				alert("Syncing Error: " + err)
 			}
@@ -201,9 +199,8 @@ export interface DeletesAction {
 	paths: Delete[];
 }
 
-export const createDeletes = (paths: Delete[]) => (dispatch: Dispatch<AnyAction>, getState: () => RootReducerState, syncr: Syncr) => {
+export const createDeletes = (paths: Delete[]) => (dispatch: Function, getState: () => RootReducerState, syncr: Syncr) => {
 
-	const key = "mutations"
 	const action = {
 		type: DELETES,
 		paths
@@ -226,11 +223,13 @@ export const createDeletes = (paths: Delete[]) => (dispatch: Dispatch<AnyAction>
 	
 	const rationalized_deletes = {
 		...state.queued,
-		[key]: {
-			...state.queued[key],
+		mutations: {
+			...state.queued.mutations,
 			...payload
 		}
 	}
+
+	dispatch(QueueUp(payload))
 
 	syncr.send({
 		type: SYNC,
@@ -240,13 +239,12 @@ export const createDeletes = (paths: Delete[]) => (dispatch: Dispatch<AnyAction>
 		payload: rationalized_deletes
 	})
 	.then(res => {
-		dispatch(QueueUp(payload, key))
 		dispatch(multiAction(res))
 	})
 	.catch(err => {
-		if (!state.connected) {
-			dispatch(QueueUp(payload, key))
-		}
+
+		dispatch(QueueUp(payload))
+
 		if( state.connected && err !== "timeout") {
 			alert("Syncing Error: " + err)
 		}
@@ -287,7 +285,7 @@ export interface SnapshotDiffAction {
 
 export const QUEUE = "QUEUE"
 // queue up an object where key is path, value is action/date
-interface Queuable { 
+interface MutationQueuable { 
 	[path: string]: {
 		action: {
 			type: "MERGE" | "DELETE";
@@ -298,24 +296,40 @@ interface Queuable {
 	};
 }
 
-export interface QueueAction {
-	type: "QUEUE";
-	payload: Queuable;
+interface AnalyticsQueuable { 
+	[path: string]: BaseAnalyticsEvent;
 }
 
-export const QueueUp = (action: Queuable, type: "mutations" ) => {
+export interface ConfirmAnalyticsSyncAction {
+	type: "CONFIRM_ANALYTICS_SYNC";
+	time: number
+}
+
+export interface QueueAction {
+	type: "QUEUE";
+	payload: MutationQueuable;
+	queue_type: "mutations"
+}
+
+export interface QueueAnalyticsAction {
+	type: "QUEUE";
+	payload: { [id: string]: BaseAnalyticsEvent }
+	queue_type: "mutations"
+}
+
+export const QueueUp = (action: MutationQueuable ) => {
 	return {
 		type: QUEUE,
 		payload: action,
-		queue_type: type
+		queue_type: "mutations"
 	}
 }
 
-export const QueueAnalytics = (action: any, type: "analytics"  ) => {
+export const QueueAnalytics = (action: AnalyticsQueuable ) => {
 	return {
 		type: QUEUE,
 		payload: action,
-		queue_type: type
+		queue_type: "analytics"
 	}
 }
 
@@ -417,9 +431,10 @@ export const loadDB = () => (dispatch: Function, getState: () => RootReducerStat
 	})
 }
 
-export const multiAction = (resp: { key: string, val: any }) => {
-	for (let [key, action] of Object.entries(resp)) {
-		if(action)
-			return (action)
+export const multiAction = (resp: { key: string, val: any }) => (dispatch: Function) => {
+	for (const action of Object.values(resp)) {
+		if (action) {
+			dispatch(action)
+		}
 	}
 }
