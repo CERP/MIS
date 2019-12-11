@@ -88,6 +88,16 @@ class printPreview extends Component <propTypes>{
 		const { classes, settings } = this.props
 		const famId = this.familyID()
 		
+		let student_class_name: string
+		let family: AugmentedMISFamily
+
+		if(famId === undefined) {
+			const sections = getSectionsFromClasses(classes)
+			student_class_name = this.getStudentClass(sections)
+		} else {
+			family = this.getFamily()
+		}
+
 		const filteredPayments = getFilteredPayments(this.mergedPaymentsForStudent(), this.year(), this.month())
 		
 		// generate random voucher number
@@ -101,14 +111,14 @@ class printPreview extends Component <propTypes>{
 					payments = {filteredPayments}
 					settings = {settings}
 					student = {this.student()}
-					class_name = {this.getStudentClass(getSectionsFromClasses(classes))}
+					class_name = {student_class_name}
 					voucherNo = {voucherNo}
 					css_style = {i === 0 ? "" : "print-only"}/>)
 			} else {
 				vouchers.push(<StudentLedgerPage key={i}
 					payments = {filteredPayments}
 					settings = {settings}
-					family = {this.getFamily()}
+					family = {family}
 					voucherNo = {voucherNo}
 					css_style = {i === 0 ? "" : "print-only"}/>)
 			}
