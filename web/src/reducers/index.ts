@@ -1,5 +1,5 @@
 import Dynamic from '@ironbay/dynamic'
-import { MERGES, DELETES, CONFIRM_SYNC, CONFIRM_SYNC_DIFF, QUEUE, SNAPSHOT, ON_CONNECT, ON_DISCONNECT, LOGIN_FAIL, LOGIN_SUCCEED, SNAPSHOT_DIFF, MergeAction, DeletesAction, ConfirmSyncAction, SnapshotDiffAction, QueueAnalyticsAction, ConfirmAnalyticsSyncAction } from 'actions/core'
+import { MERGES, DELETES, CONFIRM_SYNC_DIFF, QUEUE, SNAPSHOT, ON_CONNECT, ON_DISCONNECT, LOGIN_FAIL, LOGIN_SUCCEED, SNAPSHOT_DIFF, MergeAction, DeletesAction, ConfirmSyncAction, SnapshotDiffAction, ConfirmAnalyticsSyncAction, QueueAction } from 'actions/core'
 import { LOCAL_LOGIN, SCHOOL_LOGIN, LOCAL_LOGOUT, SIGN_UP_FAILED, SIGN_UP_SUCCEED, SIGN_UP_LOADING } from 'actions'
 import { Reducer, AnyAction } from 'redux'
 
@@ -96,14 +96,16 @@ const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerSta
 
 		case QUEUE:
 			{
-				if (action.queue_type === "analytics") {
+				const actionType = action as QueueAction
+				
+				if (actionType.queue_type === "analytics") {
 					return {
 						...state,
 						queued: {
 							...state.queued,
-							[action.queue_type]: {
+							analytics: {
 								...state.queued.analytics,
-								...action.payload
+								...actionType.payload
 							}
 						},
 						acceptSnapshot: false
@@ -113,9 +115,9 @@ const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerSta
 					...state,
 					queued: {
 						...state.queued,
-						[action.queue_type] : {
+						mutations : {
 							...state.queued.mutations,
-							...action.payload
+							...actionType.payload
 						}
 					},
 					acceptSnapshot: false

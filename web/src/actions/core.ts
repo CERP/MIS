@@ -19,12 +19,7 @@ export interface MergeAction {
 	merges: Merge[];
 }
 
-export interface AnalyticsEvent {
-	type: "ROUTE"
-	meta: any
-}
-
-export const analyticsEvent = (event: AnalyticsEvent[]) => (dispatch: Function, getState: () => RootReducerState, syncr: Syncr) => {
+export const analyticsEvent = (event: BaseAnalyticsEvent[]) => (dispatch: Function, getState: () => RootReducerState, syncr: Syncr) => {
 
 	const event_payload = event.reduce((agg, curr) => {
 		return {
@@ -33,9 +28,9 @@ export const analyticsEvent = (event: AnalyticsEvent[]) => (dispatch: Function, 
 				type: curr.type,
 				meta: curr.meta,
 				time: new Date().getTime()
-			}
+			} as RouteAnalyticsEvent
 		}
-	}, {})
+	}, {} as { [id: string]: RouteAnalyticsEvent })
 
 	const state = getState();
 	const rationalized_event_payload = {
@@ -285,7 +280,7 @@ export interface SnapshotDiffAction {
 
 export const QUEUE = "QUEUE"
 // queue up an object where key is path, value is action/date
-interface MutationQueuable { 
+interface Queuable { 
 	[path: string]: {
 		action: {
 			type: "MERGE" | "DELETE";
@@ -297,27 +292,31 @@ interface MutationQueuable {
 }
 
 interface AnalyticsQueuable { 
-	[path: string]: BaseAnalyticsEvent;
+	[path: string]: RouteAnalyticsEvent;
 }
+
+interface BaseQueueAction {
+	type: "QUEUE";
+	queue_type: string;
+}
+
+export interface QueueAnalyticsAction extends BaseQueueAction {
+	queue_type: "analytics";
+	payload: AnalyticsQueuable;
+}
+
+export interface QueueMutationsAction extends BaseQueueAction {
+	queue_type: "mutations";
+	payload: Queuable;
+}
+export type QueueAction = QueueMutationsAction | QueueAnalyticsAction
 
 export interface ConfirmAnalyticsSyncAction {
 	type: "CONFIRM_ANALYTICS_SYNC";
 	time: number
 }
 
-export interface QueueAction {
-	type: "QUEUE";
-	payload: MutationQueuable;
-	queue_type: "mutations"
-}
-
-export interface QueueAnalyticsAction {
-	type: "QUEUE";
-	payload: { [id: string]: BaseAnalyticsEvent }
-	queue_type: "mutations"
-}
-
-export const QueueUp = (action: MutationQueuable ) => {
+export const QueueUp = (action: Queuable ) => {
 	return {
 		type: QUEUE,
 		payload: action,

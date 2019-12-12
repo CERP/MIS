@@ -15,10 +15,10 @@ type propsType = {
  
 const TrackedRoute = ({ component, school_id, name, token, initialized, location, trackRoute, ...rest }: propsType) => {
 
+	const Component = component
 	// react's hook
 	useEffect(() => {
 		window.scroll(0, 0);
-		trackRoute(location.pathname)
 	})
 
 	if (!initialized) {
@@ -26,12 +26,18 @@ const TrackedRoute = ({ component, school_id, name, token, initialized, location
 	}
 
 	if(token && name) {
-		return <Route component={component} {...rest} />
+		return <Route {...rest} render={(props) => {
+			trackRoute(window.location.pathname)
+			//@ts-ignore
+			return <Component {...props} />
+		}} />
 	}
-	else if(token) {
+	else if (token) {
+		trackRoute('/login')
 		return <Redirect to="/login" />
 	}
 	else {
+		trackRoute("/school-login")
 		return <Redirect to="/school-login" />
 	}
 }

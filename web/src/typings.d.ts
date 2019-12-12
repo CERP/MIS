@@ -44,7 +44,11 @@ interface RootDBState {
 interface BaseAnalyticsEvent {
 	type: string;
 	meta: any;
+}
+interface RouteAnalyticsEvent extends BaseAnalyticsEvent {
+	type: "ROUTE";
 	time: number;
+	meta: { route: string };
 }
 
 interface RootReducerState {
@@ -62,7 +66,7 @@ interface RootReducerState {
 			}
 		},
 		analytics: {
-			[id: string]: BaseAnalyticsEvent
+			[id: string]: RouteAnalyticsEvent
 		}
 	};
 	acceptSnapshot: boolean;
