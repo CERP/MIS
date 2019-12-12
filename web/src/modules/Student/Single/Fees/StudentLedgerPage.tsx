@@ -11,7 +11,7 @@ interface StudentLedgerPageProp {
 	family?: AugmentedMISFamily
 	class_name?: string
 	settings: RootDBState["settings"]
-	voucherNo: number
+	voucherNo?: number
 	css_style?: "print-only" | "no-print" | ""
 }
 
@@ -94,8 +94,8 @@ export const StudentLedgerPage : React.SFC < StudentLedgerPageProp > = ({ paymen
 				<label className={owed <= 0 ? "advance-amount" : "pending-amount"}><b>{owed <= 0 ? "Advance:" : "Pending:"}</b></label>
 				<div className={owed <= 0 ? "advance-amount" : "pending-amount"}><b>Rs. {numberWithCommas(Math.abs(owed))}</b></div>
 			</div>
-			{ // don't show if student ledger rendered in historical fee module, Voucher No. hard coded in this case
-				voucherNo !== 777 &&
+			{ // don't show if student ledger rendered in historical fee module
+				voucherNo !== undefined &&
 					<div className="row voucher-signature">
 						<div>Principal Signature</div>
 						<div>Accountant Signature</div>

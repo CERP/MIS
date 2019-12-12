@@ -55,7 +55,7 @@ class printPreview extends Component <propTypes>{
 
 	student = (): MISStudent => {
 		const id = this.studentID()
-		return this.props.students[id] || this.siblings()[0]
+		return id === undefined ? this.siblings()[0] : this.props.students[id]
 	}
 
 	siblings = (): MISStudent[] => {

@@ -104,7 +104,7 @@ class StudentFees extends Component <propTypes, S> {
 
 	student = (): MISStudent => {
 		const id = this.props.match.params.id;
-		return this.props.students[id] || this.siblings()[0];
+		return id === undefined ? this.siblings()[0] : this.props.students[id]
 	}
 
 	familyID = (): string =>  {
