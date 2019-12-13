@@ -101,6 +101,9 @@ class ClassReportMenu extends Component {
 					temp_marks.total += parseFloat(e.total_score || 0)
 				}
 
+				const grade = calculateGrade(temp_marks.obtained, temp_marks.total, this.props.grades)
+				const remarks = grade !== undefined ? this.props.grades[grade].remarks : ""
+
 				return [
 					...agg,
 					{
@@ -108,9 +111,10 @@ class ClassReportMenu extends Component {
 						name: curr.Name,
 						roll: curr.RollNumber ? curr.RollNumber : "",
 						marks: temp_marks,
-						grade: calculateGrade(temp_marks.obtained, temp_marks.total, this.props.grades),
 						position: 0,
-						exams: new_exams
+						exams: new_exams,
+						grade,
+						remarks
 					}
 				]
 			}, [])
