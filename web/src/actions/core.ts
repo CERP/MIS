@@ -103,14 +103,14 @@ export const createMerges= (merges: Merge[]) => (dispatch: (a: any) => any, getS
 		payload: rationalized_merges
 	}
 
-	dispatch(QueueUp(new_merges))
+	dispatch(QueueMutations(new_merges))
 
 	syncr.send(payload)
 		.then(res => {
 			dispatch(multiAction(res))
 		})
 		.catch(err => {
-			dispatch(QueueUp(new_merges))
+			dispatch(QueueMutations(new_merges))
 			
 			if( state.connected && err !== "timeout") {
 				alert("Syncing Error: " + err)
@@ -224,7 +224,7 @@ export const createDeletes = (paths: Delete[]) => (dispatch: Function, getState:
 		}
 	}
 
-	dispatch(QueueUp(payload))
+	dispatch(QueueMutations(payload))
 
 	syncr.send({
 		type: SYNC,
@@ -238,7 +238,7 @@ export const createDeletes = (paths: Delete[]) => (dispatch: Function, getState:
 	})
 	.catch(err => {
 
-		dispatch(QueueUp(payload))
+		dispatch(QueueMutations(payload))
 
 		if( state.connected && err !== "timeout") {
 			alert("Syncing Error: " + err)
@@ -280,7 +280,7 @@ export interface SnapshotDiffAction {
 
 export const QUEUE = "QUEUE"
 // queue up an object where key is path, value is action/date
-interface Queuable { 
+interface MutationsQueueable { 
 	[path: string]: {
 		action: {
 			type: "MERGE" | "DELETE";
@@ -307,7 +307,7 @@ export interface QueueAnalyticsAction extends BaseQueueAction {
 
 export interface QueueMutationsAction extends BaseQueueAction {
 	queue_type: "mutations";
-	payload: Queuable;
+	payload: MutationsQueueable;
 }
 export type QueueAction = QueueMutationsAction | QueueAnalyticsAction
 
@@ -316,7 +316,7 @@ export interface ConfirmAnalyticsSyncAction {
 	time: number
 }
 
-export const QueueUp = (action: Queuable ) => {
+export const QueueMutations = (action: MutationsQueueable ) : QueueMutationsAction => {
 	return {
 		type: QUEUE,
 		payload: action,
@@ -324,7 +324,7 @@ export const QueueUp = (action: Queuable ) => {
 	}
 }
 
-export const QueueAnalytics = (action: AnalyticsQueuable ) => {
+export const QueueAnalytics = (action: AnalyticsQueuable ) : QueueAnalyticsAction => {
 	return {
 		type: QUEUE,
 		payload: action,
