@@ -262,10 +262,10 @@ const reconstructGradesObject = (state: RootReducerState) =>  {
 	
 	if(state.db.settings && state.db.settings.exams) {
 
-		const grade = Object.values(state.db.settings.exams.grades)
+		const grades_values = Object.values(state.db.settings.exams.grades)
 		
 		// check if new structure already exists
-		if (typeof(grade[0]) === "object") {
+		if (typeof(grades_values[0]) === "object") {
 			return state
 		}
 		

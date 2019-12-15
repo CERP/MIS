@@ -74,6 +74,8 @@ class Settings extends Component {
 	constructor(props){ 
 		super(props);
 
+		const aggGrades = this.reconstructGradesObject()
+
 		const settings = {
 			...(props.settings || defaultSettings),
 			permissions: {
@@ -84,7 +86,7 @@ class Settings extends Component {
 			exams: {
 				...defaultExams,
 				grades: {
-					...((props.settings && props.settings.exams) || defaultSettings.exams).grades
+					...aggGrades
 				}
 			}
 		}
@@ -112,6 +114,37 @@ class Settings extends Component {
 		}
 
 		this.former = new Former(this, [])
+	}
+
+	reconstructGradesObject = () =>  {
+		
+		if(this.props.settings && this.props.settings.exams) {
+	
+			const grades_values = Object.values(this.props.settings.exams.grades)
+			
+			// check if new structure already exists
+			if (typeof(grades_values[0]) === "object") {
+				return this.props.settings.exams.grades
+			}
+			
+			// else construct new structure using previous information
+			const grades = Object.entries(this.props.settings.exams.grades)
+				.reduce((agg, [grade, val]) => {
+					return {
+						...agg,
+						[grade]: {
+							percent: val,
+							remarks: ""
+						}
+					}
+				}, {})
+			
+			// return new grades structure
+			return grades
+		}
+		
+		// return default grades in case of settings don't have exams
+		return defaultExams.grades
 	}
 
 	changeTeacherPermissions = () => {
