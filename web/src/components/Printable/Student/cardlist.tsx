@@ -1,19 +1,42 @@
 import React from "react"
+import StudentIDCard from "./card"
 
-interface AugmentedMISStudent {
-    name: string
-    dob: string
-    rollNo: string
-    avatar?: string
-}
+import "./../print.css"
+import "./style.css"
 
 type PropsTypes = {
-    students: MISStudent[]
-    class: string
-    schoolName: string
-    schoolLogo: string
+  students: MISStudent[]
+  schoolName: string
+  schoolLogo: string
+  studentClass: string
 }
 
-const StudentIDCardList = (props: PropsTypes) => {
-  return(<></>);
+export const StudenPrintabletIDCardList = (props: PropsTypes) => {
+  const students = props.studentClass !== "" ?
+    props.students.sort((a, b) => (parseInt(a.RollNumber) || 0) - (parseInt(b.RollNumber) || 0)) :
+    props.students
+
+  return (
+    <div className="student-id-card print-only print-table" style={{ width: "90%" }}>
+      <table>
+        <caption>
+            <div className="text-uppercase">{ props.schoolName ? props.schoolName : "" }</div>
+            <div>Students Cards for { props.studentClass }</div>
+        </caption>
+        <tbody>
+            <div className="card-grid">
+              {
+                props.students.map((student) => (
+                  <div>
+                    <StudentIDCard
+                      student={ student }
+                      schoolName={ props.schoolName }
+                      studentClass={ props.studentClass }
+                      schoolLogo={ props.schoolLogo }/>
+                  </div>))
+              }
+            </div>
+        </tbody>
+      </table>
+    </div>)
 }
