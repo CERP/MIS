@@ -245,7 +245,8 @@ export class StudentList extends Component {
 						chunkSize={ index === 0 ? 0 : chunkSize * index }
 						schoolName={ settings.schoolName }
 						studentClass={ curr_section }/>)
-				 			     :
+                                              :
+                // print 8 students ID cards per page
 				chunkify(items, 8)
 					.map((chunkItems, index) => <StudenPrintabletIDCardList students={chunkItems} key={index}
 						schoolName={ settings.schoolName }

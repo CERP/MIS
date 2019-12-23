@@ -26,14 +26,11 @@ export const StudenPrintabletIDCardList = (props: PropsTypes) => {
         <tbody>
             <div className="card-grid">
               {
-                props.students.map((student) => (
-                  <div>
-                    <StudentIDCard
+                students.map(student => ( <StudentIDCard key={ student.id }
                       student={ student }
                       schoolName={ props.schoolName }
                       studentClass={ props.studentClass }
-                      schoolLogo={ props.schoolLogo }/>
-                  </div>))
+                      schoolLogo={ props.schoolLogo }/>))
               }
             </div>
         </tbody>
