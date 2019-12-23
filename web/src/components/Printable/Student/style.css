@@ -7,50 +7,58 @@
     width: 85.6mm;
     height: 54mm;
 }
-.school-title {
+.card-school-title {
     padding: 5px;
     margin: 0px;
     font-weight: bold;
     font-size: 1.2rem;
 }
-.school-logo {
+.card-school-logo {
     border-radius: 2px;
     width: 64px;
     height: 64px;
 }
-.school-info {
+.card-school-info {
     padding: 5px 5px;
     padding-bottom: 0px;
 }
-.student-profile {
+.card-student-profile {
     width: 100px;
     height: 100px;
 }
-.student-info {
+.card-student-info {
     padding: 10px;
     padding-top: 0px;
 }
-.student-info div {
+.card-student-info div {
     font-weight: bold;
     padding: 2px;
     margin: 0px;
 }
-.student-info span {
+.card-student-info span {
     font-weight: normal;
 }
-.student-card .signature {
+.card-signature {
     border-top: 1px solid;
     font-size: 0.7rem;
     width: fit-content;
 }
-.valid-date {
+.card-valid-date {
     font-size: 0.8rem;
     text-align: right;
     font-weight: bold;
 }
-.student-card .row {
+.card-row {
     display: flex;
 }
-.student-card .column {
+.card-column {
     flex: 1;
+}
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    grid-gap: 20px;
+}
+.student-id-card.print-table table {
+    margin-bottom: 3.6cm;
 }
