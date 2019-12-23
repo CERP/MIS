@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps, Link } from 'react-router-dom'
 import moment from 'moment'
 import {v4} from 'node-uuid'
 import former from 'utils/former';
-import { PrintHeader } from 'components/Layout'
+import Layout, { PrintHeader } from 'components/Layout'
 import Banner from 'components/Banner'
 import { addMultiplePayments, addPayment, logSms, editPayment } from 'actions'
 import { sendSMS } from 'actions/core'
@@ -104,7 +104,7 @@ class StudentFees extends Component <propTypes, S> {
 
 	student = (): MISStudent => {
 		const id = this.props.match.params.id;
-		return this.props.students[id] || this.siblings()[0];
+		return id === undefined ? this.siblings()[0] : this.props.students[id]
 	}
 
 	familyID = (): string =>  {
@@ -255,14 +255,15 @@ class StudentFees extends Component <propTypes, S> {
 	}
 
 	componentDidMount() {
+		
+		const famId = this.familyID()
 		// loop through fees, check if we have added
-		if(this.familyID() === undefined) {
+		if(famId === undefined || famId === "") {
 			const owedPayments = checkStudentDuesReturning(this.student());
 			if (owedPayments.length > 0) {
 				this.props.addMultiplePayments(owedPayments);
 			}
-		}
-		if(this.familyID() !== undefined) {
+		} else {
 			const siblings = this.siblings()
 			this.generateSiblingsPayments(siblings)
 		}
@@ -298,23 +299,21 @@ class StudentFees extends Component <propTypes, S> {
 		let siblings: MISStudent[]
 		let payments
 
-		if(famId !== undefined) {
-		 	siblings = Object.values(nextProps.students)
-				.filter(s => s && s.Name && s.FamilyID && s.FamilyID === famId)
-		}
-
 		// generating payments from fees if any
-		if(famId === undefined) {
+		if(famId === undefined || famId === "") {
 			const owedPayments = checkStudentDuesReturning(student);
 			if (owedPayments.length > 0) {
 				this.props.addMultiplePayments(owedPayments);
-				console.log(owedPayments)
 			}
+		} else {
+			siblings = Object.values(nextProps.students)
+				.filter(s => s && s.Name && s.FamilyID && s.FamilyID === famId)
+			
+			this.generateSiblingsPayments(siblings)
 		}
-		this.generateSiblingsPayments(siblings)
 
 		// getting payments if against any single student or siblings
-		if(famId === undefined) {
+		if(famId === undefined || famId === "") {
 			payments = Object.entries(student.payments)
 				.reduce((agg, [pid, curr]) => ({
 					...agg,
@@ -421,10 +420,19 @@ class StudentFees extends Component <propTypes, S> {
 		const style_class = owed_amount <= 0 ? "advance-amount" : "pending-amount"
 		return style_class
 	}
+
+	// return a route for fee voucher preview
+	getPreviewRoute = (): string => {
+		const famId = this.familyID()
+		const redirectTo = famId === undefined ? `/student/${this.props.match.params.id}` : `/families/${famId}`
+
+		return `${redirectTo}/fee-print-preview?month=${this.state.month}&year=${this.state.year}`
+	}
+
 	render() {
 
 		const merged_payments = this.mergedPayments()
-		
+		const famId = this.familyID()
 		const Months =  new Set(
 			Object.entries(merged_payments)
 				.sort(([, a_payment], [, b_payment]) => a_payment.date - b_payment.date)
@@ -443,7 +451,7 @@ class StudentFees extends Component <propTypes, S> {
 		const total_owed = Object.entries(merged_payments)
 			.reduce((agg, [, curr]) => agg - (curr.type === "SUBMITTED" || curr.type === "FORGIVEN" ? 1 : -1) * curr.amount, 0)
 
-		return <div className="student-fees">
+		const RenderBody = <div className="student-fees">
 			{ this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false }
 			<PrintHeader settings={this.props.settings} logo={this.props.schoolLogo}/>
 			<div className="divider">Payments Information</div>
@@ -459,7 +467,7 @@ class StudentFees extends Component <propTypes, S> {
 						.reduce((agg, curr) => curr.type === "FEE" && curr.period === "SINGLE" ? agg + parseFloat(curr.amount) : agg, 0)
 				}</div>
 			</div>
-			<div className="divider">{this.familyID() !== undefined ? "Family Ledger" : "Student Ledger"}</div>
+			<div className="divider">{famId === undefined || famId !== "" ? "Student Ledger" : "Family Ledger"}</div>
 
 			<div className="filter row no-print"  style={{marginBottom:"10px"}}>
 				<select className="" {...this.Former.super_handle(["month"])} style={{ width: "150px" }}>
@@ -541,10 +549,18 @@ class StudentFees extends Component <propTypes, S> {
 					</div>
 					<div className="button save" onClick={this.addPayment}>Add Payment</div>
 				</div> }
-				<Link className="print button" to={`/student/${this.props.match.params.id}/fee-print-preview?month=${this.state.month}&year=${this.state.year}`}>Print Preview</Link>
+				<Link className="print button" to={this.getPreviewRoute()}> Print Preview</Link>
 			</div>
 
 		</div>
+
+		if(famId === undefined || famId === "") {
+			return RenderBody
+		}
+		// if family payment ledger
+		return <Layout history={this.props.history}> 
+			<div>{ RenderBody }</div>
+		</Layout>
 	}
 }
 

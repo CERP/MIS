@@ -11,7 +11,10 @@ const defaultTemplates = () => ({
 
 export const initState: RootReducerState = {
 	client_id: localStorage.getItem("client_id") || v4(),
-	queued: { },
+	queued: {
+		mutations: {},
+		analytics: {}
+	},
 	acceptSnapshot: false,
 	lastSnapshot: 0,
 	initialized: false,
@@ -36,7 +39,10 @@ export const initState: RootReducerState = {
 			trial_period: 15,
 			paid: false
 		},
-		diary: {} as MISDiary
+		diary: {} as MISDiary,
+		planner: {
+			datesheet: {}
+		}
 	},
 	auth: {
 		school_id: undefined,
@@ -103,8 +109,24 @@ export const loadDb = async () => {
 			}
 		}
 
-		const prev: RootReducerState = JSON.parse(serialized)
+		let prev: RootReducerState = JSON.parse(serialized)
 		const client_id = localStorage.getItem('client_id') || prev.client_id || v4()
+
+		if ( prev.queued && (!prev.queued.mutations || !prev.queued.analytics)) {
+			console.log("MOVING FROM OLD QUEUE")
+
+			prev.queued = {
+				analytics: {},
+				//@ts-ignore
+				mutations: {
+					...prev.queued
+				}
+			}
+		}
+		else {
+			console.log("NOT MOVING FROM OLD QUEUE")
+		}
+
 		const merged = {
 			...initState,
 			...prev,
@@ -255,8 +277,39 @@ const checkGrades = (state: RootReducerState) => {
 	return state
 }
 
+// re-constructing old structure [grade: string]: string to
+// [grade: string]: { percent: string, remarks: string }
+	
+const reconstructGradesObject = (state: RootReducerState) =>  {
+	
+	if(state.db.settings && state.db.settings.exams) {
+
+		const grades_values = Object.values(state.db.settings.exams.grades)
+		
+		// check if new structure already exists
+		if (typeof(grades_values[0]) === "object") {
+			return state
+		}
+		
+		// else construct new structure using previous information
+		const grades = Object.entries(state.db.settings.exams.grades)
+		state.db.settings.exams.grades = grades.reduce((agg, [grade, val]) => {
+			return {
+				...agg,
+				[grade]: {
+					percent: val,
+					remarks: ""
+				}
+			}
+		}, {})
+	}
+
+	return state
+}
+
 const onLoadScripts = [
 	addFacultyID,
 	checkPermissions,
-	checkGrades
+	checkGrades,
+	reconstructGradesObject
 ];

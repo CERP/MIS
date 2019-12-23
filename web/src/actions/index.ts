@@ -1,5 +1,5 @@
 import { hash } from 'utils'
-import { createMerges, createDeletes, createLoginFail } from './core'
+import { createMerges, createDeletes, createLoginFail, analyticsEvent } from './core'
 import moment from 'moment'
 import {v4} from "node-uuid"
 import Syncr from 'syncr';
@@ -776,7 +776,7 @@ export const editPayment = (payments: AugmentedMISPaymentMap) => (dispatch: Func
 			},
 			{
 				path:["db", "students", student_id, "fees", fee_id, "amount"],
-				value: Math.abs(amount)
+				value: Math.abs(amount).toString() // because we're handling fees as string value
 			}
 		]
 	}, [])
@@ -817,4 +817,51 @@ export const markPurchased = () => (dispatch: Function) => {
 		path: ["db", "package_info", "paid"],
 		value: true
 	}]))
+}
+
+export const trackRoute = (route: string) => (dispatch: Function) => {	
+	dispatch(analyticsEvent([
+		{
+			type: "ROUTE",
+			meta: {
+				route: route.split("/").splice(1)
+			}
+		}
+	]))
+}
+
+export interface dateSheetMerges {
+	[id: string]: MISDateSheet
+}
+
+export const saveDateSheet = ( datesheetMerges: dateSheetMerges, section_id: string) => (dispatch: Function) => {
+
+	const merges = Object.entries(datesheetMerges)
+		.reduce((agg, [id, dateSheet]) => {
+
+			const currMerges = Object.entries(dateSheet)
+				.reduce((agg, [subj, ds]) => {
+					return [
+						...agg,
+						{
+							path: ["db", "planner", "datesheet",section_id, id, subj],
+							value: ds
+						}
+					]
+				},[])
+
+			return [
+				...agg,
+				...currMerges
+			]
+		}, [])
+	dispatch(createMerges(merges))
+}
+
+export const removeSubjectFromDatesheet = ( id: string, subj: string, section_id: string ) => (dispatch: Function) => {
+
+	dispatch(createDeletes([{
+		path:["db", "planner","datesheet", section_id, id, subj]
+	}]))
+
 }

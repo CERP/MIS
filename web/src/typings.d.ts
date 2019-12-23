@@ -38,21 +38,44 @@ interface RootDBState {
 		trial_period: number
 		paid: boolean
 	}
-	diary : MISDiary
+	diary: MISDiary
+	planner: { 
+		// Will be able to add more planner stuff here i.e Teacher/Class shedule e.t.c 
+		datesheet: {
+			[section_id: string]: {
+				[id: string]: MISDateSheet
+			}
+		}
+	}
+}
+
+interface BaseAnalyticsEvent {
+	type: string;
+	meta: any;
+}
+interface RouteAnalyticsEvent extends BaseAnalyticsEvent {
+	type: "ROUTE";
+	time: number;
+	meta: { route: string };
 }
 
 interface RootReducerState {
 	client_id: string;
 	initialized: boolean;
 	queued: {
-		[path: string]: {
-			action: {
-				path: string[];
-				value?: any;
-				type: "MERGE" | "DELETE";
-			}; 
-			date: number; 
-		}; 
+		mutations: {
+			[path: string]: {
+				action: {
+					path: string[];
+					value?: any;
+					type: "MERGE" | "DELETE";
+				}; 
+				date: number; 
+			}
+		},
+		analytics: {
+			[id: string]: RouteAnalyticsEvent
+		}
 	};
 	acceptSnapshot: boolean;
 	lastSnapshot: number;
@@ -100,7 +123,10 @@ interface MISSettings {
 	};
 	exams: {
 		grades: {
-			[grade: string]: string;
+			[grade: string]: {
+				percent: string
+				remarks: string
+			}
 		};
 	};
 }
@@ -124,6 +150,16 @@ interface MISClass {
 	subjects: {
 		[subject: string]: true;
 	};
+}
+
+interface AugmentedSection {
+	id: string;
+	class_id: string;
+	namespaced_name: string;
+	className: string;
+	classYear: number;
+	name: string;
+	faculty_id?: string;
 }
 
 interface MISStudent {
@@ -173,6 +209,8 @@ interface MISFamilyInfo {
 	ManCNIC: string;
 	Address: string;
 }
+
+type AugmentedMISFamily = MISFamilyInfo & { ID: string }
 
 interface MISCertificate {
 	type: string;
@@ -301,4 +339,10 @@ interface MISDiary{
 			};
 		};
 	};
+}
+interface MISDateSheet {
+	[subject: string]: {
+		date: number,
+		time: string
+	}
 }
