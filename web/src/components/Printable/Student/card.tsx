@@ -1,5 +1,6 @@
 import React from "react"
 import './style.css'
+import moment from "moment";
 
 type PropsTypes = {
     student: MISStudent
@@ -29,7 +30,7 @@ const StudentIDCard = (props: PropsTypes) => {
                 <div className="card-signature">Issuing Authority</div>
             </div>
             <div className="card-column">
-                <div className="card-valid-date">Valid 2019-2020</div>
+                <div className="card-valid-date">Valid { moment().format("YYYY") }-{ moment().add(1, "year").format("YYYY") }</div>
             </div>
         </div>
     </div>);
