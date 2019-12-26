@@ -53,6 +53,7 @@ export const analyticsEvent = (event: BaseAnalyticsEvent[]) => (dispatch: Functi
 	dispatch(QueueAnalytics(event_payload))
 
 	if (!syncr.connection_verified) {
+		console.warn("connection not verified")
 		return
 	}
 
@@ -113,6 +114,7 @@ export const createMerges = (merges: Merge[]) => (dispatch: (a: any) => any, get
 	dispatch(QueueMutations(new_merges))
 
 	if (!syncr.connection_verified) {
+		console.warn("connection not verified")
 		return;
 	}
 
@@ -239,6 +241,7 @@ export const createDeletes = (paths: Delete[]) => (dispatch: Function, getState:
 	dispatch(QueueMutations(payload))
 
 	if (!syncr.connection_verified) {
+		console.warn("connection not verified")
 		return;
 	}
 
