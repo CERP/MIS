@@ -51,8 +51,7 @@ export const initState: RootReducerState = {
 		username: undefined,
 		name: undefined,
 		attempt_failed: false,
-		loading: false,
-		connection_verified: false
+		loading: false
 	},
 	connected: false,
 	sign_up_form: {
@@ -135,11 +134,6 @@ export const loadDb = async () => {
 			db: {
 				...initState.db,
 				...prev.db
-			},
-			auth: {
-				...initState.auth,
-				...prev.auth,
-				connection_verified: false
 			},
 			connected: false,
 			sign_up_form: {

@@ -53,8 +53,7 @@ const initState: RootReducerState = {
 		username: undefined,
 		name: undefined,
 		attempt_failed: false,
-		loading: false,
-		connection_verified: false
+		loading: false
 	},
 	connected: false,
 	sign_up_form: {

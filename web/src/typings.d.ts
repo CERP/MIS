@@ -88,7 +88,6 @@ interface RootReducerState {
 		name: string;
 		attempt_failed: boolean;
 		loading: boolean;
-		connection_verified: boolean;
 	};
 	connected: boolean;
 	sign_up_form: {
