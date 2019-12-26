@@ -23,9 +23,13 @@ export const MERGE_FACULTY = "MERGE_FACULTY"
 export const createFacultyMerge = (faculty: MISTeacher) => (dispatch: Function) => {
 
 	dispatch(createMerges([
-		{ path: ["db", "faculty", faculty.id], value: faculty },
 		{
-			path: ["db", "users", faculty.id], value: {
+			path: ["db", "faculty", faculty.id],
+			value: faculty
+		},
+		{
+			path: ["db", "users", faculty.id],
+			value: {
 				name: faculty.Name,
 				password: faculty.Password,
 				type: faculty.Admin ? "admin" : "teacher"
@@ -126,45 +130,47 @@ export const promoteStudents = (promotion_map: PromotionMap, section_metadata: S
 	const merges = Object.entries(promotion_map).reduce((agg, [student_id, { current, next }]) => {
 
 		if (next === "FINISHED_SCHOOL") {
-			return [...agg,
-			{
-				path: ["db", "students", student_id, "Active"],
-				value: false
-			},
+			return [
+				...agg,
+				{
+					path: ["db", "students", student_id, "Active"],
+					value: false
+				},
+				{
+					path: ["db", "students", student_id, "section_id"],
+					value: ""
+				},
+				{
+					path: ["db", "students", student_id, "class_history", current, "end_date"],
+					value: new Date().getTime()
+				},
+				{
+					path: ["db", "students", student_id, "tags", next],
+					value: true
+				}
+			]
+		}
+
+		const meta = section_metadata.find(x => x.id === next);
+		return [
+			...agg,
 			{
 				path: ["db", "students", student_id, "section_id"],
-				value: ""
+				value: next
 			},
 			{
 				path: ["db", "students", student_id, "class_history", current, "end_date"],
 				value: new Date().getTime()
 			},
 			{
-				path: ["db", "students", student_id, "tags", next],
-				value: true
+				path: ["db", "students", student_id, "class_history", next],
+				value: {
+					start_date: new Date().getTime(),
+					class_id: meta.class_id, // class id
+					class_name: meta.className,
+					namespaced_name: meta.namespaced_name
+				}
 			}
-			]
-		}
-
-		const meta = section_metadata.find(x => x.id === next);
-		return [...agg,
-		{
-			path: ["db", "students", student_id, "section_id"],
-			value: next
-		},
-		{
-			path: ["db", "students", student_id, "class_history", current, "end_date"],
-			value: new Date().getTime()
-		},
-		{
-			path: ["db", "students", student_id, "class_history", next],
-			value: {
-				start_date: new Date().getTime(),
-				class_id: meta.class_id, // class id
-				class_name: meta.className,
-				namespaced_name: meta.namespaced_name
-			}
-		}
 		]
 
 
@@ -279,9 +285,11 @@ export const createSchoolLogin = (school_id: string, password: string) => (dispa
 
 export const createEditClass = (newClass: MISClass) => (dispatch: Function) => {
 	dispatch(createMerges([
-		{ path: ["db", "classes", newClass.id], value: newClass }
-	]
-	))
+		{
+			path: ["db", "classes", newClass.id],
+			value: newClass
+		}
+	]))
 }
 
 export const deleteClass = (Class: MISClass) => (dispatch: Function, getState: () => RootReducerState) => {
@@ -290,7 +298,10 @@ export const deleteClass = (Class: MISClass) => (dispatch: Function, getState: (
 	const students = Object.values(state.db.students)
 		.filter(student => Class.sections[student.section_id] !== undefined)
 		.map(student => (
-			{ path: ["db", "students", student.id, "section_id"], value: "" }
+			{
+				path: ["db", "students", student.id, "section_id"],
+				value: ""
+			}
 		))
 
 	dispatch(createMerges(students))
@@ -305,7 +316,10 @@ export const deleteClass = (Class: MISClass) => (dispatch: Function, getState: (
 export const addStudentToSection = (section_id: string, student: MISStudent) => (dispatch: Function) => {
 
 	dispatch(createMerges([
-		{ path: ["db", "students", student.id, "section_id"], value: section_id }
+		{
+			path: ["db", "students", student.id, "section_id"],
+			value: section_id
+		}
 	]))
 }
 
@@ -555,14 +569,15 @@ export const editExpense = (expenses: ExpenseEditItem) => (dispatch: Function, g
 	const state = getState()
 
 	const merges = Object.entries(expenses).reduce((agg, [id, { amount }]) => {
-		return [...agg,
-		{
-			path: ["db", "expenses", id],
-			value: {
-				...state.db.expenses[id],
-				amount
+		return [
+			...agg,
+			{
+				path: ["db", "expenses", id],
+				value: {
+					...state.db.expenses[id],
+					amount
+				}
 			}
-		}
 		]
 	}, [])
 
@@ -858,6 +873,7 @@ export const saveDateSheet = (datesheetMerges: dateSheetMerges, section_id: stri
 				...currMerges
 			]
 		}, [])
+
 	dispatch(createMerges(merges))
 }
 
