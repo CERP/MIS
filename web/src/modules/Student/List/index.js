@@ -7,7 +7,7 @@ import Former from 'utils/former'
 import getStudentLimt from 'utils/getStudentLimit';
 import { LayoutWrap } from 'components/Layout';
 import { StudentPrintableList } from 'components/Printable/Student/list';
-import { StudenPrintabletIDCardList } from 'components/Printable/Student/cardlist';
+import { StudenPrintableIDCardList } from 'components/Printable/Student/cardlist';
 import {chunkify} from 'utils/chunkify'
 import Card from 'components/Card'
 
@@ -248,7 +248,7 @@ export class StudentList extends Component {
                                               :
                 // print 8 students ID cards per page
 				chunkify(items, 8)
-					.map((chunkItems, index) => <StudenPrintabletIDCardList students={chunkItems} key={index}
+					.map((chunkItems, index) => <StudenPrintableIDCardList students={chunkItems} key={index}
 						schoolName={ settings.schoolName }
 						schoolLogo={ this.props.schoolLogo }
 						studentClass={ curr_section }/>)

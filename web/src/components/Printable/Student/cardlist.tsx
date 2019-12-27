@@ -11,7 +11,7 @@ type PropsTypes = {
   studentClass: string
 }
 
-export const StudenPrintabletIDCardList = (props: PropsTypes) => {
+export const StudenPrintableIDCardList = (props: PropsTypes) => {
   const students = props.studentClass !== "" ?
     props.students.sort((a, b) => (parseInt(a.RollNumber) || 0) - (parseInt(b.RollNumber) || 0)) :
     props.students
