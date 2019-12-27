@@ -17,7 +17,7 @@ const StudentIDCard = (props: PropsTypes) => {
         </div>
         <div className="card-row first">
             <div className="card-student-profile">
-                <img src="https://via.placeholder.com/100" alt="profile"/>
+                <img src="" alt="profile"/>
             </div>
             <div className="card-student-info">
                 <div>Name: <span>{ props.student.Name }</span></div>
