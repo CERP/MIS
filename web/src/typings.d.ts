@@ -3,21 +3,21 @@ interface RootDBState {
 	faculty: {
 		[id: string]: MISTeacher;
 	};
-	users: { 
+	users: {
 		[id: string]: MISUser;
 	};
 	students: {
 		[id: string]: MISStudent;
 	};
-	classes: { 
+	classes: {
 		[id: string]: MISClass;
 	};
-	sms_templates: { 
+	sms_templates: {
 		attendance: string;
 		fee: string;
 		result: string;
 	};
-	exams: { 
+	exams: {
 		[id: string]: MISExam;
 	};
 	settings: MISSettings;
@@ -29,8 +29,8 @@ interface RootDBState {
 			[id: string]: MISSMSHistory
 		}
 	}
-	assets : {
-		schoolLogo : string
+	assets: {
+		schoolLogo: string
 	}
 	max_limit: number
 	package_info: {
@@ -38,21 +38,44 @@ interface RootDBState {
 		trial_period: number
 		paid: boolean
 	}
-	diary : MISDiary
+	diary: MISDiary
+	planner: {
+		// Will be able to add more planner stuff here i.e Teacher/Class shedule e.t.c 
+		datesheet: {
+			[section_id: string]: {
+				[id: string]: MISDateSheet
+			}
+		}
+	}
+}
+
+interface BaseAnalyticsEvent {
+	type: string;
+	meta: any;
+}
+interface RouteAnalyticsEvent extends BaseAnalyticsEvent {
+	type: "ROUTE";
+	time: number;
+	meta: { route: string };
 }
 
 interface RootReducerState {
 	client_id: string;
 	initialized: boolean;
 	queued: {
-		[path: string]: {
-			action: {
-				path: string[];
-				value?: any;
-				type: "MERGE" | "DELETE";
-			}; 
-			date: number; 
-		}; 
+		mutations: {
+			[path: string]: {
+				action: {
+					path: string[];
+					value?: any;
+					type: "MERGE" | "DELETE";
+				};
+				date: number;
+			}
+		},
+		analytics: {
+			[id: string]: RouteAnalyticsEvent
+		}
 	};
 	acceptSnapshot: boolean;
 	lastSnapshot: number;
@@ -100,7 +123,10 @@ interface MISSettings {
 	};
 	exams: {
 		grades: {
-			[grade: string]: string;
+			[grade: string]: {
+				percent: string
+				remarks: string
+			}
 		};
 	};
 }
@@ -126,6 +152,16 @@ interface MISClass {
 	};
 }
 
+interface AugmentedSection {
+	id: string;
+	class_id: string;
+	namespaced_name: string;
+	className: string;
+	classYear: number;
+	name: string;
+	faculty_id?: string;
+}
+
 interface MISStudent {
 	id: string;
 	Name: string;
@@ -141,7 +177,7 @@ interface MISStudent {
 	Birthdate: string;
 	Address: string;
 	Notes: string;
-	StartDate: number; 
+	StartDate: number;
 	AdmissionNumber: string;
 	BloodType?: "" | "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-";
 	FamilyID?: string;
@@ -163,16 +199,18 @@ interface MISStudent {
 	};
 	tags: { [tag: string]: boolean };
 	certificates: {
-		[id: string]: MISCertificate; 
+		[id: string]: MISCertificate;
 	};
 }
 
-interface MISFamilyInfo { 
+interface MISFamilyInfo {
 	ManName: string;
 	Phone: string;
 	ManCNIC: string;
 	Address: string;
 }
+
+type AugmentedMISFamily = MISFamilyInfo & { ID: string }
 
 interface MISCertificate {
 	type: string;
@@ -211,12 +249,18 @@ interface MISStudentPayment {
 	fee_name?: string;
 }
 
+type AugmentedMISPayment = MISStudentPayment & { student_id: string, edited: boolean }
+
+interface AugmentedMISPaymentMap {
+	[pid: string]: AugmentedMISPayment
+}
+
 interface BaseMISExpense {
 	expense: string;
 	amount: number;
 	label: string;
 	type: string;
-	category: "SALARY" | "BILLS" | "STATIONERY" | "REPAIRS" | "RENT" | "ACTIVITY" | "DAILY" | "PETTY_CASH" | "";   
+	category: "SALARY" | "BILLS" | "STATIONERY" | "REPAIRS" | "RENT" | "ACTIVITY" | "DAILY" | "PETTY_CASH" | "";
 	date: number;
 	time: number;
 }
@@ -246,7 +290,7 @@ interface MISStudentAttendanceEntry {
 
 interface MISTeacher {
 	id: string;
-	Name: string; 
+	Name: string;
 	CNIC: string;
 	Gender: string;
 	Username: string;
@@ -266,7 +310,7 @@ interface MISTeacher {
 	HireDate: string;
 	Admin: boolean;
 
-	attendance:  MISTeacherAttendance;
+	attendance: MISTeacherAttendance;
 }
 
 type MISTeacherAttendanceStatus = "check_in" | "check_out" | "absent" | "leave" | ""
@@ -287,7 +331,7 @@ interface MISSmsPayload {
 	return_link: string;
 }
 
-interface MISDiary{
+interface MISDiary {
 	[date: string]: {
 		[section_id: string]: {
 			[subject: string]: {
@@ -295,4 +339,10 @@ interface MISDiary{
 			};
 		};
 	};
+}
+interface MISDateSheet {
+	[subject: string]: {
+		date: number,
+		time: string
+	}
 }

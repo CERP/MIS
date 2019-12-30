@@ -1,8 +1,8 @@
 import { hash } from 'utils'
-import { createMerges, createDeletes, createLoginFail } from './core'
+import { createMerges, createDeletes, createLoginFail, analyticsEvent } from './core'
 import moment from 'moment'
 import { v4 } from "node-uuid"
-import Syncr from 'syncr';
+import Syncr from '@cerp/syncr';
 import { historicalPayment } from 'modules/Settings/HistoricalFees/historical-fee';
 
 const client_type = "mis";
@@ -23,9 +23,13 @@ export const MERGE_FACULTY = "MERGE_FACULTY"
 export const createFacultyMerge = (faculty: MISTeacher) => (dispatch: Function) => {
 
 	dispatch(createMerges([
-		{ path: ["db", "faculty", faculty.id], value: faculty },
 		{
-			path: ["db", "users", faculty.id], value: {
+			path: ["db", "faculty", faculty.id],
+			value: faculty
+		},
+		{
+			path: ["db", "users", faculty.id],
+			value: {
 				name: faculty.Name,
 				password: faculty.Password,
 				type: faculty.Admin ? "admin" : "teacher"
@@ -41,7 +45,7 @@ export const createStudentMerge = (student: MISStudent) => (dispatch: Function) 
 		{
 			path: ["db", "students", student.id],
 			value: student
-		},
+		}
 	]))
 }
 
@@ -126,45 +130,47 @@ export const promoteStudents = (promotion_map: PromotionMap, section_metadata: S
 	const merges = Object.entries(promotion_map).reduce((agg, [student_id, { current, next }]) => {
 
 		if (next === "FINISHED_SCHOOL") {
-			return [...agg,
-			{
-				path: ["db", "students", student_id, "Active"],
-				value: false
-			},
+			return [
+				...agg,
+				{
+					path: ["db", "students", student_id, "Active"],
+					value: false
+				},
+				{
+					path: ["db", "students", student_id, "section_id"],
+					value: ""
+				},
+				{
+					path: ["db", "students", student_id, "class_history", current, "end_date"],
+					value: new Date().getTime()
+				},
+				{
+					path: ["db", "students", student_id, "tags", next],
+					value: true
+				}
+			]
+		}
+
+		const meta = section_metadata.find(x => x.id === next);
+		return [
+			...agg,
 			{
 				path: ["db", "students", student_id, "section_id"],
-				value: ""
+				value: next
 			},
 			{
 				path: ["db", "students", student_id, "class_history", current, "end_date"],
 				value: new Date().getTime()
 			},
 			{
-				path: ["db", "students", student_id, "tags", next],
-				value: true
+				path: ["db", "students", student_id, "class_history", next],
+				value: {
+					start_date: new Date().getTime(),
+					class_id: meta.class_id, // class id
+					class_name: meta.className,
+					namespaced_name: meta.namespaced_name
+				}
 			}
-			]
-		}
-
-		const meta = section_metadata.find(x => x.id === next);
-		return [...agg,
-		{
-			path: ["db", "students", student_id, "section_id"],
-			value: next
-		},
-		{
-			path: ["db", "students", student_id, "class_history", current, "end_date"],
-			value: new Date().getTime()
-		},
-		{
-			path: ["db", "students", student_id, "class_history", next],
-			value: {
-				start_date: new Date().getTime(),
-				class_id: meta.class_id, // class id
-				class_name: meta.className,
-				namespaced_name: meta.namespaced_name
-			}
-		}
 		]
 
 
@@ -279,9 +285,11 @@ export const createSchoolLogin = (school_id: string, password: string) => (dispa
 
 export const createEditClass = (newClass: MISClass) => (dispatch: Function) => {
 	dispatch(createMerges([
-		{ path: ["db", "classes", newClass.id], value: newClass }
-	]
-	))
+		{
+			path: ["db", "classes", newClass.id],
+			value: newClass
+		}
+	]))
 }
 
 export const deleteClass = (Class: MISClass) => (dispatch: Function, getState: () => RootReducerState) => {
@@ -290,7 +298,10 @@ export const deleteClass = (Class: MISClass) => (dispatch: Function, getState: (
 	const students = Object.values(state.db.students)
 		.filter(student => Class.sections[student.section_id] !== undefined)
 		.map(student => (
-			{ path: ["db", "students", student.id, "section_id"], value: "" }
+			{
+				path: ["db", "students", student.id, "section_id"],
+				value: ""
+			}
 		))
 
 	dispatch(createMerges(students))
@@ -305,7 +316,10 @@ export const deleteClass = (Class: MISClass) => (dispatch: Function, getState: (
 export const addStudentToSection = (section_id: string, student: MISStudent) => (dispatch: Function) => {
 
 	dispatch(createMerges([
-		{ path: ["db", "students", student.id, "section_id"], value: section_id }
+		{
+			path: ["db", "students", student.id, "section_id"],
+			value: section_id
+		}
 	]))
 }
 
@@ -616,7 +630,7 @@ export const addFee = (student_fee: SingleFeeItem) => (dispatch: Function) => {
 		path: ["db", "students", student_fee.student_id, "fees", student_fee.fee_id],
 		value: {
 			amount: student_fee.amount,
-			nane: student_fee.name,
+			name: student_fee.name,
 			period: student_fee.period,
 			type: student_fee.type
 		}
@@ -769,18 +783,18 @@ export const addDiary = (date: string, section_id: string, diary: MISDiary["sect
 
 }
 
-export const editPayment = (student: MISStudent, payments: MISStudent["payments"]) => (dispatch: Function) => {
+export const editPayment = (payments: AugmentedMISPaymentMap) => (dispatch: Function) => {
 
 	// payments is an object with id as key and value is { amount, fee_id } 
-	const merges = Object.entries(payments).reduce((agg, [p_id, { amount, fee_id }]) => {
+	const merges = Object.entries(payments).reduce((agg, [p_id, { student_id, amount, fee_id }]) => {
 		return [...agg,
 		{
-			path: ["db", "students", student.id, "payments", p_id, "amount"],
+			path: ["db", "students", student_id, "payments", p_id, "amount"],
 			value: amount
 		},
 		{
-			path: ["db", "students", student.id, "fees", fee_id, "amount"],
-			value: amount
+			path: ["db", "students", student_id, "fees", fee_id, "amount"],
+			value: Math.abs(amount).toString() // because we're handling fees as string value
 		}
 		]
 	}, [])
@@ -821,4 +835,52 @@ export const markPurchased = () => (dispatch: Function) => {
 		path: ["db", "package_info", "paid"],
 		value: true
 	}]))
+}
+
+export const trackRoute = (route: string) => (dispatch: Function) => {
+	dispatch(analyticsEvent([
+		{
+			type: "ROUTE",
+			meta: {
+				route: route.split("/").splice(1)
+			}
+		}
+	]))
+}
+
+export interface dateSheetMerges {
+	[id: string]: MISDateSheet
+}
+
+export const saveDateSheet = (datesheetMerges: dateSheetMerges, section_id: string) => (dispatch: Function) => {
+
+	const merges = Object.entries(datesheetMerges)
+		.reduce((agg, [id, dateSheet]) => {
+
+			const currMerges = Object.entries(dateSheet)
+				.reduce((agg, [subj, ds]) => {
+					return [
+						...agg,
+						{
+							path: ["db", "planner", "datesheet", section_id, id, subj],
+							value: ds
+						}
+					]
+				}, [])
+
+			return [
+				...agg,
+				...currMerges
+			]
+		}, [])
+
+	dispatch(createMerges(merges))
+}
+
+export const removeSubjectFromDatesheet = (id: string, subj: string, section_id: string) => (dispatch: Function) => {
+
+	dispatch(createDeletes([{
+		path: ["db", "planner", "datesheet", section_id, id, subj]
+	}]))
+
 }

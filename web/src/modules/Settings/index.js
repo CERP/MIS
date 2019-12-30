@@ -17,19 +17,45 @@ export const defaultPermissions = {
 	fee:  { teacher: true },
 	dailyStats: { teacher: true },
 	setupPage: {teacher: true },
-	expense: { teacher: true }
+	expense: { teacher: true },
+	prospective: { teacher: true },
+	family: { teacher: true }
 }
 
 export const defaultExams = {
 	grades: {
-		"A+": "90",
-		"A": "80",
-		"B+": "70",
-		"B": "65",
-		"C+": "60",
-		"C": "55",
-		"D": "50",
-		"F": "40",
+		"A+": {
+			percent: "90",
+			remarks: "Excellent"
+		},
+		"A": {
+			percent: "80",
+			remarks: "Good"
+		},
+		"B+": {
+			percent: "70",
+			remarks: "Satisfactory"
+		},
+		"B": {
+			percent: "65",
+			remarks: "Must work hard"
+		},
+		"C+": {
+			percent: "60",
+			remarks: "Poor, work hard"
+		},
+		"C": {
+			percent: "55",
+			remarks: "Very poor"
+		},
+		"D": {
+			percent: "50",
+			remarks: "Very very poor"
+		},
+		"F": {
+			percent: "40",
+			remarks: "Fail"
+		},
 	}
 }
 const defaultSettings = {
@@ -42,13 +68,15 @@ const defaultSettings = {
 	sendSMSOption: "SIM", // API
 	permissions: defaultPermissions,
 	devices: {},
-	exams: defaultExams
+	exams: defaultExams	
 }
 
 class Settings extends Component {
 
 	constructor(props){ 
 		super(props);
+
+		const aggGrades = this.reconstructGradesObject()
 
 		const settings = {
 			...(props.settings || defaultSettings),
@@ -60,7 +88,7 @@ class Settings extends Component {
 			exams: {
 				...defaultExams,
 				grades: {
-					...((props.settings && props.settings.exams) || defaultSettings.exams).grades
+					...aggGrades
 				}
 			}
 		}
@@ -81,12 +109,44 @@ class Settings extends Component {
 			addGrade: false,
 			newGrade: {
 				grade: "",
-				percent: ""
+				percent: "",
+				remarks: ""
 			}
 
 		}
 
 		this.former = new Former(this, [])
+	}
+
+	reconstructGradesObject = () =>  {
+		
+		if(this.props.settings && this.props.settings.exams) {
+	
+			const grades_values = Object.values(this.props.settings.exams.grades)
+			
+			// check if new structure already exists
+			if (typeof(grades_values[0]) === "object") {
+				return this.props.settings.exams.grades
+			}
+			
+			// else construct new structure using previous information
+			const grades = Object.entries(this.props.settings.exams.grades)
+				.reduce((agg, [grade, val]) => {
+					return {
+						...agg,
+						[grade]: {
+							percent: val,
+							remarks: ""
+						}
+					}
+				}, {})
+			
+			// return new grades structure
+			return grades
+		}
+		
+		// return default grades in case of settings don't have exams
+		return defaultExams.grades
 	}
 
 	changeTeacherPermissions = () => {
@@ -116,6 +176,20 @@ class Settings extends Component {
 			<div className="row">
 				<label> Allow teacher to view Expense Information? </label>
 				<select {...this.former.super_handle(["settings", "permissions", "expense","teacher"])}>
+					<option value={true}>Yes</option>
+					<option value={false}>No</option>
+				</select>
+			</div>
+			<div className="row">
+				<label> Allow teacher to view Family Information? </label>
+				<select {...this.former.super_handle(["settings", "permissions", "family","teacher"])}>
+					<option value={true}>Yes</option>
+					<option value={false}>No</option>
+				</select>
+			</div>
+			<div className="row">
+				<label> Allow teacher to view Prospective Information? </label>
+				<select {...this.former.super_handle(["settings", "permissions", "prospective","teacher"])}>
 					<option value={true}>Yes</option>
 					<option value={false}>No</option>
 				</select>
@@ -166,11 +240,12 @@ class Settings extends Component {
 		return <div className="grade-menu">
 			{
 				Object.entries(exams.grades)
-					.map(([grade, percent]) => {
+					.map(([grade, curr]) => {
 						return <div className="row">
 							<label> {grade} </label>
 							<div className="editable-row">
-								<input type="number" {...this.former.super_handle(["settings", "exams", "grades", grade])}/>
+								<input type="text" {...this.former.super_handle(["settings", "exams", "grades", grade, "remarks"])}/>
+								<input type="number" {...this.former.super_handle(["settings", "exams", "grades", grade, "percent"])}/>
 								<div className="button red" onClick={()=> this.removeGrade(grade)}>x</div>
 							</div>
 						</div>
@@ -192,6 +267,10 @@ class Settings extends Component {
 					<div className="row">
 						<label>Percent</label>
 						<input type="number" {...this.former.super_handle(["newGrade", "percent"])}/>
+					</div>
+					<div className="row">
+						<label>Remarks</label>
+						<input type="text" {...this.former.super_handle(["newGrade", "remarks"])}/>
 					</div>
 					<div className="row">
 						<div className="button green" onClick={() => this.addGrade()}>+</div>
@@ -232,14 +311,18 @@ class Settings extends Component {
 					...this.state.settings.exams,
 					grades: {
 						...this.state.settings.exams.grades,
-						[newGrade.grade]: newGrade.percent
+						[newGrade.grade]: {
+							percent: newGrade.percent,
+							remarks: newGrade.remarks
+						}
 					}
 				}
 			},
 			addGrade: false,
 			newGrade: {
 				grade: "",
-				percent: ""
+				percent: "",
+				remarks: ""
 			}
 		})
 	}

@@ -1,6 +1,7 @@
-import { Dispatch, AnyAction } from 'redux'
-import Syncr from 'syncr';
+import { Dispatch } from 'redux'
+import Syncr from '@cerp/syncr'
 import { loadDb } from 'utils/indexedDb';
+import { v4 } from 'node-uuid';
 
 const SYNC = "SYNC"
 const client_type = "mis";
@@ -18,7 +19,59 @@ export interface MergeAction {
 	merges: Merge[];
 }
 
-export const createMerges= (merges: Merge[]) => (dispatch: (a: any) => any, getState: () => RootReducerState, syncr: Syncr) => {
+export const analyticsEvent = (event: BaseAnalyticsEvent[]) => (dispatch: Function, getState: () => RootReducerState, syncr: Syncr) => {
+
+	const event_payload = event.reduce((agg, curr) => {
+		return {
+			...agg,
+			[v4()]: {
+				type: curr.type,
+				meta: curr.meta,
+				time: new Date().getTime()
+			} as RouteAnalyticsEvent
+		}
+	}, {} as { [id: string]: RouteAnalyticsEvent })
+
+	const state = getState();
+	const rationalized_event_payload = {
+		...state.queued,
+		analytics: {
+			...state.queued.analytics,
+			...event_payload
+		}
+	}
+
+	const payload = {
+		type: SYNC,
+		school_id: state.auth.school_id,
+		client_type: client_type,
+		lastSnapshot: state.lastSnapshot,
+		payload: rationalized_event_payload
+	}
+
+	dispatch(QueueAnalytics(event_payload))
+
+	if (!syncr.connection_verified) {
+		console.warn("connection not verified")
+		return
+	}
+
+	syncr.send(payload)
+		.then(res => {
+			dispatch(multiAction(res))
+		})
+		.catch(err => {
+			dispatch(QueueAnalytics(event_payload))
+
+			console.error("analytics error:", err)
+
+			if (state.connected && err !== "timeout") {
+				alert("Syncing Error: " + err)
+			}
+		})
+}
+
+export const createMerges = (merges: Merge[]) => (dispatch: (a: any) => any, getState: () => RootReducerState, syncr: Syncr) => {
 	// merges is a list of path, value
 
 	const action = {
@@ -41,7 +94,13 @@ export const createMerges= (merges: Merge[]) => (dispatch: (a: any) => any, getS
 	}), {})
 
 	const state = getState();
-	const rationalized_merges = {...state.queued, ...new_merges}
+	const rationalized_merges = {
+		...state.queued,
+		mutations: {
+			...state.queued.mutations,
+			...new_merges
+		}
+	}
 
 	const payload = {
 		type: SYNC,
@@ -51,13 +110,22 @@ export const createMerges= (merges: Merge[]) => (dispatch: (a: any) => any, getS
 		payload: rationalized_merges
 	}
 
+	dispatch(QueueMutations(new_merges))
+
+	if (!syncr.connection_verified) {
+		console.warn("connection not verified")
+		return;
+	}
+
 	syncr.send(payload)
-		.then(dispatch)
+		.then(res => {
+			dispatch(multiAction(res))
+		})
 		.catch(err => {
+			console.error("create merges error: ", err)
+			dispatch(QueueMutations(new_merges))
 
-			dispatch(QueueUp(new_merges))
-
-			if( state.connected && err !== "timeout") {
+			if (state.connected && err !== "timeout") {
 				alert("Syncing Error: " + err)
 			}
 		})
@@ -78,8 +146,8 @@ export const sendSMS = (text: string, number: string) => (dispatch: (a: any) => 
 			number,
 		}
 	})
-	.then(dispatch)
-	.catch((err: Error) => console.error(err)) // this should backup to sending the sms via the android app?
+		.then(dispatch)
+		.catch((err: Error) => console.error(err)) // this should backup to sending the sms via the android app?
 }
 
 
@@ -100,9 +168,9 @@ export const sendBatchSMS = (messages: SMS[]) => (dispatch: (a: any) => any, get
 			messages
 		}
 	})
-	.catch((err: Error) => {
-		console.error(err) // send via android app?
-	})
+		.catch((err: Error) => {
+			console.error(err) // send via android app?
+		})
 }
 
 interface ServerAction {
@@ -110,7 +178,7 @@ interface ServerAction {
 	payload: any;
 }
 
-export const sendServerAction = ( action: ServerAction ) => (dispatch: Dispatch, getState: () => RootReducerState, syncr: Syncr) => {
+export const sendServerAction = (action: ServerAction) => (dispatch: Dispatch, getState: () => RootReducerState, syncr: Syncr) => {
 	const state = getState();
 
 	console.log('send server action...', action)
@@ -121,10 +189,10 @@ export const sendServerAction = ( action: ServerAction ) => (dispatch: Dispatch,
 		school_id: state.auth.school_id,
 		payload: action.payload
 	})
-	.then(dispatch)
-	.catch((err: Error) => {
-		console.error(err)
-	})
+		.then(dispatch)
+		.catch((err: Error) => {
+			console.error(err)
+		})
 
 	// should it get queued up....
 }
@@ -139,7 +207,7 @@ export interface DeletesAction {
 	paths: Delete[];
 }
 
-export const createDeletes = (paths: Delete[]) => (dispatch: Dispatch<AnyAction>, getState: () => RootReducerState, syncr: Syncr) => {
+export const createDeletes = (paths: Delete[]) => (dispatch: Function, getState: () => RootReducerState, syncr: Syncr) => {
 
 	const action = {
 		type: DELETES,
@@ -150,18 +218,31 @@ export const createDeletes = (paths: Delete[]) => (dispatch: Dispatch<AnyAction>
 
 	const state = getState();
 	const payload = paths.reduce((agg, curr) => ({
-			...agg, 
-			[curr.path.join(',')]: {
-				action: {
-					type: "DELETE",
-					path: curr.path.map(x => x === undefined ? "" : x),
-					value: 1
-				},
-				date: new Date().getTime()
-			}
-		}), {})
-	
-	const rationalized_deletes = {...state.queued, ...payload}
+		...agg,
+		[curr.path.join(',')]: {
+			action: {
+				type: "DELETE",
+				path: curr.path.map(x => x === undefined ? "" : x),
+				value: 1
+			},
+			date: new Date().getTime()
+		}
+	}), {})
+
+	const rationalized_deletes = {
+		...state.queued,
+		mutations: {
+			...state.queued.mutations,
+			...payload
+		}
+	}
+
+	dispatch(QueueMutations(payload))
+
+	if (!syncr.connection_verified) {
+		console.warn("connection not verified")
+		return;
+	}
 
 	syncr.send({
 		type: SYNC,
@@ -170,14 +251,17 @@ export const createDeletes = (paths: Delete[]) => (dispatch: Dispatch<AnyAction>
 		lastSnapshot: state.lastSnapshot,
 		payload: rationalized_deletes
 	})
-	.then(dispatch)
-	.catch(err => {
-		dispatch(QueueUp(payload))
+		.then(res => {
+			dispatch(multiAction(res))
+		})
+		.catch(err => {
 
-		if( state.connected && err !== "timeout") {
-			alert("Syncing Error: " + err)
-		}
-	})
+			dispatch(QueueMutations(payload))
+
+			if (state.connected && err !== "timeout") {
+				alert("Syncing Error: " + err)
+			}
+		})
 
 }
 
@@ -214,7 +298,7 @@ export interface SnapshotDiffAction {
 
 export const QUEUE = "QUEUE"
 // queue up an object where key is path, value is action/date
-interface Queuable {
+interface MutationsQueueable {
 	[path: string]: {
 		action: {
 			type: "MERGE" | "DELETE";
@@ -225,28 +309,57 @@ interface Queuable {
 	};
 }
 
-export interface QueueAction {
-	type: "QUEUE";
-	payload: Queuable;
+interface AnalyticsQueuable {
+	[path: string]: RouteAnalyticsEvent;
 }
 
-export const QueueUp = (action: Queuable) => {
+interface BaseQueueAction {
+	type: "QUEUE";
+	queue_type: string;
+}
+
+export interface QueueAnalyticsAction extends BaseQueueAction {
+	queue_type: "analytics";
+	payload: AnalyticsQueuable;
+}
+
+export interface QueueMutationsAction extends BaseQueueAction {
+	queue_type: "mutations";
+	payload: MutationsQueueable;
+}
+export type QueueAction = QueueMutationsAction | QueueAnalyticsAction
+
+export interface ConfirmAnalyticsSyncAction {
+	type: "CONFIRM_ANALYTICS_SYNC";
+	time: number
+}
+
+export const QueueMutations = (action: MutationsQueueable): QueueMutationsAction => {
 	return {
 		type: QUEUE,
-		payload: action
+		payload: action,
+		queue_type: "mutations"
+	}
+}
+
+export const QueueAnalytics = (action: AnalyticsQueuable): QueueAnalyticsAction => {
+	return {
+		type: QUEUE,
+		payload: action,
+		queue_type: "analytics"
 	}
 }
 
 export const ON_CONNECT = "ON_CONNECT"
 export const ON_DISCONNECT = "ON_DISCONNECT"
-export const connected = () => (dispatch: (a: any) => any, getState: () => RootReducerState, syncr: Syncr) => { 
-	const action = {type: ON_CONNECT}
+export const connected = () => (dispatch: (a: any) => any, getState: () => RootReducerState, syncr: Syncr) => {
+	const action = { type: ON_CONNECT }
 
 	dispatch(action)
 
 	const state = getState();
 
-	if(state.auth.school_id && state.auth.token) {
+	if (state.auth.school_id && state.auth.token) {
 		syncr
 			.send({
 				type: "VERIFY",
@@ -258,6 +371,9 @@ export const connected = () => (dispatch: (a: any) => any, getState: () => RootR
 				}
 			})
 			.then(res => {
+
+				syncr.verify()
+
 				return syncr.send({
 					type: SYNC,
 					client_type: client_type,
@@ -266,9 +382,7 @@ export const connected = () => (dispatch: (a: any) => any, getState: () => RootR
 					lastSnapshot: state.lastSnapshot
 				})
 			})
-			.then(resp => {
-				dispatch(resp)
-			})
+			.then(resp => dispatch(multiAction(resp)))
 			.catch(err => {
 				console.error(err)
 				alert("Authorization Failed. Log out and Log in again.")
@@ -288,7 +402,7 @@ export interface LoginSucceed {
 	token: string;
 	db: RootReducerState['db'];
 }
-export const createLoginSucceed = (school_id: string, db: RootReducerState['db'], token: string): LoginSucceed => ({ 
+export const createLoginSucceed = (school_id: string, db: RootReducerState['db'], token: string): LoginSucceed => ({
 	type: LOGIN_SUCCEED,
 	school_id,
 	token,
@@ -304,8 +418,8 @@ export const loadDB = () => (dispatch: Function, getState: () => RootReducerStat
 		})
 
 		const state = res;
-		
-		if(syncr.ready && state.auth.school_id && state.auth.token) {
+
+		if (syncr.ready && state.auth.school_id && state.auth.token) {
 			syncr
 				.send({
 					type: "VERIFY",
@@ -317,6 +431,9 @@ export const loadDB = () => (dispatch: Function, getState: () => RootReducerStat
 					}
 				})
 				.then(res => {
+
+					syncr.verify()
+
 					return syncr.send({
 						type: SYNC,
 						client_type: client_type,
@@ -326,7 +443,7 @@ export const loadDB = () => (dispatch: Function, getState: () => RootReducerStat
 					})
 				})
 				.then(resp => {
-					dispatch(resp)
+					dispatch(multiAction(resp))
 				})
 				.catch(err => {
 					console.error(err)
@@ -335,4 +452,12 @@ export const loadDB = () => (dispatch: Function, getState: () => RootReducerStat
 		}
 
 	})
+}
+
+export const multiAction = (resp: { key: string, val: any }) => (dispatch: Function) => {
+	for (const action of Object.values(resp)) {
+		if (action) {
+			dispatch(action)
+		}
+	}
 }
