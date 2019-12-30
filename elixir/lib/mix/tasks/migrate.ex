@@ -52,6 +52,7 @@ defmodule Mix.Tasks.Migrate do
 		
 		Application.ensure_all_started(:sarkar)
 
+		IO.puts "querying..."
 		{:ok, res} = Postgrex.query(Sarkar.School.DB, "
 		SELECT 
 			school_id,
@@ -81,67 +82,72 @@ defmodule Mix.Tasks.Migrate do
 		#end)
 
 		# TODO: this is to be replaced by a loop over all schools
-		example_sid = "ittehadschool"
-		IO.inspect example_sid
+		IO.inspect Map.keys(schools)
 
-		example = Map.get(schools, "ittehadschool")
+		Map.keys(schools)
+		|> Enum.each(fn example_sid -> 
+			IO.inspect example_sid
 
-		# now lets query out all the payments associated with these fees...
+			example = Map.get(schools, example_sid)
 
-		# probably better to just go and load this school into memory.
+			# probably better to just go and load this school into memory.
+			start_school(example_sid)
 
-		start_school(example_sid)
+			db = Sarkar.School.get_db(example_sid)
 
-		db = Sarkar.School.get_db(example_sid)
+			results = Enum.reduce(example, 0, fn {path, value}, agg -> 
 
-		results = Enum.reduce(example, 0, fn {path, value}, agg -> 
+				[_, sid, _, fee_id, _] = path
 
-			[_, sid, _, fee_id, _] = path
+				payments = Dynamic.get(db, ["students", sid, "payments"])
 
-			payments = Dynamic.get(db, ["students", sid, "payments"])
-
-			relevant = Enum.filter(payments, fn {payment_id, payment} -> 
-				# we are looking at values that are all negative because of our earlier filtering.
-				# all of these values were supposed to be positive
-				# they got saved as negative because of an editing bug
-				# so scholarships which are supposed to be stored as negative amounts got double flipped into positive amounts
-				# here we identify relevant payments which are incorrectly positive. these should be set to their negative values
-				
-				Map.get(payment, "fee_id") == fee_id and Map.get(payment, "amount") == -value 
-			end)
-
-			IO.inspect relevant
-
-			fixed_writes = relevant
-				|> Enum.map(fn {payment_id, payment} -> 
-
-					fixed_path = ["db", "students", sid, "payments", payment_id, "amount"]
-					fixed_value = -value
-
-					%{
-						"type" => "MERGE",
-						"path" => fixed_path,
-						"value" => fixed_value
-					}
-
+				relevant = Enum.filter(payments, fn {payment_id, payment} -> 
+					# we are looking at values that are all negative because of our earlier filtering.
+					# all of these values were supposed to be positive
+					# they got saved as negative because of an editing bug
+					# so scholarships which are supposed to be stored as negative amounts got double flipped into positive amounts
+					# here we identify relevant payments which are incorrectly positive. these should be set to their negative values
+					
+					Map.get(payment, "fee_id") == fee_id and Map.get(payment, "amount") == -value 
 				end)
-			
-			fixed_writes = [%{
-				"type" => "MERGE",
-				"path" => ["db", "students", sid, "fees", fee_id, "amount"],
-				"value" => -value
-			} | fixed_writes]
 
-			# sync these changes and it will reverse all incorrect payments and set the fee correctly
+				IO.puts "RELEVANT PAYMENTS"
+				IO.inspect relevant
 
-			agg + Enum.count(relevant)
-			# now check how many of the relevant are equal to the NEGATIVE of the messed up write
+				fixed_writes = relevant
+					|> Enum.map(fn {payment_id, payment} -> 
 
+						fixed_path = ["db", "students", sid, "payments", payment_id, "amount"]
+
+						%{
+							"type" => "MERGE",
+							"path" => fixed_path,
+							"value" => value
+						}
+
+					end)
+				
+				fixed_writes = [%{
+					"type" => "MERGE",
+					"path" => ["db", "students", sid, "fees", fee_id, "amount"],
+					"value" => -value
+				} | fixed_writes]
+
+				IO.puts "FIXED:"
+				IO.inspect fixed_writes
+
+				# sync these changes and it will reverse all incorrect payments and set the fee correctly
+
+
+				prepared = Sarkar.School.prepare_changes(fixed_writes)
+				# Sarkar.School.sync_changes(example_sid, "backend", prepared, :os.system_time(:millisecond))
+
+				agg + Enum.count(relevant)
+				# now check how many of the relevant are equal to the NEGATIVE of the messed up write
+
+			end)
+		
 		end)
-
-		IO.inspect results
-
-
 	end
 
 	def run(["assign_max_students"]) do
