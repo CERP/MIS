@@ -129,6 +129,7 @@ class ClassSettings extends Component<propsType, S> {
 			modified_settings = {
 				...settings,
 				classes: {
+                    ...settings.classes,
 					defaultFee: {
 						[class_id]: {
                             ...this.state.fee,

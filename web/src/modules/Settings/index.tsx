@@ -111,7 +111,17 @@ const defaultSettings = {
 	devices: {},
 	exams: defaultExams,
 	classes: {
-		defaultFee: {}
+		defaultFee: {},
+		feeVoucher: {
+			dueDate: "",
+			feeFine: "",
+			notice: "",
+			bankInfo: {
+				name: "",
+				accountTitle: "",
+				accountNo: ""
+			}
+		}
 	} 
 }
 class Settings extends Component <propsType, S>{
