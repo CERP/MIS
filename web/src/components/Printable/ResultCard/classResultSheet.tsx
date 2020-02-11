@@ -60,7 +60,7 @@ export const ClassResultSheet = (props: PropsTypes) => {
 										props.relevant_exams
 											.sort((a, b) => a.date - b.date)
 											.map(exam => {
-												const aug_exam = student.merge_exams.find(x => x.id == exam.id)
+												const aug_exam = student.merge_exams.find(x => x.id === exam.id)
 												if (aug_exam === undefined) {
 													return <td key={exam.id} className="cell-center">-</td>
 												}
