@@ -136,6 +136,7 @@ class Login extends Component {
 							<option value="" disabled>Select a User</option>
 						{
 							Object.entries(this.props.users)
+								.filter(([, f]) => f.hasLogin !== false)
 								.sort(([, a], [, b]) => a.name.localeCompare(b.name))
 								.map(([uid, u]) => <option key={uid} value={u.name}>{u.name}</option>)
 						}
