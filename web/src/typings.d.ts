@@ -168,6 +168,7 @@ interface MISUser {
 	name: string
 	password: string
 	type: "admin" | "teacher"
+	hasLogin: boolean
 }
 
 interface MISClass {
@@ -349,7 +350,8 @@ interface MISTeacher {
 	Experience: string
 	HireDate: string
 	Admin: boolean
-
+	HasLogin: boolean
+	tags: { [tag: string]: boolean }
 	attendance: MISTeacherAttendance
 }
 
