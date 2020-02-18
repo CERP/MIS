@@ -151,8 +151,8 @@ interface MISSettings {
 		defaultFee: {
 			[class_id: string]: MISStudentFee
 		}
-		feeVoucher: {
-			dueDate: string
+		feeVoucher?: {
+			dueDays: string
 			feeFine: string
 			notice: string
 			bankInfo: {

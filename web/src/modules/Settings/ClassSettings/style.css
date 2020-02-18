@@ -8,7 +8,7 @@
 .note-message span {
     font-weight: bold;
 }
-.class-settings .default-fee {
+.class-settings .default-fee, .fee-voucher {
     width: inherit;
 }
 .class-settings .disabled {
