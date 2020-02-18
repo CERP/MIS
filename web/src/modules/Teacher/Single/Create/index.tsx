@@ -190,7 +190,7 @@ class CreateTeacher extends Component<propTypes, S> {
 		}, 1000);
 	}
 
-	UNSAVE_componentWillReceiveProps(newProps: propTypes) {
+	UNSAFE_componentWillReceiveProps(newProps: propTypes) {
 		// this means every time teacher upgrades, we will change the fields to whatever was just sent.
 		// this means it will be very annoying for someone to edit the user at the same time as someone else
 		// which is probably a good thing. 
@@ -319,10 +319,10 @@ class CreateTeacher extends Component<propTypes, S> {
 					</select>
 				</div>
 				<div className="row">
-					<label>Has Login</label>
+					<label>User status</label>
 					<select {...this.former.super_handle(["HasLogin"])} disabled={!admin}>
-						<option value="true">Yes</option>
-						<option value="false">No</option>
+						<option value="true">Has login access</option>
+						<option value="false">Does not have login access</option>
 					</select>
 				</div>
 				<div className="row">
