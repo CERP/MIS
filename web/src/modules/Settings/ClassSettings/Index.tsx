@@ -300,7 +300,7 @@ class ClassSettings extends Component<propsType, S> {
                         </div>
                         <div className="row">
                             <label>Late Fee Fine</label>
-                            <input type="number"{...this.former.super_handle(["fineFine"])}
+                            <input type="number"{...this.former.super_handle(["feeFine"])}
                                 placeholder="e.g. Rs. 10 per day" />
                         </div>
                         <div className="row">
