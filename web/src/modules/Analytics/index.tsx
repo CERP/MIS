@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Route, Link } from 'react-router-dom'
 import { connect } from 'react-redux'
+import { RouteComponentProps } from 'react-router-dom'
 
 import Layout from 'components/Layout'
 
@@ -11,7 +12,9 @@ import TeacherAttendanceAnalytics from './Teacher-Attendance'
 
 import './style.css'
 
-class Analytics extends Component {
+type P = RootReducerState & RouteComponentProps
+
+class Analytics extends Component<P> {
 
 	render() {
 
@@ -20,10 +23,10 @@ class Analytics extends Component {
 		return <Layout history={this.props.history}>
 			<div className="analytics">
 				<div className="row tabs">
-					<Link className={`button ${loc === "fees" ? "orange" : false}`} to="fees" replace={true}>Fees</Link>
-					<Link className={`button ${loc === "attendance" ? "blue" : false}`} to="attendance" replace={true}>Attendance</Link>
-					<Link className={`button ${loc === "teacher-attendance" ? "red" : false}`} to="teacher-attendance" replace={true}>Teacher Attendance</Link>
-					<Link className={`button ${loc === "expenses" ? "green" : false}`} to="expenses" replace={true}>Expenses</Link>
+					<Link className={`button ${loc === "fees" ? "orange" : ''}`} to="fees" replace={true}>Fees</Link>
+					<Link className={`button ${loc === "attendance" ? "blue" : ''}`} to="attendance" replace={true}>Attendance</Link>
+					<Link className={`button ${loc === "teacher-attendance" ? "red" : ''}`} to="teacher-attendance" replace={true}>Teacher Attendance</Link>
+					<Link className={`button ${loc === "expenses" ? "green" : ''}`} to="expenses" replace={true}>Expenses</Link>
 				</div>
 
 				<Route path="/analytics/fees" component={Fees} />
@@ -35,4 +38,4 @@ class Analytics extends Component {
 	}
 }
 
-export default connect(state => ({ db: state.db }))(Analytics);
+export default connect((state: RootReducerState) => ({ db: state.db }))(Analytics)
