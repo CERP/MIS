@@ -2,11 +2,11 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 import queryString from 'query-string'
-import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
 import { getFilteredPayments } from 'utils/getFilteredPayments'
 import { StudentLedgerPage } from './StudentLedgerPage'
 import Layout from "components/Layout"
 import moment from 'moment'
+import getSectionFromId from 'utils/getSectionFromId'
 
 interface P {
 	classes: RootDBState["classes"]
@@ -67,13 +67,6 @@ class printPreview extends Component<propTypes>{
 			.filter(s => s && s.Name && s.FamilyID && s.FamilyID === famId)
 	}
 
-	getStudentClass = (sections: AugmentedSection[]): string => {
-		const student = this.student()
-		const section = sections.find((x) => x.id === student.section_id)
-
-		return section ? section.namespaced_name : ""
-	}
-
 	getFamily = () => {
 		const student = this.student()
 		const family = {
@@ -93,12 +86,12 @@ class printPreview extends Component<propTypes>{
 		const { classes, settings } = this.props
 		const famId = this.familyID()
 
-		let student_class_name: string
+		let student_section: AugmentedSection
 		let family: AugmentedMISFamily
 
 		if (famId === undefined) {
-			const sections = getSectionsFromClasses(classes)
-			student_class_name = this.getStudentClass(sections)
+			const section_id = this.student().section_id
+			student_section = getSectionFromId(section_id, classes)
 		} else {
 			family = this.getFamily()
 		}
@@ -116,7 +109,7 @@ class printPreview extends Component<propTypes>{
 					payments={filteredPayments}
 					settings={settings}
 					student={this.student()}
-					class_name={student_class_name}
+					section={student_section}
 					voucherNo={voucherNo}
 					css_style={i === 0 ? "" : "print-only"}
 					logo={this.props.schoolLogo}

@@ -49,6 +49,15 @@
 }
 
 @media print {
+
+	.payment-history.section.print-page {
+		margin-top: 15mm;
+		width: 280px;
+		height: 600px;
+		border: 1px solid black;
+		border-radius: 0px;
+		font-family: Georgia, 'Times New Roman', Times, serif;
+	}
 	.student-fees .print-wrap>* {
 		display: block;
 		width: 100%;
@@ -62,44 +71,36 @@
 	.payment-history {
 		margin: 10px 5px;
 	}
-	.payment-history .divider {
-		margin: 10px
+	.payment-history .print-table table th {
+		font-size: 0.75rem;
 	}
-	.voucher.table.row * {
-		font-weight: normal;
-		line-height: 1.5rem;
-		font-size: 0.8rem;
+	.payment-history .print-table .th-description {
+		width: 70%;
+	}
+	.payment-history .print-table table {
+		margin-bottom: 0px;
+	}
+	.payment-history .print-table table tbody {
+		font-size: 0.75rem !important;
+	}
+	.payment-history .fee-notice, .bank-info {
 		width: 100%;
+		margin-top: 10px;
+		font-size: 0.75rem;
 	}
-	.voucher.table.row .date {
-		text-align: left;
-		max-width: 20%;
+	.payment-history .fee-notice {
+		height: 25mm;
 	}
-	.voucher.table.row .amount {
-		text-align: right;
-		max-width: 20%;
+	.payment-history fieldset {
+		border: 1px solid black;
+		border-radius: 0;
+		margin: 0;
 	}
-	.voucher.table.row .label {
-		text-align: center;
-		max-width: 60%;
-		word-wrap: normal;
-	}
-
-	.voucher-signature div {
+	.payment-history .voucher-signature div {
 		font-size: 0.6rem;
 		margin-top: 4px;
 		border-top: 1px solid;
 	}
-}
-
-.payment-history .print-table table th {
-	font-size: 0.75rem;
-}
-.payment-history .print-table table {
-	margin-bottom: 0px;
-}
-.payment-history .print-table table tbody {
-	font-size: 0.75rem;
 }
 
 .pending-amount{
@@ -109,4 +110,21 @@
 .advance-amount{
 	color: #5ECDB9;
 	font-weight: bold;
+}
+.payment-history fieldset {
+	border: 1px solid black;
+	margin: 0;
+}
+.payment-history .voucher-heading {
+	margin-top: 4px;
+	margin-bottom: 4px;
+	font-size: 1rem;
+}
+.payment-history .print-table table {
+	border-radius: 4px;
+	border: 1px solid black;
+	margin-bottom: 4px;
+}
+.payment-history .print-table table tbody {
+	font-size: 1rem;
 }
