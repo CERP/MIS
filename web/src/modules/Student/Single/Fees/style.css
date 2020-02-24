@@ -74,9 +74,6 @@
 	.payment-history .print-table table th {
 		font-size: 0.75rem;
 	}
-	.payment-history .print-table .th-description {
-		width: 50%;
-	}
 	.payment-history .print-table table {
 		margin-bottom: 0px;
 	}

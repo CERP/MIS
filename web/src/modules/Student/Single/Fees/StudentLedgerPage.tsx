@@ -21,11 +21,8 @@ export const StudentLedgerPage: React.SFC<StudentLedgerPageProp> = ({ payments, 
 
 	const siblingCount = family && family.ID ? family.children.length : 1 // 1 in case of single student fee voucher
 
-	const classID = section ? section.class_id : undefined
-	const monthlyFee = settings && settings.classes && settings.classes.defaultFee[classID] ? settings.classes.defaultFee[classID].amount : ""
-
-	const voucherSettings = settings && settings.classes && settings.classes.feeVoucher ? settings.classes.feeVoucher : undefined
 	const voucherFor = family && family.ID ? "Family" : "Student"
+	const voucherSettings = settings && settings.classes && settings.classes.feeVoucher ? settings.classes.feeVoucher : undefined
 
 	const dueDays = parseInt(voucherSettings.dueDays || "0")
 	const currMonthDays = parseInt(moment().format("DD"))
@@ -37,7 +34,7 @@ export const StudentLedgerPage: React.SFC<StudentLedgerPageProp> = ({ payments, 
 
 		<PrintHeaderSmall settings={settings} logo={logo} />
 
-		<div className="voucher-heading text-uppercase text-center bold">Fee Receipt - {moment().format("MMMM, YYYY")}</div>
+		<div className="voucher-heading text-uppercase text-center bold">Fee Receipt - {moment(`${month} ${year}`, "MMMM YYYY").format("MMMM DD, YYYY")}</div>
 		{
 			voucherFor === "Student" ?
 				<>
@@ -76,8 +73,8 @@ export const StudentLedgerPage: React.SFC<StudentLedgerPageProp> = ({ payments, 
 						<div>{family.Phone}</div>
 					</div>
 					<div className="row info">
-						<label>Siblings</label>
-						<div>{toTitleCase(getSiblingsNameString(family), ",")}</div>
+						<label>Total Siblings</label>
+						<div>{siblingCount}</div>
 					</div>
 					<div className="row info">
 						<label>Voucher No:</label>
@@ -92,30 +89,40 @@ export const StudentLedgerPage: React.SFC<StudentLedgerPageProp> = ({ payments, 
 			<table style={{ marginLeft: "auto" }}>
 				<thead>
 					<tr>
-						<th className="th-description">Description</th>
+						<th style={{ width: voucherFor === "Student" ? "70%" : "50%" }}>Description</th>
 						<th>Amount</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
-						<td>Tuition Fee</td>
-						<td>{family && family.ID ? getSiblingsFeeString(family, settings) : monthlyFee}</td>
+						<td>Total Monthly Fee</td>
+						<td>
+							{
+								Object.values(getMergedFees(family, student))
+									.reduce((agg, curr) => curr.type === "FEE" && curr.period === "MONTHLY" ? agg + parseFloat(curr.amount) : agg, 0)
+							}
+						</td>
+					</tr>
+					<tr>
+						<td>Total One-Time Fee</td>
+						<td>
+							{
+								Object.values(getMergedFees(family, student))
+									.reduce((agg, curr) => curr.type === "FEE" && curr.period === "SINGLE" ? agg + parseFloat(curr.amount) : agg, 0)
+							}
+						</td>
 					</tr>
 					<tr>
 						<td className={owed > 0 ? "pending-amount" : ""} >Balance/Arrears</td>
-						<td className="cell-center bold">{owed > 0 ? numberWithCommas(owed) : "-"}</td>
+						<td className="bold">{owed > 0 ? numberWithCommas(owed) : "-"}</td>
 					</tr>
 					<tr>
 						<td className={owed <= 0 ? "advance-amount" : ""}>Advance</td>
-						<td className="cell-center bold">{owed <= 0 ? numberWithCommas(Math.abs(owed)) : "-"}</td>
+						<td className="bold">{owed <= 0 ? numberWithCommas(Math.abs(owed)) : "-"}</td>
 					</tr>
 					<tr>
 						<td>Late Fee Fine</td>
 						<td>{feeFine > 0 ? feeFine : "-"}</td>
-					</tr>
-					<tr>
-						<td>Other</td>
-						<td></td>
 					</tr>
 					<tr className="bold">
 						<td>Total Payable</td>
@@ -137,9 +144,9 @@ export const StudentLedgerPage: React.SFC<StudentLedgerPageProp> = ({ payments, 
 					<div>{voucherSettings && voucherSettings.bankInfo ? voucherSettings.bankInfo.accountTitle : ""}</div>
 				</div>
 				<div className="row info">
-					<label>Account No.:</label>
-					<div>{voucherSettings && voucherSettings.bankInfo ? voucherSettings.bankInfo.accountNo : ""}</div>
 				</div>
+				<label>Account No:</label>
+				<div>{voucherSettings && voucherSettings.bankInfo ? voucherSettings.bankInfo.accountNo : ""}</div>
 			</fieldset>
 		</div>
 
@@ -155,11 +162,11 @@ export const StudentLedgerPage: React.SFC<StudentLedgerPageProp> = ({ payments, 
 			<div>{moment(`${month} ${year}`, "MMMM YYYY").add(voucherSettings.dueDays, "days").format("DD/MM/YYYY")}</div>
 		</div>
 		<div className="row info bold" style={{ marginTop: 0 }} >
-			<label>Issuance Date</label>
+			<label>Date of Issue</label>
 			<div>{moment().format("DD/MM/YYYY")}</div>
 		</div>
 
-		{ // don't show if student ledger rendered in historical fee module
+		{
 			voucherNo && <div className="print-only">
 				<div className="row voucher-signature" style={{ marginTop: 10 }}>
 					<div>Principal Signature</div>
@@ -170,31 +177,27 @@ export const StudentLedgerPage: React.SFC<StudentLedgerPageProp> = ({ payments, 
 	</div>
 }
 
-export const getSiblingsFeeString = (family: AugmentedMISFamily, settings: MISSettings) => {
+export const getMergedFees = (family: AugmentedMISFamily, single_student: MISStudent) => {
 
-	let fees = []
+	const siblings = family && family.children ? family.children : []
 
-	for (const student of family.children) {
+	if (siblings.length > 0) {
+		const agg_fees = siblings
+			.reduce((agg, curr) => ({
+				...agg,
+				...Object.entries(curr.fees)
+					.reduce((agg, [fid, f]) => {
+						return {
+							...agg,
+							[fid]: {
+								...f
+							}
+						}
+					}, {} as MISStudent['fees'])
+			}), {} as { [id: string]: MISStudentFee })
 
-		const classID = student.section ? student.section.class_id : undefined
-		const { amount } = settings
-			&& settings.classes
-			&& settings.classes.defaultFee
-			&& settings.classes.defaultFee[classID] ?
-			settings.classes.defaultFee[classID] : { amount: 0 }
-
-		fees.push(amount)
+		return agg_fees
 	}
 
-	return fees.toString()
-}
-export const getSiblingsNameString = (family: AugmentedMISFamily) => {
-
-	let names = []
-
-	for (const student of family.children) {
-		const name = student.Name.split(" ").splice(-1)
-		names.push(name)
-	}
-	return names.toString()
+	return single_student.fees
 }

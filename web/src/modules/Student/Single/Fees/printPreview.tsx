@@ -98,7 +98,7 @@ class printPreview extends Component<propTypes>{
 
 	render() {
 
-		const { classes, settings } = this.props
+		const { classes, settings, schoolLogo } = this.props
 		const famId = this.familyID()
 
 		let student_section: AugmentedSection
@@ -127,7 +127,7 @@ class printPreview extends Component<propTypes>{
 					section={student_section}
 					voucherNo={voucherNo}
 					css_style={i === 0 ? "" : "print-only"}
-					logo={this.props.schoolLogo}
+					logo={schoolLogo}
 					month={this.month()}
 					year={this.year()} />)
 			} else {
@@ -137,7 +137,7 @@ class printPreview extends Component<propTypes>{
 					family={family}
 					voucherNo={voucherNo}
 					css_style={i === 0 ? "" : "print-only"}
-					logo={this.props.schoolLogo}
+					logo={schoolLogo}
 					month={this.month()}
 					year={this.year()} />)
 			}
