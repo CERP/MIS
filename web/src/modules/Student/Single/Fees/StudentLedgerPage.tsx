@@ -4,7 +4,6 @@ import numberWithCommas from "utils/numberWithCommas"
 import moment from "moment"
 import toTitleCase from 'utils/toTitleCase'
 
-
 interface StudentLedgerPageProp {
 	payments: [string, MISStudentPayment][]
 	student?: MISStudent
@@ -20,18 +19,19 @@ interface StudentLedgerPageProp {
 
 export const StudentLedgerPage: React.SFC<StudentLedgerPageProp> = ({ payments, student, settings, section, voucherNo, css_style, family, logo, month, year }) => {
 
-	const class_id = section ? section.class_id : undefined
-	const monthly_fee = settings && settings.classes && settings.classes.defaultFee[class_id] ? settings.classes.defaultFee[class_id].amount : ""
+	const siblingCount = family && family.ID ? family.children.length : 1 // 1 in case of single student fee voucher
 
-	const owed = payments.reduce((agg, [, curr]) => agg - (curr.type === "SUBMITTED" || curr.type === "FORGIVEN" ? 1 : -1) * curr.amount, 0)
+	const classID = section ? section.class_id : undefined
+	const monthlyFee = settings && settings.classes && settings.classes.defaultFee[classID] ? settings.classes.defaultFee[classID].amount : ""
 
-	const voucher_options = settings && settings.classes && settings.classes.feeVoucher ? settings.classes.feeVoucher : undefined
+	const voucherSettings = settings && settings.classes && settings.classes.feeVoucher ? settings.classes.feeVoucher : undefined
 	const voucherFor = family && family.ID ? "Family" : "Student"
 
-	const due_days = parseInt(voucher_options.dueDays || "0")
-	const curr_month_days = parseInt(moment().format("DD"))
+	const dueDays = parseInt(voucherSettings.dueDays || "0")
+	const currMonthDays = parseInt(moment().format("DD"))
+	const feeFine = currMonthDays >= dueDays ? (currMonthDays - dueDays) * parseInt(voucherSettings.feeFine || "0") * siblingCount : 0
 
-	const fee_fine = curr_month_days >= due_days ? (curr_month_days - due_days) * parseInt(voucher_options.feeFine || "0") : 0
+	const owed = payments.reduce((agg, [, curr]) => agg - (curr.type === "SUBMITTED" || curr.type === "FORGIVEN" ? 1 : -1) * curr.amount, 0)
 
 	return <div className={`payment-history section print-page ${css_style}`}>
 
@@ -69,11 +69,15 @@ export const StudentLedgerPage: React.SFC<StudentLedgerPageProp> = ({ payments, 
 					</div>
 					<div className="row info">
 						<label>Father Name:</label>
+						<div>{family.ManName}</div>
 					</div>
-					<div>{family.ManName}</div>
 					<div className="row info">
 						<label>Phone</label>
 						<div>{family.Phone}</div>
+					</div>
+					<div className="row info">
+						<label>Siblings</label>
+						<div>{toTitleCase(getSiblingsNameString(family), ",")}</div>
 					</div>
 					<div className="row info">
 						<label>Voucher No:</label>
@@ -95,7 +99,7 @@ export const StudentLedgerPage: React.SFC<StudentLedgerPageProp> = ({ payments, 
 				<tbody>
 					<tr>
 						<td>Tuition Fee</td>
-						<td className="cell-center">{monthly_fee}</td>
+						<td>{family && family.ID ? getSiblingsFeeString(family, settings) : monthlyFee}</td>
 					</tr>
 					<tr>
 						<td className={owed > 0 ? "pending-amount" : ""} >Balance/Arrears</td>
@@ -107,15 +111,15 @@ export const StudentLedgerPage: React.SFC<StudentLedgerPageProp> = ({ payments, 
 					</tr>
 					<tr>
 						<td>Late Fee Fine</td>
-						<td className="cell-center">{fee_fine > 0 ? fee_fine : "-"}</td>
+						<td>{feeFine > 0 ? feeFine : "-"}</td>
 					</tr>
 					<tr>
 						<td>Other</td>
-						<td className="cell-center"></td>
+						<td></td>
 					</tr>
 					<tr className="bold">
 						<td>Total Payable</td>
-						<td className="cell-center">Rs. {owed + fee_fine}</td>
+						<td>Rs. {owed + feeFine}</td>
 					</tr>
 				</tbody>
 			</table>
@@ -126,15 +130,15 @@ export const StudentLedgerPage: React.SFC<StudentLedgerPageProp> = ({ payments, 
 				<legend>Bank Information</legend>
 				<div className="row info">
 					<label>Bank Name:</label>
-					<div>{voucher_options && voucher_options.bankInfo ? voucher_options.bankInfo.name : ""}</div>
+					<div>{voucherSettings && voucherSettings.bankInfo ? voucherSettings.bankInfo.name : ""}</div>
 				</div>
 				<div className="row info">
 					<label>Account Title:</label>
-					<div>{voucher_options && voucher_options.bankInfo ? voucher_options.bankInfo.accountTitle : ""}</div>
+					<div>{voucherSettings && voucherSettings.bankInfo ? voucherSettings.bankInfo.accountTitle : ""}</div>
 				</div>
 				<div className="row info">
 					<label>Account No.:</label>
-					<div>{voucher_options && voucher_options.bankInfo ? voucher_options.bankInfo.accountNo : ""}</div>
+					<div>{voucherSettings && voucherSettings.bankInfo ? voucherSettings.bankInfo.accountNo : ""}</div>
 				</div>
 			</fieldset>
 		</div>
@@ -142,13 +146,13 @@ export const StudentLedgerPage: React.SFC<StudentLedgerPageProp> = ({ payments, 
 		<div className="fee-notice">
 			<fieldset>
 				<legend>Fee Notice</legend>
-				<div>{voucher_options.notice}</div>
+				<div>{voucherSettings.notice}</div>
 			</fieldset>
 		</div>
 
 		<div className="row info bold" style={{ marginTop: 5 }}>
 			<label>Due Date</label>
-			<div>{moment(`${month} ${year}`, "MMMM YYYY").add(voucher_options.dueDays, "days").format("DD/MM/YYYY")}</div>
+			<div>{moment(`${month} ${year}`, "MMMM YYYY").add(voucherSettings.dueDays, "days").format("DD/MM/YYYY")}</div>
 		</div>
 		<div className="row info bold" style={{ marginTop: 0 }} >
 			<label>Issuance Date</label>
@@ -164,5 +168,33 @@ export const StudentLedgerPage: React.SFC<StudentLedgerPageProp> = ({ payments, 
 			</div>
 		}
 	</div>
+}
 
+export const getSiblingsFeeString = (family: AugmentedMISFamily, settings: MISSettings) => {
+
+	let fees = []
+
+	for (const student of family.children) {
+
+		const classID = student.section ? student.section.class_id : undefined
+		const { amount } = settings
+			&& settings.classes
+			&& settings.classes.defaultFee
+			&& settings.classes.defaultFee[classID] ?
+			settings.classes.defaultFee[classID] : { amount: 0 }
+
+		fees.push(amount)
+	}
+
+	return fees.toString()
+}
+export const getSiblingsNameString = (family: AugmentedMISFamily) => {
+
+	let names = []
+
+	for (const student of family.children) {
+		const name = student.Name.split(" ").splice(-1)
+		names.push(name)
+	}
+	return names.toString()
 }

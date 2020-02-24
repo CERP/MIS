@@ -52,7 +52,7 @@
 
 	.payment-history.section.print-page {
 		margin-top: 15mm;
-		width: 280px;
+		width: 285px;
 		height: 600px;
 		border: 1px solid black;
 		border-radius: 0px;
@@ -69,13 +69,13 @@
 		font-weight: bold;
 	}
 	.payment-history {
-		margin: 10px 5px;
+		margin: 10px 10px;
 	}
 	.payment-history .print-table table th {
 		font-size: 0.75rem;
 	}
 	.payment-history .print-table .th-description {
-		width: 70%;
+		width: 50%;
 	}
 	.payment-history .print-table table {
 		margin-bottom: 0px;

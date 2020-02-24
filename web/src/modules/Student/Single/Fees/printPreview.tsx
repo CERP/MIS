@@ -61,10 +61,24 @@ class printPreview extends Component<propTypes>{
 		return id === undefined ? this.siblings()[0] : this.props.students[id]
 	}
 
-	siblings = (): MISStudent[] => {
+	siblings = (): AugmentedSibling[] => {
+
+		const { students, classes } = this.props
+
 		const famId = this.familyID()
-		return Object.values(this.props.students)
+
+		return Object.values(students)
 			.filter(s => s && s.Name && s.FamilyID && s.FamilyID === famId)
+			.reduce((agg, curr) => {
+				const section_id = curr.section_id
+				return [
+					...agg,
+					{
+						...curr,
+						section: getSectionFromId(section_id, classes)
+					}
+				]
+			}, [])
 	}
 
 	getFamily = () => {
@@ -73,7 +87,8 @@ class printPreview extends Component<propTypes>{
 			ID: student.FamilyID,
 			ManName: student.ManName,
 			ManCNIC: student.ManCNIC,
-			Phone: student.Phone
+			Phone: student.Phone,
+			children: this.siblings()
 		} as AugmentedMISFamily
 
 		return family

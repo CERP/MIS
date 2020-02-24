@@ -249,7 +249,10 @@ interface MISFamilyInfo {
 	Phone: string
 	ManCNIC: string
 	Address: string
+	children?: AugmentedSibling[]
 }
+
+type AugmentedSibling = MISStudent & {section?: AugmentedSection}
 
 type AugmentedMISFamily = MISFamilyInfo & { ID: string }
 
