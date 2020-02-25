@@ -120,57 +120,66 @@ class ClassFeeMenu extends Component<propTypes, S> {
 			)]
 		}
 
+		let voucherContainer
 		const voucherPerPage = settings && settings.vouchersPerPage ? parseInt(settings.vouchersPerPage) : 3
-		let combineVouchers;
 
+		// the idea is here: if the user set fee voucher per page to 1,
+		// show 3 different students' vouchers per page
+		// take the relevant students, pass to chunkify (total_students/3)
+		// prepare a voucher chunk of 3 different students and return to map
+		// it will automatically handle the case, if there are no 3 student in some chunks
 		if (voucherPerPage === 1) {
 
-			const chunkified_students = chunkify(relevant_students, 3)
+			voucherContainer = chunkify(relevant_students, 3)
+				.map((items: MISStudent[], index: number) => {
 
-			combineVouchers = chunkified_students.map((items: MISStudent[], i: number) => {
-				let voucher_chunk = []
-				for (const student of items) {
-					voucher_chunk.push(<StudentLedgerPage key={student.id}
-						payments={getFilteredPayments(this.mergedPaymentsForStudent(student), "", "")}
-						settings={settings}
-						student={student}
-						section={getSectionFromId(student.section_id, classes)}
-						voucherNo={this.generateVoucherNumber()}
-						css_style={""}
-						logo={schoolLogo}
-						month={month}
-						year={year} />)
-				}
-				return <div key={i} className="voucher-row" style={{ marginBottom: "30mm" }}>{voucher_chunk}</div>
-			})
+					let vouchers = []
+
+					for (const student of items) {
+						vouchers.push(<StudentLedgerPage key={student.id}
+							payments={getFilteredPayments(this.mergedPaymentsForStudent(student), "", "")}
+							settings={settings}
+							student={student}
+							section={getSectionFromId(student.section_id, classes)}
+							voucherNo={this.generateVoucherNumber()}
+							css_style={""}
+							logo={schoolLogo}
+							month={month}
+							year={year} />)
+					}
+
+					return <div key={index} className="voucher-row" style={{ marginBottom: "30mm" }}>{vouchers}</div>
+				})
 		} else {
 
-			combineVouchers = relevant_students.map((student: MISStudent, i: number) => {
+			// this works like single student, if user set voucherPerPgae to 2 or 3
+			// vouchers of single student will be 2 or 3 per page
 
-				const voucher_chunk = []
-				const voucher_no = this.generateVoucherNumber()
+			voucherContainer = relevant_students
+				.map((student: MISStudent, index: number) => {
 
-				for (let i = 0; i < voucherPerPage; i++) {
-					voucher_chunk.push(<StudentLedgerPage key={student.id}
-						payments={getFilteredPayments(this.mergedPaymentsForStudent(student), "", "")}
-						settings={settings}
-						student={student}
-						section={getSectionFromId(student.section_id, classes)}
-						voucherNo={voucher_no}
-						css_style={i === 0 ? "" : "print-only"}
-						logo={schoolLogo}
-						month={month}
-						year={year} />)
-				}
+					let vouchers = []
+					const voucher_no = this.generateVoucherNumber()
 
-				return <div key={i} className="voucher-row" style={{ marginBottom: "30mm" }}>{voucher_chunk}</div>
-			})
+					for (let i = 0; i < voucherPerPage; i++) {
+						vouchers.push(<StudentLedgerPage key={student.id + i} // adding i to avoid key duplicaiton
+							payments={getFilteredPayments(this.mergedPaymentsForStudent(student), "", "")}
+							settings={settings}
+							student={student}
+							section={getSectionFromId(student.section_id, classes)}
+							voucherNo={voucher_no}
+							css_style={i === 0 ? "" : "print-only"}
+							logo={schoolLogo}
+							month={month}
+							year={year} />)
+					}
+
+					return <div key={index} className="voucher-row" style={{ marginBottom: "30mm" }}>{vouchers}</div>
+				})
 		}
 
 		return <div className="student-fees-ledger">
-
 			<div className="divider no-print">Print Fee Receipts</div>
-
 			<div className="row no-print" style={{ marginBottom: "10px" }}>
 				<label>Fee Month</label>
 				<select className="" {...this.Former.super_handle(["month"])}>
@@ -182,7 +191,6 @@ class ClassFeeMenu extends Component<propTypes, S> {
 					}
 				</select>
 			</div>
-
 			<div className="row no-print" style={{ marginBottom: "10px" }}>
 				<label>Select Year</label>
 				<select className="" {...this.Former.super_handle(["year"])}>
@@ -195,12 +203,7 @@ class ClassFeeMenu extends Component<propTypes, S> {
 				</select>
 			</div>
 			<div className="print button" style={{ marginBottom: "10px" }} onClick={() => window.print()}>Print</div>
-			<div>
-				{
-					combineVouchers
-				}
-			</div>
-
+			<div>{voucherContainer}</div>
 		</div>
 	}
 }

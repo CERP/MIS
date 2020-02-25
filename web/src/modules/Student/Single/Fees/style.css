@@ -84,6 +84,7 @@
 		width: 100%;
 		margin-top: 10px;
 		font-size: 0.75rem;
+		height: 23mm;
 	}
 	.payment-history .fee-notice {
 		height: 25mm;
@@ -124,4 +125,10 @@
 }
 .payment-history .print-table table tbody {
 	font-size: 1rem;
+}
+.payment-history.section.print-page .show {
+	display: block;
+}
+.payment-history.section.print-page .hide {
+	display: none;
 }
