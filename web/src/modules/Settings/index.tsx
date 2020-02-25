@@ -120,6 +120,12 @@ const defaultSettings = {
 				name: "",
 				accountTitle: "",
 				accountNo: ""
+			},
+			options: {
+				showDueDays: false,
+				showFine: false,
+				showNotice: false,
+				showBankInfo: false
 			}
 		}
 	}

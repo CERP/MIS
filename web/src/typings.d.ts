@@ -160,6 +160,12 @@ interface MISSettings {
 				accountTitle: string
 				accountNo: string
 			}
+			options?: {
+				showDueDays: boolean
+				showFine: boolean
+				showNotice: boolean
+				showBankInfo: boolean
+			}
 		}
 	}
 }
