@@ -113,7 +113,7 @@ const defaultSettings = {
 	classes: {
 		defaultFee: {},
 		feeVoucher: {
-			dueDate: "",
+			dueDays: "",
 			feeFine: "",
 			notice: "",
 			bankInfo: {
@@ -129,7 +129,7 @@ const defaultSettings = {
 			}
 		}
 	}
-}
+} as RootDBState["settings"]
 class Settings extends Component<propsType, S>{
 
 	former: Former
