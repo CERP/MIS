@@ -24,9 +24,9 @@ export const StudentLedgerPage: React.SFC<StudentLedgerPageProp> = ({ payments, 
 	const voucherFor = family && family.ID ? "Family" : "Student"
 	const voucherSettings = settings && settings.classes && settings.classes.feeVoucher ? settings.classes.feeVoucher : undefined
 
-	const dueDays = parseInt(voucherSettings.dueDays || "0")
+	const dueDays = parseInt(voucherSettings ? voucherSettings.dueDays : "0")
 	const currMonthDays = parseInt(moment().format("DD"))
-	const feeFine = currMonthDays >= dueDays ? (currMonthDays - dueDays) * parseInt(voucherSettings.feeFine || "0") * siblingCount : 0
+	const feeFine = currMonthDays >= dueDays ? (currMonthDays - dueDays) * parseInt(voucherSettings ? voucherSettings.feeFine : "0") * siblingCount : 0
 
 	const owed = payments.reduce((agg, [, curr]) => agg - (curr.type === "SUBMITTED" || curr.type === "FORGIVEN" ? 1 : -1) * curr.amount, 0)
 
@@ -153,13 +153,13 @@ export const StudentLedgerPage: React.SFC<StudentLedgerPageProp> = ({ payments, 
 		<div className="fee-notice">
 			<fieldset>
 				<legend>Fee Notice</legend>
-				<div>{voucherSettings.notice}</div>
+				<div>{voucherSettings ? voucherSettings.notice : ''}</div>
 			</fieldset>
 		</div>
 
 		<div className="row info bold" style={{ marginTop: 5 }}>
 			<label>Due Date</label>
-			<div>{moment(`${month} ${year}`, "MMMM YYYY").add(voucherSettings.dueDays, "days").format("DD/MM/YYYY")}</div>
+			<div>{moment(`${month} ${year}`, "MMMM YYYY").add(dueDays, "days").format("DD/MM/YYYY")}</div>
 		</div>
 		<div className="row info bold" style={{ marginTop: 0 }} >
 			<label>Date of Issue</label>
