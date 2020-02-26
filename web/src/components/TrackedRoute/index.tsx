@@ -9,11 +9,13 @@ type propsType = {
 	name: string
 	token: string
 	initialized: boolean
+	faculty_id: string
+	faculty: RootDBState['faculty']
 	location: { pathname: string }
 	trackRoute: (path: string) => any
 }
 
-const TrackedRoute = ({ component, school_id, name, token, initialized, location, trackRoute, ...rest }: propsType) => {
+const TrackedRoute = ({ component, school_id, name, faculty_id, token, initialized, location, trackRoute, faculty, ...rest }: propsType) => {
 
 	const Component = component
 	// react's hook
@@ -26,6 +28,14 @@ const TrackedRoute = ({ component, school_id, name, token, initialized, location
 	}
 
 	if (token && name) {
+
+		if (faculty[faculty_id] === undefined) {
+
+			// unset the faculty_id and the name
+			// redirect to the logi npage
+			return <Redirect to="/login" />
+		}
+
 		return <Route {...rest} render={(props) => {
 			trackRoute(window.location.pathname)
 			//@ts-ignore
@@ -43,7 +53,9 @@ const TrackedRoute = ({ component, school_id, name, token, initialized, location
 }
 
 export default connect((state: RootReducerState) => ({
-	...state.auth, initialized: state.initialized
+	...state.auth,
+	initialized: state.initialized,
+	faculty: state.db.faculty
 }), (dispatch: Function) => ({
 	trackRoute: (path: string) => dispatch(trackRoute(path))
 }))(TrackedRoute);
