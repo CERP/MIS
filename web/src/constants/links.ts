@@ -7,12 +7,12 @@ type Tutorial = {
 
 export const TutorialLinks: Tutorial = {
 	"DEFAULT": {
-		title: "What is MISchool",
-		link: "https://www.youtube.com/embed/QN6JzExvbw8?controls=0"
-	},
-	"SCHOOL-LOGIN": {
 		title: "Brief Introduction to MISchool",
 		link: "https://www.youtube.com/embed/SHnVsuqp6G8?controls=0"
+	},
+	"SCHOOL-LOGIN": {
+		title: "",
+		link: ""
 	},
 	"LOGIN": {
 		title: "",
@@ -96,8 +96,8 @@ export const getLinkForPath = (pathname: string) => {
 
 	const path = pathname.split("/")[1].toUpperCase()
 
-	const title = TutorialLinks[path] ? TutorialLinks[path].title : TutorialLinks["DEFAULT"].title
-	const link = TutorialLinks[path] ? TutorialLinks[path].link : TutorialLinks["DEFAULT"].link
+	const title = TutorialLinks[path] && TutorialLinks[path].title ? TutorialLinks[path].title : TutorialLinks["DEFAULT"].title
+	const link = TutorialLinks[path] && TutorialLinks[path].title ? TutorialLinks[path].link : TutorialLinks["DEFAULT"].link
 
 	return { title, link }
 }
