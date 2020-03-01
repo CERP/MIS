@@ -4,6 +4,7 @@ import { getSchoolList, resetSchoolPassword } from 'actions'
 import Former from 'former'
 
 interface P {
+	getSchoolList: () => void
 	schoolList: string[]
 	resetSchoolPassword: (school_id: string, password: string) => void
 }
@@ -30,6 +31,10 @@ class ResetPassword extends Component<P, S> {
 	onRestPassword = () => {
 		const { school_id, password } = this.state
 		this.props.resetSchoolPassword(school_id, password)
+	}
+
+	componentDidMount() {
+		this.props.getSchoolList()
 	}
 
 	render() {

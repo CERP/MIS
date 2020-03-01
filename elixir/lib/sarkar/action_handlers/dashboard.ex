@@ -557,24 +557,8 @@ defmodule Sarkar.ActionHandler.Dashboard do
 				"password" => new_password
 			}
 		},
-	%{id: id, client_id: client_id } = state
-	)do
-		case Sarkar.DB.Postgres.query(
-			Sarkar.School.DB,
-			"UPDATE auth SET password=$2 WHERE id=$1",
-			[school_id, hash(new_password,52)]
-		)do
-			{:ok, resp} ->
-				{:reply, succeed("Password has been reset successfully"), state}
-			{:error, err} ->
-				{:reply, fail("Unable to reset password, Please try again")}
-		end
-	end
-
-	defp hash(text, length) do
-		:crypto.hash(:sha512, text)
-		|> Base.url_encode64
-		|> binary_part(0, length)
+	%{id: id, client_id: client_id } = state)do
+		Sarkar.Auth.reset_school_password(school_id, new_password)
 	end
 
 	defp fail(message) do

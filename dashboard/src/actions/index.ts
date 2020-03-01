@@ -210,7 +210,7 @@ export const updateReferralInformation = (school_id: string, value: any) => (dis
 	})
 		.then((res) => {
 			window.alert(`Update Successful\n${res}`)
-			getReferralsInfo()
+			dispatch(getReferralsInfo())
 		})
 		.catch(() => {
 			window.alert(`Update Information Failed for school ${school_id}`)

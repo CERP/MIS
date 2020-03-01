@@ -166,6 +166,17 @@ defmodule Sarkar.Auth do
 		end
 	end
 
+	def reset_school_password(school_id, new_password) do
+		case Sarkar.DB.Postgres.query(
+			Sarkar.School.DB,
+			"UPDATE auth SET password=$2 WHERE id=$1",
+			[school_id, hash(new_password, 52)]) do
+			{:ok, _res} -> {:ok, "Password has been reset successfully"}
+			{:error, err} ->
+				{:ok, "Unable to reset password, Please try again"}
+		end
+	end
+
 	def hash(text, length) do
 		:crypto.hash(:sha512, text)
 		|> Base.url_encode64
