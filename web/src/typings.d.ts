@@ -399,3 +399,5 @@ interface ExamFilter {
 	subject?: string
 	exam_title: string
 }
+
+type MISGrades = RootDBState["settings"]["exams"]["grades"]
