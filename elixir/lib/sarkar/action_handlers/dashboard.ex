@@ -558,7 +558,7 @@ defmodule Sarkar.ActionHandler.Dashboard do
 			}
 		},
 	%{id: id, client_id: client_id } = state)do
-		Sarkar.Auth.reset_school_password(school_id, new_password)
+		Sarkar.Auth.updatePassword(school_id, new_password)
 	end
 
 	defp fail(message) do
