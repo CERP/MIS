@@ -18,7 +18,7 @@ type GraphData = {
 }
 
 type S = {
-
+	position_count: string
 } & ExamFilter
 
 class ClassTopStudentGraph extends Component<PropsType, S> {
@@ -29,23 +29,40 @@ class ClassTopStudentGraph extends Component<PropsType, S> {
 
 		this.state = {
 			year: "",
-			exam_title: ""
+			exam_title: "",
+			position_count: "5"
 		}
 
 		this.former = new Former(this, [])
 	}
 
-	getClassStudentsMarks = (students: MergeStudentsExams[], grades: MISGrades, max = 5) => {
+	getClassStudentsMarks = (students: MergeStudentsExams[], grades: MISGrades) => {
 
-		let students_chunk = getStudentExamMarksSheet(students, grades).splice(0, max)
+		const { position_count, exam_title } = this.state
+		const no_of_positions = parseInt(position_count)
+
+
+		let students_chunk;
+
+		if (no_of_positions < 0) {
+			students_chunk = getStudentExamMarksSheet(students, grades).splice(no_of_positions) // getting slice of bottom students
+		} else {
+			students_chunk = getStudentExamMarksSheet(students, grades).splice(0, no_of_positions) // from start of array
+		}
 
 		const graph_data = students_chunk.reduce((agg, curr) => {
 
 			let marks = { total: 0, obtained: 0 }
 
 			for (const exam of curr.merge_exams) {
-				marks.obtained += parseFloat(exam.stats.score.toString() || '0')
-				marks.total += parseFloat(exam.total_score.toString() || '0')
+
+				const exam_title_flag = exam_title ? exam.name === exam_title : true
+
+				if (exam_title_flag) {
+
+					marks.obtained += parseFloat(exam.stats.score.toString() || '0')
+					marks.total += parseFloat(exam.total_score.toString() || '0')
+				}
 			}
 			return [
 				...agg,
@@ -72,10 +89,21 @@ class ClassTopStudentGraph extends Component<PropsType, S> {
 				<div className="row">
 					<div className="" style={{ marginRight: "10px" }}>
 						<div className="row">
-							<select {...this.former.super_handle(["positionGraph"])}>
+							<select {...this.former.super_handle(["exam_title"])}>
+								<option value="">Exams</option>
+								{
+									ExamTitles
+										.map(title => <option key={title} value={title}>{title}</option>)
+								}
+							</select>
+						</div>
+						<div className="row">
+							<select {...this.former.super_handle(["position_count"])}>
 								<option value="">Show Positions of</option>
-								<option value="TOP_STUDENTS">Top 5 Students</option>
-								<option value="LOWEST_STUDENTS">Lowest 5 Students</option>
+								<option value="5">Top 5 Students</option>
+								<option value="10">Top 10 Students</option>
+								<option value="-5">Last 5 Students</option>
+								<option value="-10">Last 10 Students</option>
 							</select>
 						</div>
 					</div>

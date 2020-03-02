@@ -1,3 +1,13 @@
+.exams-analytics {
+
+}
+.exams-analytics .year-range {
+	display: flex;
+	justify-content: space-between;
+}
+.exams-analytics .year-range select {
+	width: 48%;
+}
 .grades-graph {
 	margin-top: 20px;
 	margin-left: auto;

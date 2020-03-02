@@ -18,7 +18,10 @@ type S = {
 	class_id: string
 	section_id: string
 	toggleFilter: boolean
-} & ExamFilter
+	exam_title: string
+	min_year: string
+	max_year: string
+}
 
 class ExamsAnalytics extends Component<P, S> {
 	former: Former
@@ -27,7 +30,8 @@ class ExamsAnalytics extends Component<P, S> {
 
 		this.state = {
 			exam_title: "",
-			year: "",
+			min_year: "",
+			max_year: "",
 			class_id: "",
 			section_id: "",
 			toggleFilter: false,
@@ -63,12 +67,36 @@ class ExamsAnalytics extends Component<P, S> {
 		return students_exams
 	}
 
+	isYearRange = (exam_year: number): boolean => {
+
+		const min_year = parseInt(this.state.min_year) || 0
+		const max_year = parseInt(this.state.max_year) || 0
+
+		// return is between
+		if (min_year && max_year) {
+			return exam_year >= min_year && exam_year <= max_year
+		}
+
+		// return if only min_year
+		if (min_year) {
+			return exam_year >= min_year
+		}
+
+		// return if only max_year
+		if (max_year) {
+			return exam_year <= max_year
+		}
+
+		// return true if min and max year not selected
+		return true
+	}
+
 	render() {
 
 
 		const { exams, classes, students, grades } = this.props
 
-		const { exam_title, year, class_id, toggleFilter } = this.state
+		const { exam_title, class_id, toggleFilter } = this.state
 
 		let years = new Set<string>()
 		let filtered_exams: MISExam[] = []
@@ -79,9 +107,12 @@ class ExamsAnalytics extends Component<P, S> {
 			years.add(moment(exam.date).format("YYYY"))
 
 			if ((exam_title ? exam.name === exam_title : true) &&
-				(year ? moment(exam.date).format("YYYY") === year : true) &&
 				(class_id ? class_id === exam.class_id : true)) {
-				filtered_exams.push(exam)
+
+				const exam_year = parseInt(moment(exam.date).format("YYYY"))
+				if (this.isYearRange(exam_year)) {
+					filtered_exams.push(exam)
+				}
 			}
 			// show all subjects of class in the list
 			if (exam.class_id === class_id) {
@@ -91,8 +122,8 @@ class ExamsAnalytics extends Component<P, S> {
 
 		const students_exams = this.getMergeStudentsExams(students, filtered_exams)
 
-		return <>
-			<div className="section" style={{ border: "none", marginBottom: "10px", width: "92%" }}>
+		return <div className="exams-analytics">
+			<div className="section" style={{ border: "none", marginBottom: "10px", width: "95%" }}>
 				<div className="row" >
 					<button className="button blue" onClick={this.onToggleFilter} style={{ marginLeft: "auto" }}>{toggleFilter ? "Hide Filters" : "Show Filters"}</button>
 				</div>
@@ -111,6 +142,27 @@ class ExamsAnalytics extends Component<P, S> {
 						</select>
 					</div>
 					<div className="row">
+						<label>Select Year Range</label>
+						<div>
+							<div className="year-range">
+								<select {...this.former.super_handle(["year"])}>
+									<option value="">Min Year</option>
+									{
+										[...years]
+											.map(year => <option key={year} value={year}>{year}</option>)
+									}
+								</select>
+								<select {...this.former.super_handle(["max_year"])}>
+									<option value="">Max Year</option>
+									{
+										[...years]
+											.map(year => <option key={year} value={year}>{year}</option>)
+									}
+								</select>
+							</div>
+						</div>
+					</div>
+					<div className="row">
 						<label>Exams Title</label>
 						<select {...this.former.super_handle(["exam_title"])}>
 							<option value="">Select Exams</option>
@@ -123,10 +175,14 @@ class ExamsAnalytics extends Component<P, S> {
 				</div>
 			}
 
-			{students_exams.length > 0 && <ClassGradesGraph relevant_students={students_exams} grades={grades} years={[...years]} />}
-			{students_exams.length > 0 && < ClassTopStudentGraph relevant_students={students_exams} grades={grades} years={[...years]} />}
-			{students_exams.length > 0 && <StudentProgressGraph relevant_students={students_exams} grades={grades} years={[...years]} />}
-		</>
+			{
+				students_exams.length > 0 && <>
+					<ClassGradesGraph relevant_students={students_exams} grades={grades} years={[...years]} />
+					<ClassTopStudentGraph relevant_students={students_exams} grades={grades} years={[...years]} />
+					<StudentProgressGraph relevant_students={students_exams} grades={grades} years={[...years]} />
+				</>
+			}
+		</div>
 	}
 }
 

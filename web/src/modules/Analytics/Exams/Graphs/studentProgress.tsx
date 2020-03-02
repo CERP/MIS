@@ -81,7 +81,7 @@ class StudentProgressGraph extends Component<PropsType, S> {
 
 	render() {
 
-		const { years, grades, relevant_students } = this.props
+		const { years, grades, relevant_students, subjects } = this.props
 
 		const graphData = this.getStudentExamsMarks(relevant_students, grades, years)
 
@@ -89,19 +89,19 @@ class StudentProgressGraph extends Component<PropsType, S> {
 			<div className="title divider">Student Progress in Exams</div>
 			<div className="section-container section">
 				<div className="row">
-					<div className="" style={{ marginRight: "10px" }}>
+					<div style={{ marginRight: "10px" }}>
 						<div className="row">
 							<select {...this.former.super_handle(["year"])}>
 								<option value="">Exams for Year</option>
 								{
-									Array.from(years)
+									years
 										.map(year => <option key={year} value={year}>{year}</option>)
 								}
 							</select>
 						</div>
 						<div className="row">
 							<select {...this.former.super_handle(["exam_title"])}>
-								<option value="">Exams</option>
+								<option value="">Select Exam</option>
 								{
 									ExamTitles
 										.map(title => <option key={title} value={title}>{title}</option>)
@@ -119,7 +119,7 @@ class StudentProgressGraph extends Component<PropsType, S> {
 						</div>
 					</div>
 					<div className="grades-graph">
-						<LineChart width={730} height={250} data={graphData}
+						<LineChart width={780} height={250} data={graphData}
 							margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
 							<CartesianGrid strokeDasharray="3 3" />
 							<XAxis dataKey="year" />
