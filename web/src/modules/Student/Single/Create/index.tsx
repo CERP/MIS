@@ -191,7 +191,7 @@ class SingleStudent extends Component<propTypes, S> {
 			const section_id = profile.section_id
 			const class_id = sections.find(section => section.id === section_id).class_id
 
-			if (settings.classes && settings.classes.defaultFee[class_id]) {
+			if (settings.classes && settings.classes.defaultFee && settings.classes.defaultFee[class_id]) {
 
 				this.setState({
 					profile: {
@@ -440,7 +440,7 @@ class SingleStudent extends Component<propTypes, S> {
 		})
 	}
 
-	componentWillReceiveProps(newProps: propTypes) {
+	UNSAFE_componentWillReceiveProps(newProps: propTypes) {
 		// this means every time students upgrades, we will change the fields to whatever was just sent.
 		// this means it will be very annoying for someone to edit the user at the same time as someone else
 		// which is probably a good thing. 
@@ -875,25 +875,6 @@ class SingleStudent extends Component<propTypes, S> {
 						disabled={!admin}
 					/>
 				</div> : false}
-
-				{!prospective ? false : <div className="row">
-					<label>Class Section</label>
-					<select
-						{...this.former.super_handle_flex(
-							["prospective_section_id"],
-							{ styles: (val: string) => val === "" ? { borderColor: "#fc6171" } : {} }
-						)}
-						disabled={!admin}>
-
-						<option value="">Please Select a Section</option>
-						{
-							getSectionsFromClasses(this.props.classes)
-								.sort((a, b) => a.classYear - b.classYear)
-								.map(c => <option key={c.id} value={c.id}>{c.namespaced_name}</option>)
-						}
-					</select>
-				</div>
-				}
 
 				{!prospective ? <div className="row">
 					<label>Admission Number</label>
