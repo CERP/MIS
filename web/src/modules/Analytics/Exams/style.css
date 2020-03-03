@@ -1,12 +1,39 @@
-.exams-analytics {
-
-}
-.exams-analytics .year-range {
+.exams-analytics .date-range {
 	display: flex;
 	justify-content: space-between;
 }
-.exams-analytics .year-range select {
+.exams-analytics .filter-button {
+	border: none;
+	margin-bottom: 10px;
+	width: 95%;
+}
+.exams-analytics .filter-container {
+	width: 100%;
+}
+.exams-analytics .filter-container.show {
+	display: block;
+}
+.exams-analytics .filter-container.hide {
+	display: none;
+}
+.exams-analytics .date-range input {
 	width: 48%;
+}
+.exams-analytics .section-container .section.graph-filters {
+	border: none;
+	width: 18%;
+}
+@media (max-width: 820px) {
+	.graph-container {
+		flex-wrap: wrap;
+	}
+	.exams-analytics .section-container .section.graph-filters {
+		width: 100%;
+	}
+}
+.exams-analytics .section-container .graph-filters select {
+	margin-right: auto;
+	width: 100%;
 }
 .grades-graph {
 	margin-top: 20px;

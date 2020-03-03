@@ -19,8 +19,8 @@ type S = {
 	section_id: string
 	toggleFilter: boolean
 	exam_title: string
-	min_year: string
-	max_year: string
+	min_date: number
+	max_date: number
 }
 
 class ExamsAnalytics extends Component<P, S> {
@@ -28,10 +28,13 @@ class ExamsAnalytics extends Component<P, S> {
 	constructor(props: P) {
 		super(props)
 
+		const min_date = moment().subtract(1, "year").unix() * 1000
+		const max_date = moment().unix() * 1000
+
 		this.state = {
 			exam_title: "",
-			min_year: "",
-			max_year: "",
+			min_date,
+			max_date,
 			class_id: "",
 			section_id: "",
 			toggleFilter: false,
@@ -67,28 +70,11 @@ class ExamsAnalytics extends Component<P, S> {
 		return students_exams
 	}
 
-	isYearRange = (exam_year: number): boolean => {
+	isBetweenDateRange = (exam_date: number): boolean => {
 
-		const min_year = parseInt(this.state.min_year) || 0
-		const max_year = parseInt(this.state.max_year) || 0
+		const { min_date, max_date } = this.state
 
-		// return is between
-		if (min_year && max_year) {
-			return exam_year >= min_year && exam_year <= max_year
-		}
-
-		// return if only min_year
-		if (min_year) {
-			return exam_year >= min_year
-		}
-
-		// return if only max_year
-		if (max_year) {
-			return exam_year <= max_year
-		}
-
-		// return true if min and max year not selected
-		return true
+		return moment(exam_date).isBetween(moment(min_date), moment(max_date), "day")
 	}
 
 	render() {
@@ -96,7 +82,7 @@ class ExamsAnalytics extends Component<P, S> {
 
 		const { exams, classes, students, grades } = this.props
 
-		const { exam_title, class_id, toggleFilter } = this.state
+		const { exam_title, class_id, min_date, max_date, toggleFilter } = this.state
 
 		let years = new Set<string>()
 		let filtered_exams: MISExam[] = []
@@ -109,13 +95,12 @@ class ExamsAnalytics extends Component<P, S> {
 			if ((exam_title ? exam.name === exam_title : true) &&
 				(class_id ? class_id === exam.class_id : true)) {
 
-				const exam_year = parseInt(moment(exam.date).format("YYYY"))
-				if (this.isYearRange(exam_year)) {
+				if (this.isBetweenDateRange(exam.date)) {
 					filtered_exams.push(exam)
 				}
 			}
 			// show all subjects of class in the list
-			if (exam.class_id === class_id) {
+			if (class_id ? exam.class_id === class_id : true) {
 				subjects.add(exam.subject)
 			}
 		}
@@ -123,13 +108,13 @@ class ExamsAnalytics extends Component<P, S> {
 		const students_exams = this.getMergeStudentsExams(students, filtered_exams)
 
 		return <div className="exams-analytics">
-			<div className="section" style={{ border: "none", marginBottom: "10px", width: "95%" }}>
-				<div className="row" >
-					<button className="button blue" onClick={this.onToggleFilter} style={{ marginLeft: "auto" }}>{toggleFilter ? "Hide Filters" : "Show Filters"}</button>
+			<div className="section filter-button no-print">
+				<div className="row">
+					<button className="button blue" onClick={this.onToggleFilter} style={{ marginLeft: "auto", width: "110px" }}>{toggleFilter ? "Hide Filters" : "Show Filters"}</button>
 				</div>
 			</div>
-			{
-				toggleFilter && <div className="section-container section form">
+			<div className={`filter-container ${toggleFilter ? 'show' : 'hide'}`}>
+				<div className="section-container section form no-print">
 					<div className="row">
 						<label>Exams for Class</label>
 						<select {...this.former.super_handle(["class_id"])}>
@@ -142,23 +127,11 @@ class ExamsAnalytics extends Component<P, S> {
 						</select>
 					</div>
 					<div className="row">
-						<label>Select Year Range</label>
+						<label>Exams Date Range</label>
 						<div>
-							<div className="year-range">
-								<select {...this.former.super_handle(["year"])}>
-									<option value="">Min Year</option>
-									{
-										[...years]
-											.map(year => <option key={year} value={year}>{year}</option>)
-									}
-								</select>
-								<select {...this.former.super_handle(["max_year"])}>
-									<option value="">Max Year</option>
-									{
-										[...years]
-											.map(year => <option key={year} value={year}>{year}</option>)
-									}
-								</select>
+							<div className="date-range">
+								<input type="date" {...this.former.super_handle(["min_date"])} value={moment(min_date).format("YYYY-MM-DD")} />
+								<input type="date" {...this.former.super_handle(["max_date"])} value={moment(max_date).format("YYYY-MM-DD")} />
 							</div>
 						</div>
 					</div>
@@ -173,13 +146,12 @@ class ExamsAnalytics extends Component<P, S> {
 						</select>
 					</div>
 				</div>
-			}
-
+			</div>
 			{
 				students_exams.length > 0 && <>
-					<ClassGradesGraph relevant_students={students_exams} grades={grades} years={[...years]} />
-					<ClassTopStudentGraph relevant_students={students_exams} grades={grades} years={[...years]} />
 					<StudentProgressGraph relevant_students={students_exams} grades={grades} years={[...years]} />
+					<ClassTopStudentGraph relevant_students={students_exams} grades={grades} subjects={[...subjects]} />
+					<ClassGradesGraph relevant_students={students_exams} grades={grades} subjects={[...subjects]} />
 				</>
 			}
 		</div>

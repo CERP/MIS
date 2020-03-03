@@ -7,8 +7,8 @@ import Former from 'utils/former'
 
 type PropsType = {
 	relevant_students: MergeStudentsExams[]
-	years: string[]
 	grades: MISGrades
+	subjects?: string[]
 }
 
 type GraphData = {
@@ -17,7 +17,7 @@ type GraphData = {
 }
 
 type S = {
-
+	subject: string
 } & ExamFilter
 
 class ClassGradesGraph extends Component<PropsType, S> {
@@ -27,6 +27,7 @@ class ClassGradesGraph extends Component<PropsType, S> {
 
 		this.state = {
 			year: "",
+			subject: "",
 			exam_title: ""
 		}
 
@@ -34,6 +35,8 @@ class ClassGradesGraph extends Component<PropsType, S> {
 	}
 
 	getClassGrades = (students: MergeStudentsExams[], grades: MISGrades): GraphData[] => {
+
+		const { exam_title, subject } = this.state
 
 		// creating grade record object
 		let gradesObject = Object.keys(grades)
@@ -50,8 +53,15 @@ class ClassGradesGraph extends Component<PropsType, S> {
 			let marks = { total: 0, obtained: 0 }
 
 			for (const exam of student.merge_exams) {
-				marks.obtained += parseFloat(exam.stats.score.toString() || '0')
-				marks.total += parseFloat(exam.total_score.toString() || '0')
+
+				const exam_title_flag = exam_title ? exam.name === exam_title : true
+				const subject_flag = subject ? exam.subject === subject : true
+
+				if (exam_title_flag && subject_flag) {
+
+					marks.obtained += parseFloat(exam.stats.score.toString() || '0')
+					marks.total += parseFloat(exam.total_score.toString() || '0')
+				}
 			}
 			const grade = calculateGrade(marks.obtained, marks.total, grades)
 			//@ts-ignore
@@ -81,36 +91,47 @@ class ClassGradesGraph extends Component<PropsType, S> {
 
 	render() {
 
-		const { years, relevant_students, grades } = this.props
+		const { relevant_students, grades, subjects } = this.props
 
 		const graphData = this.getClassGrades(relevant_students, grades)
 
 		return <>
-			<div className="title">School Grades</div>
-			<div className="section-container section">
-				<div className="row">
-					<div className="" style={{ marginRight: "10px" }}>
-						<div className="row">
-							<select {...this.former.super_handle(["year"])}>
-								<option value="">Grades for Year</option>
-								{
-									years
-										.map(year => <option key={year} value={year}>{year}</option>)
-								}
-							</select>
+			<div className="class-grades-graph no-print">
+				<div className="title">School Grades</div>
+				<div className="section-container section">
+					<div className="row graph-container">
+						<div className="section form graph-filters">
+							<div className="row">
+								<select {...this.former.super_handle(["exam_title"])}>
+									<option value="">Select Exam</option>
+									{
+										ExamTitles
+											.map(title => <option key={title} value={title}>{title}</option>)
+									}
+								</select>
+							</div>
+							<div className="row">
+								<select {...this.former.super_handle(["subject"])}>
+									<option value="">Select Subject</option>
+									{
+										subjects
+											.map(subject => <option key={subject} value={subject}>{subject}</option>)
+									}
+								</select>
+							</div>
 						</div>
-					</div>
-					<div className="grades-graph">
-						<BarChart
-							width={680}
-							height={300}
-							data={graphData}>
-							<Tooltip />
-							<Legend />
-							<XAxis dataKey="grade" />
-							<YAxis label={{ value: 'Total Grades', angle: -90, position: 'insideLeft', textAnchor: 'end' }} />
-							<Bar dataKey="total" name="Final Grades" fill="#8884d8" minPointSize={5} />
-						</BarChart>
+						<div className="grades-graph">
+							<BarChart
+								width={820}
+								height={300}
+								data={graphData}>
+								<Tooltip />
+								<Legend />
+								<XAxis dataKey="grade" />
+								<YAxis label={{ value: 'Total Grades', angle: -90, position: 'insideLeft', textAnchor: 'end' }} />
+								<Bar dataKey="total" name="Final Grades" fill="#8884d8" minPointSize={5} />
+							</BarChart>
+						</div>
 					</div>
 				</div>
 			</div>
