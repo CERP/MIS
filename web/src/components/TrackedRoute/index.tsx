@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Route, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { trackRoute } from '../../actions'
+import { trackRoute, createLogout } from '../../actions'
 
 type propsType = {
 	component: any
@@ -12,10 +12,11 @@ type propsType = {
 	faculty_id: string
 	faculty: RootDBState['faculty']
 	location: { pathname: string }
-	trackRoute: (path: string) => any
+	trackRoute: (path: string) => void
+	logout: () => void
 }
 
-const TrackedRoute = ({ component, school_id, name, faculty_id, token, initialized, location, trackRoute, faculty, ...rest }: propsType) => {
+const TrackedRoute = ({ component, school_id, name, faculty_id, token, initialized, location, trackRoute, faculty, logout, ...rest }: propsType) => {
 
 	const Component = component
 	// react's hook
@@ -32,7 +33,9 @@ const TrackedRoute = ({ component, school_id, name, faculty_id, token, initializ
 		if (faculty[faculty_id] === undefined) {
 
 			// unset the faculty_id and the name
-			// redirect to the logi npage
+			// hack: just call existing logout function
+			logout()
+			// redirect to the login npage
 			return <Redirect to="/login" />
 		}
 
@@ -57,5 +60,6 @@ export default connect((state: RootReducerState) => ({
 	initialized: state.initialized,
 	faculty: state.db.faculty
 }), (dispatch: Function) => ({
-	trackRoute: (path: string) => dispatch(trackRoute(path))
+	trackRoute: (path: string) => dispatch(trackRoute(path)),
+	logout: () => dispatch(createLogout())
 }))(TrackedRoute);
