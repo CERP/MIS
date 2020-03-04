@@ -901,3 +901,11 @@ export const removeSubjectFromDatesheet = (id: string, subj: string, section_id:
 	}]))
 
 }
+
+export const resetFees = (fees: any) => (dispatch: Function) => {
+	dispatch(createMerges(fees))
+}
+
+export const resetPayments = (payments: any) => (dispatch: Function) => {
+	dispatch(createMerges(payments))
+}

@@ -7,15 +7,17 @@ import Banner from 'components/Banner'
 import Layout from 'components/Layout'
 import former from "utils/former"
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
-import { addMultipleFees, addFee, deleteMultipleFees } from 'actions'
+import { addMultipleFees, addFee, deleteMultipleFees, resetFees, resetPayments } from 'actions'
 
 interface P {
 	students: RootDBState["students"]
 	classes: RootDBState["classes"]
 
-	addMultipleFees: (fees: FeeAddItem[]) => any
-	addFee: (fee: FeeSingleItem) => any
-	deleteMultipleFees: (students_fees: FeeDeleteMap) => any
+	addMultipleFees: (fees: FeeAddItem[]) => void
+	addFee: (fee: FeeSingleItem) => void
+	deleteMultipleFees: (students_fees: FeeDeleteMap) => void
+	resetFees: (fees: any) => void
+	resetPayments: (payments: any) => void
 }
 
 interface S {
@@ -218,6 +220,46 @@ class ManageFees extends Component<propTypes, S> {
 		}
 	}
 
+	resetStudentsFees = () => {
+
+		const students = Object.values(this.props.students)
+			.filter(student => student && student.Name)
+
+		const student_count = students.length
+
+		let fees = []
+		let payments = []
+
+		for (const student of students) {
+			fees.push({
+				path: ["db", "students", student.id, "fees"],
+				value: {}
+			})
+			payments.push({
+				path: ["db", "students", student.id, "payments"],
+				value: {}
+			})
+		}
+
+		const alert_message = `Warning this action cannot be undo! ${student_count} student will be effected. Are you sure you want to reset fees?`
+
+		if (window.confirm(alert_message)) {
+
+			this.props.resetFees(fees)
+			this.props.resetPayments(payments)
+
+			this.setState({
+				banner: {
+					active: true,
+					good: true,
+					text: "Fees has been reset!"
+				}
+			}, () => {
+				setTimeout(() => this.setState({ banner: { active: false } }), 3000)
+			})
+		}
+	}
+
 	render() {
 
 		const { classes } = this.props;
@@ -228,73 +270,74 @@ class ManageFees extends Component<propTypes, S> {
 			this.getSelectedSectionStudents();
 
 		return <Layout history={this.props.history}>
-			<div className="form sms-page">
+			<div className="section-container">
 
 				{this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
 
 				<div className="title">Fee Management</div>
-				<div className="form">
-					<div className="divider">Add Fees</div>
-					<div className="section">
-						<div className="row">
-							<label>Add To</label>
-							<select {...this.former.super_handle(["fee_filter"], () => true, () => this.filterCallback())}>
-								<option value="">Select Students</option>
-								<option value="to_all_students">All Students</option>
-								<option value="to_single_class">Single Class</option>
-								<option value="to_single_student">Single Student</option>
-							</select>
-						</div>
-
-						{this.state.fee_filter === "to_single_class" || this.state.fee_filter === "to_single_student" ?  //Section Wise
-							<div className="row">
-								<label>Select Class</label>
-								<select {...this.former.super_handle(["selected_section_id"])}>
-									<option value="" >Select Class</option>
-									{
-										sortedSections.map(s => <option key={s.id} value={s.id}>{s.namespaced_name}</option>)
-									}
-								</select>
-							</div> : false}
-						{this.state.fee_filter === "to_single_student" && this.state.selected_section_id !== "" ?
-							<div className="row">
-								<label>Select Student</label>
-								<select {...this.former.super_handle(["selected_student_id"])}>
-									<option value="">Select Student</option>
-									{
-										this.getSelectedSectionStudents().map(s => <option key={s.id} value={s.id}>{s.Name}</option>)
-									}
-								</select>
-							</div> : false}
+				<div className="row" style={{ justifyContent: "flex-end" }}>
+					<div className="button red" onClick={this.resetStudentsFees}>Reset Fees</div>
+				</div>
+				<div className="divider">Add Fees</div>
+				<div className="section form">
+					<div className="row">
+						<label>Add To</label>
+						<select {...this.former.super_handle(["fee_filter"], () => true, () => this.filterCallback())}>
+							<option value="">Select Students</option>
+							<option value="to_all_students">All Students</option>
+							<option value="to_single_class">Single Class</option>
+							<option value="to_single_student">Single Student</option>
+						</select>
 					</div>
 
-					<div className="section">
+					{this.state.fee_filter === "to_single_class" || this.state.fee_filter === "to_single_student" ?  //Section Wise
 						<div className="row">
-							<label>Fee Type</label>
-							<select {...this.former.super_handle(["fee", "type"])}>
-								<option value="">Select Fee Type</option>
-								<option value="FEE">Fee</option>
-								<option value="SCHOLARSHIP">Scholarship</option>
+							<label>Select Class</label>
+							<select {...this.former.super_handle(["selected_section_id"])}>
+								<option value="" >Select Class</option>
+								{
+									sortedSections.map(s => <option key={s.id} value={s.id}>{s.namespaced_name}</option>)
+								}
 							</select>
-						</div>
+						</div> : false}
+					{this.state.fee_filter === "to_single_student" && this.state.selected_section_id !== "" ?
 						<div className="row">
-							<label>Name</label>
-							<input type="text" {...this.former.super_handle(["fee", "name"])} placeholder="Enter Name" />
-						</div>
-						<div className="row">
-							<label>Amount</label>
-							<input type="number" {...this.former.super_handle(["fee", "amount"])} placeholder="Enter Amount" />
-						</div>
-						<div className="row">
-							<label>Fee Period</label>
-							<select {...this.former.super_handle(["fee", "period"])}>
-								<option value="">Select Period</option>
-								<option value="MONTHLY">Monthly</option>
-								<option value="SINGLE">One Time</option>
+							<label>Select Student</label>
+							<select {...this.former.super_handle(["selected_student_id"])}>
+								<option value="">Select Student</option>
+								{
+									this.getSelectedSectionStudents().map(s => <option key={s.id} value={s.id}>{s.Name}</option>)
+								}
 							</select>
-						</div>
-						<div className="button blue" onClick={this.save}> Add </div>
+						</div> : false}
+				</div>
+
+				<div className="section form">
+					<div className="row">
+						<label>Fee Type</label>
+						<select {...this.former.super_handle(["fee", "type"])}>
+							<option value="">Select Fee Type</option>
+							<option value="FEE">Fee</option>
+							<option value="SCHOLARSHIP">Scholarship</option>
+						</select>
 					</div>
+					<div className="row">
+						<label>Name</label>
+						<input type="text" {...this.former.super_handle(["fee", "name"])} placeholder="Enter Name" />
+					</div>
+					<div className="row">
+						<label>Amount</label>
+						<input type="number" {...this.former.super_handle(["fee", "amount"])} placeholder="Enter Amount" />
+					</div>
+					<div className="row">
+						<label>Fee Period</label>
+						<select {...this.former.super_handle(["fee", "period"])}>
+							<option value="">Select Period</option>
+							<option value="MONTHLY">Monthly</option>
+							<option value="SINGLE">One Time</option>
+						</select>
+					</div>
+					<div className="button blue" onClick={this.save}> Add </div>
 				</div>
 
 				<div className="divider">Recent Added Fees</div>
@@ -311,7 +354,9 @@ export default connect((state: RootReducerState) => ({
 }), (dispatch: Function) => ({
 	addMultipleFees: (fees: FeeAddItem[]) => dispatch(addMultipleFees(fees)),
 	addFee: (fee: FeeSingleItem) => dispatch(addFee(fee)),
-	deleteMultipleFees: (students_fees: FeeDeleteMap) => dispatch(deleteMultipleFees(students_fees))
+	deleteMultipleFees: (students_fees: FeeDeleteMap) => dispatch(deleteMultipleFees(students_fees)),
+	resetFees: (fees: any) => dispatch(resetFees(fees)),
+	resetPayments: (payments: any) => dispatch(resetPayments(payments)),
 }))(ManageFees);
 
 
@@ -347,7 +392,7 @@ class RemoveFeesComponent extends React.PureComponent<RemoveProps, RemoveState> 
 		this.calculate()
 	}
 
-	componentWillReceiveProps(nextProps: RemoveProps) {
+	UNSAFE_componentWillReceiveProps(nextProps: RemoveProps) {
 		setTimeout(this.calculate, 0)
 	}
 
