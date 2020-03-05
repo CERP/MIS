@@ -32,7 +32,7 @@ export const StudentLedgerPage: React.SFC<StudentLedgerPageProp> = ({ payments, 
 
 	const voucherSettings = settings && settings.classes && settings.classes.feeVoucher ? settings.classes.feeVoucher : undefined
 
-	const { showDueDays, showFine, showNotice, showBankInfo } = voucherSettings && voucherSettings.options || DefaultOptions
+	const { showDueDays, showFine, showNotice, showBankInfo } = (voucherSettings && voucherSettings.options) || DefaultOptions
 
 	// get the due days and curr month days till current date
 	const dueDays = parseInt(voucherSettings ? voucherSettings.dueDays : "0")
@@ -204,7 +204,7 @@ export const getMergedFees = (family: AugmentedMISFamily, single_student: MISStu
 
 	const siblings = family && family.children
 
-	if (!siblings || siblings.length == 0) {
+	if (!siblings || siblings.length === 0) {
 		return single_student.fees
 	}
 
