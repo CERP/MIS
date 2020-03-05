@@ -7,7 +7,7 @@ import Banner from 'components/Banner'
 import Layout from 'components/Layout'
 import former from "utils/former"
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
-import { addMultipleFees, addFee, deleteMultipleFees, resetFees, resetPayments } from 'actions'
+import { addMultipleFees, addFee, deleteMultipleFees, resetFees } from 'actions'
 
 interface P {
 	students: RootDBState["students"]
@@ -16,8 +16,7 @@ interface P {
 	addMultipleFees: (fees: FeeAddItem[]) => void
 	addFee: (fee: FeeSingleItem) => void
 	deleteMultipleFees: (students_fees: FeeDeleteMap) => void
-	resetFees: (fees: any) => void
-	resetPayments: (payments: any) => void
+	resetFees: (students: MISStudent[]) => void
 }
 
 interface S {
@@ -222,31 +221,33 @@ class ManageFees extends Component<propTypes, S> {
 
 	resetStudentsFees = () => {
 
-		const students = Object.values(this.props.students)
-			.filter(student => student && student.Name)
+		const { fee_filter, selected_section_id, selected_student_id } = this.state
+
+		let students = Object.values(this.props.students)
+			.filter(student => {
+
+				if (fee_filter === "to_all_students") {
+					return true
+				}
+
+				if (fee_filter === "to_single_class" && student.section_id && student.section_id === selected_section_id) {
+					return true
+				}
+
+				if (fee_filter === "to_single_student" && student.section_id && student.id === selected_student_id) {
+					return true
+				}
+
+			})
 
 		const student_count = students.length
 
-		let fees = []
-		let payments = []
-
-		for (const student of students) {
-			fees.push({
-				path: ["db", "students", student.id, "fees"],
-				value: {}
-			})
-			payments.push({
-				path: ["db", "students", student.id, "payments"],
-				value: {}
-			})
-		}
 
 		const alert_message = `Warning this action cannot be undo! ${student_count} student will be effected. Are you sure you want to reset fees?`
 
-		if (window.confirm(alert_message)) {
+		if (window.confirm(alert_message) && student_count > 0) {
 
-			this.props.resetFees(fees)
-			this.props.resetPayments(payments)
+			this.props.resetFees(students)
 
 			this.setState({
 				banner: {
@@ -270,7 +271,7 @@ class ManageFees extends Component<propTypes, S> {
 			this.getSelectedSectionStudents();
 
 		return <Layout history={this.props.history}>
-			<div className="section-container">
+			<div className="section-container" style={{ display: "block" }}>
 
 				{this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
 
@@ -355,8 +356,7 @@ export default connect((state: RootReducerState) => ({
 	addMultipleFees: (fees: FeeAddItem[]) => dispatch(addMultipleFees(fees)),
 	addFee: (fee: FeeSingleItem) => dispatch(addFee(fee)),
 	deleteMultipleFees: (students_fees: FeeDeleteMap) => dispatch(deleteMultipleFees(students_fees)),
-	resetFees: (fees: any) => dispatch(resetFees(fees)),
-	resetPayments: (payments: any) => dispatch(resetPayments(payments)),
+	resetFees: (students: MISStudent[]) => dispatch(resetFees(students)),
 }))(ManageFees);
 
 
