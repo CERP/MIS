@@ -46,8 +46,9 @@ class ExamsAnalytics extends Component<P, S> {
 		this.setState({ toggleFilter: !this.state.toggleFilter })
 	}
 
-	getMergeStudentsExams = (students: P["students"], exams: MISExam[]) => {
-		const students_exams = Object.values(students)
+	getMergeStudentsExams = (students: P["students"], exams: MISExam[]): MergeStudentsExams[] => {
+
+		return Object.values(students)
 			.filter(student => student && student.Name && student.exams)
 			.reduce<MergeStudentsExams[]>((agg, curr) => {
 
@@ -67,7 +68,6 @@ class ExamsAnalytics extends Component<P, S> {
 				return [...agg, { ...curr, merge_exams }]
 
 			}, [])
-		return students_exams
 	}
 
 	isBetweenDateRange = (exam_date: number): boolean => {
@@ -110,11 +110,11 @@ class ExamsAnalytics extends Component<P, S> {
 		return <div className="exams-analytics">
 			<div className="section filter-button no-print">
 				<div className="row">
-					<button className="button blue" onClick={this.onToggleFilter} style={{ marginLeft: "auto", width: "110px" }}>{toggleFilter ? "Hide Filters" : "Show Filters"}</button>
+					<button className="button blue" onClick={this.onToggleFilter}>{toggleFilter ? "Hide Filters" : "Show Filters"}</button>
 				</div>
 			</div>
-			<div className={`filter-container ${toggleFilter ? 'show' : 'hide'}`}>
-				<div className="section-container section form no-print">
+			{
+				toggleFilter && <div className="section-container section form no-print">
 					<div className="row">
 						<label>Exams for Class</label>
 						<select {...this.former.super_handle(["class_id"])}>
@@ -146,7 +146,7 @@ class ExamsAnalytics extends Component<P, S> {
 						</select>
 					</div>
 				</div>
-			</div>
+			}
 			{
 				students_exams.length > 0 && <>
 					<StudentProgressGraph relevant_students={students_exams} grades={grades} years={[...years]} />

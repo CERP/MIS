@@ -7,14 +7,12 @@
 	margin-bottom: 10px;
 	width: 95%;
 }
+.exams-analytics .filter-button .button {
+	margin-left: auto;
+	width: 110px;
+}
 .exams-analytics .filter-container {
 	width: 100%;
-}
-.exams-analytics .filter-container.show {
-	display: block;
-}
-.exams-analytics .filter-container.hide {
-	display: none;
 }
 .exams-analytics .date-range input {
 	width: 48%;

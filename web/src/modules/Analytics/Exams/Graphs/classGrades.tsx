@@ -65,11 +65,11 @@ class ClassGradesGraph extends Component<PropsType, S> {
 			}
 			const grade = calculateGrade(marks.obtained, marks.total, grades)
 			//@ts-ignore
-			gradesObject[grade] += 1;
+			gradesObject[grade] += 1
 
 		}
 
-		// creating data map for graph
+		// creating data array for graph
 		const graph_data = Object.entries(gradesObject)
 			.reduce((agg, curr) => {
 				return [

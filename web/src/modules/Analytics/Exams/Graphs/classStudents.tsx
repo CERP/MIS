@@ -37,7 +37,7 @@ class ClassTopStudentGraph extends Component<PropsType, S> {
 		this.former = new Former(this, [])
 	}
 
-	getClassStudentsMarks = (students: MergeStudentsExams[], grades: MISGrades) => {
+	getClassStudentsMarks = (students: MergeStudentsExams[], grades: MISGrades): GraphData[] => {
 
 		const { position_count, exam_title, subject } = this.state
 		const no_of_positions = parseInt(position_count)
@@ -67,7 +67,7 @@ class ClassTopStudentGraph extends Component<PropsType, S> {
 				{
 					name: curr.name,
 					marks_obtained: marks.obtained,
-					marks_total: marks.total
+					total_marks: marks.total
 				}
 			]
 		}, [])
@@ -126,7 +126,8 @@ class ClassTopStudentGraph extends Component<PropsType, S> {
 
 								<Tooltip />
 								<Legend />
-								<Bar dataKey="marks_obtained" barSize={50} name="Obtained Marks" fill="#8884d8" />
+								<Bar dataKey="total_marks" barSize={40} name="Total Marks" fill="red" />
+								<Bar dataKey="marks_obtained" barSize={40} name="Marks Obtained" fill="#8884d8" />
 							</BarChart>
 						</div>
 					</div>
