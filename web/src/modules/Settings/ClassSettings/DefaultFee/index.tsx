@@ -44,16 +44,13 @@ class DefaultFeeSettings extends Component<P, S> {
 		this.former = new Former(this, [])
 	}
 
-	setDefaultFee = () => {
-
-		const default_fee = {
+	setDefaultFee = (): MISStudentFee => {
+		return {
 			name: "",
 			type: "FEE",
 			amount: "",
 			period: "MONTHLY"
-		} as MISStudentFee
-
-		return default_fee
+		}
 	}
 
 	onSectionChange = () => {

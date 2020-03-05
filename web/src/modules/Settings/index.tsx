@@ -95,41 +95,43 @@ export const defaultExams = {
 	}
 }
 
-const defaultSettings = {
-	shareData: true,
-	schoolName: "",
-	schoolAddress: "",
-	schoolPhoneNumber: "",
-	schoolCode: "",
-	schoolSession: {
-		start_date: moment().startOf("year").unix() * 1000,
-		end_date: moment().add(1, "year").startOf("year").unix() * 1000
-	},
-	vouchersPerPage: "1",
-	sendSMSOption: "SIM", // API
-	permissions: defaultPermissions,
-	devices: {},
-	exams: defaultExams,
-	classes: {
-		defaultFee: {},
-		feeVoucher: {
-			dueDays: "",
-			feeFine: "",
-			notice: "",
-			bankInfo: {
-				name: "",
-				accountTitle: "",
-				accountNo: ""
-			},
-			options: {
-				showDueDays: false,
-				showFine: false,
-				showNotice: false,
-				showBankInfo: false
+function getDefaultSettings(): RootDBState["settings"] {
+	return {
+		shareData: true,
+		schoolName: "",
+		schoolAddress: "",
+		schoolPhoneNumber: "",
+		schoolCode: "",
+		schoolSession: {
+			start_date: moment().startOf("year").unix() * 1000,
+			end_date: moment().add(1, "year").startOf("year").unix() * 1000
+		},
+		vouchersPerPage: "1",
+		sendSMSOption: "SIM", // API
+		permissions: defaultPermissions,
+		devices: {},
+		exams: defaultExams,
+		classes: {
+			defaultFee: {},
+			feeVoucher: {
+				dueDays: "",
+				feeFine: "",
+				notice: "",
+				bankInfo: {
+					name: "",
+					accountTitle: "",
+					accountNo: ""
+				},
+				options: {
+					showDueDays: false,
+					showFine: false,
+					showNotice: false,
+					showBankInfo: false
+				}
 			}
 		}
 	}
-} as RootDBState["settings"]
+}
 class Settings extends Component<propsType, S>{
 
 	former: Former
@@ -138,6 +140,7 @@ class Settings extends Component<propsType, S>{
 
 		const aggGrades = this.reconstructGradesObject()
 
+		const defaultSettings = getDefaultSettings()
 		const settings = {
 			...(props.settings || defaultSettings),
 			schoolSession: props.settings ? (props.settings.schoolSession || defaultSettings.schoolSession) : defaultSettings.schoolSession,
@@ -468,10 +471,10 @@ class Settings extends Component<propsType, S>{
 		console.log(nextProps)
 
 		const settings = {
-			...(nextProps.settings || defaultSettings),
+			...(nextProps.settings || getDefaultSettings()),
 			permissions: {
 				...defaultPermissions,
-				...(nextProps.settings || defaultSettings).permissions
+				...(nextProps.settings || getDefaultSettings()).permissions
 			},
 			devices: (nextProps.settings ? (nextProps.settings.devices || {}) : {})
 		} as RootDBState["settings"]

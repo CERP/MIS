@@ -43,7 +43,7 @@ class VoucherSettings extends Component<P, S> {
 		this.former = new Former(this, [])
 	}
 
-	setFeeVoucherSetings = () => {
+	setFeeVoucherSetings = (): MISSettings["classes"]["feeVoucher"] => {
 		return {
 			dueDays: "",
 			feeFine: "",
@@ -59,7 +59,7 @@ class VoucherSettings extends Component<P, S> {
 				showNotice: false,
 				showBankInfo: false
 			}
-		} as MISSettings["classes"]["feeVoucher"]
+		}
 	}
 
 	onSaveFeeVoucher = (): void => {
