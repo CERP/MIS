@@ -238,6 +238,9 @@ class ManageFees extends Component<propTypes, S> {
 					return true
 				}
 
+				// in case of empty selection
+				return false
+
 			})
 
 		const student_count = students.length
