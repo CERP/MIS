@@ -8,16 +8,18 @@ import Former from 'utils/former'
 type PropsType = {
 	relevant_students: MergeStudentsExams[]
 	grades: MISGrades
+	classes?: RootDBState["classes"]
 	subjects?: string[]
 }
 
 type GraphData = {
 	grade: string
-	total: string
+	count: string
 }
 
 type S = {
 	subject: string
+	class_id: string
 } & ExamFilter
 
 class ClassGradesGraph extends Component<PropsType, S> {
@@ -28,7 +30,8 @@ class ClassGradesGraph extends Component<PropsType, S> {
 		this.state = {
 			year: "",
 			subject: "",
-			exam_title: ""
+			exam_title: "",
+			class_id: ""
 		}
 
 		this.former = new Former(this, [])
@@ -36,10 +39,10 @@ class ClassGradesGraph extends Component<PropsType, S> {
 
 	getClassGrades = (students: MergeStudentsExams[], grades: MISGrades): GraphData[] => {
 
-		const { exam_title, subject } = this.state
+		const { class_id, exam_title, subject } = this.state
 
 		// creating grade record object
-		let gradesObject = Object.keys(grades)
+		let grades_count = Object.keys(grades)
 			.reduce((agg, curr) => {
 				return {
 					...agg,
@@ -54,34 +57,36 @@ class ClassGradesGraph extends Component<PropsType, S> {
 
 			for (const exam of student.merge_exams) {
 
-				const exam_title_flag = exam_title ? exam.name === exam_title : true
-				const subject_flag = subject ? exam.subject === subject : true
+				const is_class = class_id ? exam.class_id === class_id : true
+				const is_exam = exam_title ? exam.name === exam_title : true
+				const is_subject = subject ? exam.subject === subject : true
 
-				if (exam_title_flag && subject_flag) {
+				if (is_class && is_exam && is_subject) {
 
 					marks.obtained += parseFloat(exam.stats.score.toString() || '0')
 					marks.total += parseFloat(exam.total_score.toString() || '0')
 				}
 			}
+
 			const grade = calculateGrade(marks.obtained, marks.total, grades)
 			//@ts-ignore
-			gradesObject[grade] += 1
+			grades_count[grade] += 1
 
 		}
 
 		// creating data array for graph
-		const graph_data = Object.entries(gradesObject)
+		const graph_data = Object.entries(grades_count)
 			.reduce((agg, curr) => {
 				return [
 					...agg,
 					{
 						grade: curr[0],
-						total: curr[1]
+						count: curr[1]
 					}
 				]
 			}, []).sort((a, b) => {
-				const aPercentage = grades && grades[a.grade] && grades[a.grade].percent ? grades[a.grade].percent : '0'
-				const bPercentage = grades && grades[b.grade] && grades[b.grade].percent ? grades[b.grade].percent : '0'
+				const aPercentage = (grades && grades[a.grade] && grades[a.grade].percent) || '0'
+				const bPercentage = (grades && grades[b.grade] && grades[b.grade].percent) || '0'
 				return parseInt(aPercentage) - parseInt(bPercentage)
 			})
 
@@ -91,7 +96,7 @@ class ClassGradesGraph extends Component<PropsType, S> {
 
 	render() {
 
-		const { relevant_students, grades, subjects } = this.props
+		const { relevant_students, grades, subjects, classes } = this.props
 
 		const graphData = this.getClassGrades(relevant_students, grades)
 
@@ -101,6 +106,16 @@ class ClassGradesGraph extends Component<PropsType, S> {
 				<div className="section-container section">
 					<div className="row graph-container">
 						<div className="section form graph-filters">
+							<div className="row">
+								<select {...this.former.super_handle(["class_id"])}>
+									<option value="">Select Class</option>
+									{
+										Object.values(classes)
+											.sort((a, b) => a.classYear - b.classYear)
+											.map(mis_class => <option key={mis_class.id} value={mis_class.id}>{mis_class.name}</option>)
+									}
+								</select>
+							</div>
 							<div className="row">
 								<select {...this.former.super_handle(["exam_title"])}>
 									<option value="">Select Exam</option>
@@ -128,12 +143,15 @@ class ClassGradesGraph extends Component<PropsType, S> {
 								<Tooltip />
 								<Legend />
 								<XAxis dataKey="grade" />
-								<YAxis label={{ value: 'Total Grades', angle: -90, position: 'insideLeft', textAnchor: 'end' }} />
-								<Bar dataKey="total" name="Final Grades" fill="#8884d8" minPointSize={5} />
+								<YAxis label={{ value: 'Grades Count', angle: -90, position: 'insideLeft', textAnchor: 'end' }} />
+								<Bar dataKey="count" name="Final Grades" fill="#8884d8" minPointSize={5} />
 							</BarChart>
 						</div>
 					</div>
 				</div>
+			</div>
+			<div className="section-container section">
+				<div className="title">School Grade List</div>
 			</div>
 		</>
 	}

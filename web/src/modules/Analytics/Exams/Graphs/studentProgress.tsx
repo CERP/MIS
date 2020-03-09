@@ -102,9 +102,9 @@ class StudentProgressGraph extends Component<PropsType, S> {
 							</div>
 							<div className="row">
 								<select {...this.former.super_handle(["student_type"])}>
-									<option value="">Select</option>
-									<option value="BEST_STUDENT">Class Best Student</option>
-									<option value="POOR_STUDENT">Class Poor Student</option>
+									<option value="">Select Class</option>
+									<option value="BEST_STUDENT">Best Student</option>
+									<option value="POOR_STUDENT">Poor Student</option>
 								</select>
 							</div>
 							<div className="row">

@@ -3,10 +3,7 @@ import { connect } from 'react-redux'
 import moment from 'moment'
 import Former from 'utils/former'
 import { ExamTitles } from 'constants/exam'
-
-import ClassGradesGraph from './Graphs/classGrades'
-import ClassTopStudentGraph from './Graphs/classStudents'
-import StudentProgressGraph from './Graphs/studentProgress'
+import StudentsPerformance from './Graphs/studentsPerformance'
 
 import './style.css'
 
@@ -17,6 +14,7 @@ type P = {
 type S = {
 	class_id: string
 	section_id: string
+	subject: string
 	toggleFilter: boolean
 	exam_title: string
 	min_date: number
@@ -36,6 +34,7 @@ class ExamsAnalytics extends Component<P, S> {
 			min_date,
 			max_date,
 			class_id: "",
+			subject: "",
 			section_id: "",
 			toggleFilter: false,
 		}
@@ -77,12 +76,22 @@ class ExamsAnalytics extends Component<P, S> {
 		return moment(exam_date).isBetween(moment(min_date), moment(max_date), "day")
 	}
 
-	render() {
+	checkFilterConditions = (exam: MISExam): boolean => {
 
+		const { class_id, exam_title, subject } = this.state
+
+		const is_class = class_id ? exam.class_id === class_id : true
+		const is_exam = exam_title ? exam.name === exam_title : true
+		const is_subject = subject ? exam.subject === subject : true
+
+		return is_class && is_exam && is_subject && this.isBetweenDateRange(exam.date)
+	}
+
+	render() {
 
 		const { exams, classes, students, grades } = this.props
 
-		const { exam_title, class_id, min_date, max_date, toggleFilter } = this.state
+		const { class_id, min_date, max_date, toggleFilter } = this.state
 
 		let years = new Set<string>()
 		let filtered_exams: MISExam[] = []
@@ -92,14 +101,11 @@ class ExamsAnalytics extends Component<P, S> {
 
 			years.add(moment(exam.date).format("YYYY"))
 
-			if ((exam_title ? exam.name === exam_title : true) &&
-				(class_id ? class_id === exam.class_id : true)) {
-
-				if (this.isBetweenDateRange(exam.date)) {
-					filtered_exams.push(exam)
-				}
+			if (this.checkFilterConditions(exam)) {
+				filtered_exams.push(exam)
 			}
-			// show all subjects of class in the list
+
+			// add class subject if class selected, else add all subjects for all classes
 			if (class_id ? exam.class_id === class_id : true) {
 				subjects.add(exam.subject)
 			}
@@ -108,50 +114,59 @@ class ExamsAnalytics extends Component<P, S> {
 		const students_exams = this.getMergeStudentsExams(students, filtered_exams)
 
 		return <div className="exams-analytics">
-			<div className="section filter-button no-print">
-				<div className="row">
-					<button className="button blue" onClick={this.onToggleFilter}>{toggleFilter ? "Hide Filters" : "Show Filters"}</button>
-				</div>
+			<div className="row filter-button no-print">
+				<button className="button green" onClick={this.onToggleFilter}>{toggleFilter ? "Hide Filters" : "Show Filters"}</button>
 			</div>
 			{
-				toggleFilter && <div className="section-container section form no-print">
-					<div className="row">
-						<label>Exams for Class</label>
-						<select {...this.former.super_handle(["class_id"])}>
-							<option value="">Select Class</option>
-							{
-								Object.values(classes)
-									.sort((a, b) => a.classYear - b.classYear)
-									.map(mis_class => <option key={mis_class.id} value={mis_class.id}>{mis_class.name}</option>)
-							}
-						</select>
-					</div>
-					<div className="row">
-						<label>Exams Date Range</label>
-						<div>
-							<div className="date-range">
-								<input type="date" {...this.former.super_handle(["min_date"])} value={moment(min_date).format("YYYY-MM-DD")} />
-								<input type="date" {...this.former.super_handle(["max_date"])} value={moment(max_date).format("YYYY-MM-DD")} />
+				toggleFilter && <div className="no-print">
+					<div className="section form">
+						<div className="row">
+							<label>Exams for Class</label>
+							<select {...this.former.super_handle(["class_id"])}>
+								<option value="">Select Class</option>
+								{
+									Object.values(classes)
+										.sort((a, b) => a.classYear - b.classYear)
+										.map(mis_class => <option key={mis_class.id} value={mis_class.id}>{mis_class.name}</option>)
+								}
+							</select>
+						</div>
+						<div className="row">
+							<label>Exam</label>
+							<select {...this.former.super_handle(["exam_title"])}>
+								<option value="">Select Exam</option>
+								{
+									ExamTitles
+										.map(title => <option key={title} value={title}>{title}</option>)
+								}
+							</select>
+						</div>
+						<div className="row">
+							<label>Subject</label>
+							<select {...this.former.super_handle(["subject"])}>
+								<option value="">Select Subject</option>
+								{
+									[...subjects]
+										.map(subject => <option key={subject} value={subject}>{subject}</option>)
+								}
+							</select>
+						</div>
+						<div className="row">
+							<label>Exams Date Range</label>
+							<div>
+								<div className="date-range">
+									<input type="date" {...this.former.super_handle(["min_date"])} value={moment(min_date).format("YYYY-MM-DD")} />
+									<input type="date" {...this.former.super_handle(["max_date"])} value={moment(max_date).format("YYYY-MM-DD")} />
+								</div>
 							</div>
 						</div>
 					</div>
-					<div className="row">
-						<label>Exams Title</label>
-						<select {...this.former.super_handle(["exam_title"])}>
-							<option value="">Select Exams</option>
-							{
-								ExamTitles
-									.map(title => <option key={title} value={title}>{title}</option>)
-							}
-						</select>
-					</div>
 				</div>
 			}
+
 			{
 				students_exams.length > 0 && <>
-					<StudentProgressGraph relevant_students={students_exams} grades={grades} years={[...years]} />
-					<ClassTopStudentGraph relevant_students={students_exams} grades={grades} subjects={[...subjects]} />
-					<ClassGradesGraph relevant_students={students_exams} grades={grades} subjects={[...subjects]} />
+					<StudentsPerformance relevant_students={students_exams} classes={classes} grades={grades} />
 				</>
 			}
 		</div>

@@ -3,13 +3,11 @@
 	justify-content: space-between;
 }
 .exams-analytics .filter-button {
-	border: none;
 	margin-bottom: 10px;
-	width: 95%;
 }
 .exams-analytics .filter-button .button {
 	margin-left: auto;
-	width: 110px;
+	width: 120px;
 }
 .exams-analytics .filter-container {
 	width: 100%;
