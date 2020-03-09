@@ -15,7 +15,6 @@ interface P {
 
 type S = {
 	selected_class_id: string
-	disabled: boolean
 	fee: MISStudentFee
 	banner: {
 		active: boolean
@@ -33,7 +32,6 @@ class DefaultFeeSettings extends Component<P, S> {
 		this.state = {
 			fee: this.setDefaultFee(),
 			selected_class_id: "",
-			disabled: true,
 			banner: {
 				active: false,
 				good: false,
@@ -68,27 +66,25 @@ class DefaultFeeSettings extends Component<P, S> {
 				fee: this.setDefaultFee()
 			})
 		}
-
-		// in case class not selected
-		this.checkFieldsFill()
 	}
 
-	checkFieldsFill = (): void => {
+	isDisabled = (): boolean => {
 
 		const amount = this.state.fee.amount.trim()
 		const name = this.state.fee.name.trim()
+		const class_id = this.state.selected_class_id
 
-		if (amount.length > 0 && name.length > 0 && this.state.selected_class_id !== "") {
-			this.setState({ disabled: false })
-		} else {
-			this.setState({ disabled: true })
-		}
+		return amount.length === 0 || this.isValidAmount(amount) || name.length === 0 || class_id === ""
+	}
+
+	isValidAmount = (amount: string): boolean => {
+		const parsed_amount = parseFloat(amount)
+		return isNaN(parsed_amount)
 	}
 
 	onSaveDefaultFee = (): void => {
 
-		// if any field has invalid value
-		if (this.state.disabled)
+		if (this.isDisabled())
 			return
 
 		const amount = parseFloat(this.state.fee.amount)
@@ -96,11 +92,6 @@ class DefaultFeeSettings extends Component<P, S> {
 		const class_id = this.state.selected_class_id
 
 		let modified_settings: MISSettings
-
-		if (isNaN(amount)) {
-			alert("Please enter valid amount")
-			return
-		}
 
 		if (settings && settings.classes) {
 			modified_settings = {
@@ -150,6 +141,8 @@ class DefaultFeeSettings extends Component<P, S> {
 	render() {
 		const { classes } = this.props
 
+		const disabled = this.isDisabled()
+
 		return <div className="class-settings">
 			{this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
 			<div className="divider">Default Fee</div>
@@ -176,11 +169,11 @@ class DefaultFeeSettings extends Component<P, S> {
 				</div>
 				<div className="row">
 					<label>Name</label>
-					<input type="text" {...this.former.super_handle(["fee", "name"], () => true, () => this.checkFieldsFill())} placeholder="Enter Name" />
+					<input type="text" {...this.former.super_handle(["fee", "name"])} placeholder="Enter Name" />
 				</div>
 				<div className="row">
 					<label>Amount</label>
-					<input type="number" {...this.former.super_handle(["fee", "amount"], () => true, () => this.checkFieldsFill())} placeholder="Enter Amount" />
+					<input type="number" {...this.former.super_handle(["fee", "amount"])} placeholder="Enter Amount" />
 				</div>
 				<div className="row">
 					<label>Fee Period</label>
@@ -189,7 +182,7 @@ class DefaultFeeSettings extends Component<P, S> {
 
 				<div className="note-message"><span>Note:</span> This is default class fee (MONTHLY) which will be added to every newly created student</div>
 
-				<div className={`button blue ${this.state.disabled ? 'disabled' : ''}`} onClick={this.onSaveDefaultFee}>Set Default Fee </div>
+				<div className={`button blue ${disabled ? 'disabled' : ''}`} onClick={this.onSaveDefaultFee}>Set Default Fee </div>
 			</div>
 		</div>
 	}

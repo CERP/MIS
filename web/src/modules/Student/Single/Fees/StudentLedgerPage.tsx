@@ -59,7 +59,7 @@ export const StudentLedgerPage: React.SFC<StudentLedgerPageProp> = ({ payments, 
 
 		<PrintHeaderSmall settings={settings} logo={logo} />
 
-		<div className="voucher-heading text-uppercase text-center bold">Fee Receipt - {month} 01, {year}</div>
+		<div className="voucher-heading text-uppercase text-center bold">Fee Receipt - {month} {year}</div>
 		{
 			voucherFor === "Student" ?
 				<>
