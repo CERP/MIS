@@ -254,7 +254,7 @@ interface MISFamilyInfo {
 	ManName: string
 	Phone: string
 	ManCNIC: string
-	Address: string
+	Address?: string
 	children?: AugmentedSibling[]
 }
 

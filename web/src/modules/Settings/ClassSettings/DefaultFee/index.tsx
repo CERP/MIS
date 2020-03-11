@@ -74,12 +74,7 @@ class DefaultFeeSettings extends Component<P, S> {
 		const name = this.state.fee.name.trim()
 		const class_id = this.state.selected_class_id
 
-		return amount.length === 0 || this.isValidAmount(amount) || name.length === 0 || class_id === ""
-	}
-
-	isValidAmount = (amount: string): boolean => {
-		const parsed_amount = parseFloat(amount)
-		return isNaN(parsed_amount)
+		return amount.length === 0 || isNaN(parseFloat(amount)) || name.length === 0 || class_id === ""
 	}
 
 	onSaveDefaultFee = (): void => {

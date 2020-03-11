@@ -81,7 +81,7 @@ class printPreview extends Component<propTypes>{
 			}, [])
 	}
 
-	getFamily = () => {
+	getFamily = (): AugmentedMISFamily => {
 		const student = this.student()
 		const family = {
 			ID: student.FamilyID,
@@ -89,7 +89,7 @@ class printPreview extends Component<propTypes>{
 			ManCNIC: student.ManCNIC,
 			Phone: student.Phone,
 			children: this.siblings()
-		} as AugmentedMISFamily
+		}
 
 		return family
 	}

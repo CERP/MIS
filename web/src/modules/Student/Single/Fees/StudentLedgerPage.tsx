@@ -111,37 +111,37 @@ export const StudentLedgerPage: React.SFC<StudentLedgerPageProp> = ({ payments, 
 		<div className="voucher-heading text-uppercase text-center bold">PAYMENT INFORMATION</div>
 
 		<div className="print-table">
-			<table style={{ marginLeft: "auto" }}>
+			<table style={{ width: "100%" }}>
 				<thead>
 					<tr>
 						<th style={{ width: voucherFor === "Student" ? "70%" : "50%" }}>Description</th>
-						<th>Amount</th>
+						<th className="text-center">Amount</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
 						<td>Total Monthly Fee</td>
-						<td>{totalMonthlyFees}</td>
+						<td className="text-center" >{totalMonthlyFees}</td>
 					</tr>
 					<tr>
 						<td>Total One-Time Fee</td>
-						<td>{totalOneTimeFees}</td>
+						<td className="text-center">{totalOneTimeFees}</td>
 					</tr>
 					<tr>
 						<td className={owed > 0 ? "pending-amount" : ""} >Balance/Arrears</td>
-						<td className="bold">{owed > 0 ? numberWithCommas(owed) : "-"}</td>
+						<td className="bold text-center">{owed > 0 ? numberWithCommas(owed) : "-"}</td>
 					</tr>
 					<tr>
 						<td className={owed <= 0 ? "advance-amount" : ""}>Advance</td>
-						<td className="bold">{owed <= 0 ? numberWithCommas(Math.abs(owed)) : "-"}</td>
+						<td className="bold text-center">{owed <= 0 ? numberWithCommas(Math.abs(owed)) : "-"}</td>
 					</tr>
 					<tr>
 						<td>Late Fee Fine</td>
-						<td>{totalFeeFine > 0 ? totalFeeFine : "-"}</td>
+						<td className="text-center">{totalFeeFine > 0 ? totalFeeFine : "-"}</td>
 					</tr>
 					<tr className="bold">
 						<td>Total Payable</td>
-						<td>Rs. {numberWithCommas(owed + totalFeeFine)}</td>
+						<td className="text-center">Rs. {numberWithCommas(owed + totalFeeFine)}</td>
 					</tr>
 				</tbody>
 			</table>
@@ -160,9 +160,9 @@ export const StudentLedgerPage: React.SFC<StudentLedgerPageProp> = ({ payments, 
 						<div>{voucherSettings && voucherSettings.bankInfo ? voucherSettings.bankInfo.accountTitle : ""}</div>
 					</div>
 					<div className="row info">
+						<label>Account No:</label>
+						<div>{voucherSettings && voucherSettings.bankInfo ? voucherSettings.bankInfo.accountNo : ""}</div>
 					</div>
-					<label>Account No:</label>
-					<div>{voucherSettings && voucherSettings.bankInfo ? voucherSettings.bankInfo.accountNo : ""}</div>
 				</fieldset>
 			}
 		</div>

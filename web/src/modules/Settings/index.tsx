@@ -155,16 +155,7 @@ class Settings extends Component<propsType, S>{
 					...aggGrades
 				}
 			},
-			classes: {
-				defaultFee: {
-					...(props.settings ? (props.settings.classes || defaultSettings.classes).defaultFee : defaultSettings.classes.defaultFee)
-				},
-				feeVoucher: {
-					...(props.settings ? (props.settings.classes && props.settings.classes.feeVoucher ?
-						props.settings.classes.feeVoucher : defaultSettings.classes.feeVoucher) :
-						defaultSettings.classes.feeVoucher)
-				}
-			}
+			classes: this.classFeeSettings()
 		} as RootDBState["settings"]
 
 		this.state = {
@@ -221,6 +212,24 @@ class Settings extends Component<propsType, S>{
 
 		// return default grades in case of settings don't have exams
 		return defaultExams.grades
+	}
+
+	classFeeSettings = (): RootDBState["settings"]["classes"] => {
+
+		const { settings } = this.props
+
+		const defaultSettings = getDefaultSettings()
+
+		return {
+			defaultFee: {
+				...(settings ? (settings.classes || defaultSettings.classes).defaultFee : defaultSettings.classes.defaultFee)
+			},
+			feeVoucher: {
+				...(settings ? (settings.classes && settings.classes.feeVoucher ?
+					settings.classes.feeVoucher : defaultSettings.classes.feeVoucher) :
+					defaultSettings.classes.feeVoucher)
+			}
+		}
 	}
 
 	changeTeacherPermissions = () => {
