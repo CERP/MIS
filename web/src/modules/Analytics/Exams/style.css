@@ -12,9 +12,6 @@
 .exams-analytics .filter-container {
 	width: 100%;
 }
-.exams-analytics .date-range input {
-	width: 48%;
-}
 .exams-analytics .section-container .section.graph-filters {
 	border: none;
 	width: 18%;

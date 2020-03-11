@@ -152,10 +152,11 @@ class ExamsAnalytics extends Component<P, S> {
 							</select>
 						</div>
 						<div className="row">
-							<label>Exams Date Range</label>
+							<label>Exams Date Range(Start Date - End Date)</label>
 							<div>
 								<div className="date-range">
 									<input type="date" {...this.former.super_handle(["min_date"])} value={moment(min_date).format("YYYY-MM-DD")} />
+									<span style={{ margin: 10 }}>-</span>
 									<input type="date" {...this.former.super_handle(["max_date"])} value={moment(max_date).format("YYYY-MM-DD")} />
 								</div>
 							</div>

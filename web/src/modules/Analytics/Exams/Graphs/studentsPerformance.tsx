@@ -26,14 +26,14 @@ class StudentsPerformance extends Component<PropsType> {
 
 		const percentage = (marks_obtained / total_marks) * 100
 
-		return Number.isInteger(percentage) ? percentage : parseFloat(percentage.toFixed(2))
+		return parseFloat(percentage.toFixed(2))
 	}
 
 	getStudentsExamsData = (students: MergeStudentsExams[], grades: MISGrades): GraphData[] => {
 
 		const marks_sheet = getStudentExamMarksSheet(students, grades)
 
-		const graph_data = marks_sheet.reduce((agg, curr) => {
+		const graph_data = marks_sheet.reduce<GraphData[]>((agg, curr) => {
 
 			let marks = { total: 0, obtained: 0 }
 
@@ -100,7 +100,7 @@ class StudentsPerformance extends Component<PropsType> {
 					</div>
 					{
 						descending_sorted_data
-							.map((student, i) => <div className="table row" key={i}>
+							.map(student => <div className="table row" key={student.id}>
 								<Link to={`/student/${student.id}/marks`}>{student.name}</Link>
 								<div>{student.marks_obtained}/{student.total_marks}</div>
 								<div>{student.percentage}%</div>
