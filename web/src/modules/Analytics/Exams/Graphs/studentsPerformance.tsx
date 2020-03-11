@@ -67,8 +67,7 @@ class StudentsPerformance extends Component<PropsType> {
 
 		const graph_data = this.getStudentsExamsData(relevant_students, grades)
 
-		const ascending_sorted_data = [...graph_data].sort((a, b) => a.percentage - b.percentage)
-		const descending_sorted_data = [...graph_data].sort((a, b) => b.percentage - a.percentage)
+		const sorted_data = [...graph_data].sort((a, b) => a.percentage - b.percentage)
 
 		return <>
 			<div className="school-grades-graph no-print">
@@ -76,7 +75,7 @@ class StudentsPerformance extends Component<PropsType> {
 				<div className="section">
 					<ResponsiveContainer width="100%" height={280}>
 						<BarChart
-							data={ascending_sorted_data}>
+							data={sorted_data}>
 
 							<XAxis dataKey="percentage" />
 							<YAxis />
@@ -99,21 +98,28 @@ class StudentsPerformance extends Component<PropsType> {
 						<label><b>Grade</b></label>
 					</div>
 					{
-						descending_sorted_data
-							.map(student => <div className="table row" key={student.id}>
-								<Link to={`/student/${student.id}/marks`}>{student.name}</Link>
-								<div>{student.marks_obtained}/{student.total_marks}</div>
-								<div>{student.percentage}%</div>
-								<div>{student.grade}</div>
-							</div>)
+						// to avoid sorting the data in descending order again,
+						// accessing items in reverse order from sorted data
+						sorted_data
+							.map((_, i: number) => {
+
+								const student = sorted_data[sorted_data.length - 1 - i]
+
+								return <div className="table row" key={student.id}>
+									<Link to={`/student/${student.id}/marks`}>{student.name}</Link>
+									<div>{student.marks_obtained}/{student.total_marks}</div>
+									<div>{student.percentage}%</div>
+									<div>{student.grade}</div>
+								</div>
+							})
 					}
 					<div className="print button" onClick={() => window.print()} style={{ marginTop: "10px" }}>Print</div>
 				</div>
 			</div>
 			{
-				chunkify(descending_sorted_data, CHUNK_SIZE)
-					.map((items: GraphData[], i: number) => <StudentsPerformanceList key={i}
-						items={items}
+				chunkify(sorted_data, CHUNK_SIZE, true)
+					.map((chunk_items: GraphData[], i: number) => <StudentsPerformanceList key={i}
+						items={chunk_items}
 						schoolName={""}
 						chunkSize={i === 0 ? 0 : CHUNK_SIZE * i}
 					/>)
