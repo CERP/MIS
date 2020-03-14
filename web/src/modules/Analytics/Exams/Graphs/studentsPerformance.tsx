@@ -146,17 +146,14 @@ class StudentsPerformance extends Component<PropsType, S> {
 
 	render() {
 
-		const { grades, relevant_students } = this.props
-
 		if (this.state.loading) {
 			return <ProgressBar percentage={this.state.loading_percentage} />
 		}
 
 		// extremely expensive
 		const graph_data = this.state.graph_data;
-		//const graph_data = this.getStudentsExamsData(relevant_students, grades)
 
-		const sorted_data = [...graph_data].sort((a, b) => a.percentage - b.percentage)
+		const sorted_data = [...graph_data].sort((a, b) => b.percentage - a.percentage)
 
 		return <>
 			<div className="school-grades-graph no-print">
@@ -184,9 +181,7 @@ class StudentsPerformance extends Component<PropsType, S> {
 						// to avoid sorting the data in descending order again,
 						// accessing items in reverse order from sorted data
 						sorted_data
-							.map((_, i: number) => {
-
-								const student = sorted_data[sorted_data.length - 1 - i]
+							.map((student) => {
 
 								return <div className="table row" key={student.id}>
 									<Link to={`/student/${student.id}/marks`}>{student.name}</Link>
@@ -200,7 +195,7 @@ class StudentsPerformance extends Component<PropsType, S> {
 				</div>
 			</div>
 			{
-				chunkify(sorted_data, CHUNK_SIZE, true)
+				chunkify(sorted_data, CHUNK_SIZE)
 					.map((chunk_items: GraphData[], i: number) => <StudentsPerformanceList key={i}
 						items={chunk_items}
 						schoolName={""}
