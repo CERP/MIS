@@ -404,11 +404,11 @@ interface StudentMarksSheet {
 	name: MISStudent["Name"]
 	manName: MISStudent["ManName"]
 	rollNo: MISStudent["RollNumber"]
-	marks: { total: number; obtained: number }
-	position: number
-	merge_exams: AugmentedMISExam[]
+	marks?: { total: number; obtained: number }
+	position?: number
+	merge_exams?: AugmentedMISExam[]
 	grade: string
-	remarks: string
+	remarks?: string
 }
 
 type MergeStudentsExams = MISStudent & { merge_exams: AugmentedMISExam[] }
@@ -418,3 +418,5 @@ interface ExamFilter {
 	subject?: string
 	exam_title: string
 }
+
+type MISGrades = RootDBState["settings"]["exams"]["grades"]

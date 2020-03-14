@@ -25,6 +25,7 @@ const getStudentExamMarksSheet = (students: MergeStudentsExams[], grades: MISSet
 					name: curr.Name,
 					manName: curr.ManName,
 					rollNo: curr.RollNumber ? curr.RollNumber : "",
+					section_id: curr.section_id,
 					marks,
 					position: 0,
 					merge_exams: curr.merge_exams,
