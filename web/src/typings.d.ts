@@ -258,7 +258,7 @@ interface MISFamilyInfo {
 	children?: AugmentedSibling[]
 }
 
-type AugmentedSibling = MISStudent & {section?: AugmentedSection}
+type AugmentedSibling = MISStudent & { section?: AugmentedSection }
 
 type AugmentedMISFamily = MISFamilyInfo & { ID: string }
 
@@ -404,6 +404,7 @@ interface StudentMarksSheet {
 	name: MISStudent["Name"]
 	manName: MISStudent["ManName"]
 	rollNo: MISStudent["RollNumber"]
+	section_id?: MISStudent['section_id']
 	marks?: { total: number; obtained: number }
 	position?: number
 	merge_exams?: AugmentedMISExam[]

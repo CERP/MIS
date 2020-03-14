@@ -33,3 +33,12 @@
 	margin-left: auto;
 	overflow-y: auto;
 }
+
+.custom-tooltip {
+	background-color: white;
+	width: 300px;
+	max-width: 90%;
+	padding: 25px;
+	border: 2px solid #74aced;
+	border-radius: 4px;
+}

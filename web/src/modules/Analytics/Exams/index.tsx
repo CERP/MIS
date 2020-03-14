@@ -167,7 +167,11 @@ class ExamsAnalytics extends Component<P, S> {
 
 			{
 				students_exams.length > 0 && <>
-					<StudentsPerformance relevant_students={students_exams} classes={classes} grades={grades} />
+					<StudentsPerformance
+						key={`${this.state.class_id}-${this.state.exam_title}-${this.state.subject}-${this.state.max_date}-${this.state.min_date}`}
+						relevant_students={students_exams}
+						classes={classes}
+						grades={grades} />
 				</>
 			}
 		</div>

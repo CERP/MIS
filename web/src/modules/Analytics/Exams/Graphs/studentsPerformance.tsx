@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
-import getStudentExamMarksSheet from 'utils/studentExamMarksSheet'
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Label } from 'recharts'
+import { getSingleStudentExamMarksSheet } from 'utils/studentExamMarksSheet'
 import { StudentsPerformanceList } from 'components/Printable/ResultCard/studentPerformance'
 import chunkify from 'utils/chunkify'
 import { Link } from 'react-router-dom'
 import calculateGrade from 'utils/calculateGrade'
+import { ProgressBar } from 'components/ProgressBar'
 
 type PropsType = {
 	relevant_students: MergeStudentsExams[]
@@ -18,9 +19,89 @@ type GraphData = {
 	percentage: number
 } & StudentMarksSheet
 
+interface S {
+	loading: boolean
+	graph_data: GraphData[]
+	loading_percentage: number
+}
+
 const CHUNK_SIZE = 22
 
-class StudentsPerformance extends Component<PropsType> {
+class StudentsPerformance extends Component<PropsType, S> {
+
+	background_calculation: NodeJS.Timeout
+
+	constructor(props: PropsType) {
+		super(props)
+
+		this.state = {
+			loading: true,
+			loading_percentage: 0,
+			graph_data: []
+		}
+
+	}
+
+	componentDidMount() {
+		this.calculate()
+	}
+
+	calculate = () => {
+
+		const { relevant_students, grades } = this.props
+
+		let i = 0;
+		clearTimeout(this.background_calculation)
+
+		let graph_data: GraphData[] = []
+
+		const reducify = () => {
+
+			// set the percentage bar every 10% change
+			const interval = Math.floor(relevant_students.length / 10)
+			if (i % interval === 0) {
+				this.setState({
+					loading_percentage: (i / relevant_students.length) * 100
+				})
+			}
+
+			if (i >= relevant_students.length) {
+				// we are done calculating
+				this.setState({
+					loading: false,
+					loading_percentage: 0,
+					graph_data
+				})
+			}
+
+			const student = relevant_students[i]
+			i += 1
+
+			if (!student || !student.Name) {
+				this.background_calculation = setTimeout(reducify, 0)
+				return;
+			}
+
+			// first, get their exam marks sheet.
+			const marks_sheet = getSingleStudentExamMarksSheet(student, grades)
+
+			graph_data.push({
+				id: student.id,
+				name: student.Name,
+				manName: student.ManName,
+				rollNo: student.RollNumber,
+				marks_obtained: marks_sheet.marks.obtained,
+				total_marks: marks_sheet.marks.total,
+				grade: calculateGrade(marks_sheet.marks.obtained, marks_sheet.marks.total, grades),
+				percentage: this.getPercentage(marks_sheet.marks.obtained, marks_sheet.marks.total)
+			})
+
+			this.background_calculation = setTimeout(reducify, 0)
+		}
+
+		this.background_calculation = setTimeout(reducify, 0)
+
+	}
 
 	getPercentage = (marks_obtained: number, total_marks: number): number => {
 
@@ -29,6 +110,7 @@ class StudentsPerformance extends Component<PropsType> {
 		return parseFloat(percentage.toFixed(2))
 	}
 
+	/*
 	getStudentsExamsData = (students: MergeStudentsExams[], grades: MISGrades): GraphData[] => {
 
 		const marks_sheet = getStudentExamMarksSheet(students, grades)
@@ -60,12 +142,19 @@ class StudentsPerformance extends Component<PropsType> {
 
 		return graph_data
 	}
+	*/
 
 	render() {
 
 		const { grades, relevant_students } = this.props
 
-		const graph_data = this.getStudentsExamsData(relevant_students, grades)
+		if (this.state.loading) {
+			return <ProgressBar percentage={this.state.loading_percentage} />
+		}
+
+		// extremely expensive
+		const graph_data = this.state.graph_data;
+		//const graph_data = this.getStudentsExamsData(relevant_students, grades)
 
 		const sorted_data = [...graph_data].sort((a, b) => a.percentage - b.percentage)
 
@@ -74,17 +163,11 @@ class StudentsPerformance extends Component<PropsType> {
 				<div className="title divider">Students Position Graph</div>
 				<div className="section">
 					<ResponsiveContainer width="100%" height={280}>
-						<BarChart
-							data={sorted_data}>
-
-							<XAxis dataKey="percentage" />
+						<BarChart data={graph_data} barSize={10}>
+							<XAxis dataKey="percentage" type="number" />
 							<YAxis />
-
-							<Tooltip itemSorter={() => 1} />
-
-							<Bar dataKey="name" barSize={0} fill="#93d0c5" />
-							<Bar dataKey="percentage" barSize={40} fill="#fc6171"></Bar>
-							<Bar dataKey="grade" barSize={0} fill="" />
+							<Tooltip content={BarLabel} />
+							<Bar dataKey="percentage" fill="#74aced" />
 
 						</BarChart>
 					</ResponsiveContainer>
@@ -125,6 +208,41 @@ class StudentsPerformance extends Component<PropsType> {
 					/>)
 			}
 		</>
+	}
+}
+
+interface BarLabelProps {
+	payload: { payload: GraphData }[]
+	active: boolean
+}
+
+const BarLabel: React.SFC<BarLabelProps> = ({ payload, active }) => {
+
+	if (active) {
+
+		const student = payload[0].payload
+
+		console.log(payload)
+
+		return <div className="custom-tooltip form">
+			<div className="row">
+				<label>Name:</label>
+				<div>{student.name}</div>
+			</div>
+			<div className="row">
+				<label>Father Name:</label>
+				<div>{student.manName}</div>
+			</div>
+			<div className="row">
+				<label>Percent:</label>
+				<div>{student.percentage}</div>
+
+			</div>
+			<div className="row">
+				<label>Grade</label>
+				<div>{student.grade}</div>
+			</div>
+		</div>
 	}
 }
 
