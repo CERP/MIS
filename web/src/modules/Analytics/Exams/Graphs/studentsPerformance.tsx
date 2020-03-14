@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Label } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { getSingleStudentExamMarksSheet } from 'utils/studentExamMarksSheet'
 import { StudentsPerformanceList } from 'components/Printable/ResultCard/studentPerformance'
 import chunkify from 'utils/chunkify'
@@ -40,6 +40,10 @@ class StudentsPerformance extends Component<PropsType, S> {
 			graph_data: []
 		}
 
+	}
+
+	componentWillUnmount() {
+		clearTimeout(this.background_calculation)
 	}
 
 	componentDidMount() {
