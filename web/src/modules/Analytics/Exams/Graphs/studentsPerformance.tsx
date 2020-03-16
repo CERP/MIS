@@ -6,6 +6,7 @@ import chunkify from 'utils/chunkify'
 import { Link } from 'react-router-dom'
 import calculateGrade from 'utils/calculateGrade'
 import { ProgressBar } from 'components/ProgressBar'
+import Former from 'utils/former'
 
 type PropsType = {
 	relevant_students: MergeStudentsExams[]
@@ -23,6 +24,7 @@ interface S {
 	loading: boolean
 	graph_data: GraphData[]
 	loading_percentage: number
+	student_name: string
 }
 
 const CHUNK_SIZE = 22
@@ -31,15 +33,18 @@ class StudentsPerformance extends Component<PropsType, S> {
 
 	background_calculation: NodeJS.Timeout
 
+	former: Former
 	constructor(props: PropsType) {
 		super(props)
 
 		this.state = {
 			loading: true,
 			loading_percentage: 0,
-			graph_data: []
+			graph_data: [],
+			student_name: ''
 		}
 
+		this.former = new Former(this, [])
 	}
 
 	componentWillUnmount() {
@@ -155,9 +160,13 @@ class StudentsPerformance extends Component<PropsType, S> {
 		}
 
 		// extremely expensive
-		const graph_data = this.state.graph_data;
+		const graph_data = this.state.graph_data
 
-		const sorted_data = [...graph_data].sort((a, b) => b.percentage - a.percentage)
+		const name = this.state.student_name
+
+		const sorted_data = [...graph_data]
+			.filter(s => name ? s.name.toLocaleLowerCase().includes(name.toLocaleLowerCase()) : true)
+			.sort((a, b) => b.percentage - a.percentage)
 
 		return <>
 			<div className="school-grades-graph no-print">
@@ -173,8 +182,17 @@ class StudentsPerformance extends Component<PropsType, S> {
 						</BarChart>
 					</ResponsiveContainer>
 				</div>
+
 				<div className="divider">Students Position List</div>
 				<div className="section">
+					<div className="row">
+						<input
+							className="search-bar"
+							type="text"
+							{...this.former.super_handle(["student_name"])}
+							placeholder="search"
+						/>
+					</div>
 					<div className="table row">
 						<label><b>Name</b></label>
 						<label><b>Marks</b></label>
@@ -220,8 +238,6 @@ const BarLabel: React.SFC<BarLabelProps> = ({ payload, active }) => {
 	if (active) {
 
 		const student = payload[0].payload
-
-		console.log(payload)
 
 		return <div className="custom-tooltip form">
 			<div className="row">
