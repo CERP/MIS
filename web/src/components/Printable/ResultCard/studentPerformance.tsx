@@ -5,6 +5,7 @@ import "./../print.css"
 
 type PropsTypes = {
 	chunkSize: number
+	students_class: MISClass
 	schoolName: string
 	items: GraphData[]
 }
@@ -22,7 +23,7 @@ export const StudentsPerformanceList = (props: PropsTypes) => {
 			<table>
 				<caption>
 					<div className="text-uppercase">{props.schoolName || ""}</div>
-					<div>Students Performance List</div>
+					<div>Students Performance List <b>{props.students_class ? props.students_class.name : ''}</b></div>
 				</caption>
 				<thead>
 					<tr>

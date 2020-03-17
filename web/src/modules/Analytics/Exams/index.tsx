@@ -29,11 +29,16 @@ class ExamsAnalytics extends Component<P, S> {
 		const min_date = moment().subtract(1, "year").unix() * 1000
 		const max_date = moment().unix() * 1000
 
+		const students_class = Object.values(this.props.classes || {})
+			.sort((a, b) => (a.classYear || 0) - (b.classYear || 0))[0]
+
+		const class_id = students_class ? students_class.id : ''
+
 		this.state = {
 			exam_title: "",
 			min_date,
 			max_date,
-			class_id: "",
+			class_id,
 			subject: "",
 			section_id: "",
 			toggleFilter: false,
@@ -92,6 +97,8 @@ class ExamsAnalytics extends Component<P, S> {
 		const { exams, classes, students, grades } = this.props
 
 		const { class_id, min_date, max_date, toggleFilter } = this.state
+
+		const students_class = classes && classes[class_id]
 
 		let years = new Set<string>()
 		let filtered_exams: MISExam[] = []
@@ -170,7 +177,7 @@ class ExamsAnalytics extends Component<P, S> {
 					<StudentsPerformance
 						key={`${this.state.class_id}-${this.state.exam_title}-${this.state.subject}-${this.state.max_date}-${this.state.min_date}`}
 						relevant_students={students_exams}
-						classes={classes}
+						students_class={students_class}
 						grades={grades} />
 				</>
 			}

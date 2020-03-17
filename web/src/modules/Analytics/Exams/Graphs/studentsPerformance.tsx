@@ -11,7 +11,7 @@ import Former from 'utils/former'
 type PropsType = {
 	relevant_students: MergeStudentsExams[]
 	grades: MISGrades
-	classes?: RootDBState["classes"]
+	students_class: MISClass
 }
 
 type GraphData = {
@@ -159,6 +159,8 @@ class StudentsPerformance extends Component<PropsType, S> {
 			return <ProgressBar percentage={this.state.loading_percentage} />
 		}
 
+		const { students_class } = this.props
+
 		// extremely expensive
 		const graph_data = this.state.graph_data
 
@@ -219,6 +221,7 @@ class StudentsPerformance extends Component<PropsType, S> {
 			{
 				chunkify(sorted_data, CHUNK_SIZE)
 					.map((chunk_items: GraphData[], i: number) => <StudentsPerformanceList key={i}
+						students_class={students_class}
 						items={chunk_items}
 						schoolName={""}
 						chunkSize={i === 0 ? 0 : CHUNK_SIZE * i}
