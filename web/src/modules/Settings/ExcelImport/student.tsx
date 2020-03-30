@@ -1,13 +1,18 @@
 import React, { ChangeEvent } from 'react'
 import { connect } from 'react-redux'
-import moment from 'moment';
-import { v4 } from 'node-uuid';
+import moment from 'moment'
+import { v4 } from 'node-uuid'
 
 import Former from 'utils/former'
-import getSectionsFromClasses from 'utils/getSectionsFromClasses';
+import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import downloadCSV from 'utils/downloadCSV'
-import { createStudentMerges } from 'actions';
+import { createStudentMerges } from 'actions'
 import Banner from 'components/Banner'
+import toTitleCase from 'utils/toTitleCase'
+
+import { DocumentDownloadIcon } from 'assets/icons'
+
+import './style.css'
 
 interface S {
 
@@ -19,6 +24,7 @@ interface S {
 		text?: string
 	}
 	selectedSection: string
+	fileName: string
 }
 
 type P = {
@@ -33,14 +39,14 @@ const studentCSVHeaders = [
 	"BForm",
 	"Gender (M/F)",
 	"Phone",
-	"Active",
+	"Active (Y/F)",
 	"FatherCNIC",
 	"FatherName",
 	"Birthdate (dd/mm/yyyy)",
 	"Address",
 	"Notes",
 	"StartDate (dd/mm/yyyy)",
-	"AdmissionNumber"
+	"AdmissionNumber (Unique)"
 ]
 
 class StudentExcelImport extends React.Component<P, S> {
@@ -57,7 +63,8 @@ class StudentExcelImport extends React.Component<P, S> {
 				good: false,
 				text: ""
 			},
-			selectedSection: ""
+			selectedSection: "",
+			fileName: "Choose File..."
 		}
 
 		this.former = new Former(this, [])
@@ -69,15 +76,21 @@ class StudentExcelImport extends React.Component<P, S> {
 	}
 
 	importStudentData = (e: ChangeEvent<HTMLInputElement>) => {
-		
+
 		const file = e.target.files[0]
-		if(file === undefined) {
-			return;
+
+		if (file === undefined) {
+			return
 		}
 
-		const reader = new FileReader();
+		this.setState({
+			fileName: file.name
+		})
+
+		const reader = new FileReader()
 
 		reader.onloadend = () => {
+
 			const text = reader.result as string
 
 			const importedStudents = convertCSVToStudents(text)
@@ -86,8 +99,9 @@ class StudentExcelImport extends React.Component<P, S> {
 
 				const matchingAdmission = s.AdmissionNumber && Object.values(this.props.students)
 					.find(existing => existing.AdmissionNumber && existing.AdmissionNumber === s.AdmissionNumber)
-				
-				if(matchingAdmission) {
+
+				if (matchingAdmission) {
+
 					setTimeout(() => {
 						this.setState({
 							banner: {
@@ -95,6 +109,7 @@ class StudentExcelImport extends React.Component<P, S> {
 							}
 						})
 					}, 5000)
+
 					this.setState({
 						banner: {
 							active: true,
@@ -103,14 +118,13 @@ class StudentExcelImport extends React.Component<P, S> {
 						}
 					})
 
-					return true;
+					return true
 				}
-				
-				/*
+
 				const matchingRollNumber = s.RollNumber && Object.values(this.props.students)
 					.find(existing => existing.RollNumber && existing.RollNumber === s.RollNumber)
 
-				if(matchingRollNumber) {
+				if (matchingRollNumber) {
 					setTimeout(() => {
 						this.setState({
 							banner: {
@@ -128,12 +142,12 @@ class StudentExcelImport extends React.Component<P, S> {
 
 					return true;
 				}
-				*/
+
 
 				return false;
 			})
 
-			if(!malformedData) {
+			if (!malformedData) {
 				this.setState({
 					loadingStudentImport: false,
 					importedStudents
@@ -158,7 +172,7 @@ class StudentExcelImport extends React.Component<P, S> {
 	}
 
 	onSave = () => {
-		
+
 		const classed_students = this.state.importedStudents
 			.map(s => ({
 				...s,
@@ -180,26 +194,34 @@ class StudentExcelImport extends React.Component<P, S> {
 		const banner = this.state.banner
 
 		return <React.Fragment>
-			{ banner.active && <Banner isGood={banner.good} text={banner.text} /> }
-			<div className="form" style={{width: "90%"}}>
+
+			{banner.active && <Banner isGood={banner.good} text={banner.text} />}
+			<div className="section-container excel-import-students" style={{ marginTop: 10 }}>
 				<div className="title">Excel Import</div>
-
-				<div className="row">
-					<label>Student Template CSV</label>
-					<div className="button grey" onClick={this.onStudentImportTemplateClick}>Download Template</div>
+				<div className="row" style={{ justifyContent: "flex-end" }}>
+					<div className="button grey" style={{ display: "flex" }} onClick={this.onStudentImportTemplateClick}>
+						<img width={20} height={20} src={DocumentDownloadIcon} alt="document-download" />
+						<div style={{ marginTop: 2 }}>Download Template</div>
+					</div>
 				</div>
-
-				<div className="row">
-					<label>Upload Student Data CSV</label>
-					<div className="fileContainer button green">
-						<div>Upload CSV</div>
-						<input type="file" accept=".csv" onChange={this.importStudentData}/>
+				<div className="section form" style={{ marginTop: 10 }}>
+					<div className="row">
+						<div style={{ width: "100%", margin: "auto", marginTop: 0 }}>
+							<label className="file" style={{ width: "100%" }}>
+								<input type="file" id="file" aria-label="file-browser" onChange={this.importStudentData} accept="text/csv" />
+								<span className="file-custom">{this.state.fileName}</span>
+							</label>
+						</div>
 					</div>
 				</div>
 
-				{ this.state.loadingStudentImport && <div>Loading student import sheet....</div> }
+			</div>
 
-				{ this.state.importedStudents.length > 0 && <div className="row">
+			<div className="form" style={{ width: "90%" }}>
+
+				{this.state.loadingStudentImport && <div>Loading student import sheet....</div>}
+
+				{this.state.importedStudents.length > 0 && <div className="row">
 					<label>Add All Students to Class</label>
 					<select {...this.former.super_handle(["selectedSection"])}>
 						<option value="">Select Class</option>
@@ -210,7 +232,7 @@ class StudentExcelImport extends React.Component<P, S> {
 					</select>
 				</div>}
 
-				{ this.state.importedStudents.length > 0 && <div className="section">
+				{this.state.importedStudents.length > 0 && <div className="section">
 					<div className="divider">Student Preview</div>
 
 					<div className="row">
@@ -218,7 +240,7 @@ class StudentExcelImport extends React.Component<P, S> {
 						<div>{this.state.importedStudents.length}</div>
 					</div>
 
-					<div style={{textAlign: "center", fontSize: "1.1rem"}}>Example Student</div>
+					<div style={{ textAlign: "center", fontSize: "1.1rem" }}>Example Student</div>
 
 					<div className="row">
 						<label>Name</label>
@@ -285,7 +307,7 @@ class StudentExcelImport extends React.Component<P, S> {
 						<div>{student.AdmissionNumber}</div>
 					</div>
 
-				</div> }
+				</div>}
 
 				<div className="row">
 					<div className="save button" onClick={this.onSave}>Save</div>
@@ -295,7 +317,7 @@ class StudentExcelImport extends React.Component<P, S> {
 	}
 }
 
-const convertCSVToStudents = (studentImportCSV: string ) => {
+const convertCSVToStudents = (studentImportCSV: string) => {
 
 	// naive csv parse, will break on commas.
 	const lines = studentImportCSV.split('\n')
@@ -308,16 +330,17 @@ const convertCSVToStudents = (studentImportCSV: string ) => {
 
 	// note that this is linked to the headers in the template above. see 
 	const students = lines.map(([Name, RollNumber, BForm, Gender, Phone, Active, ManCNIC, ManName, Birthdate, Address, Notes, StartDate, AdmissionNumber]) => {
+
 		const student: MISStudent = {
 			id: v4(),
-			Name,
+			Name: toTitleCase(Name),
 			RollNumber,
 			BForm,
-			Gender: Gender.toLowerCase() === "m" ? "male" : ( Gender.toLowerCase() === "f" ? "female" : ""),
+			Gender: Gender.toLowerCase() === "m" ? "male" : (Gender.toLowerCase() === "f" ? "female" : ""),
 			Phone,
 			Active: Active.toLowerCase() === "y" || Active.toLowerCase() === "yes" || Active.toLowerCase() === "true" || Active.toLowerCase() === "",
 			ManCNIC,
-			ManName,
+			ManName: toTitleCase(ManName),
 			Birthdate,
 			Address,
 			Notes,
@@ -329,14 +352,14 @@ const convertCSVToStudents = (studentImportCSV: string ) => {
 			BloodType: "",
 			prospective_section_id: "",
 
-			fees: { },
-			payments: { },
-			attendance: { },
-			exams: { },
-			tags: { },
-			certificates: { }
+			fees: {},
+			payments: {},
+			attendance: {},
+			exams: {},
+			tags: {},
+			certificates: {}
 		}
-	
+
 		return student;
 	})
 
@@ -345,7 +368,7 @@ const convertCSVToStudents = (studentImportCSV: string ) => {
 	console.log(students)
 
 	return students;
-	
+
 }
 
 export default connect((state: RootReducerState) => ({
