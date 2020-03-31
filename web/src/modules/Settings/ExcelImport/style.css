@@ -61,8 +61,13 @@
 .excel-import-students .table-wrapper td, th {
 	white-space: nowrap;
 	border: 1px solid #ddd;
-	padding: 5px;
+    padding: 5px;
+    text-align: center;
 	vertical-align: middle;
+}
+
+.excel-import-students .table-wrapper tbody td.text-left {
+    text-align: left;
 }
 
 .excel-import-students .table-wrapper th {
