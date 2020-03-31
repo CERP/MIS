@@ -7,6 +7,7 @@ import eyeClosed from './svgs/eye_closed.svg'
 import helpIcon from './svgs/help-icon.svg'
 import backButtonIcon from './svgs/back.svg'
 import downloadDocument from './svgs/document-download.svg'
+import trashOutlineIcon from './svgs/outline-trash.svg'
 
 export const EditIcon = deleteIcon
 export const DeleteIcon = editIcon
@@ -17,3 +18,4 @@ export const EyeClosedIcon = eyeClosed
 export const HelpIcon = helpIcon
 export const BackButtonIcon = backButtonIcon
 export const DocumentDownloadIcon = downloadDocument
+export const TrashOutlineIcon = trashOutlineIcon

@@ -10,7 +10,7 @@ import { createStudentMerges } from 'actions'
 import Banner from 'components/Banner'
 import toTitleCase from 'utils/toTitleCase'
 
-import { DocumentDownloadIcon } from 'assets/icons'
+import { DocumentDownloadIcon, TrashOutlineIcon } from 'assets/icons'
 
 import './style.css'
 
@@ -24,7 +24,7 @@ interface S {
 		text?: string
 	}
 	selectedSection: string
-	fileName: string
+	selectedFileName: string
 }
 
 type P = {
@@ -39,14 +39,29 @@ const studentCSVHeaders = [
 	"BForm",
 	"Gender (M/F)",
 	"Phone",
-	"Active (Y/F)",
+	"Active (Yes/No)",
 	"FatherCNIC",
 	"FatherName",
 	"Birthdate (dd/mm/yyyy)",
 	"Address",
 	"Notes",
 	"StartDate (dd/mm/yyyy)",
-	"AdmissionNumber (Unique)"
+	"AdmissionNumber"
+]
+
+const studentTableHeaders = [
+	"B-Form",
+	"Father Name",
+	"Father CNIC",
+	"Active",
+	"Gender",
+	"DOB",
+	"Admission Date",
+	"Admission No.",
+	"Roll No",
+	"Phone",
+	"Address",
+	"Notes"
 ]
 
 class StudentExcelImport extends React.Component<P, S> {
@@ -64,7 +79,7 @@ class StudentExcelImport extends React.Component<P, S> {
 				text: ""
 			},
 			selectedSection: "",
-			fileName: "Choose File..."
+			selectedFileName: "Choose File..."
 		}
 
 		this.former = new Former(this, [])
@@ -84,7 +99,7 @@ class StudentExcelImport extends React.Component<P, S> {
 		}
 
 		this.setState({
-			fileName: file.name
+			selectedFileName: file.name
 		})
 
 		const reader = new FileReader()
@@ -121,30 +136,29 @@ class StudentExcelImport extends React.Component<P, S> {
 					return true
 				}
 
-				const matchingRollNumber = s.RollNumber && Object.values(this.props.students)
-					.find(existing => existing.RollNumber && existing.RollNumber === s.RollNumber)
+				// const matchingRollNumber = s.RollNumber && Object.values(this.props.students)
+				// 	.find(existing => existing.RollNumber && existing.RollNumber === s.RollNumber)
 
-				if (matchingRollNumber) {
-					setTimeout(() => {
-						this.setState({
-							banner: {
-								active: false
-							}
-						})
-					}, 5000)
-					this.setState({
-						banner: {
-							active: true,
-							good: false,
-							text: `A student with Roll Number ${matchingRollNumber.RollNumber} already exists in the data.`
-						}
-					})
+				// if (matchingRollNumber) {
+				// 	setTimeout(() => {
+				// 		this.setState({
+				// 			banner: {
+				// 				active: false
+				// 			}
+				// 		})
+				// 	}, 5000)
+				// 	this.setState({
+				// 		banner: {
+				// 			active: true,
+				// 			good: false,
+				// 			text: `A student with Roll Number ${matchingRollNumber.RollNumber} already exists in the data.`
+				// 		}
+				// 	})
 
-					return true;
-				}
+				// 	return true;
+				// }
 
-
-				return false;
+				return false
 			})
 
 			if (!malformedData) {
@@ -173,28 +187,60 @@ class StudentExcelImport extends React.Component<P, S> {
 
 	onSave = () => {
 
-		const classed_students = this.state.importedStudents
+		const section_id = this.state.selectedSection
+		const students = this.state.importedStudents
+
+		if (section_id.length === 0) {
+			alert("Please select class first to save students!")
+			return
+		}
+
+		const classed_students = students
 			.map(s => ({
 				...s,
-				section_id: this.state.selectedSection
+				section_id
 			}))
 
-		this.props.saveStudents(classed_students)
+		if (window.confirm(`Are you sure you want to Save ${students.length} Students?`)) {
+
+			this.props.saveStudents(classed_students)
+
+			this.setState({
+				importedStudents: [],
+				selectedFileName: "Choose File...",
+				banner: {
+					active: true,
+					good: true,
+					text: "Students have been saved successfully"
+				}
+			})
+
+			setTimeout(() => { this.setState({ banner: { active: false } }) }, 2000)
+		}
+
+	}
+
+	removeStudent = (id: string): void => {
+
+		if (!window.confirm("Are you sure you want to remove?")) {
+			return
+		}
+
+		const filtered_students = this.state.importedStudents.filter(student => student.id !== id)
 
 		this.setState({
-			importedStudents: []
+			importedStudents: filtered_students
 		})
 
 	}
 
 	render() {
 
-		const student = this.state.importedStudents[0]
+		const students = this.state.importedStudents
 
 		const banner = this.state.banner
 
 		return <React.Fragment>
-
 			{banner.active && <Banner isGood={banner.good} text={banner.text} />}
 			<div className="section-container excel-import-students" style={{ marginTop: 10 }}>
 				<div className="title">Excel Import</div>
@@ -206,112 +252,82 @@ class StudentExcelImport extends React.Component<P, S> {
 				</div>
 				<div className="section form" style={{ marginTop: 10 }}>
 					<div className="row">
-						<div style={{ width: "100%", margin: "auto", marginTop: 0 }}>
-							<label className="file" style={{ width: "100%" }}>
-								<input type="file" id="file" aria-label="file-browser" onChange={this.importStudentData} accept="text/csv" />
-								<span className="file-custom">{this.state.fileName}</span>
+						<div className="file-upload-container">
+							<label className="file-upload">
+								<input type="file" aria-label="file-browser" onChange={this.importStudentData} accept=".csv" />
+								<span className="file-upload-custom">{this.state.selectedFileName}</span>
 							</label>
 						</div>
 					</div>
 				</div>
 
-			</div>
-
-			<div className="form" style={{ width: "90%" }}>
-
 				{this.state.loadingStudentImport && <div>Loading student import sheet....</div>}
 
-				{this.state.importedStudents.length > 0 && <div className="row">
-					<label>Add All Students to Class</label>
-					<select {...this.former.super_handle(["selectedSection"])}>
-						<option value="">Select Class</option>
-						{
-							getSectionsFromClasses(this.props.classes)
-								.map(s => <option key={s.id} value={s.id}>{s.namespaced_name}</option>)
-						}
-					</select>
-				</div>}
+				{
+					!this.state.loadingStudentImport && students.length > 0 && <>
+						<div className="divider">Preview Students List</div>
+						<div className="section">
+							<div className="form">
+								<div className="row">
+									<label>Add All Students to Class</label>
+									<select {...this.former.super_handle(["selectedSection"])}>
+										<option value="">Select Class</option>
+										{
+											getSectionsFromClasses(this.props.classes)
+												.sort((a, b) => (a.classYear || 0) - (b.classYear || 0))
+												.map(s => <option key={s.id} value={s.id}>{s.namespaced_name}</option>)
+										}
+									</select>
+								</div>
 
-				{this.state.importedStudents.length > 0 && <div className="section">
-					<div className="divider">Student Preview</div>
+								<div className="row">
+									<label>Total Students: {students.length}</label>
+									<div />
+								</div>
 
-					<div className="row">
-						<label>Total Number of Students</label>
-						<div>{this.state.importedStudents.length}</div>
-					</div>
-
-					<div style={{ textAlign: "center", fontSize: "1.1rem" }}>Example Student</div>
-
-					<div className="row">
-						<label>Name</label>
-						<div>{student.Name}</div>
-					</div>
-
-					<div className="row">
-						<label>Roll Number</label>
-						<div>{student.RollNumber}</div>
-					</div>
-
-					<div className="row">
-						<label>BForm</label>
-						<div>{student.BForm}</div>
-					</div>
-
-					<div className="row">
-						<label>Gender</label>
-						<div>{student.Gender}</div>
-					</div>
-
-					<div className="row">
-						<label>Phone</label>
-						<div>{student.Phone}</div>
-					</div>
-
-					<div className="row">
-						<label>Active</label>
-						<div>{student.Active}</div>
-					</div>
-
-					<div className="row">
-						<label>Father CNIC</label>
-						<div>{student.ManCNIC}</div>
-					</div>
-
-					<div className="row">
-						<label>Father Name</label>
-						<div>{student.ManName}</div>
-					</div>
-
-					<div className="row">
-						<label>Birthdate</label>
-						<div>{student.Birthdate}</div>
-					</div>
-
-					<div className="row">
-						<label>Address</label>
-						<div>{student.Address}</div>
-					</div>
-
-					<div className="row">
-						<label>Notes</label>
-						<div>{student.Notes}</div>
-					</div>
-
-					<div className="row">
-						<label>Start Date</label>
-						<div>{moment(student.StartDate).format("DD/MM/YYYY")}</div>
-					</div>
-
-					<div className="row">
-						<label>Admission Number</label>
-						<div>{student.AdmissionNumber}</div>
-					</div>
-
-				</div>}
-
-				<div className="row">
-					<div className="save button" onClick={this.onSave}>Save</div>
-				</div>
+								<div className="table-wrapper">
+									<table>
+										<thead>
+											<tr>
+												<th></th>
+												{studentTableHeaders.map(header => <th key={header}> {header}</th>)}
+											</tr>
+										</thead>
+										<tbody>
+											{
+												students.map(student => <tr key={student.id}>
+													<td className="text-left">
+														<div style={{ display: "flex", alignItems: "center" }}>
+															<div className="delete-button">
+																<img src={TrashOutlineIcon} alt="delete" onClick={() => this.removeStudent(student.id)} />
+															</div>
+															<div>{student.Name}</div>
+														</div>
+													</td>
+													<td>{student.BForm}</td>
+													<td className="text-left">{student.ManName}</td>
+													<td>{student.ManCNIC}</td>
+													<td>{student.Active ? "Yes" : "No"}</td>
+													<td>{student.Gender}</td>
+													<td>{student.Birthdate}</td>
+													<td>{moment(student.StartDate).format("DD-MM-YYYY")}</td>
+													<td>{student.AdmissionNumber}</td>
+													<td>{student.RollNumber}</td>
+													<td>{student.Phone}</td>
+													<td className="text-left">{student.Address}</td>
+													<td className="text-left">{student.Notes}</td>
+												</tr>)
+											}
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+						<div className="row" style={{ justifyContent: "flex-end" }}>
+							<div className="save button" onClick={this.onSave}>Save Students</div>
+						</div>
+					</>
+				}
 			</div>
 		</React.Fragment>
 	}
