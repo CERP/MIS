@@ -9,10 +9,12 @@ import downloadCSV from 'utils/downloadCSV'
 import { createStudentMerges } from 'actions'
 import Banner from 'components/Banner'
 import toTitleCase from 'utils/toTitleCase'
+import Papa from 'papaparse'
 
 import { DocumentDownloadIcon, TrashOutlineIcon } from 'assets/icons'
 
 import './style.css'
+import Hyphenator from 'utils/Hyphenator'
 
 interface S {
 
@@ -49,7 +51,7 @@ const studentCSVHeaders = [
 	"AdmissionNumber"
 ]
 
-const studentTableHeaders = [
+const studentPreviewTableHeaders = [
 	"B-Form",
 	"Father Name",
 	"Father CNIC",
@@ -155,7 +157,7 @@ class StudentExcelImport extends React.Component<P, S> {
 				// 		}
 				// 	})
 
-				// 	return true;
+				// 	return true
 				// }
 
 				return false
@@ -290,7 +292,7 @@ class StudentExcelImport extends React.Component<P, S> {
 										<thead>
 											<tr>
 												<th></th>
-												{studentTableHeaders.map(header => <th key={header}> {header}</th>)}
+												{studentPreviewTableHeaders.map(header => <th key={header}> {header}</th>)}
 											</tr>
 										</thead>
 										<tbody>
@@ -333,58 +335,80 @@ class StudentExcelImport extends React.Component<P, S> {
 	}
 }
 
+const formatCNIC = (cnic: string): string => {
+
+	// CNIC must be 13 character long and 15 long with hyphens
+	if (cnic === "" || cnic.length <= 15) {
+		return cnic
+	}
+
+	return Hyphenator(cnic)
+}
+
+const formatPhone = (phone: string): string => {
+
+	if (phone === "" || phone.length >= 11) {
+		return phone
+	}
+
+	// append '0' at start if not present due to auto excel conversion text to number
+	return "0".concat(phone)
+}
+
 const convertCSVToStudents = (studentImportCSV: string) => {
 
-	// naive csv parse, will break on commas.
-	const lines = studentImportCSV.split('\n')
-		.map(x => x.split(',').map(x => x.trim()))
+	// // naive csv parse, will break on commas.
+	// const lines = studentImportCSV.split('\n')
+	// 	.map(x => x.split(',').map(x => x.trim()))
+	// 	.filter(x => x.length === studentCSVHeaders.length)
+	// 	.slice(1) // ignore headers
+
+	// papa parse handles CSV parsing gracefully with zero dependency
+	const { data, errors, meta } = Papa.parse(studentImportCSV)
+
+	console.log(data, errors, meta)
+
+	const items: Array<string> = data
 		.filter(x => x.length === studentCSVHeaders.length)
 		.slice(1) // ignore headers
 
-	console.log(studentImportCSV)
-	console.log(lines)
+	// note that this is linked to the headers in the template above. see
+	const students = items
+		.map(([Name, RollNumber, BForm, Gender, Phone, Active, ManCNIC, ManName, Birthdate, Address, Notes, StartDate, AdmissionNumber]) => {
 
-	// note that this is linked to the headers in the template above. see 
-	const students = lines.map(([Name, RollNumber, BForm, Gender, Phone, Active, ManCNIC, ManName, Birthdate, Address, Notes, StartDate, AdmissionNumber]) => {
+			const student: MISStudent = {
+				id: v4(),
+				Name: toTitleCase(Name),
+				RollNumber,
+				BForm: formatCNIC(BForm),
+				Gender: Gender.toLowerCase() === "m" ? "male" : (Gender.toLowerCase() === "f" ? "female" : ""),
+				Phone: formatPhone(Phone),
+				Active: Active.toLowerCase() === "y" || Active.toLowerCase() === "yes" || Active.toLowerCase() === "true" || Active.toLowerCase() === "",
+				ManCNIC: formatCNIC(ManCNIC),
+				ManName: toTitleCase(ManName),
+				Birthdate,
+				Address,
+				Notes,
+				StartDate: StartDate ? moment(StartDate, "DD/MM/YYYY").unix() * 1000 : new Date().getTime(), // shady...
+				AdmissionNumber,
+				Fee: 0,
 
-		const student: MISStudent = {
-			id: v4(),
-			Name: toTitleCase(Name),
-			RollNumber,
-			BForm,
-			Gender: Gender.toLowerCase() === "m" ? "male" : (Gender.toLowerCase() === "f" ? "female" : ""),
-			Phone,
-			Active: Active.toLowerCase() === "y" || Active.toLowerCase() === "yes" || Active.toLowerCase() === "true" || Active.toLowerCase() === "",
-			ManCNIC,
-			ManName: toTitleCase(ManName),
-			Birthdate,
-			Address,
-			Notes,
-			StartDate: StartDate ? moment(StartDate, "DD/MM/YYYY").unix() * 1000 : new Date().getTime(), // shady...
-			AdmissionNumber,
-			Fee: 0,
+				section_id: "",
+				BloodType: "",
+				prospective_section_id: "",
 
-			section_id: "",
-			BloodType: "",
-			prospective_section_id: "",
+				fees: {},
+				payments: {},
+				attendance: {},
+				exams: {},
+				tags: {},
+				certificates: {}
+			}
 
-			fees: {},
-			payments: {},
-			attendance: {},
-			exams: {},
-			tags: {},
-			certificates: {}
-		}
+			return student
+		})
 
-		return student;
-	})
-
-	// at this point should show some preview of the students
-	// 
-	console.log(students)
-
-	return students;
-
+	return students
 }
 
 export default connect((state: RootReducerState) => ({
