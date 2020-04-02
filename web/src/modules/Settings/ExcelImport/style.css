@@ -80,7 +80,7 @@
 
 /* The first cell that lives in the top left of our spreadsheet */
 .excel-import-students .table-wrapper th:first-of-type {
-	left: 0;
+	left: -1px;
 	z-index: 3;
 }
 
@@ -103,12 +103,11 @@
 
 @media (max-width: 572px) {
     .excel-import-students .table-wrapper th:first-of-type {
-        right: 0;
-        z-index: 0;
+        left: unset;
     }
     .excel-import-students .table-wrapper tbody tr td:first-of-type {
         position: relative;
-        left: 0px;
+        left: unset;
         z-index: 0;
     }
 }
