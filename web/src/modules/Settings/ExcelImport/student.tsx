@@ -337,8 +337,7 @@ class StudentExcelImport extends React.Component<P, S> {
 
 const formatCNIC = (cnic: string): string => {
 
-	// CNIC must be 13 character long and 15 long with hyphens
-	if (cnic === "" || cnic.length <= 15) {
+	if (cnic === "" || cnic.length < 13) {
 		return cnic
 	}
 
