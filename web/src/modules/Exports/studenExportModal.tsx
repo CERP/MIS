@@ -37,7 +37,7 @@ const StudentExportModal: React.FC<PropsType> = ({ students, sections, onClose }
 	const generateCSV = () => {
 
 		// for filename
-		let section_name = sectionID ? sections.find(section => section.id === sectionID).namespaced_name : "all_classes"
+		let section_name = sectionID ? sections.find(section => section.id === sectionID).namespaced_name : "all-students"
 
 		const csv_data = students
 			.filter(student => {
@@ -52,7 +52,7 @@ const StudentExportModal: React.FC<PropsType> = ({ students, sections, onClose }
 						Gender: curr.Gender,
 						Phone: curr.Phone,
 						AlternatePhone: curr.AlternatePhone,
-						Active: curr.Active,
+						Active: curr.Active ? "Yes" : "No",
 						FatherName: curr.ManName,
 						FatherCNIC: curr.ManCNIC,
 						Birthdate: curr.Birthdate,
@@ -77,7 +77,7 @@ const StudentExportModal: React.FC<PropsType> = ({ students, sections, onClose }
 				<div className="row">Export all or single class students</div>
 				<div className="row" style={{ marginTop: 5 }}>
 					<select onChange={(e) => setSectionID(e.target.value)} style={{ width: "100%" }}>
-						<option value="">Select Class</option>
+						<option value="">All Classes</option>
 						{
 							sections
 								.sort((a, b) => a.classYear - b.classYear)

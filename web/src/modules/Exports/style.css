@@ -12,7 +12,6 @@
 	justify-content: center;
 }
 
-
 .exports-modal .row .button {
 	padding: 10px 15px;
 	margin-top: 10px;
@@ -35,7 +34,7 @@
 @media (max-width: 425px) {
 	.exports-modal {
 		width: 80%;
-		min-height: 40%;
+		min-height: 35%;
 	}
 	.exports-modal .section-container {
 		width: 80%;
@@ -53,14 +52,4 @@
 	position: absolute;
 	right: 10px;
 	top: 10px;
-}
-
-.tutorial-window .title {
-	color: #333;
-	align-self: center;
-}
-
-.tutorial-window .card {
-	padding: 20px;
-	width: 90%;
 }

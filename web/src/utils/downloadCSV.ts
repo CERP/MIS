@@ -13,14 +13,14 @@ const downloadCSV = (data: string[][], name: string) => {
 	hiddenElem.click();
 }
 
-export const downloadAsCSV = (data: any, headers: string[], filename = "mis_csv") => {
+export const downloadAsCSV = (data: any, headers: string[], filename = "csv-generated-by-mischool") => {
 
 	let csv = Papa.unparse({ data: data, fields: headers})
 
 	const hiddenElem = document.createElement("a")
 	hiddenElem.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv)
 	hiddenElem.target = '_blank'
-	hiddenElem.download = `${filename}.csv`
+	hiddenElem.download = `${filename}-generated-by-mischool.csv`
 	hiddenElem.click()
 }
 
