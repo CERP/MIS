@@ -59,15 +59,12 @@
 	.create-exam-container .title {
 		font-size: 1.5em;
 	}
-	.create-exam-container .row .button {
-		padding: 5px 10px;
-	}
 }
 
 .bulk-exams .table-wrapper {
 	width: 100%;
 	max-height: 440px;
-	overflow: scroll;
+	overflow: auto;
 }
 
 .bulk-exams .table-wrapper table {
@@ -114,7 +111,6 @@
 	border-radius: 2px;
 	font-size: 0.95rem;
 	background-color: #fff;
-	border-color: #949191;
 	border: 1px solid #949191;
 	box-shadow: none;
 	display: inline-block;

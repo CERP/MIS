@@ -10,8 +10,9 @@ interface PropsType {
 
 type S = {
 	date: number
-	total_score: string
+	totalScore: string
 	subject: string
+	isExamCreated: boolean
 }
 
 class CreateExamModal extends Component<PropsType, S> {
@@ -24,37 +25,44 @@ class CreateExamModal extends Component<PropsType, S> {
 
 		this.state = {
 			date,
-			total_score: "",
-			subject: ""
+			totalScore: "",
+			subject: "",
+			isExamCreated: false
 		}
 
 		this.former = new Former(this, [])
 	}
 
 	isDisabled = () => {
-		const { subject, total_score } = this.state
-		return subject.length === 0 || isNaN(parseFloat(total_score))
+		const { subject, totalScore } = this.state
+		return subject.length === 0 || isNaN(parseFloat(totalScore))
 	}
 
 	createExam = () => {
 
-		const { subject, total_score, date } = this.state
+		const { subject, totalScore, date } = this.state
 		// invoking method
-		this.props.onCreate(subject, parseFloat(total_score), date)
+		this.props.onCreate(subject, parseFloat(totalScore), date)
 
 		// reseting state
 		this.setState({
-			total_score: "",
-			subject: ""
+			totalScore: "",
+			subject: "",
+			isExamCreated: true
 		})
 
-		alert("Exam has been created successfully!")
+		setTimeout(() => {
+			this.setState({
+				isExamCreated: false
+			})
+		}, 3000)
+
 	}
 
 	render() {
 
 		const { onClose, subjects } = this.props
-		const { date } = this.state
+		const { date, isExamCreated } = this.state
 
 		const disabled = this.isDisabled()
 
@@ -62,8 +70,11 @@ class CreateExamModal extends Component<PropsType, S> {
 			<div className="close button red" onClick={onClose}>✕</div>
 			<div className="title">Create New Exam</div>
 			<div className="content-inner">
-				<div className="section-container section">
+				<div className="section">
 					<div className="form">
+						{
+							isExamCreated && <div className="text-center bold" style={{ color: "#5ecdb9" }}>New exam has been created successfully!</div>
+						}
 						<div className="row">
 							<label>Exam Subject</label>
 							<select {...this.former.super_handle(["subject"])}>
@@ -75,7 +86,7 @@ class CreateExamModal extends Component<PropsType, S> {
 						</div>
 						<div className="row">
 							<label>Total Marks</label>
-							<input type="number" {...this.former.super_handle(["total_score"])} placeholder="Enter total marks" />
+							<input type="number" {...this.former.super_handle(["totalScore"])} placeholder="Enter total marks" />
 						</div>
 						<div className="row">
 							<label>Exam Date</label>
