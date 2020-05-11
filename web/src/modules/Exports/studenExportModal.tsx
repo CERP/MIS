@@ -72,11 +72,11 @@ const StudentExportModal: React.FC<PropsType> = ({ students, sections, onClose }
 	return (
 		<div className="exports-modal">
 			<div className="close button red" onClick={onClose}>✕</div>
-			<div className="title">Students Export</div>
+			<div className="title">Export Students</div>
 			<div className="section-container section">
-				<div className="row">
-					<label>Select to export</label>
-					<select onChange={(e) => setSectionID(e.target.value)}>
+				<div className="row">Export all or single class students</div>
+				<div className="row" style={{ marginTop: 5 }}>
+					<select onChange={(e) => setSectionID(e.target.value)} style={{ width: "100%" }}>
 						<option value="">Select Class</option>
 						{
 							sections

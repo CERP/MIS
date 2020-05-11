@@ -1,7 +1,7 @@
 .exports-modal {
 	background-color: #fafafa;
-	width: 75%;
-	min-height: 50%;
+	width: 50%;
+	min-height: 40%;
 	padding: 20px;
 	border-radius: 8px;
 	position: relative;
@@ -12,29 +12,34 @@
 	justify-content: center;
 }
 
-.exports-modal .row {
-	justify-content: space-between;
-}
-
-.exports-modal .row select {
-	min-width: 30%;
-}
 
 .exports-modal .row .button {
 	padding: 10px 15px;
 	margin-top: 10px;
+	margin-left: auto;
 }
 
 @media (max-width: 768px) {
+	.exports-modal {
+		width: 60%;
+	}
 	.exports-modal .close.button {
 		padding: 4px 8px;
 	}
 	.exports-modal .title {
 		font-size: 1.5rem;
+		font-weight: bold;
 	}
 }
 
 @media (max-width: 425px) {
+	.exports-modal {
+		width: 80%;
+		min-height: 40%;
+	}
+	.exports-modal .section-container {
+		width: 80%;
+	}
 	.exports-modal .close.button {
 		font-size: 14px;
 		padding: 2px 6px;
