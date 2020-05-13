@@ -261,6 +261,25 @@ export const resetSchoolPassword = (school_id: string, password: string) => (dis
 	})
 }
 
+export const updateSchoolId  = (old_school_id: string, new_school_id: string) => (getState: GetState, syncr: Syncr) => {
+
+	const state = getState()
+
+	syncr.send({
+		type: "RESET_SCHOOL_PASSWORD",
+		client_type: state.auth.client_type,
+		client_id: state.client_id,
+		payload:{
+			old_school_id,
+			new_school_id
+		}
+	}).then(res => {
+		window.alert(res)
+	}).catch(() => {
+		window.alert(`Unable to update new id for ${old_school_id}`)
+	})
+}
+
 export const getEndPointResource = ( point: string, school_id: string, start_date: number, end_date: number) => ( dispatch: Dispatch, getState: GetState,  syncr: Syncr) => {
 
 	const state = getState()
