@@ -18,7 +18,7 @@ const ManageSchool: React.FC<P> = ({ schoolList, resetPassword, getSchoolList, u
 
 	useEffect(() => {
 		getSchoolList()
-	}, [])
+	}, [getSchoolList])
 
 	return <div className="page admin-actions">
 		<UpdateSchoolId

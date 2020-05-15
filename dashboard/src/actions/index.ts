@@ -261,12 +261,12 @@ export const resetSchoolPassword = (school_id: string, password: string) => (dis
 	})
 }
 
-export const updateSchoolId  = (old_school_id: string, new_school_id: string) => (getState: GetState, syncr: Syncr) => {
+export const updateSchoolId  = (old_school_id: string, new_school_id: string) => (dispatch: Dispatch, getState: GetState, syncr: Syncr) => {
 
 	const state = getState()
 
 	syncr.send({
-		type: "RESET_SCHOOL_PASSWORD",
+		type: "UPDATE_SCHOOL_ID",
 		client_type: state.auth.client_type,
 		client_id: state.client_id,
 		payload:{
