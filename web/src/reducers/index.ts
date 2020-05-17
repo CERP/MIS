@@ -355,6 +355,13 @@ const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerSta
 					initialized: false
 				}
 			}
+		case "AUTO_LOGIN_SUCCEED":
+			{
+				return {
+					...state,
+					initialized: false,
+				}
+			}
 
 		case LOGIN_SUCCEED:
 			{

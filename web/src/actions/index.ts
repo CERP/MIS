@@ -300,6 +300,38 @@ export const createSchoolLogin = (school_id: string, password: string) => (dispa
 		})
 }
 
+export const autoSchoolLogin = (school_id: string, token: string, client_id: string) => (dispatch: Function, getState: () => RootReducerState, syncr: Syncr) => {
+
+	const action = {
+		type: SCHOOL_LOGIN,
+	}
+
+	dispatch(action);
+
+	syncr.send({
+		type: "AUTO_LOGIN",
+		client_type,
+		payload: {
+			school_id,
+			token,
+			client_id: getState().client_id,
+			ilmx_client_id: client_id
+		}
+	})
+		.then(res => {
+			syncr.verify()
+
+			dispatch({
+				type: "AUTO_LOGIN_SUCCEED",
+			})
+
+		})
+		.catch(err => {
+			console.error(err)
+			dispatch(createLoginFail())
+		})
+}
+
 export const createEditClass = (newClass: MISClass) => (dispatch: Function) => {
 	dispatch(createMerges([
 		{
@@ -903,7 +935,7 @@ export const removeSubjectFromDatesheet = (id: string, subj: string, section_id:
 }
 
 export const resetFees = (students: MISStudent[]) => (dispatch: Function) => {
-	
+
 	const merges = students.reduce((agg, curr) => {
 		return [
 			...agg,
