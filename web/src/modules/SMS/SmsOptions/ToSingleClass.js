@@ -79,8 +79,7 @@ class ToSingleClass extends Component {
 							: <div className="button" onClick={() => sendBatchMessages(messages)}>Send</div>
 					}
 				<div className="is-mobile-only" style={{marginTop: 10}}>
-					<div className="text-center">Share on Whatsapp</div>
-					<ShareButton text={this.state.text} />
+					<ShareButton title={"SMS"} text={this.state.text} />
 				</div>
 			</div>
 		)
