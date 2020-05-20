@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { getSchoolList, resetSchoolPassword, updateSchoolId } from 'actions'
 import ResetSchoolPassword from './resetPassword'
 import UpdateSchoolId from './updateId'
+import UpdateLoginStrategy from './updateStrategy'
 
 interface P {
 
@@ -28,6 +29,10 @@ const ManageSchool: React.FC<P> = ({ schoolList, resetPassword, getSchoolList, u
 		<ResetSchoolPassword
 			schoolList={schoolList}
 			onResetPassword={resetPassword} />
+
+		<UpdateLoginStrategy
+			schoolList={schoolList} />
+
 	</div>
 }
 
