@@ -1,14 +1,16 @@
-import React, { useState, Component } from 'react'
+import React, { Component } from 'react'
 import Former from 'former'
 
 type PropsType = {
 	schoolList: string[]
+	schoolLoginInfo: TrialsDataRow["value"]
 	onGetSchoolInfo?: (school_id: string) => void
-	onUpdateLoginStrategy?: (school_id: string, password: string) => void
+	onUpdateLoginStrategy?: (school_id: string, login_info: TrialsDataRow["value"]) => void
 }
 
 type S = {
 	schoolId: string
+	loginInfo: TrialsDataRow["value"]
 }
 
 class UpdateLoginStrategy extends Component<PropsType, S> {
@@ -17,8 +19,11 @@ class UpdateLoginStrategy extends Component<PropsType, S> {
 	constructor(props: PropsType) {
 		super(props)
 
+		const loginInfo = this.props.schoolLoginInfo
+
 		this.state = {
-			schoolId: ""
+			schoolId: "",
+			loginInfo
 		}
 
 		this.former = new Former(this, [])
@@ -42,7 +47,6 @@ class UpdateLoginStrategy extends Component<PropsType, S> {
 					</datalist>
 					<input list="schools" {...this.former.super_handle(["schoolId"])} placeholder="Type or Select School" />
 				</div>
-				<div className="button blue">Get School Info</div>
 			</div>
 		</>)
 	}

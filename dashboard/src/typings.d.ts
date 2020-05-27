@@ -185,7 +185,7 @@ interface SignUpValue {
 	area_manager_name: "AYESHA" | "UMER" | "FAROOQ" | "ZAHID" | "KAMRAN" | "NOMAN" | ""
 	office: "" | "LAHORE" | "SARGODHA" | "SIALKOT" | "GUJRANWALA" | "FAISALABAD" | "ISLAMABAD" | "RAWALPINDI"
 	city: string
-	type_of_login: "" | "SCHOOL_REFERRAL" | "ASSOCIATION" | "EDFIN" | "INDIVIDUAL" | "AGENT" | "PLATFORM" | "AGENT_SCHOOL"
+	type_of_login: "" | "SCHOOL_REFERRAL" | "ASSOCIATION" | "EDFIN" | "INDIVIDUAL" | "AGENT" | "ILM_EXCHANGE" | "AGENT_SCHOOL"
 
 	school_name: string
 	owner_name: string

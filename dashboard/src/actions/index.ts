@@ -280,6 +280,25 @@ export const updateSchoolId  = (old_school_id: string, new_school_id: string) =>
 	})
 }
 
+export const updateLoginStrategy = (school_id: string, login_info: TrialsDataRow["value"]) => (dispatch: Dispatch, getState: GetState, syncr: Syncr) => {
+	
+	const state = getState()
+
+	syncr.send({
+		type: "UPDATE_LOGIN_STRATEGY",
+		client_type: state.auth.client_type,
+		client_id: state.client_id,
+		payload:{
+			school_id,
+			value: login_info
+		}
+	}).then(res => {
+		window.alert(res)
+	}).catch(() => {
+		window.alert(`Unable to update strategy for ${school_id}`)
+	})
+}
+
 export const getEndPointResource = ( point: string, school_id: string, start_date: number, end_date: number) => ( dispatch: Dispatch, getState: GetState,  syncr: Syncr) => {
 
 	const state = getState()
