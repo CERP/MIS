@@ -10,6 +10,7 @@ import Attendance from './Attendance'
 import ExpenseAnalytics from './Expenses'
 import TeacherAttendanceAnalytics from './Teacher-Attendance'
 import ExamsAnalytics from './Exams/index'
+import IlmExchangeAnalytics from './IlmExchange'
 
 import './style.css'
 
@@ -29,6 +30,8 @@ class Analytics extends Component<P> {
 					<Link className={`button ${loc === "teacher-attendance" ? "red" : ''}`} to="teacher-attendance" replace={true}>Teacher Attendance</Link>
 					<Link className={`button ${loc === "expenses" ? "green" : ''}`} to="expenses" replace={true}>Expenses</Link>
 					<Link className={`button ${loc === "exams" ? "blue" : ''}`} to="exams" replace={true}>Exams</Link>
+					<Link className={`button ${loc === "ilmexchange" ? "blue" : ''}`} to="ilmexchange" replace={true}>IlmExchange</Link>
+
 				</div>
 
 				<Route path="/analytics/fees" component={Fees} />
@@ -36,6 +39,8 @@ class Analytics extends Component<P> {
 				<Route path="/analytics/expenses" component={ExpenseAnalytics} />
 				<Route path="/analytics/teacher-attendance" component={TeacherAttendanceAnalytics} />
 				<Route path="/analytics/exams" component={ExamsAnalytics} />
+				<Route path="/analytics/ilmexchange" component={IlmExchangeAnalytics} />
+
 			</div>
 		</Layout>
 	}
