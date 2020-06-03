@@ -1,4 +1,7 @@
 import React from "react"
+import { connect } from 'react-redux'
+
+import { PlayIcon } from 'assets/icons'
 
 import data from 'constants/ilmexchange.json'
 
@@ -8,10 +11,9 @@ type PropsType = {
 
 }
 
-
 type ReduceLessonMap = {
 	[id: string]: {
-		count: number
+		watchCount: number
 		duration: number
 		title: string
 		type: string
@@ -36,12 +38,12 @@ function computeVideosData() {
 				if (agg[lesson_id]) {
 					agg[lesson_id] = {
 						...agg[lesson_id],
-						count: agg[lesson_id].count + 1,
+						watchCount: agg[lesson_id].watchCount + 1,
 						duration: agg[lesson_id].duration + duration
 					}
 				} else {
 					agg[lesson_id] = {
-						count: 1,
+						watchCount: 1,
 						duration,
 						// @ts-ignore
 						...lessons_meta[lesson_id]
@@ -53,47 +55,69 @@ function computeVideosData() {
 	return agg
 }
 
-const getSortedEntries = (videos_data: ReduceLessonMap) => {
-	return Object.entries(videos_data)
-		.sort(([, a], [_, b]) => b.count - a.count)
-}
-
-const getMostWatchCount = (sorted_entries: any) => {
-	const [_, lesson_meta] = sorted_entries[0]
-	return lesson_meta ? lesson_meta.count : 0
-}
-
-const IlmExchangeAnalytics: React.FC<PropsType> = ({ }) => {
+const IlmExchangeAnalytics: React.FC<PropsType> = () => {
 
 	const computed_videos_data: ReduceLessonMap = computeVideosData()
 
 	const sorted_entries = getSortedEntries(computed_videos_data)
-	const most_watch_count = getMostWatchCount(sorted_entries)
 
 	return (
 		<div className="section-container">
 			<div className="divider">IlmExchange Analytics</div>
 			<div className="text-left" style={{ marginTop: 4, marginBottom: 4, fontSize: "1.25rem" }}>Most viewed videos</div>
 			<div className="section">
-				<table style={{ width: "100%" }}>
-					<tbody>
-						{
-							sorted_entries
-								.map(([lesson_id, lesson_meta]) => {
-									return <tr key={lesson_id}>
-										<td>{lesson_meta.title}</td>
-										<td><progress max={most_watch_count} value={lesson_meta.count} /></td>
-										<td>{lesson_meta.count} Views</td>
-									</tr>
-								})
-						}
-					</tbody>
-				</table>
+				<div className="ilmx-analytics container">
+					{
+						sorted_entries
+							.map(([lesson_id, lesson_meta]) => {
+								return <div className="card" key={lesson_id}>
+									<div className="card-row">
+										<div className="card-row inner">
+											<img src={PlayIcon} alt="play-icon" height="24" width="24" />
+											<p className="lesson-title">{lesson_meta.title}</p>
+										</div>
+										<div style={{ marginLeft: "auto" }}>
+											<p className="views">{lesson_meta.watchCount} views</p>
+										</div>
+									</div>
+									<div className="card-row">
+										<div className="more-detail">
+											<p className="hidden-views">{lesson_meta.watchCount} views</p>
+											<p>Watch Duration: {getDurationString(lesson_meta.duration)}</p>
+										</div>
+									</div>
+								</div>
+							})
+					}
 
+				</div>
 			</div>
 		</div>
 	)
 
 }
 
-export default IlmExchangeAnalytics
+export default connect((state: RootReducerState) => ({
+
+}))(IlmExchangeAnalytics)
+
+
+const getSortedEntries = (videos_data: ReduceLessonMap) => {
+	return Object.entries(videos_data)
+		.sort(([, a], [_, b]) => b.watchCount - a.watchCount)
+}
+
+const getDurationString = (duration: number): string => {
+
+	const duration_mins = duration / 60
+
+	if (duration_mins === 0) {
+		return "0 min"
+	}
+
+	if (duration_mins > 0 && duration_mins < 1) {
+		return "approx 1 min"
+	}
+
+	return `${duration_mins.toFixed(0)} mins`
+}
