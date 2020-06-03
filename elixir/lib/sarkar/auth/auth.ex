@@ -120,6 +120,26 @@ defmodule Sarkar.Auth do
 		end
 	end
 
+	def updateSchoolId({old_id, new_id}) do
+		case Sarkar.DB.Postgres.query(
+			Sarkar.School.DB,
+			"UPDATE auth SET id=$2 WHERE id=$1",
+			[old_id, new_id]
+			) do
+				{:ok, _res} -> 
+					case Sarkar.DB.Postgres.query(Sarkar.School.DB,
+					"UPDATE flattened_schools SET school_id=$2 WHERE school_id=$1",
+					[old_id, new_id]
+					) do
+						{:ok, _res} ->
+							{:ok, "updated #{old_id} with #{new_id}"}
+					end
+				{:error, err} -> 
+					IO.inspect err
+					{:error, "updating failed"}
+		end
+	end
+
 	def update_referrals_info({ school_id, value}) do
 
 		case Sarkar.DB.Postgres.query(Sarkar.School.DB,

@@ -84,7 +84,7 @@ class CreateTeacher extends Component<propTypes, S> {
 		this.state = {
 			profile: {
 				...faculty || blankTeacher(this.isFirst()),
-				HasLogin: faculty && faculty.HasLogin ? faculty.HasLogin : true
+				HasLogin: faculty && faculty.HasLogin
 			},
 			redirect: false,
 			banner: {

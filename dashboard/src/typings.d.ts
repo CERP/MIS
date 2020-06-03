@@ -185,6 +185,8 @@ interface TrialsDataRow {
 		computer_operator: string
 		previous_management_system: string
 		previous_software_name: string
+		needy_status: string
+		trustworthiness: string
 	}
 }
 

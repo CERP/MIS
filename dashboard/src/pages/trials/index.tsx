@@ -6,11 +6,13 @@ import Former from 'former';
 
 import './style.css'
 import moment from 'moment';
+import downloadCSV from 'utils/downloadCSV';
 
 interface P {
 	trials: RootReducerState["trials"]
 	user: RootReducerState["auth"]["id"]
 	admin: boolean
+	loggedUser: string | undefined
 	getReferralsInfo: () => any
 	updateReferralInformation: (school_id: string, value: any) => any
 }
@@ -40,7 +42,9 @@ const defaultReferralState = () => ({
 	owner_other_job: "",
 	computer_operator: "",
 	previous_management_system: "",
-	previous_software_name: ""
+	previous_software_name: "",
+	needy_status: "",
+	trustworthiness: "",
 })
 
 type EditsRow = TrialsDataRow["value"] & {
@@ -66,6 +70,25 @@ interface Routeinfo {
 
 type propTypes = RouteComponentProps<Routeinfo> & P
 
+const CSVHeaders = [
+	"school_id",
+	"owner_name",
+	"owner_phone",
+	"district",
+	"area_manager",
+	"needy_status",
+	"trustworthiness"
+]
+
+interface CSVData {
+	school_id: string
+	owner_name: string
+	owner_phone: string
+	district: string
+	area_manager: string
+	needy_status: string
+	trustworthiness: string
+}
 
 class Trial extends Component<propTypes, S> {
 
@@ -201,8 +224,36 @@ class Trial extends Component<propTypes, S> {
 		})
 	}
 
+	generateCSV = () => {
+
+		const { edits } = this.state
+
+		const csv_items = Object.entries(edits)
+			.filter(([_, value]) => value && value.needy_status && value.trustworthiness)
+			.sort(([, a], [, b]) => a.area_manager_name.localeCompare(b.area_manager_name))
+			.reduce<CSVData[]>((agg, curr) => {
+				const [school_id, value] = curr
+				return [
+					...agg,
+					{
+						school_id,
+						owner_name: value.owner_name,
+						owner_phone: value.owner_phone,
+						district: value.city,
+						area_manager: value.area_manager_name,
+						needy_status: value.needy_status,
+						trustworthiness: value.trustworthiness
+					}
+				]
+			}, [])
+
+		downloadCSV(csv_items, CSVHeaders, "marked_school")
+	}
+
 	render() {
-		const { edits, filterMenu, active_school } = this.state
+
+		const { edits, filterMenu } = this.state
+		const { loggedUser } = this.props
 
 		const Items = Object.entries(edits)
 			.filter(([school_id, value]) => {
@@ -210,11 +261,11 @@ class Trial extends Component<propTypes, S> {
 					&& this.getDaysPassedFliter(value.time)
 					&& this.getSearchString(school_id, value).includes(this.state.filters.filterText.toLowerCase())
 					&& this.byAreaManager(value.area_manager_name)
+					&& (loggedUser === "admin" ? true : loggedUser === value.area_manager_name)
 			})
 			.sort(([, a_value], [, b_value]) => this.daysPassed(a_value.time) - this.daysPassed(b_value.time))
 
 		return <div className="trials page">
-
 			<div className="title"> Trial Information</div>
 
 			<div className="form" style={{ width: "90%", marginBottom: "20px" }}>
@@ -242,7 +293,10 @@ class Trial extends Component<propTypes, S> {
 					<input type="text" {...this.former.super_handle(["filters", "filterText"])} placeholder="Search" style={{ width: "100%" }} />
 				</>}
 			</div>
-
+			{loggedUser === "admin" && <div className="row" style={{ width: "90%", justifyContent: "space-between", marginTop: 5, marginBottom: 10 }}>
+				<label>List of marked schools</label>
+				<div className="button blue" onClick={this.generateCSV}>Download .CSV</div>
+			</div>}
 			<div className="section" style={{ overflow: "auto" }}>
 				<div className="newtable">
 					<div className="newtable-row heading">
@@ -253,7 +307,7 @@ class Trial extends Component<propTypes, S> {
 
 					{
 						Items
-							.map(([school_id, value], index) => {
+							.map(([school_id, value]) => {
 								return <div key={school_id}>
 									<div className="newtable-row">
 										<div className="clickable" onClick={() => this.setActive(school_id)}>{school_id}</div>
@@ -274,52 +328,66 @@ class Trial extends Component<propTypes, S> {
 													<input type="text" className="newtable-input" {...this.former.super_handle(["edits", school_id, "owner_phone"])} />
 												</div>
 												<div className="row">
-													<label>Area Manager</label>
-													<div>{value.area_manager_name || "-"}</div>
-												</div>
-												<div className="row">
-													<label>Agent name</label>
-													<div>{value.agent_name || "-"}</div>
-												</div>
-												<div className="row">
-													<label>Notes</label>
-													<input type="text" className="newtable-input" {...this.former.super_handle(["edits", school_id, "notes"])} />
-												</div>
-												<div className="row">
-													<label>Ref-Code</label>
-													<input type="text" className="newtable-input" {...this.former.super_handle(["edits", school_id, "ref_code"])} />
-												</div>
-												<div className="row">
-													<label>BackCheck Status</label>
-													<input type="text" className="newtable-input" {...this.former.super_handle(["edits", school_id, "backcheck_status"])} />
-												</div>
-												<div className="row">
-													<label>Warning Status</label>
-													<input type="text" className="newtable-input" {...this.former.super_handle(["edits", school_id, "warning_status"])} />
-												</div>
-												<div className="row">
-													<label>Followup Status</label>
-													<input type="text" className="newtable-input" {...this.former.super_handle(["edits", school_id, "follow_up_status"])} />
-												</div>
-												<div className="row">
-													<label>Trial Reset Status</label>
-													<input type="text" className="newtable-input" {...this.former.super_handle(["edits", school_id, "trial_reset_status"])} />
-												</div>
-												<div className="row">
-													<label>Overall Status</label>
-													<input type="text" className="newtable-input" {...this.former.super_handle(["edits", school_id, "overall_status"])} />
-												</div>
-												<div className="row">
-													<label>Survey Status</label>
-													<select {...this.former.super_handle(["edits", school_id, "survey_status"])}>
-														<option value=""> Pending </option>
-														<option value="IN_PROGRESS"> In Progress</option>
-														<option value="COMPLETED"> Completed</option>
+													<label>Rate how needy this school is?</label>
+													<select {...this.former.super_handle(["edits", school_id, "needy_status"])}>
+														<option value="1">Not needy at all</option>
+														<option value="2">Needy</option>
+														<option value="3">Somewhat needy</option>
+														<option value="4">Very needy</option>
+														<option value="5">Extremely needy</option>
 													</select>
 												</div>
-
+												<div className="row">
+													<label> Rate How much trust do you have on school owner regarding needy students information?</label>
+													<select {...this.former.super_handle(["edits", school_id, "trustworthiness"])}>
+														<option value="1">Not at all trustworthy</option>
+														<option value="2">Trusthworthy</option>
+														<option value="3">Somewhat trustworthy</option>
+														<option value="4">Very trustworthy</option>
+														<option value="5">Totally trustworthy</option>
+													</select>
+												</div>
+												{loggedUser === "admin" && <>
+													<div className="row">
+														<label>Area Manager</label>
+														<div>{value.area_manager_name || "-"}</div>
+													</div>
+													<div className="row">
+														<label>Agent name</label>
+														<div>{value.agent_name || "-"}</div>
+													</div>
+													<div className="row">
+														<label>Notes</label>
+														<input type="text" className="newtable-input" {...this.former.super_handle(["edits", school_id, "notes"])} />
+													</div>
+													<div className="row">
+														<label>Ref-Code</label>
+														<input type="text" className="newtable-input" {...this.former.super_handle(["edits", school_id, "ref_code"])} />
+													</div>
+													<div className="row">
+														<label>BackCheck Status</label>
+														<input type="text" className="newtable-input" {...this.former.super_handle(["edits", school_id, "backcheck_status"])} />
+													</div>
+													<div className="row">
+														<label>Warning Status</label>
+														<input type="text" className="newtable-input" {...this.former.super_handle(["edits", school_id, "warning_status"])} />
+													</div>
+													<div className="row">
+														<label>Followup Status</label>
+														<input type="text" className="newtable-input" {...this.former.super_handle(["edits", school_id, "follow_up_status"])} />
+													</div>
+													<div className="row">
+														<label>Trial Reset Status</label>
+														<input type="text" className="newtable-input" {...this.former.super_handle(["edits", school_id, "trial_reset_status"])} />
+													</div>
+													<div className="row">
+														<label>Overall Status</label>
+														<input type="text" className="newtable-input" {...this.former.super_handle(["edits", school_id, "overall_status"])} />
+													</div>
+												</>
+												}
 												{
-													!value.payment_received && <div className="row">
+													!value.payment_received && loggedUser === "ADMIN" && <div className="row">
 														<label>Mark Paid</label>
 														<div className="button blue" onClick={() => this.markPaid(school_id)}>Mark</div>
 													</div>
@@ -341,7 +409,8 @@ class Trial extends Component<propTypes, S> {
 export default connect((state: RootReducerState) => ({
 	trials: state.trials,
 	user: state.auth && state.auth.id,
-	admin: state.auth.role ? state.auth.role === "ADMIN" : false
+	admin: state.auth.role ? state.auth.role === "ADMIN" : false,
+	loggedUser: state.auth.id
 }), (dispatch: Function) => ({
 	updateReferralInformation: (school_id: string, value: any) => dispatch(updateReferralInformation(school_id, value)),
 	getReferralsInfo: () => dispatch(getReferralsInfo())
