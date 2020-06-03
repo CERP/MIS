@@ -300,7 +300,7 @@ export const createSchoolLogin = (school_id: string, password: string) => (dispa
 		})
 }
 
-export const autoSchoolLogin = (school_id: string, token: string, client_id: string) => (dispatch: Function, getState: () => RootReducerState, syncr: Syncr) => {
+export const autoSchoolLogin = (school_id: string, token: string, client_id: string, refcode: string) => (dispatch: Function, getState: () => RootReducerState, syncr: Syncr) => {
 
 	const action = {
 		type: SCHOOL_LOGIN,
@@ -315,7 +315,8 @@ export const autoSchoolLogin = (school_id: string, token: string, client_id: str
 			school_id,
 			token,
 			client_id: getState().client_id,
-			ilmx_client_id: client_id
+			ilmx_school_id: refcode,
+			ilmx_client_id: client_id,
 		}
 	})
 		.then(res => {
@@ -324,7 +325,6 @@ export const autoSchoolLogin = (school_id: string, token: string, client_id: str
 			dispatch({
 				type: "AUTO_LOGIN_SUCCEED",
 			})
-
 		})
 		.catch(err => {
 			console.error(err)

@@ -10,7 +10,7 @@ interface P {
 	connected: boolean
 	initialized: boolean
 	auth: RootReducerState["auth"]
-	autoSchoolLogin: (id: string, token: string, client_id: string) => void
+	autoSchoolLogin: (id: string, token: string, client_id: string, refcode: string) => void
 }
 
 const AutoLogin: React.FC<P & RouteComponentProps> = ({ connected, initialized, auth, autoSchoolLogin, location }) => {
@@ -21,13 +21,14 @@ const AutoLogin: React.FC<P & RouteComponentProps> = ({ connected, initialized, 
 	const id = params.id ? params.id.toString() : ''
 	const token = params.key ? params.key.toString() : ''
 	const client_id = params.cid ? params.cid.toString() : ''
+	const refcode = params.ref ? params.ref.toString() : ""
 
 	if (auth.token) {
 		return <Redirect to="/landing" />
 	}
 
-	if (connected && !auth.loading && id !== "" && token !== "" && client_id !== "") {
-		autoSchoolLogin(id, token, client_id)
+	if (connected && !auth.loading && id !== "" && token !== "" && client_id !== "" && refcode !== "") {
+		autoSchoolLogin(id, token, client_id, refcode)
 	}
 
 	if (connected && !initialized) {
@@ -44,5 +45,5 @@ export default connect((state: RootReducerState) => ({
 	connected: state.connected,
 	auth: state.auth
 }), (dispatch: Function) => ({
-	autoSchoolLogin: (id: string, token: string, client_id: string) => dispatch(autoSchoolLogin(id, token, client_id))
+	autoSchoolLogin: (id: string, token: string, client_id: string, refcode: string) => dispatch(autoSchoolLogin(id, token, client_id, refcode))
 }))(AutoLogin)

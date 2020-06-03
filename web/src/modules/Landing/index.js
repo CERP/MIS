@@ -6,6 +6,7 @@ import moment from 'moment'
 
 import { createLogout, resetTrial, markPurchased } from 'actions'
 import Layout from 'components/Layout'
+import Modal from 'components/Modal'
 import { numberWithCommas } from 'utils/numberWithCommas'
 
 import attendanceIcon from './icons/attendance/checklist_1.svg'            //
@@ -45,7 +46,9 @@ class Landing extends Component {
 		super(props);
 
 		this.state = {
-			scroll: 0
+			scroll: 0,
+			showModal: false,
+			phone: ""
 		}
 	}
 
@@ -146,9 +149,41 @@ class Landing extends Component {
 
 	}
 
+	redirectToIlmx = () => {
+
+		const ilmx = localStorage.getItem("ilmx")
+
+		if (!Boolean(ilmx)) {
+			this.setState({
+				showModal: true
+			})
+			return
+		}
+
+		const { user, auth, client_id } = this.props
+
+		const link = `http://localhost:3000/auto-login?type=SCHOOL&id=${auth.school_id}&key=${auth.token}&cid=${client_id}&phone=${ilmx}`
+		return window.location.href = link
+	}
+
+	modalRedirectToIlmx = () => {
+
+		if (this.state.phone === "" || this.state.phone.length !== 11) {
+			alert("please enter a valid phone number")
+			return
+		}
+
+		const { user, auth, client_id } = this.props
+		const link = `http://localhost:3000/auto-login?type=SCHOOL&id=${auth.school_id}&key=${auth.token}&cid=${client_id}&phone=${this.state.phone}`
+
+		localStorage.setItem("ilmx", this.state.phone)
+
+		return window.location.href = link
+	}
+
 	render() {
 
-		const { logout, user, students, faculty, lastSnapshot, unsyncd, permissions, package_info } = this.props;
+		const { logout, user, students, faculty, lastSnapshot, unsyncd, permissions, package_info, auth, client_id } = this.props;
 
 		const current_page = Math.floor(this.state.scroll / window.innerWidth);
 
@@ -206,6 +241,26 @@ class Landing extends Component {
 		}
 
 		return <Layout history={this.props.history}>
+
+			{
+				this.state.showModal && <Modal>
+					<div className="confirm-box" style={{ background: "#ffffff" }}>
+						<div className="title">Please verify your number</div>
+						<input
+							type="text"
+							placeholder="phone" style={{ width: "100%" }}
+							onChange={(e) => this.setState({ phone: e.target.value })} />
+						<div
+							className="button blue"
+							style={{ margin: "5px 0px 10px 0px" }}
+							onClick={() => this.modalRedirectToIlmx()}
+						>
+							Continue
+						</div>
+						<label style={{ width: "50px" }}><span style={{ color: "red" }}>Note:</span> If you already have an IlmExchange account please enter the number you registered with otherwise a new account will be created</label>
+					</div>
+				</Modal>
+			}
 			<div className="landing">
 				{!package_info.paid && package_info.date !== -1 && <div onClick={() => this.askForPassword()} className="trial-bar">
 					{this.getTrialWarningMessage()}
@@ -254,11 +309,12 @@ class Landing extends Component {
 							}
 							{
 								(user.Admin) &&
-								<a href="http://localhost:3000/school"
+								<div
+									onClick={() => this.redirectToIlmx()}
 									className="button green-shadow"
 									style={{ backgroundImage: `url(${ilmx})` }}>
 									IlmExchange
-								</a>
+								</div>
 							}
 						</div>
 					</div>
@@ -444,7 +500,9 @@ export default connect(state => ({
 	lastSnapshot: state.lastSnapshot,
 	unsyncd: Object.keys(state.queued.mutations || {}).length,
 	package_info: state.db.package_info || { date: -1, trial_period: 15, paid: false }, //If package info is undefined
-	school_id: state.auth.school_id
+	school_id: state.auth.school_id,
+	auth: state.auth,
+	client_id: state.client_id
 }), dispatch => ({
 	resetTrial: () => dispatch(resetTrial()),
 	markPurchased: () => dispatch(markPurchased()),
