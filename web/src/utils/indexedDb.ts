@@ -45,6 +45,10 @@ export const initState: RootReducerState = {
 		diary: {} as MISDiary,
 		planner: {
 			datesheet: {}
+		},
+		ilmx: {
+			events: {},
+			lessons: {}
 		}
 	},
 	auth: {

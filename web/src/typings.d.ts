@@ -47,6 +47,15 @@ interface RootDBState {
 			}
 		}
 	}
+
+	ilmx: {
+		events: { 
+			[device_id: string]: IlmxEvent
+		}
+		lessons: {
+			[lesson_id: string]: IlmxLesson
+		}
+	}
 }
 
 interface BaseAnalyticsEvent {
@@ -425,3 +434,18 @@ type AugmentedStudent = {
 } & MISStudent
 
 type MISGrades = RootDBState["settings"]["exams"]["grades"]
+
+interface IlmxEvent {
+	[timestamp: string]: {
+		lesson_id: string
+		student_id: string
+		duration: string
+	}
+}
+
+interface IlmxLesson {
+		title: string
+		type: "VIDEO" | ""
+		url: string
+		chapter_name: string
+}

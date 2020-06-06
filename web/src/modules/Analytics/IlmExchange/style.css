@@ -47,9 +47,16 @@
 }
 
 .ilmx-analytics .card-row .more-detail p {
-	font-size: 0.65rem;
+	font-size: 0.75rem;
 	margin: 0;
-	padding-left: 1rem;
+	margin-left: 1rem;
+}
+
+.ilmx-analytics .card-row .viewer {
+	background: #5ecdb9;
+	cursor: pointer;
+	border-radius: 4px;
+	padding: 1px;
 }
 
 @media (max-width: 475px) {

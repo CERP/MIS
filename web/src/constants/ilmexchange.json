@@ -3,74 +3,90 @@
 		"254525": {
 			"1590870257": {
 				"lesson_id": 1,
+				"student_id": "1",
 				"duration": 5
 			},
 			"1590872157": {
 				"lesson_id": 2,
+				"student_id": "1",
 				"duration": 10
 			},
 			"1590872057": {
 				"lesson_id": 3,
+				"student_id": "1",
 				"duration": 20
 			}
 		},
 		"254524": {
 			"1590872257": {
 				"lesson_id": 1,
+				"student_id": "2",
 				"duration": 15
 			},
 			"1590871570": {
 				"lesson_id": 2,
+				"student_id": "2",
 				"duration": 25
 			},
 			"1590872087": {
 				"lesson_id": 4,
+				"student_id": "2",
 				"duration": 30
 			}
 		},
 		"254528": {
 			"1590872257": {
 				"lesson_id": 1,
+				"student_id": "3",
 				"duration": 15
 			},
 			"1590871570": {
 				"lesson_id": 2,
+				"student_id": "3",
 				"duration": 25
 			},
 			"1590872087": {
 				"lesson_id": 4,
+				"student_id": "3",
 				"duration": 30
 			}
 		},
 		"254024": {
 			"1590872257": {
 				"lesson_id": 2,
+				"student_id": "4",
 				"duration": 30
 			},
 			"1590871570": {
 				"lesson_id": 5,
+				"student_id": "4",
 				"duration": 45
 			},
 			"1590872087": {
 				"lesson_id": 4,
+				"student_id": "5",
 				"duration": 30
 			}
 		},
 		"250524": {
 			"1590872257": {
 				"lesson_id": 4,
+				"student_id": "5",
 				"duration": 30
 			},
 			"1590871570": {
 				"lesson_id": 5,
+				"student_id": "6",
 				"duration": 45
 			},
 			"1590872087": {
 				"lesson_id": 2,
+				"student_id": "6",
 				"duration": 30
 			},
 			"1590872063": {
 				"lesson_id": 5,
+				"student_id": "6",
 				"duration": 40
 			}
 		}
