@@ -327,6 +327,77 @@ defmodule Sarkar.Server.Analytics do
 
 		{:ok, req, state}
 	end
+	
+	def init(%{bindings: %{type: "needy.csv"}} = req, state) do
+		{:ok, resp} =
+			Sarkar.DB.Postgres.query(
+				Sarkar.School.DB,
+				"SELECT
+						to_timestamp(time/1000)::date::text as date,
+						school_id,
+						value->> 'Name' as Name,
+						value->> 'ManName' as Father_Guardian_Name,
+						value->> 'ManCNIC' as Father_Guardian_CNIC,
+						value->> 'Phone' as Phone,
+						value->> 'NeedyStatus' as NeedyStatus,
+						value->> 'Orphan' as Orphan,
+						value->> 'FamilyMembers' as FamilyMembers,
+						value->> 'MembersWhoEarn' as MembersWhoEarn,
+						value->> 'ApproxIncome' as ApproxIncome,
+						value->> 'ReceivedAnyDonation' as ReceivedAnyDonation,
+						value->> 'EarnThisMonth' as EarnThisMonth,
+						value->> 'IncomeSource' as IncomeSource,
+						value->> 'Occupation' as Occupation,
+						value->> 'JobPlace' as JobPlace
+					FROM writes
+					WHERE path[2] = 'students' AND value ->> 'Needy' = 'true'
+					ORDER BY date desc, school_id asc",
+				[]
+			)
+	
+		csv =
+			[
+				[
+					"date",
+					"school_id",
+					"Name",
+					"Father_Guardian_Name",
+					"Father_Guardian_CNIC",
+					"Phone",
+					"NeedyStatus",
+					"Orphan",
+					"FamilyMembers",
+					"MembersWhoEarn",
+					"ApproxIncome",
+					"ReceivedAnyDonation",
+					"EarnThisMonth",
+					"IncomeSource",
+					"Occupation",
+					"JobPlace"
+				]
+				| resp.rows
+			]
+			|> Enum.map(fn row ->
+				Enum.map(row, fn item ->
+					case item do
+						nil -> ""
+						_ -> String.replace(item, ",", "-")
+					end
+				end)
+			end)
+			|> CSV.encode()
+			|> Enum.join()
+	
+		req =
+			:cowboy_req.reply(
+				200,
+				%{"content-type" => "text/csv", "cache-control" => "no-cache"},
+				csv,
+				req
+			)
+	
+		{:ok, req, state}
+	end
 
 	def init(req, state) do 
 		req = :cowboy_req.reply(200, req)
