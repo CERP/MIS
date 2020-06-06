@@ -22,32 +22,45 @@ class ToProspectiveStudents extends Component {
 		const historyObj = {
 			faculty: this.props.faculty_id,
 			date: new Date().getTime(),
+
 			type: "PROSPECTIVE",
 			count: messages.length,
 			text: this.state.text
 		}
-
 		this.props.logSms(historyObj)
 	}
 
+	getMessages = () => {
+
+		const { students, portal_link } = this.props
+
+		const messages = Object.values(students)
+			.filter(s => (s.tags !== undefined ) && (s.tags["PROSPECTIVE"]) && s.Phone)
+			.reduce((agg,student)=> {
+				
+				const index  = agg.findIndex(s => s.number === student.Phone)		
+				if(index >= 0 ){
+					return agg
+				}
+
+				const text_string = portal_link ? `${this.state.text}\n${portal_link}${student.id}` : this.state.text
+				return [...agg,{
+					number: student.Phone,
+					text :  text_string
+				}]
+
+			}, [])
+
+		return messages
+	}
+
 	render() {
-	const { students, sendBatchMessages, smsOption } = this.props;
-	console.log(smsOption)
 
-	const messages = Object.values(students)
-						.filter(s => (s.tags !== undefined ) && (s.tags["PROSPECTIVE"]) && s.Phone)
-						.reduce((agg,student)=> {
-							const index  = agg.findIndex(s => s.number === student.Phone)		
-							if(index >= 0 ){
-								return agg
-							}
+	const { sendBatchMessages, smsOption } = this.props;
 
-							return [...agg,{
-								number: student.Phone,
-								text : this.state.text
-							}]
-						}, [])
-						
+	const messages = this.getMessages()
+
+	console.log(messages)
 
 	return (
 		<div>

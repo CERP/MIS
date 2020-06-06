@@ -9,17 +9,18 @@ import ShareButton from 'components/ShareButton';
 
 class ToSingleClass extends Component {
 	constructor(props) {
-	super(props)
-	
-	this.state = {
-		selected_section_id: "",
-		selected_student_number: "",
-		text: ""
+		super(props)
+		
+		this.state = {
+			selected_section_id: "",
+			selected_student_number: "",
+			text: ""
+		}
+
+		this.former = new former(this, [])
 	}
 
-	this.former = new former(this, [])
-	}
-	logSms = (messages) =>{
+	logSms = (messages) => {
 		if(messages.length === 0){
 			console.log("No Messaged to Log")
 			return
@@ -35,23 +36,35 @@ class ToSingleClass extends Component {
 		this.props.logSms(historyObj)
 	}
 
+	getMessages = () => {
+
+		const { students, portal_link } = this.props
+
+		const messages = Object.values(students)
+			.filter(s => s.section_id === this.state.selected_section_id && (s.tags === undefined || !s.tags["PROSPECTIVE"]) && s.Phone)
+			.reduce((agg,student)=> {
+					const index  = agg.findIndex(s => s.number === student.Phone)		
+					if(index >= 0 ){
+						return agg
+				}
+
+				const text_string = portal_link ? `${this.state.text}\n${portal_link}${student.id}` : this.state.text
+
+				return [...agg,{
+					number: student.Phone,
+					text:  text_string
+				}]
+
+			}, [])
+
+		return messages
+	}
+
 	render() {
 
-	const { classes, students, sendBatchMessages, smsOption } = this.props;
+	const { classes, sendBatchMessages, smsOption } = this.props;
 
-	const messages = Object.values(students)
-		.filter(s => s.section_id === this.state.selected_section_id && (s.tags === undefined || !s.tags["PROSPECTIVE"]) && s.Phone)
-		.reduce((agg,student)=> {
-			const index  = agg.findIndex(s => s.number === student.Phone)		
-			if(index >= 0 ){
-				return agg
-			}
-
-			return [...agg,{
-				number: student.Phone,
-				text : this.state.text
-			}]
-		}, [])
+	const messages = this.getMessages()
 				
 	return (
 			<div>

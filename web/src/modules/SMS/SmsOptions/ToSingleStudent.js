@@ -34,7 +34,9 @@ class ToSingleStudent extends Component {
   render() {
 
 	const { students, sendMessage, smsOption } = this.props;
-	console.log("Selected Number", this.state.selected_student_number)
+	
+	// const text_string = portal_link ? `${this.state.text}\n${portal_link}${student.id}` : this.state.text
+
 	return (
 		<div>
 
