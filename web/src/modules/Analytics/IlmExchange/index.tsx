@@ -1,6 +1,8 @@
 import React, { useState } from "react"
 import { connect } from 'react-redux'
 
+import Modal from "components/Modal/index"
+import LessonViewerModal from './lessonViewer'
 import { PlayIcon } from 'assets/icons'
 import data from 'constants/ilmexchange.json'
 
@@ -13,29 +15,34 @@ interface PropsType {
 }
 
 interface S {
-	showViewers: boolean
+	showViewerModal: boolean
 	lessonId: string
 }
 
-const IlmExchangeAnalytics: React.FC<PropsType> = () => {
+const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons }) => {
 
-	const computed_videos_data: ReduceLessonMap = computeVideosData()
-	const sorted_entries = getSortedEntries(computed_videos_data)
+	const computed_lesson_data: ReduceLessonMap = computeLessonsData()
+	const sorted_entries = getSortedEntries(computed_lesson_data)
 
 	const [stateProps, setStateProps] = useState<S>({
-		showViewers: false,
+		showViewerModal: false,
 		lessonId: ""
 	})
 
-
 	const handleClickShowViewers = (lesson_id: string) => {
-
 		setStateProps({
 			...stateProps,
-			showViewers: !stateProps.showViewers,
+			showViewerModal: !stateProps.showViewerModal,
 			lessonId: lesson_id
 		})
+	}
 
+	const handleToggleModal = () => {
+		setStateProps({
+			...stateProps,
+			showViewerModal: !stateProps.showViewerModal,
+			lessonId: ''
+		})
 	}
 
 	return (
@@ -60,13 +67,21 @@ const IlmExchangeAnalytics: React.FC<PropsType> = () => {
 									<div className="card-row">
 										<div className="more-detail">
 											<p className="hidden-views viewer" onClick={() => handleClickShowViewers(lesson_id)}>{lesson_meta.watchCount} views</p>
-											<p>Watch Duration: {getDurationString(lesson_meta.duration)}</p>
+											<p>Watch Duration: {getDurationString(lesson_meta.watchDuration)}</p>
 										</div>
 									</div>
 								</div>
 							})
 					}
-
+					{
+						stateProps.showViewerModal && <Modal>
+							<LessonViewerModal
+								lessonId={stateProps.lessonId}
+								lessons={computed_lesson_data}
+								students={students}
+								onClose={handleToggleModal} />
+						</Modal>
+					}
 				</div>
 			</div>
 		</div>
@@ -83,12 +98,12 @@ export default connect((state: RootReducerState) => ({
 type ReduceLessonMap = {
 	[id: string]: {
 		watchCount: number
-		duration: number
+		watchDuration: number
 		viewers: Array<string>
 	} & IlmxLesson
 }
 
-function computeVideosData() {
+function computeLessonsData() {
 
 	const lessons_meta = data["lessons"]
 
@@ -108,13 +123,13 @@ function computeVideosData() {
 					agg[lesson_id] = {
 						...agg[lesson_id],
 						watchCount: agg[lesson_id].watchCount + 1,
-						duration: agg[lesson_id].duration + duration,
+						watchDuration: agg[lesson_id].watchDuration + duration,
 						viewers: unique_viewers
 					}
 				} else {
 					agg[lesson_id] = {
 						watchCount: 1,
-						duration,
+						watchDuration: duration,
 						// @ts-ignore
 						...lessons_meta[lesson_id],
 						viewers: new Array(student_id)

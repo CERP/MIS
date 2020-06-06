@@ -13,6 +13,7 @@ import debounce from 'utils/debounce'
 import { loadDB, connected, disconnected, processImageQueue } from './actions/core'
 
 import './index.css';
+import './styles/main.css'
 
 //window.debug_host = '69def37f.ngrok.io';
 window.debug_host = 'mis-socket.metal.fish'
