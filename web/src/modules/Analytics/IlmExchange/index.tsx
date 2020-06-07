@@ -1,65 +1,56 @@
-import React from "react"
+import React, { useState, useEffect } from "react"
 import { connect } from 'react-redux'
 
+import { fetchLessons } from 'actions/core'
+import Modal from "components/Modal/index"
+import LessonViewerModal from './lessonViewer'
 import { PlayIcon } from 'assets/icons'
-
-import data from 'constants/ilmexchange.json'
 
 import './style.css'
 
-type PropsType = {
-
+interface PropsType {
+	dispatch: Function
+	students: RootDBState["students"]
+	events: RootDBState["ilmx"]["events"]
+	lessons: RootDBState["ilmx"]["lessons"]
+	isLoading: boolean
+	hasError: boolean
 }
 
-type ReduceLessonMap = {
-	[id: string]: {
-		watchCount: number
-		duration: number
-		title: string
-		type: string
-		utl: string
-		chapter_name: string
-	}
+interface S {
+	showViewerModal: boolean
+	lessonId: string
 }
 
-function computeVideosData() {
+const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons, isLoading, hasError, dispatch }) => {
 
-	const lessons_meta = data["lessons"]
+	useEffect(() => {
+		dispatch(fetchLessons)
+	}, [dispatch])
 
-	let agg: ReduceLessonMap = {}
+	const computed_lesson_data: AugmentedIlmxLessons = computeLessonsData(events, lessons)
+	const sorted_entries = getSortedEntries(computed_lesson_data)
 
-	Object.entries(data["events"])
-		.forEach(([_, lessons]) => {
+	const [stateProps, setStateProps] = useState<S>({
+		showViewerModal: false,
+		lessonId: ""
+	})
 
-			for (const item of Object.values(lessons)) {
-
-				const { lesson_id, duration } = item
-
-				if (agg[lesson_id]) {
-					agg[lesson_id] = {
-						...agg[lesson_id],
-						watchCount: agg[lesson_id].watchCount + 1,
-						duration: agg[lesson_id].duration + duration
-					}
-				} else {
-					agg[lesson_id] = {
-						watchCount: 1,
-						duration,
-						// @ts-ignore
-						...lessons_meta[lesson_id]
-					}
-				}
-			}
+	const handleClickShowViewers = (lesson_id: string) => {
+		setStateProps({
+			...stateProps,
+			showViewerModal: !stateProps.showViewerModal,
+			lessonId: lesson_id
 		})
+	}
 
-	return agg
-}
-
-const IlmExchangeAnalytics: React.FC<PropsType> = () => {
-
-	const computed_videos_data: ReduceLessonMap = computeVideosData()
-
-	const sorted_entries = getSortedEntries(computed_videos_data)
+	const handleToggleModal = () => {
+		setStateProps({
+			...stateProps,
+			showViewerModal: !stateProps.showViewerModal,
+			lessonId: ''
+		})
+	}
 
 	return (
 		<div className="section-container">
@@ -74,22 +65,30 @@ const IlmExchangeAnalytics: React.FC<PropsType> = () => {
 									<div className="card-row">
 										<div className="card-row inner">
 											<img src={PlayIcon} alt="play-icon" height="24" width="24" />
-											<p className="lesson-title">{lesson_meta.title}</p>
+											<p className="lesson-title">{lesson_meta.name}</p>
 										</div>
 										<div style={{ marginLeft: "auto" }}>
-											<p className="views">{lesson_meta.watchCount} views</p>
+											<p className="views viewer" onClick={() => handleClickShowViewers(lesson_id)}>{lesson_meta.watchCount} views</p>
 										</div>
 									</div>
 									<div className="card-row">
 										<div className="more-detail">
-											<p className="hidden-views">{lesson_meta.watchCount} views</p>
-											<p>Watch Duration: {getDurationString(lesson_meta.duration)}</p>
+											<p className="hidden-views viewer" onClick={() => handleClickShowViewers(lesson_id)}>{lesson_meta.watchCount} views</p>
+											<p>Watch Duration: {getDurationString(lesson_meta.watchDuration)}</p>
 										</div>
 									</div>
 								</div>
 							})
 					}
-
+					{
+						stateProps.showViewerModal && <Modal>
+							<LessonViewerModal
+								lessonId={stateProps.lessonId}
+								lessons={computed_lesson_data}
+								students={students}
+								onClose={handleToggleModal} />
+						</Modal>
+					}
 				</div>
 			</div>
 		</div>
@@ -98,26 +97,73 @@ const IlmExchangeAnalytics: React.FC<PropsType> = () => {
 }
 
 export default connect((state: RootReducerState) => ({
-
+	students: state.db.students,
+	events: state.db.ilmx.events,
+	lessons: state.db.ilmx.lessons,
+	isLoading: state.ilmxLessons.isLoading,
+	hasError: state.ilmxLessons.hasError
 }))(IlmExchangeAnalytics)
 
+type AugmentedIlmxLessons = {
+	[id: string]: {
+		watchCount: number
+		watchDuration: number
+		viewers: Array<string>
+	} & IlmxLesson
+}
 
-const getSortedEntries = (videos_data: ReduceLessonMap) => {
+function computeLessonsData(events: PropsType["events"], lessons_meta: PropsType["lessons"]) {
+
+	let agg: AugmentedIlmxLessons = {}
+
+	Object.entries(events)
+		.forEach(([_, lessons]) => {
+
+			for (const item of Object.values(lessons)) {
+
+				const { lesson_id, duration, student_id } = item
+
+				if (agg[lesson_id]) {
+
+					const unique_viewers = [...new Set(agg[lesson_id].viewers).add(student_id)]
+
+					agg[lesson_id] = {
+						...agg[lesson_id],
+						watchCount: agg[lesson_id].watchCount + 1,
+						watchDuration: agg[lesson_id].watchDuration + duration,
+						viewers: unique_viewers
+					}
+				} else {
+					agg[lesson_id] = {
+						watchCount: 1,
+						watchDuration: duration,
+						// @ts-ignore
+						...lessons_meta[lesson_id],
+						viewers: new Array(student_id)
+					}
+				}
+			}
+		})
+
+	return agg
+}
+
+const getSortedEntries = (videos_data: AugmentedIlmxLessons) => {
 	return Object.entries(videos_data)
 		.sort(([, a], [_, b]) => b.watchCount - a.watchCount)
 }
 
 const getDurationString = (duration: number): string => {
 
-	const duration_mins = duration / 60
+	const duration_in_mins = duration / 60
 
-	if (duration_mins === 0) {
-		return "0 min"
+	if (duration_in_mins === 0) {
+		return "0 mins"
 	}
 
-	if (duration_mins > 0 && duration_mins < 1) {
-		return "approx 1 min"
+	if (duration_in_mins > 0 && duration_in_mins < 1) {
+		return "1 mins"
 	}
 
-	return `${duration_mins.toFixed(0)} mins`
+	return `${duration_in_mins.toFixed(0)} mins`
 }

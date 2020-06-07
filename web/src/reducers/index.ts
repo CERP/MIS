@@ -1,6 +1,35 @@
 import Dynamic from '@cerp/dynamic'
-import { MERGES, DELETES, CONFIRM_SYNC_DIFF, QUEUE, SNAPSHOT, ON_CONNECT, ON_DISCONNECT, LOGIN_FAIL, LOGIN_SUCCEED, SNAPSHOT_DIFF, MergeAction, DeletesAction, ConfirmSyncAction, SnapshotDiffAction, ConfirmAnalyticsSyncAction, QueueAction, ImageUploadConfirmation, IMAGE_QUEUE_LOCK, IMAGE_QUEUE_UNLOCK } from 'actions/core'
-import { LOCAL_LOGIN, SCHOOL_LOGIN, LOCAL_LOGOUT, SIGN_UP_FAILED, SIGN_UP_SUCCEED, SIGN_UP_LOADING } from 'actions'
+import { 
+	MERGES,
+	DELETES,
+	CONFIRM_SYNC_DIFF,
+	QUEUE, SNAPSHOT,
+	ON_CONNECT,
+	ON_DISCONNECT,
+	LOGIN_FAIL, LOGIN_SUCCEED,
+	SNAPSHOT_DIFF, MergeAction,
+	DeletesAction,
+	ConfirmSyncAction,
+	SnapshotDiffAction,
+	ConfirmAnalyticsSyncAction,
+	QueueAction, 
+	ImageUploadConfirmation,
+	IMAGE_QUEUE_LOCK,
+	IMAGE_QUEUE_UNLOCK,
+	GET_LESSONS,
+	GET_LESSONS_SUCCESS,
+	GET_LESSONS_FAILURE
+} from 'actions/core'
+
+import {
+	LOCAL_LOGIN,
+	SCHOOL_LOGIN,
+	LOCAL_LOGOUT,
+	SIGN_UP_FAILED,
+	SIGN_UP_SUCCEED,
+	SIGN_UP_LOADING 
+} from 'actions'
+
 import { AnyAction } from 'redux'
 
 const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerState => {
@@ -397,6 +426,25 @@ const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerSta
 					}
 				}
 			}
+		case GET_LESSONS: return {
+			...state,
+			ilmxLessons: { isLoading: true, hasError: false }
+		}
+		case GET_LESSONS_FAILURE: return {
+			...state, 
+			ilmxLessons: { isLoading: false, hasError: true }
+		}
+		case GET_LESSONS_SUCCESS: return {
+			...state,
+			db: {
+				...state.db,
+				ilmx: {
+					...state.db.ilmx,
+					lessons: action.payload
+				}
+			},
+			ilmxLessons: { isLoading: false, hasError: false }
+		}
 
 		default:
 			return state;
