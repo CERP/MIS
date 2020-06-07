@@ -118,6 +118,10 @@ interface RootReducerState {
 		succeed: boolean
 		reason: string
 	}
+	ilmxLessons: {
+		isLoading: boolean
+		hasError: boolean
+	}
 }
 
 interface MISSMSHistory {
@@ -439,7 +443,7 @@ interface IlmxEvent {
 	[timestamp: string]: {
 		lesson_id: string
 		student_id: string
-		duration: string
+		duration: number
 	}
 }
 

@@ -120,6 +120,7 @@ export interface ImageUploadConfirmation {
 export const IMAGE_QUEUE_LOCK = "IMAGE_QUEUE_LOCK"
 const lockImageQueue = {
 	type: IMAGE_QUEUE_LOCK
+
 }
 
 export const IMAGE_QUEUE_UNLOCK = "IMAGE_QUEUE_UNLOCK"
@@ -604,6 +605,57 @@ export const multiAction = (resp: { key: string; val: any }) => (dispatch: Funct
 	for (const action of Object.values(resp)) {
 		if (action) {
 			dispatch(action)
+		}
+	}
+}
+
+export const GET_LESSONS = "GET_LESSONS"
+export const GET_LESSONS_SUCCESS = "GET_LESSONS_SUCCESS"
+export const GET_LESSONS_FAILURE = "GET_LESSONS_FAILURE"
+
+export const getLessons = () => ({
+	type: GET_LESSONS
+})
+
+export const getLessonsSuccess = (lessons: RootDBState["ilmx"]["lessons"]) => ({
+	type: GET_LESSONS_SUCCESS,
+	payload: lessons
+})
+
+export const getLessonsFailure = () => ({
+	type: GET_LESSONS_FAILURE
+})
+
+export const fetchLessons = () => {
+	return async (dispatch: Dispatch, getState: () => RootReducerState) => {
+		
+		const state = getState()
+
+		dispatch(getLessons())
+
+		try {
+			// @ts-ignore
+			const host = window.api_url || window.debug_host;
+
+			const response = await fetch(`https://${host}/ilmx/lessons`, {
+				method: 'GET',
+				mode: 'cors',
+				cache: 'no-cache',
+				headers: {
+					'content-type': 'application/json',
+					'token': state.auth.token,
+					'client-id': state.client_id,
+					'school-id': state.auth.school_id,
+					'client-type': client_type
+				}
+			})
+
+			const lessons = await response.json()
+
+			dispatch(getLessonsSuccess(lessons))
+
+		} catch (error) {
+			dispatch(getLessonsFailure())
 		}
 	}
 }

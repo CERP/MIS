@@ -1,17 +1,22 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { connect } from 'react-redux'
+import { Dispatch } from 'redux'
 
+import data from 'constants/ilmexchange.json'
+import { fetchLessons } from 'actions/core'
 import Modal from "components/Modal/index"
 import LessonViewerModal from './lessonViewer'
 import { PlayIcon } from 'assets/icons'
-import data from 'constants/ilmexchange.json'
 
 import './style.css'
 
 interface PropsType {
+	dispatch: Function
 	students: RootDBState["students"]
 	events: RootDBState["ilmx"]["events"]
 	lessons: RootDBState["ilmx"]["lessons"]
+	isLoading: boolean
+	hasError: boolean
 }
 
 interface S {
@@ -19,9 +24,13 @@ interface S {
 	lessonId: string
 }
 
-const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons }) => {
+const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons, isLoading, hasError, dispatch }) => {
 
-	const computed_lesson_data: ReduceLessonMap = computeLessonsData()
+	// useEffect(() => {
+	// 	dispatch(fetchLessons())
+	// }, [dispatch])
+
+	const computed_lesson_data: AugmentedIlmxLessons = computeLessonsData(events, lessons)
 	const sorted_entries = getSortedEntries(computed_lesson_data)
 
 	const [stateProps, setStateProps] = useState<S>({
@@ -92,10 +101,12 @@ const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons }
 export default connect((state: RootReducerState) => ({
 	students: state.db.students,
 	events: state.db.ilmx.events,
-	lessons: state.db.ilmx.lessons
+	lessons: state.db.ilmx.lessons,
+	isLoading: state.ilmxLessons.isLoading,
+	hasError: state.ilmxLessons.hasError
 }))(IlmExchangeAnalytics)
 
-type ReduceLessonMap = {
+type AugmentedIlmxLessons = {
 	[id: string]: {
 		watchCount: number
 		watchDuration: number
@@ -103,11 +114,11 @@ type ReduceLessonMap = {
 	} & IlmxLesson
 }
 
-function computeLessonsData() {
+function computeLessonsData(events: PropsType["events"], lessons: PropsType["lessons"]) {
 
 	const lessons_meta = data["lessons"]
 
-	let agg: ReduceLessonMap = {}
+	let agg: AugmentedIlmxLessons = {}
 
 	Object.entries(data["events"])
 		.forEach(([_, lessons]) => {
@@ -141,22 +152,22 @@ function computeLessonsData() {
 	return agg
 }
 
-const getSortedEntries = (videos_data: ReduceLessonMap) => {
+const getSortedEntries = (videos_data: AugmentedIlmxLessons) => {
 	return Object.entries(videos_data)
 		.sort(([, a], [_, b]) => b.watchCount - a.watchCount)
 }
 
 const getDurationString = (duration: number): string => {
 
-	const duration_mins = duration / 60
+	const duration_in_mins = duration / 60
 
-	if (duration_mins === 0) {
+	if (duration_in_mins === 0) {
 		return "0 mins"
 	}
 
-	if (duration_mins > 0 && duration_mins < 1) {
+	if (duration_in_mins > 0 && duration_in_mins < 1) {
 		return "1 mins"
 	}
 
-	return `${duration_mins.toFixed(0)} mins`
+	return `${duration_in_mins.toFixed(0)} mins`
 }

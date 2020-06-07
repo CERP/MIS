@@ -66,6 +66,10 @@ export const initState: RootReducerState = {
 		succeed: false,
 		reason: ""
 	},
+	ilmxLessons: {
+		isLoading: false,
+		hasError: false
+	}
 }
 
 export const loadDb = async () => {
