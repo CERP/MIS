@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { connect } from 'react-redux'
-import { Dispatch } from 'redux'
 
-import data from 'constants/ilmexchange.json'
 import { fetchLessons } from 'actions/core'
 import Modal from "components/Modal/index"
 import LessonViewerModal from './lessonViewer'
@@ -26,9 +24,9 @@ interface S {
 
 const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons, isLoading, hasError, dispatch }) => {
 
-	// useEffect(() => {
-	// 	dispatch(fetchLessons())
-	// }, [dispatch])
+	useEffect(() => {
+		dispatch(fetchLessons)
+	}, [dispatch])
 
 	const computed_lesson_data: AugmentedIlmxLessons = computeLessonsData(events, lessons)
 	const sorted_entries = getSortedEntries(computed_lesson_data)
@@ -67,7 +65,7 @@ const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons, 
 									<div className="card-row">
 										<div className="card-row inner">
 											<img src={PlayIcon} alt="play-icon" height="24" width="24" />
-											<p className="lesson-title">{lesson_meta.title}</p>
+											<p className="lesson-title">{lesson_meta.name}</p>
 										</div>
 										<div style={{ marginLeft: "auto" }}>
 											<p className="views viewer" onClick={() => handleClickShowViewers(lesson_id)}>{lesson_meta.watchCount} views</p>
@@ -114,13 +112,11 @@ type AugmentedIlmxLessons = {
 	} & IlmxLesson
 }
 
-function computeLessonsData(events: PropsType["events"], lessons: PropsType["lessons"]) {
-
-	const lessons_meta = data["lessons"]
+function computeLessonsData(events: PropsType["events"], lessons_meta: PropsType["lessons"]) {
 
 	let agg: AugmentedIlmxLessons = {}
 
-	Object.entries(data["events"])
+	Object.entries(events)
 		.forEach(([_, lessons]) => {
 
 			for (const item of Object.values(lessons)) {

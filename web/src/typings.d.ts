@@ -444,12 +444,13 @@ interface IlmxEvent {
 		lesson_id: string
 		student_id: string
 		duration: number
+		type: string
 	}
 }
 
 interface IlmxLesson {
-		title: string
-		type: "VIDEO" | ""
-		url: string
-		chapter_name: string
+	name: string
+	type: "VIDEO" | ""
+	link: string
+	chapter_name: string
 }

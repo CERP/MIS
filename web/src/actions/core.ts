@@ -626,36 +626,26 @@ export const getLessonsFailure = () => ({
 	type: GET_LESSONS_FAILURE
 })
 
-export const fetchLessons = () => {
-	return async (dispatch: Dispatch, getState: () => RootReducerState) => {
-		
-		const state = getState()
+export const fetchLessons = async (dispatch: Dispatch, getState: () => RootReducerState, syncr: Syncr) => {
 
-		dispatch(getLessons())
+	const state = getState()
 
-		try {
-			// @ts-ignore
-			const host = window.api_url || window.debug_host;
+	// start loading
+	dispatch(getLessons())
 
-			const response = await fetch(`https://${host}/ilmx/lessons`, {
-				method: 'GET',
-				mode: 'cors',
-				cache: 'no-cache',
-				headers: {
-					'content-type': 'application/json',
-					'token': state.auth.token,
-					'client-id': state.client_id,
-					'school-id': state.auth.school_id,
-					'client-type': client_type
-				}
-			})
-
-			const lessons = await response.json()
-
-			dispatch(getLessonsSuccess(lessons))
-
-		} catch (error) {
-			dispatch(getLessonsFailure())
-		}
+	try {
+		const response = await syncr.send({
+			type: "GET_LESSONS",
+			client_type: client_type,
+			payload: {
+				school_id: state.auth.school_id,
+				token: state.auth.token,
+				client_id: state.client_id,
+			}
+		});
+		dispatch(getLessonsSuccess(response));
+	}
+	catch (err) {
+		dispatch(getLessonsFailure());
 	}
 }
