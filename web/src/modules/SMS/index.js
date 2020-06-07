@@ -98,7 +98,8 @@ class SMS extends Component {
 
 	onCheckSendStudentPortalLink = () => {
 		this.setState({
-			sendStudentPortalLink: !this.state.sendStudentPortalLink
+			sendStudentPortalLink: !this.state.sendStudentPortalLink,
+			smsFilter: !this.state.sendStudentPortalLink ? "to_single_class" : "to_single_student"
 		})
 	}
 
@@ -242,13 +243,16 @@ class SMS extends Component {
 						<label>Send to</label>
 							<select onChange={this.sendMessageFilter} value={this.state.smsFilter}>
 									<option value="" disabled>Select</option>
-									<option value="to_single_student">Single Student</option>
 									<option value="to_single_class">Single Class</option>
-									<option value="to_single_teacher">Single Teacher</option>
 									<option value="to_all_students">All Students</option>
-									<option value="to_all_teachers">All Teachers</option>
-									<option value="to_fee_defaulters">Fee Defaulters</option>
 									<option value="to_prospective_students">Prospective Students</option>
+									{ !this.state.sendStudentPortalLink && <> 
+											<option value="to_single_student">Single Student</option>
+											<option value="to_single_teacher">Single Teacher</option>
+											<option value="to_all_teachers">All Teachers</option>
+											<option value="to_fee_defaulters">Fee Defaulters</option>
+										</>
+									}
 							</select>
 						</div>
 

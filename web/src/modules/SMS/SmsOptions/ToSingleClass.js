@@ -48,7 +48,7 @@ class ToSingleClass extends Component {
 						return agg
 				}
 
-				const text_string = portal_link ? `${this.state.text}\n${portal_link}${student.id}` : this.state.text
+				const text_string = portal_link ? `${this.state.text}\nName: ${student.Name}\nStudent portal link: ${portal_link}${student.id}` : this.state.text
 
 				return [...agg,{
 					number: student.Phone,
@@ -65,7 +65,9 @@ class ToSingleClass extends Component {
 	const { classes, sendBatchMessages, smsOption } = this.props;
 
 	const messages = this.getMessages()
-				
+
+	console.log(messages)
+	
 	return (
 			<div>
 				<div className="row">

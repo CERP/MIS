@@ -44,7 +44,7 @@ class ToAllStudents extends Component {
 					return agg
 				}
 
-				const text_string = portal_link ? `${this.state.text}\n${portal_link}${student.id}` : this.state.text
+				const text_string = portal_link ? `${this.state.text}\nName: ${student.Name}\nStudent portal link: ${portal_link}${student.id}` : this.state.text
 				return [...agg,{
 					number: student.Phone,
 					text :  text_string
