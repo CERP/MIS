@@ -8,7 +8,7 @@ import helpIcon from './svgs/help-icon.svg'
 import backButtonIcon from './svgs/back.svg'
 import downloadDocument from './svgs/document-download.svg'
 import trashOutlineIcon from './svgs/outline-trash.svg'
-import shareIcon from './svgs/share-wa.svg'
+import shareIcon from './svgs/sm-share.svg'
 import phoneIcon from './svgs/phone.svg'
 import playIcon from './svgs/play.svg'
 

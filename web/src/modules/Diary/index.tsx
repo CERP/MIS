@@ -408,8 +408,7 @@ class Diary extends Component<propTypes, S> {
 									<div className="row button" onClick={() => sendBatchMessages(messages)} style={{ width: "20%" }}>Send</div>
 							}
 							<div className="is-mobile-only" style={{ marginTop: 10 }}>
-								<div className="text-center">Share on Whatsapp</div>
-								<ShareButton text={this.diaryString()} />
+								<ShareButton title={"School Diary"} text={this.diaryString()} />
 							</div>
 						</div>
 					}

@@ -29,7 +29,8 @@ class SMS extends Component {
 				good: true,
 				text: "Saved!"
 			},
-			smsFilter: "to_single_student"
+			smsFilter: "to_single_student",
+			sendStudentPortalLink: false
 		}
 
 		this.former = new former(this, [])
@@ -95,6 +96,25 @@ class SMS extends Component {
 		this.setState({ smsFilter : e.target.value})
 	}
 
+	onCheckSendStudentPortalLink = () => {
+		this.setState({
+			sendStudentPortalLink: !this.state.sendStudentPortalLink,
+			smsFilter: !this.state.sendStudentPortalLink ? "to_single_class" : "to_single_student"
+		})
+	}
+
+	getStudentPortalLink = () => {
+		const ref_phone = this.props.schoolPhoneNumber
+		const ref_id = this.getReferralString(ref_phone)
+		return `https://ilmexchange.com/student?referral=${ref_id}&std_id=`
+	}
+
+	getReferralString = (phone) => {
+		if (phone) {
+			return [...phone].slice(1).reverse().join("")
+		}
+	}
+ 
 	getType = (value) =>{
 		switch(value){
 			case "to_single_student":
@@ -121,16 +141,18 @@ class SMS extends Component {
 		}
 	}
 
-	getFilteredFunctionality = (value) =>{
+	getFilteredFunctionality = (value, portal_link) => {
+
 		switch(value){
 			case "to_single_student":
-				return  <ToSingleStudent 
+				return  <ToSingleStudent
 							students={this.props.students} 
 							sendMessage={this.sendMessage} 
 							connected={this.props.connected}
 							smsOption={this.props.smsSetting}
 							logSms={this.props.logSms}
 							faculty_id={this.props.faculty_id}
+							portal_link={portal_link}
 							/>
 
 			case "to_single_class":
@@ -142,6 +164,7 @@ class SMS extends Component {
 							smsOption={this.props.smsSetting}
 							logSms={this.props.logSms}
 							faculty_id={this.props.faculty_id}
+							portal_link={portal_link}
 							/>
 			
 			case "to_all_students":
@@ -152,6 +175,7 @@ class SMS extends Component {
 							smsOption={this.props.smsSetting}
 							logSms={this.props.logSms}
 							faculty_id={this.props.faculty_id}
+							portal_link={portal_link}
 							/>
 
 			case "to_single_teacher":
@@ -191,6 +215,7 @@ class SMS extends Component {
 						smsOption={this.props.smsSetting}
 						logSms={this.props.logSms}
 						faculty_id={this.props.faculty_id}
+						portal_link={portal_link}
 						/>
 			
 			default:
@@ -198,6 +223,8 @@ class SMS extends Component {
 		}
 	}
 	render() {
+
+		const portal_link = this.state.sendStudentPortalLink ? this.getStudentPortalLink() : undefined
 
 		return <Layout history={this.props.history}>
 			<div className="sms-page">
@@ -208,21 +235,28 @@ class SMS extends Component {
 
 					<div className="divider">Send Message</div>
 					<div className="section">
+						<div className="portal-link">
+							<label style={{ color: "#aaa" }}>Student portal link</label>
+							<input type="checkbox" onChange={ () => this.onCheckSendStudentPortalLink()}/>
+						</div>
 						<div className="row"> 
-						<label>Send to</label>		
+						<label>Send to</label>
 							<select onChange={this.sendMessageFilter} value={this.state.smsFilter}>
 									<option value="" disabled>Select</option>
-									<option value="to_single_student">Single Student</option>
 									<option value="to_single_class">Single Class</option>
-									<option value="to_single_teacher">Single Teacher</option>
 									<option value="to_all_students">All Students</option>
-									<option value="to_all_teachers">All Teachers</option>
-									<option value="to_fee_defaulters">Fee Defaulters</option>
 									<option value="to_prospective_students">Prospective Students</option>
+									{ !this.state.sendStudentPortalLink && <> 
+											<option value="to_single_student">Single Student</option>
+											<option value="to_single_teacher">Single Teacher</option>
+											<option value="to_all_teachers">All Teachers</option>
+											<option value="to_fee_defaulters">Fee Defaulters</option>
+										</>
+									}
 							</select>
 						</div>
 
-						{this.getFilteredFunctionality(this.state.smsFilter)}
+						{this.getFilteredFunctionality(this.state.smsFilter, portal_link)}
 					</div>
 				</div>
 			</div>
@@ -236,7 +270,8 @@ export default connect(state => ({
 	classes: state.db.classes,
 	teachers:state.db.faculty,
 	connected: state.connected,
-	smsSetting: state.db.settings.sendSMSOption
+	smsSetting: state.db.settings.sendSMSOption,
+	schoolPhoneNumber: state.db.settings.schoolPhoneNumber || ""
 }), dispatch => ({
 	sendMessage: (text, number, type) => dispatch(sendSMS(text, number)),
 	sendBatchMessages: (messages, type) => dispatch(sendBatchSMS(messages)),
