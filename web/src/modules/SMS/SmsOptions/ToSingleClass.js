@@ -65,8 +65,6 @@ class ToSingleClass extends Component {
 	const { classes, sendBatchMessages, smsOption } = this.props;
 
 	const messages = this.getMessages()
-
-	console.log(messages)
 	
 	return (
 			<div>
