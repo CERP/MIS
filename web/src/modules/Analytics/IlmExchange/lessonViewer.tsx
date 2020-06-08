@@ -1,9 +1,9 @@
 import React from 'react'
 
 interface PropsType {
-	students?: RootDBState["students"]
-	lessonId?: string
-	lessons?: {
+	students: RootDBState["students"]
+	lessonId: string
+	lessons: {
 		[id: string]: AugmentedIlmxLesson
 	}
 	onClose: () => void
@@ -18,8 +18,6 @@ type AugmentedIlmxLesson = {
 const LessonViewerModal: React.FC<PropsType> = ({ students, lessonId, lessons, onClose }) => {
 
 	const students_who_watched = getStudents(students, lessonId, lessons)
-
-	console.log(students)
 
 	return (
 		<div className="modal-container inner">
