@@ -104,15 +104,8 @@ class SMS extends Component {
 	}
 
 	getStudentPortalLink = () => {
-		const ref_phone = this.props.schoolPhoneNumber
-		const ref_id = this.getReferralString(ref_phone)
-		return `https://ilmexchange.com/student?referral=${ref_id}&std_id=`
-	}
-
-	getReferralString = (phone) => {
-		if (phone) {
-			return [...phone].slice(1).reverse().join("")
-		}
+		const ref_id = this.props.schoolId
+		return `https://ilmexchange.com/student%3Freferral%3D${ref_id}%26std_id%3D`
 	}
  
 	getType = (value) =>{
@@ -271,7 +264,7 @@ export default connect(state => ({
 	teachers:state.db.faculty,
 	connected: state.connected,
 	smsSetting: state.db.settings.sendSMSOption,
-	schoolPhoneNumber: state.db.settings.schoolPhoneNumber || ""
+	schoolId: state.auth.school_id || ""
 }), dispatch => ({
 	sendMessage: (text, number, type) => dispatch(sendSMS(text, number)),
 	sendBatchMessages: (messages, type) => dispatch(sendBatchSMS(messages)),
