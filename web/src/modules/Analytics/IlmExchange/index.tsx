@@ -22,14 +22,14 @@ interface S {
 	lessonId: string
 }
 
-const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons, isLoading, hasError, dispatch }) => {
+const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons, dispatch }) => {
 
 	useEffect(() => {
 		dispatch(fetchLessons)
 	}, [dispatch])
 
-	const computed_lesson_data: AugmentedIlmxLessons = computeLessonsData(events, lessons)
-	const sorted_entries = getSortedEntries(computed_lesson_data)
+	const computed_lessons_data: AugmentedIlmxLessons = computeLessonsData(events, lessons)
+	const sorted_entries = getSortedEntries(computed_lessons_data)
 
 	const [stateProps, setStateProps] = useState<S>({
 		showViewerModal: false,
@@ -60,8 +60,8 @@ const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons, 
 				<div className="ilmx-analytics container">
 					{
 						sorted_entries
-							.map(([lesson_id, lesson_meta]) => {
-								return <div className="card" key={lesson_id}>
+							.map(([lesson_id, lesson_meta]) => (
+								<div className="card" key={lesson_id}>
 									<div className="card-row">
 										<div className="card-row inner">
 											<img src={PlayIcon} alt="play-icon" height="24" width="24" />
@@ -78,13 +78,13 @@ const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons, 
 										</div>
 									</div>
 								</div>
-							})
+							))
 					}
 					{
-						stateProps.showViewerModal && <Modal>
+						stateProps.showViewerModal && computed_lessons_data && <Modal>
 							<LessonViewerModal
 								lessonId={stateProps.lessonId}
-								lessons={computed_lesson_data}
+								lessons={computed_lessons_data}
 								students={students}
 								onClose={handleToggleModal} />
 						</Modal>
@@ -112,14 +112,20 @@ type AugmentedIlmxLessons = {
 	} & IlmxLesson
 }
 
-function computeLessonsData(events: PropsType["events"], lessons_meta: PropsType["lessons"]) {
+function computeLessonsData(events: PropsType["events"], lessons: PropsType["lessons"]) {
 
 	let agg: AugmentedIlmxLessons = {}
 
-	Object.entries(events)
-		.forEach(([_, lessons]) => {
+	const lessons_meta = lessons["lessons"] || {}
 
-			for (const item of Object.values(lessons)) {
+	if (!lessons_meta) {
+		return agg
+	}
+
+	Object.entries(events || {})
+		.forEach(([_, lessons_history]) => {
+
+			for (const item of Object.values(lessons_history)) {
 
 				const { lesson_id, duration, student_id } = item
 
@@ -148,8 +154,8 @@ function computeLessonsData(events: PropsType["events"], lessons_meta: PropsType
 	return agg
 }
 
-const getSortedEntries = (videos_data: AugmentedIlmxLessons) => {
-	return Object.entries(videos_data)
+const getSortedEntries = (lessons_data: AugmentedIlmxLessons) => {
+	return Object.entries(lessons_data)
 		.sort(([, a], [_, b]) => b.watchCount - a.watchCount)
 }
 
