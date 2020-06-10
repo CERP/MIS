@@ -81,6 +81,7 @@ class MainActivity : AppCompatActivity() {
         clearButton.setOnClickListener {
             clearLogMessages()
             databaseHandler.deleteAllSMs()
+            databaseHandler.deleteAllFailedSMs()
             arraylist.clear()
             recyclerAdapter!!.notifyDataSetChanged()
             tv.text = readLogMessages()
@@ -204,7 +205,7 @@ class MainActivity : AppCompatActivity() {
         try {
             Log.d("tryCc",""+parsed.messages.size);
             Log.e(TAG, parsed.messages.toString())
-            //Log.d("tryMessage",parsed.messages.get(0));
+
             appendMessagesToFile(parsed.messages)
         }
         catch(e : Exception){
@@ -215,23 +216,15 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "scheduling....")
         try {
 
-            if(parsed.messages.size>0) {
-
-                    startService(Intent(this, SMSDispatcherService::class.java))
-
-
+            if(parsed.messages.size > 0 ) {
+                startService(Intent(this, SMSDispatcherService::class.java))
             }
         }
         catch(e : Exception) {
             Log.e(TAG, e.message)
         }
 
-
-
-
-
         finish()
-
     }
 
     fun updateLogText(text : String) {
