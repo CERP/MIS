@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { smsIntentLink } from 'utils/intent'
 import former from 'utils/former'
 import ShareButton from 'components/ShareButton'
+import { replaceSpecialCharsWithUTFChars } from 'utils/stringHelper'
 
 
 class ToAllStudents extends Component {
@@ -44,7 +45,9 @@ class ToAllStudents extends Component {
 					return agg
 				}
 
-				const text_string = portal_link ? `${this.state.text}\nName: ${student.Name}\nStudent portal link: ${portal_link}${student.id}` : this.state.text
+				const text_string = portal_link ? `${this.state.text}\nName: ${student.Name}\nStudent portal link: ${portal_link}${student.id}` 
+					: replaceSpecialCharsWithUTFChars(this.state.text)
+
 				return [...agg,{
 					number: student.Phone,
 					text :  text_string

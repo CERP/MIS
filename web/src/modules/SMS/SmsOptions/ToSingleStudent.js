@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { smsIntentLink } from 'utils/intent'
 import former from 'utils/former'
+import { replaceSpecialCharsWithUTFChars } from 'utils/stringHelper'
 import ShareButton from 'components/ShareButton'
 
 class ToSingleStudent extends Component {
@@ -15,11 +16,13 @@ class ToSingleStudent extends Component {
 	  this.former = new former(this, [])
 	}
 	
-	logSms = () =>{
+	logSms = () => {
+
 		if(this.state.selected_student_number === ""){
 			console.log("No Message to Log")
 			return
 		}
+
 		const historyObj = {
 			faculty: this.props.faculty_id,
 			date: new Date().getTime(),
@@ -36,6 +39,8 @@ class ToSingleStudent extends Component {
 	const { students, sendMessage, smsOption } = this.props;
 	
 	// const text_string = portal_link ? `${this.state.text}\n${portal_link}${student.id}` : this.state.text
+
+	const sms_text = replaceSpecialCharsWithUTFChars(this.state.text)
 
 	return (
 		<div>
@@ -59,11 +64,11 @@ class ToSingleStudent extends Component {
 				{
 					smsOption === "SIM" ?
 						<a href={smsIntentLink({
-							messages: [{ number: this.state.selected_student_number, text: this.state.text }],
+							messages: [{ number: this.state.selected_student_number, text: sms_text }],
 							return_link: window.location.href 
 							})} onClick={this.logSms} className="button blue">Send using Local SIM</a> :
 
-						<div className="button" onClick={() => sendMessage( this.state.text, this.state.selected_student_number)}>Send</div>
+						<div className="button" onClick={() => sendMessage(this.state.text, this.state.selected_student_number)}>Send</div>
 				}
 			<div className="is-mobile-only" style={{marginTop: 10}}>
 				<ShareButton title={"SMS"} text={this.state.text} />
