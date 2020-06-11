@@ -162,7 +162,7 @@ class Landing extends Component {
 
 		const { user, auth, client_id } = this.props
 
-		const link = `https://ilmexchange.com//auto-login?type=SCHOOL&id=${auth.school_id}&key=${auth.token}&cid=${client_id}&phone=${ilmx}`
+		const link = `https://ilmexchange.com/auto-login?type=SCHOOL&id=${auth.school_id}&key=${auth.token}&cid=${client_id}&phone=${ilmx}`
 		return window.location.href = link
 	}
 
@@ -174,7 +174,7 @@ class Landing extends Component {
 		}
 
 		const { user, auth, client_id } = this.props
-		const link = `https://ilmexchange.com//auto-login?type=SCHOOL&id=${auth.school_id}&key=${auth.token}&cid=${client_id}&phone=${this.state.phone}`
+		const link = `https://ilmexchange.com/auto-login?type=SCHOOL&id=${auth.school_id}&key=${auth.token}&cid=${client_id}&phone=${this.state.phone}`
 
 		localStorage.setItem("ilmx", this.state.phone)
 
