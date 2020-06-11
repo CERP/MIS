@@ -36,29 +36,23 @@ const val MY_PERMISSIONS_SEND_SMS = 1
 const val filename = "pending_messages.json"
 const val logFileName = "logFile.txt"
 
-private var list: RecyclerView? = null
-private var country: ArrayList<String>? = null
-
 class MainActivity : AppCompatActivity() {
 
     private var list: RecyclerView? = null
-    private var recyclerAdapter: adapter? = null
-    private var country: ArrayList<String>? = null
-    var arraylist = arrayListOf<SMSItem>();
+    private var recyclerAdapter: SMSAdapter? = null
+    var arraylist = arrayListOf<SMSItem>()
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         val intent = this.intent
-
         val data = intent.data
         val dataString = intent.dataString
 
-        permissions()
-
-        Log.d(TAG, "HELLOOOO")
-        Log.d(TAG, intent.action)
+        // ask for permissions
+        getPermissions()
 
         val logMessages = readLogMessages()
         val tv = findViewById<TextView>(R.id.logtext)
@@ -66,109 +60,133 @@ class MainActivity : AppCompatActivity() {
         tv.movementMethod = ScrollingMovementMethod()
 
         val databaseHandler: DatabaseHandler = DatabaseHandler(this)
+
         list = findViewById(R.id.recyclerV) as RecyclerView
+
         val layoutManager = LinearLayoutManager(this)
-        layoutManager.setReverseLayout(true);
-        layoutManager.setStackFromEnd(true);
+        layoutManager.setReverseLayout(true)
+        layoutManager.setStackFromEnd(true)
         list!!.setLayoutManager(layoutManager)
-        arraylist = databaseHandler.viewAllSms();
-        Log.d("tryArrayListSize",arraylist.size.toString());
-        recyclerAdapter = adapter(this@MainActivity)
+
+        arraylist = databaseHandler.getAllSMS()
+
+        recyclerAdapter = SMSAdapter(this@MainActivity)
         list!!.addItemDecoration(DividerItemDecoration(list!!.getContext(), layoutManager.orientation))
         list!!.setAdapter(recyclerAdapter)
-        //startService(Intent(this, SMSDispatcherService::class.java))
-        val clearButton = findViewById<Button>(R.id.clearLogButton)
-        clearButton.setOnClickListener {
+
+        // clear logs button
+        val clearLogsButton = findViewById<Button>(R.id.clearLogButton)
+        clearLogsButton.setOnClickListener {
+
             clearLogMessages()
-            databaseHandler.deleteAllSMs()
-            databaseHandler.deleteAllFailedSMs()
+            databaseHandler.deleteAllSMS()
+            databaseHandler.deleteAllFailedSMS()
+
             arraylist.clear()
             recyclerAdapter!!.notifyDataSetChanged()
+
+            // re-reading logs to ensure removed
             tv.text = readLogMessages()
         }
 
-        val resendButton = findViewById<Button>(R.id.button)
-        resendButton.setOnClickListener {
-            Toast.makeText(baseContext,"resending all",Toast.LENGTH_SHORT).show()
-            val msgs = databaseHandler.getAllFailedSms();
-//            for(msg in arraylist){
-//                if(msg.status.equals("Failed")){
-//                    arraylist.remove(msg);
-//                }
-//            }
-            Log.d("tryResend",arraylist.size.toString()+" "+msgs.size);
-            databaseHandler.deleteAllFailedSMs()
-            arraylist = databaseHandler.viewAllSms();
-            Log.d("tryResend",arraylist.size.toString()+"");
+        // resend failed sms button
+        val resendFailedSMSButton = findViewById<Button>(R.id.button)
+        resendFailedSMSButton.setOnClickListener {
 
-            val databaseHandler: DatabaseHandler = DatabaseHandler(baseContext)
-            for(msg in msgs){
-                databaseHandler.addSms(SMSItem(number = msg.number,text = msg.text, status =  msg.status,date = msg.date))
+            val failedMessages = databaseHandler.getAllFailedSMS()
+            val failedMessagesSize = failedMessages.size
+
+            if(failedMessagesSize > 0) {
+
+                Toast.makeText(baseContext, "resending $failedMessagesSize failed sms", Toast.LENGTH_SHORT).show()
+
+                // delete failed sms so that in next try they don't duplicate in db
+                databaseHandler.deleteAllFailedSMS()
+
+                //
+                val databaseHandler: DatabaseHandler = DatabaseHandler(baseContext)
+                for (msg in failedMessages) {
+                    databaseHandler.addSMS(SMSItem(number = msg.number, text = msg.text, status = msg.status, date = msg.date))
+                }
+
+                // appending failed sms to file
+                appendMessagesToFile(failedMessages)
+
+                recyclerAdapter!!.notifyDataSetChanged()
+                startService(Intent(this@MainActivity, SMSDispatcherService::class.java))
+            } else {
+                Toast.makeText(baseContext, "No sms to resend", Toast.LENGTH_SHORT).show()
             }
-            appendMessagesToFile(msgs)
-            recyclerAdapter!!.notifyDataSetChanged()
-            startService(Intent(this@MainActivity, SMSDispatcherService::class.java))
         }
 
         var sent= 0
         var total = 0
         var pending = 0
         var failed = 0
-        for(sms in arraylist){
-            Log.d("trySSStatus",sms.status);
-            if(sms.status.equals("SENT")){
-                sent++;
-            }else if(sms.status.equals("PENDING")){
-                pending++;
+
+        for(sms in arraylist) {
+
+            if(sms.status.equals("SENT")) {
+                sent++
+            } else if(sms.status.equals("PENDING")){
+                pending++
             }
-            else if(sms.status.equals("Failed")){
-                failed++;
+            else if(sms.status.equals("FAILED")){
+                failed++
             }
         }
+
         total = arraylist.size
+
         val tvsent = findViewById<TextView>(R.id.textViewsent)
         val tvpending = findViewById<TextView>(R.id.textViewpending)
         val tvfailed = findViewById<TextView>(R.id.textView2failed)
-        //tv2.text = "Sent: "+sent+"  Pending:"+pending+" Total:"+total+" Failed:"+failed;
-        tvsent.text = "Sent: "+sent
-        tvpending.text = "Pending: "+pending
-        tvfailed.text = "Failed: "+failed
+
+        tvsent.text = "Sent: $sent"
+        tvpending.text = "Pending: $pending"
+        tvfailed.text = "Failed: $failed"
 
         val handler = Handler()
         var pre = readLogMessages()
+
         handler.postDelayed(object : Runnable {
-            override fun run() { //your code
-                arraylist = databaseHandler.viewAllSms();
-                Log.d("tryArrayListSize","in handler"+arraylist.size.toString());
-                Log.d("tryDB", arraylist.size.toString());
+            override fun run() {
+                arraylist = databaseHandler.getAllSMS()
+                Log.d("tryArrayListSize","in handler" + arraylist.size.toString())
+                Log.d("tryDB", arraylist.size.toString())
 
                 handler.postDelayed(this, 2000)
                 val text = readLogMessages()
-                if(!pre.equals(text)) {
 
+                if(pre != text) {
                     updateLogText(text)
                     pre = text
                 }
 
                 sent = 0
                 failed = 0
-                pending =0;
-                for(sms in arraylist){
-                    Log.d("trySStatus",sms.status);
-                    if(sms.status.equals("SENT")){
-                        sent++;
-                    }else if(sms.status.equals("PENDING")){
-                        pending++;
-                    }
-                    else if(sms.status.equals("Failed")){
-                        failed++;
+                pending = 0
+
+                for(sms in arraylist) {
+                    
+                    Log.d("SMS-Status", sms.status)
+
+                    if(sms.status.equals("SENT")) {
+                        sent++
+                    } else if(sms.status.equals("PENDING")) {
+                        pending++
+                    } else if(sms.status.equals("FAILED")) {
+                        failed++
                     }
                 }
+
                 total = arraylist.size
-                tvsent.text = "Sent: "+sent
-                tvpending.text = "Pending: "+pending
-                tvfailed.text = "Failed: "+failed
-                recyclerAdapter!!.notifyDataSetChanged();
+
+                tvsent.text = "Sent: $sent"
+                tvpending.text = "Pending: $pending"
+                tvfailed.text = "Failed: $failed"
+
+                recyclerAdapter!!.notifyDataSetChanged()
             }
         }, 2000)
 
@@ -176,70 +194,61 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
+        val jsonString = java.net.URLDecoder.decode(dataString.split("=")[1], "UTF-8")
+        
+        tv.append(jsonString)
 
-
-        Log.d(TAG, dataString)
-        val json_string = java.net.URLDecoder.decode(dataString.split("=")[1], "UTF-8")
-        Log.d(TAG, json_string)
-
-        tv.append(json_string)
-
-        val parsed : SMSPayload? = Klaxon().parse(json_string)
-
-        if(parsed == null) {
+        val parsed: SMSPayload? = Klaxon().parse(jsonString)
+        if(parsed === null) {
             return
         }
-
 
         // open file, append messages and quit
         // task which runs every minute will consume from here
         // do I need to acquire a lock on this file?
 
-        //TODO save msgs in DB
+        val timestamp = LocalDateTime.now()
+        val date = timestamp.format(DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a"))
 
-        val currentDateTime = LocalDateTime.now()
-        val cdate = currentDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a"))
-        for (sms in parsed.messages) {
-            val status = databaseHandler.addSms(SMSItem(number = sms.number,text = sms.text, status =  sms.status,date =  cdate))
+        for(sms in parsed.messages) {
+            databaseHandler.addSMS(SMSItem(number = sms.number, text = sms.text, status =  sms.status, date =  date))
         }
+
         try {
-            Log.d("tryCc",""+parsed.messages.size);
-            Log.e(TAG, parsed.messages.toString())
 
             appendMessagesToFile(parsed.messages)
-        }
-        catch(e : Exception){
+
+        } catch(e: Exception){
             Log.e(TAG, e.message)
             Log.e(TAG, e.toString())
         }
 
         Log.d(TAG, "scheduling....")
-        try {
 
-            if(parsed.messages.size > 0 ) {
+        try {
+            if(parsed.messages.isNotEmpty()) {
                 startService(Intent(this, SMSDispatcherService::class.java))
             }
-        }
-        catch(e : Exception) {
+        } catch(e: Exception) {
             Log.e(TAG, e.message)
         }
 
         finish()
     }
 
-    fun updateLogText(text : String) {
+    fun updateLogText(text: String) {
 
         runOnUiThread {
             run {
                 val tv = findViewById<TextView>(R.id.logtext)
-                tv.setText(text)
+                tv.text = text
             }
         }
     }
 
 
 
-    private fun appendMessagesToFile( messages : List<SMSItem>) {
+    private fun appendMessagesToFile(messages: List<SMSItem>) {
 
         // first read the file as json
 
@@ -250,7 +259,7 @@ class MainActivity : AppCompatActivity() {
 
         Log.d(TAG, file.absolutePath)
 
-        var content : String? = null
+        var content: String? = null
 
         if(file.exists()) {
             val bytes = file.readBytes()
@@ -258,29 +267,23 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG,"content of pending messages is $content")
         }
 
-         val new_list = if(content == null) {
+         val newList = if(content == null) {
             messages
         } else {
             val parsed = Klaxon().parseArray<SMSItem>(content)
             parsed.orEmpty() + messages
         }
 
-        Log.d(TAG, "new list is $new_list")
+        Log.d(TAG, "new list is $newList")
 
-        val res = Klaxon().toJsonString(new_list)
+        val res = Klaxon().toJsonString(newList)
         file.writeBytes(res.toByteArray())
 
         Log.d(TAG, "DONE writing")
 
-
     }
 
-//    private fun processString(): String{
-//        var msgtxt = readLogMessages()
-//        var arr = msgtxt.split("\n")
-//       // if(arr.co)
-//    }
-    private fun readLogMessages() : String {
+    private fun readLogMessages(): String {
 
         val file = File(filesDir, "${logFileName}")
         var content = if(file.exists()) {
@@ -291,7 +294,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         return content
-
     }
 
     private fun clearLogMessages() {
@@ -300,47 +302,57 @@ class MainActivity : AppCompatActivity() {
         file.writeBytes("".toByteArray())
     }
 
-    private inner class adapter(internal var context: Context) :
-            RecyclerView.Adapter<adapter.myViewHolder>() {
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): adapter.myViewHolder {
+    private inner class SMSAdapter(internal var context: Context): RecyclerView.Adapter<SMSAdapter.SMSViewHolder >() {
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SMSAdapter.SMSViewHolder  {
             val view = LayoutInflater.from(context).inflate(R.layout.model, parent, false)
-            return myViewHolder(view)
+            return SMSViewHolder (view)
         }
+
         @SuppressLint("ResourceAsColor")
-        override fun onBindViewHolder(holder: adapter.myViewHolder, position: Int) {
-            holder.country.text =arraylist[position].number+"\n"+arraylist[position].text;
+        override fun onBindViewHolder(holder: SMSAdapter.SMSViewHolder, position: Int) {
+
+            holder.country.text =arraylist[position].number+"\n"+arraylist[position].text
 
             if(!arraylist[position].status.equals("SENT") && !arraylist[position].status.equals("PENDING")){
-                holder.resend.visibility =  View.VISIBLE;
+                holder.resend.visibility =  View.VISIBLE
                 holder.resendcard.visibility = View.VISIBLE
-            }else{
+            } else {
                 holder.resend.visibility =  View.GONE
                 holder.resendcard.visibility = View.GONE
             }
+
             if(!arraylist[position].date.equals("-1")) {
                 holder.date.text = arraylist[position].date
             }
-            Log.d("trySOtatus",arraylist[position].status)
-            holder.status.text = arraylist[position].status;
-            if(arraylist[position].status.equals("SENT")){
+
+            holder.status.text = arraylist[position].status
+
+            if(arraylist[position].status.equals("SENT")) {
                 holder.status.setBackgroundResource(R.color.green)
-            }else if(arraylist[position].status.equals("Failed")){
+            } else if(arraylist[position].status.equals("FAILED")) {
                 holder.status.setBackgroundResource(R.color.red)
-            }else if(arraylist[position].status.equals("PENDING")){
+            } else if(arraylist[position].status.equals("PENDING")) {
                 holder.status.setBackgroundResource(R.color.gray)
             }
+
             holder.resend.setOnClickListener(View.OnClickListener {
-                Log.d("trySOtatus","clicked")
-                Toast.makeText(context,"retrying",Toast.LENGTH_LONG).show();
-                val msgs = arrayListOf<SMSItem>();
-                msgs.add(arraylist[position]);
-                appendMessagesToFile(msgs)
+
+                Toast.makeText(context,"retrying",Toast.LENGTH_LONG).show()
+
+                val messages = arrayListOf<SMSItem>()
+                messages.add(arraylist[position])
+                // append failed messages to file
+                appendMessagesToFile(messages)
+
+                // add sms to database
                 val databaseHandler: DatabaseHandler = DatabaseHandler(context)
-                databaseHandler.deleteSMs(arraylist[position])
-                databaseHandler.addSms(SMSItem(number = arraylist[position].number,text = arraylist[position].text, status =  arraylist[position].status,date = arraylist[position].date))
+                databaseHandler.deleteSMS(arraylist[position])
+                databaseHandler.addSMS(SMSItem(number = arraylist[position].number,text = arraylist[position].text, status =  arraylist[position].status,date = arraylist[position].date))
                 arraylist.remove(arraylist[position])
+
                 notifyDataSetChanged()
-                //arraylist.removeAt(mData[position].index!!);
+
                 startService(Intent(this@MainActivity, SMSDispatcherService::class.java))
             })
 
@@ -348,7 +360,9 @@ class MainActivity : AppCompatActivity() {
         override fun getItemCount(): Int {
             return arraylist.size
         }
-        inner class myViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        inner class SMSViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
+
             internal var country: TextView
             internal var resend: Button
             internal var resendcard: CardView
@@ -365,7 +379,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun permissions() {
+    private fun getPermissions() {
 
         if(ContextCompat.checkSelfPermission(this@MainActivity, android.Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED ||
            ContextCompat.checkSelfPermission(this@MainActivity, android.Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED ||
@@ -374,7 +388,7 @@ class MainActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(this@MainActivity, arrayOf(android.Manifest.permission.SEND_SMS, android.Manifest.permission.READ_SMS, android.Manifest.permission.READ_PHONE_STATE), MY_PERMISSIONS_SEND_SMS)
         }
         else {
-            Log.d(TAG, "Permissions are granted...")
+            Log.d(TAG, "Permissions has been granted!")
         }
     }
 
@@ -382,7 +396,7 @@ class MainActivity : AppCompatActivity() {
         when(requestCode) {
             MY_PERMISSIONS_SEND_SMS -> {
                 if((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    Log.d(TAG, "PERMISSION GRANTED IN HERE");
+                    Log.d(TAG, "PERMISSION GRANTED IN HERE")
                 }
             }
         }

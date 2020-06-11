@@ -9,8 +9,6 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        Log.d(TAG,"a     inside app");
-       // startService(Intent(this, SMSDispatcherService::class.java))
-        //JobManager.create(this).addJobCreator(SMSDispatcher())
+        Log.d(TAG,"App started");
     }
 }

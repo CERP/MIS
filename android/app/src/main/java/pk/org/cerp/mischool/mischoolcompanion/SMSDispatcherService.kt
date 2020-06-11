@@ -11,25 +11,21 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.Build
 import android.os.IBinder
+import android.provider.Telephony
 import android.support.annotation.RequiresApi
 import android.telephony.SmsManager
 import android.util.Log
-import android.widget.TextView
-import android.widget.Toast
 import com.beust.klaxon.Klaxon
 import java.io.File
 import java.text.DateFormat
 import java.util.*
-import kotlin.collections.ArrayList
-
 
 class SMSDispatcherService : Service() {
 
     companion object {
         val SEND_KEY = "SENT"
-        val Pending_KEY = "PENDING"
-        val Failed_KEY = "Failed"
-        var issDo = false;
+        val PENDING_KEY = "PENDING"
+        val FAILED_KEY = "FAILED"
     }
 
     override fun onCreate() {
@@ -44,36 +40,17 @@ class SMSDispatcherService : Service() {
     @TargetApi(Build.VERSION_CODES.O)
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        //Toast.makeText(this, "Notification Service started by user.", Toast.LENGTH_LONG).show()
-        Log.d("tryService", "on start command called")
-//        if(isDo){
-//            isDo = false;
-//        }else {
-            Thread(Runnable {
-                kotlin.run {
-                    MyFunc()
-                }
-            }).start()
-//        }
-        //MyFunc()
+        Thread(Runnable {
+            kotlin.run {
+                MyFunc()
+            }
+        }).start()
         return Service.START_STICKY
     }
 
     override fun onBind(p0: Intent?): IBinder? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented")
     }
-//    override fun onHandleIntent(intent: Intent?) {
-//
-//        try {
-//            Log.d(TAG, "inside on handle intent")
-//            if (intent != null) {
-//                //Log.d(TAG, intent.dataString.toString())
-//                MyFunc();
-//            };
-//        } catch(e : Exception) {
-//            Log.d(TAG, e.message)
-//        }
-//    }
 
     fun sendAllSMS(messages : List<SMSItem>) {
         for(p in messages) {
@@ -81,19 +58,9 @@ class SMSDispatcherService : Service() {
             sendSMS(p)
             Thread.sleep(100)
         }
-
-     //   Toast.makeText(applicationContext, messages.size.toString() + " messages Sent", Toast.LENGTH_SHORT).show()
-
     }
 
-    private fun replaceUTF8CharsWith(text: String): String {
-        return text
-                .replace("%3F", "?")
-                .replace("%3D", "=")
-                .replace("%26", "&")
-    }
-
-    fun sentMessages() : Pair<Int, Int> {
+    fun sentMessages(): Pair<Int, Int> {
 
         val unixTime = System.currentTimeMillis()
 
@@ -139,16 +106,14 @@ class SMSDispatcherService : Service() {
 
     }
 
-    public fun MyFunc(){
-        var reschedule = true
+    fun MyFunc() {
+
         return try {
+
             Log.d(TAG, "doing run job using service")
-            // updateLogText("doing run job")
 
             val pending = readMessagesFromFile()
             val num_messages = pending.size
-
-
 
             val history = messageHistory()
             val last_min_messages = history.first
@@ -163,9 +128,11 @@ class SMSDispatcherService : Service() {
 
             // we assume that sending messages will not error for now.
             // because when they do error they tend to show up in the messages app for manual retry
-            Log.d("tryMMessage", "max = "+max_per_minute+"  last min msgs = "+last_min_messages+"  current msgs = "+num_messages)
-            val next_list = when {
-                last_min_messages > max_per_minute ->  {
+            Log.d("tryMMessage", "max = $max_per_minute last min msgs = $last_min_messages current msgs = $num_messages")
+
+            val nextList = when {
+
+                last_min_messages > max_per_minute -> {
                     Log.d(TAG, "too many messages sent last minute. waiting until next round")
                     pending
                 }
@@ -195,144 +162,120 @@ class SMSDispatcherService : Service() {
                 }
             }
 
-            writeMessagesToFile(next_list)
-//            reschedule = next_list.isNotEmpty()
+            // write message to file
+            writeMessagesToFile(nextList)
 
-
-        }
-        catch(e : Exception) {
-            e.printStackTrace();
-
-
+        } catch(e: Exception) {
+            e.printStackTrace()
         } finally {
-//            if(reschedule) SMSJob.scheduleJob() else {
-//                Log.d(TAG, "done sending messages!")
-//                //updateLogText("Allall messages sent")
-//            }
+            Log.d(TAG, "done sending messages!")
         }
     }
 
-    fun sendBatchSMS(messages : List<SMSItem>) {
-        for(p in messages) {
-            Log.d(TAG, "send " + p.text + " to " + p.number)
-            sendSMS(p)
+    private fun sendBatchSMS(messages: List<SMSItem>) {
+        for(message in messages) {
+            Log.d(TAG, "send " + message.text + " to " + message.number)
+            sendSMS(message)
             Thread.sleep(1000)
         }
-
     }
 
-    fun sendSMS(p:SMSItem) {
-        Log.d("tryMMessage","in send msg");
-//        for (i:SMSItem in list){
-//            Log.d("tryMessage",i.text+"  "+i.status);
-//        }
+    private fun sendSMS(sms: SMSItem) {
+
         try {
-//            p.index = list.size;
-//            list.add(p);
-// check permission first
+
             val smsManager = SmsManager.getDefault();
 
-            val messages = smsManager.divideMessage(replaceUTF8CharsWith(p.text))
-
+            val messages = smsManager.divideMessage(replaceUTF8CharsWithSpecialChars(sms.text))
+            Log.d(TAG, "size of messages: ${messages.size}")
             val currentTime = DateFormat.getDateTimeInstance().format(Date())
 
-            Log.d(TAG, "size of messages: ${messages.size}")
-
-
-
             val sentPI = PendingIntent.getBroadcast(this, 0, Intent("SENT"), 0)
-            val index = p.index;
+
             val databaseHandler: DatabaseHandler = DatabaseHandler(this)
-            val broadCastReceiver = object : BroadcastReceiver() {
+
+            val broadCastReceiver = object: BroadcastReceiver() {
                 @RequiresApi(Build.VERSION_CODES.O)
                 override fun onReceive(contxt: Context?, intent: Intent?) {
-                    unregisterReceiver(this);
+                    
+                    unregisterReceiver(this)
 
-                    Log.d(TAG,"inside receive")
-                    val resultCode = getResultCode();
-                    if (resultCode == Activity.RESULT_OK) {
-                       // unregisterReceiver(re)
-                        p.status = SEND_KEY
-                        Log.d("tryMessage",p.text+"  "+p.index+"  "+index+"  "+p.status+" ")
-                        databaseHandler.updateSms(p);
-                        //Toast.makeText(getBaseContext(), "SMS sent ",Toast.LENGTH_SHORT).show();
-                    }else if(resultCode == SmsManager.RESULT_ERROR_GENERIC_FAILURE) {
-                        p.status = Failed_KEY
-                        databaseHandler.updateSms(p);
-                        Log.d("tryMessage",p.text+"  "+p.index+"  "+index+"  "+p.status)
-                        //Toast.makeText(getBaseContext(), "error",Toast.LENGTH_SHORT).show();
-                    }else if(resultCode == SmsManager.RESULT_ERROR_NO_SERVICE) {
-                        p.status = Failed_KEY
-                        databaseHandler.updateSms(p);
-                        Log.d("tryMessage",p.text+"  "+p.index+"  "+index+"  "+p.status)
-                        //Toast.makeText(getBaseContext(), "Generic failure",Toast.LENGTH_SHORT).show();
-                    }else if(resultCode == SmsManager.RESULT_ERROR_NULL_PDU) {
-                        p.status = Failed_KEY
-                        databaseHandler.updateSms(p);
-                        Log.d("tryMessage",p.text+"  "+p.index+"  "+index+"  "+p.status)
-                        //Toast.makeText(getBaseContext(), "No service",Toast.LENGTH_SHORT).show();
-                    }else if(resultCode == SmsManager.RESULT_ERROR_RADIO_OFF) {
-                        p.status = Failed_KEY
-                        databaseHandler.updateSms(p);
-                        Log.d("tryMessage",p.text+"  "+p.index+"  "+index+"  "+p.status)
-                        //Toast.makeText(getBaseContext(), "Radio off",Toast.LENGTH_SHORT).show();
+                    when (resultCode) {
+                        Activity.RESULT_OK -> {
+                            sms.status = SEND_KEY
+                            databaseHandler.updateSMS(sms)
+                        }
+                        SmsManager.RESULT_ERROR_GENERIC_FAILURE -> {
+                            sms.status = FAILED_KEY
+                            databaseHandler.updateSMS(sms)
+                        }
+                        SmsManager.RESULT_ERROR_NO_SERVICE -> {
+                            sms.status = FAILED_KEY
+                            databaseHandler.updateSMS(sms)
+                        }
+                        SmsManager.RESULT_ERROR_NULL_PDU -> {
+                            sms.status = FAILED_KEY
+                            databaseHandler.updateSMS(sms)
+                        }
+                        SmsManager.RESULT_ERROR_RADIO_OFF -> {
+                            sms.status = FAILED_KEY
+                            databaseHandler.updateSMS(sms)
+                        }
+                        else -> {
+                            sms.status = PENDING_KEY
+                            databaseHandler.updateSMS(sms)
+                        }
                     }
-                 //   abortBroadcast()
                 }
             }
-//            if(!isDo) {
-//                isDo = true;
-                registerReceiver(broadCastReceiver, IntentFilter("SENT"));
- //           }
+
+            registerReceiver(broadCastReceiver, IntentFilter("SENT"))
 
             if(messages.size > 1) {
-                Log.d("tryMMessage", "SENDING MULTIPART")
+                Log.d("trySend", "SENDING MULTIPART")
+
                 var plist = arrayListOf<PendingIntent>()
-                for (i in 0..messages.size-1){
+                for (i in 0..messages.size-1) {
                     plist.add(sentPI)
                 }
+                smsManager.sendMultipartTextMessage(sms.number, null, messages, plist, null)
+                updateLogText("Message: ${sms.number}-${sms.text}-${sms.status}-$currentTime")
+                
+            } else {
 
-                smsManager.sendMultipartTextMessage(p.number, null, messages, plist, null)
-                updateLogText("Message: ${p.number}-${p.text}-${p.status}-$currentTime")
+                val msgText = replaceUTF8CharsWithSpecialChars(sms.text)
+
+                smsManager.sendTextMessage(sms.number, null, msgText, sentPI, null)
+                updateLogText("Message: ${sms.number}-${sms.text}-${sms.status}-$currentTime")
             }
-            else {
-
-                val msgText = replaceUTF8CharsWith(p.text)
-
-                smsManager.sendTextMessage(p.number, null, msgText, sentPI, null)
-                updateLogText("Message: ${p.number}-${p.text}-${p.status}-$currentTime")
-            }
-            //updateLogText("message sent")
 
         } catch( e: Exception) {
             Log.d(TAG, e.message)
             val currentTime = DateFormat.getDateTimeInstance().format(Date())
-            updateLogText("ERROR: ${p.number}-${p.text}-${p.status}-$currentTime")
+            updateLogText("ERROR: ${sms.number}-${sms.text}-${sms.status}-$currentTime")
         }
-
     }
 
-
-
-    fun messageHistory() : Pair<Int, Int> {
+    private  fun messageHistory() : Pair<Int, Int> {
 
         val unixTime = System.currentTimeMillis()
 
         try {
 
-            val min_time = unixTime - (15 * 60 * 1000)
+            val minTime = unixTime - (15 * 60 * 1000)
             val cursor = this.applicationContext.contentResolver.query(
                     Uri.parse("content://sms/sent"),
                     arrayOf("date"),
-                    "date > $min_time",
+                    "date > $minTime",
                     null,
                     null
             )
 
 
             return if (cursor.moveToFirst()) {
+
                 var messages_past_minute = 0
-                var messages_past_15_min = 0
+                var messages_past_15_minute = 0
 
                 do {
 
@@ -341,26 +284,22 @@ class SMSDispatcherService : Service() {
 
                     if(diff <= 60) messages_past_minute++
 
-                    messages_past_15_min++
-
+                    messages_past_15_minute++
 
                 } while (cursor.moveToNext())
 
-                return Pair(messages_past_minute, messages_past_15_min)
+                return Pair(messages_past_minute, messages_past_15_minute)
             } else {
                 Log.d(TAG, "couldnt move to first...")
                 return Pair(0, 0)
             }
-
-        }
-        catch(e : Exception) {
+        } catch(e : Exception) {
             Log.e(TAG, e.message)
             return Pair(0, 0)
         }
-
     }
 
-    fun readMessagesFromFile() : List<SMSItem> {
+    private fun readMessagesFromFile(): List<SMSItem> {
 
         Log.d(TAG, "appending messages to file.....")
 
@@ -371,13 +310,13 @@ class SMSDispatcherService : Service() {
         if(file.exists()) {
             val bytes = file.readBytes()
             content = String(bytes)
-            Log.d("tryMMessages","content of pending messages is $content")
+            Log.d("tryWriteMsgToFile","content of pending messages is $content")
         }
 
         return if(content == null) emptyList<SMSItem>() else Klaxon().parseArray<SMSItem>(content).orEmpty()
     }
 
-    fun writeMessageToLogFile(message : String) {
+    private  fun writeMessageToLogFile(message: String) {
 
         val file = File(applicationContext.filesDir, "$logFileName")
 
@@ -396,10 +335,9 @@ class SMSDispatcherService : Service() {
 
     }
 
-    fun writeMessagesToFile(messages : List<SMSItem>) {
+    private fun writeMessagesToFile(messages: List<SMSItem>) {
 
         val file = File(applicationContext.filesDir, "$filename")
-
         Log.d(TAG, "messages length is ${messages.size}")
         val res = Klaxon().toJsonString(messages)
         file.writeBytes(res.toByteArray())
@@ -407,16 +345,10 @@ class SMSDispatcherService : Service() {
         Log.d(TAG, "DONE  writing file")
     }
 
-    fun updateLogText(text : String) {
+    private fun updateLogText(text : String) {
         // here we'll write logs to a file
-        // on the ui we'll read the file and display it.
-
+        // on the ui we'll read the file and display it
         try {
-
-            // val activityThreadClass = Class.forName("pk.org.cerp.mischool.mischoolcompanion.MainActivity")
-
-            // (context as MainActivity).updateLogText("doing run job")
-
             writeMessageToLogFile(text)
         }
         catch (e : Exception) {
