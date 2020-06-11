@@ -6,6 +6,7 @@ import moment from 'moment'
 
 import { createLogout, resetTrial, markPurchased } from 'actions'
 import Layout from 'components/Layout'
+import Modal from 'components/Modal'
 import { numberWithCommas } from 'utils/numberWithCommas'
 
 import attendanceIcon from './icons/attendance/checklist_1.svg'            //
@@ -29,6 +30,7 @@ import family from "./icons/family/family.svg"
 
 import Help from './icons/Help/help.svg'
 import diary from './icons/Diary/diary.svg'
+import ilmx from './icons/ilmx/ilmx.svg'
 
 /**
  * line for adding new badge just copy / paste it
@@ -44,7 +46,9 @@ class Landing extends Component {
 		super(props);
 
 		this.state = {
-			scroll: 0
+			scroll: 0,
+			showModal: false,
+			phone: ""
 		}
 	}
 
@@ -145,6 +149,38 @@ class Landing extends Component {
 
 	}
 
+	redirectToIlmx = () => {
+
+		const ilmx = localStorage.getItem("ilmx")
+
+		if (!Boolean(ilmx)) {
+			this.setState({
+				showModal: true
+			})
+			return
+		}
+
+		const { user, auth, client_id } = this.props
+
+		const link = `https://ilmexchange.com//auto-login?type=SCHOOL&id=${auth.school_id}&key=${auth.token}&cid=${client_id}&phone=${ilmx}`
+		return window.location.href = link
+	}
+
+	modalRedirectToIlmx = () => {
+
+		if (this.state.phone === "" || this.state.phone.length !== 11) {
+			alert("please enter a valid phone number")
+			return
+		}
+
+		const { user, auth, client_id } = this.props
+		const link = `https://ilmexchange.com//auto-login?type=SCHOOL&id=${auth.school_id}&key=${auth.token}&cid=${client_id}&phone=${this.state.phone}`
+
+		localStorage.setItem("ilmx", this.state.phone)
+
+		return window.location.href = link
+	}
+
 	render() {
 
 		const { logout, user, students, faculty, lastSnapshot, unsyncd, permissions, package_info } = this.props;
@@ -168,9 +204,9 @@ class Landing extends Component {
 
 		for (const student of Object.values(students)) {
 
-			if(student && student.Name) {
+			if (student && student.Name) {
 				const record = (student.attendance || {})[today_date];
-				if(record) {
+				if (record) {
 					today_attendance[record.status] += 1;
 				}
 
@@ -178,10 +214,10 @@ class Landing extends Component {
 					.filter(x => moment(x.date).format("YYYY-MM-DD") === today_date && x.type === "SUBMITTED")
 					.reduce((agg, curr) => agg + curr.amount, 0);
 
-				if(additional_payment > 0) {
+				if (additional_payment > 0) {
 					today_payment_students += 1
 				}
-        
+
 				today_payment += additional_payment;
 			}
 		}
@@ -205,6 +241,26 @@ class Landing extends Component {
 		}
 
 		return <Layout history={this.props.history}>
+
+			{
+				this.state.showModal && <Modal>
+					<div className="confirm-box" style={{ background: "#ffffff" }}>
+						<div className="title">Please verify your number</div>
+						<input
+							type="text"
+							placeholder="phone" style={{ width: "100%" }}
+							onChange={(e) => this.setState({ phone: e.target.value })} />
+						<div
+							className="button blue"
+							style={{ margin: "5px 0px 10px 0px" }}
+							onClick={() => this.modalRedirectToIlmx()}
+						>
+							Continue
+						</div>
+						<label style={{ width: "50px" }}><span style={{ color: "red" }}>Note:</span> If you already have an IlmExchange account please enter the number you registered with otherwise a new account will be created</label>
+					</div>
+				</Modal>
+			}
 			<div className="landing">
 				{!package_info.paid && package_info.date !== -1 && <div onClick={() => this.askForPassword()} className="trial-bar">
 					{this.getTrialWarningMessage()}
@@ -250,6 +306,15 @@ class Landing extends Component {
 									style={{ backgroundImage: `url(${family})` }}>
 									Families
 								</Link>
+							}
+							{
+								(user.Admin) &&
+								<div
+									onClick={() => this.redirectToIlmx()}
+									className="button green-shadow"
+									style={{ backgroundImage: `url(${ilmx})` }}>
+									IlmExchange
+								</div>
 							}
 						</div>
 					</div>
@@ -393,7 +458,7 @@ class Landing extends Component {
 
 							<Link
 								className="box no-underline bg-green"
-								to = '/analytics/daily-stats?type=paid_students'>
+								to='/analytics/daily-stats?type=paid_students'>
 								<div>{today_payment_students}</div>
 								<div>Students</div>
 							</Link>
@@ -435,7 +500,9 @@ export default connect(state => ({
 	lastSnapshot: state.lastSnapshot,
 	unsyncd: Object.keys(state.queued.mutations || {}).length,
 	package_info: state.db.package_info || { date: -1, trial_period: 15, paid: false }, //If package info is undefined
-	school_id: state.auth.school_id
+	school_id: state.auth.school_id,
+	auth: state.auth,
+	client_id: state.client_id,
 }), dispatch => ({
 	resetTrial: () => dispatch(resetTrial()),
 	markPurchased: () => dispatch(markPurchased()),

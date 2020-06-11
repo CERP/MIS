@@ -34,7 +34,9 @@ class ToSingleStudent extends Component {
   render() {
 
 	const { students, sendMessage, smsOption } = this.props;
-	console.log("Selected Number", this.state.selected_student_number)
+	
+	// const text_string = portal_link ? `${this.state.text}\n${portal_link}${student.id}` : this.state.text
+
 	return (
 		<div>
 
@@ -64,8 +66,7 @@ class ToSingleStudent extends Component {
 						<div className="button" onClick={() => sendMessage( this.state.text, this.state.selected_student_number)}>Send</div>
 				}
 			<div className="is-mobile-only" style={{marginTop: 10}}>
-				<div className="text-center">Share on Whatsapp</div>
-				<ShareButton text={this.state.text} />
+				<ShareButton title={"SMS"} text={this.state.text} />
 			</div>
 		</div>
 	)
