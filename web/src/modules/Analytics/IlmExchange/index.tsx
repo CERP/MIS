@@ -26,7 +26,7 @@ const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons, 
 
 	useEffect(() => {
 		fetchLessons()
-	}, [])
+	}, [fetchLessons])
 
 	const computed_lessons_data: AugmentedIlmxLessons = computeLessonsData(events, lessons)
 	const sorted_entries = getSortedEntries(computed_lessons_data)
