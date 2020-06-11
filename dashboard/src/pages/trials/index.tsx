@@ -10,6 +10,8 @@ import downloadCSV from 'utils/downloadCSV';
 
 interface P {
 	trials: RootReducerState["trials"]
+	user: RootReducerState["auth"]["id"]
+	admin: boolean
 	loggedUser: string | undefined
 	getReferralsInfo: () => any
 	updateReferralInformation: (school_id: string, value: any) => any
@@ -36,6 +38,11 @@ const defaultReferralState = () => ({
 	follow_up_status: "",
 	trial_reset_status: "",
 	overall_status: "",
+	survey_status: "",
+	owner_other_job: "",
+	computer_operator: "",
+	previous_management_system: "",
+	previous_software_name: "",
 	needy_status: "",
 	trustworthiness: "",
 })
@@ -73,7 +80,7 @@ const CSVHeaders = [
 	"trustworthiness"
 ]
 
-type CSVData = {
+interface CSVData {
 	school_id: string
 	owner_name: string
 	owner_phone: string
@@ -207,6 +214,8 @@ class Trial extends Component<propTypes, S> {
 		}
 	}
 
+	byAreaManager = (area_manager: string) => this.props.admin || this.props.user === area_manager
+
 	setActive = (school_id: string) => {
 		const active_school = this.state.active_school === school_id ? "" : school_id
 
@@ -251,6 +260,7 @@ class Trial extends Component<propTypes, S> {
 				return this.getStatusFilter(value.time, value.payment_received)
 					&& this.getDaysPassedFliter(value.time)
 					&& this.getSearchString(school_id, value).includes(this.state.filters.filterText.toLowerCase())
+					&& this.byAreaManager(value.area_manager_name)
 					&& (loggedUser === "admin" ? true : loggedUser === value.area_manager_name)
 			})
 			.sort(([, a_value], [, b_value]) => this.daysPassed(a_value.time) - this.daysPassed(b_value.time))
@@ -398,6 +408,8 @@ class Trial extends Component<propTypes, S> {
 
 export default connect((state: RootReducerState) => ({
 	trials: state.trials,
+	user: state.auth && state.auth.id,
+	admin: state.auth.role ? state.auth.role === "ADMIN" : false,
 	loggedUser: state.auth.id
 }), (dispatch: Function) => ({
 	updateReferralInformation: (school_id: string, value: any) => dispatch(updateReferralInformation(school_id, value)),

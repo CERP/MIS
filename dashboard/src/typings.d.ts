@@ -3,7 +3,7 @@ interface SyncState {
 }
 
 interface RootReducerState {
-	sync_state: SyncState 
+	sync_state: SyncState
 	auth: {
 		id?: string
 		token?: string
@@ -64,6 +64,9 @@ interface RootReducerState {
 		diary?: {
 			data: DiaryData[]
 		}
+	}
+	users: {
+		[id: string]: PermissionPayload
 	}
 }
 
@@ -175,6 +178,13 @@ interface TrialsDataRow {
 		overall_status: string
 		user: string
 		school_type: string
+
+		survey_status: string
+
+		owner_other_job: string
+		computer_operator: string
+		previous_management_system: string
+		previous_software_name: string
 		needy_status: string
 		trustworthiness: string
 	}
@@ -199,6 +209,11 @@ interface SignUpValue {
 	user: string
 	owner_phone: string
 	school_type: string
+
+	owner_other_job: "" | "YES" | "NO"
+	computer_operator: "" | "YES" | "NO"
+	previous_management_system: "" | "REGISTER" | "SOFTWARE" | "EXCEL"
+	previous_software_name: string
 }
 
 interface UserPermissions {
@@ -206,4 +221,8 @@ interface UserPermissions {
 	new_user: boolean
 	stats: boolean
 	trials: boolean
+}
+interface PermissionPayload {
+	role: string
+	permissions: UserPermissions
 }

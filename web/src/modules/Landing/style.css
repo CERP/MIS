@@ -29,6 +29,11 @@
 	.trial-bar:hover {
 		transform: scale(1.05);
 	}
+	.confirm-box {
+		background: #ffffff;
+		padding: 20px;
+		border-radius: 5px;
+	}
 
 .landing .button {
 	display: flex;
