@@ -9,12 +9,12 @@ import { PlayIcon } from 'assets/icons'
 import './style.css'
 
 interface PropsType {
-	dispatch: Function
 	students: RootDBState["students"]
 	events: RootDBState["ilmx"]["events"]
 	lessons: RootDBState["ilmx"]["lessons"]
 	isLoading: boolean
 	hasError: boolean
+	fetchLessons: () => void
 }
 
 interface S {
@@ -22,11 +22,11 @@ interface S {
 	lessonId: string
 }
 
-const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons, dispatch }) => {
+const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons, fetchLessons }) => {
 
 	useEffect(() => {
-		dispatch(fetchLessons)
-	}, [dispatch])
+		fetchLessons()
+	}, [])
 
 	const computed_lessons_data: AugmentedIlmxLessons = computeLessonsData(events, lessons)
 	const sorted_entries = getSortedEntries(computed_lessons_data)
@@ -102,6 +102,8 @@ export default connect((state: RootReducerState) => ({
 	lessons: state.db.ilmx.lessons,
 	isLoading: state.ilmxLessons.isLoading,
 	hasError: state.ilmxLessons.hasError
+}), (dispatch: Function) => ({
+	fetchLessons: () => dispatch(fetchLessons())
 }))(IlmExchangeAnalytics)
 
 type AugmentedIlmxLessons = {
@@ -116,7 +118,7 @@ function computeLessonsData(events: PropsType["events"], lessons: PropsType["les
 
 	let agg: AugmentedIlmxLessons = {}
 
-	const lessons_meta = lessons["lessons"] || {}
+	const lessons_meta = lessons || {}
 
 	if (!lessons_meta) {
 		return agg

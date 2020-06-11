@@ -319,8 +319,11 @@ export const autoSchoolLogin = (school_id: string, token: string, client_id: str
 			ilmx_client_id: client_id,
 		}
 	})
-		.then(res => {
+		.then((res: { status: string; number: string }) => {
 			syncr.verify()
+
+			localStorage.setItem("ilmx", res.number)
+			localStorage.setItem("user", "ILMX")
 
 			dispatch({
 				type: "AUTO_LOGIN_SUCCEED",

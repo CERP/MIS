@@ -162,7 +162,7 @@ class Landing extends Component {
 
 		const { user, auth, client_id } = this.props
 
-		const link = `http://localhost:3000/auto-login?type=SCHOOL&id=${auth.school_id}&key=${auth.token}&cid=${client_id}&phone=${ilmx}`
+		const link = `https://ilmexchange.com//auto-login?type=SCHOOL&id=${auth.school_id}&key=${auth.token}&cid=${client_id}&phone=${ilmx}`
 		return window.location.href = link
 	}
 
@@ -174,7 +174,7 @@ class Landing extends Component {
 		}
 
 		const { user, auth, client_id } = this.props
-		const link = `http://localhost:3000/auto-login?type=SCHOOL&id=${auth.school_id}&key=${auth.token}&cid=${client_id}&phone=${this.state.phone}`
+		const link = `https://ilmexchange.com//auto-login?type=SCHOOL&id=${auth.school_id}&key=${auth.token}&cid=${client_id}&phone=${this.state.phone}`
 
 		localStorage.setItem("ilmx", this.state.phone)
 
@@ -183,7 +183,7 @@ class Landing extends Component {
 
 	render() {
 
-		const { logout, user, students, faculty, lastSnapshot, unsyncd, permissions, package_info, auth, client_id } = this.props;
+		const { logout, user, students, faculty, lastSnapshot, unsyncd, permissions, package_info } = this.props;
 
 		const current_page = Math.floor(this.state.scroll / window.innerWidth);
 
@@ -502,7 +502,7 @@ export default connect(state => ({
 	package_info: state.db.package_info || { date: -1, trial_period: 15, paid: false }, //If package info is undefined
 	school_id: state.auth.school_id,
 	auth: state.auth,
-	client_id: state.client_id
+	client_id: state.client_id,
 }), dispatch => ({
 	resetTrial: () => dispatch(resetTrial()),
 	markPurchased: () => dispatch(markPurchased()),
