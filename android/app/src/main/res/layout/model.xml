@@ -94,7 +94,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/blue"
-                    android:text="RESEND"
+                    android:text="@string/resend"
                     android:textColor="@android:color/background_light"
                     android:textSize="8sp"
                     android:visibility="visible" />
