@@ -10,8 +10,9 @@ import android.os.Build
 import android.provider.Telephony
 import android.support.annotation.RequiresApi
 import android.util.Log
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 //create the database logic, extending the SQLiteOpenHelper base class
 
@@ -162,10 +163,13 @@ class DatabaseHandler(context: Context): SQLiteOpenHelper(context, DATABASE_NAME
         val contentValues = ContentValues()
         contentValues.put(KEY_STATUS, sms.status)
         
-        // update the sms date
-        val currentTimestamp = LocalDateTime.now()
-        val date = currentTimestamp.format(DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a"))
-        contentValues.put(KEY_DATE, date)
+        // update the sms timestamp
+
+        val date = Calendar.getInstance().time
+        val formatter = SimpleDateFormat.getDateTimeInstance() //or use getDateInstance()
+        val formattedDate = formatter.format(date)
+
+        contentValues.put(KEY_DATE, formattedDate)
         
         // execute update query
         val success = db.update(TABLE_CONTACTS, contentValues, "text=? AND phone=? AND status !=?", arrayOf(sms.text, sms.number, "SENT"))

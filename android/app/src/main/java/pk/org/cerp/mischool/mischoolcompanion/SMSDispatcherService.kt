@@ -23,18 +23,14 @@ import java.util.*
 class SMSDispatcherService : Service() {
 
     companion object {
-        val SEND_KEY = "SENT"
-        val PENDING_KEY = "PENDING"
-        val FAILED_KEY = "FAILED"
+        const val SENT_KEY = "SENT"
+        const val PENDING_KEY = "PENDING"
+        const val FAILED_KEY = "FAILED"
     }
 
     override fun onCreate() {
         super.onCreate()
-        Log.d("tryService","on create called")
-//        Thread(Runnable { kotlin.run {
-//            isDo = true;
-//            MyFunc()
-//        } }).start()
+        Log.d("tryStartService","on create called")
     }
 
     @TargetApi(Build.VERSION_CODES.O)
@@ -42,7 +38,7 @@ class SMSDispatcherService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Thread(Runnable {
             kotlin.run {
-                MyFunc()
+                prepareSendingSms()
             }
         }).start()
         return Service.START_STICKY
@@ -52,61 +48,7 @@ class SMSDispatcherService : Service() {
         TODO("not implemented")
     }
 
-    fun sendAllSMS(messages : List<SMSItem>) {
-        for(p in messages) {
-            Log.d(TAG, "send " + p.text + " to " + p.number)
-            sendSMS(p)
-            Thread.sleep(100)
-        }
-    }
-
-    fun sentMessages(): Pair<Int, Int> {
-
-        val unixTime = System.currentTimeMillis()
-
-        try {
-
-            val min_time = unixTime - (15 * 60 * 1000)
-            val cursor = contentResolver.query(
-                    Uri.parse("content://sms/sent"),
-                    arrayOf("date"),
-                    "date > $min_time",
-                    null,
-                    null
-            )
-
-
-            return if (cursor.moveToFirst()) {
-                var messages_past_minute = 0
-                var messages_past_15_min = 0
-
-                do {
-
-                    val date = cursor.getLong(cursor.getColumnIndex("date"))
-                    val diff = (unixTime - date) / 1000L
-
-                    if(diff <= 60) messages_past_minute++
-
-                    messages_past_15_min++
-
-
-                } while (cursor.moveToNext())
-
-                return Pair(messages_past_minute, messages_past_15_min)
-            } else {
-                Log.d(TAG, "couldnt move to first...")
-                return Pair(0, 0)
-            }
-
-        }
-        catch(e : Exception) {
-            Log.e(TAG, e.message)
-            return Pair(0, 0)
-        }
-
-    }
-
-    fun MyFunc() {
+    private fun prepareSendingSms() {
 
         return try {
 
@@ -188,10 +130,9 @@ class SMSDispatcherService : Service() {
 
             val messages = smsManager.divideMessage(replaceUTF8CharsWithSpecialChars(sms.text))
             Log.d(TAG, "size of messages: ${messages.size}")
+
             val currentTime = DateFormat.getDateTimeInstance().format(Date())
-
             val sentPI = PendingIntent.getBroadcast(this, 0, Intent("SENT"), 0)
-
             val databaseHandler: DatabaseHandler = DatabaseHandler(this)
 
             val broadCastReceiver = object: BroadcastReceiver() {
@@ -202,27 +143,27 @@ class SMSDispatcherService : Service() {
 
                     when (resultCode) {
                         Activity.RESULT_OK -> {
-                            sms.status = SEND_KEY
+                            sms.status = SENT_KEY
                             databaseHandler.updateSMS(sms)
                         }
-                        SmsManager.RESULT_ERROR_GENERIC_FAILURE -> {
-                            sms.status = FAILED_KEY
-                            databaseHandler.updateSMS(sms)
-                        }
-                        SmsManager.RESULT_ERROR_NO_SERVICE -> {
-                            sms.status = FAILED_KEY
-                            databaseHandler.updateSMS(sms)
-                        }
-                        SmsManager.RESULT_ERROR_NULL_PDU -> {
-                            sms.status = FAILED_KEY
-                            databaseHandler.updateSMS(sms)
-                        }
-                        SmsManager.RESULT_ERROR_RADIO_OFF -> {
-                            sms.status = FAILED_KEY
-                            databaseHandler.updateSMS(sms)
-                        }
+//                        SmsManager.RESULT_ERROR_GENERIC_FAILURE -> {
+//                            sms.status = FAILED_KEY
+//                            databaseHandler.updateSMS(sms)
+//                        }
+//                        SmsManager.RESULT_ERROR_NO_SERVICE -> {
+//                            sms.status = FAILED_KEY
+//                            databaseHandler.updateSMS(sms)
+//                        }
+//                        SmsManager.RESULT_ERROR_NULL_PDU -> {
+//                            sms.status = FAILED_KEY
+//                            databaseHandler.updateSMS(sms)
+//                        }
+//                        SmsManager.RESULT_ERROR_RADIO_OFF -> {
+//                            sms.status = FAILED_KEY
+//                            databaseHandler.updateSMS(sms)
+//                        }
                         else -> {
-                            sms.status = PENDING_KEY
+                            sms.status = FAILED_KEY
                             databaseHandler.updateSMS(sms)
                         }
                     }
@@ -235,7 +176,7 @@ class SMSDispatcherService : Service() {
                 Log.d("trySend", "SENDING MULTIPART")
 
                 var plist = arrayListOf<PendingIntent>()
-                for (i in 0..messages.size-1) {
+                for (i in 0 until messages.size) {
                     plist.add(sentPI)
                 }
                 smsManager.sendMultipartTextMessage(sms.number, null, messages, plist, null)

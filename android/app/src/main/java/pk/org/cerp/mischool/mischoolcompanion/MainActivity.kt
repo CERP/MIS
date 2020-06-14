@@ -27,9 +27,8 @@ import android.widget.TextView
 import android.widget.Toast
 import com.beust.klaxon.Klaxon
 import java.io.File
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-
+import java.text.SimpleDateFormat
+import java.util.*
 
 const val TAG = "MISchool-Companion"
 const val MY_PERMISSIONS_SEND_SMS = 1
@@ -80,7 +79,6 @@ class MainActivity : AppCompatActivity() {
 
             clearLogMessages()
             databaseHandler.deleteAllSMS()
-            databaseHandler.deleteAllFailedSMS()
 
             arraylist.clear()
             recyclerAdapter!!.notifyDataSetChanged()
@@ -206,18 +204,17 @@ class MainActivity : AppCompatActivity() {
         // open file, append messages and quit
         // task which runs every minute will consume from here
         // do I need to acquire a lock on this file?
-
-        val timestamp = LocalDateTime.now()
-        val date = timestamp.format(DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a"))
+        
+        val date = Calendar.getInstance().time
+        val formatter = SimpleDateFormat.getDateTimeInstance()
+        val formattedDate = formatter.format(date)
 
         for(sms in parsed.messages) {
-            databaseHandler.addSMS(SMSItem(number = sms.number, text = sms.text, status =  sms.status, date =  date))
+            databaseHandler.addSMS(SMSItem(number = sms.number, text = sms.text, status =  sms.status, date =  formattedDate))
         }
 
         try {
-
             appendMessagesToFile(parsed.messages)
-
         } catch(e: Exception){
             Log.e(TAG, e.message)
             Log.e(TAG, e.toString())
