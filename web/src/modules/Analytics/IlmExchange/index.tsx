@@ -22,6 +22,7 @@ interface PropsType {
 interface S {
 	showViewerModal: boolean
 	lessonId: string
+	scrollY: number
 }
 
 const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons, fetchLessons, classes }) => {
@@ -35,15 +36,22 @@ const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons, 
 
 	const [stateProps, setStateProps] = useState<S>({
 		showViewerModal: false,
-		lessonId: ""
+		lessonId: "",
+		scrollY: 0,
 	})
 
 	const handleClickShowViewers = (lesson_id: string) => {
+
+		const scrollY = window.pageYOffset
+
 		setStateProps({
 			...stateProps,
 			showViewerModal: !stateProps.showViewerModal,
-			lessonId: lesson_id
+			lessonId: lesson_id,
+			scrollY: scrollY
 		})
+
+		document.body.style.position = 'fixed'
 	}
 
 	const handleToggleModal = () => {
@@ -52,6 +60,9 @@ const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons, 
 			showViewerModal: !stateProps.showViewerModal,
 			lessonId: ''
 		})
+
+		document.body.style.position = ''
+		window.scrollTo(0, stateProps.scrollY)
 	}
 
 	return (
