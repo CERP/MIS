@@ -1,5 +1,5 @@
 .ilmx-analytics.container{
-	width: 100;
+	width: 100%;
 	display: block;
 }
 .ilmx-analytics .card {
@@ -23,13 +23,19 @@
 	width: 80%;
 }
 
-.ilmx-analytics .card-row .views {
-	margin-top: 0;
-	padding-top: 4px;
-	margin-left: 0.50rem;
+.ilmx-analytics .card-row .student-class-title {
+	font-size: 0.85rem;
+	margin: 0;
+	margin-left: 2.0rem;
 }
 
-.ilmx-analytics .card-row .lesson-title {
+.ilmx-analytics .card-row .views {
+	margin: 0;
+	margin-left: 0.50rem;
+	padding-top: 4px;
+}
+
+.ilmx-analytics .card-row .card-title {
 	margin: 0;
 	font-weight: bold;
 	padding-top: 4px;
@@ -59,17 +65,46 @@
 	padding: 1px;
 }
 
+.ilmx-analytics.modal-container.inner {
+	width: 50%;
+	padding: 15px;
+}
+
+.ilmx-analytics.modal-container.inner .card {
+	padding: 0.5rem;
+	border: 1px solid #74aced;	
+}
+
+.ilmx-analytics.modal-container.inner .card-row .viewer {
+	font-size: 0.85rem;
+	background: #5ecdb9;
+	border-radius: 4px;
+}
+
+.ilmx-analytics.modal-container.inner .card-row .hidden-views {
+	font-weight: normal;
+}
+
 @media (max-width: 475px) {
 	.ilmx-analytics .card-row .views {
 		display: none;
 	}
-	.ilmx-analytics .card-row .lesson-title {
+	.ilmx-analytics .card-row .card-title {
 		padding-top: 2px;
 		font-size: 0.85rem;
 	}
 	.ilmx-analytics .card-row .inner {
 		width: 100%;
-	}	
+	}
+	.ilmx-analytics.modal-container.inner .card-row .viewer {
+		font-size: 0.65rem;
+		padding-left: 0.075rem;
+		padding-right: 0.075rem;
+	}
+	.ilmx-analytics.modal-container.inner {
+		width: 80%;
+		padding: 15px;
+	}
 }
 
 @media (min-width: 475px) {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import { connect } from 'react-redux'
 
 import { fetchLessons } from 'actions/core'
+import { getTimeString } from "utils/helpers"
 import Modal from "components/Modal/index"
 import LessonViewerModal from './lessonViewer'
 import { PlayIcon } from 'assets/icons'
@@ -10,6 +11,7 @@ import './style.css'
 
 interface PropsType {
 	students: RootDBState["students"]
+	classes: RootDBState["classes"]
 	events: RootDBState["ilmx"]["events"]
 	lessons: RootDBState["ilmx"]["lessons"]
 	isLoading: boolean
@@ -22,7 +24,7 @@ interface S {
 	lessonId: string
 }
 
-const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons, fetchLessons }) => {
+const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons, fetchLessons, classes }) => {
 
 	useEffect(() => {
 		fetchLessons()
@@ -65,16 +67,21 @@ const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons, 
 									<div className="card-row">
 										<div className="card-row inner">
 											<img src={PlayIcon} alt="play-icon" height="24" width="24" />
-											<p className="lesson-title">{lesson_meta.name}</p>
+											<p className="card-title">{lesson_meta.name}</p>
 										</div>
 										<div style={{ marginLeft: "auto" }}>
 											<p className="views viewer" onClick={() => handleClickShowViewers(lesson_id)}>{lesson_meta.watchCount} views</p>
 										</div>
 									</div>
 									<div className="card-row">
+										<p className="student-class-title">Class: {getClassTitleFromLessonId(lesson_id)}-{getBookTitleFromLessonId(lesson_id)}</p>
+									</div>
+									<div className="card-row">
 										<div className="more-detail">
-											<p className="hidden-views viewer" onClick={() => handleClickShowViewers(lesson_id)}>{lesson_meta.watchCount} views</p>
-											<p>Watch Duration: {getDurationString(lesson_meta.watchDuration)}</p>
+											<p>watch time: {getTimeString(lesson_meta.watchDuration)}</p>
+											<p className="hidden-views viewer"
+												style={{ marginLeft: "auto" }}
+												onClick={() => handleClickShowViewers(lesson_id)}>{lesson_meta.watchCount} views</p>
 										</div>
 									</div>
 								</div>
@@ -86,6 +93,7 @@ const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons, 
 								lessonId={stateProps.lessonId}
 								lessons={computed_lessons_data}
 								students={students}
+								classes={classes}
 								onClose={handleToggleModal} />
 						</Modal>
 					}
@@ -98,6 +106,7 @@ const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons, 
 
 export default connect((state: RootReducerState) => ({
 	students: state.db.students,
+	classes: state.db.classes,
 	events: state.db.ilmx.events,
 	lessons: state.db.ilmx.lessons,
 	isLoading: state.ilmxLessons.isLoading,
@@ -107,11 +116,7 @@ export default connect((state: RootReducerState) => ({
 }))(IlmExchangeAnalytics)
 
 type AugmentedIlmxLessons = {
-	[id: string]: {
-		watchCount: number
-		watchDuration: number
-		viewers: Array<string>
-	} & IlmxLesson
+	[id: string]: AugmentedIlmxLesson
 }
 
 function computeLessonsData(events: PropsType["events"], lessons: PropsType["lessons"]) {
@@ -133,13 +138,17 @@ function computeLessonsData(events: PropsType["events"], lessons: PropsType["les
 
 				if (agg[lesson_id]) {
 
-					const unique_viewers = [...new Set(agg[lesson_id].viewers).add(student_id)]
-
 					agg[lesson_id] = {
 						...agg[lesson_id],
 						watchCount: agg[lesson_id].watchCount + 1,
 						watchDuration: agg[lesson_id].watchDuration + duration,
-						viewers: unique_viewers
+						viewers: {
+							...agg[lesson_id].viewers,
+							[student_id]: {
+								watchCount: agg[lesson_id].viewers[student_id] ? agg[lesson_id].viewers[student_id].watchCount + 1 : 1,
+								watchDuration: agg[lesson_id].viewers[student_id] ? agg[lesson_id].viewers[student_id].watchDuration + duration : duration
+							}
+						}
 					}
 				} else {
 					agg[lesson_id] = {
@@ -147,7 +156,12 @@ function computeLessonsData(events: PropsType["events"], lessons: PropsType["les
 						watchDuration: duration,
 						// @ts-ignore
 						...lessons_meta[lesson_id],
-						viewers: new Array(student_id)
+						viewers: {
+							[student_id]: {
+								watchCount: 1,
+								watchDuration: duration
+							}
+						}
 					}
 				}
 			}
@@ -161,17 +175,9 @@ const getSortedEntries = (lessons_data: AugmentedIlmxLessons) => {
 		.sort(([, a], [_, b]) => b.watchCount - a.watchCount)
 }
 
-const getDurationString = (duration: number): string => {
-
-	const duration_in_mins = duration / 60
-
-	if (duration_in_mins === 0) {
-		return "0 mins"
-	}
-
-	if (duration_in_mins > 0 && duration_in_mins < 1) {
-		return "1 mins"
-	}
-
-	return `${duration_in_mins.toFixed(0)} mins`
+const getClassTitleFromLessonId = (lessonId: string): string => {
+	return lessonId.split("-")[1] || "nil"
+}
+const getBookTitleFromLessonId = (lessonId: string): string => {
+	return lessonId.split("-")[2] || "nil"
 }

@@ -454,3 +454,14 @@ interface IlmxLesson {
 	link: string
 	chapter_name: string
 }
+
+type AugmentedIlmxLesson = {
+	watchCount: number
+	watchDuration: number
+	viewers: {
+		[id: string]: {
+			watchCount: number
+			watchDuration: number
+		}
+	}
+} & IlmxLesson
