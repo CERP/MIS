@@ -465,3 +465,8 @@ type AugmentedIlmxLesson = {
 		}
 	}
 } & IlmxLesson
+
+type AugmentedSmsHistory = {
+	faculty?: string
+	text?: string
+} & MISSMSHistory

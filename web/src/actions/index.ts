@@ -788,9 +788,7 @@ export const deleteExam = (students: string[], exam_id: string) => (dispatch: Fu
 
 }
 
-export const logSms = (history: MISSMSHistory) => (dispatch: Function) => {
-
-	//history is an object { date: "", type: "", count:"" }
+export const logSms = (history: AugmentedSmsHistory) => (dispatch: Function) => {
 
 	dispatch(createMerges([
 		{
