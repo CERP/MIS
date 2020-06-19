@@ -31,6 +31,7 @@ import family from "./icons/family/family.svg"
 import Help from './icons/Help/help.svg'
 import diary from './icons/Diary/diary.svg'
 import ilmx from './icons/ilmx/ilmx.svg'
+import { showScroll, hideScroll } from 'utils/helpers'
 
 /**
  * line for adding new badge just copy / paste it
@@ -39,6 +40,7 @@ import ilmx from './icons/ilmx/ilmx.svg'
  */
 
 import './style.css'
+import IlmxRedirectModal from 'components/Ilmx/redirectModal'
 
 class Landing extends Component {
 
@@ -47,7 +49,7 @@ class Landing extends Component {
 
 		this.state = {
 			scroll: 0,
-			showModal: false,
+			toggleRedirectModal: false,
 			phone: ""
 		}
 	}
@@ -55,6 +57,10 @@ class Landing extends Component {
 	//They will still be able to access other components if they typed their Url e.g /attendance.
 	//Need to do something about that ..
 	componentDidMount() {
+
+		// for redirect to ilmx
+		const phone = localStorage.getItem("ilmx")
+		this.setState({ phone })
 
 		const { paid, trial_period, date } = this.props.package_info
 
@@ -149,36 +155,31 @@ class Landing extends Component {
 
 	}
 
-	redirectToIlmx = () => {
+	redirectToIlmx = (input_phone) => {
 
-		const ilmx = localStorage.getItem("ilmx")
+		const { phone } = this.state
+		const { auth, client_id } = this.props
+		const link = `https://ilmexchange.com/auto-login?type=SCHOOL&id=${auth.school_id}&key=${auth.token}&cid=${client_id}&phone=${phone || input_phone}`
 
-		if (!Boolean(ilmx)) {
-			this.setState({
-				showModal: true
-			})
+		if (input_phone) {
+			localStorage.setItem("ilmx", input_phone)
+			window.location.href = link
 			return
 		}
 
-		const { auth, client_id } = this.props
-
-		const link = `https://ilmexchange.com/auto-login?type=SCHOOL&id=${auth.school_id}&key=${auth.token}&cid=${client_id}&phone=${ilmx}`
-		return window.location.href = link
+		if (phone) {
+			window.location.href = link
+		} else {
+			this.setState({ toggleRedirectModal: !this.state.toggleRedirectModal }, () => {
+				hideScroll()
+			})
+		}
 	}
 
-	modalRedirectToIlmx = () => {
-
-		if (this.state.phone === "" || this.state.phone.length !== 11) {
-			alert("please enter a valid phone number")
-			return
-		}
-
-		const { auth, client_id } = this.props
-		const link = `https://ilmexchange.com/auto-login?type=SCHOOL&id=${auth.school_id}&key=${auth.token}&cid=${client_id}&phone=${this.state.phone}`
-
-		localStorage.setItem("ilmx", this.state.phone)
-
-		return window.location.href = link
+	toggleRedirectModal = () => {
+		this.setState({ toggleRedirectModal: !this.state.toggleRedirectModal }, () => {
+			showScroll()
+		})
 	}
 
 	render() {
@@ -243,22 +244,11 @@ class Landing extends Component {
 		return <Layout history={this.props.history}>
 
 			{
-				this.state.showModal && <Modal>
-					<div className="confirm-box" style={{ background: "#ffffff" }}>
-						<div className="title">Please verify your number</div>
-						<input
-							type="text"
-							placeholder="phone" style={{ width: "100%" }}
-							onChange={(e) => this.setState({ phone: e.target.value })} />
-						<div
-							className="button blue"
-							style={{ margin: "5px 0px 10px 0px" }}
-							onClick={() => this.modalRedirectToIlmx()}
-						>
-							Continue
-						</div>
-						<label style={{ width: "50px" }}><span style={{ color: "red" }}>Note:</span> If you already have an IlmExchange account please enter the number you registered with otherwise a new account will be created</label>
-					</div>
+				this.state.toggleRedirectModal && <Modal>
+						<IlmxRedirectModal
+							redirectToIlmx={this.redirectToIlmx}
+							onClose={this.toggleRedirectModal}
+						/>
 				</Modal>
 			}
 			<div className="landing">
