@@ -11,6 +11,7 @@ import trashOutlineIcon from './svgs/outline-trash.svg'
 import shareIcon from './svgs/sm-share.svg'
 import phoneIcon from './svgs/phone.svg'
 import playIcon from './svgs/play.svg'
+import ilmxLogo from './pngs/ilmx-logo.png'
 
 
 export const EditIcon = deleteIcon
@@ -26,3 +27,4 @@ export const TrashOutlineIcon = trashOutlineIcon
 export const ShareIcon = shareIcon
 export const PhoneIcon = phoneIcon
 export const PlayIcon = playIcon
+export const IlmxLogo = ilmxLogo 
