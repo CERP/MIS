@@ -41,6 +41,7 @@ import { showScroll, hideScroll } from 'utils/helpers'
 
 import './style.css'
 import IlmxRedirectModal from 'components/Ilmx/redirectModal'
+import IlmxLanding from './ilmxLanding'
 
 class Landing extends Component {
 
@@ -50,7 +51,8 @@ class Landing extends Component {
 		this.state = {
 			scroll: 0,
 			toggleRedirectModal: false,
-			phone: ""
+			phone: "",
+			ilmxUser: ""
 		}
 	}
 
@@ -60,7 +62,8 @@ class Landing extends Component {
 
 		// for redirect to ilmx
 		const phone = localStorage.getItem("ilmx")
-		this.setState({ phone })
+		const user = localStorage.getItem("user")
+		this.setState({ phone, ilmxUser: user })
 
 		const { paid, trial_period, date } = this.props.package_info
 
@@ -186,7 +189,7 @@ class Landing extends Component {
 
 		const { logout, user, students, faculty, lastSnapshot, unsyncd, permissions, package_info } = this.props;
 
-		const current_page = Math.floor(this.state.scroll / window.innerWidth);
+		const current_page = Math.floor(this.state.scroll / window.innerWidth)
 
 		const today_date = moment().format("YYYY-MM-DD");
 
@@ -258,7 +261,13 @@ class Landing extends Component {
 
 				<div className="horizontal-scroll-container">
 
-					<div className="page">
+					{this.state.ilmxUser === "ILMX" ?
+							<IlmxLanding 
+							 faculty={this.props.user}
+							 onLogout={logout}
+							 onRedirectToIlmx={this.redirectToIlmx}
+							/>  
+						: <> <div className="page">
 						<div className="title">Setup</div>
 						{user.Admin || setupPage ? <div className="row">
 							<Link to="/teacher" className="button green-shadow" style={{ backgroundImage: `url(${teachersIcon})` }}>Teachers</Link>
@@ -468,6 +477,7 @@ class Landing extends Component {
 
 					</div> : false}
 
+					</>}
 				</div>
 			</div>
 
