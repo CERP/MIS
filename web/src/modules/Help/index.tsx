@@ -5,7 +5,13 @@ import { smsIntentLink } from 'utils/intent'
 import { logSms } from 'actions'
 import { sendSMS } from 'actions/core'
 import { History } from 'history'
+import siteConfig from 'constants/siteConfig.json'
+import HelpTutorial from './tutorial'
 
+import { isMobile } from 'utils/helpers'
+import { PhoneIcon } from 'assets/icons'
+
+import './style.css'
 interface P {
 	auth: RootReducerState["auth"]
 	school_address: string
@@ -18,6 +24,7 @@ interface P {
 
 const Help: React.FC<P> = ({ auth, school_address, faculty_id, smsOption, logSms, sendMessage, history }) => {
 
+	const helpLine = siteConfig["helpLine"]
 	const [smsText, setSmsText] = useState('')
 
 	const onSendLogSms = () => {
@@ -32,46 +39,45 @@ const Help: React.FC<P> = ({ auth, school_address, faculty_id, smsOption, logSms
 		logSms(sms_history)
 	}
 
-
-	const number = "03481112004"
 	const text = `School Name : ${auth.school_id}\nSchool Address: ${school_address}\nTeacher Name: ${auth.name}\nMessage: ${smsText}`
 
 	return (
 		<Layout history={history}>
 			<div className="help-page">
 				<div className="form" style={{ width: "75%" }}>
-					<div className="title">Help</div>
+					<div className="title">MISchool Help</div>
 					<div className="section">
-						<div style={{ width: "inherit" }}>
-							<h3>If you need any assistance, please call our customer representative or message us using the box below</h3>
+						<div className="">
+							<h3>Phone Support</h3>
+							<p>For any assistance, Call to speak to a customer service rep</p>
 						</div>
-
-						<div style={{ marginTop: "30px" }}>
-							<div>Customer Representative - <a href="tel:+923481112004">0348-111-2004</a></div>
+						<div className="helpline text-center" style={{ fontSize: "1.5rem" }}>
+							<a href={`tel:${helpLine.phoneInt}`}>
+								<img src={PhoneIcon} alt="phone" />
+								{helpLine.phoneAlt}
+							</a>
 						</div>
-					</div>
-					<div className="divider">Ask Us</div>
-					<div className="section">
-
-						<div className="row">
-							<label>Message</label>
-							<textarea onChange={(e) => setSmsText(e.target.value)} placeholder="Write message here" />
-						</div>
-						<div>
+						<div className="">
+							<h3 style={{ marginTop: 0 }}>Message Support</h3>
+							<textarea
+								style={{ borderRadius: 4 }}
+								onChange={(e) => setSmsText(e.target.value)}
+								placeholder="Write your message here..." />
 							{
-								smsOption === "SIM" ?
+								smsOption === "SIM" && isMobile() ?
 									<a href={smsIntentLink({
-										messages: [{ number, text }],
+										messages: [{ number: helpLine.phone, text }],
 										return_link: window.location.href
 									})} onClick={onSendLogSms} className="button blue">Send using Local SIM</a> :
 
-									<div className="button" onClick={() => sendMessage(text, number)}>Can only send using Local SIM</div>
+									<div className="button grey" onClick={() => sendMessage(text, helpLine.phone)}>Can only send using Local SIM</div>
 							}
 						</div>
 					</div>
+					<HelpTutorial />
 				</div>
 			</div>
-		</Layout>
+		</Layout >
 	)
 }
 

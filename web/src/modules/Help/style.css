@@ -1,0 +1,36 @@
+.help-page .helpline {
+	margin: auto;
+	margin-top: 1.5rem;
+	margin-bottom: 1.75rem;
+	width: 250px;
+	height: 15px;
+}
+
+.help-page .helpline img{
+	width: 24px;
+	height: 24px;
+	vertical-align: text-bottom;;
+	margin-right: .375rem;
+}
+
+.help-page textarea {
+	width: 100%;
+}
+
+.help-page .helpline a {
+	font-weight: bold;
+	text-decoration: none;
+	padding: 1rem;
+	font-size: 1.5rem;
+}
+
+.help-tutorial .p-link {
+	color: #74aced;
+	cursor: pointer;
+}
+
+@media(max-width:425px){
+	.help-page .helpline {
+		width: 85%;
+	}
+}

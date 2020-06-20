@@ -26,10 +26,16 @@ export const getTimeString = (time: number): string => {
  *  description: Make position of <body> fixed to hide scroll on modal popup
  * 	There are numbers of ways to achieve this but I'm using simple approach
  */
-
-export const hideScroll = (): void => {
+ export const hideScroll = (): void => {
 	document.body.style.position = 'fixed'
  }
  export const showScroll = (): void => {
 	 document.body.style.position = ''
  }
+ 
+ /**
+  *  check it's mobile device or not
+  */
+export const isMobile = () => {
+	 return /Mobi|Android/i.test(navigator.userAgent)
+}
