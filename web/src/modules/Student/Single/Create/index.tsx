@@ -932,8 +932,8 @@ class SingleStudent extends Component<propTypes, S> {
 						</div>
 				</div>
 
-				{this.state.show_hide_fee && (admin || this.props.permissions.fee.teacher) && !prospective ? <div className="divider">Payment</div> : false}
-				{this.state.show_hide_fee && (admin || this.props.permissions.fee.teacher) && !prospective ?
+				{this.state.show_hide_fee && (admin || (this.props.permissions && this.props.permissions.fee.teacher)) && !prospective ? <div className="divider">Payment</div> : false}
+				{this.state.show_hide_fee && (admin || (this.props.permissions && this.props.permissions.fee.teacher)) && !prospective ?
 					Object.entries(this.state.profile.fees).map(([id, fee]) => {
 						const editable = this.state.edit[id] || this.isNew()
 
