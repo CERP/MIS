@@ -30,8 +30,10 @@ import family from "./icons/family/family.svg"
 
 import Help from './icons/Help/help.svg'
 import diary from './icons/Diary/diary.svg'
-import ilmx from './icons/ilmx/ilmx.svg'
+import { IlmxLogo } from 'assets/icons'
 import { showScroll, hideScroll } from 'utils/helpers'
+import IlmxRedirectModal from 'components/Ilmx/redirectModal'
+import IlmxLanding from './ilmxLanding'
 
 /**
  * line for adding new badge just copy / paste it
@@ -40,8 +42,6 @@ import { showScroll, hideScroll } from 'utils/helpers'
  */
 
 import './style.css'
-import IlmxRedirectModal from 'components/Ilmx/redirectModal'
-import IlmxLanding from './ilmxLanding'
 
 class Landing extends Component {
 
@@ -311,7 +311,7 @@ class Landing extends Component {
 								<div
 									onClick={() => this.redirectToIlmx()}
 									className="button green-shadow"
-									style={{ backgroundImage: `url(${ilmx})` }}>
+									style={{ backgroundImage: `url(${IlmxLogo})` }}>
 									IlmExchange
 								</div>
 							}

@@ -169,7 +169,7 @@ class Login extends Component<PropsType, S> {
 
 		return <Layout history={this.props.history}>
 			<div className="login faculty-login">
-				<div className="title">Staff Login for {this.props.auth.school_id}</div>
+				<div className="title">Staff Login</div>
 				<div className="form">
 					<div className="row">
 						<select {...this.former.super_handle(["name"])}>

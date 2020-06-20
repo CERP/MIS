@@ -64,6 +64,7 @@ const blankStudent = (): MISStudent => ({
 // should be a dropdown of choices. not just teacher or admin.
 
 interface P {
+	school_id: string
 	students: RootDBState['students']
 	classes: RootDBState['classes']
 	settings: RootDBState["settings"]
@@ -618,6 +619,7 @@ class SingleStudent extends Component<propTypes, S> {
 		const sections = getSectionsFromClasses(this.props.classes)
 
 		const oldStudent = students[this.props.match.params.id]
+		const { school_id } = this.props
 
 		return <div className="single-student">
 			{this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
@@ -886,6 +888,11 @@ class SingleStudent extends Component<propTypes, S> {
 					<textarea {...this.former.super_handle(["Notes"])} placeholder="Notes" disabled={!admin} />
 				</div>
 
+				<div className="row">
+					<label>Student Portal Link</label>
+					<textarea value={`https://ilmexchange.com/student%3Freferral%3D${this.props.school_id}%26std_id%3D${this.state.profile.id}`} />
+				</div>
+
 				{!prospective && <div className="divider"> Tags </div>}
 				{!prospective && <div className="tag-container">
 					{
@@ -1011,6 +1018,7 @@ class SingleStudent extends Component<propTypes, S> {
 }
 
 export default connect((state: RootReducerState) => ({
+	school_id: state.auth.school_id,
 	students: state.db.students,
 	classes: state.db.classes,
 	settings: state.db.settings,

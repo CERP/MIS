@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Layout from 'components/Layout'
 import { connect } from 'react-redux'
 import { smsIntentLink } from 'utils/intent'
@@ -24,8 +24,13 @@ interface P {
 
 const Help: React.FC<P> = ({ auth, school_address, faculty_id, smsOption, logSms, sendMessage, history }) => {
 
-	const helpLine = siteConfig["helpLine"]
 	const [smsText, setSmsText] = useState('')
+	const [ilmxUser, setIlmxUser] = useState('')
+
+	useEffect(() => {
+		const user = localStorage.getItem('user')
+		setIlmxUser(user)
+	}, [])
 
 	const onSendLogSms = () => {
 		const sms_history: AugmentedSmsHistory = {
@@ -40,6 +45,7 @@ const Help: React.FC<P> = ({ auth, school_address, faculty_id, smsOption, logSms
 	}
 
 	const text = `School Name : ${auth.school_id}\nSchool Address: ${school_address}\nTeacher Name: ${auth.name}\nMessage: ${smsText}`
+	const helpLine = ilmxUser ? siteConfig["helpLineIlmx"] : siteConfig["helpLine"]
 
 	return (
 		<Layout history={history}>
@@ -51,7 +57,7 @@ const Help: React.FC<P> = ({ auth, school_address, faculty_id, smsOption, logSms
 							<h3>Phone Support</h3>
 							<p>For any assistance, Call to speak to a customer service rep</p>
 						</div>
-						<div className="helpline text-center" style={{ fontSize: "1.5rem" }}>
+						<div className="helpline text-center">
 							<a href={`tel:${helpLine.phoneInt}`}>
 								<img src={PhoneIcon} alt="phone" />
 								{helpLine.phoneAlt}
@@ -74,7 +80,7 @@ const Help: React.FC<P> = ({ auth, school_address, faculty_id, smsOption, logSms
 							}
 						</div>
 					</div>
-					<HelpTutorial />
+					{ilmxUser && <HelpTutorial />}
 				</div>
 			</div>
 		</Layout >
