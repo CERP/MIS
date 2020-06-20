@@ -21,3 +21,15 @@ export const getTimeString = (time: number): string => {
 
 	return ret
 }
+
+/**
+ *  description: Make position of <body> fixed to hide scroll on modal popup
+ * 	There are numbers of ways to achieve this but I'm using simple approach
+ */
+
+export const hideScroll = (): void => {
+	document.body.style.position = 'fixed'
+ }
+ export const showScroll = (): void => {
+	 document.body.style.position = ''
+ }
