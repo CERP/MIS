@@ -1,4 +1,4 @@
-.ilmx-analytics.container{
+.ilmx-analytics .container {
 	width: 100%;
 	display: block;
 }
@@ -113,9 +113,35 @@
 	}
 }
 
-.ilmx .most-viewed-videos.sort {
+.ilmx-analytics .most-viewed-videos.sort {
 	height: 24px;
 	width: 24px;
 	margin-left: auto;
 	cursor: pointer;
+}
+
+.ilmx-analytics  .custom-tooltip {
+	background-color: white;
+	width: 200px;
+	max-width: 100%;
+	padding: 15px;
+	border: 2px solid var(--ilmx-primary);
+	border-radius: 4px;
+}
+.ilmx-analytics .custom-tooltip .row {
+	margin-bottom: 0.5rem;
+}
+
+.ilmx-analytics .custom-tooltip .row label {
+	font-weight: bold;
+	padding-right: 0.25rem;
+}
+@media (max-width: 425px) {
+	.ilmx-analytics .custom-tooltip {
+	 width: 150px;
+	}
+	.ilmx-analytics .custom-tooltip .row {
+		font-size: 0.90rem;
+	 	margin-bottom: 0.375rem;
+ 	}
 }

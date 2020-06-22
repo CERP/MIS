@@ -8,6 +8,7 @@ import LessonViewerModal from './lessonViewer'
 import { PlayIcon } from 'assets/icons'
 import SortAscendingIcon from "assets/svgs/react/SortAscending"
 import SortDescendingIcon from "assets/svgs/react/SortDescending"
+import IlmxGraphs from "./Graphs"
 
 import './style.css'
 
@@ -70,14 +71,18 @@ const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons, 
 	}
 
 	return (
-		<div className="section-container">
+		<div className="ilmx-analytics section-container">
 			<div className="divider">IlmExchange Analytics</div>
-			<div className="text-left" style={{ marginTop: 4, marginBottom: "1rem", fontSize: "1.25rem" }}>Most viewed videos</div>
-			<div className="ilmx section">
+			<div className="text-left" style={{ marginTop: 4, fontWeight: 700, marginBottom: "1rem", fontSize: "1.25rem" }}>Last week activity</div>
+			<div className="section">
+				<IlmxGraphs events={events} />
+			</div>
+			<div className="text-left" style={{ marginTop: 4, fontWeight: 700, marginBottom: "1rem", fontSize: "1.25rem" }}>Most viewed videos</div>
+			<div className="section">
 				<div className="most-viewed-videos sort" onClick={() => setToggleSortOrder(!toggleSortOrder)} title="Sort Videos">
 					{toggleSortOrder ? <SortAscendingIcon /> : <SortDescendingIcon />}
 				</div>
-				<div className="ilmx-analytics container">
+				<div className="container">
 					{
 						sorted_entries
 							.map(([lesson_id, lesson_meta]) => (

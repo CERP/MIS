@@ -1,3 +1,7 @@
+:root {
+	--ilmx-primary: #1bb4bb
+}
+
 .modal-container.inner {
 	background-color: #fafafa;
 	width: 50%;
