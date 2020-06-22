@@ -457,11 +457,11 @@ interface IlmxLesson {
 
 type AugmentedIlmxLesson = {
 	watchCount: number
-	watchDuration: number
+	watchTime: number
 	viewers: {
 		[id: string]: {
 			watchCount: number
-			watchDuration: number
+			watchTime: number
 		}
 	}
 } & IlmxLesson

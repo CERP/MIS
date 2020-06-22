@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react"
 import { connect } from 'react-redux'
 
 import { fetchLessons } from 'actions/core'
-import { getTimeString } from "utils/helpers"
+import { getTimeString, showScroll, hideScroll } from "utils/helpers"
 import Modal from "components/Modal/index"
 import LessonViewerModal from './lessonViewer'
 import { PlayIcon } from 'assets/icons'
+import SortAscendingIcon from "assets/svgs/react/SortAscending"
+import SortDescendingIcon from "assets/svgs/react/SortDescending"
 
 import './style.css'
 
@@ -27,12 +29,14 @@ interface S {
 
 const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons, fetchLessons, classes }) => {
 
+	const [toggleSortOrder, setToggleSortOrder] = useState(false)
+
 	useEffect(() => {
 		fetchLessons()
 	}, [fetchLessons])
 
 	const computed_lessons_data: AugmentedIlmxLessons = computeLessonsData(events, lessons)
-	const sorted_entries = getSortedEntries(computed_lessons_data)
+	const sorted_entries = getSortedEntries(computed_lessons_data, toggleSortOrder)
 
 	const [stateProps, setStateProps] = useState<S>({
 		showViewerModal: false,
@@ -51,7 +55,7 @@ const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons, 
 			scrollY: scrollY
 		})
 
-		document.body.style.position = 'fixed'
+		hideScroll()
 	}
 
 	const handleToggleModal = () => {
@@ -61,15 +65,18 @@ const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons, 
 			lessonId: ''
 		})
 
-		document.body.style.position = ''
+		showScroll()
 		window.scrollTo(0, stateProps.scrollY)
 	}
 
 	return (
 		<div className="section-container">
 			<div className="divider">IlmExchange Analytics</div>
-			<div className="text-left" style={{ marginTop: 4, marginBottom: 4, fontSize: "1.25rem" }}>Most viewed videos</div>
-			<div className="section">
+			<div className="text-left" style={{ marginTop: 4, marginBottom: "1rem", fontSize: "1.25rem" }}>Most viewed videos</div>
+			<div className="ilmx section">
+				<div className="most-viewed-videos sort" onClick={() => setToggleSortOrder(!toggleSortOrder)} title="Sort Videos">
+					{toggleSortOrder ? <SortAscendingIcon /> : <SortDescendingIcon />}
+				</div>
 				<div className="ilmx-analytics container">
 					{
 						sorted_entries
@@ -89,7 +96,7 @@ const IlmExchangeAnalytics: React.FC<PropsType> = ({ students, events, lessons, 
 									</div>
 									<div className="card-row">
 										<div className="more-detail">
-											<p>watch time: {getTimeString(lesson_meta.watchDuration)}</p>
+											<p>watch time: {getTimeString(lesson_meta.watchTime)}</p>
 											<p className="hidden-views viewer"
 												style={{ marginLeft: "auto" }}
 												onClick={() => handleClickShowViewers(lesson_id)}>{lesson_meta.watchCount} views</p>
@@ -152,25 +159,25 @@ function computeLessonsData(events: PropsType["events"], lessons: PropsType["les
 					agg[lesson_id] = {
 						...agg[lesson_id],
 						watchCount: agg[lesson_id].watchCount + 1,
-						watchDuration: agg[lesson_id].watchDuration + duration,
+						watchTime: agg[lesson_id].watchTime + duration,
 						viewers: {
 							...agg[lesson_id].viewers,
 							[student_id]: {
 								watchCount: agg[lesson_id].viewers[student_id] ? agg[lesson_id].viewers[student_id].watchCount + 1 : 1,
-								watchDuration: agg[lesson_id].viewers[student_id] ? agg[lesson_id].viewers[student_id].watchDuration + duration : duration
+								watchTime: agg[lesson_id].viewers[student_id] ? agg[lesson_id].viewers[student_id].watchTime + duration : duration
 							}
 						}
 					}
 				} else {
 					agg[lesson_id] = {
 						watchCount: 1,
-						watchDuration: duration,
+						watchTime: duration,
 						// @ts-ignore
 						...lessons_meta[lesson_id],
 						viewers: {
 							[student_id]: {
 								watchCount: 1,
-								watchDuration: duration
+								watchTime: duration
 							}
 						}
 					}
@@ -181,7 +188,13 @@ function computeLessonsData(events: PropsType["events"], lessons: PropsType["les
 	return agg
 }
 
-const getSortedEntries = (lessons_data: AugmentedIlmxLessons) => {
+const getSortedEntries = (lessons_data: AugmentedIlmxLessons, sortOrder: boolean) => {
+
+	if (sortOrder) {
+		return Object.entries(lessons_data)
+			.sort(([, a], [_, b]) => a.watchCount - b.watchCount)
+	}
+
 	return Object.entries(lessons_data)
 		.sort(([, a], [_, b]) => b.watchCount - a.watchCount)
 }

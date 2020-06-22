@@ -39,7 +39,7 @@ const IlmxLanding: React.FC<P> = ({ onLogout, onRedirectToIlmx, faculty }) => {
 			</div>
 			<div className="row">
 				<Link to="/teacher" className="button green-shadow" style={{ backgroundImage: `url(${teachersIcon})` }}>Teachers</Link>
-				<p className="guide-steps"><strong>Step 3</strong>: Teaher Profile</p>
+				<p className="guide-steps"><strong>Step 3</strong>: Teacher Profile</p>
 			</div>
 			{
 				faculty.Admin && <div className="row">

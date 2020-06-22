@@ -15,7 +15,7 @@ interface PropsType {
 
 type LessonViewer = {
 	watchCount: number
-	watchDuration: number
+	watchTime: number
 } & MISStudent & { section_info: AugmentedSection }
 
 const LessonViewerModal: React.FC<PropsType> = ({ students, lessonId, lessons, classes, onClose }) => {
@@ -29,7 +29,7 @@ const LessonViewerModal: React.FC<PropsType> = ({ students, lessonId, lessons, c
 			<div className="form scrollbar">
 				{
 					students_who_watched
-						.sort((a, b) => (b.watchDuration + b.watchCount) - (a.watchDuration + b.watchCount))
+						.sort((a, b) => (b.watchTime + b.watchCount) - (a.watchTime + b.watchCount))
 						.map((student: LessonViewer) => (<div className="card" key={student.id}>
 							<div className="card-row">
 								<div className="card-row inner">
@@ -45,7 +45,7 @@ const LessonViewerModal: React.FC<PropsType> = ({ students, lessonId, lessons, c
 							</div>
 							<div className="card-row">
 								<div className="more-detail">
-									<p>watch time: {getTimeString(student.watchDuration)}</p>
+									<p>watch time: {getTimeString(student.watchTime)}</p>
 									<p className="hidden-views viewer" style={{ marginLeft: "auto" }}>{student.watchCount} views</p>
 								</div>
 							</div>

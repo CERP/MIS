@@ -112,3 +112,10 @@
 		display: none;
 	}
 }
+
+.ilmx .most-viewed-videos.sort {
+	height: 24px;
+	width: 24px;
+	margin-left: auto;
+	cursor: pointer;
+}

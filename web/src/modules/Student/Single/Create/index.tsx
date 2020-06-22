@@ -619,7 +619,6 @@ class SingleStudent extends Component<propTypes, S> {
 		const sections = getSectionsFromClasses(this.props.classes)
 
 		const oldStudent = students[this.props.match.params.id]
-		const { school_id } = this.props
 
 		return <div className="single-student">
 			{this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
