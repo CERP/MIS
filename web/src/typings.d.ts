@@ -49,8 +49,10 @@ interface RootDBState {
 	}
 
 	ilmx: {
-		events: { 
-			[device_id: string]: IlmxEvent
+		events: {
+			[device_id: string]: {
+				[timestamp: string]: IlmxVideoEvent | IlmxExamEvent
+			}
 		}
 		lessons: {
 			[lesson_id: string]: IlmxLesson
@@ -432,19 +434,40 @@ interface ExamFilter {
 	subject?: string
 	exam_title: string
 }
-type AugmentedStudent = { 
+type AugmentedStudent = {
 	section?: AugmentedSection
 	forwardTo?: string
 } & MISStudent
 
 type MISGrades = RootDBState["settings"]["exams"]["grades"]
 
-interface IlmxEvent {
-	[timestamp: string]: {
+interface BaseIlmxEvent {
+	type: string
+}
+interface IlmxVideoEvent {
+	type: "VIDEO"
+	lesson_id: string
+	student_id: string
+	duration: number
+}
+
+interface IlmxExamEvent {
+	type: "ASSESSMENT"
+	student_id: string
+	score: number
+	total_score: number
+	date: number
+	meta: {
+		medium: string
+		subject: string
+		chapter_id: string
 		lesson_id: string
-		student_id: string
-		duration: number
-		type: string
+		excercise_id: string
+		total_duration: number
+		attempted_in: number
+		wrong_responses: {
+			[question_id: string]: string
+		}
 	}
 }
 
