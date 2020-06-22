@@ -151,33 +151,35 @@ function computeLessonsData(events: PropsType["events"], lessons: PropsType["les
 		.forEach(([_, lessons_history]) => {
 
 			for (const item of Object.values(lessons_history)) {
+				if (item.type === "VIDEO") {
 
-				const { lesson_id, duration, student_id } = item
+					const { lesson_id, duration, student_id } = item
 
-				if (agg[lesson_id]) {
+					if (agg[lesson_id]) {
 
-					agg[lesson_id] = {
-						...agg[lesson_id],
-						watchCount: agg[lesson_id].watchCount + 1,
-						watchTime: agg[lesson_id].watchTime + duration,
-						viewers: {
-							...agg[lesson_id].viewers,
-							[student_id]: {
-								watchCount: agg[lesson_id].viewers[student_id] ? agg[lesson_id].viewers[student_id].watchCount + 1 : 1,
-								watchTime: agg[lesson_id].viewers[student_id] ? agg[lesson_id].viewers[student_id].watchTime + duration : duration
+						agg[lesson_id] = {
+							...agg[lesson_id],
+							watchCount: agg[lesson_id].watchCount + 1,
+							watchTime: agg[lesson_id].watchTime + duration,
+							viewers: {
+								...agg[lesson_id].viewers,
+								[student_id]: {
+									watchCount: agg[lesson_id].viewers[student_id] ? agg[lesson_id].viewers[student_id].watchCount + 1 : 1,
+									watchTime: agg[lesson_id].viewers[student_id] ? agg[lesson_id].viewers[student_id].watchTime + duration : duration
+								}
 							}
 						}
-					}
-				} else {
-					agg[lesson_id] = {
-						watchCount: 1,
-						watchTime: duration,
-						// @ts-ignore
-						...lessons_meta[lesson_id],
-						viewers: {
-							[student_id]: {
-								watchCount: 1,
-								watchTime: duration
+					} else {
+						agg[lesson_id] = {
+							watchCount: 1,
+							watchTime: duration,
+							// @ts-ignore
+							...lessons_meta[lesson_id],
+							viewers: {
+								[student_id]: {
+									watchCount: 1,
+									watchTime: duration
+								}
 							}
 						}
 					}

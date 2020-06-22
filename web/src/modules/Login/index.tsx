@@ -86,6 +86,7 @@ class Login extends Component<PropsType, S> {
 		}
 
 		localStorage.removeItem("ilmx")
+		localStorage.removeItem("user")
 		openDB('db', 1, {
 			upgrade(db) {
 				db.createObjectStore('root-state')
