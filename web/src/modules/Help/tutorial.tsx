@@ -1,11 +1,15 @@
 import React, { useState } from 'react'
-import tutorials from './tutorials.json'
 
 import Modal from 'components/Modal'
 import TutorialWindow from 'components/Tutorial'
+import { getTutorialLinks } from 'constants/links'
 import { showScroll, hideScroll } from 'utils/helpers'
 
 import './style.css'
+
+interface PropsType {
+	type: "ILMX" | "MIS"
+}
 
 type Tutorial = {
 	title: string
@@ -13,7 +17,7 @@ type Tutorial = {
 	link: string
 }
 
-const HelpTutorial = () => {
+const HelpTutorial: React.FC<PropsType> = ({ type }) => {
 
 	const [toggleModal, setToggleModal] = useState(false)
 	const [tutorial, setTutorial] = useState<Tutorial>()
@@ -45,9 +49,11 @@ const HelpTutorial = () => {
 				}
 				<ul>
 					{
-						tutorials.map((tutorial, index) => <li key={index}>
-							<p className="p-link" onClick={() => handleOnClickTutorial(tutorial)}>{tutorial.title}</p>
-						</li>)
+						Object.entries(getTutorialLinks(type))
+							.filter(([, tutorial]) => tutorial.title)
+							.map(([_, tutorial], index) => <li key={index}>
+								<p className="p-link" onClick={() => handleOnClickTutorial(tutorial)}>{tutorial.title}</p>
+							</li>)
 					}
 				</ul>
 			</div>

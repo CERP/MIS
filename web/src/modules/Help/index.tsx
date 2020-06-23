@@ -80,7 +80,7 @@ const Help: React.FC<P> = ({ auth, school_address, faculty_id, smsOption, logSms
 							}
 						</div>
 					</div>
-					{ilmxUser && <HelpTutorial />}
+					{<HelpTutorial type={ilmxUser ? "ILMX" : "MIS"} />}
 				</div>
 			</div>
 		</Layout >
