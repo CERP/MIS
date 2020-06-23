@@ -259,7 +259,7 @@ class Landing extends Component {
 					{this.getTrialWarningMessage()}
 				</div>}
 
-				<div className="horizontal-scroll-container">
+				<div className="horizontal-scroll-container" style={{ overflowX: this.state.ilmxUser ? 'unset' : 'auto' }}>
 
 					{this.state.ilmxUser === "ILMX" ?
 						<IlmxLanding

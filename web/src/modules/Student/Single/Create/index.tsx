@@ -889,7 +889,7 @@ class SingleStudent extends Component<propTypes, S> {
 
 				<div className="row">
 					<label>Student Portal Link</label>
-					<textarea value={`https://ilmexchange.com/student%3Freferral%3D${this.props.school_id}%26std_id%3D${this.state.profile.id}`} />
+					<textarea value={`https://ilmexchange.com/student?referral=${this.props.school_id}&std_id=${this.state.profile.id}`} />
 				</div>
 
 				{!prospective && <div className="divider"> Tags </div>}

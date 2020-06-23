@@ -14,6 +14,7 @@ import { openDB } from 'idb'
 
 import './style.css'
 interface P {
+	client_id: string
 	settings: RootDBState["settings"]
 	students: RootDBState["students"]
 	user: RootDBState["faculty"]["MISTeacher"]
@@ -169,7 +170,7 @@ class Settings extends Component<propsType, S>{
 				good: true,
 				text: "Saved!"
 			},
-			client_id: localStorage.getItem("client_id"),
+			client_id: this.props.client_id,
 			schoolLogo: props.schoolLogo,
 			addGrade: false,
 			newGrade: {
@@ -694,6 +695,7 @@ class Settings extends Component<propsType, S>{
 }
 
 export default connect((state: RootReducerState) => ({
+	client_id: state.client_id,
 	settings: state.db.settings,
 	students: state.db.students,
 	user: state.db.faculty[state.auth.faculty_id],
