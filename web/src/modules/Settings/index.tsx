@@ -10,6 +10,8 @@ import Layout from 'components/Layout'
 import Banner from 'components/Banner'
 import moment from 'moment'
 import { openDB } from 'idb'
+import { getIlmxUser, isMobile } from 'utils/helpers'
+
 //import newBadge from "Landing/icons/New/new.svg";
 
 import './style.css'
@@ -21,6 +23,7 @@ interface P {
 	sms_templates: RootDBState["sms_templates"]
 	schoolLogo: string
 	max_limit: number
+	ilmxUser: string
 
 	saveTemplates: (templates: RootDBState["sms_templates"]) => void
 	saveSettings: (settings: RootDBState["settings"]) => void
@@ -41,6 +44,7 @@ interface S {
 	schoolLogo: string
 	addGrade: boolean
 	newGrade: NewGrade
+	toggleMoreSettings: boolean
 }
 interface NewGrade {
 	grade: string
@@ -177,8 +181,8 @@ class Settings extends Component<propsType, S>{
 				grade: "",
 				percent: "",
 				remarks: ""
-			}
-
+			},
+			toggleMoreSettings: false
 		}
 
 		this.former = new Former(this, [])
@@ -237,47 +241,52 @@ class Settings extends Component<propsType, S>{
 
 		return <div className="table">
 			<div className="row">
-				<label> Allow teacher to view Fee Information ? </label>
-				<select {...this.former.super_handle(["settings", "permissions", "fee", "teacher"])}>
-					<option value="true">Yes</option>
-					<option value="false">No</option>
-				</select>
-			</div>
-			<div className="row">
-				<label> Allow teacher to view Daily Statistics ? </label>
-				<select {...this.former.super_handle(["settings", "permissions", "dailyStats", "teacher"])}>
-					<option value="true">Yes</option>
-					<option value="false">No</option>
-				</select>
-			</div>
-			<div className="row">
 				<label> Allow teacher to view Setup Page ? </label>
 				<select {...this.former.super_handle(["settings", "permissions", "setupPage", "teacher"])}>
 					<option value="true">Yes</option>
 					<option value="false">No</option>
 				</select>
 			</div>
-			<div className="row">
-				<label> Allow teacher to view Expense Information? </label>
-				<select {...this.former.super_handle(["settings", "permissions", "expense", "teacher"])}>
-					<option value="true">Yes</option>
-					<option value="false">No</option>
-				</select>
-			</div>
-			<div className="row">
-				<label> Allow teacher to view Family Information? </label>
-				<select {...this.former.super_handle(["settings", "permissions", "family", "teacher"])}>
-					<option value="true">Yes</option>
-					<option value="false">No</option>
-				</select>
-			</div>
-			<div className="row">
-				<label> Allow teacher to view Prospective Information? </label>
-				<select {...this.former.super_handle(["settings", "permissions", "prospective", "teacher"])}>
-					<option value="true">Yes</option>
-					<option value="false">No</option>
-				</select>
-			</div>
+
+			{
+				!this.props.ilmxUser && <>
+					<div className="row">
+						<label> Allow teacher to view Fee Information ? </label>
+						<select {...this.former.super_handle(["settings", "permissions", "fee", "teacher"])}>
+							<option value="true">Yes</option>
+							<option value="false">No</option>
+						</select>
+					</div>
+					<div className="row">
+						<label> Allow teacher to view Daily Statistics ? </label>
+						<select {...this.former.super_handle(["settings", "permissions", "dailyStats", "teacher"])}>
+							<option value="true">Yes</option>
+							<option value="false">No</option>
+						</select>
+					</div>
+					<div className="row">
+						<label> Allow teacher to view Expense Information? </label>
+						<select {...this.former.super_handle(["settings", "permissions", "expense", "teacher"])}>
+							<option value="true">Yes</option>
+							<option value="false">No</option>
+						</select>
+					</div>
+					<div className="row">
+						<label> Allow teacher to view Family Information? </label>
+						<select {...this.former.super_handle(["settings", "permissions", "family", "teacher"])}>
+							<option value="true">Yes</option>
+							<option value="false">No</option>
+						</select>
+					</div>
+					<div className="row">
+						<label> Allow teacher to view Prospective Information? </label>
+						<select {...this.former.super_handle(["settings", "permissions", "prospective", "teacher"])}>
+							<option value="true">Yes</option>
+							<option value="false">No</option>
+						</select>
+					</div>
+				</>
+			}
 		</div>
 	}
 
@@ -535,6 +544,9 @@ class Settings extends Component<propsType, S>{
 		}
 	}
 
+	toggleMoreSettings = () => {
+		this.setState({ toggleMoreSettings: !this.state.toggleMoreSettings })
+	}
 
 	render() {
 
@@ -551,23 +563,29 @@ class Settings extends Component<propsType, S>{
 
 				<div className="title">Settings</div>
 
-				<div className="form" style={{ width: "90%" }}>
+				<div className="section-container form">
+
+					{
+						isMobile() && <div className="row">
+							<label>Download SMS App</label>
+							<a className="button green" href="!#">Open PlayStore</a>
+						</div>
+					}
 
 					<div className="row">
-						<img className="school logo" src={this.state.schoolLogo} alt={"No Logo Found"} />
+						<img className="school logo" src={this.state.schoolLogo} style={{ borderRadius: this.state.schoolLogo ? 15 : "0.25rem" }} alt={"No Logo Found"} />
 					</div>
 
 					<div className="row">
 						<label>School Logo</label>
 						{this.state.schoolLogo === "" ?
 							<div className="badge-container">
-								<div className="fileContainer button green" style={{ width: "90%" }}>
+								<div className="file-container button green">
 									<div>Select A Logo</div>
 									<input type="file" onChange={this.logoHandler} />
 								</div>
 							</div>
 							: <div className="button red" onClick={this.onLogoRemove}> Remove </div>}
-
 					</div>
 					<div className="row">
 						<label>School Name</label>
@@ -583,74 +601,84 @@ class Settings extends Component<propsType, S>{
 						<label>School Phone Number</label>
 						<input type="text" {...this.former.super_handle(["settings", "schoolPhoneNumber"])} placeholder="School Phone Number" />
 					</div>
+					{
+						this.props.ilmxUser && <div
+							style={{ marginTop: "1.25rem", marginBottom: "1rem" }}
+							className="button blue"
+							onClick={this.toggleMoreSettings}
+						>{this.state.toggleMoreSettings ? "Hide more Settings" : "Show more Settings"}</div>
+					}
+					{
+						(this.props.ilmxUser ? this.state.toggleMoreSettings : true) && <>
+							<div className="row">
+								<label>School Code (Optional)</label>
+								<input type="text" {...this.former.super_handle(["settings", "schoolCode"])} placeholder="School Code" />
+							</div>
 
-					<div className="row">
-						<label>School Code (Optional)</label>
-						<input type="text" {...this.former.super_handle(["settings", "schoolCode"])} placeholder="School Code" />
-					</div>
+							<div className="row">
+								<label>School Session Start Period</label>
+								<input type="date" {...this.former.super_handle(["settings", "schoolSession", "start_date"])}
+									value={moment(this.state.settings.schoolSession.start_date).format("YYYY-MM-DD")}
+									placeholder="session start" />
+							</div>
+							<div className="row">
+								<label>School Session End Period</label>
+								<input type="date" {...this.former.super_handle(["settings", "schoolSession", "end_date"])}
+									value={moment(this.state.settings.schoolSession.end_date).format("YYYY-MM-DD")}
+									placeholder="session end" />
+							</div>
 
-					<div className="row">
-						<label>School Session Start Period</label>
-						<input type="date" {...this.former.super_handle(["settings", "schoolSession", "start_date"])}
-							value={moment(this.state.settings.schoolSession.start_date).format("YYYY-MM-DD")}
-							placeholder="session start" />
-					</div>
-					<div className="row">
-						<label>School Session End Period</label>
-						<input type="date" {...this.former.super_handle(["settings", "schoolSession", "end_date"])}
-							value={moment(this.state.settings.schoolSession.end_date).format("YYYY-MM-DD")}
-							placeholder="session end" />
-					</div>
+							<div className="row">
+								<label>Fee Vouchers per Page</label>
+								<select {...this.former.super_handle(["settings", "vouchersPerPage"])}>
+									<option value="1">1</option>
+									<option value="2">2</option>
+									<option value="3">3</option>
+								</select>
+							</div>
 
-					<div className="row">
-						<label>Fee Vouchers per Page</label>
-						<select {...this.former.super_handle(["settings", "vouchersPerPage"])}>
-							<option value="1">1</option>
-							<option value="2">2</option>
-							<option value="3">3</option>
-						</select>
-					</div>
+							<div className="row">
+								<label>SMS Option</label>
+								<select {...this.former.super_handle(["settings", "sendSMSOption"])}>
+									<option value="">Select SMS Option</option>
+									<option value="SIM">Send SMS from Local SIM Card</option>
+									<option value="API" disabled>Send SMS from API</option>
+								</select>
+							</div>
+							<div className="row">
+								<label>Data Sharing</label>
+								<select {...this.former.super_handle(["settings", "shareData"])}>
+									<option value="true">Yes</option>
+									<option value="false">No</option>
+								</select>
+							</div>
 
-					<div className="row">
-						<label>SMS Option</label>
-						<select {...this.former.super_handle(["settings", "sendSMSOption"])}>
-							<option value="">Select SMS Option</option>
-							<option value="SIM">Send SMS from Local SIM Card</option>
-							<option value="API" disabled>Send SMS from API</option>
-						</select>
-					</div>
-					<div className="row">
-						<label>Data Sharing</label>
-						<select {...this.former.super_handle(["settings", "shareData"])}>
-							<option value="true">Yes</option>
-							<option value="false">No</option>
-						</select>
-					</div>
+							<div className="row">
+								<label>Device Name</label>
+								<input type="text" {...this.former.super_handle(["settings", "devices", this.state.client_id])} placeholder="Device Name" />
+							</div>
 
-					<div className="row">
-						<label>Device Name</label>
-						<input type="text" {...this.former.super_handle(["settings", "devices", this.state.client_id])} placeholder="Device Name" />
-					</div>
+							<div className="row">
+								<label>MISchool Version</label>
+								<label>{mis_version}</label>
+							</div>
 
-					<div className="row">
-						<label>MISchool Version</label>
-						<label>{mis_version}</label>
-					</div>
+							<div className="row">
+								<label>Client Id</label>
+								<label>{this.state.client_id}</label>
+							</div>
 
-					<div className="row">
-						<label>Client Id</label>
-						<label>{this.state.client_id}</label>
-					</div>
-
-					<div className="row">
-						<label>Student Limit</label>
-						<label>{this.props.max_limit >= 0 ? `${studentLength} out of ${this.props.max_limit}` : "Unlimited"}</label>
-					</div>
+							<div className="row">
+								<label>Student Limit</label>
+								<label>{this.props.max_limit >= 0 ? `${studentLength} out of ${this.props.max_limit}` : "Unlimited"}</label>
+							</div>
 
 
-					<div className="button grey" onClick={() => this.setState({ templateMenu: !this.state.templateMenu })}>
-						Change SMS Templates
-					</div>
+							<div className="button grey" onClick={() => this.setState({ templateMenu: !this.state.templateMenu })}>
+								Change SMS Templates
+							</div>
+						</>
+					}
 					{
 						this.state.templateMenu ? this.changeSMStemplates() : false
 					}
@@ -665,7 +693,7 @@ class Settings extends Component<propsType, S>{
 						this.state.permissionMenu ? this.changeTeacherPermissions() : false
 					}
 					{
-						this.props.user.Admin ?
+						this.props.user.Admin && !this.props.ilmxUser ?
 							<div className="button grey" onClick={() => this.setState({ gradeMenu: !this.state.gradeMenu })}>
 								Grade Settings
 							</div>
@@ -675,9 +703,13 @@ class Settings extends Component<propsType, S>{
 						this.state.gradeMenu && this.gradeMenu()
 					}
 
-					<Link className="button grey" to="settings/class">Fee Settings</Link>
-					<Link className="button grey" to="/settings/promote">Promote Students</Link>
-					<Link className="button grey" to="/settings/historicalFee">Add Historical Fees</Link>
+					{
+						!this.props.ilmxUser && <>
+							<Link className="button grey" to="settings/class">Fee Settings</Link>
+							<Link className="button grey" to="/settings/promote">Promote Students</Link>
+							<Link className="button grey" to="/settings/historicalFee">Add Historical Fees</Link>
+						</>
+					}
 					<Link className="button grey" to="/settings/excel-import/students">Import From Excel</Link>
 					{
 						this.props.user.Admin ?
@@ -701,7 +733,8 @@ export default connect((state: RootReducerState) => ({
 	user: state.db.faculty[state.auth.faculty_id],
 	sms_templates: state.db.sms_templates,
 	schoolLogo: state.db.assets ? state.db.assets.schoolLogo || "" : "",
-	max_limit: state.db.max_limit || -1
+	max_limit: state.db.max_limit || -1,
+	ilmxUser: getIlmxUser()
 }),
 	(dispatch: Function) => ({
 		saveTemplates: (templates: RootDBState["sms_templates"]) => dispatch(createTemplateMerges(templates)),

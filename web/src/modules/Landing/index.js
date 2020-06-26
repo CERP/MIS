@@ -31,7 +31,7 @@ import family from "./icons/family/family.svg"
 import Help from './icons/Help/help.svg'
 import diary from './icons/Diary/diary.svg'
 import { IlmxLogo } from 'assets/icons'
-import { showScroll, hideScroll } from 'utils/helpers'
+import { showScroll, hideScroll, getIlmxUser } from 'utils/helpers'
 import IlmxRedirectModal from 'components/Ilmx/redirectModal'
 import IlmxLanding from './ilmxLanding'
 
@@ -52,7 +52,6 @@ class Landing extends Component {
 			scroll: 0,
 			toggleRedirectModal: false,
 			phone: "",
-			ilmxUser: ""
 		}
 	}
 
@@ -62,8 +61,8 @@ class Landing extends Component {
 
 		// for redirect to ilmx
 		const phone = localStorage.getItem("ilmx")
-		const user = localStorage.getItem("user")
-		this.setState({ phone, ilmxUser: user })
+
+		this.setState({ phone })
 
 		const { paid, trial_period, date } = this.props.package_info
 
@@ -259,9 +258,9 @@ class Landing extends Component {
 					{this.getTrialWarningMessage()}
 				</div>}
 
-				<div className="horizontal-scroll-container" style={{ overflowX: this.state.ilmxUser ? 'unset' : 'auto' }}>
+				<div className="horizontal-scroll-container" style={{ overflowX: this.props.ilmxUser ? 'unset' : 'auto' }}>
 
-					{this.state.ilmxUser === "ILMX" ?
+					{this.props.ilmxUser === "ILMX" ?
 						<IlmxLanding
 							faculty={this.props.user}
 							onLogout={logout}
@@ -503,6 +502,7 @@ export default connect(state => ({
 	school_id: state.auth.school_id,
 	auth: state.auth,
 	client_id: state.client_id,
+	ilmxUser: getIlmxUser(),
 }), dispatch => ({
 	resetTrial: () => dispatch(resetTrial()),
 	markPurchased: () => dispatch(markPurchased()),

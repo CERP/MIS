@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import Layout from 'components/Layout'
 import { connect } from 'react-redux'
 import { smsIntentLink } from 'utils/intent'
@@ -7,8 +7,7 @@ import { sendSMS } from 'actions/core'
 import { History } from 'history'
 import siteConfig from 'constants/siteConfig.json'
 import HelpTutorial from './tutorial'
-
-import { isMobile } from 'utils/helpers'
+import { isMobile, getIlmxUser } from 'utils/helpers'
 import { PhoneIcon } from 'assets/icons'
 
 import './style.css'
@@ -18,19 +17,15 @@ interface P {
 	faculty_id: string
 	smsOption: RootDBState["settings"]["sendSMSOption"]
 	history: History
+	ilmxUser: string
+
 	sendMessage: (text: string, number: string) => void
 	logSms: (sms_history: AugmentedSmsHistory) => void
 }
 
-const Help: React.FC<P> = ({ auth, school_address, faculty_id, smsOption, logSms, sendMessage, history }) => {
+const Help: React.FC<P> = ({ auth, ilmxUser, school_address, faculty_id, smsOption, logSms, sendMessage, history }) => {
 
 	const [smsText, setSmsText] = useState('')
-	const [ilmxUser, setIlmxUser] = useState('')
-
-	useEffect(() => {
-		const user = localStorage.getItem('user')
-		setIlmxUser(user)
-	}, [])
 
 	const onSendLogSms = () => {
 		const sms_history: AugmentedSmsHistory = {
@@ -91,7 +86,8 @@ export default connect((state: RootReducerState) => ({
 	auth: state.auth,
 	school_address: state.db.settings.schoolAddress,
 	faculty_id: state.auth.faculty_id,
-	smsOption: state.db.settings.sendSMSOption
+	smsOption: state.db.settings.sendSMSOption,
+	ilmxUser: getIlmxUser()
 }), (dispatch: Function) => ({
 	sendMessage: (text: string, number: string) => dispatch(sendSMS(text, number)),
 	logSms: (history: AugmentedSmsHistory) => dispatch(logSms(history))

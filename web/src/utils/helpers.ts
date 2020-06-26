@@ -39,3 +39,7 @@ export const getTimeString = (time: number): string => {
 export const isMobile = () => {
 	 return /Mobi|Android/i.test(navigator.userAgent)
 }
+
+export const getIlmxUser = (): string => {
+	return localStorage.getItem("user")
+}

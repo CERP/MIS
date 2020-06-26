@@ -6,6 +6,7 @@ import Layout from 'components/Layout'
 import Create from './Create'
 import Attendance from './Attendance'
 import TeacherCertificates from './Certificates'
+import { getIlmxUser } from 'utils/helpers'
 
 import './style.css'
 
@@ -15,36 +16,25 @@ const New = () => {
 
 export default class TeacherPage extends Component {
 
-	state = {
-		ilmxUser: ''
-	}
-
-	componentDidMount() {
-		const user = localStorage.getItem("user")
-		this.setState({ ilmxUser: user })
-	}
+	ilmxUser = getIlmxUser()
 
 	render() {
-		
 		const loc = this.props.location.pathname.split('/').slice(-1).pop();
 
 		return <Layout history={this.props.history}>
 			<div className="single-teacher">
-				{ loc === "new" ? false : 
-				<div className="row tabs">
-					<Link className={`button ${loc === "profile" ? "orange" : false}`} to="profile" replace={true}>Profile</Link>
-					{ !this.state.ilmxUser && <>
-							<Link className={`button ${loc === "attendance" ? "purple" : false}`} to="attendance" replace={true}>Attendance</Link>
-							<Link className={`button ${loc === "certificates" ? "yellow" : false}`} to="certificates" replace={true}>Certificates</Link>
-						</>
-					}
-				</div>
+				{ 
+					loc !== "new" && !this.ilmxUser && <div className="row tabs">
+						<Link className={`button ${loc === "profile" ? "orange" : false}`} to="profile" replace={true}>Profile</Link>
+						<Link className={`button ${loc === "attendance" ? "purple" : false}`} to="attendance" replace={true}>Attendance</Link>
+						<Link className={`button ${loc === "certificates" ? "yellow" : false}`} to="certificates" replace={true}>Certificates</Link>
+					</div>
 				}
 
 				<Route path="/faculty/first" component={Create} />
 				<Route path="/faculty/new" component={Create} />
 				<Route path="/faculty/:id/profile" component={Create} />
-				{ !this.state.ilmxUser && <>
+				{ !this.ilmxUser && <>
 						<Route path="/faculty/:id/payment" component={New} />
 						<Route path="/faculty/:id/attendance" component={Attendance} />
 						<Route path="/faculty/:id/certificates" component={TeacherCertificates} />

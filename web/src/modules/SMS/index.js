@@ -15,6 +15,7 @@ import ToSingleTeacher from './SmsOptions/ToSingleTeacher';
 import ToAllTeachers   from './SmsOptions/ToAllTeachers';
 import ToFeeDefaulters from './SmsOptions/ToFeeDefaulters';
 import ToProspectiveStudents from './SmsOptions/ToProspectiveStudents'
+import { getIlmxUser } from 'utils/helpers'
 
 import './style.css'
 
@@ -238,12 +239,12 @@ class SMS extends Component {
 									<option value="" disabled>Select</option>
 									<option value="to_single_class">Single Class</option>
 									<option value="to_all_students">All Students</option>
-									<option value="to_prospective_students">Prospective Students</option>
+									{ !this.props.ilmxUser && <option value="to_prospective_students">Prospective Students</option> }
 									{ !this.state.sendStudentPortalLink && <> 
 											<option value="to_single_student">Single Student</option>
 											<option value="to_single_teacher">Single Teacher</option>
 											<option value="to_all_teachers">All Teachers</option>
-											<option value="to_fee_defaulters">Fee Defaulters</option>
+											{ !this.props.ilmxUser && <option value="to_fee_defaulters">Fee Defaulters</option> }
 										</>
 									}
 							</select>
@@ -264,7 +265,8 @@ export default connect(state => ({
 	teachers:state.db.faculty,
 	connected: state.connected,
 	smsSetting: state.db.settings.sendSMSOption,
-	schoolId: state.auth.school_id || ""
+	schoolId: state.auth.school_id || "",
+	ilmxUser: getIlmxUser()
 }), dispatch => ({
 	sendMessage: (text, number, type) => dispatch(sendSMS(text, number)),
 	sendBatchMessages: (messages, type) => dispatch(sendBatchSMS(messages)),

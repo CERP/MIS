@@ -28,7 +28,9 @@ export const initState: RootReducerState = {
 		classes: {},
 		sms_templates: defaultTemplates(),
 		exams: {},
-		settings: {} as MISSettings,
+		settings: {
+			sendSMSOption: "SIM"
+		} as MISSettings,
 		expenses: {},
 		analytics: {
 			sms_history: {}
