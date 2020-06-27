@@ -2,6 +2,12 @@
 	width: 100%;
 	display: block;
 }
+.ilmx-analytics .heading {
+	 margin-top: 0.25rem;
+	 font-weight: 700;
+	 margin-bottom: 1rem;
+	 font-size: 1.25rem;
+}
 .ilmx-analytics .card {
 	display: flex;
 	flex-wrap: wrap;
@@ -113,7 +119,13 @@
 	}
 }
 
-.ilmx-analytics .most-viewed-videos.sort {
+.ilmx-analytics .toggle-actions-container {
+	display: flex;
+	margin-left: auto;
+}
+
+.ilmx-analytics .toggle-actions {
+	margin: 0.175rem;
 	height: 24px;
 	width: 24px;
 	margin-left: auto;
@@ -144,4 +156,27 @@
 		font-size: 0.90rem;
 	 	margin-bottom: 0.375rem;
  	}
+}
+
+.ilmx-analytics .section select {
+	height: 30px;
+	border-radius: 4px;
+	font-size: 16px;
+	padding: 0 4px;
+}
+.ilmx-analytics .video-filter {
+	margin-bottom: 0.5rem;
+	align-items: center;
+}
+.ilmx-analytics .video-filter select {
+	width: 42%;
+	margin: 0.175rem;
+}
+.ilmx-analytics .section .calender {
+	display: flex;
+	margin-bottom: 0.5rem;
+}
+.ilmx-analytics .section .calender input {
+	height: 30px;
+	margin-left: auto;
 }
