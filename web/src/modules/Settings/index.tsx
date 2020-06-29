@@ -24,6 +24,7 @@ interface P {
 	schoolLogo: string
 	max_limit: number
 	ilmxUser: string
+	unsyncd: number
 
 	saveTemplates: (templates: RootDBState["sms_templates"]) => void
 	saveSettings: (settings: RootDBState["settings"]) => void
@@ -567,8 +568,8 @@ class Settings extends Component<propsType, S>{
 
 					{
 						isMobile() && <div className="row">
-							<label>Download SMS App</label>
-							<a className="button green" href="!#">Open PlayStore</a>
+							<label>MISchool SMS Companion App</label>
+							<a className="button green" href="https://github.com/CERP/MIS/raw/master/android/app/release/app-release.apk">Download Android App</a>
 						</div>
 					}
 
@@ -672,7 +673,11 @@ class Settings extends Component<propsType, S>{
 								<label>Student Limit</label>
 								<label>{this.props.max_limit >= 0 ? `${studentLength} out of ${this.props.max_limit}` : "Unlimited"}</label>
 							</div>
-
+							{this.props.ilmxUser && <div className="row">
+								<label>Total Unsynced Changes</label>
+								<div>{this.props.unsyncd}</div>
+							</div>
+							}
 
 							<div className="button grey" onClick={() => this.setState({ templateMenu: !this.state.templateMenu })}>
 								Change SMS Templates
@@ -734,7 +739,8 @@ export default connect((state: RootReducerState) => ({
 	sms_templates: state.db.sms_templates,
 	schoolLogo: state.db.assets ? state.db.assets.schoolLogo || "" : "",
 	max_limit: state.db.max_limit || -1,
-	ilmxUser: getIlmxUser()
+	ilmxUser: getIlmxUser(),
+	unsyncd: Object.keys(state.queued.mutations || {}).length
 }),
 	(dispatch: Function) => ({
 		saveTemplates: (templates: RootDBState["sms_templates"]) => dispatch(createTemplateMerges(templates)),

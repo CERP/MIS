@@ -123,42 +123,47 @@ export const IlmxTutorialLinks: TutorialLink = {
 	"DEFAULT": {
 		title: "Brief Introduction to MISchool",
 		titleShort: "Introduction to MISchool",
-		link: ""
+		link: "https://www.youtube.com/embed/GjF_oWI1Afg"
 	},
 	"CLASS": {
-		title: "How to setup a class?",
-		titleShort: "Setup a Class",
-		link: ""
+		title: "How to setup classes?",
+		titleShort: "Setup student Classes",
+		link: "https://www.youtube.com/embed/lUXYg3LLEq8"
 	},
-	"SETTINGS-EXCEL-IMPORT-STUDENT": {
+	"SETTINGS-EXCEL-IMPORT-STUDENTS": {
 		title: "How to enter students list classwise through CSV file?",
 		titleShort: "Import Students through CSV",
-		link: ""
+		link: "https://www.youtube.com/embed/whkNkdGZVUk"
 	},
 	"STUDENT": {
 		title: "How to create student profile?",
 		titleShort: "Create Student Profile",
-		link: ""
+		link: "https://www.youtube.com/embed/lsjK4fCif5c"
+	},
+	"TEACHER": {
+		title: "How to create teacher profile?",
+		titleShort: "Create Teacher Profile",
+		link: "https://www.youtube.com/embed/gi_W4d1sBvk",
 	},
 	"SMS-APP": {
 		title: "How to download and install Android SMS app in mobile?",
 		titleShort: "Download and Install SMS App",
-		link: ""
+		link: "https://youtube.com/embed/UtW-lqaY9rc"
 	},
 	"SMS": {
 		title: "How to share Student Portal Link with students through SMS?",
 		titleShort: "Share Student Portal Link",
-		link: ""
+		link: "https://www.youtube.com/embed/HO-nMR8BYhc"
 	},
 	"DIARY": {
 		title: "How to send Daily Diary to students?",
 		titleShort: "Send Daily Diary",
-		link: ""
+		link: "https://www.youtube.com/embed/x4YrwS2fkxE"
 	},
-	"ANALYTICS": {
+	"ANALYTICS-ILMEXCHANGE": {
 		title: "How to analyze the analytics about learning videos?",
-		titleShort: "Learning about video Analytics",
-		link: ""
+		titleShort: "Learning about Video Analytics",
+		link: "https://www.youtube.com/embed/nvEs6aym7ps"
 	}
 }
 
@@ -174,7 +179,19 @@ export const getLinkForPath = (pathname: string) => {
 
 export const getIlmxLinkForPath = (pathname: string) => {
 	
-	const path = pathname.split("/").filter(Boolean).join("-").toUpperCase()
+	let path = pathname.split("/").filter(Boolean).join("-").toUpperCase()
+
+	if(path.includes("FACULTY")) {
+		path = "TEACHER"
+	}
+
+	if(path.includes("CLASS") && (path.includes("NEW") || path.includes("PROFILE"))) {
+		path = "CLASS"
+	}
+
+	if(path.includes("STUDENT") && (path.includes("NEW") || path.includes("PROFILE"))) {
+		path = "STUDENT"
+	}
 
 	const title = IlmxTutorialLinks[path] && IlmxTutorialLinks[path].titleShort ? IlmxTutorialLinks[path].titleShort : IlmxTutorialLinks["DEFAULT"].titleShort
 	const link = IlmxTutorialLinks[path] && IlmxTutorialLinks[path].link ? IlmxTutorialLinks[path].link : IlmxTutorialLinks["DEFAULT"].link
