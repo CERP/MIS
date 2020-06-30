@@ -1,24 +1,27 @@
 import React, { Component } from 'react'
 import { smsIntentLink } from 'utils/intent'
 
-import {getSectionsFromClasses} from 'utils/getSectionsFromClasses';
+import {getSectionsFromClasses} from 'utils/getSectionsFromClasses'
 
 import former from 'utils/former'
+import ShareButton from 'components/ShareButton'
+import { replaceSpecialCharsWithUTFChars } from 'utils/stringHelper'
 
 
 class ToSingleClass extends Component {
 	constructor(props) {
-	super(props)
-	
-	this.state = {
-		selected_section_id: "",
-		selected_student_number: "",
-		text: ""
+		super(props)
+		
+		this.state = {
+			selected_section_id: "",
+			selected_student_number: "",
+			text: ""
+		}
+
+		this.former = new former(this, [])
 	}
 
-	this.former = new former(this, [])
-	}
-	logSms = (messages) =>{
+	logSms = (messages) => {
 		if(messages.length === 0){
 			console.log("No Messaged to Log")
 			return
@@ -34,24 +37,37 @@ class ToSingleClass extends Component {
 		this.props.logSms(historyObj)
 	}
 
+	getMessages = () => {
+
+		const { students, portal_link } = this.props
+
+		const messages = Object.values(students)
+			.filter(s => s.section_id === this.state.selected_section_id && (s.tags === undefined || !s.tags["PROSPECTIVE"]) && s.Phone)
+			.reduce((agg,student)=> {
+					const index  = agg.findIndex(s => s.number === student.Phone)		
+					if(index >= 0 ){
+						return agg
+				}
+
+				const text_string = portal_link ? `${this.state.text}\nName: ${student.Name}\nStudent portal link: ${portal_link}${student.id}` 
+					: replaceSpecialCharsWithUTFChars (this.state.text)
+
+				return [...agg,{
+					number: student.Phone,
+					text:  text_string
+				}]
+
+			}, [])
+
+		return messages
+	}
+
 	render() {
 
-	const { classes, students, sendBatchMessages, smsOption } = this.props;
+	const { classes, sendBatchMessages, smsOption } = this.props;
 
-	const messages = Object.values(students)
-		.filter(s => s.section_id === this.state.selected_section_id && (s.tags === undefined || !s.tags["PROSPECTIVE"]) && s.Phone)
-		.reduce((agg,student)=> {
-			const index  = agg.findIndex(s => s.number === student.Phone)		
-			if(index >= 0 ){
-				return agg
-			}
-
-			return [...agg,{
-				number: student.Phone,
-				text : this.state.text
-			}]
-		}, [])
-				
+	const messages = this.getMessages()
+	
 	return (
 			<div>
 				<div className="row">
@@ -75,7 +91,11 @@ class ToSingleClass extends Component {
 							messages,
 							return_link: window.location.href 
 							})} onClick={() => this.logSms(messages)} className="button blue">Send using Local SIM</a> 
-							: <div className="button" onClick={() => sendBatchMessages(messages)}>Send</div>}
+							: <div className="button" onClick={() => sendBatchMessages(messages)}>Send</div>
+					}
+				<div className="is-mobile-only" style={{marginTop: 10}}>
+					<ShareButton title={"SMS"} text={this.state.text} />
+				</div>
 			</div>
 		)
 	}

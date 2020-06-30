@@ -1,6 +1,5 @@
-import React,{Component} from 'react'
-import { Link, RouteComponentProps } from 'react-router-dom'
-import Former from 'utils/former'
+import React from 'react'
+import { Link } from 'react-router-dom'
 
 import './style.css'
 
@@ -10,63 +9,41 @@ interface P {
 	create: string
 	createText: string
 	toLabel: Function
+	totalItems?: number
+	search?: (value: string) => void
+	children?: React.ReactNode
 }
 
-interface S {
-	filterText: string
-}
+const Card: React.FC<P> = ({ items, Component, create, createText, totalItems, search, children }) => {
 
-interface Routeinfo {
-	id: string
-}
-
-type propTypes = RouteComponentProps<Routeinfo> & P
-
-export default class Card extends Component <propTypes, S> {
-
-	former: Former
-	constructor(props: propTypes) {
-		super(props)
-		this.state = {
-			filterText : ""
-		}
-		this.former = new Former(this, [])
-	}
-	
-	onChange = (e: any) => {
-		this.setState({filterText:e.target.value});
-	}
-	
-	create = ({ to , text}: { to: string; text: string} ) => {
-		return <Link className="button blue" to={to}>{text}</Link>
+	const onChange = (e: React.FormEvent<HTMLInputElement>) => {
+		search(e.currentTarget.value)
 	}
 
-	render(){
-		const {items, toLabel, Component, children } = this.props;
-
-		const filteredList = items
-			.filter(item => {
-				return toLabel(item) !== undefined && toLabel(item).toLowerCase().includes(this.state.filterText.toLowerCase())
-			})
-			.sort((a,b) => toLabel(b).localeCompare(this.state.filterText) - toLabel(a).localeCompare(this.state.filterText))
-
-		return <div className="card-wrap">
-
+	return (
+		<div className="card-wrap">
 			<div className="total">
-				<div className="label">
-					Total: <strong> {filteredList.length} </strong>
-				</div>
-				{ this.props.create ? <this.create to={this.props.create} text={this.props.createText} /> : false }
+				<div className="label">Total: <strong> {totalItems} </strong> </div>
+				{create && <CreateButtonElem to={create} text={createText} />}
 			</div>
-			<input className="search-bar no-print" type="text" placeholder="Search by name | class | admission # | phone #" onChange={this.onChange}/>
-			{ children }
-
+			<input className="search-bar no-print" type="text" placeholder="Search by name | class | admission # | phone #" onChange={onChange} />
+			{children}
 			<div className="card-list">
-			{
-				filteredList.map(item => Component(item) )
-			}
+				{
+					items.map(item => Component(item))
+				}
 			</div>
 		</div>
-	}
+	)
+}
 
+export default Card
+
+type CreateButtonElemProps = {
+	to: string
+	text: string
+}
+
+const CreateButtonElem: React.FC<CreateButtonElemProps> = ({ to, text }) => {
+	return <Link className="button blue" to={to}>{text}</Link>
 }

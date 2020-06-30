@@ -12,6 +12,7 @@ defmodule Sarkar.MixProject do
 	end
 
 	# Run "mix help compile.app" to learn about applications.
+	# We're starting application here?
 	def application do
 		[
 			extra_applications: [:logger],

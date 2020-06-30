@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { smsIntentLink } from 'utils/intent'
 import former from 'utils/former'
+import ShareButton from 'components/ShareButton'
+import { replaceSpecialCharsWithUTFChars } from 'utils/stringHelper'
 
 class ToAllTeachers extends Component {
 	constructor(props) {
@@ -12,11 +14,14 @@ class ToAllTeachers extends Component {
 
 	  this.former = new former(this, [])
 	}
-	logSms = (messages) =>{
-		if(messages.length === 0){
+
+	logSms = (messages) => {
+		
+		if(messages.length === 0) {
 			console.log("No Message to Log")
 			return
 		}
+		
 		const historyObj = {
 			faculty: this.props.faculty_id,
 			date: new Date().getTime(),
@@ -27,13 +32,14 @@ class ToAllTeachers extends Component {
 
 		this.props.logSms(historyObj)
 	}
+
   render() {
 
 	const { teachers, sendBatchMessages, smsOption } = this.props;
 	
 	const messages = Object.values(teachers).filter( teacher => teacher.Phone)
 						.map (T => { 
-							return { number: T.Phone, text : this.state.text }
+							return { number: T.Phone, text : replaceSpecialCharsWithUTFChars(this.state.text)}
 						});
 
 	return (
@@ -41,7 +47,7 @@ class ToAllTeachers extends Component {
 				<div className="row">
 					<label>Message</label>
 					<textarea {...this.former.super_handle(["text"])} placeholder="Write text message here" />
-				</div> 
+				</div>
 					{
 						smsOption === "SIM" ? 
 							<a href={smsIntentLink({
@@ -51,6 +57,9 @@ class ToAllTeachers extends Component {
 
 							<div className="button" onClick={() => sendBatchMessages(messages)}>Can only send using Local SIM</div>
 					}
+				<div className="is-mobile-only" style={{marginTop: 10}}>
+					<ShareButton title={"SMS"} text={this.state.text} />
+				</div>
 			</div>
 		)
   }

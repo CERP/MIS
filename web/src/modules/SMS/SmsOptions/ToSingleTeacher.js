@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { smsIntentLink } from 'utils/intent'
 import former from 'utils/former'
+import ShareButton from 'components/ShareButton'
+import { replaceSpecialCharsWithUTFChars } from 'utils/stringHelper'
 
 class ToSingleTeacher extends Component {
 	constructor(props) {
@@ -34,6 +36,8 @@ class ToSingleTeacher extends Component {
 
 	const { teachers, sendMessage, smsOption } = this.props;
 	
+	const sms_text =  replaceSpecialCharsWithUTFChars(this.state.text)
+	
 	return (
 	<div>
 		<div className="row">
@@ -56,12 +60,15 @@ class ToSingleTeacher extends Component {
 			{
 				smsOption === "SIM" ? 
 					<a href={smsIntentLink({
-						messages: [{ number: this.state.selected_teacher_number, text: this.state.text }],
+						messages: [{ number: this.state.selected_teacher_number, text: sms_text }],
 						return_link: window.location.href 
 						})} onClick={this.logSms} className="button blue">Send using Local SIM</a> :
 				
 					<div className="button" onClick={() => sendMessage( this.state.text, this.state.selected_teacher_number)}>Can only send using Local SIM</div>
 			}
+		<div className="is-mobile-only" style={{marginTop: 10}}>
+			<ShareButton title={"SMS"} text={this.state.text} />
+		</div>
 	</div>
 	)
   }
