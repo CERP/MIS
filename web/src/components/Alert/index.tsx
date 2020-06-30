@@ -36,11 +36,9 @@ export const MISPrompt: React.FC<PropsType> = (props) => {
 						onChange={(e) => setInput(e.target.value)}
 					/>
 				</div>
-				{
-					props.error && <div className="row error">
-						<div>{props.error}</div>
-					</div>
-				}
+				<div className="row error" style={{ padding: 0, fontSize: "0.75rem", height: 12 }}>
+					{props.error && <div>{props.error}</div>}
+				</div>
 				<div className="row actions">
 					<button className="button grey cancel" onClick={props.onCancel}>Cancel</button>
 					<button className="button blue" onClick={() => props.onSubmit(input)}>OK</button>

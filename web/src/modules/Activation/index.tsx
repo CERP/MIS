@@ -108,10 +108,12 @@ const MISActivation: React.FC<P> = ({ initialized, schoolId, resetTrial, markAsP
 								<div className="row">
 									<input type="text" onChange={(e) => handleStateChange("code", e.target.value)} placeholder="Enter valid code" autoFocus />
 								</div>
-								{state.isValidCode &&
-									<div className="row is-danger" style={{ marginTop: 10 }}>Invalid code, please enter valid code</div>
-								}
-								<div className="row" style={{ marginTop: 15 }}>
+								<div className="row is-danger" style={{ marginTop: "0.275rem", height: 12, fontSize: "0.75rem" }}>
+									{
+										state.isValidCode && <div>Invalid Code, Enter valid code</div>
+									}
+								</div>
+								<div className="row" style={{ marginTop: "0.375rem" }}>
 									<div className="button blue" onClick={handleVerifyCode}>Verify Code</div>
 								</div>
 							</div>
