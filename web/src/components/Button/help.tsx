@@ -1,8 +1,9 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect } from 'react'
 import { HelpIcon } from 'assets/icons'
 import Modal from 'components/Modal'
 import TutorialWindow from 'components/Tutorial'
-import { getLinkForPath } from 'constants/links'
+import { getLinkForPath, getIlmxLinkForPath } from 'constants/links'
+import { showScroll, hideScroll } from 'utils/helpers'
 
 import './style.css'
 
@@ -11,53 +12,41 @@ type PropsType = {
 	link?: string
 }
 
-type S = {
-	showTutorial: boolean
-}
+const HelpButton: React.FC<PropsType> = (props) => {
 
+	const { pathname } = window.location
+	const [toggleTutorialModal, setToggleTutorialModal] = useState(false)
+	const [ilmxUser, setIlmxUser] = useState('')
 
-class HelpButton extends Component<PropsType, S> {
-	constructor(props: PropsType) {
-		super(props)
+	useEffect(() => {
+		const user = localStorage.getItem("user")
+		setIlmxUser(user)
+	}, [])
 
-		this.state = {
-			showTutorial: false
+	const toggleTutorialWindow = () => {
+		setToggleTutorialModal(!toggleTutorialModal)
+		hideScroll()
+	}
+
+	const onCloseTutorialWindow = () => {
+		setToggleTutorialModal(false)
+		showScroll()
+	}
+
+	const { title, link } = props.title && props.link ? props : ilmxUser ? getIlmxLinkForPath(pathname) : getLinkForPath(pathname)
+
+	return <>
+		<img src={HelpIcon} className="help-button" onClick={toggleTutorialWindow} title={"MISchool Help"} alt="help" />
+		{
+			toggleTutorialModal && <Modal>
+				<TutorialWindow
+					title={title}
+					link={link}
+					onClose={onCloseTutorialWindow} />
+			</Modal>
 		}
-	}
+	</>
 
-	toggleTutorialWindow = () => {
-		this.setState({ showTutorial: !this.state.showTutorial }, () => {
-			// on modal shown
-			if (this.state.showTutorial) {
-				document.body.style.position = "fixed"
-			}
-		})
-	}
-
-	onCloseTutorialWindow = () => {
-		this.setState({ showTutorial: false }, () => {
-			// on modal hidden
-			document.body.style.position = ''
-		})
-	}
-
-	render() {
-
-		const { title, link } = this.props.title && this.props.link ? this.props : getLinkForPath(window.location.pathname)
-
-		return <>
-			<img src={HelpIcon} className="help-button" onClick={this.toggleTutorialWindow} title={"MISchool Tutorial"} alt="help" />
-			{
-				this.state.showTutorial && <Modal>
-					<TutorialWindow
-						title={title}
-						link={link}
-						onClose={this.onCloseTutorialWindow} />
-				</Modal>
-			}
-		</>
-
-	}
 }
 
 export default HelpButton

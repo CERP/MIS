@@ -43,6 +43,17 @@ interface RootDBState {
 			}
 		}
 	}
+
+	ilmx: {
+		events: {
+			[device_id: string]: {
+				[timestamp: string]: IlmxVideoEvent | IlmxExamEvent
+			}
+		}
+		lessons: {
+			[lesson_id: string]: IlmxLesson
+		}
+	}
 }
 
 interface BaseAnalyticsEvent {
@@ -104,6 +115,10 @@ interface RootReducerState {
 		loading: boolean
 		succeed: boolean
 		reason: string
+	}
+	ilmxLessons: {
+		isLoading: boolean
+		hasError: boolean
 	}
 }
 
@@ -415,7 +430,7 @@ interface ExamFilter {
 	subject?: string
 	exam_title: string
 }
-type AugmentedStudent = { 
+type AugmentedStudent = {
 	section?: AugmentedSection
 	forwardTo?: string
 } & MISStudent
@@ -427,3 +442,55 @@ interface MISPackage  {
 	trial_period: number
 	paid: boolean
 }
+interface BaseIlmxEvent {
+	type: string
+}
+interface IlmxVideoEvent {
+	type: "VIDEO"
+	lesson_id: string
+	student_id: string
+	duration: number
+}
+
+interface IlmxExamEvent {
+	type: "ASSESSMENT"
+	student_id: string
+	score: number
+	total_score: number
+	date: number
+	meta: {
+		medium: string
+		subject: string
+		chapter_id: string
+		lesson_id: string
+		excercise_id: string
+		total_duration: number
+		attempted_in: number
+		wrong_responses: {
+			[question_id: string]: string
+		}
+	}
+}
+
+interface IlmxLesson {
+	name: string
+	type: "VIDEO" | ""
+	link: string
+	chapter_name: string
+}
+
+type AugmentedIlmxLesson = {
+	watchCount: number
+	watchTime: number
+	viewers: {
+		[id: string]: {
+			watchCount: number
+			watchTime: number
+		}
+	}
+} & IlmxLesson
+
+type AugmentedSmsHistory = {
+	faculty?: string
+	text?: string
+} & MISSMSHistory

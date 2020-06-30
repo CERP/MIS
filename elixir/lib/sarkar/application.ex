@@ -3,6 +3,7 @@ defmodule Sarkar.Application do
 	# for more information on OTP Applications
 	@moduledoc false
 
+
 	use Application
 
 	def start(_type, _args) do
@@ -35,6 +36,9 @@ defmodule Sarkar.Application do
 		# See https://hexdocs.pm/elixir/Supervisor.html
 		# for other strategies and supported options
 		opts = [strategy: :one_for_one, name: Sarkar.Supervisor]
-		Supervisor.start_link(children, opts)
+		ret = Supervisor.start_link(children, opts)
+
+		IO.inspect ret
+
 	end
 end

@@ -15,7 +15,7 @@ import { connected, disconnected } from 'actions/core';
 
 //const debug_url = "wss://mis-socket.metal.fish"
 
-const debug_url = "5982b1ba.ngrok.io"
+const debug_url = "1712b0a5.ngrok.io"
 
 //@ts-ignore
 const host = window.api_url || debug_url;

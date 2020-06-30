@@ -29,6 +29,11 @@
 	.trial-bar:hover {
 		transform: scale(1.05);
 	}
+	.confirm-box {
+		background: #ffffff;
+		padding: 20px;
+		border-radius: 5px;
+	}
 
 .landing .button {
 	display: flex;
@@ -44,7 +49,7 @@
 }
 
 .landing .row {
-	flex-wrap: wrap;
+	/* flex-wrap: wrap; */
 	justify-content: space-around;	
 	align-items: flex-end;
 }
@@ -142,4 +147,20 @@
 	}
 .no-underline {
 	text-decoration: none;
+}
+.landing .ilmx.page .guide-steps {
+	text-align: center;
+	vertical-align: middle;
+	margin-bottom: 4rem;
+}
+
+@media(max-width: 425px) {
+	.landing .ilmx.page .row {
+		flex-wrap: wrap-reverse !important;
+	}
+	.landing .ilmx.page .guide-steps {
+		padding: 20px;
+		margin-bottom: 0;
+		width: 100%;
+	}
 }

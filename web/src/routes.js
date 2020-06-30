@@ -10,6 +10,7 @@ import TeacherSingle from 'modules/Teacher/Single'
 import StudentList from 'modules/Student/List'
 import StudentSingle from 'modules/Student/Single'
 import Login from 'modules/Login'
+import AutoLogin from 'modules/Login/autoLogin'
 import SchoolLogin from 'modules/Login/school'
 import ClassModule from 'modules/Class/List'
 import ClassSingle from 'modules/Class/Single'
@@ -127,6 +128,7 @@ export default class Routes extends React.Component {
 					<Route exact path="/" component={Front} />
 					<Route path="/school-login" component={SchoolLogin} />
 					<Route path="/login" component={Login} />
+					<Route path="/auto-login" component={AutoLogin} />
 
 				</Switch>
 			</BrowserRouter>

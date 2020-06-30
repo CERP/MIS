@@ -1,9 +1,9 @@
-.fileContainer {
+.file-container {
 	overflow: hidden;
 	position: relative;
 }
 
-.fileContainer [type=file] {
+.file-container [type=file] {
 	cursor: inherit;
 	display: block;
 	font-size: 999px;
@@ -19,12 +19,13 @@
 
 /* Example stylistic flourishes */
 
-.fileContainer {
-	border-radius: .5em;
+.file-container.button {
+	border-radius: 0.25rem;
 	float: left;
+	width: 100%;
 }
 
-.fileContainer [type=file] {
+.file-container [type=file] {
 	cursor: pointer;
 }
 
