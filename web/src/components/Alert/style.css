@@ -1,7 +1,7 @@
 .mis-alert {
 	background-color: #fafafa;
-	width: 75%;
-	height: 40%;
+	width: 50%;
+	height: 35%;
 	padding: 20px;
 	border-radius: 8px;
 	position: relative;
@@ -13,7 +13,7 @@
 }
 
 .mis-alert .section-container {
-	width: 80%;
+	width: 90%;
 }
 
 .mis-alert .title {
@@ -50,6 +50,13 @@
 	.mis-alert .title {
 		font-weight: 700;
 		font-size: 1.5rem;
+	}
+}
+
+@media screen and (max-width: 525px) {
+	.mis-alert {
+		width: 75%;
+		height: 40%;
 	}
 }
 

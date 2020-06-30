@@ -112,9 +112,14 @@ class Landing extends Component {
 	}
 
 	onActivationCodeModal = () => {
+
+		const show_prompt = !this.state.showPrompt
+
 		this.setState({
-			showPrompt: !this.state.showPrompt
+			showPrompt: show_prompt
 		})
+
+		if(show_prompt) hideScroll()
 	}
 
 	validateActivationCode = (code) => {
@@ -126,6 +131,7 @@ class Landing extends Component {
 						showPrompt: false,
 						hasPromptError: false
 					})
+					showScroll()
 				} else {
 					this.setState({
 						hasPromptError: true
@@ -157,6 +163,7 @@ class Landing extends Component {
 		this.setState({
 			showPrompt: !this.state.showPrompt
 		})
+		showScroll()
 	}
 
 	redirectToIlmx = (input_phone) => {

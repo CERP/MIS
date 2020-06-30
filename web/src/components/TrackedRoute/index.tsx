@@ -37,7 +37,7 @@ const TrackedRoute = ({ component, name, faculty_id, token, initialized, locatio
 
 	if (date !== -1 && !paid && daysPassedSinceTrial > trial_period + 1) {
 
-		return <Redirect to="activation-code" />
+		return <Redirect to="/verify-code" />
 	}
 
 	if (token && name) {
