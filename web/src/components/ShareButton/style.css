@@ -4,8 +4,7 @@
 	margin-top: 10px;
 	margin-bottom: 10px;
 }
-.share-button.whatsapp {
-	padding: 4px 8px;
-	background-color: white;
-	border-color: #5ecdb9;
+
+.share-button.button {
+	padding: 2px 4px;
 }

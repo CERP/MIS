@@ -1,3 +1,4 @@
+
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Link, RouteProps } from 'react-router-dom'
@@ -15,8 +16,7 @@ import { StudentIcon, HorizontalDots } from 'assets/icons'
 import { chunkify } from 'utils/chunkify'
 import { deleteStudentById } from 'actions/index'
 import DropdownMenu from 'components/Dropdown/DropdownMenu'
-import Popover from 'react-bootstrap/Popover'
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
+import { useComponentVisible } from 'utils/customHooks'
 
 import './style.css'
 
@@ -39,6 +39,7 @@ type S = {
 	section_id: string
 	student_id: string
 	page_index: number
+	search_filter_text: string
 }
 
 const CHUNK_SIZE_FOR_LIST = 29
@@ -58,7 +59,8 @@ export class StudentList extends Component<P, S> {
 			tag: "",
 			section_id: "",
 			student_id: "",
-			page_index: 0
+			page_index: 0,
+			search_filter_text: ""
 		}
 		this.former = new Former(this, [])
 	}
@@ -192,6 +194,13 @@ export class StudentList extends Component<P, S> {
 		}
 	}
 
+	handleSearch = (value: string) => {
+		this.setState({
+			page_index: 0,
+			search_filter_text: value
+		})
+	}
+
 	render() {
 
 		const { classes, students, settings, forwardTo, max_limit } = this.props
@@ -206,9 +215,15 @@ export class StudentList extends Component<P, S> {
 		const section_name = this.getSectionName(sections)
 
 		let items = Object.entries(students)
-			.filter(([, s]) => s && s.Name &&
-				(forwardTo === "prospective-student" || this.getListFilterCondition(s)) &&
-				(section_id ? s.section_id === section_id : true))
+			.filter(([, s]) => {
+
+				const label = toLabel(s)
+
+				return s && s.Name &&
+					(forwardTo === "prospective-student" || this.getListFilterCondition(s)) &&
+					(section_id ? s.section_id === section_id : true) &&
+					label && label.toLowerCase().includes(this.state.search_filter_text.toLowerCase())
+			})
 			.sort(([, a], [, b]) => a.Name.localeCompare(b.Name))
 			.map(([id, student]) => {
 				const relevant_section = sections.find(section => student.section_id === section.id)
@@ -256,13 +271,12 @@ export class StudentList extends Component<P, S> {
 		const { page_index, student_id } = this.state
 
 		const card_items = items.slice(page_index * PAGE_SIZE, ((page_index + 1) * PAGE_SIZE))
-
-		// filter in case of single student id card print
 		const print_card_items = student_id ? items.filter(student => student.id === student_id) : items
 
 		return <div className="student-list">
 			<div className="title no-print">All Students</div>
 			<div className="no-print">
+
 				{
 					//@ts-ignore
 					<Card
@@ -272,7 +286,9 @@ export class StudentList extends Component<P, S> {
 						toLabel={toLabel}
 						totalItems={items.length}
 						onDeleteStudent={this.deleteStudent}
-						onPrintStudentIdCard={this.printStudentIdCard}>
+						onPrintStudentIdCard={this.printStudentIdCard}
+						search={this.handleSearch}
+					>
 
 						{forwardTo !== "prospective-student" && <div className="row filter-container no-print">
 							<div className="row checkbox-container">
@@ -364,111 +380,96 @@ interface StudentItemProps {
 	printStudentIdCard: (student_id: string) => void
 }
 
-export class StudentItem extends Component<StudentItemProps> {
+export const StudentItem: React.FC<StudentItemProps> = ({ student, deleteStudent, printStudentIdCard }) => {
 
-	onPrintStudentIdCard = (student_id: string) => {
-		// hack to close the popover before invoking print method
-		document.body.click()
+	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false)
 
-		// wait for popover close
-		setTimeout(() => {
-			this.props.printStudentIdCard(student_id)
-		}, 500);
+	const onPrintStudentIdCard = (student_id: string) => {
+		setIsComponentVisible(false)
+		printStudentIdCard(student_id)
 	}
 
-	renderPopover = (props: StudentItemProps) => {
+	const section_name = student.section ? student.section.namespaced_name : "No Class"
+	const tags = student.tags !== undefined && Object.keys(student.tags).length > 0 ? Object.keys(student.tags) : []
 
-		return <Popover id="card-popover">
-			<DropdownMenu>
-				<div className="dropdown-item disabled bold">For Single Student</div>
-				<div className="dropdown-divider" role="none"></div>
-				<div className="dropdown-item" onClick={() => this.onPrintStudentIdCard(props.student.id)}>Print ID Card</div>
-				<div className="dropdown-item delete" onClick={() => this.props.deleteStudent(props.student.id)}>Delete Permanently</div>
-			</DropdownMenu>
-		</Popover>
+	let card_button_text = "Edit Student"
+
+	if (student.forwardTo === 'payment') {
+		card_button_text = "View Payments"
+	}
+	if (student.forwardTo === 'certificates') {
+		card_button_text = "View Certificate"
+	}
+	if (student.forwardTo === 'marks') {
+		card_button_text = "View Marks"
 	}
 
-	render() {
+	// to show dropdown menu only for profile
+	const isProfileComponent = student.forwardTo === 'profile'
 
-		const { student } = this.props
+	const avatar = student.ProfilePicture ? student.ProfilePicture.url || student.ProfilePicture.image_string : StudentIcon
 
-		const section_name = student.section ? student.section.namespaced_name : "No Class"
-		const tags = student.tags !== undefined && Object.keys(student.tags).length > 0 ? Object.keys(student.tags) : []
+	return <div className="profile-card-wrapper" key={`${student.id}-${student.section_id}`}>
+		{
+			isProfileComponent && <div className="dropdown-menu-container" ref={ref}>
+				{
+					isComponentVisible &&
+					<DropdownMenu>
+						<div className="dropdown-item disabled bold">For Single Student</div>
+						<div className="dropdown-divider" role="none"></div>
+						<div className="dropdown-item" onClick={() => onPrintStudentIdCard(student.id)}>Print ID Card</div>
+						<div className="dropdown-item delete" onClick={() => deleteStudent(student.id)}>Delete Permanently</div>
+					</DropdownMenu>
+				}
+				<div className="menu-anchor" onClick={() => setIsComponentVisible(!isComponentVisible)}>
+					<img src={HorizontalDots} alt="menu" />
+				</div>
 
-		let card_button_text = "Edit Student"
-
-		if (student.forwardTo === 'payment') {
-			card_button_text = "View Payments"
+			</div>
 		}
-		if (student.forwardTo === 'certificates') {
-			card_button_text = "View Certificate"
-		}
-		if (student.forwardTo === 'marks') {
-			card_button_text = "View Marks"
-		}
-
-		// to show dropdown menu only for profile
-		const isProfileComponent = student.forwardTo === 'profile'
-
-		const avatar = student.ProfilePicture ? student.ProfilePicture.url || student.ProfilePicture.image_string : StudentIcon
-
-		return <div className="profile-card-wrapper" key={`${student.id}-${student.section_id}`}>
-			{
-				isProfileComponent && <div className="dropdown-menu-container">
-					<OverlayTrigger
-						key={student.id}
-						trigger="click"
-						placement="bottom-end"
-						rootClose={true}
-						overlay={this.renderPopover(this.props)}>
-						<div className="menu-anchor"><img src={HorizontalDots} alt="menu" /></div>
-					</OverlayTrigger>
-				</div>
-			}
-			<div className="profile" style={{ marginTop: isProfileComponent ? '0em' : '2.2em' }}>
-				<img
-					className="thumbnail"
-					src={avatar}
-					crossOrigin="anonymous"
-					alt="profile" />
-				<div className="name name-wrap">
-					<Link style={{ textDecoration: "none" }} to={`/student/${student.id}/${student.forwardTo}`} key={student.id}>
-						{toTitleCase(student.Name)}
-					</Link>
-				</div>
-				<div className="row info">
-					<label>F.Name </label>
-					<div className="name-wrap">{toTitleCase(student.ManName)}</div>
-				</div>
-				<div className="row info">
-					<label>Class </label>
-					<div>{section_name}</div>
-				</div>
-				<div className="row info">
-					<label>Adm No </label>
-					<div>{(student.forwardTo !== "prospective-student" && student.AdmissionNumber) || ""}</div>
-				</div>
-				<div className="row info">
-					<label>Roll No </label>
-					<div>{(student.forwardTo !== "prospective-student" && student.RollNumber) || ""}</div>
-				</div>
-				<div className="row info">
-					<label>Phone </label>
-					<div>{student.Phone || ""}</div>
-				</div>
-				<div className={`row tags ${tags.length > 0 ? 'scroll' : ''}`}>
-					{
-						tags
-							.filter(tag => tag !== "FINISHED_SCHOOL")
-							.map((tag, i) => <div className="tag" key={i}> {tag}</div>)
-					}
-				</div>
-				<Link className="edit-btn" to={`/student/${student.id}/${student.forwardTo}`} key={student.id}>
-					{card_button_text}
+		<div className="profile" style={{ marginTop: isProfileComponent ? '0em' : '2.2em' }}>
+			<img
+				className="thumbnail"
+				src={avatar}
+				crossOrigin="anonymous"
+				alt="profile" />
+			<div className="name name-wrap">
+				<Link style={{ textDecoration: "none" }} to={`/student/${student.id}/${student.forwardTo}`} key={student.id}>
+					{toTitleCase(student.Name)}
 				</Link>
 			</div>
+			<div className="row info">
+				<label>F.Name </label>
+				<div className="name-wrap">{toTitleCase(student.ManName)}</div>
+			</div>
+			<div className="row info">
+				<label>Class </label>
+				<div>{section_name}</div>
+			</div>
+			<div className="row info">
+				<label>Adm No </label>
+				<div>{(student.forwardTo !== "prospective-student" && student.AdmissionNumber) || ""}</div>
+			</div>
+			<div className="row info">
+				<label>Roll No </label>
+				<div>{(student.forwardTo !== "prospective-student" && student.RollNumber) || ""}</div>
+			</div>
+			<div className="row info">
+				<label>Phone </label>
+				<div>{student.Phone || ""}</div>
+			</div>
+			<div className={`row tags ${tags.length > 0 ? 'scroll' : ''}`}>
+				{
+					tags
+						.filter(tag => tag !== "FINISHED_SCHOOL")
+						.map((tag, i) => <div className="tag" key={i}> {tag}</div>)
+				}
+			</div>
+			<Link className="edit-btn" to={`/student/${student.id}/${student.forwardTo}`} key={student.id}>
+				{card_button_text}
+			</Link>
 		</div>
-	}
+	</div>
 }
 
 const toLabel = (student: AugmentedStudent): string => {

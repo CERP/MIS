@@ -10,9 +10,12 @@ import horizontalDots from './svgs/dots-horizontal.svg'
 import verticalDots from './svgs/dots-vertical.svg'
 import downloadDocument from './svgs/document-download.svg'
 import trashOutlineIcon from './svgs/outline-trash.svg'
-import shareIcon from './svgs/share-wa.svg'
+import shareIcon from './svgs/sm-share.svg'
 import phoneIcon from './svgs/phone.svg'
-
+import playIcon from './svgs/play.svg'
+import ilmxLogo from './pngs/ilmx-logo.png'
+import sortAscIcon from './svgs/sort-ascending.svg'
+import sortDescIcon from './svgs/sort-descending.svg'
 
 export const EditIcon = deleteIcon
 export const DeleteIcon = editIcon
@@ -28,3 +31,7 @@ export const DocumentDownloadIcon = downloadDocument
 export const TrashOutlineIcon = trashOutlineIcon
 export const ShareIcon = shareIcon
 export const PhoneIcon = phoneIcon
+export const PlayIcon = playIcon
+export const IlmxLogo = ilmxLogo
+export const SortAscIcon = sortAscIcon
+export const SortDescIcon = sortDescIcon

@@ -2,4 +2,4 @@ package pk.org.cerp.mischool.mischoolcompanion
 
 class SMSPayload(val return_link: String, val messages: List<SMSItem>)
 
-class SMSItem(val text: String, val number: String)
+class SMSItem(val text: String, val number: String, var status: String? = "PENDING",var index:Int?=-1,var date:String?="-1")
