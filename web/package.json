@@ -32,7 +32,7 @@
 		"recharts": "^1.8.5",
 		"redux": "^4.0.0",
 		"redux-thunk": "^2.3.0",
-		"typescript": "^3.8.3"
+		"typescript": "^3.4.1"
 	},
 	"scripts": {
 		"start": "export HTTPS=true && react-scripts start",

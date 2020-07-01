@@ -171,11 +171,13 @@ export class StudentList extends Component<P, S> {
 
 		window.print()
 
-		// reset state
-		this.setState({
-			student_id: "",
-			printStudentCard: false
-		})
+		setTimeout(() => {
+			this.setState({
+				student_id: "",
+				printStudentCard: false
+			})
+		}, 2000)
+
 	}
 
 	printStudentIdCard = (student_id: string) => {
@@ -199,6 +201,10 @@ export class StudentList extends Component<P, S> {
 			page_index: 0,
 			search_filter_text: value
 		})
+	}
+
+	isStudentsMenu = (ref: string) => {
+		return ref === "profile"
 	}
 
 	render() {
@@ -295,15 +301,16 @@ export class StudentList extends Component<P, S> {
 								<div className="checkbox">
 									<input type="checkbox" {...this.former.super_handle(["showActiveStudent"])} />
 									Active
-							</div>
+								</div>
 								<div className="checkbox">
 									<input type="checkbox" {...this.former.super_handle(["showInactiveStudent"])} />
 									InActive
-							</div>
-								<div className="checkbox">
+								</div>
+								{this.isStudentsMenu(forwardTo) && <div className="checkbox">
 									<input type="checkbox" {...this.former.super_handle(["printStudentCard"])} />
 									Cards
-							</div>
+								</div>
+								}
 							</div>
 							<div className="row">
 								<select className="list-select" {...this.former.super_handle(["tag"], () => true, () => this.resetPageIndex())} style={{ marginLeft: 0 }}>
@@ -323,7 +330,9 @@ export class StudentList extends Component<P, S> {
 											.map(section => <option key={section.id} value={section.id}> {section.namespaced_name} </option>)
 									}
 								</select>
-								<div className="print button" onClick={() => window.print()}>Print</div>
+								{
+									this.isStudentsMenu(forwardTo) && <div className="print button" onClick={() => window.print()}>Print</div>
+								}
 							</div>
 						</div>}
 					</Card>
