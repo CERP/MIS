@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { withRouter, Redirect } from 'react-router-dom'
+import { withRouter, Redirect, Link } from 'react-router-dom'
 import { createLogin } from 'actions'
 import { RouteComponentProps } from 'react-router'
 import Former from 'utils/former'
@@ -203,7 +203,9 @@ class Login extends Component<PropsType, S> {
 					</div>
 					<div className="button blue" onClick={this.onLogin}>Login</div>
 					<div className="error">{this.state.errorMessage}</div>
-					<div className="info"><b>Note</b>: This login form is only for staff</div>
+					<div className="text-center forgot-password">
+						<Link to="/reset-password">Forgotten Password?</Link>
+					</div>
 				</div>
 
 				{this.props.connected ? <div className="button red" onClick={this.onSwitchSchool} style={{ position: "absolute", bottom: "20px", left: "20px" }}>Switch School</div> : false}

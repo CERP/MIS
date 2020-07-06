@@ -1,0 +1,40 @@
+.reset-password .section-container {
+	width: 50%;
+	margin-top: 5rem;
+}
+.reset-password .section .box-title {
+	font-size: 1.25rem;
+	font-weight: bold;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #aaa;
+}
+.reset-password .section .box {
+	width: 70%;
+	margin-left: auto;
+	margin-right: auto;
+}
+.reset-password .section .box input {
+	padding-left: 0.5rem;
+	height: 30px;
+	width: calc(100% - 0.75rem);
+}
+
+.reset-password .box .row {
+	margin-top: 0.5rem;
+}
+
+@media screen and (max-width: 525px) {
+	.reset-password .section-container {
+		width: 80%;
+		margin-top: 1rem;
+	}
+	.reset-password .section {
+		padding: 10px;
+	}
+	.reset-password .section .box {
+		width: calc(80% - 0.75rem);
+	}
+	.reset-password .section .box-title {
+		font-size: 1rem;
+	}
+}
