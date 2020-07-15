@@ -45,12 +45,13 @@ const login_strategies = [
 	"Agent School",
 	"Association",
 	"Edfin",
-	"School Referrals",
+	"School Referral",
 	"Individual",
-	"Ilm Exchange"
+	"Ilm Exchange",
+	"Facebook"
 ]
 
-export const getAreaManagers = () => area_managers
-export const getAgents = () => agents.sort((a, b) => a.localeCompare(b))
-export const getDistricts = () => districts
+export const getAreaManagerList = () => area_managers
+export const getAgentList = () => agents
+export const getDistrictList = () => districts
 export const getStrategies = () => login_strategies

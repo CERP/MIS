@@ -226,3 +226,20 @@ interface PermissionPayload {
 	role: string
 	permissions: UserPermissions
 }
+
+type SchoolLoginInfo = {
+	agent_name: string
+	area_manager_name: string
+	association_name: string
+	city: string
+	notes: string
+	office: string
+	owner_easypaisa_number: string
+	owner_name: string
+	owner_phone: string
+	package_name: string
+	school_name: string
+	school_type: "URBAN" | "RURAL"
+	type_of_login: string
+	user?: string
+}
