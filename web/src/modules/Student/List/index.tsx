@@ -32,6 +32,7 @@ type S = {
 	tag: string
 	section_id: string
 	page_index: number
+	search_filter_text: string
 }
 
 const CHUNK_SIZE_FOR_LIST = 29
@@ -50,7 +51,8 @@ export class StudentList extends Component<P, S> {
 			printStudentCard: false,
 			tag: "",
 			section_id: "",
-			page_index: 0
+			page_index: 0,
+			search_filter_text: ""
 		}
 		this.former = new Former(this, [])
 	}
@@ -157,6 +159,13 @@ export class StudentList extends Component<P, S> {
 		this.setState({ page_index: 0 })
 	}
 
+	handleSearch = (value: string) => {
+		this.setState({
+			page_index: 0,
+			search_filter_text: value
+		})
+	}
+
 	render() {
 
 		const { classes, students, settings, forwardTo, max_limit } = this.props
@@ -171,9 +180,15 @@ export class StudentList extends Component<P, S> {
 		const section_name = this.getSectionName(sections)
 
 		let items = Object.entries(students)
-			.filter(([, s]) => s && s.Name &&
-				(forwardTo === "prospective-student" || this.getListFilterCondition(s)) &&
-				(section_id ? s.section_id === section_id : true))
+			.filter(([, s]) => {
+
+				const label = toLabel(s)
+
+				return s && s.Name &&
+					(forwardTo === "prospective-student" || this.getListFilterCondition(s)) &&
+					(section_id ? s.section_id === section_id : true) &&
+					label && label.toLowerCase().includes(this.state.search_filter_text.toLowerCase())
+			})
 			.sort(([, a], [, b]) => a.Name.localeCompare(b.Name))
 			.map(([id, student]) => {
 				const relevant_section = sections.find(section => student.section_id === section.id)
@@ -225,6 +240,7 @@ export class StudentList extends Component<P, S> {
 		return <div className="student-list">
 			<div className="title no-print">All Students</div>
 			<div className="no-print">
+
 				{
 					//@ts-ignore
 					<Card
@@ -233,7 +249,8 @@ export class StudentList extends Component<P, S> {
 						create={create}
 						createText={createText}
 						toLabel={toLabel}
-						totalItems={items.length}>
+						totalItems={items.length}
+						search={this.handleSearch}>
 
 						{forwardTo !== "prospective-student" && <div className="row filter-container no-print">
 							<div className="row checkbox-container">

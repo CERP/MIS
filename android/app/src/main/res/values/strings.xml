@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">MISchoolCompanion</string>
+    <string name="app_name_long">MISchool SMS Companion</string>
     <string name="clear_logs">Clear Logs</string>
+    <string name="resend_all">Resend All</string>
+    <string name="resend">Resend</string>
+    <string name="sent">Sent</string>
+    <string name="failed">Failed</string>
+    <string name="pending">Pending</string>
 </resources>

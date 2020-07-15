@@ -28,7 +28,9 @@ export const initState: RootReducerState = {
 		classes: {},
 		sms_templates: defaultTemplates(),
 		exams: {},
-		settings: {} as MISSettings,
+		settings: {
+			sendSMSOption: "SIM"
+		} as MISSettings,
 		expenses: {},
 		analytics: {
 			sms_history: {}
@@ -45,6 +47,10 @@ export const initState: RootReducerState = {
 		diary: {} as MISDiary,
 		planner: {
 			datesheet: {}
+		},
+		ilmx: {
+			events: {},
+			lessons: {}
 		}
 	},
 	auth: {
@@ -62,6 +68,10 @@ export const initState: RootReducerState = {
 		succeed: false,
 		reason: ""
 	},
+	ilmxLessons: {
+		isLoading: false,
+		hasError: false
+	}
 }
 
 export const loadDb = async () => {

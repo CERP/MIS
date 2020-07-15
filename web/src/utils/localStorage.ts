@@ -44,6 +44,10 @@ const initState: RootReducerState = {
 		diary: {} as MISDiary,
 		planner: {
 			datesheet: {}
+		},
+		ilmx: {
+			events: {},
+			lessons: {}
 		}
 	},
 	// this part of the tree i want to obscure.
@@ -63,6 +67,10 @@ const initState: RootReducerState = {
 		succeed: false,
 		reason: ""
 	},
+	ilmxLessons: {
+		isLoading: false,
+		hasError: false
+	}
 }
 
 export const loadDB = () => {

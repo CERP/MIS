@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { BackButtonIcon } from 'assets/icons'
 import HelpButton from 'components/Button/help'
 import { History } from 'history'
+import IlmxButton from 'components/Button/Ilmx'
 
 import './style.css'
 
@@ -15,11 +16,23 @@ type PropsType = {
 	settings?: RootDBState["settings"]
 	logo?: string
 	history?: History
+	auth?: RootReducerState["auth"]
+	client_id?: string
 }
 
-const Layout = ({ user, children, history, title, link }: PropsType) => {
+const Layout = ({ user, children, history, title, link, auth, client_id }: PropsType) => {
 	return <div className="layout">
-		{history.location.pathname === "/" ? <FrontHeader user={user} /> : <Header user={user} history={history} title={title} link={link} />}
+		{
+			history.location.pathname === "/" ? <FrontHeader user={user} /> :
+				<Header
+					user={user}
+					history={history}
+					title={title}
+					link={link}
+					auth={auth}
+					client_id={client_id}
+				/>
+		}
 		{children}
 	</div>
 }
@@ -29,7 +42,7 @@ const FrontHeader = ({ user }: PropsType) => <div className="header bg-red">
 	{user ? <Link className="profile" to={`/faculty/${user.id}/profile`}>{user.Name}</Link> : <Link className="profile" style={{ marginRight: "10px" }} to="/login">Login</Link>}
 </div>
 
-const Header = ({ user, history, title, link }: PropsType) => <div className="header" style={{ justifyContent: "space-between" }}>
+const Header = ({ user, history, title, link, auth, client_id }: PropsType) => <div className="header" style={{ justifyContent: "space-between" }}>
 	<div className="row header-items">
 		{
 			(history.location.pathname !== "/landing" && history.location.pathname !== "/" && history.location.pathname !== "/login") &&
@@ -41,8 +54,10 @@ const Header = ({ user, history, title, link }: PropsType) => <div className="he
 		{
 			user ? <div className="row header-items">
 				<Link className="profile" to={`/faculty/${user.id}/profile`}>{user.Name}</Link>
+				{user.Admin && <IlmxButton auth={auth} client_id={client_id} />}
 				<HelpButton title={title} link={link} />
-			</div> : <div className="row header-items">
+			</div> :
+				<div className="row header-items">
 					<HelpButton title={title} link={link} />
 				</div>
 		}
@@ -82,6 +97,8 @@ export const PrintHeaderSmall = ({ settings, logo }: PropsType) => <div classNam
 </div>
 
 export default connect((state: RootReducerState) => ({
+	auth: state.auth,
+	client_id: state.client_id,
 	user: state.db.faculty[state.auth.faculty_id]
 }))(Layout)
 
