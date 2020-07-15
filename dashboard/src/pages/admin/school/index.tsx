@@ -39,7 +39,7 @@ const ManageSchool: React.FC<PropsType> = (props) => {
 
 	useEffect(() => {
 		getSchoolList()
-	}, [])
+	}, [getSchoolList])
 
 	return <div className="page admin-actions">
 		<UpdateSchoolId
