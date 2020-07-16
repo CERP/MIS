@@ -183,7 +183,7 @@ class BulkExam extends Component<P, S> {
 		const class_id = this.getClassIdFromSections()
 
 		const student_marks = Object.entries(students)
-			.filter(([_, student]) => student && student.Name && student.section_id === selectedSection)
+			.filter(([_, student]) => student && student.Active && !student.prospective_section_id && student.Name && student.section_id === selectedSection)
 			.reduce((agg, [id, _]) => ({ ...agg, [id]: { score: "", grade: "", remarks: "" } }), {})
 
 		const prepare_exam: CreateExam = {
@@ -226,6 +226,8 @@ class BulkExam extends Component<P, S> {
 				}
 			}, {})
 
+			console.log("SEE WHAT IS INSIDE STUDENT_eXAMS", student_exams)
+
 			// outer reduce return
 			return {
 				...aggStudents,
@@ -245,7 +247,7 @@ class BulkExam extends Component<P, S> {
 		const filtered_exams = this.getFilteredExams(exams, section_id, examFilter)
 
 		const merge_student_exams = Object.values(students)
-			.filter(student => student && student.Name && student.section_id && student.exams)
+			.filter(student => student && student.Name && student.section_id && student.exams && student.Active)
 			.reduce<MergeStudentsExams[]>((agg, curr) => {
 
 				const merge_exams: AugmentedMISExam[] = []
@@ -413,59 +415,49 @@ class BulkExam extends Component<P, S> {
 		return <Layout history={history}>
 			<div className="bulk-exams">
 				{this.state.banner.active && <Banner isGood={this.state.banner.good} text={this.state.banner.text} />}
-				<div className="title">Bulk Exams</div>
-				<div className="section-container section form">
-					<div className="row">
-						<label>Class</label>
-						<select {...this.former.super_handle(["selectedSection"], () => true, () => this.setScoreSheet(students, exams))}>
-							<option value="">Select Class</option>
+				<div className="title">Manage Bulk Exams</div>
+				<div className="section-container section">
+					<div className="filter-container">
+						<div className="row">
 							{
-								sections.map(section => <option key={section.id} value={section.id}>{section ? section.namespaced_name : ''}</option>)
+								exam_title === 'Test' &&
+								<select {...this.former.super_handle(["examFilter", "month"], () => true, () => this.setScoreSheet(students, exams))}>
+									<option value="">Select Month</option>
+									{
+										months.map(month => <option key={month} value={month}>{month}</option>)
+									}
+								</select>
 							}
-						</select>
-					</div>
-					<div className="row">
-						<label>Exam Year</label>
-						<select {...this.former.super_handle(["examFilter", "year"], () => true, () => this.setScoreSheet(students, exams))}>
-							<option value="">Select Year</option>
-							{
-								[...years]
-									.sort((a, b) => parseInt(b) - parseInt(a))
-									.map(year => <option key={year} value={year}>{year}</option>)
-							}
-						</select>
-					</div>
-					<div className="row">
-						<label>Exam Title</label>
-						<select {...this.former.super_handle(["examFilter", "exam_title"], () => true, () => this.setScoreSheet(students, exams))}>
-							<option value="">Select Exam</option>
-							{
-								ExamTitles.map(title => <option key={title} value={title}>{title}</option>)
-							}
-						</select>
-					</div>
-					{
-						exam_title === 'Test' && <div className="row">
-							<label>Exam Month</label>
-							<select {...this.former.super_handle(["examFilter", "month"], () => true, () => this.setScoreSheet(students, exams))}>
-								<option value="">Select Month</option>
+							<select {...this.former.super_handle(["examFilter", "year"], () => true, () => this.setScoreSheet(students, exams))}>
+								<option value="">Select Year</option>
 								{
-									months.map(month => <option key={month} value={month}>{month}</option>)
+									[...years]
+										.sort((a, b) => parseInt(b) - parseInt(a))
+										.map(year => <option key={year} value={year}>{year}</option>)
+								}
+							</select>
+							<select {...this.former.super_handle(["examFilter", "exam_title"], () => true, () => this.setScoreSheet(students, exams))}>
+								<option value="">Select Exam</option>
+								{
+									ExamTitles.map(title => <option key={title} value={title}>{title}</option>)
+								}
+							</select>
+							<select {...this.former.super_handle(["selectedSection"], () => true, () => this.setScoreSheet(students, exams))}>
+								<option value="">Select Class</option>
+								{
+									sections.map(section => <option key={section.id} value={section.id}>{section ? section.namespaced_name : ''}</option>)
 								}
 							</select>
 						</div>
-					}
+					</div>
 					{
-						selectedSection && exam_title && year && <div className="exams">
-							<fieldset>
-								<legend>Recent Added Exams</legend>
-								<RecentAddedExams
-									exams={filtered_exams}
-									onDeleteExam={this.deleteExam} />
-								<div className="row">
-									<div className="button blue create-exam" onClick={this.toggleCreateExamModal}>Create New Exam</div>
-								</div>
-							</fieldset>
+						<div className="recent-exams">
+							<RecentAddedExams
+								exams={filtered_exams}
+								onDeleteExam={this.deleteExam} />
+							<div className="row create-exam">
+								<div className="button blue" onClick={this.toggleCreateExamModal}>Create New Exam</div>
+							</div>
 						</div>
 					}
 				</div>
@@ -515,7 +507,7 @@ const ExamScoreSheet: React.FC<ExamScoreSheetProps> = ({ scoreSheet, exams, onSu
 	return <>
 		<div className="divider">Exams Marks Sheet</div>
 		<div className="section-container section">
-			<div className="table-wrapper">
+			<div className="score-sheet table-wrapper">
 				<table>
 					<thead>
 						<tr>
@@ -537,6 +529,7 @@ const ExamScoreSheet: React.FC<ExamScoreSheetProps> = ({ scoreSheet, exams, onSu
 									<td title={toTitleCase(student.Name)}><Link to={`/student/${student.id}/profile`}>{student.RollNumber || ""} {toTitleCase(student.Name)}</Link></td>
 									{
 										Object.entries(student.scoreSheetExams)
+											.sort(([, a], [, b]) => a.date - b.date)
 											.map(([exam_id, exam]) => <td key={`${exam_id}-${student.id}-${exam.section_id}`}>
 												<input onBlur={(e) => onSubjectScoreUpdate(student.id, exam_id, e.target.value)} type="text" placeholder="enter marks" defaultValue={exam.stats.score} />
 											</td>)
@@ -546,7 +539,7 @@ const ExamScoreSheet: React.FC<ExamScoreSheetProps> = ({ scoreSheet, exams, onSu
 					</tbody>
 				</table>
 			</div>
-			<div className="row marks-sheet">
+			<div className="score-sheet row">
 				<div className="button blue" onClick={onSaveBulkExams}>Save Marks Sheet</div>
 			</div>
 		</div>
@@ -554,38 +547,42 @@ const ExamScoreSheet: React.FC<ExamScoreSheetProps> = ({ scoreSheet, exams, onSu
 }
 
 
-interface RecentAddExamsProps {
+interface RecentAddedExamsProps {
 	exams: MISExam[]
 	onDeleteExam: (exam_id: string) => void
 }
 
-const RecentAddedExams: React.FC<RecentAddExamsProps> = ({ exams, onDeleteExam }) => {
+const RecentAddedExams: React.FC<RecentAddedExamsProps> = ({ exams, onDeleteExam }) => {
 
-	return <div className="exams-table">
-		<div className="table-row table-header">
-			<div className="thead cell">Subject</div>
-			<div className="thead cell">Max Score</div>
-			<div className="thead cell">Date</div>
-			<div className="thead cell" style={{ width: "10%" }}>Edit/Delete</div>
-		</div>
-		{
-			exams
-				.sort((a, b) => a.date - b.date)
-				.map(exam => <div className="table-row" key={exam.id}>
-					<div className="cell">
-						<Link to={`/reports/${exam.class_id}/${exam.section_id}/exam/${exam.id}`}>{exam.subject}</Link>
-					</div>
-					<div className="cell">{exam.total_score}</div>
-					<div className="cell">{moment(exam.date).format("DD/MM")}</div>
-					<div className="cell" style={{ width: "10%" }}>
-						<div className="">
-							<Link to={`/reports/${exam.class_id}/${exam.section_id}/exam/${exam.id}`}>
-								<img className="edit-icon" src={EditIcon} alt="edit" />
-							</Link>
-							<img className="delete-icon" src={DeleteIcon} onClick={() => onDeleteExam(exam.id)} alt="delete" />
-						</div>
-					</div>
-				</div>)
-		}
+	return <div className="recent-exams table-wrapper">
+		<table>
+			<thead>
+				<tr>
+					<th>Subject</th>
+					<th>Max Score</th>
+					<th>Date</th>
+					<th>Edit/Delete</th>
+				</tr>
+			</thead>
+			<tbody>
+				{
+					exams
+						.sort((a, b) => a.date - b.date)
+						.map(exam => <tr key={exam.id}>
+							<td className="text-left"><Link to={`/reports/${exam.class_id}/${exam.section_id}/exam/${exam.id}`}>{exam.subject}</Link></td>
+							<td>{exam.total_score}</td>
+							<td>{moment(exam.date).format("DD/MM")}</td>
+							<td>
+								<div className="">
+									<Link to={`/reports/${exam.class_id}/${exam.section_id}/exam/${exam.id}`}>
+										<img className="edit-icon" src={EditIcon} alt="edit" />
+									</Link>
+									<img className="delete-icon" src={DeleteIcon} onClick={() => onDeleteExam(exam.id)} alt="delete" />
+								</div>
+							</td>
+						</tr>)
+				}
+			</tbody>
+		</table>
 	</div>
 }

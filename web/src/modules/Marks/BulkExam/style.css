@@ -1,70 +1,30 @@
-.create-exam-container {
-	background-color: #fafafa;
-	width: 75%;
-	min-height: 50%;
-	padding: 20px;
-	border-radius: 8px;
-	position: relative;
 
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-}
-
-.create-exam-container .row .button {
-	padding: 10px 15px;
-}
-
-.create-exam-container .close {
-	position: absolute;
-	right: 10px;
-	top: 10px;
-}
-
-.create-exam-container .title {
-	color: #333;
-	margin: 10px 0px;
-	align-self: center;
-}
-
-.create-exam-container .content-inner {
+.bulk-exams .filter-container {
 	width: 100%;
+	margin: 0;
+}
+.bulk-exams .filter-container .row {
+	justify-content: flex-end;
 }
 
-.create-exam-container .disabled {
-	pointer-events: none;
-	opacity: 0.7;
+.bulk-exams .filter-container select {
+	margin: 0.25rem;
 }
 
-.bulk-exams .exams .row .create-exam {
-	margin-top: 10px;
+.bulk-exams .filter-container select:last-child {
+	margin-right: 0;
+}
+
+.bulk-exams .row .button {
 	padding: 10px 15px;
-}
-
-@media (max-width: 768px) {
-	.create-exam-container .close.button {
-		padding: 4px 8px;
-	}
-	.create-exam-container .title {
-		font-size: 1.75em;
-	}
-}
-
-@media (max-width: 425px) {
-	.create-exam-container .close.button {
-		font-size: 14px;
-		padding: 2px 6px;
-	}
-	.create-exam-container .title {
-		font-size: 1.5em;
-	}
 }
 
 .bulk-exams .table-wrapper {
 	width: 100%;
 	max-height: 440px;
 	overflow: auto;
+	padding-right: 0.5rem;
+	padding-bottom: 0.5rem;
 }
 
 .bulk-exams .table-wrapper table {
@@ -81,7 +41,7 @@
 	vertical-align: middle;
 }
 
-.bulk-exams .table-wrapper th {
+.bulk-exams .score-sheet.table-wrapper th {
 	background-color: #eee;
 	position: sticky;
 	top: -1px;
@@ -90,13 +50,13 @@
 }
 
 /* The first cell that lives in the top left of our spreadsheet */
-.bulk-exams .table-wrapper th:first-of-type {
+.bulk-exams .score-sheet.table-wrapper th:first-of-type {
 	left: -1px;
 	z-index: 3;
 }
 
  /* The first column that we want to stick to the left */
- .bulk-exams .table-wrapper tbody tr td:first-of-type {
+ .bulk-exams .score-sheet.table-wrapper tbody tr td:first-of-type {
 	background-color: #eee;
 	position: sticky;
 	left: -1px;
@@ -106,7 +66,7 @@
 	vertical-align: middle;
 }
 
-.bulk-exams .table-wrapper tbody tr td input {
+.bulk-exams .score-sheet.table-wrapper tbody tr td input {
 	width: 80px;
 	border-radius: 2px;
 	font-size: 0.95rem;
@@ -117,25 +77,66 @@
 	height: 1.0em;
 	justify-content: flex-start;
 	line-height: 1.0;
+	text-align: center;
 	padding: calc(.5em - 1px);
 }
 
-.bulk-exams .row.marks-sheet {
+.bulk-exams .recent-exams {
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+}
+
+.bulk-exams .recent-exams .create-exam {
+	margin-top: 1.25rem;
+}
+
+.bulk-exams .recent-exams .create-exam.row {
+	justify-content: flex-end;
+}
+
+.bulk-exams .score-sheet.row {
 	justify-content: flex-end;
 	margin-top: 20px;
 }
 
-.bulk-exams .row.row.marks-sheet .button {
-	padding: 10px 15px;
+.bulk-exams .recent-exams.table-wrapper td:first-child {
+	text-align: left;
+}
+.bulk-exams .recent-exams.table-wrapper th {
+	background-color: #eee;
 }
 
-@media (max-width: 572px) {
-    .bulk-exams .table-wrapper th:first-of-type {
-        left: unset;
-    }
-    .bulk-exams .table-wrapper tbody tr td:first-of-type {
-        position: relative;
-        left: unset;
-        z-index: 0;
-    }
+@media (max-width: 575px) {
+	.bulk-exams .filter-container select {
+		font-size: 0.85rem;
+		height: 35px;
+		width: 25%;
+	}
+	.bulk-exams .filter-container select:last-child {
+		width: 50% !important;
+	}
+	.bulk-exams .score-sheet.table-wrapper th:first-of-type {
+			left: unset;
+	}
+	.bulk-exams .score-sheet.table-wrapper tbody tr td:first-of-type {
+			position: relative;
+			left: unset;
+			z-index: 0;
+	}
+}
+
+.bulk-exams.modal-container.inner {
+	width: 80%;
+	min-height: 50%;
+	padding: 20px;
+}
+
+.bulk-exams.modal-container.inner .form {
+	width: 100%;
+	margin: 0;
+}
+
+.bulk-exams.bulk-exams.modal-container.inner .disabled {
+	pointer-events: none;
+	opacity: 0.7;
 }

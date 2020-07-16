@@ -66,36 +66,34 @@ class CreateExamModal extends Component<PropsType, S> {
 
 		const disabled = this.isDisabled()
 
-		return <div className="create-exam-container">
+		return <div className="bulk-exams modal-container inner">
 			<div className="close button red" onClick={onClose}>✕</div>
 			<div className="title">Create New Exam</div>
-			<div className="content-inner">
-				<div className="section">
-					<div className="form">
-						{
-							isExamCreated && <div className="text-center bold" style={{ color: "#5ecdb9" }}>New exam has been created successfully!</div>
-						}
-						<div className="row">
-							<label>Exam Subject</label>
-							<select {...this.former.super_handle(["subject"])}>
-								<option value="">Select Subject</option>
-								{
-									subjects.map(subject => <option key={subject} value={subject}>{subject}</option>)
-								}
-							</select>
-						</div>
-						<div className="row">
-							<label>Total Marks</label>
-							<input type="number" {...this.former.super_handle(["totalScore"])} placeholder="Enter total marks" />
-						</div>
-						<div className="row">
-							<label>Exam Date</label>
-							<input type="date" {...this.former.super_handle(["date"])} value={moment(date).format("YYYY-MM-DD")} placeholder="Enter total marks" />
-						</div>
+			<div className="section-container section">
+				<div className="form">
+					{
+						isExamCreated && <div className="text-center bold" style={{ color: "#5ecdb9" }}>New exam has been created successfully!</div>
+					}
+					<div className="row">
+						<label>Exam Subject</label>
+						<select {...this.former.super_handle(["subject"])}>
+							<option value="">Select Subject</option>
+							{
+								subjects.map(subject => <option key={subject} value={subject}>{subject}</option>)
+							}
+						</select>
 					</div>
-					<div className="row" style={{ marginTop: 15, justifyContent: "flex-end" }}>
-						<div className={`button blue ${disabled ? 'disabled' : ''}`} onClick={this.createExam}>Create Exam</div>
+					<div className="row">
+						<label>Total Marks</label>
+						<input type="number" {...this.former.super_handle(["totalScore"])} placeholder="Enter total marks" />
 					</div>
+					<div className="row">
+						<label>Exam Date</label>
+						<input type="date" {...this.former.super_handle(["date"])} value={moment(date).format("YYYY-MM-DD")} placeholder="Enter total marks" />
+					</div>
+				</div>
+				<div className="row" style={{ marginTop: 15, justifyContent: "flex-end" }}>
+					<div className={`button blue ${disabled ? 'disabled' : ''}`} onClick={this.createExam}>Create Exam</div>
 				</div>
 			</div>
 		</div>
