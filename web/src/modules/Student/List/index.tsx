@@ -1,3 +1,4 @@
+
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Link, RouteProps } from 'react-router-dom'
@@ -11,8 +12,11 @@ import { LayoutWrap } from 'components/Layout'
 import { StudentPrintableList } from 'components/Printable/Student/list'
 import { StudenPrintableIDCardList } from 'components/Printable/Student/cardlist'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
-import { StudentIcon } from 'assets/icons'
+import { StudentIcon, HorizontalDots } from 'assets/icons'
 import { chunkify } from 'utils/chunkify'
+import { deleteStudentById } from 'actions/index'
+import DropdownMenu from 'components/Dropdown/DropdownMenu'
+import { useComponentVisible } from 'utils/customHooks'
 
 import './style.css'
 
@@ -23,6 +27,8 @@ type P = {
 	schoolLogo?: string
 	forwardTo: string
 	max_limit?: number
+
+	deleteStudent?: (student_id: string) => void
 }
 
 type S = {
@@ -31,6 +37,7 @@ type S = {
 	printStudentCard: boolean
 	tag: string
 	section_id: string
+	student_id: string
 	page_index: number
 	search_filter_text: string
 }
@@ -51,6 +58,7 @@ export class StudentList extends Component<P, S> {
 			printStudentCard: false,
 			tag: "",
 			section_id: "",
+			student_id: "",
 			page_index: 0,
 			search_filter_text: ""
 		}
@@ -159,11 +167,44 @@ export class StudentList extends Component<P, S> {
 		this.setState({ page_index: 0 })
 	}
 
+	onPrint = () => {
+
+		window.print()
+
+		setTimeout(() => {
+			this.setState({
+				student_id: "",
+				printStudentCard: false
+			})
+		}, 2000)
+
+	}
+
+	printStudentIdCard = (student_id: string) => {
+
+		this.setState({ student_id, printStudentCard: true })
+
+		// wait to render the elements for id card correctly and then print
+		setTimeout(() => {
+			this.onPrint()
+		}, 200)
+	}
+
+	deleteStudent = (student_id: string) => {
+		if (window.confirm("Are you sure you want to delete this student?")) {
+			this.props.deleteStudent(student_id)
+		}
+	}
+
 	handleSearch = (value: string) => {
 		this.setState({
 			page_index: 0,
 			search_filter_text: value
 		})
+	}
+
+	isStudentsMenu = (ref: string) => {
+		return ref === "profile"
 	}
 
 	render() {
@@ -233,9 +274,10 @@ export class StudentList extends Component<P, S> {
 			createText = "Manage Fees"
 		}
 
-		const { page_index } = this.state
+		const { page_index, student_id } = this.state
 
 		const card_items = items.slice(page_index * PAGE_SIZE, ((page_index + 1) * PAGE_SIZE))
+		const print_card_items = student_id ? items.filter(student => student.id === student_id) : items
 
 		return <div className="student-list">
 			<div className="title no-print">All Students</div>
@@ -245,27 +287,30 @@ export class StudentList extends Component<P, S> {
 					//@ts-ignore
 					<Card
 						items={card_items}
-						Component={StudentItem}
 						create={create}
 						createText={createText}
 						toLabel={toLabel}
 						totalItems={items.length}
-						search={this.handleSearch}>
+						onDeleteStudent={this.deleteStudent}
+						onPrintStudentIdCard={this.printStudentIdCard}
+						search={this.handleSearch}
+					>
 
 						{forwardTo !== "prospective-student" && <div className="row filter-container no-print">
 							<div className="row checkbox-container">
 								<div className="checkbox">
 									<input type="checkbox" {...this.former.super_handle(["showActiveStudent"])} />
 									Active
-							</div>
+								</div>
 								<div className="checkbox">
 									<input type="checkbox" {...this.former.super_handle(["showInactiveStudent"])} />
 									InActive
-							</div>
-								<div className="checkbox">
+								</div>
+								{this.isStudentsMenu(forwardTo) && <div className="checkbox">
 									<input type="checkbox" {...this.former.super_handle(["printStudentCard"])} />
 									Cards
-							</div>
+								</div>
+								}
 							</div>
 							<div className="row">
 								<select className="list-select" {...this.former.super_handle(["tag"], () => true, () => this.resetPageIndex())} style={{ marginLeft: 0 }}>
@@ -285,7 +330,9 @@ export class StudentList extends Component<P, S> {
 											.map(section => <option key={section.id} value={section.id}> {section.namespaced_name} </option>)
 									}
 								</select>
-								<div className="print button" onClick={() => window.print()}>Print</div>
+								{
+									this.isStudentsMenu(forwardTo) && <div className="print button" onClick={() => window.print()}>Print</div>
+								}
 							</div>
 						</div>}
 					</Card>
@@ -313,7 +360,7 @@ export class StudentList extends Component<P, S> {
 							studentClass={section_name} />)
 					:
 					// print 8 students ID cards per page
-					chunkify(items, CHUNK_SIZE_FOR_CARDS)
+					chunkify(print_card_items, CHUNK_SIZE_FOR_CARDS)
 						.map((chunkItems: AugmentedStudent[], index: number) => <StudenPrintableIDCardList students={chunkItems} key={index}
 							schoolName={settings.schoolName}
 							schoolLogo={this.props.schoolLogo}
@@ -332,13 +379,28 @@ export default connect((state: RootReducerState, { location, forwardTo = undefin
 	schoolLogo: state.db.assets ? state.db.assets.schoolLogo || "" : "",
 	forwardTo: forwardTo || queryString.parse(location.search).forwardTo || "profile",
 	max_limit: state.db.max_limit || -1
+}), (dispatch: Function) => ({
+	deleteStudent: (student_id: string) => dispatch(deleteStudentById(student_id))
 }))(LayoutWrap(StudentList))
 
+interface StudentItemProps {
+	student: AugmentedStudent
+	deleteStudent: (student_id: string) => void
+	printStudentIdCard: (student_id: string) => void
+}
 
-const StudentItem = (student: AugmentedStudent) => {
+export const StudentItem: React.FC<StudentItemProps> = ({ student, deleteStudent, printStudentIdCard }) => {
+
+	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false)
+
+	const onPrintStudentIdCard = (student_id: string) => {
+		setIsComponentVisible(false)
+		printStudentIdCard(student_id)
+	}
 
 	const section_name = student.section ? student.section.namespaced_name : "No Class"
 	const tags = student.tags !== undefined && Object.keys(student.tags).length > 0 ? Object.keys(student.tags) : []
+
 	let card_button_text = "Edit Student"
 
 	if (student.forwardTo === 'payment') {
@@ -351,10 +413,30 @@ const StudentItem = (student: AugmentedStudent) => {
 		card_button_text = "View Marks"
 	}
 
+	// to show dropdown menu only for profile
+	const isProfileComponent = student.forwardTo === 'profile'
+
 	const avatar = student.ProfilePicture ? student.ProfilePicture.url || student.ProfilePicture.image_string : StudentIcon
 
 	return <div className="profile-card-wrapper" key={`${student.id}-${student.section_id}`}>
-		<div className="profile">
+		{
+			isProfileComponent && <div className="dropdown-menu-container" ref={ref}>
+				{
+					isComponentVisible &&
+					<DropdownMenu>
+						<div className="dropdown-item disabled bold">For Single Student</div>
+						<div className="dropdown-divider" role="none"></div>
+						<div className="dropdown-item" onClick={() => onPrintStudentIdCard(student.id)}>Print ID Card</div>
+						<div className="dropdown-item delete" onClick={() => deleteStudent(student.id)}>Delete Permanently</div>
+					</DropdownMenu>
+				}
+				<div className="menu-anchor" onClick={() => setIsComponentVisible(!isComponentVisible)}>
+					<img src={HorizontalDots} alt="menu" />
+				</div>
+
+			</div>
+		}
+		<div className="profile" style={{ marginTop: isProfileComponent ? '0em' : '2.2em' }}>
 			<img
 				className="thumbnail"
 				src={avatar}

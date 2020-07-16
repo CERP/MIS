@@ -430,6 +430,12 @@ interface ExamFilter {
 	subject?: string
 	exam_title: string
 }
+type AugmentedStudent = { 
+	section?: AugmentedSection
+	forwardTo?: string
+} & MISStudent
+
+type MISGrades = RootDBState["settings"]["exams"]["grades"]
 type AugmentedStudent = {
 	section?: AugmentedSection
 	forwardTo?: string
@@ -490,6 +496,21 @@ type AugmentedIlmxLesson = {
 	}
 } & IlmxLesson
 
+type MISGrades = RootDBState["settings"]["exams"]["grades"]
+
+interface MISBanner {
+	active: boolean
+	good?: boolean
+	text?: string
+}
+
+interface ExamScoreSheet {
+	[studentId: string]: MISStudent & {
+		scoreSheetExams: {
+			[examId: string]: { edited: boolean } & AugmentedMISExam
+		}
+	}
+}
 type AugmentedSmsHistory = {
 	faculty?: string
 	text?: string
