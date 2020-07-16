@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Former from 'former'
+import checkCompulsoryFields from 'utils/checkCompulsoryFields'
 import {
 	getAgentList,
 	getDistrictList,
@@ -98,11 +99,37 @@ class UpdateLoginInfo extends Component<PropsType, S> {
 		}
 	}
 
-	render() {
-
-		const { schoolList, getSchoolInfo, updateLoginInfo } = this.props
+	updateSchoolLoginInfo = () => {
 
 		const { schoolId, schoolLoginInfo } = this.state
+
+		if (schoolId) {
+
+			const compulsory_fields = checkCompulsoryFields(schoolLoginInfo,
+				[
+					["area_manager_name"],
+					["office"],
+					["city"],
+					["type_of_login"]
+				]
+			)
+
+			if (compulsory_fields) {
+				const error = `Please Fill ${(compulsory_fields as string[][]).map(x => x[0].replace("_", " ")).join(", ")} !`
+				return window.alert(error)
+			}
+
+			this.props.updateLoginInfo(schoolId, schoolLoginInfo)
+			return
+		}
+
+	}
+
+	render() {
+
+		const { schoolList, getSchoolInfo } = this.props
+
+		const { schoolId } = this.state
 
 		return (<>
 			<div className="title"> Update School Login</div>
@@ -213,7 +240,7 @@ class UpdateLoginInfo extends Component<PropsType, S> {
 
 				</div>}
 
-				<div className="button blue" style={{ marginTop: "0.5rem" }} onClick={() => updateLoginInfo(schoolId, schoolLoginInfo)}>Update School Login Info</div>
+				<div className="button blue" style={{ marginTop: "0.5rem" }} onClick={() => this.updateSchoolLoginInfo()}>Update School Login Info</div>
 
 			</div>
 		</>)
