@@ -495,6 +495,21 @@ type AugmentedIlmxLesson = {
 	}
 } & IlmxLesson
 
+type MISGrades = RootDBState["settings"]["exams"]["grades"]
+
+interface MISBanner {
+	active: boolean
+	good?: boolean
+	text?: string
+}
+
+interface ExamScoreSheet {
+	[studentId: string]: MISStudent & {
+		scoreSheetExams: {
+			[examId: string]: { edited: boolean } & AugmentedMISExam
+		}
+	}
+}
 type AugmentedSmsHistory = {
 	faculty?: string
 	text?: string

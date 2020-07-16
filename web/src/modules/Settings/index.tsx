@@ -522,7 +522,7 @@ class Settings extends Component<propsType, S>{
 				const a = document.createElement("a")
 				const client_id = localStorage.getItem("client_id")
 
-				a.href = URL.createObjectURL(new Blob([IdbData], { type: "text/json" }))
+				a.href = URL.createObjectURL(new Blob([JSON.stringify(IdbData)], { type: "text/json" }))
 				a.download = `mischool_export_idb_${client_id}_${moment().format("DD-MM-YYYY")}.json`
 				a.click()
 			}

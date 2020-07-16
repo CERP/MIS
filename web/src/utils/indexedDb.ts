@@ -11,7 +11,7 @@ const defaultTemplates = () => ({
 })
 
 export const initState: RootReducerState = {
-	client_id: v4(),
+	client_id: localStorage.getItem("client_id") || v4(),
 	queued: {
 		mutations: {},
 		analytics: {},
