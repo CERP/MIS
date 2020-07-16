@@ -1,22 +1,26 @@
 import React, { Component } from 'react'
 import { RouteComponentProps } from 'react-router'
 import { connect } from 'react-redux'
-import Former from 'utils/former'
-import getSectionsFromClasses from 'utils/getSectionsFromClasses'
-import Layout from 'components/Layout'
-import { ExamTitles } from 'constants/exam'
-import { v4 } from 'node-uuid'
-import toTitleCase from 'utils/toTitleCase'
-import moment from 'moment'
-import months from 'constants/months'
-import Modal from 'components/Modal'
-import CreateExamModal from './createExamModal'
-import { mergeExam, updateBulkExams, deleteExam } from 'actions/index'
-import calculateGrade from 'utils/calculateGrade'
-import { EditIcon, DeleteIcon } from 'assets/icons'
 import { Link } from 'react-router-dom'
-import Banner from 'components/Banner'
 import queryString from 'query-string'
+import { v4 } from 'node-uuid'
+import moment from 'moment'
+
+import Former from 'utils/former'
+import { mergeExam, updateBulkExams, deleteExam } from 'actions/index'
+import getSectionsFromClasses from 'utils/getSectionsFromClasses'
+import calculateGrade from 'utils/calculateGrade'
+import toTitleCase from 'utils/toTitleCase'
+import { hideScroll, showScroll } from 'utils/helpers'
+
+import Layout from 'components/Layout'
+import Modal from 'components/Modal'
+import Banner from 'components/Banner'
+import CreateExamModal from './createExamModal'
+
+import months from 'constants/months'
+import { ExamTitles } from 'constants/exam'
+import { EditIcon, DeleteIcon } from 'assets/icons'
 
 import './style.css'
 
@@ -140,7 +144,7 @@ class BulkExam extends Component<P, S> {
 
 	closeCreateExamModal = () => {
 		this.setState({ showCreateExam: false }, () => {
-			document.body.style.position = ''
+			showScroll()
 		})
 	}
 
@@ -156,7 +160,7 @@ class BulkExam extends Component<P, S> {
 
 		this.setState({ showCreateExam: !this.state.showCreateExam }, () => {
 			if (this.state.showCreateExam) {
-				document.body.style.position = 'fixed'
+				hideScroll()
 			}
 		})
 	}
@@ -225,8 +229,6 @@ class BulkExam extends Component<P, S> {
 					}
 				}
 			}, {})
-
-			console.log("SEE WHAT IS INSIDE STUDENT_eXAMS", student_exams)
 
 			// outer reduce return
 			return {
