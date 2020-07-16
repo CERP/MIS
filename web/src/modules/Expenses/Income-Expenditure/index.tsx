@@ -198,7 +198,7 @@ class IncomeExpenditure extends Component<propTypes, S> {
 
 					Years.add(moment(expense.date).format("YYYY"))
 
-					let amount = this.parseAmount(expense.amount)
+					const amount = this.parseAmount(expense.amount)
 					//@ts-ignore
 					const deduction = this.parseAmount(expense.deduction)
 
@@ -217,8 +217,7 @@ class IncomeExpenditure extends Component<propTypes, S> {
 							label: "EXPENSE",
 							date: expense.date
 						}
-					amount -= deduction
-					total_expense += amount
+					total_expense += (amount - deduction)
 				}
 
 			}
