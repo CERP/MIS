@@ -12,6 +12,8 @@ import downloadDocument from './svgs/document-download.svg'
 import trashOutlineIcon from './svgs/outline-trash.svg'
 import shareIcon from './svgs/sm-share.svg'
 import phoneIcon from './svgs/phone.svg'
+import exclamation from './svgs/exclamation.svg'
+import emojiHappy from './svgs/emoji-happy.svg'
 import playIcon from './svgs/play.svg'
 import ilmxLogo from './pngs/ilmx-logo.png'
 import sortAscIcon from './svgs/sort-ascending.svg'
@@ -31,6 +33,8 @@ export const DocumentDownloadIcon = downloadDocument
 export const TrashOutlineIcon = trashOutlineIcon
 export const ShareIcon = shareIcon
 export const PhoneIcon = phoneIcon
+export const ExclamationIcon = exclamation
+export const HappyEmojiIcon = emojiHappy
 export const PlayIcon = playIcon
 export const IlmxLogo = ilmxLogo
 export const SortAscIcon = sortAscIcon

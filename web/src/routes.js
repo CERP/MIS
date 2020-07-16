@@ -43,6 +43,7 @@ import printPreview from 'modules/Student/Single/Fees/printPreview'
 import ExpensePage from './modules/Expenses';
 import ExcelImport from './modules/Settings/ExcelImport';
 import ClassSettings from 'modules/Settings/ClassSettings/Index'
+import MISActivation from 'modules/Activation'
 import BulkExam from 'modules/Marks/BulkExam'
 
 export default class Routes extends React.Component {
@@ -125,6 +126,7 @@ export default class Routes extends React.Component {
 					<TrackedRoute path="/certificate-menu" component={CertificateMenu} />
 
 					<TrackedRoute path="/fee-menu" component={FeeMenu} />
+					<Route path="/verify-code" component={MISActivation} />					
 					<Route exact path="/" component={Front} />
 					<Route path="/school-login" component={SchoolLogin} />
 					<Route path="/login" component={Login} />
