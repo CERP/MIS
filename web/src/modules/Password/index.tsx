@@ -1,26 +1,32 @@
 import React from 'react'
 import { History } from 'history'
 import { connect } from 'react-redux'
-import Layout from 'components/Layout'
 import { Redirect } from 'react-router'
 import { Link } from 'react-router-dom'
+
+import Layout from 'components/Layout'
+import SiteConfig from 'constants/siteConfig.json'
+import { getIlmxUser } from 'utils/helpers'
 
 import './style.css'
 
 type PropsType = {
 	faculty: RootDBState["faculty"]
 	history: History
+	ilmxUser: string
 } & RootReducerState
 
-const ResetPassword: React.FC<PropsType> = (props) => {
+const ResetPassword: React.FC<PropsType> = ({ history, ilmxUser, initialized, auth }) => {
+
+	const helpline = ilmxUser ? SiteConfig["helpLineIlmx"] : SiteConfig["helpLine"]
 
 	return (<>
 		{
-			!(props.initialized && props.auth.school_id) && <Redirect to="/school-login" />
+			!(initialized && auth.school_id) && <Redirect to="/school-login" />
 		}
-		<Layout history={props.history}>
+		<Layout history={history}>
 			<div className="reset-password">
-				<div className="title">Reset Password</div>
+				<div className="title">Reset Admin Password</div>
 				<div className="section-container section">
 					<div className="box-title">Enter Your Phone</div>
 					<div className="box">
@@ -35,6 +41,7 @@ const ResetPassword: React.FC<PropsType> = (props) => {
 								className="button grey"
 								style={{ marginLeft: "0.175rem" }}>Cancel</Link>
 						</div>
+						<p className="error">Provided number doesn't match with any admin account, <span><a href={`tel:${helpline.phoneInt}`} title={helpline.phone}>Please contact helpline!</a></span></p>
 					</div>
 				</div>
 			</div>
@@ -48,6 +55,7 @@ export default connect((state: RootReducerState) => ({
 	initialized: state.initialized,
 	users: state.db.users,
 	connected: state.connected,
+	ilmxUser: getIlmxUser()
 }), (dispatch: Function) => ({
 
 }))(ResetPassword)
