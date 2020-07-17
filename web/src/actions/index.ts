@@ -20,7 +20,7 @@ export const mergeSettings = (settings: MISSettings) => (dispatch: Function) => 
 }
 
 export const MERGE_FACULTY = "MERGE_FACULTY"
-export const createFacultyMerge = (faculty: MISTeacher) => (dispatch: Function) => {
+export const createFacultyMerge = (faculty: MISTeacher, is_first?: boolean) => (dispatch: Function) => {
 
 	dispatch(createMerges([
 		{
@@ -37,6 +37,14 @@ export const createFacultyMerge = (faculty: MISTeacher) => (dispatch: Function) 
 			}
 		}
 	]))
+
+	if(is_first) {
+		dispatch({
+			type: LOCAL_LOGIN,
+			name: faculty.Name,
+			password: faculty.Password 
+		})
+	}
 }
 
 export const MERGE_STUDENT = "MERGE_STUDENT"
@@ -201,6 +209,7 @@ export const createLogin = (name: string, password: string) => (dispatch: Functi
 			})
 		})
 }
+
 
 export const SIGN_UP_LOADING = "SIGN_UP_LOADING"
 export const SIGN_UP_SUCCEED = "SIGN_UP_SUCCEED"
