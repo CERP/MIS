@@ -33,7 +33,7 @@ const TrackedRoute = ({ component, name, faculty_id, token, initialized, locatio
 
 	const { paid, trial_period, date } = package_info
 
-	const daysPassedSinceTrial = moment().diff(date, "days")
+	const daysPassedSinceTrial = moment().diff(moment(date), "days")
 
 	if (date !== -1 && !paid && daysPassedSinceTrial > trial_period + 1) {
 

@@ -1,15 +1,7 @@
-.mis-alert {
-	background-color: #fafafa;
+.mis-alert.modal-container.inner {
 	width: 50%;
 	height: 35%;
 	padding: 20px;
-	border-radius: 8px;
-	position: relative;
-
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
 }
 
 .mis-alert .section-container {
@@ -54,6 +46,9 @@
 }
 
 @media screen and (max-width: 525px) {
+	.mis-alert.modal-container.inner {
+		width: 80%;
+	}
 	.mis-alert {
 		width: 75%;
 		height: 40%;
@@ -67,6 +62,12 @@
 	}
 	.mis-alert .title {
 		font-size: 1.2rem;
+	}
+}
+
+@media screen and (max-height: 500px) {
+	.mis-alert.modal-container.inner {
+		height: 50%;
 	}
 }
 

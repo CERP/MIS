@@ -24,7 +24,7 @@ export const MISPrompt: React.FC<PropsType> = (props) => {
 	}, [])
 
 	return <>
-		<div className="mis-alert">
+		<div className="mis-alert modal-container inner">
 			<div className="section-container">
 				<div className="title">{props.title}</div>
 				<div className="row">

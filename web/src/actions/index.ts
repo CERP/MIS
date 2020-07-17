@@ -905,7 +905,7 @@ export const issueCertificate = (type: string, student_id: string, faculty_id: s
 }
 
 export const resetTrial = (days = 7) => (dispatch: Function) => {
-	const date = moment().subtract(days, "days")
+	const date = moment().subtract(days, "days").unix() * 1000
 
 	dispatch(createMerges([{
 		path: ["db", "package_info", "date"],
