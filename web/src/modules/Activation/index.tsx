@@ -24,24 +24,17 @@ interface S {
 	code: string
 	isVerified: boolean
 	isPaid: boolean
-	isValidCode: boolean
+	isInvalidCode: boolean
 }
 
 const MISActivation: React.FC<P> = ({ initialized, schoolId, resetTrial, markAsPurchased, history }) => {
 
-	const [state, setState] = useState<S>({
+	const [stateProps, setStateProps] = useState<S>({
 		code: "",
-		isValidCode: false,
+		isInvalidCode: false,
 		isVerified: false,
 		isPaid: false
 	})
-
-	const handleStateChange = (prop: keyof S, value: boolean | string) => {
-		setState({
-			...state,
-			[prop]: value
-		})
-	}
 
 	const verifyCode = async (code: string) => {
 
@@ -53,21 +46,20 @@ const MISActivation: React.FC<P> = ({ initialized, schoolId, resetTrial, markAsP
 
 		if (code === reset_code) {
 			resetTrial()
-			return true
+			return [true, "RESET"]
 		}
 
 		if (code === purchase_code) {
 			markAsPurchased()
-			handleStateChange("isPaid", true)
-			return true
+			return [true, "PURCHASED"]
 		}
 
-		return false
+		return [false, "INVALID"]
 	}
 
 	const handleVerifyCode = () => {
 
-		const { code } = state
+		const { code } = stateProps
 
 		if (code.trim().length === 0) {
 			return
@@ -75,16 +67,29 @@ const MISActivation: React.FC<P> = ({ initialized, schoolId, resetTrial, markAsP
 
 		verifyCode(code)
 			.then(accepted => {
-				if (accepted) {
-					handleStateChange("isVerified", true)
+				const [status, type] = accepted
+				if (status) {
+					setStateProps({
+						...stateProps,
+						isVerified: true,
+						isPaid: type === "PURCHASED" ? true : false
+					})
 				} else {
-					handleStateChange("isValidCode", true)
+					setStateProps({
+						...stateProps,
+						isInvalidCode: true
+					})
 				}
 			})
 
 		// don't show error message after 3s
 		setTimeout(() => {
-			handleStateChange("isValidCode", false)
+			if (stateProps.isInvalidCode) {
+				setStateProps({
+					...stateProps,
+					isInvalidCode: false
+				})
+			}
 		}, 3000)
 	}
 
@@ -96,7 +101,7 @@ const MISActivation: React.FC<P> = ({ initialized, schoolId, resetTrial, markAsP
 			<div className="mis-activation">
 				<div className="section-container">
 					<div className="title">Verify Activation Code</div>
-					{!state.isVerified &&
+					{!stateProps.isVerified &&
 						<div className="section">
 							<div className="trial-alert">
 								<div className="exclamation-icon">
@@ -106,11 +111,11 @@ const MISActivation: React.FC<P> = ({ initialized, schoolId, resetTrial, markAsP
 							</div>
 							<div className="activation-code">
 								<div className="row">
-									<input type="text" onChange={(e) => handleStateChange("code", e.target.value)} placeholder="Enter valid code" autoFocus />
+									<input type="text" onBlur={(e) => setStateProps({ ...stateProps, code: e.target.value })} placeholder="Enter valid code" autoFocus />
 								</div>
-								<div className="row is-danger" style={{ marginTop: "0.275rem", height: 12, fontSize: "0.75rem" }}>
+								<div className="row is-danger">
 									{
-										state.isValidCode && <div>Invalid Code, Enter valid code</div>
+										stateProps.isInvalidCode && <div>Invalid Code, Enter valid code</div>
 									}
 								</div>
 								<div className="row" style={{ marginTop: "0.375rem" }}>
@@ -119,18 +124,19 @@ const MISActivation: React.FC<P> = ({ initialized, schoolId, resetTrial, markAsP
 							</div>
 						</div>
 					}
-					{state.isVerified &&
+					{stateProps.isVerified &&
 						<div className="section">
 							<div className="trial-alert">
 								<div className="exclamation-icon">
 									<img src={HappyEmojiIcon} alt="exclamation" />
 								</div>
 								<div className="trial-text is-success">
-									<div> Hurrah! <strong>{state.isPaid ? "Purchase" : "Reset Trial"}</strong> code has been verified.
-											{
-											state.isPaid ? <span> You have been marked as Paid User.</span> :
+									<div> Hurrah! <strong>{stateProps.isPaid ? "Purchase" : "Reset Trial"}</strong> code has been verified.
+										{
+											stateProps.isPaid ? <span> You have been marked as Paid User.</span> :
 												<span> Your Trial has been reset.</span>
 										}
+										Thanks for using MISchool!
 									</div>
 								</div>
 							</div>

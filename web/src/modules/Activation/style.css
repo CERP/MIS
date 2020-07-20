@@ -46,6 +46,9 @@
 }
 
 .mis-activation .is-danger {
+	margin-top: 0.275rem;
+	height: 12;
+	font-size: 0.75rem;
 	color: #fc6171;
 }
 
