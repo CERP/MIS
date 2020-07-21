@@ -47,9 +47,10 @@ interface P {
 	faculty: RootDBState['faculty']
 	user: MISTeacher
 	ilmxUser: string
+	auth: RootReducerState["auth"]
 
-	save: (teacher: MISTeacher) => any
-	delete: (faculty_id: string) => any
+	save: (teacher: MISTeacher, is_first?: boolean) => void
+	delete: (faculty_id: string) => void
 }
 
 interface S {
@@ -83,7 +84,7 @@ class CreateTeacher extends Component<propTypes, S> {
 		this.state = {
 			profile: {
 				...faculty || blankTeacher(this.isFirst()),
-				HasLogin: faculty && faculty.HasLogin
+				HasLogin: this.isFirst() || this.isNew() ? true : faculty && faculty.HasLogin
 			},
 			redirect: false,
 			banner: {
@@ -103,7 +104,9 @@ class CreateTeacher extends Component<propTypes, S> {
 
 	onSave = () => {
 
-		const compulsoryFileds = checkCompulsoryFields(this.state.profile, [
+		let { profile } = this.state
+
+		const compulsoryFileds = checkCompulsoryFields(profile, [
 			["Name"],
 			["Password"]
 		]);
@@ -121,12 +124,13 @@ class CreateTeacher extends Component<propTypes, S> {
 			})
 		}
 
-		if (this.state.profile.Password.length !== 128) { // hack...
-			hash(this.state.profile.Password).then(hashed => {
+		if (profile.Password.length !== 128) { // hack...
+			hash(profile.Password).then(hashed => {
+
 				this.props.save({
-					...this.state.profile,
+					...profile,
 					Password: hashed
-				})
+				}, true)
 
 				this.setState({
 					banner: {
@@ -138,8 +142,7 @@ class CreateTeacher extends Component<propTypes, S> {
 
 				setTimeout(() => {
 					this.setState({
-						redirect: this.isFirst() ? "/login" : (this.isNew() ? `/teacher` : false),
-
+						redirect: this.isNew() ? `/teacher` : false,
 						banner: { active: false }
 					})
 				}, 1500);
@@ -147,7 +150,7 @@ class CreateTeacher extends Component<propTypes, S> {
 			})
 		}
 		else {
-			this.props.save(this.state.profile)
+			this.props.save(profile)
 
 			this.setState({
 				banner: {
@@ -166,7 +169,7 @@ class CreateTeacher extends Component<propTypes, S> {
 	}
 
 	onDelete = () => {
-		// console.log(this.state.profile.id)
+
 		const val = window.confirm("Are you sure you want to delete?")
 		if (!val)
 			return
@@ -190,13 +193,22 @@ class CreateTeacher extends Component<propTypes, S> {
 		}, 1000);
 	}
 
-	UNSAFE_componentWillReceiveProps(newProps: propTypes) {
+	UNSAFE_componentWillReceiveProps(nextProps: propTypes) {
 		// this means every time teacher upgrades, we will change the fields to whatever was just sent.
 		// this means it will be very annoying for someone to edit the user at the same time as someone else
 		// which is probably a good thing. 
 
+		if (this.isFirst() && nextProps.auth.name && nextProps.auth.name !== this.props.auth.name) {
+			setTimeout(() => {
+				this.setState({
+					...this.state,
+					redirect: '/landing'
+				})
+			}, 2000)
+		}
+
 		this.setState({
-			profile: newProps.faculty[this.props.match.params.id] || this.state.profile
+			profile: nextProps.faculty[this.props.match.params.id] || this.state.profile
 		})
 	}
 
@@ -461,10 +473,11 @@ class CreateTeacher extends Component<propTypes, S> {
 }
 
 export default connect((state: RootReducerState) => ({
+	auth: state.auth,
 	faculty: state.db.faculty,
 	user: state.db.faculty[state.auth.faculty_id],
 	ilmxUser: getIlmxUser()
 }), (dispatch: Function) => ({
-	save: (teacher: MISTeacher) => dispatch(createFacultyMerge(teacher)),
+	save: (teacher: MISTeacher, is_first?: boolean) => dispatch(createFacultyMerge(teacher, is_first)),
 	delete: (faculty_id: string) => dispatch(deleteFaculty(faculty_id))
 }))(CreateTeacher);
