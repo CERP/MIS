@@ -217,8 +217,7 @@ class IncomeExpenditure extends Component<propTypes, S> {
 							label: "EXPENSE",
 							date: expense.date
 						}
-
-					total_expense += amount
+					total_expense += (amount - deduction)
 				}
 
 			}
