@@ -6,23 +6,29 @@ import {
 	resetSchoolPassword,
 	updateSchoolId,
 	getSchoolInfo,
-	updateLoginStrategy
+	updateLoginStrategy,
+	getMISFacultyLoginInfo,
+	updateFacultyPassword
 } from 'actions'
 
 import ResetSchoolPassword from './resetPassword'
 import UpdateSchoolId from './updateId'
 import UpdateLoginStrategy from './updateStrategy'
+import ResetFacultyPassword from './resetFacultyPassword'
 
 interface PropsType {
 
 	schoolList: Array<string>
 	loginInfo: TrialsDataRow["value"]
+	faculty: MISFaculty
 
 	getSchoolList: () => void
 	updateId: (old_school_id: string, new_school_id: string) => void
 	resetPassword: (school_id: string, password: string) => void
 	getSchoolInfo: (school_id: string) => void
 	updateStrategy: (school_id: string, login_info: TrialsDataRow["value"]) => void
+	getMISFacultyLoginInfo: (school_id: string) => void
+	updateFacultyPassword: (school_id: string, faculty_id: string, faculty: Faculty) => void
 }
 
 const ManageSchool: React.FC<PropsType> = (props) => {
@@ -30,21 +36,24 @@ const ManageSchool: React.FC<PropsType> = (props) => {
 	const {
 		schoolList,
 		loginInfo,
+		faculty,
 		getSchoolInfo,
 		updateId,
 		resetPassword,
-		updateStrategy
+		updateStrategy,
+		getMISFacultyLoginInfo,
+		updateFacultyPassword
 	} = props
 
 	useEffect(() => {
 		getSchoolList()
-	}, [getSchoolList])
+	})
 
 	return <div className="page admin-actions">
 		<UpdateSchoolId
 			schoolList={schoolList}
-			onUpdateSchoolId={updateId}
-		/>
+			onUpdateSchoolId={updateId} />
+
 		<ResetSchoolPassword
 			schoolList={schoolList}
 			onResetPassword={resetPassword} />
@@ -55,16 +64,25 @@ const ManageSchool: React.FC<PropsType> = (props) => {
 			onUpdateLoginStrategy={updateStrategy}
 			schoolLoginInfo={loginInfo} />
 
+		<ResetFacultyPassword
+			schoolList={schoolList}
+			faculty={faculty}
+			onUpdateFacultyPassword={updateFacultyPassword}
+			onGetMISFacultyLoginInfo={getMISFacultyLoginInfo} />
+
 	</div>
 }
 
 export default connect((state: RootReducerState) => ({
 	loginInfo: state.school_Info.meta as TrialsDataRow["value"],
 	schoolList: state.school_Info.school_list,
+	faculty: state.mis_faculty
 }), (dispatch: Function) => ({
 	getSchoolList: () => dispatch(getSchoolList()),
 	updateId: (old_id: string, new_id: string) => dispatch(updateSchoolId(old_id, new_id)),
 	getSchoolInfo: (school_id: string) => dispatch(getSchoolInfo(school_id)),
 	updateStrategy: (school_id: string, login_info: TrialsDataRow["value"]) => dispatch(updateLoginStrategy(school_id, login_info)),
-	resetPassword: (school_id: string, password: string) => dispatch(resetSchoolPassword(school_id, password))
+	resetPassword: (school_id: string, password: string) => dispatch(resetSchoolPassword(school_id, password)),
+	getMISFacultyLoginInfo: (school_id: string) => dispatch(getMISFacultyLoginInfo(school_id)),
+	updateFacultyPassword: (school_id: string, faculty_id: string, faculty: Faculty) => dispatch(updateFacultyPassword(school_id, faculty_id, faculty))
 }))(ManageSchool)

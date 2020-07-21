@@ -1,10 +1,10 @@
 import Dynamic from '@ironbay/dynamic'
 
 import { MERGES, MergeAction, ON_CONNECT, ON_DISCONNECT, DELETES, DeletesAction, QueueAction, QUEUE, CONFIRM_SYNC_DIFF, ConfirmSyncAction, SnapshotDiffAction, SNAPSHOT_DIFF, LOGIN_SUCCEED, LoginSucceed } from 'actions/core'
-import { SCHOOL_LIST, REFERRALS_INFO, SCHOOL_INFO } from 'actions/index'
+import { SCHOOL_LIST, REFERRALS_INFO, SCHOOL_INFO, GET_MIS_FACULTY } from 'actions/index'
 import { AnyAction } from 'redux';
 
-const rootReducer = (state: RootReducerState, action : AnyAction) : RootReducerState => {
+const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerState => {
 
 	switch(action.type) {
 
@@ -71,6 +71,11 @@ const rootReducer = (state: RootReducerState, action : AnyAction) : RootReducerS
 			}
 		}
 
+		case GET_MIS_FACULTY:
+			return {
+				...state,
+				mis_faculty: action.payload
+			}
 			
 		case "STUDENT_ATTENDANCE_DATA":
 		{

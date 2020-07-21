@@ -1,6 +1,6 @@
 import { v4 } from 'uuid';
 
-export const saveDB = (db : RootReducerState) => {
+export const saveDB = (db: RootReducerState) => {
 
 	try {
 
@@ -24,7 +24,7 @@ export const clearDB = () => {
 
 export const loadAuth = (): RootReducerState['auth'] => {
 
-	let init_auth : RootReducerState['auth'] = {
+	let init_auth: RootReducerState['auth'] = {
 		id: undefined,
 		token: undefined,
 		client_type: "dashboard"
@@ -56,7 +56,7 @@ const loadClientId = () => {
 	return client_id;
 }
 
-const loadSyncState = () : RootReducerState['sync_state'] => {
+const loadSyncState = (): RootReducerState['sync_state'] => {
 
 	const str = localStorage.getItem("sync_state");
 
@@ -69,12 +69,12 @@ const loadSyncState = () : RootReducerState['sync_state'] => {
 
 }
 
-const saveSyncState = (sync_state : RootReducerState['sync_state']) => {
+const saveSyncState = (sync_state: RootReducerState['sync_state']) => {
 
 	localStorage.setItem("sync_state", JSON.stringify(sync_state));
 }
 
-const saveQueue = (queue : RootReducerState['queued']) => {
+const saveQueue = (queue: RootReducerState['queued']) => {
 
 	localStorage.setItem("queued", JSON.stringify(queue))
 
@@ -84,7 +84,7 @@ const loadQueue = () => {
 	return JSON.parse(localStorage.getItem("queued") || "{}") as RootReducerState['queued']
 }
 
-const saveSnapshot = (last_snapshot : number) => {
+const saveSnapshot = (last_snapshot: number) => {
 
 	//@ts-ignore
 	localStorage.setItem("last_snapshot", last_snapshot);
@@ -94,7 +94,7 @@ const loadSnapshot = () => {
 	return parseInt(localStorage.getItem("last_snapshot") || "0")
 }
 
-export const loadDB = () : RootReducerState => {
+export const loadDB = (): RootReducerState => {
 
 	return {
 		client_id: loadClientId(),
@@ -108,6 +108,7 @@ export const loadDB = () : RootReducerState => {
 			school_list: [],
 		},
 		trials: [],
-		stats: {}
+		stats: {},
+		mis_faculty: {}
 	}
 }
