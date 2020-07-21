@@ -108,8 +108,8 @@ export const getSchoolList = () => (dispatch: Dispatch, getState: GetState, sync
 
 	const state = getState()
 
-	if (!syncr.connection_verified) {
-		syncr.onNext("verify", () => dispatch(getSchoolList()))
+	if (!syncr.ready) {
+		syncr.onNext("connect", () => dispatch(getSchoolList()))
 		return
 	}
 
@@ -352,7 +352,73 @@ export const updateSchoolLoginInfo = (school_id: string, login_info: SchoolLogin
 	})
 }
 
-export const getEndPointResource = (point: string, school_id: string, start_date: number, end_date: number) => (dispatch: Dispatch, getState: GetState, syncr: Syncr) => {
+export const GET_MIS_FACULTY = "GET_MIS_FACULTY"
+export const getMISFacultyLoginInfo = (school_id: string) => (dispatch: Dispatch, getState: GetState, syncr: Syncr) => {
+	
+	const state = getState()
+
+	syncr.send({
+		type: GET_MIS_FACULTY,
+		client_type: state.auth.client_type,
+		client_id: state.client_id,
+		payload:{
+			school_id
+		}
+	}).then(res => {
+		 dispatch({
+			 type: GET_MIS_FACULTY,
+			 payload: res
+		 })
+	}).catch(() => {
+		window.alert(`Unable to get faculty for ${school_id}`)
+	})
+}
+
+export const updateFacultyPassword = (school_id: string, faculty_id: string, faculty: Faculty) => (dispatch: Dispatch, getState: GetState, syncr: Syncr) => {
+	
+	const state = getState()
+
+	const merges = [
+		{
+			[`db,users,${faculty_id},password`]: {
+				"date": moment.now(),
+				"action": {
+					"path": ["db", "users", faculty_id, "password"],
+					"type": "MERGE",
+					"value": faculty.password
+				}
+			}
+		},
+		{
+			[`db,faculty,${faculty_id},password`]:{
+				"date": moment.now(),
+				"action": {
+					"path": ["db", "faculty", faculty_id, "Password"],
+					"type": "MERGE",
+					"value": faculty.password
+				}
+			}
+		}
+	]
+
+	syncr.send({
+		type: "UPDATE_FACULTY_PASSWORD",
+		client_type: state.auth.client_type,
+		client_id: state.client_id,
+		payload:{
+			merges,
+			school_id,
+			faculty_id,
+			password: faculty.password
+		}
+	}).then(res => {
+		window.alert(res)
+	}).catch(() => {
+		window.alert(`Unable to update faculty password for ${faculty.name}`)
+	})
+}
+
+export const getEndPointResource = ( point: string, school_id: string, start_date: number, end_date: number) => ( dispatch: Dispatch, getState: GetState,  syncr: Syncr) => {
 
 	const state = getState()
 

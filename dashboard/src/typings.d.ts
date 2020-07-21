@@ -37,6 +37,7 @@ interface RootReducerState {
 		}
 		meta?: TrialsDataRow["value"]
 	}
+	mis_faculty: MISFaculty
 	trials: TrialsDataRow[]
 	stats: {
 		student_attendance?: {
@@ -242,4 +243,15 @@ type SchoolLoginInfo = {
 	school_type: "URBAN" | "RURAL"
 	type_of_login: string
 	user?: string
+}
+
+interface MISFaculty {
+	[id: string]: Faculty
+}
+
+type Faculty = {
+	name: string
+	hasLogin: string
+	password: string
+	type: "admin" | "teacher"
 }
