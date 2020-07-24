@@ -118,7 +118,7 @@ class SMSDispatcherService : Service() {
         for(message in messages) {
             Log.d(TAG, "send " + message.text + " to " + message.number)
             sendSMS(message)
-            Thread.sleep(1000)
+            Thread.sleep(4000)
         }
     }
 
@@ -178,6 +178,8 @@ class SMSDispatcherService : Service() {
                 var plist = arrayListOf<PendingIntent>()
                 for (i in 0 until messages.size) {
                     plist.add(sentPI)
+//                    Thread.sleep(1500)
+
                 }
                 smsManager.sendMultipartTextMessage(sms.number, null, messages, plist, null)
                 updateLogText("Message: ${sms.number}-${sms.text}-${sms.status}-$currentTime")

@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.opengl.Visibility
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -54,9 +52,11 @@ class MainActivity : AppCompatActivity() {
         getPermissions()
 
         val logMessages = readLogMessages()
-        val tv = findViewById<TextView>(R.id.logtext)
-        tv.text = logMessages
-        tv.movementMethod = ScrollingMovementMethod()
+
+        val textview_logs = findViewById<TextView>(R.id.logtext)
+        
+        textview_logs.text = logMessages
+        textview_logs.movementMethod = ScrollingMovementMethod()
 
         val databaseHandler: DatabaseHandler = DatabaseHandler(this)
 
@@ -75,6 +75,7 @@ class MainActivity : AppCompatActivity() {
 
         // clear logs button
         val clearLogsButton = findViewById<Button>(R.id.clearLogButton)
+        
         clearLogsButton.setOnClickListener {
 
             clearLogMessages()
@@ -84,7 +85,7 @@ class MainActivity : AppCompatActivity() {
             recyclerAdapter!!.notifyDataSetChanged()
 
             // re-reading logs to ensure removed
-            tv.text = readLogMessages()
+            textview_logs.text = readLogMessages()
         }
 
         // resend failed sms button
@@ -101,7 +102,6 @@ class MainActivity : AppCompatActivity() {
                 // delete failed sms so that in next try they don't duplicate in db
                 databaseHandler.deleteAllFailedSMS()
 
-                //
                 val databaseHandler: DatabaseHandler = DatabaseHandler(baseContext)
                 for (msg in failedMessages) {
                     databaseHandler.addSMS(SMSItem(number = msg.number, text = msg.text, status = msg.status, date = msg.date))
@@ -117,32 +117,30 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        var sent= 0
-        var total = 0
-        var pending = 0
-        var failed = 0
+        var sms_sent= 0
+        var sms_total = arraylist.size
+        var sms_pending = 0
+        var sms_failed = 0
 
         for(sms in arraylist) {
 
             if(sms.status.equals("SENT")) {
-                sent++
+                sms_sent++
             } else if(sms.status.equals("PENDING")){
-                pending++
+                sms_pending++
             }
             else if(sms.status.equals("FAILED")){
-                failed++
+                sms_failed++
             }
         }
 
-        total = arraylist.size
+        val textview_sent = findViewById<TextView>(R.id.textViewsent)
+        val textview_pending = findViewById<TextView>(R.id.textViewpending)
+        val textview_failed = findViewById<TextView>(R.id.textView2failed)
 
-        val tvsent = findViewById<TextView>(R.id.textViewsent)
-        val tvpending = findViewById<TextView>(R.id.textViewpending)
-        val tvfailed = findViewById<TextView>(R.id.textView2failed)
-
-        tvsent.text = "Sent: $sent"
-        tvpending.text = "Pending: $pending"
-        tvfailed.text = "Failed: $failed"
+        textview_sent.text = "Sent: $sms_sent"
+        textview_pending.text = "Pending: $sms_pending"
+        textview_failed.text = "Failed: $sms_failed"
 
         val handler = Handler()
         var pre = readLogMessages()
@@ -151,9 +149,9 @@ class MainActivity : AppCompatActivity() {
             override fun run() {
                 arraylist = databaseHandler.getAllSMS()
                 Log.d("tryArrayListSize","in handler" + arraylist.size.toString())
-                Log.d("tryDB", arraylist.size.toString())
-
+                // add delay in sms sending
                 handler.postDelayed(this, 2000)
+                
                 val text = readLogMessages()
 
                 if(pre != text) {
@@ -161,28 +159,28 @@ class MainActivity : AppCompatActivity() {
                     pre = text
                 }
 
-                sent = 0
-                failed = 0
-                pending = 0
+                sms_sent = 0
+                sms_failed = 0
+                sms_pending = 0
 
                 for(sms in arraylist) {
                     
                     Log.d("SMS-Status", sms.status)
 
                     if(sms.status.equals("SENT")) {
-                        sent++
+                        sms_sent++
                     } else if(sms.status.equals("PENDING")) {
-                        pending++
+                        sms_pending++
                     } else if(sms.status.equals("FAILED")) {
-                        failed++
+                        sms_failed++
                     }
                 }
 
-                total = arraylist.size
+                sms_total = arraylist.size
 
-                tvsent.text = "Sent: $sent"
-                tvpending.text = "Pending: $pending"
-                tvfailed.text = "Failed: $failed"
+                textview_sent.text = "Sent: $sms_sent"
+                textview_pending.text = "Pending: $sms_pending"
+                textview_failed.text = "Failed: $sms_failed"
 
                 recyclerAdapter!!.notifyDataSetChanged()
             }
@@ -192,11 +190,12 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        val jsonString = java.net.URLDecoder.decode(dataString.split("=")[1], "UTF-8")
+        val json_string = java.net.URLDecoder.decode(dataString.split("=")[1], "UTF-8")
         
-        tv.append(jsonString)
+        textview_logs.append(json_string)
 
-        val parsed: SMSPayload? = Klaxon().parse(jsonString)
+        val parsed: SMSPayload? = Klaxon().parse(json_string)
+        
         if(parsed === null) {
             return
         }
@@ -237,8 +236,8 @@ class MainActivity : AppCompatActivity() {
 
         runOnUiThread {
             run {
-                val tv = findViewById<TextView>(R.id.logtext)
-                tv.text = text
+                val textview_logs = findViewById<TextView>(R.id.logtext)
+                textview_logs.text = text
             }
         }
     }
@@ -282,20 +281,19 @@ class MainActivity : AppCompatActivity() {
 
     private fun readLogMessages(): String {
 
-        val file = File(filesDir, "${logFileName}")
-        var content = if(file.exists()) {
+        val file = File(filesDir, logFileName)
+
+        return if(file.exists()) {
             val bytes = file.readBytes()
             String(bytes)
         } else {
             ""
         }
-
-        return content
     }
 
     private fun clearLogMessages() {
 
-        val file = File(filesDir, "${logFileName}")
+        val file = File(filesDir, logFileName)
         file.writeBytes("".toByteArray())
     }
 
@@ -309,7 +307,7 @@ class MainActivity : AppCompatActivity() {
         @SuppressLint("ResourceAsColor")
         override fun onBindViewHolder(holder: SMSAdapter.SMSViewHolder, position: Int) {
 
-            holder.country.text =arraylist[position].number+"\n"+arraylist[position].text
+            holder.messsage_card.text =arraylist[position].number+"\n"+arraylist[position].text
 
             if(!arraylist[position].status.equals("SENT") && !arraylist[position].status.equals("PENDING")){
                 holder.resend.visibility =  View.VISIBLE
@@ -360,13 +358,13 @@ class MainActivity : AppCompatActivity() {
 
         inner class SMSViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
 
-            internal var country: TextView
+            internal var messsage_card: TextView
             internal var resend: Button
             internal var resendcard: CardView
             internal var status: Button
             internal var date: TextView
             init {
-                country = itemView.findViewById(R.id.textView)
+                messsage_card = itemView.findViewById(R.id.tvSMS)
                 date = itemView.findViewById(R.id.textView2)
                 resend = itemView.findViewById(R.id.resendButton2)
                 status = itemView.findViewById(R.id.resendButton)
