@@ -170,16 +170,13 @@ class SMSDispatcherService : Service() {
                 }
             }
 
-            registerReceiver(broadCastReceiver, IntentFilter("SENT"))
-
             if(messages.size > 1) {
                 Log.d("trySend", "SENDING MULTIPART")
 
                 var plist = arrayListOf<PendingIntent>()
                 for (i in 0 until messages.size) {
                     plist.add(sentPI)
-//                    Thread.sleep(1500)
-
+                    Thread.sleep(4000)
                 }
                 smsManager.sendMultipartTextMessage(sms.number, null, messages, plist, null)
                 updateLogText("Message: ${sms.number}-${sms.text}-${sms.status}-$currentTime")
@@ -191,6 +188,8 @@ class SMSDispatcherService : Service() {
                 smsManager.sendTextMessage(sms.number, null, msgText, sentPI, null)
                 updateLogText("Message: ${sms.number}-${sms.text}-${sms.status}-$currentTime")
             }
+
+            registerReceiver(broadCastReceiver, IntentFilter("SENT"))
 
         } catch( e: Exception) {
             Log.d(TAG, e.message)

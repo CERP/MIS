@@ -79,13 +79,13 @@ class MainActivity : AppCompatActivity() {
         clearLogsButton.setOnClickListener {
 
             clearLogMessages()
+            clearPendingMessages()
             databaseHandler.deleteAllSMS()
-
             arraylist.clear()
-            recyclerAdapter!!.notifyDataSetChanged()
 
-            // re-reading logs to ensure removed
-            textview_logs.text = readLogMessages()
+            Toast.makeText(baseContext, "Logs cleared!", Toast.LENGTH_SHORT).show()
+
+            recyclerAdapter!!.notifyDataSetChanged()
         }
 
         // resend failed sms button
@@ -294,7 +294,16 @@ class MainActivity : AppCompatActivity() {
     private fun clearLogMessages() {
 
         val file = File(filesDir, logFileName)
-        file.writeBytes("".toByteArray())
+       if(file.exists()) {
+         file.delete()
+       }
+    }
+
+    private fun clearPendingMessages() {
+        val file = File(filesDir, filename)
+        if(file.exists()) {
+            file.delete()
+        }
     }
 
     private inner class SMSAdapter(internal var context: Context): RecyclerView.Adapter<SMSAdapter.SMSViewHolder >() {
