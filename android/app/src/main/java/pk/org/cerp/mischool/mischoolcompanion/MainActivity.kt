@@ -48,34 +48,34 @@ class MainActivity : AppCompatActivity() {
         val data = intent.data
         val dataString = intent.dataString
 
+        val textview_logs = findViewById<TextView>(R.id.logtext)
+        val textview_sent = findViewById<TextView>(R.id.textViewsent)
+        val textview_pending = findViewById<TextView>(R.id.textViewpending)
+        val textview_failed = findViewById<TextView>(R.id.textView2failed)
+
         // ask for permissions
         getPermissions()
 
         val logMessages = readLogMessages()
+        val databaseHandler: DatabaseHandler = DatabaseHandler(this)
+        arraylist = databaseHandler.getAllSMS()
 
-        val textview_logs = findViewById<TextView>(R.id.logtext)
-        
         textview_logs.text = logMessages
         textview_logs.movementMethod = ScrollingMovementMethod()
 
-        val databaseHandler: DatabaseHandler = DatabaseHandler(this)
-
-        list = findViewById(R.id.recyclerV) as RecyclerView
+        list = findViewById<RecyclerView>(R.id.recyclerV)
 
         val layoutManager = LinearLayoutManager(this)
-        layoutManager.setReverseLayout(true)
-        layoutManager.setStackFromEnd(true)
-        list!!.setLayoutManager(layoutManager)
-
-        arraylist = databaseHandler.getAllSMS()
+        layoutManager.reverseLayout = true
+        layoutManager.stackFromEnd = true
+        list!!.layoutManager = layoutManager
 
         recyclerAdapter = SMSAdapter(this@MainActivity)
-        list!!.addItemDecoration(DividerItemDecoration(list!!.getContext(), layoutManager.orientation))
-        list!!.setAdapter(recyclerAdapter)
+        list!!.addItemDecoration(DividerItemDecoration(list!!.context, layoutManager.orientation))
+        list!!.adapter = recyclerAdapter
 
         // clear logs button
         val clearLogsButton = findViewById<Button>(R.id.clearLogButton)
-        
         clearLogsButton.setOnClickListener {
 
             clearLogMessages()
@@ -124,39 +124,42 @@ class MainActivity : AppCompatActivity() {
 
         for(sms in arraylist) {
 
-            if(sms.status.equals("SENT")) {
-                sms_sent++
-            } else if(sms.status.equals("PENDING")){
-                sms_pending++
-            }
-            else if(sms.status.equals("FAILED")){
-                sms_failed++
+            when {
+                sms.status.equals("SENT") -> {
+                    sms_sent++
+                }
+                sms.status.equals("PENDING") -> {
+                    sms_pending++
+                }
+                sms.status.equals("FAILED") -> {
+                    sms_failed++
+                }
             }
         }
 
-        val textview_sent = findViewById<TextView>(R.id.textViewsent)
-        val textview_pending = findViewById<TextView>(R.id.textViewpending)
-        val textview_failed = findViewById<TextView>(R.id.textView2failed)
 
         textview_sent.text = "Sent: $sms_sent"
         textview_pending.text = "Pending: $sms_pending"
         textview_failed.text = "Failed: $sms_failed"
 
         val handler = Handler()
-        var pre = readLogMessages()
+        var pre_logged_text = readLogMessages()
 
         handler.postDelayed(object : Runnable {
             override fun run() {
+
                 arraylist = databaseHandler.getAllSMS()
+
                 Log.d("tryArrayListSize","in handler" + arraylist.size.toString())
+
                 // add delay in sms sending
                 handler.postDelayed(this, 2000)
                 
-                val text = readLogMessages()
+                val logged_text = readLogMessages()
 
-                if(pre != text) {
-                    updateLogText(text)
-                    pre = text
+                if(pre_logged_text != logged_text) {
+                    updateLogText(logged_text)
+                    pre_logged_text = logged_text
                 }
 
                 sms_sent = 0
@@ -167,12 +170,16 @@ class MainActivity : AppCompatActivity() {
                     
                     Log.d("SMS-Status", sms.status)
 
-                    if(sms.status.equals("SENT")) {
-                        sms_sent++
-                    } else if(sms.status.equals("PENDING")) {
-                        sms_pending++
-                    } else if(sms.status.equals("FAILED")) {
-                        sms_failed++
+                    when {
+                        sms.status.equals("SENT") -> {
+                            sms_sent++
+                        }
+                        sms.status.equals("PENDING") -> {
+                            sms_pending++
+                        }
+                        sms.status.equals("FAILED") -> {
+                            sms_failed++
+                        }
                     }
                 }
 
