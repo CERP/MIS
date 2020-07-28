@@ -3,7 +3,7 @@ import { hash } from 'utils'
 type PropsType = {
 	schoolList: string[]
 	faculty: MISFaculty
-	onUpdateFacultyPassword: (school_id: string, faculty_id: string, faculty: Faculty) => void
+	onUpdateFacultyPassword: (school_id: string, faculty_id: string, password: string) => void
 	onGetMISFacultyLoginInfo: (school_id: string) => void
 }
 
@@ -29,15 +29,7 @@ const ResetFacultyPassword: React.FC<PropsType> = ({ schoolList, faculty, onGetM
 
 		hash(password)
 			.then(hashed_pass => {
-				const update_faculty: Faculty = {
-					...faculty[faculty_id],
-					password: hashed_pass
-				}
-
-				onUpdateFacultyPassword(school_id, faculty_id, update_faculty)
-
-				console.log("PASS HASH", hashed_pass)
-
+				onUpdateFacultyPassword(school_id, faculty_id, hashed_pass)
 			})
 	}
 
@@ -64,7 +56,7 @@ const ResetFacultyPassword: React.FC<PropsType> = ({ schoolList, faculty, onGetM
 							<option>Select faculty</option>
 							{
 								Object.entries(faculty)
-									.map(([id, value]) => <option key={id} value={id}>{value.name}</option>)
+									.map(([id, name]) => <option key={id} value={id}>{name}</option>)
 							}
 						</select>
 					</div>

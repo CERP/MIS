@@ -29,7 +29,7 @@ interface PropsType {
 	updateLoginInfo: (school_id: string, login_info: SchoolLoginInfo) => void
 	updateStrategy: (school_id: string, login_info: TrialsDataRow["value"]) => void
 	getMISFacultyLoginInfo: (school_id: string) => void
-	updateFacultyPassword: (school_id: string, faculty_id: string, faculty: Faculty) => void
+	updateFacultyPassword: (school_id: string, faculty_id: string, password: string) => void
 }
 
 const ManageSchool: React.FC<PropsType> = (props) => {
@@ -49,7 +49,7 @@ const ManageSchool: React.FC<PropsType> = (props) => {
 
 	useEffect(() => {
 		getSchoolList()
-	})
+	}, [getSchoolList])
 
 	return <div className="page admin-actions">
 		<UpdateSchoolId
@@ -86,5 +86,5 @@ export default connect((state: RootReducerState) => ({
 	updateLoginInfo: (school_id: string, login_info: SchoolLoginInfo) => dispatch(updateSchoolLoginInfo(school_id, login_info)),
 	resetPassword: (school_id: string, password: string) => dispatch(resetSchoolPassword(school_id, password)),
 	getMISFacultyLoginInfo: (school_id: string) => dispatch(getMISFacultyLoginInfo(school_id)),
-	updateFacultyPassword: (school_id: string, faculty_id: string, faculty: Faculty) => dispatch(updateFacultyPassword(school_id, faculty_id, faculty))
+	updateFacultyPassword: (school_id: string, faculty_id: string, password: string) => dispatch(updateFacultyPassword(school_id, faculty_id, password))
 }))(ManageSchool)

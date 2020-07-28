@@ -246,12 +246,5 @@ type SchoolLoginInfo = {
 }
 
 interface MISFaculty {
-	[id: string]: Faculty
-}
-
-type Faculty = {
-	name: string
-	hasLogin: string
-	password: string
-	type: "admin" | "teacher"
+	[id: string]: string
 }

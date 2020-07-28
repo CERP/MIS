@@ -374,32 +374,28 @@ export const getMISFacultyLoginInfo = (school_id: string) => (dispatch: Dispatch
 	})
 }
 
-export const updateFacultyPassword = (school_id: string, faculty_id: string, faculty: Faculty) => (dispatch: Dispatch, getState: GetState, syncr: Syncr) => {
+export const updateFacultyPassword = (school_id: string, faculty_id: string, password: string) => (dispatch: Dispatch, getState: GetState, syncr: Syncr) => {
 	
 	const state = getState()
 
-	const merges = [
-		{
-			[`db,users,${faculty_id},password`]: {
-				"date": moment.now(),
-				"action": {
-					"path": ["db", "users", faculty_id, "password"],
-					"type": "MERGE",
-					"value": faculty.password
-				}
+	const merges = {
+		[`db,users,${faculty_id},password`]: {
+			"date": moment.now(),
+			"action": {
+				"path": ["db", "users", faculty_id, "password"],
+				"type": "MERGE",
+				"value": password
 			}
 		},
-		{
-			[`db,faculty,${faculty_id},password`]:{
-				"date": moment.now(),
-				"action": {
-					"path": ["db", "faculty", faculty_id, "Password"],
-					"type": "MERGE",
-					"value": faculty.password
-				}
+		[`db,faculty,${faculty_id},password`]:{
+			"date": moment.now(),
+			"action": {
+				"path": ["db", "faculty", faculty_id, "Password"],
+				"type": "MERGE",
+				"value": password
 			}
 		}
-	]
+	}
 
 	syncr.send({
 		type: "UPDATE_FACULTY_PASSWORD",
@@ -407,14 +403,12 @@ export const updateFacultyPassword = (school_id: string, faculty_id: string, fac
 		client_id: state.client_id,
 		payload:{
 			merges,
-			school_id,
-			faculty_id,
-			password: faculty.password
+			school_id
 		}
 	}).then(res => {
 		window.alert(res)
 	}).catch(() => {
-		window.alert(`Unable to update faculty password for ${faculty.name}`)
+		window.alert("Unable to update faculty password")
 	})
 }
 
