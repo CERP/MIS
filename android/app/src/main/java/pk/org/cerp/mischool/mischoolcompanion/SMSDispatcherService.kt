@@ -8,12 +8,14 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.icu.util.UniversalTimeScale.toLong
 import android.net.Uri
 import android.os.Build
 import android.os.IBinder
 import android.support.annotation.RequiresApi
 import android.telephony.SmsManager
 import android.util.Log
+import com.beust.klaxon.Converter
 import com.beust.klaxon.Klaxon
 import java.io.File
 import java.text.DateFormat
@@ -117,7 +119,7 @@ class SMSDispatcherService : Service() {
         for(message in messages) {
             Log.d(TAG, "send " + message.text + " to " + message.number)
             sendSMS(message)
-            Thread.sleep(10_000)
+            Thread.sleep(8_000)
         }
     }
 
@@ -179,8 +181,12 @@ class SMSDispatcherService : Service() {
 
                 for (i in 0 until messages.size) {
                     plist.add(sentPI)
-                    Thread.sleep(4000)
                 }
+
+                // this is to make sure, if a message broken down to multiple messages
+                // to avoid the PTA restriction, sleep for 4000 fo each message
+                // so next chunk of messages after the total 4000 * message.size
+                Thread.sleep((messages.size * 4000).toLong())
 
                 smsManager.sendMultipartTextMessage(sms.number, null, messages, plist, null)
                 updateLogText("Message: ${sms.number}-${sms.text}-${sms.status}-$currentTime")
