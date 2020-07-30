@@ -63,7 +63,7 @@ class ToSingleStudent extends Component {
 			</div>
 				{
 					smsOption === "SIM" ?
-						<a href={smsIntentLink({
+						<a href={ this.state.selected_student_number && smsIntentLink({
 							messages: [{ number: this.state.selected_student_number, text: sms_text }],
 							return_link: window.location.href 
 							})} onClick={this.logSms} className="button blue">Send using Local SIM</a> :
