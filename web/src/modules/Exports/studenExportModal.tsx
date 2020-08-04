@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import moment from 'moment'
 
 import { downloadAsCSV } from 'utils/downloadCSV'
 
 import './style.css'
+import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 
 const CSVHeaders = [
 	"Name",
@@ -23,15 +24,18 @@ const CSVHeaders = [
 ]
 
 type PropsType = {
-	students: AugmentedStudent[]
-	sections?: AugmentedSection[]
+	students: RootDBState["students"]
+	classes: RootDBState["classes"]
 	onClose: () => void
 }
 
-const StudentExportModal: React.FC<PropsType> = ({ students, sections, onClose }) => {
-
+const StudentExportModal: React.FC<PropsType> = ({ students, classes, onClose }) => {
 
 	const [sectionID, setSectionID] = useState("")
+	const sections = useMemo(
+		() => getSectionsFromClasses(classes),
+		[classes]
+	)
 
 
 	const generateCSV = () => {
@@ -39,7 +43,7 @@ const StudentExportModal: React.FC<PropsType> = ({ students, sections, onClose }
 		// for filename
 		let section_name = sectionID ? sections.find(section => section.id === sectionID).namespaced_name : "all-students"
 
-		const csv_data = students
+		const csv_data = Object.values(students)
 			.filter(student => {
 				return sectionID ? sectionID === student.section_id : true
 			})

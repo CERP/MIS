@@ -13,8 +13,6 @@ import { StudenPrintableIDCardList } from 'components/Printable/Student/cardlist
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { StudentIcon } from 'assets/icons'
 import { chunkify } from 'utils/chunkify'
-import Modal from 'components/Modal'
-import StudentExportModal from 'modules/Exports/studenExportModal'
 
 import './style.css'
 
@@ -163,19 +161,6 @@ export class StudentList extends Component<P, S> {
 		this.setState({ page_index: 0 })
 	}
 
-
-	toggleExportModal = () => {
-		this.setState({
-			showExportModal: !this.state.showExportModal
-		})
-	}
-
-	onCloseExportModal = () => {
-		this.setState({
-			showExportModal: false
-		})
-	}
-
 	handleSearch = (value: string) => {
 		this.setState({
 			page_index: 0,
@@ -186,7 +171,7 @@ export class StudentList extends Component<P, S> {
 	render() {
 
 		const { classes, students, settings, forwardTo, max_limit } = this.props
-		const { section_id, showActiveStudent, showInactiveStudent, printStudentCard, showExportModal } = this.state
+		const { section_id, showActiveStudent, showInactiveStudent, printStudentCard } = this.state
 
 		const schoolSession = {
 			startYear: settings && settings.schoolSession ? moment(settings.schoolSession.start_date).format("YYYY") : "",
@@ -255,15 +240,6 @@ export class StudentList extends Component<P, S> {
 		const card_items = items.slice(page_index * PAGE_SIZE, ((page_index + 1) * PAGE_SIZE))
 
 		return <div className="student-list">
-
-			{
-				showExportModal && <Modal>
-					<StudentExportModal
-						students={items}
-						sections={sections}
-						onClose={this.onCloseExportModal} />
-				</Modal>
-			}
 
 			<div className="title no-print">All Students</div>
 			<div className="no-print">
