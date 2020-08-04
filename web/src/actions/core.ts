@@ -120,6 +120,7 @@ export interface ImageUploadConfirmation {
 export const IMAGE_QUEUE_LOCK = "IMAGE_QUEUE_LOCK"
 const lockImageQueue = {
 	type: IMAGE_QUEUE_LOCK
+
 }
 
 export const IMAGE_QUEUE_UNLOCK = "IMAGE_QUEUE_UNLOCK"
@@ -606,4 +607,38 @@ export const multiAction = (resp: { key: string; val: any }) => (dispatch: Funct
 			dispatch(action)
 		}
 	}
+}
+
+export const GET_LESSONS = "GET_LESSONS"
+export const GET_LESSONS_SUCCESS = "GET_LESSONS_SUCCESS"
+export const GET_LESSONS_FAILURE = "GET_LESSONS_FAILURE"
+
+export const getLessons = () => ({
+	type: GET_LESSONS
+})
+
+export const getLessonsSuccess = (lessons: RootDBState["ilmx"]["lessons"]) => ({
+	type: GET_LESSONS_SUCCESS,
+	payload: lessons
+})
+
+export const getLessonsFailure = () => ({
+	type: GET_LESSONS_FAILURE
+})
+
+export const fetchLessons = () => (dispatch: Dispatch, getState: () => RootReducerState, syncr: Syncr) => {
+	const state = getState()
+	// start loading
+	dispatch(getLessons())
+	syncr.send({
+		type: "GET_LESSONS",
+		client_type: client_type,
+		payload: {
+			school_id: state.auth.school_id,
+			token: state.auth.token,
+			client_id: state.client_id,
+		}
+	})
+		.then(response => dispatch(getLessonsSuccess(response)))
+		.catch(err => dispatch(getLessonsFailure()))
 }

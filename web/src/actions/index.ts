@@ -20,7 +20,7 @@ export const mergeSettings = (settings: MISSettings) => (dispatch: Function) => 
 }
 
 export const MERGE_FACULTY = "MERGE_FACULTY"
-export const createFacultyMerge = (faculty: MISTeacher) => (dispatch: Function) => {
+export const createFacultyMerge = (faculty: MISTeacher, is_first?: boolean) => (dispatch: Function) => {
 
 	dispatch(createMerges([
 		{
@@ -37,6 +37,14 @@ export const createFacultyMerge = (faculty: MISTeacher) => (dispatch: Function) 
 			}
 		}
 	]))
+
+	if(is_first) {
+		dispatch({
+			type: LOCAL_LOGIN,
+			name: faculty.Name,
+			password: faculty.Password 
+		})
+	}
 }
 
 export const MERGE_STUDENT = "MERGE_STUDENT"
@@ -202,6 +210,7 @@ export const createLogin = (name: string, password: string) => (dispatch: Functi
 		})
 }
 
+
 export const SIGN_UP_LOADING = "SIGN_UP_LOADING"
 export const SIGN_UP_SUCCEED = "SIGN_UP_SUCCEED"
 export const SIGN_UP_FAILED = "SIGN_UP_FAILED"
@@ -293,6 +302,41 @@ export const createSchoolLogin = (school_id: string, password: string) => (dispa
 				type: "GETTING_DB"
 			})
 
+		})
+		.catch(err => {
+			console.error(err)
+			dispatch(createLoginFail())
+		})
+}
+
+export const autoSchoolLogin = (school_id: string, token: string, client_id: string, refcode: string) => (dispatch: Function, getState: () => RootReducerState, syncr: Syncr) => {
+
+	const action = {
+		type: SCHOOL_LOGIN,
+	}
+
+	dispatch(action);
+
+	syncr.send({
+		type: "AUTO_LOGIN",
+		client_type,
+		payload: {
+			school_id,
+			token,
+			client_id: getState().client_id,
+			ilmx_school_id: refcode,
+			ilmx_client_id: client_id,
+		}
+	})
+		.then((res: { status: string; number: string }) => {
+			syncr.verify()
+
+			localStorage.setItem("ilmx", res.number)
+			localStorage.setItem("user", "ILMX")
+
+			dispatch({
+				type: "AUTO_LOGIN_SUCCEED",
+			})
 		})
 		.catch(err => {
 			console.error(err)
@@ -753,9 +797,7 @@ export const deleteExam = (students: string[], exam_id: string) => (dispatch: Fu
 
 }
 
-export const logSms = (history: MISSMSHistory) => (dispatch: Function) => {
-
-	//history is an object { date: "", type: "", count:"" }
+export const logSms = (history: AugmentedSmsHistory) => (dispatch: Function) => {
 
 	dispatch(createMerges([
 		{
@@ -903,7 +945,7 @@ export const removeSubjectFromDatesheet = (id: string, subj: string, section_id:
 }
 
 export const resetFees = (students: MISStudent[]) => (dispatch: Function) => {
-	
+
 	const merges = students.reduce((agg, curr) => {
 		return [
 			...agg,

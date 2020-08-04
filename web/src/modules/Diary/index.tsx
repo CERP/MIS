@@ -12,6 +12,7 @@ import moment from 'moment'
 import getSectionFromId from 'utils/getSectionFromId'
 import DiaryPrintable from 'components/Printable/Diary/diary'
 import ShareButton from 'components/ShareButton'
+import { getIlmxUser } from 'utils/helpers'
 
 import './style.css'
 
@@ -21,6 +22,7 @@ interface P {
 	settings: RootDBState["settings"]
 	faculty_id: string
 	diary: RootDBState["diary"]
+	ilmxUser: string
 
 	addDiary: (date: string, section_id: string, diary: MISDiary["section_id"]) => any
 	sendMessage: (text: string, number: string) => any
@@ -346,9 +348,13 @@ class Diary extends Component<propTypes, S> {
 								<select {...this.former.super_handle(["students_filter"])}>
 									<option value="" disabled>Select Students</option>
 									<option value="all_students"> All students</option>
-									<option value="absent_students"> Only Absent students</option>
-									<option value="leave_students"> Only Leave students</option>
 									<option value="single_student"> Single student</option>
+									{
+										!this.props.ilmxUser && <>
+											<option value="absent_students"> Only Absent students</option>
+											<option value="leave_students"> Only Leave students</option>
+										</>
+									}
 								</select>
 							</div>
 						}
@@ -408,8 +414,7 @@ class Diary extends Component<propTypes, S> {
 									<div className="row button" onClick={() => sendBatchMessages(messages)} style={{ width: "20%" }}>Send</div>
 							}
 							<div className="is-mobile-only" style={{ marginTop: 10 }}>
-								<div className="text-center">Share on Whatsapp</div>
-								<ShareButton text={this.diaryString()} />
+								<ShareButton title={"School Diary"} text={this.diaryString()} />
 							</div>
 						</div>
 					}
@@ -431,7 +436,8 @@ export default connect((state: RootReducerState) => ({
 	diary: state.db.diary,
 	students: state.db.students,
 	classes: state.db.classes,
-	settings: state.db.settings
+	settings: state.db.settings,
+	ilmxUser: getIlmxUser()
 }), (dispatch: Function) => ({
 	sendMessage: (text: string, number: string) => dispatch(sendSMS(text, number)),
 	sendBatchMessages: (messages: MISSms[]) => dispatch(sendBatchSMS(messages)),

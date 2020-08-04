@@ -7,7 +7,7 @@ import DashboardPage from 'pages/stats';
 import './style.css'
 import Trials from 'pages/trials';
 import AdminActions from 'pages/admin';
-import ResetPassword from 'pages/admin/password'
+import ManageSchool from 'pages/admin/school'
 import newUser from 'pages/admin/newUser';
 import { connect } from 'react-redux';
 
@@ -75,7 +75,7 @@ class Accordian extends React.Component<propTypes, S> {
 				{(stats || admin) && <Link to={{ pathname: "/dashboard/school_id/start_date/end_date/", search }} className={current === "/dashboard/school_id/start_date/end_date/" ? "active" : ""}> Stats</Link>}
 				{<Link to={{ pathname: "/trials", search }} className={current === "/trials" ? "active" : ""}>Trials</Link>}
 				{admin && <Link to={{ pathname: "/admin", search }} className={current === "/admin" ? "active" : ""}>Admin</Link>}
-				{admin && <Link to={{ pathname: "/reset-password", search }} className={current === "/reset-password" ? "active" : ""}>Reset Password</Link>}
+				{admin && <Link to={{ pathname: "/manage-school", search }} className={current === "/manage-school" ? "active" : ""}>Manage School</Link>}
 				{(new_user || admin) && <Link to={{ pathname: "/user/new", search }} className={current === "/user/new" ? "active" : ""}>New User</Link>}
 				<Link to="" onClick={() => this.onLogout()}> LOGOUT </Link>
 			</div>}
@@ -85,7 +85,7 @@ class Accordian extends React.Component<propTypes, S> {
 				<Route path="/dashboard/:school_id/:start_date/:end_date/" component={DashboardPage} />
 				<Route path="/trials" component={Trials} />
 				<Route exact path="/admin" component={AdminActions} />
-				<Route exact path="/reset-password" component={ResetPassword} />
+				<Route exact path="/manage-school" component={ManageSchool} />
 				<Route exact path="/user/new" component={newUser} />
 			</div>
 		</div>
