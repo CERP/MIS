@@ -124,6 +124,7 @@ interface RootReducerState {
 		isLoading: boolean
 		hasError: boolean
 	}
+	is_code_sent: boolean
 }
 
 interface MISSMSHistory {
