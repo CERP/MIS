@@ -2,9 +2,9 @@ import React, { useState, useEffect, useMemo } from "react"
 import { connect } from 'react-redux'
 
 import { fetchLessons } from 'actions/core'
-import { getTimeString, showScroll, hideScroll } from "utils/helpers"
+import { showScroll, hideScroll } from "utils/helpers"
 import { PlayIcon } from 'assets/icons'
-import FileCopyIcon from '@material-ui/icons/FileCopy'
+import { ContentCopyIcon } from 'assets/icons'
 import moment from 'moment'
 
 import './style.css'
@@ -30,10 +30,10 @@ const SubjectTable: React.FC<PropsType> = ({ students, events, lessons, fetchLes
     const current_date = moment.now()
 
     const [toggleSortOrder, setToggleSortOrder] = useState(false)
-    const [toggleCalendar, setToggleCalendar] = useState(false)
     const [classFilter, setClassFilter] = useState('')
     const [subjectFilter, setSubjectFilter] = useState('')
     const [dateFilter, setDateFilter] = useState(null)
+    const [, setCopied] = useState(false)
 
     useEffect(() => {
         fetchLessons()
@@ -65,30 +65,8 @@ const SubjectTable: React.FC<PropsType> = ({ students, events, lessons, fetchLes
         hideScroll()
     }
 
-    const handleToggleModal = () => {
-        setStateProps({
-            ...stateProps,
-            showViewerModal: !stateProps.showViewerModal,
-            lessonId: ''
-        })
-
-        showScroll()
-        window.scrollTo(0, stateProps.scrollY)
-    }
-
-    const hanleToggleCalender = () => {
-        if (!toggleCalendar) {
-            setDateFilter(current_date)
-        } else {
-            setDateFilter(null)
-        }
-
-        setToggleCalendar(!toggleCalendar)
-    }
-
-    const handleDateChange = (input_date: string) => {
-        const date = moment(input_date, "YYYY-MM-DD").unix() * 1000
-        setDateFilter(date)
+    const copyLink = (link: string) => {
+        navigator.clipboard.writeText(link)
     }
 
     return (
@@ -122,9 +100,9 @@ const SubjectTable: React.FC<PropsType> = ({ students, events, lessons, fetchLes
                 </div>
                 <div className="container">
                     {
-
                         sorted_entries
                             .map(([lesson_id, lesson_meta]) => (
+                                console.log('dekho', lesson_id, lesson_meta.chapter_name),
                                 <div className="card" key={lesson_id}>
                                     <div className="card-row">
                                         <div className="card-row inner">
@@ -132,7 +110,7 @@ const SubjectTable: React.FC<PropsType> = ({ students, events, lessons, fetchLes
                                             <p className="card-title">{lesson_meta.name}</p>
                                         </div>
                                         <div style={{ marginLeft: "auto" }}>
-                                            <FileCopyIcon className="copyIcon" />
+                                            <img src={ContentCopyIcon} alt="copy-icon" className="copyIcon" onClick={() => copyLink(`https://ilmexchange.com/library/${lesson_id.replace(/-/g, '/').slice(0, -2)}/${lesson_meta.chapter_name}`)} />
                                         </div>
                                     </div>
                                     <div className="card-row">
