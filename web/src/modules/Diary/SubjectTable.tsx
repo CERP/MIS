@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { fetchLessons } from 'actions/core'
 import { getTimeString, showScroll, hideScroll } from "utils/helpers"
 import { PlayIcon } from 'assets/icons'
-// import FileCopyIcon from '@material-ui/icons/FileCopy'
+import FileCopyIcon from '@material-ui/icons/FileCopy'
 import moment from 'moment'
 
 import './style.css'
@@ -132,8 +132,7 @@ const SubjectTable: React.FC<PropsType> = ({ students, events, lessons, fetchLes
                                             <p className="card-title">{lesson_meta.name}</p>
                                         </div>
                                         <div style={{ marginLeft: "auto" }}>
-                                            {/* <FileCopyIcon /> */}
-                                            <p className="views viewer" >Copy Link</p>
+                                            <FileCopyIcon className="copyIcon" />
                                         </div>
                                     </div>
                                     <div className="card-row">

@@ -10,3 +10,10 @@
 .diary .section .row .button {
 	padding: 10px 15px;
 }
+
+.copyIcon {
+	color: rgb(73, 215, 189)
+}
+.copyIcon:hover {
+	color: black
+}
