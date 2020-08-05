@@ -36,7 +36,10 @@ class ToProspectiveStudents extends Component {
 		const { students, portal_link } = this.props
 
 		const messages = Object.values(students)
-			.filter(s => (s.tags !== undefined ) && (s.tags["PROSPECTIVE"]) && s.Phone)
+			.filter(s => {
+				return (s.tags !== undefined ) && (s.tags["PROSPECTIVE"]) &&
+				s.Phone && (s.Phone.length >= 11 && s.Phone.length <=15)
+			})
 			.reduce((agg,student)=> {
 				
 				const index  = agg.findIndex(s => s.number === student.Phone)		
@@ -72,7 +75,7 @@ class ToProspectiveStudents extends Component {
 				<textarea {...this.former.super_handle(["text"])} placeholder="Write text message here" />
 			</div> 
 				{ smsOption === "SIM" ? 
-					<a href={smsIntentLink({
+					<a href={ messages.length > 0 &&  smsIntentLink({
 						messages,
 						return_link: window.location.href 
 					})} onClick={() => this.logSms(messages)} className="button blue">Send using Local SIM</a> : 

@@ -24,7 +24,7 @@ class ToAllStudents extends Component {
 		const historyObj = {
 			faculty: this.props.faculty_id,
 			date: new Date().getTime(),
-			type: "ALL_STUDENTS",
+			type: this.props.portal_link ? "STUDENT_LINK_SMS" : "ALL_STUDENTS",
 			count: messages.length,
 			text: this.state.text
 		}
@@ -37,7 +37,10 @@ class ToAllStudents extends Component {
 		const { students, portal_link } = this.props
 
 		const messages = Object.values(students)
-			.filter(s => (s.tags === undefined || !s.tags["PROSPECTIVE"]) && s.Phone)
+			.filter(s => {
+				return (s.tags === undefined || !s.tags["PROSPECTIVE"]) &&
+					s.Phone && (s.Phone.length >= 11 && s.Phone.length <=15)
+			})
 			.reduce((agg,student)=> {
 				const index  = agg.findIndex(s => s.number === student.Phone)		
 				
