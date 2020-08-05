@@ -15,6 +15,7 @@ import ShareButton from 'components/ShareButton'
 import { replaceSpecialCharsWithUTFChars } from 'utils/stringHelper'
 
 import './style.css'
+import SubjectTable from './SubjectTable'
 
 interface P {
 	students: RootDBState["students"]
@@ -40,6 +41,7 @@ interface S {
 	selected_student_phone: string
 	students_filter: "" | "all_students" | "single_student" | "absent_students" | "leave_students"
 	diary: MISDiary["date"]
+	showSubjects: boolean
 }
 
 type propTypes = RouteComponentProps & P
@@ -79,7 +81,8 @@ class Diary extends Component<propTypes, S> {
 			selected_section_id: "",
 			selected_student_phone: "",
 			students_filter: "all_students",
-			diary
+			diary,
+			showSubjects: false
 		}
 
 		this.former = new former(this, [])
@@ -303,6 +306,10 @@ class Diary extends Component<propTypes, S> {
 			}, {} as { [id: string]: string })
 	}
 
+	getClassName = () => {
+		this.setState({ showSubjects: true })
+	}
+
 	render() {
 
 		const { classes, sendBatchMessages, settings } = this.props;
@@ -337,7 +344,7 @@ class Diary extends Component<propTypes, S> {
 						</div>
 						<div className="row">
 							<label>Select Class/Section</label>
-							<select {...this.former.super_handle(["selected_section_id"])}>
+							<select {...this.former.super_handle(["selected_section_id"])} onClick={this.getClassName}>
 								<option value="" disabled>Select Section</option>
 								{
 									sortedSections.map(s => <option key={s.id} value={s.id}>{s.namespaced_name}</option>)
@@ -425,6 +432,10 @@ class Diary extends Component<propTypes, S> {
 					schoolDiary={this.getSelectedSectionDiary()}
 				/>
 				}
+				{
+					this.state.showSubjects ? <SubjectTable /> : null
+				}
+
 			</div>
 		</Layout>
 	}
