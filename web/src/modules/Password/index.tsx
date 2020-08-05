@@ -4,8 +4,11 @@ import { connect } from 'react-redux'
 import { Redirect } from 'react-router'
 import { Link } from 'react-router-dom'
 
+import { sendResetCode } from 'actions/index'
+
 import Layout from 'components/Layout'
 import SiteConfig from 'constants/siteConfig.json'
+import { hash } from 'utils'
 import { getIlmxUser } from 'utils/helpers'
 
 import './style.css'
@@ -14,9 +17,12 @@ type PropsType = {
 	faculty: RootDBState["faculty"]
 	history: History
 	ilmxUser: string
+	isCodeSent: boolean
+	sendResetCode: (phone: string, code: string) => void
+
 } & RootReducerState
 
-const AdminResetPassword: React.FC<PropsType> = ({ history, faculty, ilmxUser, initialized, auth }) => {
+const AdminResetPassword: React.FC<PropsType> = ({ history, faculty, ilmxUser, initialized, auth, sendResetCode, isCodeSent }) => {
 
 	const helpline = ilmxUser ? SiteConfig["helpLineIlmx"] : SiteConfig["helpLine"]
 
@@ -47,6 +53,24 @@ const AdminResetPassword: React.FC<PropsType> = ({ history, faculty, ilmxUser, i
 			setError("Provided number doesn't match with admin account")
 			return
 		}
+
+		const rand_code = Math.floor(100000 + Math.random() * 900000).toString()
+		const curr_date = new Date().getDate()
+
+		hash(rand_code).then(hash_code => {
+
+			const validate = {
+				"date": curr_date,
+				"code": hash_code
+			}
+
+			// store hash of code for verification
+			localStorage.setItem('reset_info', JSON.stringify(validate))
+
+			// send code to provided number
+			sendResetCode(phoneNumber, rand_code)
+		})
+
 	}
 
 	const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -111,9 +135,10 @@ export default connect((state: RootReducerState) => ({
 	faculty: state.db.faculty,
 	initialized: state.initialized,
 	connected: state.connected,
+	isCodeSent: state.is_code_sent,
 	ilmxUser: getIlmxUser()
 }), (dispatch: Function) => ({
-
+	sendResetCode: (phone: string, code: string) => dispatch(sendResetCode(phone, code))
 }))(AdminResetPassword)
 
 const getAdminFaculty = (faculty: PropsType["faculty"]) => {
