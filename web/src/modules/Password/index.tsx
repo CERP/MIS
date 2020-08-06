@@ -30,7 +30,7 @@ const AdminResetPassword: React.FC<PropsType> = ({ history, faculty, ilmxUser, i
 	)
 
 	const [error, setError] = useState("")
-	const [admin, setAdmin] = useState<MISTeacher>()
+	const [admin, setAdmin] = useState<MISTeacher>(undefined)
 	const [adminId, setAdminId] = useState("")
 	const [phoneNumber, setPhoneNumber] = useState("")
 	const [verifyPasswordSent, setVerifyPasswordSent] = useState(false)
@@ -42,7 +42,7 @@ const AdminResetPassword: React.FC<PropsType> = ({ history, faculty, ilmxUser, i
 			setVerifyPasswordSent(!verify)
 		}
 
-	}, [faculty])
+	}, [faculty, adminId, admin])
 
 	const handleSelectionChange = (id: string) => {
 		setAdminId(id)
