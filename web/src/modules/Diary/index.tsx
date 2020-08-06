@@ -13,6 +13,7 @@ import getSectionFromId from 'utils/getSectionFromId'
 import DiaryPrintable from 'components/Printable/Diary/diary'
 import ShareButton from 'components/ShareButton'
 import { getIlmxUser } from 'utils/helpers'
+import { replaceSpecialCharsWithUTFChars } from 'utils/stringHelper'
 
 import './style.css'
 
@@ -212,7 +213,10 @@ class Diary extends Component<propTypes, S> {
 		const diary_message = Object.entries(this.state.diary[this.state.selected_section_id])
 			.map(([subject, { homework }]) => `${subject}: ${homework}`)
 
-		return curr_date + section_name + diary_message.join("\n")
+		const raw_diary_string = curr_date + section_name + diary_message.join("\n")
+		const diary_string = replaceSpecialCharsWithUTFChars(raw_diary_string)
+
+		return diary_string
 	}
 
 	getSelectedSectionStudents = () => {

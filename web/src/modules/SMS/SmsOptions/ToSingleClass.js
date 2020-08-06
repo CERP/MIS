@@ -5,7 +5,8 @@ import {getSectionsFromClasses} from 'utils/getSectionsFromClasses'
 
 import former from 'utils/former'
 import ShareButton from 'components/ShareButton'
-import { replaceSpecialCharsWithUTFChars } from 'utils/stringHelper'
+import { replaceSpecialCharsWithUTFChars, isSMSCharsLimitExceed } from 'utils/stringHelper'
+import { SMSLimitExceed } from '..'
 
 
 class ToSingleClass extends Component {
@@ -69,9 +70,9 @@ class ToSingleClass extends Component {
 	render() {
 
 	const { classes, sendBatchMessages, smsOption } = this.props;
-
 	const messages = this.getMessages()
-	
+	const limit_exceed = isSMSCharsLimitExceed(this.state.text)
+
 	return (
 			<div>
 				<div className="row">
@@ -90,13 +91,13 @@ class ToSingleClass extends Component {
 					<label>Message</label>
 					<textarea {...this.former.super_handle(["text"])} placeholder="Write text message here" />
 				</div>
-					{ smsOption === "SIM" ? 
-						<a href={smsIntentLink({
-							messages,
-							return_link: window.location.href 
-							})} onClick={() => this.logSms(messages)} className="button blue">Send using Local SIM</a> 
-							: <div className="button" onClick={() => sendBatchMessages(messages)}>Send</div>
-					}
+				{ limit_exceed && <SMSLimitExceed /> }
+				{ smsOption === "SIM" ? 
+					<a href={smsIntentLink({ messages, return_link: window.location.href })}
+						onClick={(e) => limit_exceed ? e.preventDefault() : this.logSms(messages)}
+						className="button blue">Send using Local SIM</a> : 
+					<div className="button" onClick={() => sendBatchMessages(messages)}>Send using API</div> 
+				}
 				<div className="is-mobile-only" style={{marginTop: 10}}>
 					<ShareButton title={"SMS"} text={this.state.text} />
 				</div>

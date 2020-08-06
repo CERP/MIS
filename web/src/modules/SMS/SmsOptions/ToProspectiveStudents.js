@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import { smsIntentLink } from 'utils/intent'
 import former from 'utils/former'
 import ShareButton from 'components/ShareButton'
-import { replaceSpecialCharsWithUTFChars } from 'utils/stringHelper'
+import { replaceSpecialCharsWithUTFChars, isSMSCharsLimitExceed } from 'utils/stringHelper'
+import { SMSLimitExceed } from '..'
 
 class ToProspectiveStudents extends Component {
 	constructor(props) {
@@ -63,10 +64,8 @@ class ToProspectiveStudents extends Component {
 	render() {
 
 	const { sendBatchMessages, smsOption } = this.props;
-
 	const messages = this.getMessages()
-
-	console.log(messages)
+	const limit_exceed = isSMSCharsLimitExceed(this.state.text)
 
 	return (
 		<div>
@@ -74,13 +73,13 @@ class ToProspectiveStudents extends Component {
 				<label>Message</label>
 				<textarea {...this.former.super_handle(["text"])} placeholder="Write text message here" />
 			</div> 
-				{ smsOption === "SIM" ? 
-					<a href={ messages.length > 0 &&  smsIntentLink({
-						messages,
-						return_link: window.location.href 
-					})} onClick={() => this.logSms(messages)} className="button blue">Send using Local SIM</a> : 
-					<div className="button" onClick={() => sendBatchMessages(messages)}>Can Only send using Local SIM</div>
-				}
+			{ limit_exceed && <SMSLimitExceed /> }
+			{ smsOption === "SIM" ? 
+				<a href={smsIntentLink({ messages, return_link: window.location.href })}
+					onClick={(e) => limit_exceed ? e.preventDefault() : this.logSms(messages)}
+					className="button blue">Send using Local SIM</a> : 
+				<div className="button" onClick={() => sendBatchMessages(messages)}>Send using API</div> 
+			}
 			<div className="is-mobile-only" style={{marginTop: 10}}>
 				<ShareButton title={"SMS"} text={this.state.text} />
 			</div>

@@ -272,3 +272,8 @@ export default connect(state => ({
 	sendBatchMessages: (messages, type) => dispatch(sendBatchSMS(messages)),
 	logSms: (faculty_id, history) => dispatch(logSms(faculty_id, history))
 }))(SMS);
+
+
+export const SMSLimitExceed = () => (
+	<p className="error"><strong>Alert</strong>: SMS characters limit exceeds, Max 165 characters are allowed!</p>
+)
