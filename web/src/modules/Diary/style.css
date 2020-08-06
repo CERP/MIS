@@ -11,9 +11,8 @@
 	padding: 10px 15px;
 }
 
-.copyIcon {
-	color: rgb(73, 215, 189)
-}
-.copyIcon:hover {
-	color: black
+.video-link {
+	margin: 2px;
+    width: 12%;
+    float: right;
 }

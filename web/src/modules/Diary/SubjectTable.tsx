@@ -27,13 +27,9 @@ interface S {
 
 const SubjectTable: React.FC<PropsType> = ({ students, events, lessons, fetchLessons, classes }) => {
 
-    const current_date = moment.now()
-
     const [toggleSortOrder, setToggleSortOrder] = useState(false)
     const [classFilter, setClassFilter] = useState('')
     const [subjectFilter, setSubjectFilter] = useState('')
-    const [dateFilter, setDateFilter] = useState(null)
-    const [, setCopied] = useState(false)
 
     useEffect(() => {
         fetchLessons()
@@ -41,8 +37,8 @@ const SubjectTable: React.FC<PropsType> = ({ students, events, lessons, fetchLes
 
     const { classTitles, subjects } = useMemo(() => getClassSubjectsInfo(events), [events])
     const lessons_data = useMemo(
-        () => computeLessonsData(events, lessons, dateFilter, classFilter, subjectFilter),
-        [events, lessons, dateFilter, classFilter, subjectFilter]
+        () => computeLessonsData(events, lessons, classFilter, subjectFilter),
+        [events, lessons, classFilter, subjectFilter]
     )
 
     const sorted_entries = getSortedEntries(lessons_data, toggleSortOrder)
@@ -67,6 +63,12 @@ const SubjectTable: React.FC<PropsType> = ({ students, events, lessons, fetchLes
 
     const copyLink = (link: string) => {
         navigator.clipboard.writeText(link)
+    }
+
+    const getLink = (link: string) => {
+        const manipulatedLink = link.replace(/-/g, '/')
+        const finalLink = manipulatedLink.replace(/ /g, '%20').slice(0, -2)
+        return finalLink
     }
 
     return (
@@ -102,7 +104,6 @@ const SubjectTable: React.FC<PropsType> = ({ students, events, lessons, fetchLes
                     {
                         sorted_entries
                             .map(([lesson_id, lesson_meta]) => (
-                                console.log('dekho', lesson_id, lesson_meta.chapter_name),
                                 <div className="card" key={lesson_id}>
                                     <div className="card-row">
                                         <div className="card-row inner">
@@ -110,18 +111,11 @@ const SubjectTable: React.FC<PropsType> = ({ students, events, lessons, fetchLes
                                             <p className="card-title">{lesson_meta.name}</p>
                                         </div>
                                         <div style={{ marginLeft: "auto" }}>
-                                            <img src={ContentCopyIcon} alt="copy-icon" className="copyIcon" onClick={() => copyLink(`https://ilmexchange.com/library/${lesson_id.replace(/-/g, '/').slice(0, -2)}/${lesson_meta.chapter_name}`)} />
+                                            <img src={ContentCopyIcon} alt="copy-icon" className="copyIcon" onClick={() => copyLink(`https://ilmexchange.com/library/${getLink(lesson_id)}/${lesson_meta.chapter_name.replace(/ /g, '%20')}`)} />
                                         </div>
                                     </div>
                                     <div className="card-row">
                                         <p className="student-class-title">Class: {getClassTitleFromLessonId(lesson_id)}-{getSubjectTitleFromLessonId(lesson_id)}</p>
-                                    </div>
-                                    <div className="card-row">
-                                        <div className="more-detail">
-                                            <p className="hidden-views viewer"
-                                                style={{ marginLeft: "auto" }}
-                                                onClick={() => handleClickShowViewers(lesson_id)}>{lesson_meta.watchCount} views</p>
-                                        </div>
                                     </div>
                                 </div>
                             ))
@@ -149,10 +143,10 @@ type AugmentedIlmxLessons = {
 }
 
 type ComputeLessonsData = {
-    (events: PropsType["events"], lessons: PropsType["lessons"], date: number, class_title: string, subject: string): AugmentedIlmxLessons
+    (events: PropsType["events"], lessons: PropsType["lessons"], class_title: string, subject: string): AugmentedIlmxLessons
 }
 
-const computeLessonsData: ComputeLessonsData = (events, lessons, date, class_title, subject) => {
+const computeLessonsData: ComputeLessonsData = (events, lessons, class_title, subject) => {
 
     let agg: AugmentedIlmxLessons = {}
 
@@ -167,9 +161,7 @@ const computeLessonsData: ComputeLessonsData = (events, lessons, date, class_tit
 
             for (const [timestamp, item] of Object.entries(lessons_history)) {
 
-                const is_same_date = date ? moment(parseInt(timestamp)).isSame(moment(date), "day") : true
-
-                if (item.type === "VIDEO" && is_same_date) {
+                if (item.type === "VIDEO" && true) {
 
                     const { lesson_id, duration, student_id } = item
 
