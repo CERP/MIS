@@ -1,15 +1,14 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { History } from 'history'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router'
 import { Link } from 'react-router-dom'
-
-import { sendResetCode } from 'actions/index'
+import { sendTempPassword } from 'actions/index'
 
 import Layout from 'components/Layout'
 import SiteConfig from 'constants/siteConfig.json'
-import { hash } from 'utils'
 import { getIlmxUser } from 'utils/helpers'
+import { hash } from 'utils'
 
 import './style.css'
 
@@ -17,12 +16,11 @@ type PropsType = {
 	faculty: RootDBState["faculty"]
 	history: History
 	ilmxUser: string
-	isCodeSent: boolean
-	sendResetCode: (phone: string, code: string) => void
+	sendTempPassword: (faculty: MISTeacher, temp_pass: string) => void
 
 } & RootReducerState
 
-const AdminResetPassword: React.FC<PropsType> = ({ history, faculty, ilmxUser, initialized, auth, sendResetCode, isCodeSent }) => {
+const AdminResetPassword: React.FC<PropsType> = ({ history, faculty, ilmxUser, initialized, connected, auth, sendTempPassword }) => {
 
 	const helpline = ilmxUser ? SiteConfig["helpLineIlmx"] : SiteConfig["helpLine"]
 
@@ -32,10 +30,31 @@ const AdminResetPassword: React.FC<PropsType> = ({ history, faculty, ilmxUser, i
 	)
 
 	const [error, setError] = useState("")
+	const [admin, setAdmin] = useState<MISTeacher>()
 	const [adminId, setAdminId] = useState("")
 	const [phoneNumber, setPhoneNumber] = useState("")
+	const [verifyPasswordSent, setVerifyPasswordSent] = useState(false)
 
-	const handleClickSendCode = () => {
+	useEffect(() => {
+
+		if (adminId) {
+			const verify = JSON.stringify(admin) === JSON.stringify(faculty[adminId])
+			setVerifyPasswordSent(!verify)
+		}
+
+	}, [faculty])
+
+	const handleSelectionChange = (id: string) => {
+		setAdminId(id)
+		setAdmin(faculty[id])
+	}
+
+	const handleClickSendPassword = () => {
+
+		if (!connected) {
+			setError("Please check your internet connect, or try again!")
+			return
+		}
 
 		if (adminId.length === 0) {
 			setError("Please select admin first")
@@ -47,28 +66,22 @@ const AdminResetPassword: React.FC<PropsType> = ({ history, faculty, ilmxUser, i
 			return
 		}
 
-		const selected_faculty = faculty[adminId]
+		const selected_teacher = faculty[adminId]
 
-		if (selected_faculty.Phone !== phoneNumber) {
+		if (selected_teacher.Phone !== phoneNumber) {
 			setError("Provided number doesn't match with admin account")
 			return
 		}
 
-		const rand_code = Math.floor(100000 + Math.random() * 900000).toString()
-		const curr_date = new Date().getDate()
+		const rand_password = Math.floor(100000 + Math.random() * 900000).toString()
 
-		hash(rand_code).then(hash_code => {
-
-			const validate = {
-				"date": curr_date,
-				"code": hash_code
+		hash(rand_password).then(hashed_pass => {
+			const teacher = {
+				...selected_teacher,
+				Password: hashed_pass
 			}
 
-			// store hash of code for verification
-			localStorage.setItem('reset_info', JSON.stringify(validate))
-
-			// send code to provided number
-			sendResetCode(phoneNumber, rand_code)
+			sendTempPassword(teacher, rand_password)
 		})
 
 	}
@@ -76,7 +89,7 @@ const AdminResetPassword: React.FC<PropsType> = ({ history, faculty, ilmxUser, i
 	const handleKeyDown = (e: React.KeyboardEvent) => {
 		// check 'enter' key pressed
 		if (e.keyCode === 13) {
-			handleClickSendCode()
+			handleClickSendPassword()
 		}
 	}
 
@@ -96,31 +109,38 @@ const AdminResetPassword: React.FC<PropsType> = ({ history, faculty, ilmxUser, i
 							</p>
 							:
 							<>
-								<div className="box-title">Send Reset Code</div>
-								<div className="box">
-									<div style={{ marginTop: "1rem", marginBottom: "0.25rem" }}>Please select admin and enter phone number to send reset code</div>
-									<select onChange={(e) => setAdminId(e.target.value)} style={{ width: "100%", marginBottom: "0.5rem" }}>
-										<option value="">Select Admin</option>
-										{
-											adminFaculty
-												.map(f => <option key={f.id} value={f.id}>{f.Name}</option>)
-										}
-									</select>
-									<div className="">
-										<input type="text"
-											placeholder="Mobile number"
-											onBlur={(e) => setPhoneNumber(e.target.value)}
-											onKeyDown={handleKeyDown} />
-									</div>
-									<div className="row">
-										<div className="button blue" onClick={handleClickSendCode} style={{ marginLeft: "auto" }}>Send Code</div>
-										<Link
-											to="/login"
-											className="button grey"
-											style={{ marginLeft: "0.175rem" }}>Cancel</Link>
-									</div>
-									{error && <p className="error">{error}, <span><a href={`tel:${helpline.phoneInt}`} title={helpline.phone}>OR Contact Helpline!</a></span></p>}
-								</div>
+								{
+									verifyPasswordSent ? <ShowPasswordSent />
+										:
+										<>
+											<div className="box-title">Send Temporary Password</div>
+											<div className="box">
+												<div style={{ marginTop: "1rem", marginBottom: "0.25rem" }}>Please select admin and enter phone number to send password</div>
+												<select onChange={(e) => handleSelectionChange(e.target.value)} style={{ width: "100%", marginBottom: "0.5rem" }}>
+													<option value="">Select Admin</option>
+													{
+														adminFaculty
+															.sort((a, b) => a.Name.localeCompare(b.Name))
+															.map(f => <option key={f.id} value={f.id}>{f.Name}</option>)
+													}
+												</select>
+												<div className="">
+													<input type="text"
+														placeholder="Mobile number"
+														onBlur={(e) => setPhoneNumber(e.target.value)}
+														onKeyDown={handleKeyDown} />
+												</div>
+												<div className="row">
+													<div className="button blue" onClick={handleClickSendPassword} style={{ marginLeft: "auto" }}>Send</div>
+													<Link
+														to="/login"
+														className="button grey"
+														style={{ marginLeft: "0.175rem" }}>Cancel</Link>
+												</div>
+												{error && <p className="error">{error}, <span><a href={`tel:${helpline.phoneInt}`} title={helpline.phone}>OR Contact Helpline!</a></span></p>}
+											</div>
+										</>
+								}
 							</>
 					}
 				</div>
@@ -135,10 +155,9 @@ export default connect((state: RootReducerState) => ({
 	faculty: state.db.faculty,
 	initialized: state.initialized,
 	connected: state.connected,
-	isCodeSent: state.is_code_sent,
 	ilmxUser: getIlmxUser()
 }), (dispatch: Function) => ({
-	sendResetCode: (phone: string, code: string) => dispatch(sendResetCode(phone, code))
+	sendTempPassword: (faculty: MISTeacher, temp_pass: string) => dispatch(sendTempPassword(faculty, temp_pass))
 }))(AdminResetPassword)
 
 const getAdminFaculty = (faculty: PropsType["faculty"]) => {
@@ -148,4 +167,16 @@ const getAdminFaculty = (faculty: PropsType["faculty"]) => {
 				&& (f.HasLogin ? f.HasLogin : true)
 				&& f.Phone
 		})
+}
+
+const ShowPasswordSent = () => {
+	return (
+		<div className="text-center">
+			<p>A temporary password has been sent to your mobile</p>
+			<Link
+				to="/login"
+				className="button blue"
+				style={{ marginLeft: "0.175rem" }}>Back to Login</Link>
+		</div>
+	)
 }

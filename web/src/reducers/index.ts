@@ -27,8 +27,7 @@ import {
 	LOCAL_LOGOUT,
 	SIGN_UP_FAILED,
 	SIGN_UP_SUCCEED,
-	SIGN_UP_LOADING,
-	RESET_ADMIN_PASSWORD
+	SIGN_UP_LOADING
 } from 'actions'
 
 import { AnyAction } from 'redux'
@@ -445,11 +444,6 @@ const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerSta
 				}
 			},
 			ilmxLessons: { isLoading: false, hasError: false }
-		}
-
-		case RESET_ADMIN_PASSWORD: return {
-			...state,
-			is_code_sent: action.payload
 		}
 
 		default:

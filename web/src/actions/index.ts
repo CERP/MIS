@@ -972,11 +972,11 @@ export const resetFees = (students: MISStudent[]) => (dispatch: Function) => {
 }
 
 export const RESET_ADMIN_PASSWORD = "RESET_ADMIN_PASSWORD"
-export const sendResetCode = (phone: string, code: string) => (dispatch: Function, getState: () => RootReducerState, syncr: Syncr) => {
+export const sendTempPassword = (faculty: MISTeacher, password: string) => (dispatch: Function, getState: () => RootReducerState, syncr: Syncr) => {
 
 	if(!syncr.ready) {
 		syncr.onNext('connect', () => {
-			dispatch(sendResetCode(phone, code))
+			dispatch(sendTempPassword(faculty, password))
 		})
 	}
 
@@ -984,18 +984,15 @@ export const sendResetCode = (phone: string, code: string) => (dispatch: Functio
 		type: RESET_ADMIN_PASSWORD,
 		client_type,
 		payload: {
-			phone,
-			code,
+			number: faculty.Phone,
+			password,
 			school_id: getState().auth.school_id,
 			client_id: getState().client_id
 		}
 	})
 		.then(res => {
 			console.log(res)
-			dispatch({
-				type: RESET_ADMIN_PASSWORD,
-				payload: true
-			})
+			dispatch(createFacultyMerge(faculty))
 		})
 		.catch(err => {
 			console.error(err)
