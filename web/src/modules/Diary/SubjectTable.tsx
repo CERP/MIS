@@ -51,7 +51,7 @@ const SubjectTable: React.FC<PropsType> = ({ events, lessons, fetchLessons, onCl
         
     	<div className="ilmx-analytics modal-container inner">
 			<div className="close button red" onClick={onClose}>✕</div>
-			<div className="title">Lesson Viewers</div>
+			<div className="title">Video Lectures</div>
 			<div className="form scrollbar">
                 <div className="row video-filter">
                     <select onChange={(e) => setClassFilter(e.target.value)}>
