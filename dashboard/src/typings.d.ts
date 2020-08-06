@@ -37,6 +37,7 @@ interface RootReducerState {
 		}
 		meta?: TrialsDataRow["value"]
 	}
+	mis_faculty: MISFaculty
 	trials: TrialsDataRow[]
 	stats: {
 		student_attendance?: {
@@ -195,7 +196,7 @@ interface SignUpValue {
 	area_manager_name: "AYESHA" | "UMER" | "FAROOQ" | "ZAHID" | "KAMRAN" | "NOMAN" | ""
 	office: "" | "LAHORE" | "SARGODHA" | "SIALKOT" | "GUJRANWALA" | "FAISALABAD" | "ISLAMABAD" | "RAWALPINDI"
 	city: string
-	type_of_login: "" | "SCHOOL_REFERRAL" | "ASSOCIATION" | "EDFIN" | "INDIVIDUAL" | "AGENT" | "PLATFORM" | "AGENT_SCHOOL"
+	type_of_login: "" | "SCHOOL_REFERRAL" | "ASSOCIATION" | "EDFIN" | "INDIVIDUAL" | "AGENT" | "ILM_EXCHANGE" | "AGENT_SCHOOL"
 
 	school_name: string
 	owner_name: string
@@ -225,4 +226,25 @@ interface UserPermissions {
 interface PermissionPayload {
 	role: string
 	permissions: UserPermissions
+}
+
+type SchoolLoginInfo = {
+	agent_name: string
+	area_manager_name: string
+	association_name: string
+	city: string
+	notes: string
+	office: string
+	owner_easypaisa_number: string
+	owner_name: string
+	owner_phone: string
+	package_name: string
+	school_name: string
+	school_type: "URBAN" | "RURAL"
+	type_of_login: string
+	user?: string
+}
+
+interface MISFaculty {
+	[id: string]: string
 }

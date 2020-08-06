@@ -8,6 +8,7 @@ import { createLogout, resetTrial, markPurchased } from 'actions'
 import Layout from 'components/Layout'
 import Modal from 'components/Modal'
 import { numberWithCommas } from 'utils/numberWithCommas'
+import { MISPrompt } from 'components/Alert'
 
 import attendanceIcon from './icons/attendance/checklist_1.svg'            //
 import teacherAttendanceIcon from './icons/attendance/Attendance.svg'    //
@@ -50,6 +51,8 @@ class Landing extends Component {
 
 		this.state = {
 			scroll: 0,
+			showPrompt: false,
+			hasPromptError: false,
 			toggleRedirectModal: false,
 			phone: "",
 		}
@@ -64,27 +67,9 @@ class Landing extends Component {
 
 		this.setState({ phone })
 
-		const { paid, trial_period, date } = this.props.package_info
-
 		const container = document.querySelector(".landing .horizontal-scroll-container");
 		container.onscroll = () => this.setState({ scroll: container.scrollLeft })
 		container.scrollTo(window.innerWidth, 0)
-
-		const daysPassesSinceTrial = moment().diff(date, "days")
-
-		if (date !== -1 && !paid && daysPassesSinceTrial > trial_period + 1) {
-
-			const word = window.prompt(`Your Trial has ended (${daysPassesSinceTrial - trial_period} days).Please Enter Purchase or Reset Code or Contact Help Line at.(+923481112004)`, "")
-
-			this.checkMagicWord(word)
-				.then(accepted => {
-					if (accepted) {
-						window.alert("ACCEPTED")
-					} else {
-						window.location.reload()
-					}
-				})
-		}
 
 		this.setState({
 			scroll: container.scrollLeft
@@ -99,7 +84,7 @@ class Landing extends Component {
 		return `/analytics/${stats_type}?start_date=${moment().format('MM-DD-YYYY')}&end_date=${moment().format('MM-DD-YYYY')}&period=Daily`
 	}
 
-	checkMagicWord = async (word) => {
+	verifyCode = async (code) => {
 
 		const { date } = this.props.package_info
 
@@ -107,41 +92,59 @@ class Landing extends Component {
 			return false
 		}
 
-		const reset_password = await hash(`reset-${this.props.school_id}-${moment().format("MMDDYYYY")}`)
+		const reset_code = await hash(`reset-${this.props.school_id}-${moment().format("MMDDYYYY")}`)
 			.then(res => res.substr(0, 4).toLowerCase())
 
-		const purchase_password = await hash(`buy-${this.props.school_id}-${moment().format("MMDDYYYY")}`)
+		const purchase_code = await hash(`buy-${this.props.school_id}-${moment().format("MMDDYYYY")}`)
 			.then(res => res.substr(0, 4).toLowerCase())
 
-		if (word === reset_password) {
+		if (code === reset_code) {
 			this.props.resetTrial()
 			return true
 		}
 
-		if (word === purchase_password) {
+		if (code === purchase_code) {
 			this.props.markPurchased()
 			return true
 		}
 
-		console.log("WRONG CODE")
 		return false
-
 	}
 
-	askForPassword = () => {
+	onActivationCodeModal = () => {
 
-		const word = window.prompt("Please Enter Purchase or Reset Code.", "")
+		const show_prompt = !this.state.showPrompt
 
-		if (word) {
-			this.checkMagicWord(word)
-				.then(accepted => {
-					if (accepted) {
-						window.alert("ACCEPTED")
-					} else {
-						window.alert("WRONG CODE")
-					}
-				})
-		}
+		this.setState({
+			showPrompt: show_prompt
+		})
+
+		if(show_prompt) hideScroll()
+	}
+
+	validateActivationCode = (code) => {
+
+		this.verifyCode(code)
+			.then(accepted => {
+				if (accepted) {
+					this.setState({
+						showPrompt: false,
+						hasPromptError: false
+					})
+					showScroll()
+				} else {
+					this.setState({
+						hasPromptError: true
+					})
+				}
+			})
+
+		// don't show error message on modal after 3s
+		setTimeout(() => {
+			this.setState({
+				hasPromptError: false
+			})
+		}, 3000)
 	}
 
 	getTrialWarningMessage = () => {
@@ -153,8 +156,14 @@ class Landing extends Component {
 			return `Trial ${trial_period - daysPassedSinceTrial} day(s) left`
 		}
 
-		return "Trial Period Ended, Please Contact helpline or You will not be able to use MISchool."
+		return "Trial Period Ended, Please Contact helpline to continue to use MISchool"
+	}
 
+	closePromptModal = () => {
+		this.setState({
+			showPrompt: !this.state.showPrompt
+		})
+		showScroll()
 	}
 
 	redirectToIlmx = (input_phone) => {
@@ -244,7 +253,16 @@ class Landing extends Component {
 		}
 
 		return <Layout history={this.props.history}>
-
+			{
+				this.state.showPrompt && <Modal>
+					<MISPrompt 
+						title={"MISchool Activation"}
+						text={"Please enter reset trial or purchase code to use mischoool"}
+						error={this.state.hasPromptError ? "Invalid Code, Enter valid code" : undefined }
+						onCancel={this.closePromptModal}
+						onSubmit={this.validateActivationCode} />
+				</Modal>
+			}
 			{
 				this.state.toggleRedirectModal && <Modal>
 					<IlmxRedirectModal
@@ -254,7 +272,7 @@ class Landing extends Component {
 				</Modal>
 			}
 			<div className="landing">
-				{!package_info.paid && package_info.date !== -1 && <div onClick={() => this.askForPassword()} className="trial-bar">
+				{!package_info.paid && package_info.date !== -1 && <div onClick={() => this.onActivationCodeModal()} className="trial-bar">
 					{this.getTrialWarningMessage()}
 				</div>}
 

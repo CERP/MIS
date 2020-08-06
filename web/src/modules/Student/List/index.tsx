@@ -39,6 +39,7 @@ type S = {
 	section_id: string
 	student_id: string
 	page_index: number
+	showExportModal: boolean
 	search_filter_text: string
 }
 
@@ -60,6 +61,7 @@ export class StudentList extends Component<P, S> {
 			section_id: "",
 			student_id: "",
 			page_index: 0,
+			showExportModal: false,
 			search_filter_text: ""
 		}
 		this.former = new Former(this, [])
@@ -280,6 +282,7 @@ export class StudentList extends Component<P, S> {
 		const print_card_items = student_id ? items.filter(student => student.id === student_id) : items
 
 		return <div className="student-list">
+
 			<div className="title no-print">All Students</div>
 			<div className="no-print">
 

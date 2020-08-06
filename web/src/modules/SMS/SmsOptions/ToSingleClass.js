@@ -29,7 +29,7 @@ class ToSingleClass extends Component {
 		const historyObj = {
 			faculty: this.props.faculty_id,
 			date: new Date().getTime(),
-			type: "CLASS",
+			type: this.props.portal_link ? "STUDENT_LINK_SMS" : "CLASS",
 			count: messages.length,
 			text: this.state.text
 		}
@@ -42,7 +42,11 @@ class ToSingleClass extends Component {
 		const { students, portal_link } = this.props
 
 		const messages = Object.values(students)
-			.filter(s => s.section_id === this.state.selected_section_id && (s.tags === undefined || !s.tags["PROSPECTIVE"]) && s.Phone)
+			.filter(s => { 
+				return s.section_id === this.state.selected_section_id &&
+					(s.tags === undefined || !s.tags["PROSPECTIVE"]) &&
+					s.Phone && (s.Phone.length >= 11 && s.Phone.length <=15)
+			})
 			.reduce((agg,student)=> {
 					const index  = agg.findIndex(s => s.number === student.Phone)		
 					if(index >= 0 ){

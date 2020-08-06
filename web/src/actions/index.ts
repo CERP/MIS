@@ -780,6 +780,32 @@ export const mergeExam = (exam: Exam, class_id: string, section_id: string) => (
 	]))
 }
 
+export const updateBulkExams = (exam_marks_sheet: ExamScoreSheet) => (dispatch: Function) => {
+	
+	let merges = []
+
+	for(const student of Object.values(exam_marks_sheet)) {
+
+		const exams = student.scoreSheetExams
+
+		for(const exam of Object.values(exams)){
+			// only create merges for those students' exams which are updated
+			if(exam.edited) {
+				merges.push({
+					path: ["db", "students", student.id, "exams", exam.id],
+					value: {
+						...exam.stats
+					}
+				})
+			}
+		}
+	}
+	
+	if (merges.length > 0) {
+		dispatch(createMerges(merges))
+	}
+}
+
 
 export const removeStudentFromExam = (e_id: string, student_id: string) => (dispatch: Function) => {
 	dispatch(createDeletes([
@@ -888,7 +914,7 @@ export const issueCertificate = (type: string, student_id: string, faculty_id: s
 }
 
 export const resetTrial = (days = 7) => (dispatch: Function) => {
-	const date = moment().subtract(days, "days")
+	const date = moment().subtract(days, "days").unix() * 1000
 
 	dispatch(createMerges([{
 		path: ["db", "package_info", "date"],

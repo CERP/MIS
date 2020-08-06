@@ -10,15 +10,19 @@ import Layout from 'components/Layout'
 import Banner from 'components/Banner'
 import moment from 'moment'
 import { openDB } from 'idb'
-import { getIlmxUser, isMobile } from 'utils/helpers'
+import { getIlmxUser, isMobile, hideScroll, showScroll } from 'utils/helpers'
+import StudentExportModal from 'modules/Exports/studenExportModal';
+import Modal from 'components/Modal';
 
 //import newBadge from "Landing/icons/New/new.svg";
 
 import './style.css'
+
 interface P {
 	client_id: string
 	settings: RootDBState["settings"]
 	students: RootDBState["students"]
+	classes: RootDBState["classes"]
 	user: RootDBState["faculty"]["MISTeacher"]
 	sms_templates: RootDBState["sms_templates"]
 	schoolLogo: string
@@ -46,6 +50,7 @@ interface S {
 	addGrade: boolean
 	newGrade: NewGrade
 	toggleMoreSettings: boolean
+	toggleExportModal: boolean
 }
 interface NewGrade {
 	grade: string
@@ -183,7 +188,8 @@ class Settings extends Component<propsType, S>{
 				percent: "",
 				remarks: ""
 			},
-			toggleMoreSettings: false
+			toggleMoreSettings: false,
+			toggleExportModal: false
 		}
 
 		this.former = new Former(this, [])
@@ -236,6 +242,22 @@ class Settings extends Component<propsType, S>{
 					defaultSettings.classes.feeVoucher)
 			}
 		}
+	}
+
+	toggleExportModal = () => {
+		this.setState({
+			toggleExportModal: !this.state.toggleExportModal
+		})
+
+		hideScroll()
+	}
+
+	onCloseExportModal = () => {
+		this.setState({
+			toggleExportModal: false
+		})
+
+		showScroll()
 	}
 
 	changeTeacherPermissions = () => {
@@ -718,9 +740,18 @@ class Settings extends Component<propsType, S>{
 					<Link className="button grey" to="/settings/excel-import/students">Import From Excel</Link>
 					{
 						this.props.user.Admin ?
-							<div className="button grey" onClick={() => this.onExport()}>
-								Export to File
-							</div>
+							<>
+								<div className="button grey" onClick={() => this.onExport()}>Export to File </div>
+								<div className="button grey" onClick={() => this.toggleExportModal()}> Export students to CSV</div>
+								{
+									this.state.toggleExportModal && <Modal>
+										<StudentExportModal
+											students={this.props.students}
+											classes={this.props.classes}
+											onClose={this.onCloseExportModal} />
+									</Modal>
+								}
+							</>
 							: false
 					}
 
@@ -735,6 +766,7 @@ export default connect((state: RootReducerState) => ({
 	client_id: state.client_id,
 	settings: state.db.settings,
 	students: state.db.students,
+	classes: state.db.classes,
 	user: state.db.faculty[state.auth.faculty_id],
 	sms_templates: state.db.sms_templates,
 	schoolLogo: state.db.assets ? state.db.assets.schoolLogo || "" : "",

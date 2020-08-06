@@ -17,7 +17,7 @@ type GraphData = {
 
 const VideoWatchGraph: React.FC<P> = ({ graph_data }) => {
 
-	const total_watch_time_in_mins = getTotalWatchTime(graph_data)
+	const max_watched_lesson_time = getMaxWatchTime(graph_data)
 
 	return (
 		<div style={{ fontSize: "0.95rem" }}>
@@ -32,7 +32,7 @@ const VideoWatchGraph: React.FC<P> = ({ graph_data }) => {
 					<XAxis dataKey="day">
 						<Label value="Days" offset={0} position="insideBottom" />
 					</XAxis>
-					<YAxis type="number" domain={[0, total_watch_time_in_mins]}>
+					<YAxis type="number" domain={[0, max_watched_lesson_time]} allowDecimals={false}>
 						<Label value="Time(m)" offset={0} position="left" angle={-90} />
 					</YAxis>
 					<Tooltip content={PointLabel} />
@@ -77,6 +77,7 @@ const PointLabel: React.FC<PointLabelProps> = ({ payload, active }) => {
 }
 
 
-const getTotalWatchTime = (graph_data: GraphData[]) => {
-	return graph_data.reduce((agg, curr) => agg + curr.watchTime, 0)
+const getMaxWatchTime = (graph_data: GraphData[]) => {
+	const most_watched_lesson = graph_data.slice(-1)[0]
+	return most_watched_lesson ? most_watched_lesson.watchTime : 0
 }
