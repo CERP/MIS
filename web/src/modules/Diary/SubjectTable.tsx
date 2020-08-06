@@ -2,11 +2,8 @@ import React, { useState, useEffect, useMemo } from "react"
 import { connect } from 'react-redux'
 
 import { fetchLessons } from 'actions/core'
-import { showScroll, hideScroll } from "utils/helpers"
 import { PlayIcon } from 'assets/icons'
 import { ContentCopyIcon } from 'assets/icons'
-import moment from 'moment'
-
 import './style.css'
 
 interface PropsType {
@@ -17,6 +14,7 @@ interface PropsType {
     isLoading: boolean
     hasError: boolean
     fetchLessons: () => void
+    onClose: () => void
 }
 
 interface S {
@@ -25,7 +23,7 @@ interface S {
     scrollY: number
 }
 
-const SubjectTable: React.FC<PropsType> = ({ students, events, lessons, fetchLessons, classes }) => {
+const SubjectTable: React.FC<PropsType> = ({ events, lessons, fetchLessons, onClose }) => {
 
     const [toggleSortOrder, setToggleSortOrder] = useState(false)
     const [classFilter, setClassFilter] = useState('')
@@ -49,17 +47,6 @@ const SubjectTable: React.FC<PropsType> = ({ students, events, lessons, fetchLes
         scrollY: 0,
     })
 
-    const handleClickShowViewers = (lesson_id: string) => {
-        const scrollY = window.pageYOffset
-        setStateProps({
-            ...stateProps,
-            showViewerModal: !stateProps.showViewerModal,
-            lessonId: lesson_id,
-            scrollY: scrollY
-        })
-
-        hideScroll()
-    }
 
     const copyLink = (link: string) => {
         navigator.clipboard.writeText(link)
@@ -72,9 +59,11 @@ const SubjectTable: React.FC<PropsType> = ({ students, events, lessons, fetchLes
     }
 
     return (
-        <div className="ilmx-analytics section-container">
-            <div className="text-left heading" style={{ marginTop: 4, fontWeight: 700, marginBottom: "1rem", fontSize: "1.25rem" }}>Related Video Lectures</div>
-            <div className="section">
+        
+    	<div className="ilmx-analytics modal-container inner">
+			<div className="close button red" onClick={onClose}>✕</div>
+			<div className="title">Lesson Viewers</div>
+			<div className="form scrollbar">
                 <div className="row video-filter">
                     <select onChange={(e) => setClassFilter(e.target.value)}>
                         <option value="">Select Class</option>

@@ -13,9 +13,9 @@ import getSectionFromId from 'utils/getSectionFromId'
 import DiaryPrintable from 'components/Printable/Diary/diary'
 import ShareButton from 'components/ShareButton'
 import { replaceSpecialCharsWithUTFChars } from 'utils/stringHelper'
-
-import './style.css'
+import Modal from 'components/Modal/index'
 import SubjectTable from './SubjectTable'
+import './style.css'
 
 interface P {
 	students: RootDBState["students"]
@@ -306,8 +306,12 @@ class Diary extends Component<propTypes, S> {
 			}, {} as { [id: string]: string })
 	}
 
-	getClassName = () => {
+	openModal = () => {
 		this.setState({ showSubjects: true })
+	}
+
+	handleToggleModal = () => {
+		this.setState({ showSubjects: false })
 	}
 
 	render() {
@@ -344,7 +348,7 @@ class Diary extends Component<propTypes, S> {
 						</div>
 						<div className="row">
 							<label>Select Class/Section</label>
-							<select {...this.former.super_handle(["selected_section_id"])} onClick={this.getClassName}>
+							<select {...this.former.super_handle(["selected_section_id"])}>
 								<option value="" disabled>Select Section</option>
 								{
 									sortedSections.map(s => <option key={s.id} value={s.id}>{s.namespaced_name}</option>)
@@ -382,6 +386,9 @@ class Diary extends Component<propTypes, S> {
 					</div>
 					{
 						this.state.selected_section_id !== "" && <div className="section">
+							<div className="row">
+								<div className="button blue mb" style={{ marginBottom: 15 }} onClick={this.openModal}>Attach Video Link </div>
+							</div>
 							{
 								Array.from(subjects)
 									.sort((a, b) => a.localeCompare(b))
@@ -433,9 +440,8 @@ class Diary extends Component<propTypes, S> {
 				/>
 				}
 				{
-					this.state.showSubjects ? <SubjectTable /> : null
+					this.state.showSubjects ? <Modal><SubjectTable onClose={this.handleToggleModal} /></Modal> : null
 				}
-
 			</div>
 		</Layout>
 	}
