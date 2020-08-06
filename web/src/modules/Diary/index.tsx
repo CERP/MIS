@@ -12,7 +12,7 @@ import moment from 'moment'
 import getSectionFromId from 'utils/getSectionFromId'
 import DiaryPrintable from 'components/Printable/Diary/diary'
 import ShareButton from 'components/ShareButton'
-import { replaceSpecialCharsWithUTFChars } from 'utils/stringHelper'
+import { showScroll, hideScroll, replaceSpecialCharsWithUTFChars } from 'utils/helpers'
 import Modal from 'components/Modal/index'
 import SubjectTable from './SubjectTable'
 import './style.css'
@@ -42,6 +42,7 @@ interface S {
 	students_filter: "" | "all_students" | "single_student" | "absent_students" | "leave_students"
 	diary: MISDiary["date"]
 	showSubjects: boolean
+	scrollY: number
 }
 
 type propTypes = RouteComponentProps & P
@@ -82,7 +83,8 @@ class Diary extends Component<propTypes, S> {
 			selected_student_phone: "",
 			students_filter: "all_students",
 			diary,
-			showSubjects: false
+			showSubjects: false,
+			scrollY: 0,
 		}
 
 		this.former = new former(this, [])
@@ -307,11 +309,15 @@ class Diary extends Component<propTypes, S> {
 	}
 
 	openModal = () => {
-		this.setState({ showSubjects: true })
+		const scrollY = window.pageYOffset
+		this.setState({ showSubjects: true, scrollY: scrollY })
+		hideScroll()
 	}
 
 	handleToggleModal = () => {
 		this.setState({ showSubjects: false })
+		showScroll()
+		window.scrollTo(0, this.state.scrollY)
 	}
 
 	render() {
@@ -439,11 +445,11 @@ class Diary extends Component<propTypes, S> {
 					schoolDiary={this.getSelectedSectionDiary()}
 				/>
 				}
-				{
-					this.state.showSubjects ? <Modal><SubjectTable onClose={this.handleToggleModal} /></Modal> : null
-				}
 			</div>
-		</Layout>
+			{
+				this.state.showSubjects ? <Modal><SubjectTable onClose={this.handleToggleModal} /></Modal> : null
+			}
+		</Layout >
 	}
 }
 export default connect((state: RootReducerState) => ({
