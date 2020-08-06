@@ -7,12 +7,9 @@ import { ContentCopyIcon } from 'assets/icons'
 import './style.css'
 
 interface PropsType {
-    students: RootDBState["students"]
-    classes: RootDBState["classes"]
     events: RootDBState["ilmx"]["events"]
     lessons: RootDBState["ilmx"]["lessons"]
     isLoading: boolean
-    hasError: boolean
     fetchLessons: () => void
     onClose: () => void
 }
@@ -25,7 +22,6 @@ interface S {
 
 const SubjectTable: React.FC<PropsType> = ({ events, lessons, fetchLessons, onClose }) => {
 
-    const [toggleSortOrder, setToggleSortOrder] = useState(false)
     const [classFilter, setClassFilter] = useState('')
     const [subjectFilter, setSubjectFilter] = useState('')
 
@@ -39,14 +35,7 @@ const SubjectTable: React.FC<PropsType> = ({ events, lessons, fetchLessons, onCl
         [events, lessons, classFilter, subjectFilter]
     )
 
-    const sorted_entries = getSortedEntries(lessons_data, toggleSortOrder)
-
-    const [stateProps, setStateProps] = useState<S>({
-        showViewerModal: false,
-        lessonId: "",
-        scrollY: 0,
-    })
-
+    const sorted_entries = getSortedEntries(lessons_data)
 
     const copyLink = (link: string) => {
         navigator.clipboard.writeText(link)
@@ -100,7 +89,7 @@ const SubjectTable: React.FC<PropsType> = ({ events, lessons, fetchLessons, onCl
                                             <p className="card-title">{lesson_meta.name}</p>
                                         </div>
                                         <div style={{ marginLeft: "auto" }}>
-                                            <img src={ContentCopyIcon} alt="copy-icon" className="copyIcon" onClick={() => copyLink(`https://ilmexchange.com/library/${getLink(lesson_id)}/${lesson_meta.chapter_name.replace(/ /g, '%20')}`)} />
+                                            <img src={ContentCopyIcon} alt="copy-icon" className="copyIcon" onClick={() => copyLink(`https://ilmexchange.com/library/${getLink(lesson_id)}/${lesson_meta.chapter_name && lesson_meta.chapter_name.replace(/ /g, '%20')}`)} />
                                         </div>
                                     </div>
                                     <div className="card-row">
@@ -117,12 +106,9 @@ const SubjectTable: React.FC<PropsType> = ({ events, lessons, fetchLessons, onCl
 }
 
 export default connect((state: RootReducerState) => ({
-    students: state.db.students,
-    classes: state.db.classes,
     events: state.db.ilmx.events,
     lessons: state.db.ilmx.lessons,
     isLoading: state.ilmxLessons.isLoading,
-    hasError: state.ilmxLessons.hasError
 }), (dispatch: Function) => ({
     fetchLessons: () => dispatch(fetchLessons())
 }))(SubjectTable)
@@ -148,7 +134,7 @@ const computeLessonsData: ComputeLessonsData = (events, lessons, class_title, su
     Object.entries(events || {})
         .forEach(([, lessons_history]) => {
 
-            for (const [timestamp, item] of Object.entries(lessons_history)) {
+            for (const [, item] of Object.entries(lessons_history)) {
 
                 if (item.type === "VIDEO" && true) {
 
@@ -215,13 +201,7 @@ const getClassSubjectsInfo = (events: PropsType["events"]) => {
     return { classTitles: [...class_titles], subjects: [...subjects] }
 }
 
-const getSortedEntries = (lessons_data: AugmentedIlmxLessons, sortOrder: boolean) => {
-
-    if (sortOrder) {
-        return Object.entries(lessons_data)
-            .sort(([, a], [_, b]) => a.watchCount - b.watchCount)
-    }
-
+const getSortedEntries = (lessons_data: AugmentedIlmxLessons) => {
     return Object.entries(lessons_data)
         .sort(([, a], [_, b]) => b.watchCount - a.watchCount)
 }
