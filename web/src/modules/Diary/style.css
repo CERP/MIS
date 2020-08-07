@@ -16,3 +16,198 @@
     width: 12%;
     float: right;
 }
+
+.subject-modal .container {
+	width: 100%;
+	display: block;
+}
+.subject-modal .heading {
+	 margin-top: 0.25rem;
+	 font-weight: 700;
+	 margin-bottom: 1rem;
+	 font-size: 1.25rem;
+}
+.subject-modal .card {
+	display: flex;
+	flex-wrap: wrap;
+	background: #ffffff;
+	margin: 0.25rem;
+	padding: 0.75rem;
+	border-radius: 6px;
+	border-left: 4px solid #74aced;
+} 
+
+.subject-modal .card-row {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	margin-top: 2px;
+}
+
+.subject-modal .card-row .inner {
+	width: 80%;
+}
+
+.subject-modal .card-row .student-class-title {
+	font-size: 0.85rem;
+	margin: 0;
+	margin-left: 2.0rem;
+}
+
+.subject-modal .card-row .views {
+	margin: 0;
+	margin-left: 0.50rem;
+	padding-top: 4px;
+}
+
+.subject-modal .card-row .card-title {
+	margin: 0;
+	font-weight: bold;
+	padding-top: 4px;
+	margin-left: 0.50rem;
+}
+
+.subject-modal .card-row .more-detail {
+	width: 100%;
+	display: flex;
+	margin-left: 1rem;
+}
+
+.subject-modal .card-row .hidden-views {
+	font-weight: bold;
+}
+
+.subject-modal .card-row .more-detail p {
+	font-size: 0.75rem;
+	margin: 0;
+	margin-left: 1rem;
+}
+
+.subject-modal .card-row .viewer {
+	background: #5ecdb9;
+	cursor: pointer;
+	border-radius: 4px;
+	padding: 1px;
+}
+
+.subject-modal.modal-container.inner {
+	width: 50%;
+	padding: 15px;
+}
+
+.subject-modal.modal-container.inner .card {
+	padding: 0.5rem;
+	border: 1px solid #74aced;	
+}
+
+.subject-modal.modal-container.inner .card-row .viewer {
+	font-size: 0.85rem;
+	background: #5ecdb9;
+	border-radius: 4px;
+}
+
+.subject-modal.modal-container.inner .card-row .hidden-views {
+	font-weight: normal;
+}
+
+@media (max-width: 475px) {
+	.subject-modal .card-row .views {
+		display: none;
+	}
+	.subject-modal .card-row .card-title {
+		padding-top: 2px;
+		font-size: 0.85rem;
+	}
+	.subject-modal .card-row .inner {
+		width: 100%;
+	}
+	.subject-modal.modal-container.inner .card-row .viewer {
+		font-size: 0.65rem;
+		padding-left: 0.075rem;
+		padding-right: 0.075rem;
+	}
+	.subject-modal.modal-container.inner {
+		width: 80%;
+		padding: 15px;
+	}
+	.subject-modal .video-filter select {
+		width: 95% !important;
+		margin: 0.175rem;
+	}
+}
+
+@media (min-width: 475px) {
+	.subject-modal .card-row .hidden-views {
+		display: none;
+	}
+	.subject-modal .video-filter select {
+		width: 95% !important;
+		margin: 0.175rem;
+	}
+}
+
+.subject-modal .toggle-actions-container {
+	display: flex;
+	margin-left: auto;
+}
+
+.subject-modal .toggle-actions {
+	margin: 0.175rem;
+	height: 24px;
+	width: 24px;
+	margin-left: auto;
+	cursor: pointer;
+}
+
+.subject-modal  .custom-tooltip {
+	background-color: white;
+	width: 200px;
+	max-width: 100%;
+	padding: 15px;
+	border: 2px solid var(--ilmx-primary);
+	border-radius: 4px;
+}
+.subject-modal .custom-tooltip .row {
+	margin-bottom: 0.5rem;
+}
+
+.subject-modal .custom-tooltip .row label {
+	font-weight: bold;
+	padding-right: 0.25rem;
+}
+@media (max-width: 425px) {
+	.subject-modal .custom-tooltip {
+	 width: 150px;
+	}
+	.subject-modal .custom-tooltip .row {
+		font-size: 0.90rem;
+	 	margin-bottom: 0.375rem;
+	 }
+	 .subject-modal .video-filter select {
+		width: 95% !important;
+		margin: 0.175rem;
+	}
+}
+
+.subject-modal .section select {
+	height: 30px;
+	border-radius: 4px;
+	font-size: 16px;
+	padding: 0 4px;
+}
+.subject-modal .video-filter {
+	margin-bottom: 0.5rem;
+	align-items: center;
+}
+.subject-modal .video-filter select {
+	width: 50%;
+	margin: 0.175rem;
+}
+.subject-modal .section .calender {
+	display: flex;
+	margin-bottom: 0.5rem;
+}
+.subject-modal .section .calender input {
+	height: 30px;
+	margin-left: auto;
+}

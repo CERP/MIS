@@ -20,7 +20,7 @@ interface S {
     scrollY: number
 }
 
-const SubjectTable: React.FC<PropsType> = ({ events, lessons, fetchLessons, onClose }) => {
+const SubjectModal: React.FC<PropsType> = ({ events, lessons, fetchLessons, onClose }) => {
 
     const [classFilter, setClassFilter] = useState('')
     const [subjectFilter, setSubjectFilter] = useState('')
@@ -49,7 +49,7 @@ const SubjectTable: React.FC<PropsType> = ({ events, lessons, fetchLessons, onCl
 
     return (
         
-    	<div className="ilmx-analytics modal-container inner">
+    	<div className="subject-modal modal-container inner">
 			<div className="close button red" onClick={onClose}>✕</div>
 			<div className="title">Video Lectures</div>
 			<div className="form scrollbar">
@@ -111,7 +111,7 @@ export default connect((state: RootReducerState) => ({
     isLoading: state.ilmxLessons.isLoading,
 }), (dispatch: Function) => ({
     fetchLessons: () => dispatch(fetchLessons())
-}))(SubjectTable)
+}))(SubjectModal)
 
 type AugmentedIlmxLessons = {
     [id: string]: AugmentedIlmxLesson

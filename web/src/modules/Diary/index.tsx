@@ -14,7 +14,7 @@ import DiaryPrintable from 'components/Printable/Diary/diary'
 import ShareButton from 'components/ShareButton'
 import { showScroll, hideScroll, replaceSpecialCharsWithUTFChars } from 'utils/helpers'
 import Modal from 'components/Modal/index'
-import SubjectTable from './SubjectTable'
+import SubjectModal from './SubjectModal'
 import './style.css'
 
 interface P {
@@ -447,7 +447,7 @@ class Diary extends Component<propTypes, S> {
 				}
 			</div>
 			{
-				this.state.showSubjects ? <Modal><SubjectTable onClose={this.handleToggleModal} /></Modal> : null
+				this.state.showSubjects ? <Modal><SubjectModal onClose={this.handleToggleModal} /></Modal> : null
 			}
 		</Layout >
 	}
