@@ -37,7 +37,7 @@ import FamilyModule from './modules/Family'
 import SingleFamily from './modules/Family/Single'
 import StudentFees from './modules/Student/Single/Fees/index'
 import ManageFees from 'modules/Student/ManageFees'
-
+import ResetPassword from 'modules/Password/index'
 import TrackedRoute from 'components/TrackedRoute'
 import printPreview from 'modules/Student/Single/Fees/printPreview'
 import ExpensePage from './modules/Expenses';
@@ -124,8 +124,8 @@ export default class Routes extends React.Component {
 
 					<TrackedRoute path="/help" component={Help} />
 					<TrackedRoute path="/certificate-menu" component={CertificateMenu} />
-
 					<TrackedRoute path="/fee-menu" component={FeeMenu} />
+					<TrackedRoute path="/reset-password" component={ResetPassword} />
 					<Route path="/verify-code" component={MISActivation} />					
 					<Route exact path="/" component={Front} />
 					<Route path="/school-login" component={SchoolLogin} />

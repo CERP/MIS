@@ -1,5 +1,8 @@
 :root {
-	--ilmx-primary: #1bb4bb
+	--ilmx-primary: #1bb4bb;
+	--mis-primary: #74aced;
+	--mis-danger: #fc6171;
+	--mis-grey: #e0e0e0;
 }
 
 .modal-container.inner {

@@ -27,7 +27,7 @@ import {
 	LOCAL_LOGOUT,
 	SIGN_UP_FAILED,
 	SIGN_UP_SUCCEED,
-	SIGN_UP_LOADING 
+	SIGN_UP_LOADING
 } from 'actions'
 
 import { AnyAction } from 'redux'

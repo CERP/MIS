@@ -996,3 +996,31 @@ export const resetFees = (students: MISStudent[]) => (dispatch: Function) => {
 
 	dispatch(createMerges(merges))
 }
+
+export const RESET_ADMIN_PASSWORD = "RESET_ADMIN_PASSWORD"
+export const sendTempPassword = (faculty: MISTeacher, password: string) => (dispatch: Function, getState: () => RootReducerState, syncr: Syncr) => {
+
+	if(!syncr.ready) {
+		syncr.onNext('connect', () => {
+			dispatch(sendTempPassword(faculty, password))
+		})
+	}
+
+	syncr.send({
+		type: RESET_ADMIN_PASSWORD,
+		client_type,
+		payload: {
+			number: faculty.Phone,
+			password,
+			school_id: getState().auth.school_id,
+			client_id: getState().client_id
+		}
+	})
+		.then(res => {
+			console.log(res)
+			dispatch(createFacultyMerge(faculty))
+		})
+		.catch(err => {
+			console.error(err)
+		})
+}

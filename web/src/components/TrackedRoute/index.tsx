@@ -11,6 +11,7 @@ type propsType = {
 	token: string
 	initialized: boolean
 	faculty_id: string
+
 	faculty: RootDBState['faculty']
 	location: { pathname: string }
 	trackRoute: (path: string) => void
@@ -40,8 +41,18 @@ const TrackedRoute = ({ component, name, faculty_id, token, initialized, locatio
 		return <Redirect to="/verify-code" />
 	}
 
-	if (token && name) {
+	if (token && name && location.pathname === "/reset-password") {
+		return <Redirect to="/landing" />
+	}
 
+	if (token && location.pathname === "/reset-password") {
+		return <Route {...rest} render={(props) => {
+			trackRoute(location.pathname)
+			return <Component {...props} />
+		}} />
+	}
+
+	if (token && name) {
 		if (faculty[faculty_id] === undefined) {
 
 			// unset the faculty_id and the name
