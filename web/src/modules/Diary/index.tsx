@@ -309,15 +309,13 @@ class Diary extends Component<propTypes, S> {
 	}
 
 	openModal = () => {
-		const scrollY = window.pageYOffset
-		this.setState({ showSubjects: true, scrollY: scrollY })
+		this.setState({ showSubjects: true })
 		hideScroll()
 	}
 
 	handleToggleModal = () => {
 		this.setState({ showSubjects: false })
 		showScroll()
-		window.scrollTo(0, this.state.scrollY)
 	}
 
 	render() {
