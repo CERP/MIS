@@ -43,7 +43,7 @@ const SubjectModal: React.FC<PropsType> = ({ events, lessons, fetchLessons, onCl
 
     const getLink = (link: string) => {
         const manipulatedLink = link.replace(/-/g, '/')
-        const finalLink = manipulatedLink.replace(/ /g, '%20').slice(0, -2)
+        const finalLink = encodeURI(manipulatedLink.slice(0, -2))
         return finalLink
     }
 
@@ -89,7 +89,7 @@ const SubjectModal: React.FC<PropsType> = ({ events, lessons, fetchLessons, onCl
                                             <p className="card-title">{lesson_meta.name}</p>
                                         </div>
                                         <div style={{ marginLeft: "auto" }}>
-                                            <img src={ContentCopyIcon} alt="copy-icon" className="copyIcon" onClick={() => copyLink(`https://ilmexchange.com/library/${getLink(lesson_id)}/${lesson_meta.chapter_name && lesson_meta.chapter_name.replace(/ /g, '%20')}`)} />
+                                            <img src={ContentCopyIcon} alt="copy-icon" className="copyIcon" onClick={() => copyLink(`https://ilmexchange.com/library/${getLink(lesson_id)}/${lesson_meta.chapter_name && encodeURI(lesson_meta.chapter_name)}`)} />
                                         </div>
                                     </div>
                                     <div className="card-row">
