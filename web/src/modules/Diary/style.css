@@ -211,3 +211,24 @@
 	height: 30px;
 	margin-left: auto;
 }
+
+.copy-icon-div {
+	border-radius: 50%;
+	padding: 7px;
+} 
+
+.copy-icon-div:hover {
+	background-color: rgb(245, 245, 245);
+	border-radius: 50%;
+	padding: 7px;
+}
+
+.chapter-name-div {
+	display: flex;
+	flex-direction:row;
+}
+
+.lesson-div {
+	display: flex !important;
+	flex-direction: column !important;
+}

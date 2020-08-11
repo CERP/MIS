@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react"
 import { connect } from 'react-redux'
-
 import { fetchLessons } from 'actions/core'
 import { PlayIcon } from 'assets/icons'
 import { ContentCopyIcon } from 'assets/icons'
@@ -48,11 +47,11 @@ const SubjectModal: React.FC<PropsType> = ({ events, lessons, fetchLessons, onCl
     }
 
     return (
-        
-    	<div className="subject-modal modal-container inner">
-			<div className="close button red" onClick={onClose}>✕</div>
-			<div className="title">Video Lectures</div>
-			<div className="form scrollbar">
+
+        <div className="subject-modal modal-container inner">
+            <div className="close button red" onClick={onClose}>✕</div>
+            <div className="title">Video Lectures</div>
+            <div className="form scrollbar">
                 <div className="row video-filter">
                     <select onChange={(e) => setClassFilter(e.target.value)}>
                         <option value="">Select Class</option>
@@ -84,16 +83,20 @@ const SubjectModal: React.FC<PropsType> = ({ events, lessons, fetchLessons, onCl
                             .map(([lesson_id, lesson_meta]) => (
                                 <div className="card" key={lesson_id}>
                                     <div className="card-row">
-                                        <div className="card-row inner">
-                                            <img src={PlayIcon} alt="play-icon" height="24" width="24" />
-                                            <p className="card-title">{lesson_meta.name}</p>
+                                        <div className="card-row inner lesson-div">
+                                            <div className="chapter-name-div"> 
+                                                <img src={PlayIcon} alt="play-icon" height="24" width="24" />
+                                                <p className="card-title">{lesson_meta.name}</p>
+                                            </div>
+                                            <div className="card-row">
+                                        <p className="student-class-title">Class: {getClassTitleFromLessonId(lesson_id)}-{getSubjectTitleFromLessonId(lesson_id)}</p>
+                                    </div>
                                         </div>
                                         <div style={{ marginLeft: "auto" }}>
-                                            <img src={ContentCopyIcon} alt="copy-icon" className="copyIcon" onClick={() => copyLink(`https://ilmexchange.com/library/${getLink(lesson_id)}/${lesson_meta.chapter_name && encodeURI(lesson_meta.chapter_name)}`)} />
+                                            <div className="copy-icon-div">
+                                                <img src={ContentCopyIcon} alt="copy-icon" className="copyIcon" onClick={() => copyLink(`https://ilmexchange.com/library/${getLink(lesson_id)}/${lesson_meta.chapter_name && encodeURI(lesson_meta.chapter_name)}`)} />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="card-row">
-                                        <p className="student-class-title">Class: {getClassTitleFromLessonId(lesson_id)}-{getSubjectTitleFromLessonId(lesson_id)}</p>
                                     </div>
                                 </div>
                             ))
