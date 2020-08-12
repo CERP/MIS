@@ -8,7 +8,7 @@ import { SMSLimitExceed } from '..'
 class ToProspectiveStudents extends Component {
 	constructor(props) {
 		super(props)
-	
+
 		this.state = {
 			text: ""
 		}
@@ -16,8 +16,8 @@ class ToProspectiveStudents extends Component {
 		this.former = new former(this, [])
 	}
 
-	logSms = (messages) =>{
-		if(messages.length === 0){
+	logSms = (messages) => {
+		if (messages.length === 0) {
 			console.log("No Message to Log")
 			return
 		}
@@ -38,22 +38,22 @@ class ToProspectiveStudents extends Component {
 
 		const messages = Object.values(students)
 			.filter(s => {
-				return (s.tags !== undefined ) && (s.tags["PROSPECTIVE"]) &&
-				s.Phone && (s.Phone.length >= 11 && s.Phone.length <=15)
+				return (s.tags !== undefined) && (s.tags["PROSPECTIVE"]) &&
+					s.Phone && (s.Phone.length >= 11 && s.Phone.length <= 15)
 			})
-			.reduce((agg,student)=> {
-				
-				const index  = agg.findIndex(s => s.number === student.Phone)		
-				if(index >= 0 ){
+			.reduce((agg, student) => {
+
+				const index = agg.findIndex(s => s.number === student.Phone)
+				if (index >= 0) {
 					return agg
 				}
 
-				const text_string = portal_link ? `${this.state.text}\nName: ${student.Name}\nStudent portal link:${portal_link}${student.id}` 
+				const text_string = portal_link ? `${this.state.text}\nName: ${student.Name}\nStudent portal link:${portal_link}${student.id}`
 					: replaceSpecialCharsWithUTFChars(this.state.text)
 
-				return [...agg,{
+				return [...agg, {
 					number: student.Phone,
-					text :  text_string
+					text: text_string
 				}]
 
 			}, [])
@@ -63,27 +63,27 @@ class ToProspectiveStudents extends Component {
 
 	render() {
 
-	const { sendBatchMessages, smsOption } = this.props;
-	const messages = this.getMessages()
-	const limit_exceed = isSMSCharsLimitExceed(this.state.text)
+		const { sendBatchMessages, smsOption } = this.props;
+		const messages = this.getMessages()
+		const limit_exceed = isSMSCharsLimitExceed(this.state.text)
 
-	return (
-		<div>
-			<div className="row">
-				<label>Message</label>
-				<textarea {...this.former.super_handle(["text"])} placeholder="Write text message here" />
-			</div> 
-			{ limit_exceed && <SMSLimitExceed /> }
-			{ smsOption === "SIM" ? 
-				<a href={smsIntentLink({ messages, return_link: window.location.href })}
-					onClick={(e) => limit_exceed ? e.preventDefault() : this.logSms(messages)}
-					className="button blue">Send using Local SIM</a> : 
-				<div className="button" onClick={() => sendBatchMessages(messages)}>Send using API</div> 
-			}
-			<div className="is-mobile-only" style={{marginTop: 10}}>
-				<ShareButton title={"SMS"} text={this.state.text} />
+		return (
+			<div>
+				<div className="row">
+					<label>Message</label>
+					<textarea {...this.former.super_handle(["text"])} placeholder="Write text message here" />
+				</div>
+				{limit_exceed && <SMSLimitExceed />}
+				{smsOption === "SIM" ?
+					<a href={smsIntentLink({ messages, return_link: window.location.href })}
+						onClick={(e) => limit_exceed ? e.preventDefault() : this.logSms(messages)}
+						className="button blue">Send using Local SIM</a> :
+					<div className="button" onClick={() => sendBatchMessages(messages)}>Send using API</div>
+				}
+				<div className="is-mobile-only" style={{ marginTop: 10 }}>
+					<ShareButton title={"SMS"} text={this.state.text} />
+				</div>
 			</div>
-		</div>
 		)
 	}
 }
