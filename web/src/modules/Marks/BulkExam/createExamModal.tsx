@@ -81,7 +81,7 @@ const CreateExamModal: React.FC<PropsType> = ({ onCreate, onClose, subjects }) =
 					<label>Exam Date</label>
 					<input type="date"
 						onChange={(e) => setStateProps({ ...stateProps, date: moment(e.target.value, "YYYY-MM-DD").unix() * 1000 })}
-						value={moment(current_date).format("YYYY-MM-DD")} placeholder="Enter total marks" />
+						defaultValue={moment(current_date).format("YYYY-MM-DD")} placeholder="Enter total marks" />
 				</div>
 			</div>
 			<div className="row" style={{ marginTop: 15, justifyContent: "flex-end" }}>
