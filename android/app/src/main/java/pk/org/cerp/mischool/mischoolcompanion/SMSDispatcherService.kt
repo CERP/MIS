@@ -185,8 +185,8 @@ class SMSDispatcherService : Service() {
 
                 // this is to make sure, if a message broken down to multiple messages
                 // to avoid the PTA restriction, sleep for 4000 fo each message
-                // so next chunk of messages after the total 4000 * message.size
-                Thread.sleep((messages.size * 4000).toLong())
+                // so next chunk of messages after the total 4000 * message.size - 8000
+                Thread.sleep((messages.size * 4000 - (4_000)).toLong())
 
                 smsManager.sendMultipartTextMessage(sms.number, null, messages, plist, null)
                 updateLogText("Message: ${sms.number}-${sms.text}-${sms.status}-$currentTime")
