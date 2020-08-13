@@ -32,9 +32,8 @@ import family from "./icons/family/family.svg"
 import Help from './icons/Help/help.svg'
 import diary from './icons/Diary/diary.svg'
 import { IlmxLogo } from 'assets/icons'
-import { showScroll, hideScroll, getIlmxUser } from 'utils/helpers'
+import { showScroll, hideScroll } from 'utils/helpers'
 import IlmxRedirectModal from 'components/Ilmx/redirectModal'
-import IlmxLanding from './ilmxLanding'
 
 /**
  * line for adding new badge just copy / paste it
@@ -119,7 +118,7 @@ class Landing extends Component {
 			showPrompt: show_prompt
 		})
 
-		if(show_prompt) hideScroll()
+		if (show_prompt) hideScroll()
 	}
 
 	validateActivationCode = (code) => {
@@ -255,10 +254,10 @@ class Landing extends Component {
 		return <Layout history={this.props.history}>
 			{
 				this.state.showPrompt && <Modal>
-					<MISPrompt 
+					<MISPrompt
 						title={"MISchool Activation"}
 						text={"Please enter reset trial or purchase code to use mischoool"}
-						error={this.state.hasPromptError ? "Invalid Code, Enter valid code" : undefined }
+						error={this.state.hasPromptError ? "Invalid Code, Enter valid code" : undefined}
 						onCancel={this.closePromptModal}
 						onSubmit={this.validateActivationCode} />
 				</Modal>
@@ -275,226 +274,220 @@ class Landing extends Component {
 				{!package_info.paid && package_info.date !== -1 && <div onClick={() => this.onActivationCodeModal()} className="trial-bar">
 					{this.getTrialWarningMessage()}
 				</div>}
+				<div className="horizontal-scroll-container">
+					<div className="page">
+						<div className="title">Setup</div>
+						{user.Admin || setupPage ? <div className="row">
+							<Link to="/teacher" className="button green-shadow" style={{ backgroundImage: `url(${teachersIcon})` }}>Teachers</Link>
+							<Link to="/student" className="button blue-shadow" style={{ backgroundImage: `url(${studentsIcon})` }}>Students</Link>
+						</div> : false}
 
-				<div className="horizontal-scroll-container" style={{ overflowX: this.props.ilmxUser ? 'unset' : 'auto' }}>
+						{user.Admin || setupPage ? <div className="row">
+							<Link to="/class" className="button purple-shadow" style={{ backgroundImage: `url(${classesIcon})` }}>Classes</Link>
+							<Link to="/settings" className="button red-shadow" style={{ backgroundImage: `url(${settingsIcon})` }}>Settings</Link>
+						</div> : false}
+						<div className="row">
+							{
+								user.Admin &&
+								<Link
+									to="/certificate-menu"
+									className="button purple-shadow"
+									style={{ backgroundImage: `url(${cerificate})` }}>
+									Certificates
+								</Link>
+							}
+							<Link
+								to="/ClassList" className="button grey-shadow"
+								style={{ backgroundImage: `url(${planner})` }}>
+								DateSheet
+							</Link>
 
-					{this.props.ilmxUser === "ILMX" ?
-						<IlmxLanding
-							faculty={this.props.user}
-							onLogout={logout}
-							onRedirectToIlmx={this.redirectToIlmx}
-						/>
-						: <> <div className="page">
-							<div className="title">Setup</div>
-							{user.Admin || setupPage ? <div className="row">
-								<Link to="/teacher" className="button green-shadow" style={{ backgroundImage: `url(${teachersIcon})` }}>Teachers</Link>
-								<Link to="/student" className="button blue-shadow" style={{ backgroundImage: `url(${studentsIcon})` }}>Students</Link>
-							</div> : false}
+						</div>
+						<div className="row">
+							{
+								(user.Admin || family_permission) &&
+								<Link to="/families"
+									className="button green-shadow"
+									style={{ backgroundImage: `url(${family})` }}>
+									Families
+								</Link>
+							}
+							<Link to="/help" className="button grey-shadow" style={{ backgroundImage: `url(${Help})` }}>Help</Link>
+						</div>
+						<div className="row">
+							<div className="button yellow-shadow" onClick={logout} style={{ backgroundImage: `url(${switchUserIcon})` }}>Logout</div>
+							{
+								(user.Admin || prospective_permission) &&
+								<Link to="/student?forwardTo=prospective-student" className="button yellow-shadow" style={{ backgroundImage: `url(${prospective})` }}>Prospective</Link>
+							}
+						</div>
 
-							{user.Admin || setupPage ? <div className="row">
-								<Link to="/class" className="button purple-shadow" style={{ backgroundImage: `url(${classesIcon})` }}>Classes</Link>
-								<Link to="/settings" className="button red-shadow" style={{ backgroundImage: `url(${settingsIcon})` }}>Settings</Link>
-							</div> : false}
-							<div className="row">
-								{
-									(user.Admin || prospective_permission) &&
-									<Link to="/student?forwardTo=prospective-student" className="button yellow-shadow" style={{ backgroundImage: `url(${prospective})` }}>Prospective</Link>
-								}
-								<Link to="/help" className="button grey-shadow" style={{ backgroundImage: `url(${Help})` }}>Help</Link>
+					</div>
+
+					<div className="page">
+						<div className="title">Actions</div>
+						<div className="row">
+							<Link to="/attendance" className="button green-shadow" style={{ backgroundImage: `url(${attendanceIcon})` }}>Attendance</Link>
+							{user.Admin ? <Link to="/teacher-attendance" className="button red-shadow" style={{ backgroundImage: `url(${teacherAttendanceIcon})` }}>Teacher Attendance</Link> : false}
+						</div>
+
+						<div className="row">
+
+							<div className="badge-container">
+								<Link
+									to="/diary"
+									className="button purple-shadow"
+									style={{ backgroundImage: `url(${diary})` }}>
+									Diary
+								</Link>
 							</div>
-							<div className="row">
-								{
-									user.Admin &&
+
+							<Link
+								to="/sms" className="button red-shadow"
+								style={{ backgroundImage: `url(${smsIcon})` }}>
+								SMS
+							</Link>
+						</div>
+
+						<div className="row">
+							{
+								user.Admin || teacher_fee_permission ?
 									<Link
-										to="/certificate-menu"
-										className="button purple-shadow"
-										style={{ backgroundImage: `url(${cerificate})` }}>
-										Certificates
-								</Link>
-								}
-								<div className="button yellow-shadow" onClick={logout} style={{ backgroundImage: `url(${switchUserIcon})` }}>Logout</div>
-							</div>
-							<div className="row">
-								{
-									(user.Admin || family_permission) &&
-									<Link to="/families"
-										className="button green-shadow"
-										style={{ backgroundImage: `url(${family})` }}>
-										Families
-								</Link>
-								}
-								{
-									(user.Admin) &&
-									<div
-										onClick={() => this.redirectToIlmx()}
-										className="button green-shadow"
-										style={{ backgroundImage: `url(${IlmxLogo})` }}>
-										IlmExchange
+										to="/fee-menu"
+										className="button blue-shadow"
+										style={{ backgroundImage: `url(${feesIcon})` }}>Fees</Link>
+
+									: false
+							}
+							{
+								(user.Admin) &&
+								<div
+									onClick={() => this.redirectToIlmx()}
+									className="button green-shadow"
+									style={{ backgroundImage: `url(${IlmxLogo})` }}>
+									IlmExchange
 								</div>
-								}
+							}
+						</div>
+
+						<div className="row">
+
+							<Link
+								to="/reports"
+								className="button yellow-shadow"
+								style={{ backgroundImage: `url(${marksIcon})` }}>
+								Marks
+							</Link>
+
+
+							<Link
+								to="/reports-menu"
+								className="button green-shadow"
+								style={{ backgroundImage: `url(${resultIcon})` }}>
+								Result Card
+							</Link>
+
+						</div>
+						<div className="row">
+							{
+								user.Admin || teacher_fee_permission ?
+									<Link to="/analytics/fees" className="button purple-shadow" style={{ backgroundImage: `url(${analyticsIcon})` }}>Analytics</Link>
+									: false
+							}
+
+							{
+								(user.Admin || teacher_expense_permission) && <div className="badge-container">
+									<Link
+										className="button yellow-shadow"
+										to="/expenses/general"
+										style={{ backgroundImage: `url(${expense})` }}>
+										Expenses
+								</Link>
+								</div>
+							}
+						</div>
+					</div>
+
+					{user.Admin || dailyStats ? <div className="page">
+						<div className="title">Daily Statistics</div>
+						<div className="divider">Attendance</div>
+						<div className="row">
+							<Link
+								className="box no-underline bg-green"
+								to={this.getDailyStatsRoute('attendance')}>
+								<div>{today_attendance.PRESENT}</div>
+								<div>Present</div>
+							</Link>
+
+							<Link
+								className="box no-underline bg-red"
+								to={this.getDailyStatsRoute('attendance')}>
+								<div>{today_attendance.ABSENT}</div>
+								<div>Absent</div>
+							</Link>
+
+							<Link
+								className="box no-underline bg-grey"
+								to={this.getDailyStatsRoute('attendance')}>
+								<div>{today_attendance.LEAVE + today_attendance.SHORT_LEAVE + today_attendance.SICK_LEAVE + today_attendance.CASUAL_LEAVE}</div>
+								<div>Leave</div>
+							</Link>
+						</div>
+
+						<div className="divider">Teacher Attendance</div>
+						<div className="row">
+							<Link
+								className="box no-underline bg-green"
+								to={this.getDailyStatsRoute('teacher-attendance')}>
+								<div>{today_teacher_attendance.PRESENT}</div>
+								<div>Present</div>
+							</Link>
+
+							<Link
+								className="box no-underline bg-red"
+								to={this.getDailyStatsRoute('teacher-attendance')}>
+								<div>{today_teacher_attendance.ABSENT}</div>
+								<div>Absent</div>
+							</Link>
+
+							<Link
+								className="box no-underline bg-grey"
+								to={this.getDailyStatsRoute('teacher-attendance')}>
+								<div>{today_teacher_attendance.LEAVE}</div>
+								<div>Leave</div>
+							</Link>
+						</div>
+
+						<div className="divider">Fee Collection</div>
+						<div className="row">
+							<Link
+								className="box no-underline bg-blue"
+								to={this.getDailyStatsRoute('fees')}>
+								<div>{numberWithCommas(today_payment)}</div>
+								<div>Rupees</div>
+							</Link>
+
+							<Link
+								className="box no-underline bg-green"
+								to='/analytics/daily-stats?type=paid_students'>
+								<div>{today_payment_students}</div>
+								<div>Students</div>
+							</Link>
+						</div>
+
+						<div className="divider">Last Backup</div>
+						<div className="row">
+							<div className="box bg-purple">
+								<div>{moment(lastSnapshot).format("HH:mm")}</div>
+								<div>{moment(lastSnapshot).format("D-M-YYYY")}</div>
+							</div>
+							<div className="box bg-grey">
+								<div>{unsyncd}</div>
+								<div>{unsyncd === 1 ? "Unsyncd Change" : "Unsynced Changes"}</div>
 							</div>
 						</div>
 
-							<div className="page">
-								<div className="title">Actions</div>
-								<div className="row">
-									<Link to="/attendance" className="button green-shadow" style={{ backgroundImage: `url(${attendanceIcon})` }}>Attendance</Link>
-									{user.Admin ? <Link to="/teacher-attendance" className="button red-shadow" style={{ backgroundImage: `url(${teacherAttendanceIcon})` }}>Teacher Attendance</Link> : false}
-								</div>
-
-								<div className="row">
-
-									<div className="badge-container">
-										<Link
-											to="/diary"
-											className="button purple-shadow"
-											style={{ backgroundImage: `url(${diary})` }}>
-											Diary
-								</Link>
-									</div>
-									<Link
-										to="/reports"
-										className="button yellow-shadow"
-										style={{ backgroundImage: `url(${marksIcon})` }}>
-										Marks
-							</Link>
-
-								</div>
-
-								<div className="row">
-
-									<Link
-										to="/sms" className="button red-shadow"
-										style={{ backgroundImage: `url(${smsIcon})` }}>
-										SMS
-							</Link>
-
-									<Link
-										to="/reports-menu"
-										className="button green-shadow"
-										style={{ backgroundImage: `url(${resultIcon})` }}>
-										Result Card
-							</Link>
-
-								</div>
-								<div className="row">
-									{
-										user.Admin || teacher_fee_permission ?
-											<Link
-												to="/fee-menu"
-												className="button blue-shadow"
-												style={{ backgroundImage: `url(${feesIcon})` }}>Fees</Link>
-
-											: false
-									}
-									{
-										user.Admin || teacher_fee_permission ?
-											<Link to="/analytics/fees" className="button purple-shadow" style={{ backgroundImage: `url(${analyticsIcon})` }}>Analytics</Link>
-											: false
-									}
-								</div>
-
-								<div className="row">
-									<Link
-										to="/ClassList" className="button grey-shadow"
-										style={{ backgroundImage: `url(${planner})` }}>
-										DateSheet
-							</Link>
-									{
-										(user.Admin || teacher_expense_permission) && <div className="badge-container">
-											<Link
-												className="button yellow-shadow"
-												to="/expenses/general"
-												style={{ backgroundImage: `url(${expense})` }}>
-												Expenses
-								</Link>
-										</div>
-									}
-								</div>
-							</div>
-
-							{user.Admin || dailyStats ? <div className="page">
-								<div className="title">Daily Statistics</div>
-								<div className="divider">Attendance</div>
-								<div className="row">
-									<Link
-										className="box no-underline bg-green"
-										to={this.getDailyStatsRoute('attendance')}>
-										<div>{today_attendance.PRESENT}</div>
-										<div>Present</div>
-									</Link>
-
-									<Link
-										className="box no-underline bg-red"
-										to={this.getDailyStatsRoute('attendance')}>
-										<div>{today_attendance.ABSENT}</div>
-										<div>Absent</div>
-									</Link>
-
-									<Link
-										className="box no-underline bg-grey"
-										to={this.getDailyStatsRoute('attendance')}>
-										<div>{today_attendance.LEAVE + today_attendance.SHORT_LEAVE + today_attendance.SICK_LEAVE + today_attendance.CASUAL_LEAVE}</div>
-										<div>Leave</div>
-									</Link>
-								</div>
-
-								<div className="divider">Teacher Attendance</div>
-								<div className="row">
-									<Link
-										className="box no-underline bg-green"
-										to={this.getDailyStatsRoute('teacher-attendance')}>
-										<div>{today_teacher_attendance.PRESENT}</div>
-										<div>Present</div>
-									</Link>
-
-									<Link
-										className="box no-underline bg-red"
-										to={this.getDailyStatsRoute('teacher-attendance')}>
-										<div>{today_teacher_attendance.ABSENT}</div>
-										<div>Absent</div>
-									</Link>
-
-									<Link
-										className="box no-underline bg-grey"
-										to={this.getDailyStatsRoute('teacher-attendance')}>
-										<div>{today_teacher_attendance.LEAVE}</div>
-										<div>Leave</div>
-									</Link>
-								</div>
-
-								<div className="divider">Fee Collection</div>
-								<div className="row">
-									<Link
-										className="box no-underline bg-blue"
-										to={this.getDailyStatsRoute('fees')}>
-										<div>{numberWithCommas(today_payment)}</div>
-										<div>Rupees</div>
-									</Link>
-
-									<Link
-										className="box no-underline bg-green"
-										to='/analytics/daily-stats?type=paid_students'>
-										<div>{today_payment_students}</div>
-										<div>Students</div>
-									</Link>
-								</div>
-
-								<div className="divider">Last Backup</div>
-								<div className="row">
-									<div className="box bg-purple">
-										<div>{moment(lastSnapshot).format("HH:mm")}</div>
-										<div>{moment(lastSnapshot).format("D-M-YYYY")}</div>
-									</div>
-									<div className="box bg-grey">
-										<div>{unsyncd}</div>
-										<div>{unsyncd === 1 ? "Unsyncd Change" : "Unsynced Changes"}</div>
-									</div>
-								</div>
-
-							</div> : false}
-
-						</>}
+					</div> : false}
 				</div>
 			</div>
 
@@ -519,8 +512,7 @@ export default connect(state => ({
 	package_info: state.db.package_info || { date: -1, trial_period: 15, paid: false }, //If package info is undefined
 	school_id: state.auth.school_id,
 	auth: state.auth,
-	client_id: state.client_id,
-	ilmxUser: getIlmxUser(),
+	client_id: state.client_id
 }), dispatch => ({
 	resetTrial: () => dispatch(resetTrial()),
 	markPurchased: () => dispatch(markPurchased()),

@@ -10,7 +10,7 @@ import Layout from 'components/Layout'
 import Banner from 'components/Banner'
 import moment from 'moment'
 import { openDB } from 'idb'
-import { getIlmxUser, isMobile, hideScroll, showScroll } from 'utils/helpers'
+import { isMobile, hideScroll, showScroll } from 'utils/helpers'
 import StudentExportModal from 'modules/Exports/studenExportModal';
 import Modal from 'components/Modal';
 
@@ -27,7 +27,6 @@ interface P {
 	sms_templates: RootDBState["sms_templates"]
 	schoolLogo: string
 	max_limit: number
-	ilmxUser: string
 	unsyncd: number
 
 	saveTemplates: (templates: RootDBState["sms_templates"]) => void
@@ -271,45 +270,41 @@ class Settings extends Component<propsType, S>{
 				</select>
 			</div>
 
-			{
-				!this.props.ilmxUser && <>
-					<div className="row">
-						<label> Allow teacher to view Fee Information ? </label>
-						<select {...this.former.super_handle(["settings", "permissions", "fee", "teacher"])}>
-							<option value="true">Yes</option>
-							<option value="false">No</option>
-						</select>
-					</div>
-					<div className="row">
-						<label> Allow teacher to view Daily Statistics ? </label>
-						<select {...this.former.super_handle(["settings", "permissions", "dailyStats", "teacher"])}>
-							<option value="true">Yes</option>
-							<option value="false">No</option>
-						</select>
-					</div>
-					<div className="row">
-						<label> Allow teacher to view Expense Information? </label>
-						<select {...this.former.super_handle(["settings", "permissions", "expense", "teacher"])}>
-							<option value="true">Yes</option>
-							<option value="false">No</option>
-						</select>
-					</div>
-					<div className="row">
-						<label> Allow teacher to view Family Information? </label>
-						<select {...this.former.super_handle(["settings", "permissions", "family", "teacher"])}>
-							<option value="true">Yes</option>
-							<option value="false">No</option>
-						</select>
-					</div>
-					<div className="row">
-						<label> Allow teacher to view Prospective Information? </label>
-						<select {...this.former.super_handle(["settings", "permissions", "prospective", "teacher"])}>
-							<option value="true">Yes</option>
-							<option value="false">No</option>
-						</select>
-					</div>
-				</>
-			}
+			<div className="row">
+				<label> Allow teacher to view Fee Information ? </label>
+				<select {...this.former.super_handle(["settings", "permissions", "fee", "teacher"])}>
+					<option value="true">Yes</option>
+					<option value="false">No</option>
+				</select>
+			</div>
+			<div className="row">
+				<label> Allow teacher to view Daily Statistics ? </label>
+				<select {...this.former.super_handle(["settings", "permissions", "dailyStats", "teacher"])}>
+					<option value="true">Yes</option>
+					<option value="false">No</option>
+				</select>
+			</div>
+			<div className="row">
+				<label> Allow teacher to view Expense Information? </label>
+				<select {...this.former.super_handle(["settings", "permissions", "expense", "teacher"])}>
+					<option value="true">Yes</option>
+					<option value="false">No</option>
+				</select>
+			</div>
+			<div className="row">
+				<label> Allow teacher to view Family Information? </label>
+				<select {...this.former.super_handle(["settings", "permissions", "family", "teacher"])}>
+					<option value="true">Yes</option>
+					<option value="false">No</option>
+				</select>
+			</div>
+			<div className="row">
+				<label> Allow teacher to view Prospective Information? </label>
+				<select {...this.former.super_handle(["settings", "permissions", "prospective", "teacher"])}>
+					<option value="true">Yes</option>
+					<option value="false">No</option>
+				</select>
+			</div>
 		</div>
 	}
 
@@ -624,15 +619,13 @@ class Settings extends Component<propsType, S>{
 						<label>School Phone Number</label>
 						<input type="text" {...this.former.super_handle(["settings", "schoolPhoneNumber"])} placeholder="School Phone Number" />
 					</div>
+					<div
+						style={{ marginTop: "1.25rem", marginBottom: "1rem" }}
+						className="button blue"
+						onClick={this.toggleMoreSettings}
+					>{this.state.toggleMoreSettings ? "Hide more Settings" : "Show more Settings"}</div>
 					{
-						this.props.ilmxUser && <div
-							style={{ marginTop: "1.25rem", marginBottom: "1rem" }}
-							className="button blue"
-							onClick={this.toggleMoreSettings}
-						>{this.state.toggleMoreSettings ? "Hide more Settings" : "Show more Settings"}</div>
-					}
-					{
-						(this.props.ilmxUser ? this.state.toggleMoreSettings : true) && <>
+						this.state.toggleMoreSettings && <>
 							<div className="row">
 								<label>School Code (Optional)</label>
 								<input type="text" {...this.former.super_handle(["settings", "schoolCode"])} placeholder="School Code" />
@@ -695,11 +688,6 @@ class Settings extends Component<propsType, S>{
 								<label>Student Limit</label>
 								<label>{this.props.max_limit >= 0 ? `${studentLength} out of ${this.props.max_limit}` : "Unlimited"}</label>
 							</div>
-							{this.props.ilmxUser && <div className="row">
-								<label>Total Unsynced Changes</label>
-								<div>{this.props.unsyncd}</div>
-							</div>
-							}
 
 							<div className="button grey" onClick={() => this.setState({ templateMenu: !this.state.templateMenu })}>
 								Change SMS Templates
@@ -719,24 +707,17 @@ class Settings extends Component<propsType, S>{
 					{
 						this.state.permissionMenu ? this.changeTeacherPermissions() : false
 					}
-					{
-						this.props.user.Admin && !this.props.ilmxUser ?
-							<div className="button grey" onClick={() => this.setState({ gradeMenu: !this.state.gradeMenu })}>
-								Grade Settings
-							</div>
-							: false
-					}
+					<div className="button grey" onClick={() => this.setState({ gradeMenu: !this.state.gradeMenu })}>
+						Grade Settings
+					</div>
 					{
 						this.state.gradeMenu && this.gradeMenu()
 					}
 
-					{
-						!this.props.ilmxUser && <>
-							<Link className="button grey" to="settings/class">Fee Settings</Link>
-							<Link className="button grey" to="/settings/promote">Promote Students</Link>
-							<Link className="button grey" to="/settings/historicalFee">Add Historical Fees</Link>
-						</>
-					}
+					<Link className="button grey" to="settings/class">Fee Voucher Settings</Link>
+					<Link className="button grey" to="/settings/promote">Promote Students</Link>
+					<Link className="button grey" to="/settings/historicalFee">Add Historical Fees</Link>
+
 					<Link className="button grey" to="/settings/excel-import/students">Import From Excel</Link>
 					{
 						this.props.user.Admin ?
@@ -771,7 +752,6 @@ export default connect((state: RootReducerState) => ({
 	sms_templates: state.db.sms_templates,
 	schoolLogo: state.db.assets ? state.db.assets.schoolLogo || "" : "",
 	max_limit: state.db.max_limit || -1,
-	ilmxUser: getIlmxUser(),
 	unsyncd: Object.keys(state.queued.mutations || {}).length
 }),
 	(dispatch: Function) => ({
