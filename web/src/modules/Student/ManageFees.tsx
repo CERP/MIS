@@ -30,6 +30,10 @@ interface S {
 	selected_section_id: string
 	selected_student_id: string
 	fee_filter: "to_all_students" | "to_single_class" | "to_single_student" | ""
+
+	reset_of_selected_section_id: string
+	reset_of_selected_student_id: string
+	reset_fee_filter: "to_all_students" | "to_single_class" | "to_single_student" | ""
 }
 
 interface FeeDeleteMap {
@@ -74,6 +78,9 @@ class ManageFees extends Component<propTypes, S> {
 			fee_filter: "to_all_students",
 			selected_section_id: "",
 			selected_student_id: "",
+			reset_fee_filter: "to_all_students",
+			reset_of_selected_section_id: "",
+			reset_of_selected_student_id: "",
 			fee: {
 				name: "",
 				type: "",
@@ -205,8 +212,20 @@ class ManageFees extends Component<propTypes, S> {
 	}
 
 	getSelectedSectionStudents = () => {
+
+		const { selected_section_id } = this.state
+
 		return Object.values(this.props.students)
-			.filter(s => s.Name && s.Active && s.section_id === this.state.selected_section_id)
+			.filter(s => s.Name && s.Active && s.section_id === selected_section_id)
+			.sort((a, b) => a.Name.localeCompare(b.Name))
+	}
+
+	getSelectedSectionStudentsForFeeReset = () => {
+
+		const { reset_of_selected_section_id } = this.state
+
+		return Object.values(this.props.students)
+			.filter(s => s.Name && s.Active && s.section_id === reset_of_selected_section_id)
 			.sort((a, b) => a.Name.localeCompare(b.Name))
 	}
 
@@ -221,20 +240,23 @@ class ManageFees extends Component<propTypes, S> {
 
 	resetStudentsFees = () => {
 
-		const { fee_filter, selected_section_id, selected_student_id } = this.state
+		const { reset_fee_filter, reset_of_selected_section_id, reset_of_selected_student_id } = this.state
+
+		console.log("SELECTED ID", reset_of_selected_student_id, reset_fee_filter, reset_of_selected_section_id)
+
 
 		let students = Object.values(this.props.students)
 			.filter(student => {
 
-				if (fee_filter === "to_all_students") {
+				if (reset_fee_filter === "to_all_students") {
 					return true
 				}
 
-				if (fee_filter === "to_single_class" && student.section_id && student.section_id === selected_section_id) {
+				if (reset_fee_filter === "to_single_class" && student.section_id && student.section_id === reset_of_selected_section_id) {
 					return true
 				}
 
-				if (fee_filter === "to_single_student" && student.section_id && student.id === selected_student_id) {
+				if (reset_fee_filter === "to_single_student" && student.section_id && student.id === reset_of_selected_student_id) {
 					return true
 				}
 
@@ -243,10 +265,12 @@ class ManageFees extends Component<propTypes, S> {
 
 			})
 
+		console.log(students)
+
 		const student_count = students.length
 
 
-		const alert_message = `Warning this action cannot be undo! ${student_count} student will be effected. Are you sure you want to reset fees?`
+		const alert_message = `Warning this action cannot be undo! ${student_count} student will be affected. Are you sure you want to reset fees?`
 
 		if (window.confirm(alert_message) && student_count > 0) {
 
@@ -279,10 +303,7 @@ class ManageFees extends Component<propTypes, S> {
 				{this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
 
 				<div className="title">Fee Management</div>
-				<div className="row" style={{ justifyContent: "flex-end" }}>
-					<div className="button red" onClick={this.resetStudentsFees}>Reset Fees</div>
-				</div>
-				<div className="divider">Add Fees</div>
+				<div className="divider">Add Fee</div>
 				<div className="section form">
 					<div className="row">
 						<label>Add To</label>
@@ -314,9 +335,7 @@ class ManageFees extends Component<propTypes, S> {
 								}
 							</select>
 						</div> : false}
-				</div>
 
-				<div className="section form">
 					<div className="row">
 						<label>Fee Type</label>
 						<select {...this.former.super_handle(["fee", "type"])}>
@@ -342,6 +361,40 @@ class ManageFees extends Component<propTypes, S> {
 						</select>
 					</div>
 					<div className="button blue" onClick={this.save}> Add </div>
+				</div>
+				<div className="divider">Reset Fee</div>
+				<div className="section form">
+					<div className="row">
+						<label>Reset of</label>
+						<select {...this.former.super_handle(["reset_fee_filter"], () => true, () => this.filterCallback())}>
+							<option value="">Select Students</option>
+							<option value="to_all_students">All Students</option>
+							<option value="to_single_class">Single Class</option>
+							<option value="to_single_student">Single Student</option>
+						</select>
+					</div>
+
+					{this.state.reset_fee_filter === "to_single_class" || this.state.reset_fee_filter === "to_single_student" ?  //Section Wise
+						<div className="row">
+							<label>Select Class</label>
+							<select {...this.former.super_handle(["reset_of_selected_section_id"])}>
+								<option value="" >Select Class</option>
+								{
+									sortedSections.map(s => <option key={s.id} value={s.id}>{s.namespaced_name}</option>)
+								}
+							</select>
+						</div> : false}
+					{this.state.reset_fee_filter === "to_single_student" && this.state.reset_of_selected_section_id !== "" ?
+						<div className="row">
+							<label>Select Student</label>
+							<select {...this.former.super_handle(["reset_of_selected_student_id"])}>
+								<option value="">Select Student</option>
+								{
+									this.getSelectedSectionStudentsForFeeReset().map(s => <option key={s.id} value={s.id}>{s.Name}</option>)
+								}
+							</select>
+						</div> : false}
+					<div className="button red" style={{ marginTop: 10 }} onClick={this.resetStudentsFees}>Reset Fee</div>
 				</div>
 
 				<div className="divider">Recent Added Fees</div>
