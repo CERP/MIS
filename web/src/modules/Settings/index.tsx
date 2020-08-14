@@ -645,15 +645,6 @@ class Settings extends Component<propsType, S>{
 							</div>
 
 							<div className="row">
-								<label>Fee Vouchers per Page</label>
-								<select {...this.former.super_handle(["settings", "vouchersPerPage"])}>
-									<option value="1">1</option>
-									<option value="2">2</option>
-									<option value="3">3</option>
-								</select>
-							</div>
-
-							<div className="row">
 								<label>SMS Option</label>
 								<select {...this.former.super_handle(["settings", "sendSMSOption"])}>
 									<option value="">Select SMS Option</option>
@@ -717,7 +708,6 @@ class Settings extends Component<propsType, S>{
 					<Link className="button grey" to="settings/class">Fee Voucher Settings</Link>
 					<Link className="button grey" to="/settings/promote">Promote Students</Link>
 					<Link className="button grey" to="/settings/historicalFee">Add Historical Fees</Link>
-
 					<Link className="button grey" to="/settings/excel-import/students">Import From Excel</Link>
 					{
 						this.props.user.Admin ?
