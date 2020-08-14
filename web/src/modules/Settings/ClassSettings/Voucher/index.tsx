@@ -117,8 +117,16 @@ class VoucherSettings extends Component<P, S> {
 
 		return <div className="class-settings fee-voucher">
 			{this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
-			<div className="divider">Fee Voucher</div>
+			<div className="divider">Fee Voucher Settings</div>
 			<div className="section form fee-voucher">
+				<div className="row">
+					<label>Fee Vouchers per Page</label>
+					<select {...this.former.super_handle(["settings", "vouchersPerPage"])}>
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+					</select>
+				</div>
 				<div className="row">
 					<label>No. of Fee due Days</label>
 					<input type="number" {...this.former.super_handle(["dueDays"])}

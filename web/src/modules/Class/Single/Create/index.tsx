@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { v4 } from 'node-uuid'
 import { Link, Redirect } from 'react-router-dom'
 import { RouteComponentProps } from 'react-router'
-
+import DefaultFeeSettings from '../../../Settings/ClassSettings/DefaultFee'
 import Former from 'utils/former'
 import checkCompulsoryFields from 'utils/checkCompulsoryFields'
 import Banner from 'components/Banner'
@@ -14,6 +14,7 @@ import { getIlmxUser } from 'utils/helpers'
 import './style.css'
 
 interface P {
+	settings: RootDBState["settings"]
 	classes: RootDBState["classes"]
 	faculty: RootDBState["faculty"]
 	students: RootDBState["students"]
@@ -381,7 +382,7 @@ class SingleClass extends Component<propsType, S> {
 						})
 				}
 				<div className="button green" onClick={this.addSection}>Add Another Section</div>
-
+				<DefaultFeeSettings classId={this.state.class.id} settings={this.props.settings} />
 				<div className="save-delete">
 					{!this.isNew() ? <div className="button red" onClick={() => this.removeClass(this.state.class)}>Delete</div> : false}
 					<div className="button save" onClick={this.onSave}>Save</div>
@@ -392,6 +393,7 @@ class SingleClass extends Component<propsType, S> {
 }
 
 export default connect((state: RootReducerState) => ({
+	settings: state.db.settings,
 	classes: state.db.classes,
 	faculty: state.db.faculty,
 	students: state.db.students,

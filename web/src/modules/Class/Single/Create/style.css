@@ -36,4 +36,12 @@
 
 	.single-class .default-fee {
 		margin-top: 20px;
+		width: 98%;
+	}
+
+	@media only screen and (max-width: 425px) {
+		.single-class .default-fee {
+			margin-top: 20px;
+			width: 90%;
+		}
 	}
