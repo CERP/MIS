@@ -8,7 +8,7 @@ import Former from 'utils/former'
 import checkCompulsoryFields from 'utils/checkCompulsoryFields'
 import Banner from 'components/Banner'
 import Dropdown from 'components/Dropdown'
-import { createEditClass, addStudentToSection, removeStudentFromSection, deleteClass } from 'actions'
+import { createEditClass, addStudentToSection, removeStudentFromSection, deleteClass, mergeSettings } from 'actions'
 import { getIlmxUser } from 'utils/helpers'
 
 import './style.css'
@@ -24,6 +24,7 @@ interface P {
 	addStudent: (section_id: string, student: MISStudent) => void
 	removeStudent: (student: MISStudent) => void
 	removeClass: (mis_class: AugmentedMISClass) => void
+	mergeSettings: (settings: MISSettings) => void
 }
 
 interface S {
@@ -382,7 +383,11 @@ class SingleClass extends Component<propsType, S> {
 						})
 				}
 				<div className="button green" onClick={this.addSection}>Add Another Section</div>
-				<DefaultFeeSettings classId={this.state.class.id} settings={this.props.settings} />
+				<DefaultFeeSettings
+					classId={this.state.class.id}
+					settings={this.props.settings}
+					mergeSettings={this.props.mergeSettings}
+				/>
 				<div className="save-delete">
 					{!this.isNew() ? <div className="button red" onClick={() => this.removeClass(this.state.class)}>Delete</div> : false}
 					<div className="button save" onClick={this.onSave}>Save</div>
@@ -402,5 +407,6 @@ export default connect((state: RootReducerState) => ({
 	save: (mis_class: AugmentedMISClass) => dispatch(createEditClass(mis_class)),
 	addStudent: (section_id: string, student: MISStudent) => dispatch(addStudentToSection(section_id, student)),
 	removeStudent: (student: MISStudent) => dispatch(removeStudentFromSection(student)),
-	removeClass: (mis_class: AugmentedMISClass) => dispatch(deleteClass(mis_class))
+	removeClass: (mis_class: AugmentedMISClass) => dispatch(deleteClass(mis_class)),
+	mergeSettings: (settings: MISSettings) => dispatch(mergeSettings(settings))
 }))(SingleClass)

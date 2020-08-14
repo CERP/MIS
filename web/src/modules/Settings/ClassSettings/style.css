@@ -1,3 +1,6 @@
+.class-settings .section-container {
+    width: 80%;
+}
 .class-settings {
     width: 100%;
     margin: auto;
@@ -17,4 +20,13 @@
 }
 .class-settings.fee-voucher fieldset {
     border: 1px solid rgba(0,0,0,0.3);
+}
+.class-settings.fee-voucher .form .row {
+    flex-direction: unset;
+}
+
+.class-settings.fee-voucher .options fieldset .row input {
+    width: 25px;
+    min-width: 25px;
+    margin-left: auto;
 }

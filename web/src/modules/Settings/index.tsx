@@ -644,15 +644,6 @@ class Settings extends Component<propsType, S>{
 									placeholder="session end" />
 							</div>
 
-							{/* <div className="row">
-								<label>Fee Vouchers per Page</label>
-								<select {...this.former.super_handle(["settings", "vouchersPerPage"])}>
-									<option value="1">1</option>
-									<option value="2">2</option>
-									<option value="3">3</option>
-								</select>
-							</div> */}
-
 							<div className="row">
 								<label>SMS Option</label>
 								<select {...this.former.super_handle(["settings", "sendSMSOption"])}>

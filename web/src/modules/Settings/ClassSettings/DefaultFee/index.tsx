@@ -1,14 +1,12 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { mergeSettings } from 'actions'
 import Former from 'utils/former'
 
 import './../style.css'
 
 interface P {
 	classId: string
-	settings: RootDBState["settings"]
-	mergeSettings: (settings: RootDBState["settings"]) => void
+	settings: MISSettings
+	mergeSettings: (settings: MISSettings) => void
 }
 
 type S = {
@@ -26,7 +24,6 @@ class DefaultFeeSettings extends Component<P, S> {
 		}
 
 		this.former = new Former(this, [])
-
 	}
 
 	setDefaultFee = (): MISStudentFee => {
@@ -97,7 +94,7 @@ class DefaultFeeSettings extends Component<P, S> {
 
 		return <div className="class-settings">
 			<div className="divider">Default Fee</div>
-			<div className="section form default-fee">
+			<div className="section">
 				<div className="row">
 					<label>Type</label>
 					<input type="text" disabled value={this.state.fee.type} />
@@ -122,8 +119,4 @@ class DefaultFeeSettings extends Component<P, S> {
 		</div>
 	}
 }
-export default connect(() => ({
-}),
-	(dispatch: Function) => ({
-		mergeSettings: (settings: RootDBState["settings"]) => dispatch(mergeSettings(settings)),
-	}))(DefaultFeeSettings);
+export default DefaultFeeSettings
