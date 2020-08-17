@@ -60,17 +60,18 @@ const ManageSchool: React.FC<PropsType> = (props) => {
 			schoolList={schoolList}
 			onResetPassword={resetPassword} />
 
+		<ResetFacultyPassword
+			schoolList={schoolList}
+			faculty={faculty}
+			onUpdateFacultyPassword={updateFacultyPassword}
+			onGetMISFacultyLoginInfo={getMISFacultyLoginInfo} />
+
 		<UpdateLoginInfo
 			schoolList={schoolList}
 			getSchoolInfo={getSchoolInfo}
 			updateLoginInfo={updateLoginInfo}
 			schoolLoginInfo={loginInfo} />
 
-		<ResetFacultyPassword
-			schoolList={schoolList}
-			faculty={faculty}
-			onUpdateFacultyPassword={updateFacultyPassword}
-			onGetMISFacultyLoginInfo={getMISFacultyLoginInfo} />
 
 	</div>
 }

@@ -279,8 +279,9 @@ class Reports extends Component<propsType, S> {
 							</div>
 						}
 					</div>
-					<div className="row create-exam">
-						<div className="button blue create-exam" onClick={this.createBulkExams}>Create Bulk Exams</div>
+					<div className="create-exam">
+						<div className="button blue" onClick={() => this.createNewExam()}>Create New Exam</div>
+						<div className="button grey create-exam" onClick={this.createBulkExams}>Create Bulk Exams</div>
 					</div>
 				</div>
 				{
@@ -316,7 +317,6 @@ class Reports extends Component<propsType, S> {
 						</fieldset>
 						<div className="row">
 							<div className="button grey" onClick={() => window.print()} style={{ marginRight: 5 }}>Print Result Sheet</div>
-							<div className="button blue" onClick={() => this.createNewExam()}>Create New Exam</div>
 						</div>
 					</div>
 				}

@@ -106,6 +106,12 @@
 	background-color: #eee;
 }
 
+@media (max-width: 475px) {
+	.bulk-exams .section-container {
+	   width: 85%; 
+	}
+}
+
 @media (max-width: 575px) {
 	.bulk-exams .filter-container select {
 		font-size: 0.85rem;

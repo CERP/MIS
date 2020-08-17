@@ -73,3 +73,9 @@ legend {
  .bulk-exams .section .row.exam-button .button {
    padding: 10px 15px;
  }
+
+@media (max-width: 475px) {
+   .section.exams-filter, .section.exams-list {
+      width: 85%; 
+   }
+}
