@@ -19,8 +19,12 @@ class DefaultFeeSettings extends Component<P, S> {
 	former: Former
 	constructor(props: P) {
 		super(props)
+
+		const { settings, classId } = props
+		const fee = settings && settings.classes && settings.classes.defaultFee && settings.classes.defaultFee[classId]
+
 		this.state = {
-			fee: props.settings.classes.defaultFee[props.classId] || this.setDefaultFee()
+			fee: fee || this.setDefaultFee()
 		}
 
 		this.former = new Former(this, [])
