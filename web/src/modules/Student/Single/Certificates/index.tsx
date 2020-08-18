@@ -208,6 +208,18 @@ const CharacterCertificate: React.FC<CertificateProps> = ({ curr_student, releva
 					<div contentEditable>{school_session}</div>
 				</div>
 
+				<div className="cert-row">
+					<label>Date of issue: </label>
+					<div contentEditable>{moment(new Date).format("DD-MM-YYYY")}
+					</div>
+				</div>
+
+				<div className="cert-row">
+					<label>Prepared by: </label>
+					<div contentEditable>
+					</div>
+				</div>
+
 			</div>
 
 			<div className="footer">
