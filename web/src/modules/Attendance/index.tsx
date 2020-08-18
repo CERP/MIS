@@ -267,20 +267,18 @@ class Attendance extends Component<propTypes, S> {
 			absent: 0,
 			leave: 0
 		}
-		Object.keys(this.state.selected_students)
-			.sort((id_a, id_b) => (this.props.students[id_a].RollNumber !== undefined && this.props.students[id_b].RollNumber !== undefined) && (parseFloat(this.props.students[id_a].RollNumber) - parseFloat(this.props.students[id_b].RollNumber)))
-			.map(sid => {
-				const x = this.props.students[sid]
-				const current_attendance = (x.attendance || {})[moment(this.state.date).format("YYYY-MM-DD")];
-				const status = current_attendance ? current_attendance.status : "n/a"
-				if (status === "PRESENT") {
-					attendanceStats.present++
-				} else if (status === "ABSENT") {
-					attendanceStats.absent++
-				} else if (status === "LEAVE" || status === "CASUAL_LEAVE" || status === "SHORT_LEAVE" || status === "SICK_LEAVE") {
-					attendanceStats.leave++
-				}
-			})
+		for (const sid of Object.keys(this.state.selected_students)) {
+			const x = this.props.students[sid]
+			const current_attendance = (x.attendance || {})[moment(this.state.date).format("YYYY-MM-DD")];
+			const status = current_attendance ? current_attendance.status : "n/a"
+			if (status === "PRESENT") {
+				attendanceStats.present++
+			} else if (status === "ABSENT") {
+				attendanceStats.absent++
+			} else if (status === "LEAVE" || status === "CASUAL_LEAVE" || status === "SHORT_LEAVE" || status === "SICK_LEAVE") {
+				attendanceStats.leave++
+			}
+		}
 		return attendanceStats
 	}
 
