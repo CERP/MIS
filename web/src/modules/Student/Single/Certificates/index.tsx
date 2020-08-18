@@ -209,6 +209,12 @@ const CharacterCertificate: React.FC<CertificateProps> = ({ curr_student, releva
 				</div>
 
 				<div className="cert-row">
+					<label>Date of Withdrawal: </label>
+					<div contentEditable>
+					</div>
+				</div>
+
+				<div className="cert-row">
 					<label>Date of issue: </label>
 					<div contentEditable>{moment(new Date).format("DD-MM-YYYY")}
 					</div>
