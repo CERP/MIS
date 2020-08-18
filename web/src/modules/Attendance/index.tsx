@@ -261,7 +261,30 @@ class Attendance extends Component<propTypes, S> {
 		}
 	}
 
+	getAttendanceStats = () => {
+		let attendanceStats = {
+			present: 0,
+			absent: 0,
+			leave: 0
+		}
+		for (const sid of Object.keys(this.state.selected_students)) {
+			const x = this.props.students[sid]
+			const current_attendance = (x.attendance || {})[moment(this.state.date).format("YYYY-MM-DD")];
+			const status = current_attendance ? current_attendance.status : "n/a"
+			if (status === "PRESENT") {
+				attendanceStats.present++
+			} else if (status === "ABSENT") {
+				attendanceStats.absent++
+			} else if (status === "LEAVE" || status === "CASUAL_LEAVE" || status === "SHORT_LEAVE" || status === "SICK_LEAVE") {
+				attendanceStats.leave++
+			}
+		}
+		return attendanceStats
+	}
+
 	render() {
+
+		const attendanceStats = this.getAttendanceStats()
 
 		const messages = Object.entries(this.state.selected_students)
 			.reduce((agg, [sid, selected]) => {
@@ -324,9 +347,9 @@ class Attendance extends Component<propTypes, S> {
 				<div className="selectors">
 					<div className="row" style={{ flexWrap: "wrap" }}>
 						<div className="button select-all" onClick={this.selectAllOrNone}>{Object.values(this.state.selected_students).every(x => x) ? "Select None" : "Select All"}</div>
-						<div className="button select-all" onClick={this.selectPresentOrNone}>P</div>
-						<div className="button select-all" onClick={this.selectAbsentOrNone}>A</div>
-						<div className="button select-all" onClick={this.selectLeaveOrNone}>L</div>
+						<div className="button select-all" onClick={this.selectPresentOrNone}>P : {attendanceStats.present}</div>
+						<div className="button select-all" onClick={this.selectAbsentOrNone}>A : {attendanceStats.absent}</div>
+						<div className="button select-all" onClick={this.selectLeaveOrNone}>L :  {attendanceStats.leave}</div>
 						<div className="button" onClick={this.markAllPresent}>Mark All Present</div>
 					</div>
 
