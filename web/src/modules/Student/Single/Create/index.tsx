@@ -20,7 +20,6 @@ import Modal from 'components/Modal'
 import Banner from 'components/Banner'
 import Former from 'utils/former'
 import AdmissionForm from 'components/Printable/Student/admissionform'
-import { getIlmxUser } from 'utils/helpers'
 
 import './style.css'
 
@@ -73,7 +72,6 @@ interface P {
 	permissions: RootDBState['settings']['permissions']
 	max_limit: RootDBState['max_limit']
 	user: MISTeacher
-	ilmxUser: string
 
 	save: (student: MISStudent) => any
 	delete: (student: MISStudent) => any
@@ -631,11 +629,8 @@ class SingleStudent extends Component<propTypes, S> {
 
 		return <div className="single-student">
 			{this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
-
-			{!this.isNew() && <div className="title no-print">Edit Student</div>}
-
 			{
-				this.props.ilmxUser && this.isNew() && !this.state.toggleMoreInfo && <div className="form no-print">
+				this.isNew() && !this.state.toggleMoreInfo && <div className="form no-print">
 					<div className="divider">Student Information</div>
 					<div className="row">
 						<label>Full Name</label>
@@ -686,17 +681,35 @@ class SingleStudent extends Component<propTypes, S> {
 						</select>
 					</div>
 					}
+					{!prospective ? false : <div className="row">
+						<label>Class Section</label>
+						<select
+							{...this.former.super_handle_flex(
+								["prospective_section_id"],
+								{ styles: (val: string) => val === "" ? { borderColor: "#fc6171" } : {} }
+							)}
+							disabled={!admin}>
+
+							<option value="">Please Select a Section</option>
+							{
+								sections
+									.sort((a, b) => a.classYear - b.classYear)
+									.map(c => <option key={c.id} value={c.id}>{c.namespaced_name}</option>)
+							}
+						</select>
+					</div>
+					}
 				</div>
 			}
 
 			{
-				this.props.ilmxUser && this.isNew() && <div className="section-container" style={{ marginTop: "1.25rem" }}>
+				this.isNew() && <div className="section-container" style={{ marginTop: "1.25rem" }}>
 					<div className="button green" onClick={this.toggleMoreInfo}>{this.state.toggleMoreInfo ? "Show Less Fields" : "Show Additional Fields"}</div>
 				</div>
 			}
 
 			{
-				(this.props.ilmxUser && this.isNew() ? this.state.toggleMoreInfo : true) && <div className="form no-print">
+				(this.isNew() ? this.state.toggleMoreInfo : true) && <div className="form no-print">
 					<div className="divider">Student Information</div>
 					<div className="row">
 						<label>Profile Picture</label>
@@ -775,13 +788,15 @@ class SingleStudent extends Component<propTypes, S> {
 							<option value="female">Female</option>
 						</select>
 					</div>
-					<div className="row">
-						<label>Religion</label>
-						<input type="text"
-							{...this.former.super_handle(["Religion"])}
-							placeholder="Religion"
-						/>
-					</div>
+					{!prospective &&
+						<div className="row">
+							<label>Religion</label>
+							<input type="text"
+								{...this.former.super_handle(["Religion"])}
+								placeholder="Religion"
+							/>
+						</div>
+					}
 					{!prospective ? <div className="row">
 						<label>Blood Type</label>
 						<select {...this.former.super_handle(["BloodType"])}>
@@ -806,7 +821,7 @@ class SingleStudent extends Component<propTypes, S> {
 						<Link to={`/families/${oldStudent.FamilyID}`} className="button purple">Family Profile</Link>
 					</div>}
 
-					<div className="row">
+					{!prospective && <div className="row">
 						<label>Family ID Code</label>
 						<datalist id="families">
 							{
@@ -815,7 +830,7 @@ class SingleStudent extends Component<propTypes, S> {
 							}
 						</datalist>
 						<input list="families" {...this.former.super_handle(["FamilyID"], () => true, this.updateSiblings)} placeholder="Optional Family ID Code" />
-					</div>
+					</div>}
 
 					<div className="row">
 						<label>Father Name</label>
@@ -854,7 +869,7 @@ class SingleStudent extends Component<propTypes, S> {
 						</div>
 					</div>
 
-					<div className="row">
+					{!prospective && <div className="row">
 						<label>Alternate Phone</label>
 						<div className="row" style={{ flexDirection: "row" }}>
 							<input
@@ -866,7 +881,7 @@ class SingleStudent extends Component<propTypes, S> {
 							/>
 							{!this.isNew() && <a className="button blue call-link" href={`tel:${this.state.profile.Phone}`} > Call</a>}
 						</div>
-					</div>
+					</div>}
 
 					{this.siblings.length > 0 && <React.Fragment>
 						<div className="divider">Siblings</div>
@@ -958,10 +973,12 @@ class SingleStudent extends Component<propTypes, S> {
 						<textarea {...this.former.super_handle(["Notes"])} placeholder="Notes" disabled={!admin} />
 					</div>
 
-					<div className="row">
-						<label>Student Portal Link</label>
-						<textarea value={`https://ilmexchange.com/student?referral=${this.props.school_id}&std_id=${this.state.profile.id}`} />
-					</div>
+					{!prospective &&
+						<div className="row">
+							<label>Student Portal Link</label>
+							<textarea value={`https://ilmexchange.com/student?referral=${this.props.school_id}&std_id=${this.state.profile.id}`} />
+						</div>
+					}
 
 					{!prospective && <div className="divider"> Tags </div>}
 					{!prospective && <div className="tag-container">
@@ -1003,70 +1020,67 @@ class SingleStudent extends Component<propTypes, S> {
 						}
 					</div>}
 
-					{
-						!this.props.ilmxUser && <>
-							<div className="no-print row">
-								<div className="button grey" onClick={() => this.setState({ show_hide_fee: !this.state.show_hide_fee })}>
-									{this.state.show_hide_fee ? "Hide" : "Show"} Payments Section
+					{!prospective && <div className="no-print row">
+						<div className="button grey" onClick={() => this.setState({ show_hide_fee: !this.state.show_hide_fee })}>
+							{this.state.show_hide_fee ? "Hide" : "Show"} Payments Section
 							</div>
+					</div>}
+
+					{this.state.show_hide_fee && (admin || (this.props.permissions && this.props.permissions.fee.teacher)) && !prospective ? <div className="divider">Payment</div> : false}
+					{this.state.show_hide_fee && (admin || (this.props.permissions && this.props.permissions.fee.teacher)) && !prospective ?
+						Object.entries(this.state.profile.fees).map(([id, fee]) => {
+							const editable = this.state.edit[id] || this.isNew()
+
+							return <div className="section" key={id}>
+								{!admin || editable ? false : <div className="click-label" onClick={() => this.onFeeEdit(id)}>Edit Fee</div>}
+								{!admin || !editable ? false : <div className="click-label" onClick={this.removeFee(id)}>Remove Fee</div>}
+								<div className="row">
+									<label>Type</label>
+									<select {...this.former.super_handle(["fees", id, "type"])} disabled={!admin || !editable}>
+										<option value="" disabled>Select Fee or Scholarship</option>
+										<option value="FEE">Fee</option>
+										<option value="SCHOLARSHIP">Scholarship</option>
+									</select>
+								</div>
+								<datalist id="fee_names">
+									{
+										[...this.uniqueFeeName().keys()]
+											.map(n => <option key={n} value={n} />)
+									}
+								</datalist>
+								<div className="row">
+									<label>Name</label>
+									<input
+										list="fee_names"
+										type="text"
+										{...this.former.super_handle(["fees", id, "name"])}
+										placeholder={this.state.profile.fees[id].type === "SCHOLARSHIP" ? "Scholarship Name" : "Fee Name"}
+										disabled={!admin || !editable}
+									/>
+								</div>
+								<div className="row">
+									<label>Amount</label>
+									<input type="number" {...this.former.super_handle_flex(
+										["fees", id, "amount"],
+										{ styles: (val: string) => val === "" ? { borderColor: "#fc6171" } : {} })
+									}
+										placeholder="Amount"
+										disabled={!admin || !editable} />
+								</div>
+								<div className="row">
+									<label>Fee Period</label>
+									<select {...this.former.super_handle(["fees", id, "period"])} disabled={!admin || !editable}>
+										<option value="" disabled>Please Select a Time Period</option>
+										<option value="SINGLE">One Time</option>
+										<option value="MONTHLY">Every Month</option>
+									</select>
+								</div>
+								{!admin || !editable ? false : <div className="button green" onClick={() => this.onFeeEditCompletion(id)}> Done </div>}
 							</div>
+						})
+						: false}
+					{this.state.show_hide_fee && admin && !prospective ? <div className="button green" onClick={this.addFee}>Add Additional Fee or Scholarship</div> : false}
 
-							{this.state.show_hide_fee && (admin || (this.props.permissions && this.props.permissions.fee.teacher)) && !prospective ? <div className="divider">Payment</div> : false}
-							{this.state.show_hide_fee && (admin || (this.props.permissions && this.props.permissions.fee.teacher)) && !prospective ?
-								Object.entries(this.state.profile.fees).map(([id, fee]) => {
-									const editable = this.state.edit[id] || this.isNew()
-
-									return <div className="section" key={id}>
-										{!admin || editable ? false : <div className="click-label" onClick={() => this.onFeeEdit(id)}>Edit Fee</div>}
-										{!admin || !editable ? false : <div className="click-label" onClick={this.removeFee(id)}>Remove Fee</div>}
-										<div className="row">
-											<label>Type</label>
-											<select {...this.former.super_handle(["fees", id, "type"])} disabled={!admin || !editable}>
-												<option value="" disabled>Select Fee or Scholarship</option>
-												<option value="FEE">Fee</option>
-												<option value="SCHOLARSHIP">Scholarship</option>
-											</select>
-										</div>
-										<datalist id="fee_names">
-											{
-												[...this.uniqueFeeName().keys()]
-													.map(n => <option key={n} value={n} />)
-											}
-										</datalist>
-										<div className="row">
-											<label>Name</label>
-											<input
-												list="fee_names"
-												type="text"
-												{...this.former.super_handle(["fees", id, "name"])}
-												placeholder={this.state.profile.fees[id].type === "SCHOLARSHIP" ? "Scholarship Name" : "Fee Name"}
-												disabled={!admin || !editable}
-											/>
-										</div>
-										<div className="row">
-											<label>Amount</label>
-											<input type="number" {...this.former.super_handle_flex(
-												["fees", id, "amount"],
-												{ styles: (val: string) => val === "" ? { borderColor: "#fc6171" } : {} })
-											}
-												placeholder="Amount"
-												disabled={!admin || !editable} />
-										</div>
-										<div className="row">
-											<label>Fee Period</label>
-											<select {...this.former.super_handle(["fees", id, "period"])} disabled={!admin || !editable}>
-												<option value="" disabled>Please Select a Time Period</option>
-												<option value="SINGLE">One Time</option>
-												<option value="MONTHLY">Every Month</option>
-											</select>
-										</div>
-										{!admin || !editable ? false : <div className="button green" onClick={() => this.onFeeEditCompletion(id)}> Done </div>}
-									</div>
-								})
-								: false}
-							{this.state.show_hide_fee && admin && !prospective ? <div className="button green" onClick={this.addFee}>Add Additional Fee or Scholarship</div> : false}
-						</>
-					}
 				</div>
 			}
 			{
@@ -1077,7 +1091,7 @@ class SingleStudent extends Component<propTypes, S> {
 			}
 			<div className="section-container">
 				{prospective && !this.isNew() && !getStudentLimit(students, max_limit) ? <div className="button green" onClick={this.onEnrolled}>Enroll</div> : false}
-				{!this.props.ilmxUser && <div className="button grey" onClick={() => window.print()}>Print Admission Form</div>}
+				{!prospective && <div className="button grey" onClick={() => window.print()}>Print Admission Form</div>}
 			</div>
 			<AdmissionForm
 				student={this.state.profile}
@@ -1101,8 +1115,7 @@ export default connect((state: RootReducerState) => ({
 	logo: state.db.assets ? state.db.assets.schoolLogo || "" : "",
 	permissions: state.db.settings.permissions,
 	max_limit: state.db.max_limit || -1,
-	user: state.db.faculty[state.auth.faculty_id],
-	ilmxUser: getIlmxUser()
+	user: state.db.faculty[state.auth.faculty_id]
 }),
 	(dispatch: Function) => ({
 		uploadImage: (student: MISStudent, image_string: string) => dispatch(uploadStudentProfilePicture(student, image_string)),

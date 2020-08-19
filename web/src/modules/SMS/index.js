@@ -9,13 +9,13 @@ import Layout from 'components/Layout'
 import Banner from 'components/Banner'
 
 import ToSingleStudent from './SmsOptions/ToSingleStudent';
-import ToSingleClass   from './SmsOptions/ToSingleClass';
-import ToAllStudents   from './SmsOptions/ToAllStudents';
+import ToSingleClass from './SmsOptions/ToSingleClass';
+import ToAllStudents from './SmsOptions/ToAllStudents';
 import ToSingleTeacher from './SmsOptions/ToSingleTeacher';
-import ToAllTeachers   from './SmsOptions/ToAllTeachers';
+import ToAllTeachers from './SmsOptions/ToAllTeachers';
 import ToFeeDefaulters from './SmsOptions/ToFeeDefaulters';
 import ToProspectiveStudents from './SmsOptions/ToProspectiveStudents'
-import { getIlmxUser } from 'utils/helpers'
+
 
 import './style.css'
 
@@ -54,10 +54,10 @@ class SMS extends Component {
 	}
 
 	sendMessage = (text, number) => {
-		if(number === "") {
+		if (number === "") {
 			return;
 		}
-		
+
 		/*
 		const type = this.getType(this.state.smsFilter)	
 		const historyObj = {
@@ -74,7 +74,7 @@ class SMS extends Component {
 	}
 
 	sendBatchMessages = (messages, text) => {
-		if(messages.length === 0 || messages === undefined){
+		if (messages.length === 0 || messages === undefined) {
 			return;
 		}
 
@@ -93,8 +93,8 @@ class SMS extends Component {
 		this.props.sendBatchMessages(messages);
 	}
 
-	sendMessageFilter=(e)=>{
-		this.setState({ smsFilter : e.target.value})
+	sendMessageFilter = (e) => {
+		this.setState({ smsFilter: e.target.value })
 	}
 
 	onCheckSendStudentPortalLink = () => {
@@ -108,26 +108,26 @@ class SMS extends Component {
 		const ref_id = this.props.schoolId
 		return `https://ilmexchange.com/student%3Freferral%3D${ref_id}%26std_id%3D`
 	}
- 
-	getType = (value) =>{
-		switch(value){
+
+	getType = (value) => {
+		switch (value) {
 			case "to_single_student":
 				return "STUDENT"
 
 			case "to_single_class":
 				return "CLASS"
-			
+
 			case "to_all_students":
 				return "ALL_STUDENTS"
 
 			case "to_single_teacher":
 				return "TEACHER"
-			
+
 			case "to_all_teachers":
 				return "ALL_TEACHERS"
-			
+
 			case "to_fee_defaulters":
-				return  "FEE_DEFAULTERS"
+				return "FEE_DEFAULTERS"
 			case "to_prospective_students":
 				return "PROSPECTIVE"
 			default:
@@ -137,81 +137,81 @@ class SMS extends Component {
 
 	getFilteredFunctionality = (value, portal_link) => {
 
-		switch(value){
+		switch (value) {
 			case "to_single_student":
-				return  <ToSingleStudent
-							students={this.props.students} 
-							sendMessage={this.sendMessage} 
-							connected={this.props.connected}
-							smsOption={this.props.smsSetting}
-							logSms={this.props.logSms}
-							faculty_id={this.props.faculty_id}
-							portal_link={portal_link}
-							/>
+				return <ToSingleStudent
+					students={this.props.students}
+					sendMessage={this.sendMessage}
+					connected={this.props.connected}
+					smsOption={this.props.smsSetting}
+					logSms={this.props.logSms}
+					faculty_id={this.props.faculty_id}
+					portal_link={portal_link}
+				/>
 
 			case "to_single_class":
-				return <ToSingleClass 
-							classes={this.props.classes} 
-							students={this.props.students} 
-							sendBatchMessages={this.sendBatchMessages} 
-							connected={this.props.connected}
-							smsOption={this.props.smsSetting}
-							logSms={this.props.logSms}
-							faculty_id={this.props.faculty_id}
-							portal_link={portal_link}
-							/>
-			
+				return <ToSingleClass
+					classes={this.props.classes}
+					students={this.props.students}
+					sendBatchMessages={this.sendBatchMessages}
+					connected={this.props.connected}
+					smsOption={this.props.smsSetting}
+					logSms={this.props.logSms}
+					faculty_id={this.props.faculty_id}
+					portal_link={portal_link}
+				/>
+
 			case "to_all_students":
-				return <ToAllStudents 
-							students={this.props.students} 
-							sendBatchMessages={this.sendBatchMessages} 
-							connected={this.props.connected}
-							smsOption={this.props.smsSetting}
-							logSms={this.props.logSms}
-							faculty_id={this.props.faculty_id}
-							portal_link={portal_link}
-							/>
+				return <ToAllStudents
+					students={this.props.students}
+					sendBatchMessages={this.sendBatchMessages}
+					connected={this.props.connected}
+					smsOption={this.props.smsSetting}
+					logSms={this.props.logSms}
+					faculty_id={this.props.faculty_id}
+					portal_link={portal_link}
+				/>
 
 			case "to_single_teacher":
-				return <ToSingleTeacher 
-							teachers={this.props.teachers} 
-							sendMessage={this.sendMessage} 
-							connected={this.props.connected}
-							smsOption={this.props.smsSetting}
-							logSms={this.props.logSms}
-							faculty_id={this.props.faculty_id}
-							/>
-			
+				return <ToSingleTeacher
+					teachers={this.props.teachers}
+					sendMessage={this.sendMessage}
+					connected={this.props.connected}
+					smsOption={this.props.smsSetting}
+					logSms={this.props.logSms}
+					faculty_id={this.props.faculty_id}
+				/>
+
 			case "to_all_teachers":
-				return <ToAllTeachers  
-							teachers={this.props.teachers} 
-							sendBatchMessages={this.sendBatchMessages} 
-							connected={this.props.connected}
-							smsOption={this.props.smsSetting}
-							logSms={this.props.logSms}
-							faculty_id={this.props.faculty_id}
-							/>
-			
+				return <ToAllTeachers
+					teachers={this.props.teachers}
+					sendBatchMessages={this.sendBatchMessages}
+					connected={this.props.connected}
+					smsOption={this.props.smsSetting}
+					logSms={this.props.logSms}
+					faculty_id={this.props.faculty_id}
+				/>
+
 			case "to_fee_defaulters":
-				return  <ToFeeDefaulters						
-							students={this.props.students} 
-							sendBatchMessages={this.sendBatchMessages} 
-							connected={this.props.connected}
-							smsOption={this.props.smsSetting}
-							logSms={this.props.logSms}
-							faculty_id={this.props.faculty_id}
-							/>
+				return <ToFeeDefaulters
+					students={this.props.students}
+					sendBatchMessages={this.sendBatchMessages}
+					connected={this.props.connected}
+					smsOption={this.props.smsSetting}
+					logSms={this.props.logSms}
+					faculty_id={this.props.faculty_id}
+				/>
 			case "to_prospective_students":
-			return <ToProspectiveStudents 
-						students={this.props.students} 
-						sendBatchMessages={this.sendBatchMessages} 
-						connected={this.props.connected}
-						smsOption={this.props.smsSetting}
-						logSms={this.props.logSms}
-						faculty_id={this.props.faculty_id}
-						portal_link={portal_link}
-						/>
-			
+				return <ToProspectiveStudents
+					students={this.props.students}
+					sendBatchMessages={this.sendBatchMessages}
+					connected={this.props.connected}
+					smsOption={this.props.smsSetting}
+					logSms={this.props.logSms}
+					faculty_id={this.props.faculty_id}
+					portal_link={portal_link}
+				/>
+
 			default:
 				return;
 		}
@@ -222,7 +222,7 @@ class SMS extends Component {
 
 		return <Layout history={this.props.history}>
 			<div className="sms-page">
-				{ this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false }
+				{this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
 
 				<div className="title">SMS Management</div>
 				<div className="form">
@@ -231,22 +231,23 @@ class SMS extends Component {
 					<div className="section">
 						<div className="portal-link">
 							<label style={{ color: "#aaa" }}>Student portal link</label>
-							<input type="checkbox" onChange={ () => this.onCheckSendStudentPortalLink()}/>
+							<input type="checkbox" onChange={() => this.onCheckSendStudentPortalLink()} />
 						</div>
-						<div className="row"> 
-						<label>Send to</label>
+						<div className="row">
+							<label>Send to</label>
 							<select onChange={this.sendMessageFilter} value={this.state.smsFilter}>
-									<option value="" disabled>Select</option>
-									<option value="to_single_class">Single Class</option>
-									<option value="to_all_students">All Students</option>
-									{ !this.props.ilmxUser && <option value="to_prospective_students">Prospective Students</option> }
-									{ !this.state.sendStudentPortalLink && <> 
-											<option value="to_single_student">Single Student</option>
-											<option value="to_single_teacher">Single Teacher</option>
-											<option value="to_all_teachers">All Teachers</option>
-											{ !this.props.ilmxUser && <option value="to_fee_defaulters">Fee Defaulters</option> }
-										</>
-									}
+								<option value="" disabled>Select</option>
+								<option value="to_single_class">Single Class</option>
+								<option value="to_all_students">All Students</option>
+								<option value="to_prospective_students">Prospective Students</option>
+								{
+									!this.state.sendStudentPortalLink && <>
+										<option value="to_single_student">Single Student</option>
+										<option value="to_single_teacher">Single Teacher</option>
+										<option value="to_all_teachers">All Teachers</option>
+										<option value="to_fee_defaulters">Fee Defaulters</option>
+									</>
+								}
 							</select>
 						</div>
 
@@ -262,13 +263,17 @@ export default connect(state => ({
 	faculty_id: state.auth.faculty_id,
 	students: state.db.students,
 	classes: state.db.classes,
-	teachers:state.db.faculty,
+	teachers: state.db.faculty,
 	connected: state.connected,
 	smsSetting: state.db.settings.sendSMSOption,
-	schoolId: state.auth.school_id || "",
-	ilmxUser: getIlmxUser()
+	schoolId: state.auth.school_id || ""
 }), dispatch => ({
 	sendMessage: (text, number, type) => dispatch(sendSMS(text, number)),
 	sendBatchMessages: (messages, type) => dispatch(sendBatchSMS(messages)),
 	logSms: (faculty_id, history) => dispatch(logSms(faculty_id, history))
 }))(SMS);
+
+
+export const SMSLimitExceed = () => (
+	<p className="error"><strong>Alert</strong>: SMS characters limit exceeds, Max 165 characters are allowed!</p>
+)

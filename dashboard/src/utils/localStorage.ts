@@ -109,6 +109,7 @@ export const loadDB = (): RootReducerState => {
 		},
 		trials: [],
 		stats: {},
-		users: {}
+		users: {},
+		mis_faculty: {}
 	}
 }

@@ -37,12 +37,14 @@ import FamilyModule from './modules/Family'
 import SingleFamily from './modules/Family/Single'
 import StudentFees from './modules/Student/Single/Fees/index'
 import ManageFees from 'modules/Student/ManageFees'
-
+import ResetPassword from 'modules/Password/index'
 import TrackedRoute from 'components/TrackedRoute'
 import printPreview from 'modules/Student/Single/Fees/printPreview'
 import ExpensePage from './modules/Expenses';
 import ExcelImport from './modules/Settings/ExcelImport';
 import ClassSettings from 'modules/Settings/ClassSettings/Index'
+import MISActivation from 'modules/Activation'
+import BulkExam from 'modules/Marks/BulkExam'
 
 export default class Routes extends React.Component {
 
@@ -92,6 +94,7 @@ export default class Routes extends React.Component {
 
 					<TrackedRoute path="/sms" component={SMS} />
 
+					<TrackedRoute exact path="/reports/bulk-exams" component={BulkExam} />
 					<TrackedRoute path="/reports/:class_id/:section_id/new" component={SingleExam} />
 					<TrackedRoute path="/reports/:class_id/:section_id/exam/:exam_id" component={SingleExam} />
 					<TrackedRoute path="/reports/:class_id/:section_id" component={ExamList} />
@@ -121,8 +124,9 @@ export default class Routes extends React.Component {
 
 					<TrackedRoute path="/help" component={Help} />
 					<TrackedRoute path="/certificate-menu" component={CertificateMenu} />
-
 					<TrackedRoute path="/fee-menu" component={FeeMenu} />
+					<TrackedRoute path="/reset-password" component={ResetPassword} />
+					<Route path="/verify-code" component={MISActivation} />					
 					<Route exact path="/" component={Front} />
 					<Route path="/school-login" component={SchoolLogin} />
 					<Route path="/login" component={Login} />

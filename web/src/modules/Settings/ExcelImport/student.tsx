@@ -32,6 +32,7 @@ interface S {
 type P = {
 	students: RootDBState['students']
 	classes: RootDBState['classes']
+	settings: MISSettings
 	saveStudents: (student: MISStudent[]) => void
 }
 
@@ -191,17 +192,38 @@ class StudentExcelImport extends React.Component<P, S> {
 
 		const section_id = this.state.selectedSection
 		const students = this.state.importedStudents
+		const { settings } = this.props
 
 		if (section_id.length === 0) {
 			alert("Please select class first to save students!")
 			return
 		}
 
+		const [class_id,] = Object.entries(this.props.classes || {})
+			.find(([, meta]) => meta && meta.sections ? Object.keys(meta.sections).includes(section_id) : false)
+
+		const class_default_fee = settings && settings.classes && settings.classes.defaultFee && settings.classes.defaultFee[class_id]
+
 		const classed_students = students
-			.map(s => ({
-				...s,
-				section_id
-			}))
+			.map(s => {
+
+				const fee_id = v4()
+
+				if (Object.keys(class_default_fee || {}).length > 0) {
+					return {
+						...s,
+						section_id,
+						fees: {
+							[fee_id]: class_default_fee
+						}
+					}
+				}
+
+				return {
+					...s,
+					section_id
+				}
+			})
 
 		if (window.confirm(`Are you sure you want to Save ${students.length} Students?`)) {
 
@@ -412,7 +434,8 @@ const convertCSVToStudents = (studentImportCSV: string) => {
 
 export default connect((state: RootReducerState) => ({
 	students: state.db.students,
-	classes: state.db.classes
+	classes: state.db.classes,
+	settings: state.db.settings
 }), (dispatch: Function) => ({
 	saveStudents: (students: MISStudent[]) => dispatch(createStudentMerges(students))
 }))(StudentExcelImport)

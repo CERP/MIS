@@ -33,11 +33,7 @@ interface RootDBState {
 		schoolLogo: string
 	}
 	max_limit: number
-	package_info: {
-		date: number
-		trial_period: number
-		paid: boolean
-	}
+	package_info: MISPackage
 	diary: MISDiary
 	planner: {
 		// Will be able to add more planner stuff here i.e Teacher/Class shedule e.t.c 
@@ -434,6 +430,12 @@ interface ExamFilter {
 	subject?: string
 	exam_title: string
 }
+type AugmentedStudent = { 
+	section?: AugmentedSection
+	forwardTo?: string
+} & MISStudent
+
+type MISGrades = RootDBState["settings"]["exams"]["grades"]
 type AugmentedStudent = {
 	section?: AugmentedSection
 	forwardTo?: string
@@ -441,6 +443,11 @@ type AugmentedStudent = {
 
 type MISGrades = RootDBState["settings"]["exams"]["grades"]
 
+interface MISPackage  {
+	date: number
+	trial_period: number
+	paid: boolean
+}
 interface BaseIlmxEvent {
 	type: string
 }
@@ -489,6 +496,21 @@ type AugmentedIlmxLesson = {
 	}
 } & IlmxLesson
 
+type MISGrades = RootDBState["settings"]["exams"]["grades"]
+
+interface MISBanner {
+	active: boolean
+	good?: boolean
+	text?: string
+}
+
+interface ExamScoreSheet {
+	[studentId: string]: MISStudent & {
+		scoreSheetExams: {
+			[examId: string]: { edited: boolean } & AugmentedMISExam
+		}
+	}
+}
 type AugmentedSmsHistory = {
 	faculty?: string
 	text?: string

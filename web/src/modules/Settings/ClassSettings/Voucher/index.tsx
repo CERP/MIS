@@ -19,6 +19,7 @@ type S = {
 		good?: boolean
 		text?: string
 	}
+	vouchersPerPage: string
 } & MISSettings["classes"]["feeVoucher"]
 
 class VoucherSettings extends Component<P, S> {
@@ -30,6 +31,8 @@ class VoucherSettings extends Component<P, S> {
 		const settings = this.props.settings
 		const feeVoucher = settings.classes && settings.classes.feeVoucher ? settings.classes.feeVoucher : this.setFeeVoucherSetings()
 
+		const { vouchersPerPage } = settings
+
 		this.state = {
 
 			banner: {
@@ -37,6 +40,7 @@ class VoucherSettings extends Component<P, S> {
 				good: false,
 				text: ""
 			},
+			vouchersPerPage: vouchersPerPage || "1",
 			...feeVoucher
 		}
 
@@ -64,7 +68,7 @@ class VoucherSettings extends Component<P, S> {
 
 	onSaveFeeVoucher = (): void => {
 
-		const { dueDays, feeFine, notice, bankInfo, options } = this.state
+		const { dueDays, feeFine, notice, bankInfo, options, vouchersPerPage } = this.state
 		const settings = this.props.settings
 
 		let modified_settings: MISSettings
@@ -81,7 +85,8 @@ class VoucherSettings extends Component<P, S> {
 						bankInfo,
 						options
 					}
-				}
+				},
+				vouchersPerPage
 			}
 		} else {
 			modified_settings = {
@@ -95,7 +100,8 @@ class VoucherSettings extends Component<P, S> {
 						bankInfo,
 						options
 					}
-				}
+				},
+				vouchersPerPage
 			}
 		}
 
@@ -117,8 +123,16 @@ class VoucherSettings extends Component<P, S> {
 
 		return <div className="class-settings fee-voucher">
 			{this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
-			<div className="divider">Fee Voucher</div>
-			<div className="section form fee-voucher">
+			<div className="title">Fee Voucher Settings</div>
+			<div className="section-container section form fee-voucher">
+				<div className="row">
+					<label>Fee Vouchers per Page</label>
+					<select {...this.former.super_handle(["vouchersPerPage"])}>
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+					</select>
+				</div>
 				<div className="row">
 					<label>No. of Fee due Days</label>
 					<input type="number" {...this.former.super_handle(["dueDays"])}
@@ -154,7 +168,7 @@ class VoucherSettings extends Component<P, S> {
 						</div>
 					</fieldset>
 				</div>
-				<div>
+				<div className="options">
 					<fieldset>
 						<legend>Options</legend>
 						<div className="row">

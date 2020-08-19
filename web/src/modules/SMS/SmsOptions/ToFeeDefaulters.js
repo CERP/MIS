@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import { smsIntentLink } from 'utils/intent'
 import former from 'utils/former'
 import ShareButton from 'components/ShareButton'
-import { replaceSpecialCharsWithUTFChars } from 'utils/stringHelper'
+import { replaceSpecialCharsWithUTFChars, isSMSCharsLimitExceed } from 'utils/stringHelper'
+import { SMSLimitExceed } from '..'
 
 
 class ToFeeDefaulters extends Component {
@@ -137,6 +138,8 @@ class ToFeeDefaulters extends Component {
 			}]
 		}, [])
 
+		const limit_exceed = isSMSCharsLimitExceed(this.state.text)
+
 	return (
 			<div>
 				<div className="row">
@@ -147,15 +150,13 @@ class ToFeeDefaulters extends Component {
 					<label>Options</label>
 					<div style={{fontSize: "0.85rem", color: "grey"}}>use $NAME, $FNAME and $BALANCE</div>
 				</div>
-					{
-						smsOption === "SIM" ? 
-							<a href={smsIntentLink({
-								messages,
-								return_link: window.location.href 
-								})} onClick={() => this.logSms(messages)} className="button blue">Send using Local SIM</a> :
-
-							<div className="button" onClick={() => sendBatchMessages(messages)}>Can only send using Local SIM</div>
-					}
+				{ limit_exceed && <SMSLimitExceed /> }
+				{ smsOption === "SIM" ? 
+					<a href={smsIntentLink({ messages, return_link: window.location.href })}
+						onClick={(e) => limit_exceed ? e.preventDefault() : this.logSms(messages)}
+						className="button blue">Send using Local SIM</a> : 
+					<div className="button" onClick={() => sendBatchMessages(messages)}>Send using API</div> 
+				}
 				<div className="is-mobile-only" style={{marginTop: 10}}>
 					<ShareButton title={"SMS"} text={this.state.text} />
 				</div>

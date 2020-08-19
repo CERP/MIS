@@ -3,26 +3,26 @@ import { connect } from 'react-redux'
 import { v4 } from 'node-uuid'
 import { Link, Redirect } from 'react-router-dom'
 import { RouteComponentProps } from 'react-router'
-
+import DefaultFeeSettings from '../../../Settings/ClassSettings/DefaultFee'
 import Former from 'utils/former'
 import checkCompulsoryFields from 'utils/checkCompulsoryFields'
 import Banner from 'components/Banner'
 import Dropdown from 'components/Dropdown'
-import { createEditClass, addStudentToSection, removeStudentFromSection, deleteClass } from 'actions'
-import { getIlmxUser } from 'utils/helpers'
+import { createEditClass, addStudentToSection, removeStudentFromSection, deleteClass, mergeSettings } from 'actions'
 
 import './style.css'
 
 interface P {
+	settings: RootDBState["settings"]
 	classes: RootDBState["classes"]
 	faculty: RootDBState["faculty"]
 	students: RootDBState["students"]
-	ilmxUser: string
 
 	save: (mis_class: AugmentedMISClass) => void
 	addStudent: (section_id: string, student: MISStudent) => void
 	removeStudent: (student: MISStudent) => void
 	removeClass: (mis_class: AugmentedMISClass) => void
+	mergeSettings: (settings: MISSettings) => void
 }
 
 interface S {
@@ -336,7 +336,7 @@ class SingleClass extends Component<propsType, S> {
 								}
 
 								{
-									(this.props.ilmxUser ? !this.isNew() : true) && <>
+									!this.isNew() && <>
 										<div className="row">
 											<label>{arr.length === 1 ? "Teacher" : "Section Teacher"}</label>
 											<select {...this.former.super_handle(["sections", id, "faculty_id"])}>
@@ -381,7 +381,11 @@ class SingleClass extends Component<propsType, S> {
 						})
 				}
 				<div className="button green" onClick={this.addSection}>Add Another Section</div>
-
+				<DefaultFeeSettings
+					classId={this.state.class.id}
+					settings={this.props.settings}
+					mergeSettings={this.props.mergeSettings}
+				/>
 				<div className="save-delete">
 					{!this.isNew() ? <div className="button red" onClick={() => this.removeClass(this.state.class)}>Delete</div> : false}
 					<div className="button save" onClick={this.onSave}>Save</div>
@@ -392,13 +396,14 @@ class SingleClass extends Component<propsType, S> {
 }
 
 export default connect((state: RootReducerState) => ({
+	settings: state.db.settings,
 	classes: state.db.classes,
 	faculty: state.db.faculty,
-	students: state.db.students,
-	ilmxUser: getIlmxUser()
+	students: state.db.students
 }), (dispatch: Function) => ({
 	save: (mis_class: AugmentedMISClass) => dispatch(createEditClass(mis_class)),
 	addStudent: (section_id: string, student: MISStudent) => dispatch(addStudentToSection(section_id, student)),
 	removeStudent: (student: MISStudent) => dispatch(removeStudentFromSection(student)),
-	removeClass: (mis_class: AugmentedMISClass) => dispatch(deleteClass(mis_class))
+	removeClass: (mis_class: AugmentedMISClass) => dispatch(deleteClass(mis_class)),
+	mergeSettings: (settings: MISSettings) => dispatch(mergeSettings(settings))
 }))(SingleClass)

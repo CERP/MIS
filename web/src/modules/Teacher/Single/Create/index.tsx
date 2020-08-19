@@ -10,7 +10,6 @@ import { hash } from 'utils'
 import Hyphenator from 'utils/Hyphenator'
 import Banner from 'components/Banner'
 import checkCompulsoryFields from 'utils/checkCompulsoryFields'
-import { getIlmxUser } from 'utils/helpers'
 
 import './style.css'
 
@@ -46,7 +45,6 @@ const blankTeacher = (isFirst = false): MISTeacher => ({
 interface P {
 	faculty: RootDBState['faculty']
 	user: MISTeacher
-	ilmxUser: string
 	auth: RootReducerState["auth"]
 
 	save: (teacher: MISTeacher, is_first?: boolean) => void
@@ -280,7 +278,7 @@ class CreateTeacher extends Component<propTypes, S> {
 		return <div className="single-teacher-create">
 			{this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
 
-			{this.props.ilmxUser && this.isNew() && !this.state.toggleMoreInfo && <div className="form">
+			{this.isNew() && !this.state.toggleMoreInfo && <div className="form">
 				<div className="divider">Personal Information</div>
 				<div className="row">
 					<label>Full Name</label>
@@ -305,13 +303,13 @@ class CreateTeacher extends Component<propTypes, S> {
 			}
 
 			{
-				this.props.ilmxUser && this.isNew() && <div className="section-container" style={{ marginTop: "1.25rem" }}>
+				this.isNew() && <div className="section-container" style={{ marginTop: "1.25rem" }}>
 					<div className="button green" onClick={this.toggleMoreInfo}>{this.state.toggleMoreInfo ? "Show Less Fields" : "Show Additional Fields"}</div>
 				</div>
 			}
 
 			{
-				(this.props.ilmxUser && this.isNew() ? this.state.toggleMoreInfo : true) && <div className="form">
+				(this.isNew() ? this.state.toggleMoreInfo : true) && <div className="form">
 					<div className="divider">Personal Information</div>
 					<div className="row">
 						<label>Full Name</label>
@@ -475,8 +473,7 @@ class CreateTeacher extends Component<propTypes, S> {
 export default connect((state: RootReducerState) => ({
 	auth: state.auth,
 	faculty: state.db.faculty,
-	user: state.db.faculty[state.auth.faculty_id],
-	ilmxUser: getIlmxUser()
+	user: state.db.faculty[state.auth.faculty_id]
 }), (dispatch: Function) => ({
 	save: (teacher: MISTeacher, is_first?: boolean) => dispatch(createFacultyMerge(teacher, is_first)),
 	delete: (faculty_id: string) => dispatch(deleteFaculty(faculty_id))
