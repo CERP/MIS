@@ -12,9 +12,10 @@ import moment from 'moment'
 import getSectionFromId from 'utils/getSectionFromId'
 import DiaryPrintable from 'components/Printable/Diary/diary'
 import ShareButton from 'components/ShareButton'
-import { showScroll, hideScroll, replaceSpecialCharsWithUTFChars } from 'utils/helpers'
+import { getIlmxUser, showScroll, hideScroll, replaceSpecialCharsWithUTFChars } from 'utils/helpers'
 import Modal from 'components/Modal/index'
 import SubjectModal from './SubjectModal'
+import { fetchLessons } from 'actions/core'
 import './style.css'
 
 interface P {
@@ -23,11 +24,16 @@ interface P {
 	settings: RootDBState["settings"]
 	faculty_id: string
 	diary: RootDBState["diary"]
+	ilmxUser: string
+	events: RootDBState["ilmx"]["events"]
+	lessons: RootDBState["ilmx"]["lessons"]
+	isLoading: boolean
 
 	addDiary: (date: string, section_id: string, diary: MISDiary["section_id"]) => any
 	sendMessage: (text: string, number: string) => any
 	sendBatchMessages: (messages: MISSms[]) => any
 	logSms: (history: MISSMSHistory) => any
+	fetchLessons: () => void
 }
 
 interface S {
@@ -318,6 +324,10 @@ class Diary extends Component<propTypes, S> {
 		showScroll()
 	}
 
+	componentDidMount() {
+		this.props.fetchLessons()
+	}
+
 	render() {
 
 		const { classes, sendBatchMessages, settings } = this.props;
@@ -445,7 +455,12 @@ class Diary extends Component<propTypes, S> {
 				}
 			</div>
 			{
-				this.state.showSubjects ? <Modal><SubjectModal onClose={this.handleToggleModal} /></Modal> : null
+				this.state.showSubjects ? <Modal>
+					<SubjectModal onClose={this.handleToggleModal}
+						events={this.props.events}
+						lessons={this.props.lessons}
+						isLoading={this.props.isLoading} />
+				</Modal> : null
 			}
 		</Layout >
 	}
@@ -455,10 +470,15 @@ export default connect((state: RootReducerState) => ({
 	diary: state.db.diary,
 	students: state.db.students,
 	classes: state.db.classes,
-	settings: state.db.settings
+	settings: state.db.settings,
+	ilmxUser: getIlmxUser(),
+	events: state.db.ilmx.events,
+	lessons: state.db.ilmx.lessons,
+	isLoading: state.ilmxLessons.isLoading,
 }), (dispatch: Function) => ({
 	sendMessage: (text: string, number: string) => dispatch(sendSMS(text, number)),
 	sendBatchMessages: (messages: MISSms[]) => dispatch(sendBatchSMS(messages)),
 	logSms: (history: MISSMSHistory) => dispatch(logSms(history)),
-	addDiary: (date: string, section_id: string, diary: MISDiary["section_id"]) => dispatch(addDiary(date, section_id, diary))
+	addDiary: (date: string, section_id: string, diary: MISDiary["section_id"]) => dispatch(addDiary(date, section_id, diary)),
+	fetchLessons: () => dispatch(fetchLessons())
 }))(Diary);

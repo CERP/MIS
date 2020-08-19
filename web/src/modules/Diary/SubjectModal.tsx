@@ -1,6 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react"
-import { connect } from 'react-redux'
-import { fetchLessons } from 'actions/core'
+import React, { useState, useMemo } from "react"
 import { PlayIcon } from 'assets/icons'
 import { ContentCopyIcon } from 'assets/icons'
 import './style.css'
@@ -9,24 +7,17 @@ interface PropsType {
     events: RootDBState["ilmx"]["events"]
     lessons: RootDBState["ilmx"]["lessons"]
     isLoading: boolean
-    fetchLessons: () => void
     onClose: () => void
 }
 
 interface S {
-    showViewerModal: boolean
     lessonId: string
-    scrollY: number
 }
 
-const SubjectModal: React.FC<PropsType> = ({ events, lessons, fetchLessons, onClose }) => {
+const SubjectModal: React.FC<PropsType> = ({ events, lessons, onClose }) => {
 
     const [classFilter, setClassFilter] = useState('')
     const [subjectFilter, setSubjectFilter] = useState('')
-
-    useEffect(() => {
-        fetchLessons()
-    }, [fetchLessons])
 
     const { classTitles, subjects } = useMemo(() => getClassSubjectsInfo(events), [events])
     const lessons_data = useMemo(
@@ -84,13 +75,13 @@ const SubjectModal: React.FC<PropsType> = ({ events, lessons, fetchLessons, onCl
                                 <div className="card" key={lesson_id}>
                                     <div className="card-row">
                                         <div className="card-row inner lesson-div">
-                                            <div className="chapter-name-div"> 
+                                            <div className="chapter-name-div">
                                                 <img src={PlayIcon} alt="play-icon" height="24" width="24" />
                                                 <p className="card-title">{lesson_meta.name}</p>
                                             </div>
                                             <div className="card-row">
-                                        <p className="student-class-title">Class: {getClassTitleFromLessonId(lesson_id)}-{getSubjectTitleFromLessonId(lesson_id)}</p>
-                                    </div>
+                                                <p className="student-class-title">Class: {getClassTitleFromLessonId(lesson_id)}-{getSubjectTitleFromLessonId(lesson_id)}</p>
+                                            </div>
                                         </div>
                                         <div style={{ marginLeft: "auto" }}>
                                             <div className="copy-icon-div">
@@ -108,13 +99,7 @@ const SubjectModal: React.FC<PropsType> = ({ events, lessons, fetchLessons, onCl
 
 }
 
-export default connect((state: RootReducerState) => ({
-    events: state.db.ilmx.events,
-    lessons: state.db.ilmx.lessons,
-    isLoading: state.ilmxLessons.isLoading,
-}), (dispatch: Function) => ({
-    fetchLessons: () => dispatch(fetchLessons())
-}))(SubjectModal)
+export default SubjectModal
 
 type AugmentedIlmxLessons = {
     [id: string]: AugmentedIlmxLesson
