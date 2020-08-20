@@ -15,8 +15,7 @@ import { OutstandingFeePrintableList } from 'components/Printable/Fee/outstandin
 import { ResponsiveContainer, XAxis, YAxis, Tooltip, LineChart, Line } from 'recharts'
 
 
-interface Filters							// familyId ? <Link to={`/student/${student.id}/payment`}>{familyId}(F)</Link> :
-{
+interface Filters {
 	total: boolean
 	paid: boolean
 	forgiven: boolean
@@ -532,9 +531,10 @@ class FeeAnalytics extends Component<propTypes, S> {
 					<label><b>Amount</b></label>
 				</div>
 				{
-					items.map(({ student, debt }) => <div className="table row" key={student.id}>
+					items.map(({ student, debt, familyId }) => <div className="table row" key={student.id}>
 						{
-							<Link to={`/student/${student.id}/payment`}>{student.Name}</Link>
+							familyId ? <Link to={`/student/${student.id}/payment`}>{familyId}(F)</Link> :
+								<Link to={`/student/${student.id}/payment`}>{student.Name}</Link>
 						}
 						<div>{student.Phone ? student.Phone : "-"}</div>
 						<div style={this.calculateDebt(debt) >= 1 ? { color: "#5ecdb9" } : { color: "#fc6171" }} > {numberWithCommas(-1 * this.calculateDebt(debt))}</div>
