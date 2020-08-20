@@ -12,8 +12,11 @@ import moment from 'moment'
 import getSectionFromId from 'utils/getSectionFromId'
 import DiaryPrintable from 'components/Printable/Diary/diary'
 import ShareButton from 'components/ShareButton'
+import { getIlmxUser, showScroll, hideScroll } from 'utils/helpers'
 import { replaceSpecialCharsWithUTFChars } from 'utils/stringHelper'
-
+import Modal from 'components/Modal/index'
+import SubjectModal from './SubjectModal'
+import { fetchLessons } from 'actions/core'
 import './style.css'
 
 interface P {
@@ -22,11 +25,16 @@ interface P {
 	settings: RootDBState["settings"]
 	faculty_id: string
 	diary: RootDBState["diary"]
+	ilmxUser: string
+	events: RootDBState["ilmx"]["events"]
+	lessons: RootDBState["ilmx"]["lessons"]
+	isLoading: boolean
 
 	addDiary: (date: string, section_id: string, diary: MISDiary["section_id"]) => any
 	sendMessage: (text: string, number: string) => any
 	sendBatchMessages: (messages: MISSms[]) => any
 	logSms: (history: MISSMSHistory) => any
+	fetchLessons: () => void
 }
 
 interface S {
@@ -40,6 +48,8 @@ interface S {
 	selected_student_phone: string
 	students_filter: "" | "all_students" | "single_student" | "absent_students" | "leave_students"
 	diary: MISDiary["date"]
+	showSubjects: boolean
+	scrollY: number
 }
 
 type propTypes = RouteComponentProps & P
@@ -79,7 +89,9 @@ class Diary extends Component<propTypes, S> {
 			selected_section_id: "",
 			selected_student_phone: "",
 			students_filter: "all_students",
-			diary
+			diary,
+			showSubjects: false,
+			scrollY: 0,
 		}
 
 		this.former = new former(this, [])
@@ -303,6 +315,20 @@ class Diary extends Component<propTypes, S> {
 			}, {} as { [id: string]: string })
 	}
 
+	openModal = () => {
+		this.setState({ showSubjects: true })
+		hideScroll()
+	}
+
+	handleToggleModal = () => {
+		this.setState({ showSubjects: false })
+		showScroll()
+	}
+
+	componentDidMount() {
+		this.props.fetchLessons()
+	}
+
 	render() {
 
 		const { classes, sendBatchMessages, settings } = this.props;
@@ -375,6 +401,9 @@ class Diary extends Component<propTypes, S> {
 					</div>
 					{
 						this.state.selected_section_id !== "" && <div className="section">
+							<div className="row">
+								<div className="button blue mb" style={{ marginBottom: 15 }} onClick={this.openModal}>Attach Video Link </div>
+							</div>
 							{
 								Array.from(subjects)
 									.sort((a, b) => a.localeCompare(b))
@@ -426,7 +455,15 @@ class Diary extends Component<propTypes, S> {
 				/>
 				}
 			</div>
-		</Layout>
+			{
+				this.state.showSubjects ? <Modal>
+					<SubjectModal onClose={this.handleToggleModal}
+						events={this.props.events}
+						lessons={this.props.lessons}
+						isLoading={this.props.isLoading} />
+				</Modal> : null
+			}
+		</Layout >
 	}
 }
 export default connect((state: RootReducerState) => ({
@@ -434,10 +471,15 @@ export default connect((state: RootReducerState) => ({
 	diary: state.db.diary,
 	students: state.db.students,
 	classes: state.db.classes,
-	settings: state.db.settings
+	settings: state.db.settings,
+	ilmxUser: getIlmxUser(),
+	events: state.db.ilmx.events,
+	lessons: state.db.ilmx.lessons,
+	isLoading: state.ilmxLessons.isLoading,
 }), (dispatch: Function) => ({
 	sendMessage: (text: string, number: string) => dispatch(sendSMS(text, number)),
 	sendBatchMessages: (messages: MISSms[]) => dispatch(sendBatchSMS(messages)),
 	logSms: (history: MISSMSHistory) => dispatch(logSms(history)),
-	addDiary: (date: string, section_id: string, diary: MISDiary["section_id"]) => dispatch(addDiary(date, section_id, diary))
+	addDiary: (date: string, section_id: string, diary: MISDiary["section_id"]) => dispatch(addDiary(date, section_id, diary)),
+	fetchLessons: () => dispatch(fetchLessons())
 }))(Diary);
