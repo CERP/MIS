@@ -297,12 +297,6 @@ const SchoolLeavingCertificate: React.FC<CertificateProps> = ({ curr_student, re
 				</div>
 
 				<div className="cert-row">
-					<label>Date of Issue: </label>
-					<div>{moment(new Date).format("DD-MM-YYYY")}
-					</div>
-				</div>
-
-				<div className="cert-row">
 					<label>Prepared by: </label>
 					<div contentEditable suppressContentEditableWarning={true}>
 					</div>
