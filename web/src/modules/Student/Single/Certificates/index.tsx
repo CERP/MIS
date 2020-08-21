@@ -208,24 +208,6 @@ const CharacterCertificate: React.FC<CertificateProps> = ({ curr_student, releva
 					<div contentEditable>{school_session}</div>
 				</div>
 
-				<div className="cert-row">
-					<label>Date of Withdrawal: </label>
-					<div contentEditable>
-					</div>
-				</div>
-
-				<div className="cert-row">
-					<label>Date of issue: </label>
-					<div contentEditable>{moment(new Date).format("DD-MM-YYYY")}
-					</div>
-				</div>
-
-				<div className="cert-row">
-					<label>Prepared by: </label>
-					<div contentEditable>
-					</div>
-				</div>
-
 			</div>
 
 			<div className="footer">
@@ -267,20 +249,36 @@ const SchoolLeavingCertificate: React.FC<CertificateProps> = ({ curr_student, re
 						{curr_student.AdmissionNumber ? curr_student.AdmissionNumber : ""}
 					</div>
 				</div>
+
 				<div className="cert-row">
 					<label>Roll No. : </label>
 					<div>
 						{curr_student.RollNumber ? curr_student.RollNumber : ""}
 					</div>
 				</div>
+
+				<div className="cert-row">
+					<label>Date of Birth: </label>
+					<div>
+						{curr_student.Birthdate ? `${moment(curr_student.Birthdate).format("DD-MM-YYYY")}` : ""}
+					</div>
+				</div>
+
 				<div className="cert-row">
 					<label>Admission Date: </label>
 					<div>
 						{curr_student.AdmissionNumber ? `${moment(curr_student.StartDate).format("DD-MM-YYYY")}` : ""}
 					</div>
 				</div>
+
 				<div className="cert-row">
 					<label>Class of Admission: </label>
+					<div contentEditable>
+					</div>
+				</div>
+
+				<div className="cert-row">
+					<label>Withdrawal Date: </label>
 					<div contentEditable>
 					</div>
 				</div>
@@ -293,10 +291,29 @@ const SchoolLeavingCertificate: React.FC<CertificateProps> = ({ curr_student, re
 				</div>
 
 				<div className="cert-row">
+					<label>Reason of Leaving: </label>
+					<div contentEditable>
+					</div>
+				</div>
+
+				<div className="cert-row">
+					<label>Date of Issue: </label>
+					<div contentEditable>{moment(new Date).format("DD-MM-YYYY")}
+					</div>
+				</div>
+
+				<div className="cert-row">
+					<label>Prepared by: </label>
+					<div contentEditable>
+					</div>
+				</div>
+
+				<div className="cert-row">
 					<label>Conduct: </label>
 					<div contentEditable>
 					</div>
 				</div>
+
 				<div className="cert-row">
 					<label>Remarks:</label>
 					<div contentEditable>
