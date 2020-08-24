@@ -125,10 +125,11 @@ class CreateTeacher extends Component<propTypes, S> {
 		if (profile.Password.length !== 128) { // hack...
 			hash(profile.Password).then(hashed => {
 
-				this.props.save({
-					...profile,
-					Password: hashed
-				}, true)
+				if (this.isFirst()) {
+					this.props.save({ ...profile, Password: hashed }, true)
+				} else {
+					this.props.save({ ...profile, Password: hashed })
+				}
 
 				this.setState({
 					banner: {
