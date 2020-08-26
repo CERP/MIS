@@ -145,33 +145,33 @@ class SMSDispatcherService : Service() {
                     when (resultCode) {
                         Activity.RESULT_OK -> {
                             sms.status = SENT_KEY
+                            updateLogText("Message: ${sms.number}-${SENT_KEY}-$currentTime")
                             databaseHandler.updateSMS(sms)
                         }
-                        SmsManager.RESULT_ERROR_GENERIC_FAILURE -> {
-                            sms.status = FAILED_KEY
-                            databaseHandler.updateSMS(sms)
-                        }
-                        SmsManager.RESULT_ERROR_NO_SERVICE -> {
-                            sms.status = FAILED_KEY
-                            databaseHandler.updateSMS(sms)
-                        }
-                        SmsManager.RESULT_ERROR_NULL_PDU -> {
-                            sms.status = FAILED_KEY
-                            databaseHandler.updateSMS(sms)
-                        }
-                        SmsManager.RESULT_ERROR_RADIO_OFF -> {
-                            sms.status = FAILED_KEY
-                            databaseHandler.updateSMS(sms)
-                        }
+//                        SmsManager.RESULT_ERROR_GENERIC_FAILURE -> {
+//                            sms.status = FAILED_KEY
+//                            databaseHandler.updateSMS(sms)
+//                        }
+//                        SmsManager.RESULT_ERROR_NO_SERVICE -> {
+//                            sms.status = FAILED_KEY
+//                            databaseHandler.updateSMS(sms)
+//                        }
+//                        SmsManager.RESULT_ERROR_NULL_PDU -> {
+//                            sms.status = FAILED_KEY
+//                            databaseHandler.updateSMS(sms)
+//                        }
+//                        SmsManager.RESULT_ERROR_RADIO_OFF -> {
+//                            sms.status = FAILED_KEY
+//                            databaseHandler.updateSMS(sms)
+//                        }
                         else -> {
                             sms.status = FAILED_KEY
+                            updateLogText("Message: ${sms.number}-${FAILED_KEY}-$currentTime")
                             databaseHandler.updateSMS(sms)
                         }
                     }
                 }
             }
-
-            registerReceiver(broadCastReceiver, IntentFilter("SENT"))
 
             if(messages.size > 1) {
 
@@ -189,12 +189,13 @@ class SMSDispatcherService : Service() {
                 Thread.sleep((messages.size * 4000 - (4_000)).toLong())
 
                 smsManager.sendMultipartTextMessage(sms.number, null, messages, plist, null)
-                updateLogText("Message: ${sms.number}-${sms.text}-${sms.status}-$currentTime")
+                updateLogText("Multipart Message: ${sms.number}-${sms.status}-$currentTime")
 
             } else {
              smsManager.sendTextMessage(sms.number, null, sms.text, sentPI, null)
-                updateLogText("Message: ${sms.number}-${sms.text}-${sms.status}-$currentTime")
+                updateLogText("Message: ${sms.number}-${sms.status}-$currentTime")
             }
+            registerReceiver(broadCastReceiver, IntentFilter("SENT"))
 
         } catch( e: Exception) {
             Log.d(TAG, e.message)
@@ -271,7 +272,7 @@ class SMSDispatcherService : Service() {
 
         var content = if(file.exists()) {
             val bytes = file.readBytes()
-            String(bytes) + "\n" + message
+            message + "\n" + String(bytes)
         } else {
             message
         }

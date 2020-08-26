@@ -74,22 +74,52 @@ class MainActivity : AppCompatActivity() {
         list!!.addItemDecoration(DividerItemDecoration(list!!.context, layoutManager.orientation))
         list!!.adapter = recyclerAdapter
 
-        // clear logs button
         val clearLogsButton = findViewById<Button>(R.id.clearLogButton)
+        val showLogsButton = findViewById<Button>(R.id.showLogs)
+        val shareLogsButton = findViewById<Button>(R.id.shareLogs)
+        val resendFailedSMSButton = findViewById<Button>(R.id.button)
+
         clearLogsButton.setOnClickListener {
+
+            if(textview_logs.visibility === View.VISIBLE) {
+                textview_logs.visibility = View.GONE
+                showLogsButton.text = "Show Logs"
+            }
 
             clearLogMessages()
             clearPendingMessages()
             databaseHandler.deleteAllSMS()
+            textview_logs.text = ""
             arraylist.clear()
 
             Toast.makeText(baseContext, "Logs cleared!", Toast.LENGTH_SHORT).show()
-
             recyclerAdapter!!.notifyDataSetChanged()
         }
 
-        // resend failed sms button
-        val resendFailedSMSButton = findViewById<Button>(R.id.button)
+        showLogsButton.setOnClickListener{
+               if(textview_logs.visibility === View.VISIBLE) {
+                    textview_logs.visibility = View.GONE
+                    showLogsButton.text = "Show Logs"
+               } else {
+                   textview_logs.visibility = View.VISIBLE
+                   showLogsButton.text = "Hide Logs"
+               }
+        }
+
+        shareLogsButton.setOnClickListener{
+
+            val logs = readLogMessages()
+
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, logs)
+                type = "text/plain"
+            }
+
+            val shareIntent = Intent.createChooser(sendIntent, "Share SMS Logs")
+            startActivity(shareIntent)
+        }
+
         resendFailedSMSButton.setOnClickListener {
 
             val failedMessages = databaseHandler.getAllFailedSMS()
@@ -250,7 +280,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
     private fun appendMessagesToFile(messages: List<SMSItem>) {
 
         // first read the file as json
@@ -393,14 +422,15 @@ class MainActivity : AppCompatActivity() {
     private fun getPermissions() {
 
         if(ContextCompat.checkSelfPermission(this@MainActivity, android.Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED ||
-           ContextCompat.checkSelfPermission(this@MainActivity, android.Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(this@MainActivity, android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ContextCompat.checkSelfPermission(this@MainActivity, android.Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(this@MainActivity, android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             // no permission granted
-            ActivityCompat.requestPermissions(this@MainActivity, arrayOf(android.Manifest.permission.SEND_SMS, android.Manifest.permission.READ_SMS, android.Manifest.permission.READ_PHONE_STATE), MY_PERMISSIONS_SEND_SMS)
+            ActivityCompat.requestPermissions(this@MainActivity, arrayOf(android.Manifest.permission.SEND_SMS, android.Manifest.permission.READ_SMS, android.Manifest.permission.READ_PHONE_STATE, android.Manifest.permission.WRITE_EXTERNAL_STORAGE), MY_PERMISSIONS_SEND_SMS)
         }
         else {
             Log.d(TAG, "Permissions has been granted!")
         }
+
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
