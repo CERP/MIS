@@ -25,41 +25,59 @@
 
     <LinearLayout
         android:id="@+id/ll"
-        android:layout_width="100dp"
         android:layout_height="40dp"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="10dp"
         android:layout_marginRight="10dp"
+        android:layout_width="fill_parent"
         android:orientation="horizontal"
         android:outlineAmbientShadowColor="#FFC2C6C6"
-        app:layout_constraintBottom_toTopOf="@+id/cardView4"
+        app:layout_constraintBottom_toTopOf="@+id/messageStatusCardView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/name">
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/card"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_gravity="center"
-            app:cardCornerRadius="10dp"
-            card_view:cardElevation="5dp"
-            >
+        <Button
+            android:id="@+id/shareLogs"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="1.0"
+            android:background="@drawable/btnroundedorange"
+            android:text="Share Logs"
+            android:layout_marginLeft="15dp"
+            android:padding="10dp"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
 
-            <Button
-                android:id="@+id/clearLogButton"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:background="@color/red"
-                android:text="@string/clear_logs"
-                android:textColor="@android:color/background_light"
-                android:textSize="12sp" />
+        <Button
+            android:id="@+id/showLogs"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="1.0"
+            android:background="@drawable/btnroundedgreen"
+            android:text="Show Logs"
+            android:layout_marginLeft="10dp"
+            android:padding="10dp"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
 
-        </android.support.v7.widget.CardView>
+        <Button
+            android:id="@+id/clearLogButton"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="1.0"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="5dp"
+            android:padding="10dp"
+            android:background="@drawable/btnroundedred"
+
+            android:text="@string/clear_logs"
+            android:textColor="@android:color/background_light"
+            android:textSize="12sp" />
 
     </LinearLayout>
 
     <android.support.v7.widget.CardView
-        android:id="@+id/cardView4"
+        android:id="@+id/messageStatusCardView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_above="@+id/ll"
@@ -91,12 +109,14 @@
             android:id="@+id/logtext"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-
             android:layout_margin="10dp"
             android:background="@color/cardview_light_background"
             android:textColor="#203a91"
-            android:textSize="18sp"
+            android:textSize="14sp"
+            android:scrollbars="vertical"
             android:visibility="gone"></TextView>
+
+
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
@@ -110,7 +130,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/cardView5"
-        app:layout_constraintTop_toBottomOf="@+id/cardView4"
+        app:layout_constraintTop_toBottomOf="@+id/messageStatusCardView"
         card_view:cardUseCompatPadding="true"
         >
 
@@ -166,7 +186,7 @@
         app:layout_constraintEnd_toStartOf="@+id/totalfailed"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/cardView7"
-        app:layout_constraintTop_toBottomOf="@+id/cardView4"
+        app:layout_constraintTop_toBottomOf="@+id/messageStatusCardView"
         card_view:cardUseCompatPadding="true"
         >
 
