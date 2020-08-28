@@ -8,19 +8,19 @@ import { SMSLimitExceed } from '..'
 
 class ToFeeDefaulters extends Component {
 	constructor(props) {
-	super(props)
-	
-	this.state = {
-		text: "",
-		total_student_debts: {}
-	}
-	
-	this.background_calculation = null
-	this.former = new former(this, [])
-}
+		super(props)
 
-	logSms = (messages) =>{
-		if(messages.length === 0){
+		this.state = {
+			text: "",
+			total_student_debts: {}
+		}
+
+		this.background_calculation = null
+		this.former = new former(this, [])
+	}
+
+	logSms = (messages) => {
+		if (messages.length === 0) {
 			console.log("No Message to Log")
 			return
 		}
@@ -42,14 +42,14 @@ class ToFeeDefaulters extends Component {
 		clearTimeout(this.background_calculation)
 
 		let i = 0;
-		
+
 		const total_student_debts = {}
 		const student_list = Object.values(this.props.students)
 
 		const reducify = () => {
 
 			// in loop
-			if(i >= student_list.length) {
+			if (i >= student_list.length) {
 				return this.setState({
 					total_student_debts
 				})
@@ -60,25 +60,25 @@ class ToFeeDefaulters extends Component {
 
 			i += 1;
 
-			const debt = { OWED: 0, SUBMITTED: 0, FORGIVEN: 0, SCHOLARSHIP: 0}
-			
-			for(const pid in student.payments || {}) {
+			const debt = { OWED: 0, SUBMITTED: 0, FORGIVEN: 0, SCHOLARSHIP: 0 }
+
+			for (const pid in student.payments || {}) {
 				const payment = student.payments[pid];
 
 				// some payment.amount has type string
-				const amount =  typeof(payment.amount) === "string" ? parseFloat(payment.amount) : payment.amount
-				
+				const amount = typeof (payment.amount) === "string" ? parseFloat(payment.amount) : payment.amount
+
 				// for 'scholarship', payment has also type OWED and negative amount
-				if(amount < 0) {
+				if (amount < 0) {
 					debt["SCHOLARSHIP"] += Math.abs(amount)
 				} else {
 					debt[payment.type] += amount
 				}
 			}
 
-			if(student.FamilyID) {
+			if (student.FamilyID) {
 				const existing = total_student_debts[student.FamilyID]
-				if(existing) {
+				if (existing) {
 					total_student_debts[student.FamilyID] = {
 						student,
 						debt: {
@@ -109,38 +109,38 @@ class ToFeeDefaulters extends Component {
 
 	render() {
 
-	const { sendBatchMessages, smsOption } = this.props;
-	
-	const messages = Object.values(this.state.total_student_debts)
-		.filter(({student, debt}) => {
-			return student.id !==undefined && student.Phone !== undefined &&
-				(student.tags === undefined || !student.tags["PROSPECTIVE"]) &&
-				this.calculateDebt(debt) > 0
-		})
-		.reduce((agg, {student, debt}) => {
+		const { sendBatchMessages, smsOption } = this.props;
 
-			const index  = agg.findIndex(s => s.number === student.Phone)		
-			
-			if(index >= 0 ) {
-				return agg
-			}
+		const messages = Object.values(this.state.total_student_debts)
+			.filter(({ student, debt }) => {
+				return student.id !== undefined && student.Phone !== undefined &&
+					(student.tags === undefined || !student.tags["PROSPECTIVE"]) &&
+					this.calculateDebt(debt) > 0
+			})
+			.reduce((agg, { student, debt }) => {
 
-			const balance = this.calculateDebt(debt)
+				const index = agg.findIndex(s => s.number === student.Phone)
 
-			const sms_text = replaceSpecialCharsWithUTFChars(this.state.text)
+				if (index >= 0) {
+					return agg
+				}
 
-			return [...agg, {
-				number: student.Phone,
-				text : sms_text
-				.replace(/\$BALANCE/g, `${balance}`)
-				.replace(/\$NAME/g, student.FamilyID || student.Name)
-				.replace(/\$FNAME/g, student.ManName)
-			}]
-		}, [])
+				const balance = this.calculateDebt(debt)
+
+				const sms_text = replaceSpecialCharsWithUTFChars(this.state.text)
+
+				return [...agg, {
+					number: student.Phone,
+					text: sms_text
+						.replace(/\$BALANCE/g, `${balance}`)
+						.replace(/\$NAME/g, student.FamilyID || student.Name)
+						.replace(/\$FNAME/g, student.ManName)
+				}]
+			}, [])
 
 		const limit_exceed = isSMSCharsLimitExceed(this.state.text)
 
-	return (
+		return (
 			<div>
 				<div className="row">
 					<label>Message</label>
@@ -148,21 +148,21 @@ class ToFeeDefaulters extends Component {
 				</div>
 				<div className="row">
 					<label>Options</label>
-					<div style={{fontSize: "0.85rem", color: "grey"}}>use $NAME, $FNAME and $BALANCE</div>
+					<div style={{ fontSize: "0.85rem", color: "grey" }}>use $NAME, $FNAME and $BALANCE</div>
 				</div>
-				{ limit_exceed && <SMSLimitExceed /> }
-				{ smsOption === "SIM" ? 
+				{limit_exceed && <SMSLimitExceed />}
+				{smsOption === "SIM" ?
 					<a href={smsIntentLink({ messages, return_link: window.location.href })}
-						onClick={(e) => limit_exceed ? e.preventDefault() : this.logSms(messages)}
-						className="button blue">Send using Local SIM</a> : 
-					<div className="button" onClick={() => sendBatchMessages(messages)}>Send using API</div> 
+						onClick={this.logSms(messages)}
+						className="button blue">Send using Local SIM</a> :
+					<div className="button" onClick={() => sendBatchMessages(messages)}>Send using API</div>
 				}
-				<div className="is-mobile-only" style={{marginTop: 10}}>
+				<div className="is-mobile-only" style={{ marginTop: 10 }}>
 					<ShareButton title={"SMS"} text={this.state.text} />
 				</div>
 			</div>
 		)
-  }
+	}
 }
 
 export default ToFeeDefaulters;
