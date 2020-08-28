@@ -707,13 +707,12 @@ class Settings extends Component<propsType, S>{
 
 					<Link className="button grey" to="settings/class">Fee Voucher Settings</Link>
 					<Link className="button grey" to="/settings/promote">Promote Students</Link>
-					<Link className="button grey" to="/settings/historicalFee">Add Historical Fees</Link>
 					<Link className="button grey" to="/settings/excel-import/students">Import From Excel</Link>
 					{
 						this.props.user.Admin ?
 							<>
-								<div className="button grey" onClick={() => this.onExport()}>Export to File </div>
-								<div className="button grey" onClick={() => this.toggleExportModal()}> Export students to CSV</div>
+								<div className="button grey" onClick={() => this.onExport()}>Export school data to File </div>
+								<div className="button grey" onClick={() => this.toggleExportModal()}> Export students data to CSV</div>
 								{
 									this.state.toggleExportModal && <Modal>
 										<StudentExportModal
