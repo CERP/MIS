@@ -1,17 +1,17 @@
 import React, { Component } from 'react'
-import { RouteComponentProps } from 'react-router';
-import former from 'utils/former';
+import { RouteComponentProps } from 'react-router'
+import former from 'utils/former'
 import { connect } from 'react-redux'
-import Layout from 'components/Layout';
+import Layout from 'components/Layout'
 
 import './style.css'
 import moment from 'moment'
-import getSectionsFromClasses from '../../../utils/getSectionsFromClasses';
-import { addHistoricalPayment } from '../../../actions';
-import { StudentLedgerPage } from '../../Student/Single/Fees/StudentLedgerPage';
-import getFilteredPayments from '../../../utils/getFilteredPayments';
+import getSectionsFromClasses from '../../../utils/getSectionsFromClasses'
+import { addHistoricalPayment } from '../../../actions'
+import { StudentLedgerPage } from '../../Student/Single/Fees/StudentLedgerPage'
+import getFilteredPayments from '../../../utils/getFilteredPayments'
 import { sortYearMonths } from '../../../utils/sortUtils'
-import Banner from '../../../components/Banner';
+import Banner from '../../../components/Banner'
 
 
 export type historicalPayment = {
@@ -51,7 +51,7 @@ interface S {
 
 type propTypes = RouteComponentProps & P
 
-class historicalFee extends Component<propTypes, S> {
+class HistoricalFee extends Component<propTypes, S> {
 
 	former: former
 	constructor(props: propTypes) {
@@ -80,12 +80,14 @@ class historicalFee extends Component<propTypes, S> {
 
 	save = () => {
 
-		const amount_owed = parseFloat(this.state.fee.amount_owed) || 0
-		const amount_paid = parseFloat(this.state.fee.amount_paid) || 0
-		const amount_forgiven = parseFloat(this.state.fee.amount_forgiven) || 0
+		const { fee, selected_student_id } = this.state
+
+		const amount_owed = parseFloat(fee.amount_owed) || 0
+		const amount_paid = parseFloat(fee.amount_paid) || 0
+		const amount_forgiven = parseFloat(fee.amount_forgiven) || 0
 
 		if (amount_owed === 0) {
-			setTimeout(() => { this.setState({ banner: { active: false } }) }, 3000);
+			setTimeout(() => { this.setState({ banner: { active: false } }) }, 3000)
 			return this.setState({
 				banner: {
 					active: true,
@@ -96,7 +98,8 @@ class historicalFee extends Component<propTypes, S> {
 		}
 
 		const payment = {
-			...this.state.fee,
+			...fee,
+			name: fee.name.trim(),
 			amount_owed: amount_owed,
 			amount_paid: amount_paid,
 			amount_forgiven: amount_forgiven
@@ -112,9 +115,9 @@ class historicalFee extends Component<propTypes, S> {
 				}
 			})
 
-			this.props.addHistoricalPayment(payment, this.state.selected_student_id)
+			this.props.addHistoricalPayment(payment, selected_student_id)
 
-			setTimeout(() => { this.setState({ banner: { active: false } }) }, 3000);
+			setTimeout(() => { this.setState({ banner: { active: false } }) }, 3000)
 		}
 	}
 
@@ -145,7 +148,7 @@ class historicalFee extends Component<propTypes, S> {
 		const { selected_section_id, selected_student_id, year_filter, month_filter, banner, fee } = this.state
 		const { students, classes, settings } = this.props
 
-		const sorted_sections = getSectionsFromClasses(classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0));
+		const sorted_sections = getSectionsFromClasses(classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0))
 
 		const selected_student = students[selected_student_id]
 
@@ -172,7 +175,7 @@ class historicalFee extends Component<propTypes, S> {
 				{banner.active ? <Banner isGood={banner.good} text={banner.text} /> : false}
 				<div className="title"> Historical Fee </div>
 
-				<div className="section">
+				<div className="section section-container">
 					<div className="row">
 						<label> Class</label>
 						<select {...this.former.super_handle(["selected_section_id"])}>
@@ -194,7 +197,7 @@ class historicalFee extends Component<propTypes, S> {
 					</div>
 				</div>
 
-				{selected_student_id && selected_section_id && <div className="section">
+				{selected_student_id && selected_section_id && <div className="section section-container" style={{ marginTop: 10 }}>
 					<div className="row">
 						<label> Date </label>
 						<input
@@ -221,8 +224,8 @@ class historicalFee extends Component<propTypes, S> {
 					</div>
 					<div className="button blue" onClick={() => this.save()}> Add Historical Fee</div>
 				</div>}
-				{selected_student && selected_student.Name && selected_section_id && <div className="section">
-					<div className="row">
+				{selected_student && selected_student.Name && selected_section_id && <div className="section section-container" style={{ marginTop: 10 }}>
+					<div className="row" style={{ marginBottom: 10 }}>
 						<select {...this.former.super_handle(["month_filter"])}>
 							<option value=""> Select Month</option>
 							{
@@ -238,16 +241,16 @@ class historicalFee extends Component<propTypes, S> {
 							}
 						</select>
 					</div>
+					{
+						filteredPayments && selected_section_id && selected_student_id &&
+						<StudentLedgerPage
+							payments={filteredPayments}
+							settings={settings}
+							student={selected_student}
+						/>
+					}
 				</div>}
 			</div>
-
-			{filteredPayments && selected_section_id && selected_student_id && <div style={{ width: "80%", margin: "0px auto" }}>
-				<StudentLedgerPage
-					payments={filteredPayments}
-					settings={settings}
-					student={selected_student}
-				/>
-			</div>}
 
 		</Layout>
 	}
@@ -259,4 +262,4 @@ export default connect((state: RootReducerState) => ({
 	settings: state.db.settings
 }), (dispatch: Function) => ({
 	addHistoricalPayment: (payment: historicalPayment, student_id: string) => dispatch(addHistoricalPayment(payment, student_id))
-}))(historicalFee)
+}))(HistoricalFee)

@@ -146,13 +146,26 @@ class Landing extends Component {
 		}, 3000)
 	}
 
+	getMonthsAndDaysText = (days) => {
+		let daysLeft = days
+		let monthsLeft = 0
+		while (daysLeft - 30 > 0) {
+			daysLeft = daysLeft - 30;
+			monthsLeft = monthsLeft + 1
+		}
+
+		return `Trial ${monthsLeft} month(s) and ${daysLeft} day(s) left`
+	}
+
 	getTrialWarningMessage = () => {
 
 		const { trial_period, date } = this.props.package_info
 		const daysPassedSinceTrial = moment().diff(date, "days")
+		const daysleft = trial_period - daysPassedSinceTrial
 
 		if (daysPassedSinceTrial <= trial_period) {
-			return `Trial ${trial_period - daysPassedSinceTrial} day(s) left`
+			return daysleft >= 30 ?
+				this.getMonthsAndDaysText(daysleft) : `Trial ${daysleft} day(s) left`
 		}
 
 		return "Trial Period Ended, Please Contact helpline to continue to use MISchool"

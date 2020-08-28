@@ -163,7 +163,7 @@ export const getSchoolInfo = (school_id: string) => (dispatch: Dispatch, getStat
 		})
 }
 
-export const updateSchoolInfo = (school_id: string, student_limit: number, paid: boolean, date: number) => (dispatch: Dispatch, getState: GetState, syncr: Syncr) => {
+export const updateSchoolInfo = (school_id: string, student_limit: number, paid: boolean, trial_period: number, date: number) => (dispatch: Dispatch, getState: GetState, syncr: Syncr) => {
 	const state = getState();
 
 	const merges = [
@@ -175,7 +175,7 @@ export const updateSchoolInfo = (school_id: string, student_limit: number, paid:
 					"type": "MERGE",
 					"value": {
 						"paid": paid,
-						"trial_period": 15,
+						"trial_period": trial_period > 0 ? trial_period : 15,
 						"date": date
 					}
 				}
@@ -329,8 +329,8 @@ export const updateSchoolId = (old_school_id: string, new_school_id: string) => 
 }
 
 export const updateSchoolLoginInfo = (school_id: string, login_info: SchoolLoginInfo) => (dispatch: Dispatch, getState: GetState, syncr: Syncr) => {
-	
-	if(!syncr.ready) {
+
+	if (!syncr.ready) {
 		syncr.onNext('connect', () => dispatch(updateSchoolLoginInfo(school_id, login_info)))
 		return
 	}
@@ -341,7 +341,7 @@ export const updateSchoolLoginInfo = (school_id: string, login_info: SchoolLogin
 		type: "UPDATE_LOGIN_INFO",
 		client_type: state.auth.client_type,
 		client_id: state.client_id,
-		payload:{
+		payload: {
 			school_id,
 			value: login_info
 		}
@@ -354,28 +354,28 @@ export const updateSchoolLoginInfo = (school_id: string, login_info: SchoolLogin
 
 export const GET_MIS_FACULTY = "GET_MIS_FACULTY"
 export const getMISFacultyLoginInfo = (school_id: string) => (dispatch: Dispatch, getState: GetState, syncr: Syncr) => {
-	
+
 	const state = getState()
 
 	syncr.send({
 		type: GET_MIS_FACULTY,
 		client_type: state.auth.client_type,
 		client_id: state.client_id,
-		payload:{
+		payload: {
 			school_id
 		}
 	}).then(res => {
-		 dispatch({
-			 type: GET_MIS_FACULTY,
-			 payload: res
-		 })
+		dispatch({
+			type: GET_MIS_FACULTY,
+			payload: res
+		})
 	}).catch(() => {
 		window.alert(`Unable to get faculty for ${school_id}`)
 	})
 }
 
 export const updateFacultyPassword = (school_id: string, faculty_id: string, password: string) => (dispatch: Dispatch, getState: GetState, syncr: Syncr) => {
-	
+
 	const state = getState()
 
 	const merges = {
@@ -387,7 +387,7 @@ export const updateFacultyPassword = (school_id: string, faculty_id: string, pas
 				"value": password
 			}
 		},
-		[`db,faculty,${faculty_id},password`]:{
+		[`db,faculty,${faculty_id},password`]: {
 			"date": moment.now(),
 			"action": {
 				"path": ["db", "faculty", faculty_id, "Password"],
@@ -401,7 +401,7 @@ export const updateFacultyPassword = (school_id: string, faculty_id: string, pas
 		type: "UPDATE_FACULTY_PASSWORD",
 		client_type: state.auth.client_type,
 		client_id: state.client_id,
-		payload:{
+		payload: {
 			merges,
 			school_id
 		}
@@ -412,7 +412,7 @@ export const updateFacultyPassword = (school_id: string, faculty_id: string, pas
 	})
 }
 
-export const getEndPointResource = ( point: string, school_id: string, start_date: number, end_date: number) => ( dispatch: Dispatch, getState: GetState,  syncr: Syncr) => {
+export const getEndPointResource = (point: string, school_id: string, start_date: number, end_date: number) => (dispatch: Dispatch, getState: GetState, syncr: Syncr) => {
 
 	const state = getState()
 

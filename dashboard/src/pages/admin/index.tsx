@@ -13,7 +13,7 @@ interface P {
 	student_info: RootReducerState["school_Info"]["student_info"]
 	meta: RootReducerState["school_Info"]["meta"]
 	getSchoolList: () => any
-	updateSchoolInfo: (school_id: string, student_limit: number, paid: boolean, date: number) => any
+	updateSchoolInfo: (school_id: string, student_limit: number, paid: boolean, trial_period: number, date: number) => any
 	getSchoolInfo: (school_id: string) => any
 }
 
@@ -22,7 +22,7 @@ interface S {
 	purchasePassword: string
 	resetPassword: string
 	misPackage: "" | "TALEEM1" | "TALEEM2" | "UNLIMITED"
-	trial_period: number
+	trial_period: string
 	paid: string
 	date: number
 	student_limit: number
@@ -47,7 +47,7 @@ class AdminActions extends Component<propTypes, S> {
 			purchasePassword: "123",
 			resetPassword: "456",
 			misPackage: "",
-			trial_period: 0,
+			trial_period: "0",
 			paid: "",
 			date: 0,
 			student_limit: 0,
@@ -114,14 +114,14 @@ class AdminActions extends Component<propTypes, S> {
 
 	onSave = () => {
 
-		const { selectedSchool, misPackage, paid, date } = this.state
+		const { selectedSchool, misPackage, paid, trial_period, date } = this.state
 
 		if (misPackage === "" || paid === "" || !date) {
 			window.alert("Please Fill All info")
 			return
 		}
 
-		this.props.updateSchoolInfo(selectedSchool, this.getLimitFromPackage(misPackage), paid === "true" ? true : false, date)
+		this.props.updateSchoolInfo(selectedSchool, this.getLimitFromPackage(misPackage), paid === "true" ? true : false, parseFloat(trial_period), date)
 	}
 
 	render() {
@@ -130,14 +130,14 @@ class AdminActions extends Component<propTypes, S> {
 		const trial_info = this.props.trial_info
 		const meta = this.props.meta
 
-		const trial_period = (trial_info && trial_info.trial_period ) || 0
+		const trial_period = (trial_info && trial_info.trial_period) || 0
 		const paid = trial_info && trial_info.paid ? "true" : "false"
 		const date = (trial_info && trial_info.date) || -1
 		const student_limit = (student_info && student_info.max_limit) || 0
 
 		const { schoolList } = this.props
 		const { selectedSchool, resetPassword, purchasePassword } = this.state
-		
+
 		return <div className="page admin-actions">
 			<div className="title"> Admin Actions</div>
 
@@ -159,28 +159,28 @@ class AdminActions extends Component<propTypes, S> {
 				<div className="divider"> Field Info </div>
 				<div className="row">
 					<label> Field Manager</label>
-					<div>{ meta && meta.area_manager_name }</div>
+					<div>{meta && meta.area_manager_name}</div>
 				</div>
 				<div className="row">
 					<label> Agent Name </label>
-					<div>{ meta && meta.agent_name }</div>
+					<div>{meta && meta.agent_name}</div>
 				</div>
 				<div className="row">
 					<label> City</label>
-					<div>{ meta && meta.office }</div>
+					<div>{meta && meta.office}</div>
 				</div>
 				<div className="row">
 					<label> Strategy</label>
-					<div>{ meta && meta.type_of_login }</div>
+					<div>{meta && meta.type_of_login}</div>
 				</div>
 				<div className="row">
 					<label> Notes</label>
-					<div>{ meta && meta.notes }</div>
+					<div>{meta && meta.notes}</div>
 				</div>
 				<div className="divider">School Info</div>
 				<div className="row">
 					<label>Trial Start Date</label>
-					<div>{ date !== -1 ? moment(date).format("MM-DD-YYYY") : "Not Set"}</div>
+					<div>{date !== -1 ? moment(date).format("MM-DD-YYYY") : "Not Set"}</div>
 				</div>
 				<div className="row">
 					<label>Status</label>
@@ -226,6 +226,10 @@ class AdminActions extends Component<propTypes, S> {
 					</select>
 				</div>
 				<div className="row">
+					<label>Trial Period(days)</label>
+					<input type="number" onChange={this.former.handle(["trial_period"])} />
+				</div>
+				<div className="row">
 					<label>Trial Start Date</label>
 					<input type="date" onChange={this.former.handle(["date"])} />
 				</div>
@@ -242,5 +246,5 @@ export default connect((state: RootReducerState) => ({
 }), (dispatch: Function) => ({
 	getSchoolList: () => dispatch(getSchoolList()),
 	getSchoolInfo: (school_id: string) => dispatch(getSchoolInfo(school_id)),
-	updateSchoolInfo: (school_id: string, student_limit: number, paid: boolean, date: number) => dispatch(updateSchoolInfo(school_id, student_limit, paid, date))
+	updateSchoolInfo: (school_id: string, student_limit: number, paid: boolean, trial_period: number, date: number) => dispatch(updateSchoolInfo(school_id, student_limit, paid, trial_period, date))
 }))(AdminActions)

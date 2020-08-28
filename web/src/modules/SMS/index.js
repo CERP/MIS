@@ -275,5 +275,5 @@ export default connect(state => ({
 
 
 export const SMSLimitExceed = () => (
-	<p className="error"><strong>Alert</strong>: SMS characters limit exceeds, Max 165 characters are allowed!</p>
+	<p className="warning"><strong>Warning</strong>: Your SMS is over 165 characters. This may consume more messages from network and your sim may be blocked by PTA</p>
 )

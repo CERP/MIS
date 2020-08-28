@@ -8,6 +8,7 @@ import Layout from 'components/Layout'
 import former from "utils/former"
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { addMultipleFees, addFee, deleteMultipleFees, resetFees } from 'actions'
+import { Link } from 'react-router-dom';
 
 interface P {
 	students: RootDBState["students"]
@@ -303,6 +304,9 @@ class ManageFees extends Component<propTypes, S> {
 				{this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
 
 				<div className="title">Fee Management</div>
+				<div className="row" style={{ justifyContent: "flex-end" }}>
+					<Link className="button blue" to="/fees/add-historical-fee">Add Historical Fee</Link>
+				</div>
 				<div className="divider">Add Fee</div>
 				<div className="section form">
 					<div className="row">
