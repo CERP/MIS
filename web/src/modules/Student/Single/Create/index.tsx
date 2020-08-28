@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import moment from 'moment';
+import moment from 'moment'
 import { v4 } from 'node-uuid'
 import { connect } from 'react-redux'
-import { Redirect, RouteComponentProps, Link } from 'react-router-dom';
+import { Redirect, RouteComponentProps, Link } from 'react-router-dom'
 import Dynamic from '@cerp/dynamic'
 
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
@@ -15,7 +15,7 @@ import getStudentLimit from 'utils/getStudentLimit'
 import Hyphenator from 'utils/Hyphenator'
 
 import { createStudentMerge, deleteStudent, uploadStudentProfilePicture } from 'actions'
-import Camera from 'components/Camera';
+import Camera from 'components/Camera'
 import Modal from 'components/Modal'
 import Banner from 'components/Banner'
 import Former from 'utils/former'
@@ -107,10 +107,9 @@ class SingleStudent extends Component<propTypes, S> {
 	siblings: MISStudent[]
 
 	constructor(props: propTypes) {
-		super(props);
+		super(props)
 
-		const id = props.match.params.id;
-
+		const id = props.match.params.id
 		const student = props.students[id] ? props.students[id].tags ?
 			props.students[id]
 			: {
@@ -210,9 +209,8 @@ class SingleStudent extends Component<propTypes, S> {
 	}
 
 	onSave = () => {
-		console.log('save!', this.state.profile)
-		let student = this.state.profile;
 
+		let student = this.state.profile
 		if (this.isProspective()) {
 			student = {
 				...this.state.profile,
@@ -227,17 +225,17 @@ class SingleStudent extends Component<propTypes, S> {
 
 		// verify 
 
-		const compulsory_paths = [["Name"]];
+		const compulsory_paths = [["Name"]]
 		if (student.Active) {
 			compulsory_paths.push(["section_id"])
 		} else {
 			student.section_id = ""
 		}
 
-		const compulsoryFields = checkCompulsoryFields(this.state.profile, compulsory_paths);
+		const compulsoryFields = checkCompulsoryFields(this.state.profile, compulsory_paths)
 
 		if (compulsoryFields) {
-			const errorText = "Please fill " + compulsoryFields.map(x => x[0] === "section_id" ? "Section ID" : x[0]).join(", ");
+			const errorText = "Please fill " + compulsoryFields.map(x => x[0] === "section_id" ? "Section ID" : x[0]).join(", ")
 
 			return this.setState({
 				banner: {
@@ -273,9 +271,8 @@ class SingleStudent extends Component<propTypes, S> {
 			}
 
 			for (const fee of Object.values(this.state.profile.fees)) {
-				//console.log('fees', fee)
 
-				if (fee.type === "" || fee.amount === "" || fee.name === "" || fee.period === "") {
+				if (fee.type === "" || fee.amount === "" || fee.name.trim() === "" || fee.period === "") {
 					return this.setState({
 						banner: {
 							active: true,
@@ -297,36 +294,37 @@ class SingleStudent extends Component<propTypes, S> {
 							fee_id: p.fee_id,
 							fee_name: p.fee_name
 						}
-					}), {});
+					}), {})
 
-				student.payments = payments;
+				student.payments = payments
 			}
 
 			for (const p_id of Object.keys(student.payments)) {
 
-				const current_payment = student.payments[p_id];
-				const corresponding_fees = student.fees[current_payment.fee_id]
+				const current_payment = student.payments[p_id]
+
+				const corresponding_fee = student.fees[current_payment.fee_id]
 
 				const curr_payment_date = moment(current_payment.date).format("MM/YYYY")
 				const curr_month = moment().format("MM/YYYY")
-				const fee_amount = corresponding_fees !== undefined ? parseFloat(corresponding_fees.amount) : 0
+				const fee_amount = corresponding_fee !== undefined ? parseFloat(corresponding_fee.amount) : 0
 
 				if (curr_payment_date === curr_month &&
 					current_payment.type === "OWED" &&
-					corresponding_fees === undefined) {
+					corresponding_fee === undefined) {
 					const { [p_id]: removed, ...nextPayment } = student.payments
-					student.payments = nextPayment;
+					student.payments = nextPayment
 				}
 				else if (curr_payment_date === curr_month &&
 					current_payment.type === "OWED" &&
-					corresponding_fees.period === "MONTHLY" &&
+					corresponding_fee.period === "MONTHLY" &&
 					Math.abs(current_payment.amount) !== Math.abs(fee_amount)) {
 					student.payments[p_id] = {
-						amount: corresponding_fees.type !== "SCHOLARSHIP" ? fee_amount : (-1 * fee_amount), // check if scholarship, then make negative
+						amount: corresponding_fee.type !== "SCHOLARSHIP" ? fee_amount : (-1 * fee_amount), // check if scholarship, then make negative
 						date: current_payment.date,
 						type: current_payment.type,
 						fee_id: current_payment.fee_id,
-						fee_name: corresponding_fees.name
+						fee_name: corresponding_fee.name.trim()
 					}
 				}
 
@@ -335,9 +333,9 @@ class SingleStudent extends Component<propTypes, S> {
 
 		if (!this.isProspective()) {
 			const { prospective_section_id: removed, ...rest } = student
-			this.props.save(rest);
+			this.props.save(rest)
 		} else {
-			this.props.save(student);
+			this.props.save(student)
 		}
 		this.setState({
 			banner: {
@@ -357,13 +355,13 @@ class SingleStudent extends Component<propTypes, S> {
 					this.isNew() ? `/student?forwardTo=prospective-student` : false
 					: this.isNew() ? `/student` : false
 			})
-		}, 2000);
+		}, 2000)
 
 	}
 
 	onEnrolled = () => {
 
-		const { prospective_section_id: section_id, tags: { "PROSPECTIVE": removed, ...rest_tags }, ...rest_profile } = this.state.profile;
+		const { prospective_section_id: section_id, tags: { "PROSPECTIVE": removed, ...rest_tags }, ...rest_profile } = this.state.profile
 		const student = {
 			...rest_profile,
 			Active: true,
@@ -373,7 +371,7 @@ class SingleStudent extends Component<propTypes, S> {
 			}
 		}
 
-		this.props.save(student);
+		this.props.save(student)
 
 		this.setState({
 			banner: {
@@ -390,7 +388,7 @@ class SingleStudent extends Component<propTypes, S> {
 				},
 				redirect: `/student?forwardTo=prospective-student`
 			})
-		}, 1000);
+		}, 1000)
 	}
 	onDelete = () => {
 		// console.log(this.state.profile.id)
@@ -432,7 +430,7 @@ class SingleStudent extends Component<propTypes, S> {
 		if (!val)
 			return
 
-		const { [id]: removed, ...nextFee } = this.state.profile.fees;
+		const { [id]: removed, ...nextFee } = this.state.profile.fees
 
 		const { [id]: removed_edit, ...rest } = this.state.edit
 		this.setState({
@@ -464,13 +462,13 @@ class SingleStudent extends Component<propTypes, S> {
 
 	addHyphens = (path: string[]) => () => {
 
-		const str = Dynamic.get(this.state, path) as string;
+		const str = Dynamic.get(this.state, path) as string
 		this.setState(Dynamic.put(this.state, path, Hyphenator(str)) as S)
 	}
 
 	uniqueTags = () => {
 
-		const tags = new Set<string>();
+		const tags = new Set<string>()
 
 		Object.values(this.props.students)
 			.filter(s => s.id && s.Name)
@@ -479,11 +477,12 @@ class SingleStudent extends Component<propTypes, S> {
 					.forEach(tag => tags.add(tag))
 			})
 
-		return tags;
+		return tags
+
 	}
 
 	uniqueFamilies = () => {
-		const families = new Set<string>();
+		const families = new Set<string>()
 
 		Object.values(this.props.students)
 			.filter(s => s.id && s.Name)
@@ -493,7 +492,7 @@ class SingleStudent extends Component<propTypes, S> {
 				}
 			})
 
-		return families;
+		return families
 	}
 
 	uniqueFeeName = () => {
@@ -523,16 +522,16 @@ class SingleStudent extends Component<propTypes, S> {
 
 		// is there any new sibling that is not in the old siblings?
 
-		this.siblings = nextSiblings;
+		this.siblings = nextSiblings
 
 	}
 
 	addTag = () => {
 
-		const new_tag = this.state.new_tag;
+		const new_tag = this.state.new_tag
 
 		if (new_tag.trim() === "") {
-			return;
+			return
 		}
 
 		this.setState({
@@ -548,7 +547,7 @@ class SingleStudent extends Component<propTypes, S> {
 
 	removeTag = (tag: string) => () => {
 
-		const { [tag]: removed, ...rest } = this.state.profile.tags;
+		const { [tag]: removed, ...rest } = this.state.profile.tags
 
 		this.setState({
 			profile: {
@@ -560,7 +559,7 @@ class SingleStudent extends Component<propTypes, S> {
 
 	removeCertificate = (id: string) => {
 
-		const { [id]: removed, ...rest } = this.state.profile.certificates;
+		const { [id]: removed, ...rest } = this.state.profile.certificates
 
 		this.setState({
 			profile: {
@@ -619,8 +618,9 @@ class SingleStudent extends Component<propTypes, S> {
 			console.log('redirecting....')
 			return <Redirect to={this.state.redirect} />
 		}
-		const admin = this.props.user.Admin;
-		const { students, max_limit } = this.props;
+		const admin = this.props.user.Admin
+
+		const { students, max_limit } = this.props
 		const prospective = this.isProspective()
 
 		const sections = getSectionsFromClasses(this.props.classes)
@@ -711,13 +711,13 @@ class SingleStudent extends Component<propTypes, S> {
 			{
 				(this.isNew() ? this.state.toggleMoreInfo : true) && <div className="form no-print">
 					<div className="divider">Student Information</div>
-					<div className="row">
+					<div className="row profile-picture-upload">
 						<label>Profile Picture</label>
-						<div className="file-container button green" style={{ marginBottom: "5px" }}>
+						<div className="file-container button green upload">
 							<div>Upload File</div>
 							<input type="file" accept="image/*" onChange={this.uploadProfilePicture} />
 						</div>
-						<div className="button blue" onClick={this.toggleCamera}>Take Picture</div>
+						<div className="button blue take" onClick={this.toggleCamera}>Take Picture</div>
 					</div>
 
 					{
@@ -763,8 +763,8 @@ class SingleStudent extends Component<propTypes, S> {
 								["BForm"],
 								(val) => val.length <= 15,
 								() => {
-									this.addHyphens(["profile", "BForm"])();
-									this.updateSiblings();
+									this.addHyphens(["profile", "BForm"])()
+									this.updateSiblings()
 								})}
 							placeholder="BForm"
 							disabled={!admin} />
@@ -1045,7 +1045,8 @@ class SingleStudent extends Component<propTypes, S> {
 								<datalist id="fee_names">
 									{
 										[...this.uniqueFeeName().keys()]
-											.map(n => <option key={n} value={n} />)
+											.filter(k => k)
+											.map(k => <option key={k} value={k.trim()} />)
 									}
 								</datalist>
 								<div className="row">
@@ -1121,4 +1122,4 @@ export default connect((state: RootReducerState) => ({
 		uploadImage: (student: MISStudent, image_string: string) => dispatch(uploadStudentProfilePicture(student, image_string)),
 		save: (student: MISStudent) => dispatch(createStudentMerge(student)),
 		delete: (student: MISStudent) => dispatch(deleteStudent(student)),
-	}))(SingleStudent);
+	}))(SingleStudent)

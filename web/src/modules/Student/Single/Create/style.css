@@ -17,9 +17,10 @@
 	text-align: right;
 	cursor: pointer;
 }
-	.click-label:hover {
-		color: #fc6171;
-	}
+
+.click-label:hover {
+	color: var(--mis-danger);
+}
 
 .single-student .profile-pic {
 	border: 2px solid #333;
@@ -50,4 +51,19 @@ input[disabled], select[disabled] {
 	.layout>div:nth-child(2) {
 		padding-bottom: 0px;
 	}
+}
+
+.single-student .form .row.profile-picture-upload .file-container {
+	margin-right: 5px;
+}
+
+.single-student .form .row.profile-picture-upload .button.take {
+	margin-left: unset;
+}
+
+@media (max-width: 772px) {
+	.single-student .form .row.profile-picture-upload .file-container {
+		margin-right: unset;
+		margin-bottom: 5px;
+	}	
 }
