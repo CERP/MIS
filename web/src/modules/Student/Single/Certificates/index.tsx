@@ -159,11 +159,11 @@ const CharacterCertificate: React.FC<CertificateProps> = ({ curr_student, releva
 			</div>
 
 			<div className="body">
-				<div className="para" contentEditable>
+				<div className="para" contentEditable suppressContentEditableWarning={true}>
 					This is to certify that <span className="emphasize">{curr_student.Name}</span>, {getGenderSpecificText("son/daughter", gender)} of <span className="emphasize">{curr_student.ManName}</span>, is a bonafide student of this school and bears a good moral character. {capitalize(getGenderSpecificText("his/her", gender))} behaviour was good with teachers and students. {capitalize(getGenderSpecificText("he/she", gender))} has neither displayed persistent violent or aggressive behavior nor any desire to harm other.
 			</div>
 
-				<div className="cert-row" contentEditable> {capitalize(getGenderSpecificText("his/her", gender))} data according to our record is as follows</div>
+				<div className="cert-row" contentEditable suppressContentEditableWarning={true}> {capitalize(getGenderSpecificText("his/her", gender))} data according to our record is as follows</div>
 				<div className="cert-row">
 					<label>Admission No.: </label>
 					<div>
@@ -198,14 +198,14 @@ const CharacterCertificate: React.FC<CertificateProps> = ({ curr_student, releva
 
 				<div className="cert-row">
 					<label>Marks: </label>
-					<div contentEditable>
+					<div contentEditable suppressContentEditableWarning={true}>
 
 					</div>
 				</div>
 
 				<div className="cert-row">
 					<label>Session: </label>
-					<div contentEditable>{school_session}</div>
+					<div contentEditable suppressContentEditableWarning={true}>{school_session}</div>
 				</div>
 
 			</div>
@@ -236,11 +236,11 @@ const SchoolLeavingCertificate: React.FC<CertificateProps> = ({ curr_student, re
 			</div>
 
 			<div className="body">
-				<div className="para" contentEditable>
+				<div className="para" contentEditable suppressContentEditableWarning={true}>
 					This is to certify that <span className="emphasize">{curr_student.Name}</span>, {getGenderSpecificText("son/daughter", gender)} of <span className="emphasize">{curr_student.ManName}</span>, has Passed/Failed the Annual Examination held in <b>{school_session}</b> for promotion to Class ____________________.
 			</div>
 
-				<div className="cert-row" contentEditable> {capitalize(getGenderSpecificText("his/her", gender))} data according to our record is as follows
+				<div className="cert-row" contentEditable suppressContentEditableWarning={true}> {capitalize(getGenderSpecificText("his/her", gender))} data according to our record is as follows
       		</div>
 
 				<div className="cert-row">
@@ -249,21 +249,37 @@ const SchoolLeavingCertificate: React.FC<CertificateProps> = ({ curr_student, re
 						{curr_student.AdmissionNumber ? curr_student.AdmissionNumber : ""}
 					</div>
 				</div>
+
 				<div className="cert-row">
 					<label>Roll No. : </label>
 					<div>
 						{curr_student.RollNumber ? curr_student.RollNumber : ""}
 					</div>
 				</div>
+
+				<div className="cert-row">
+					<label>Date of Birth: </label>
+					<div>
+						{curr_student.Birthdate ? `${moment(curr_student.Birthdate).format("DD-MM-YYYY")}` : ""}
+					</div>
+				</div>
+
 				<div className="cert-row">
 					<label>Admission Date: </label>
 					<div>
 						{curr_student.AdmissionNumber ? `${moment(curr_student.StartDate).format("DD-MM-YYYY")}` : ""}
 					</div>
 				</div>
+
 				<div className="cert-row">
 					<label>Class of Admission: </label>
-					<div contentEditable>
+					<div contentEditable suppressContentEditableWarning={true}>
+					</div>
+				</div>
+
+				<div className="cert-row">
+					<label>Withdrawal Date: </label>
+					<div contentEditable suppressContentEditableWarning={true}>
 					</div>
 				</div>
 
@@ -275,19 +291,32 @@ const SchoolLeavingCertificate: React.FC<CertificateProps> = ({ curr_student, re
 				</div>
 
 				<div className="cert-row">
-					<label>Conduct: </label>
-					<div contentEditable>
+					<label>Reason of Leaving: </label>
+					<div contentEditable suppressContentEditableWarning={true}>
 					</div>
 				</div>
+
+				<div className="cert-row">
+					<label>Prepared by: </label>
+					<div contentEditable suppressContentEditableWarning={true}>
+					</div>
+				</div>
+
+				<div className="cert-row">
+					<label>Conduct: </label>
+					<div contentEditable suppressContentEditableWarning={true}>
+					</div>
+				</div>
+
 				<div className="cert-row">
 					<label>Remarks:</label>
-					<div contentEditable>
+					<div contentEditable suppressContentEditableWarning={true}>
 					</div>
 				</div>
 
 				<div className="cert-row">
 					<label>&nbsp;</label>
-					<div contentEditable>
+					<div contentEditable suppressContentEditableWarning={true}>
 					</div>
 				</div>
 
@@ -319,7 +348,7 @@ const SportsCertificate: React.FC<CertificateProps> = ({ curr_student, relevant_
 		</div>
 
 		<div className="body">
-			<div className="para" contentEditable>
+			<div className="para" contentEditable suppressContentEditableWarning={true}>
 				This certificate is awarded to <span style={{ fontWeight: "bold", textDecoration: "underline" }}>{curr_student.Name}</span>, {getGenderSpecificText("son/daughter", gender)} of <span style={{ fontWeight: "bold", textDecoration: "underline" }}>{curr_student.ManName}</span>, for {getGenderSpecificText("his/her", gender)} excellent athletics performance in ____________________ at our school.
       		</div>
 
@@ -363,7 +392,7 @@ const PerformanceCertificate: React.FC<CertificateProps> = ({ curr_student, rele
 			</div>
 
 			<div className="body">
-				<div className="para" contentEditable>
+				<div className="para" contentEditable suppressContentEditableWarning={true}>
 					This certificate is awarded to <span className="emphasize">{curr_student.Name}</span>, {` ${getGenderSpecificText("son/daughter", gender)}`} of <span className="emphasize">{curr_student.ManName}</span>, for the acknowledgement of {getGenderSpecificText("his/her", gender)} outstanding performance in ____________________ at our school.
 				</div>
 
@@ -382,7 +411,7 @@ const PerformanceCertificate: React.FC<CertificateProps> = ({ curr_student, rele
 					</div>
 				</div>
 
-				<div className="para" contentEditable>
+				<div className="para" contentEditable suppressContentEditableWarning={true}>
 					We found {getGenderSpecificText("him/her", gender)} responsible, enthusiastic and hardworking and we hope {getGenderSpecificText("he/she", gender)} will keep up this good work and make us all proud.
 				</div>
 
@@ -415,7 +444,7 @@ const CompletionCertificate: React.FC<CertificateProps> = ({ curr_student, schoo
 			</div>
 
 			<div className="body">
-				<div className="para" contentEditable>
+				<div className="para" contentEditable suppressContentEditableWarning={true}>
 					This certificate is awarded to <span className="emphasize">{curr_student.Name}</span>,
 					{getGenderSpecificText("son/daughter", gender)} of <span className="emphasize">{curr_student.ManName}</span>, who is a bonafide student of this school and
 					has successfully completed the following course(s) from our school
@@ -423,11 +452,11 @@ const CompletionCertificate: React.FC<CertificateProps> = ({ curr_student, schoo
 
 				<div className="cert-row">
 					<label>Course(s): </label>
-					<div contentEditable>
+					<div contentEditable suppressContentEditableWarning={true}>
 					</div>
 				</div>
 
-				<div className="para" contentEditable>
+				<div className="para" contentEditable suppressContentEditableWarning={true}>
 					during the period of {school_session} and obtained Grade ____________________________. We wish {getGenderSpecificText("him/her", gender)} tremendous success in {getGenderSpecificText("his/her", gender)} future endeavours.
 				</div>
 			</div>
