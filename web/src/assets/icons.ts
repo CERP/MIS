@@ -18,6 +18,7 @@ import playIcon from './svgs/play.svg'
 import ilmxLogo from './pngs/ilmx-logo.png'
 import sortAscIcon from './svgs/sort-ascending.svg'
 import sortDescIcon from './svgs/sort-descending.svg'
+import contentCopyIcon from './svgs/content-copy.svg'
 
 export const EditIcon = deleteIcon
 export const DeleteIcon = editIcon
@@ -39,3 +40,4 @@ export const PlayIcon = playIcon
 export const IlmxLogo = ilmxLogo
 export const SortAscIcon = sortAscIcon
 export const SortDescIcon = sortDescIcon
+export const ContentCopyIcon = contentCopyIcon

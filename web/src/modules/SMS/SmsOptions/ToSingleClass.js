@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { smsIntentLink } from 'utils/intent'
 
-import {getSectionsFromClasses} from 'utils/getSectionsFromClasses'
+import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
 
 import former from 'utils/former'
 import ShareButton from 'components/ShareButton'
@@ -12,7 +12,7 @@ import { SMSLimitExceed } from '..'
 class ToSingleClass extends Component {
 	constructor(props) {
 		super(props)
-		
+
 		this.state = {
 			selected_section_id: "",
 			selected_student_number: "",
@@ -23,7 +23,7 @@ class ToSingleClass extends Component {
 	}
 
 	logSms = (messages) => {
-		if(messages.length === 0){
+		if (messages.length === 0) {
 			console.log("No Messaged to Log")
 			return
 		}
@@ -43,23 +43,23 @@ class ToSingleClass extends Component {
 		const { students, portal_link } = this.props
 
 		const messages = Object.values(students)
-			.filter(s => { 
+			.filter(s => {
 				return s.section_id === this.state.selected_section_id &&
 					(s.tags === undefined || !s.tags["PROSPECTIVE"]) &&
-					s.Phone && (s.Phone.length >= 11 && s.Phone.length <=15)
+					s.Phone && (s.Phone.length >= 11 && s.Phone.length <= 15)
 			})
-			.reduce((agg,student)=> {
-					const index  = agg.findIndex(s => s.number === student.Phone)		
-					if(index >= 0 ){
-						return agg
+			.reduce((agg, student) => {
+				const index = agg.findIndex(s => s.number === student.Phone)
+				if (index >= 0) {
+					return agg
 				}
 
-				const text_string = portal_link ? `${this.state.text}\nName: ${student.Name}\nStudent portal link: ${portal_link}${student.id}` 
-					: replaceSpecialCharsWithUTFChars (this.state.text)
+				const text_string = portal_link ? `${this.state.text}\nName: ${student.Name}\nStudent portal link: ${portal_link}${student.id}`
+					: replaceSpecialCharsWithUTFChars(this.state.text)
 
-				return [...agg,{
+				return [...agg, {
 					number: student.Phone,
-					text:  text_string
+					text: text_string
 				}]
 
 			}, [])
@@ -69,36 +69,36 @@ class ToSingleClass extends Component {
 
 	render() {
 
-	const { classes, sendBatchMessages, smsOption } = this.props;
-	const messages = this.getMessages()
-	const limit_exceed = isSMSCharsLimitExceed(this.state.text)
+		const { classes, sendBatchMessages, smsOption } = this.props;
+		const messages = this.getMessages()
+		const limit_exceed = isSMSCharsLimitExceed(this.state.text)
 
-	return (
+		return (
 			<div>
 				<div className="row">
-					<label>Select Class/Section</label>		
-						<select {...this.former.super_handle(["selected_section_id"])}>
-									{
-										[<option key="abcd" value="" disabled>Select Section</option>,
-										...Object.entries(getSectionsFromClasses(classes))
-										.sort(([, a], [, b]) => (a.classYear || 0) - (b.classYear || 0))
-										.map(([id, C]) => <option key={id} value={C.id}>{C.namespaced_name}</option>)
-										]
-									}
-						</select>
+					<label>Select Class/Section</label>
+					<select {...this.former.super_handle(["selected_section_id"])}>
+						{
+							[<option key="abcd" value="" disabled>Select Section</option>,
+							...Object.entries(getSectionsFromClasses(classes))
+								.sort(([, a], [, b]) => (a.classYear || 0) - (b.classYear || 0))
+								.map(([id, C]) => <option key={id} value={C.id}>{C.namespaced_name}</option>)
+							]
+						}
+					</select>
 				</div>
 				<div className="row">
 					<label>Message</label>
 					<textarea {...this.former.super_handle(["text"])} placeholder="Write text message here" />
 				</div>
-				{ limit_exceed && <SMSLimitExceed /> }
-				{ smsOption === "SIM" ? 
+				{limit_exceed && <SMSLimitExceed />}
+				{smsOption === "SIM" ?
 					<a href={smsIntentLink({ messages, return_link: window.location.href })}
-						onClick={(e) => limit_exceed ? e.preventDefault() : this.logSms(messages)}
-						className="button blue">Send using Local SIM</a> : 
-					<div className="button" onClick={() => sendBatchMessages(messages)}>Send using API</div> 
+						onClick={this.logSms(messages)}
+						className="button blue">Send using Local SIM</a> :
+					<div className="button" onClick={() => sendBatchMessages(messages)}>Send using API</div>
 				}
-				<div className="is-mobile-only" style={{marginTop: 10}}>
+				<div className="is-mobile-only" style={{ marginTop: 10 }}>
 					<ShareButton title={"SMS"} text={this.state.text} />
 				</div>
 			</div>

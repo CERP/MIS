@@ -32,7 +32,7 @@ import FeeMenu from 'modules/FeeMenu'
 import PlannerList from 'modules/Planner/ClassList'
 import Planner from 'modules/Planner'
 import CertificateMenu from 'modules/CertificateMenu'
-import historicalFee from './modules/Settings/HistoricalFees/historical-fee';
+import HistoricalFee from './modules/Settings/HistoricalFees/historical-fee';
 import FamilyModule from './modules/Family'
 import SingleFamily from './modules/Family/Single'
 import StudentFees from './modules/Student/Single/Fees/index'
@@ -100,12 +100,9 @@ export default class Routes extends React.Component {
 					<TrackedRoute path="/reports/:class_id/:section_id" component={ExamList} />
 					<TrackedRoute path="/reports" component={Marks} />
 
-					<TrackedRoute path="/fees/manage" component={ManageFees} />
-
 					<TrackedRoute path="/settings/excel-import" component={ExcelImport} />
 					<TrackedRoute path="/settings/promote" component={PromotionPage} />
 					<TrackedRoute path="/settings/class" component={ClassSettings} />
-					<TrackedRoute path="/settings/historicalFee" component={historicalFee} />
 					<TrackedRoute path="/settings" component={Settings} />
 					<TrackedRoute path="/analytics/daily-stats" component={DailyStats} />
 					<TrackedRoute path="/analytics" component={Analytics} />
@@ -124,9 +121,11 @@ export default class Routes extends React.Component {
 
 					<TrackedRoute path="/help" component={Help} />
 					<TrackedRoute path="/certificate-menu" component={CertificateMenu} />
+					<TrackedRoute path="/fees/manage" component={ManageFees} />
+					<TrackedRoute path="/fees/add-historical-fee" component={HistoricalFee} />
 					<TrackedRoute path="/fee-menu" component={FeeMenu} />
 					<TrackedRoute path="/reset-password" component={ResetPassword} />
-					<Route path="/verify-code" component={MISActivation} />					
+					<Route path="/verify-code" component={MISActivation} />
 					<Route exact path="/" component={Front} />
 					<Route path="/school-login" component={SchoolLogin} />
 					<Route path="/login" component={Login} />
