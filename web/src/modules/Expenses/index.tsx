@@ -12,7 +12,6 @@ import './style.css'
 
 interface P {
 	user: MISTeacher
-	permissions: RootDBState["settings"]["permissions"]
 }
 
 interface RouteInfo {
@@ -30,14 +29,13 @@ class ExpensePage extends Component <propTypes> {
 		// if student is new, just render the profile. when they hit save, redirect to the right page.
 		
 		const loc = this.props.location.pathname.split('/').slice(-1).pop();
-		const admin = this.props.user.Admin;
-		const permissions = this.props.permissions;
+		const {Admin: admin, permissions} = this.props.user;
 
 		return <Layout history={this.props.history}>
 			<div className="expense-page">
 				<div className="row tabs">
 					{ 
-						admin || permissions.expense.teacher ?
+						admin || permissions.expense ?
 						<Link
 							className={`button ${loc === "general" ? "green": false}`}
 							to="general"
@@ -47,7 +45,7 @@ class ExpensePage extends Component <propTypes> {
 						</Link> : false
 					}
 					{
-						admin || permissions.fee.teacher ?
+						admin || permissions.fee ?
 						<Link
 							className={`button ${loc === "income-expenditure" ? "red": false}`}
 							to="income-expenditure"
@@ -66,6 +64,5 @@ class ExpensePage extends Component <propTypes> {
 	}
 }
 export default connect((state: RootReducerState) => ({  
-	user: state.db.faculty[state.auth.faculty_id],
-	permissions: state.db.settings.permissions,
+	user: state.db.faculty[state.auth.faculty_id]
 }))(ExpensePage)

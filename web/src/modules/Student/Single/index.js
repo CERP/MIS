@@ -18,15 +18,14 @@ class StudentPage extends Component {
 	render() {
 
 		const loc = this.props.location.pathname.split('/').slice(-1).pop();
-		const admin = this.props.user.Admin;
-		const permissions = this.props.permissions;
+		const { Admin:admin, permissions } = this.props.user;
 
 		return <Layout history={this.props.history}>
 			<div className="single-student">
 				{loc === "new" || loc === "prospective-student" ? false :
 					<div className="row tabs">
 						<Link className={`button ${loc === "profile" ? "red" : false}`} to="profile" replace={true}>Profile</Link>
-						{admin || (permissions ? permissions.fee.teacher : false) ?
+						{admin || (permissions ? permissions.fee : false) ?
 							<Link className={`button ${loc === "payment" ? "green" : false}`} to="payment" replace={true}>
 								Payment
 								</Link> : false}
@@ -52,5 +51,5 @@ class StudentPage extends Component {
 }
 export default connect(state => ({
 	user: state.db.faculty[state.auth.faculty_id],
-	permissions: state.db.settings.permissions,
+	// permissions: state.db.settings.permissions,
 }))(StudentPage)

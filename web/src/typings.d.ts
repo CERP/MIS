@@ -141,14 +141,6 @@ interface MISSettings {
 	schoolCode: string
 	vouchersPerPage: string
 	sendSMSOption: "SIM" | "API"
-	permissions: {
-		fee: { teacher: boolean }
-		dailyStats: { teacher: boolean }
-		setupPage: { teacher: boolean }
-		expense: { teacher: boolean }
-		family: { teacher: boolean }
-		prospective: {teacher: boolean}
-	}
 	devices: {
 		[client_id: string]: string
 	}
@@ -375,7 +367,7 @@ interface MISTeacher {
 	HasLogin: boolean
 	tags: { [tag: string]: boolean }
 	attendance: MISTeacherAttendance
-	permissions?: {
+	permissions: {
 		fee: boolean 
 		dailyStats: boolean
 		setupPage: boolean 

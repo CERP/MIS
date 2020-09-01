@@ -69,7 +69,6 @@ interface P {
 	classes: RootDBState['classes']
 	settings: RootDBState["settings"]
 	logo: RootDBState["assets"]["schoolLogo"]
-	permissions: RootDBState['settings']['permissions']
 	max_limit: RootDBState['max_limit']
 	user: MISTeacher
 
@@ -1026,8 +1025,8 @@ class SingleStudent extends Component<propTypes, S> {
 							</div>
 					</div>}
 
-					{this.state.show_hide_fee && (admin || (this.props.permissions && this.props.permissions.fee.teacher)) && !prospective ? <div className="divider">Payment</div> : false}
-					{this.state.show_hide_fee && (admin || (this.props.permissions && this.props.permissions.fee.teacher)) && !prospective ?
+					{this.state.show_hide_fee && (admin || (this.props.user && this.props.user.permissions.fee)) && !prospective ? <div className="divider">Payment</div> : false}
+					{this.state.show_hide_fee && (admin || (this.props.user && this.props.user.permissions.fee)) && !prospective ?
 						Object.entries(this.state.profile.fees).map(([id, fee]) => {
 							const editable = this.state.edit[id] || this.isNew()
 
@@ -1114,7 +1113,6 @@ export default connect((state: RootReducerState) => ({
 	classes: state.db.classes,
 	settings: state.db.settings,
 	logo: state.db.assets ? state.db.assets.schoolLogo || "" : "",
-	permissions: state.db.settings.permissions,
 	max_limit: state.db.max_limit || -1,
 	user: state.db.faculty[state.auth.faculty_id]
 }),
