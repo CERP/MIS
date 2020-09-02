@@ -23,6 +23,8 @@ import java.util.*
 
 class SMSDispatcherService : Service() {
 
+    var multipart_sms_counter = 0
+
     companion object {
         const val SENT_KEY = "SENT"
         const val PENDING_KEY = "PENDING"
@@ -175,6 +177,8 @@ class SMSDispatcherService : Service() {
 
             if(messages.size > 1) {
 
+                multipart_sms_counter += messages.size
+
                 Log.d("trySend", "SENDING MULTIPART")
 
                 var plist = arrayListOf<PendingIntent>()
@@ -189,7 +193,8 @@ class SMSDispatcherService : Service() {
                 Thread.sleep((messages.size * 4000 - (4_000)).toLong())
 
                 smsManager.sendMultipartTextMessage(sms.number, null, messages, plist, null)
-                updateLogText("Multipart Message: ${sms.number}-${sms.status}-$currentTime")
+                updateLogText("Multipart SMS count: ${multipart_sms_counter}")
+                updateLogText("Multipart Message(${messages.size}): ${sms.number}-${sms.status}-$currentTime")
 
             } else {
              smsManager.sendTextMessage(sms.number, null, sms.text, sentPI, null)
