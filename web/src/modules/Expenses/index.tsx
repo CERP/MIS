@@ -18,51 +18,51 @@ interface RouteInfo {
 	id: string
 }
 
-type propTypes = RouteComponentProps <RouteInfo> & P
+type propTypes = RouteComponentProps<RouteInfo> & P
 
 
-class ExpensePage extends Component <propTypes> {
+class ExpensePage extends Component<propTypes> {
 
 	render() {
 		// three buttons, 
 
 		// if student is new, just render the profile. when they hit save, redirect to the right page.
-		
+
 		const loc = this.props.location.pathname.split('/').slice(-1).pop();
-		const {Admin: admin, permissions} = this.props.user;
+		const { Admin: admin, permissions } = this.props.user;
 
 		return <Layout history={this.props.history}>
 			<div className="expense-page">
 				<div className="row tabs">
-					{ 
+					{
 						admin || permissions.expense ?
-						<Link
-							className={`button ${loc === "general" ? "green": false}`}
-							to="general"
-							replace={true}
-							> 
-							General
+							<Link
+								className={`button ${loc === "general" ? "green" : false}`}
+								to="general"
+								replace={true}
+							>
+								General
 						</Link> : false
 					}
 					{
 						admin || permissions.fee ?
-						<Link
-							className={`button ${loc === "income-expenditure" ? "red": false}`}
-							to="income-expenditure"
-							replace={true}
-							> 
-							Income-Expenditure
-						</Link> : false 
+							<Link
+								className={`button ${loc === "income-expenditure" ? "red" : false}`}
+								to="income-expenditure"
+								replace={true}
+							>
+								Income-Expenditure
+						</Link> : false
 					}
 				</div>
 
 				<Route path="/expenses/general" component={Expenses} />
-				<Route path="/expenses/income-expenditure" component={IncomeExpenditure}/>
+				<Route path="/expenses/income-expenditure" component={IncomeExpenditure} />
 
 			</div>
 		</Layout>
 	}
 }
-export default connect((state: RootReducerState) => ({  
+export default connect((state: RootReducerState) => ({
 	user: state.db.faculty[state.auth.faculty_id]
 }))(ExpensePage)

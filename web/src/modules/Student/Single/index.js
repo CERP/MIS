@@ -51,5 +51,4 @@ class StudentPage extends Component {
 }
 export default connect(state => ({
 	user: state.db.faculty[state.auth.faculty_id],
-	// permissions: state.db.settings.permissions,
 }))(StudentPage)
