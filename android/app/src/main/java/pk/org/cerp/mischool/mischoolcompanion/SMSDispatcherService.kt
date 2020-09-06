@@ -44,11 +44,20 @@ class SMSDispatcherService : Service() {
                 prepareSendingSms()
             }
         }).start()
+
+        updateLogText("Service has been start")
+        SingletonServiceManager.isSMSServiceRunning = true
         return Service.START_STICKY
     }
 
     override fun onBind(p0: Intent?): IBinder? {
         TODO("not implemented")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        updateLogText("Service has been destroyed")
+        SingletonServiceManager.isSMSServiceRunning = false
     }
 
     private fun prepareSendingSms() {

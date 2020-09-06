@@ -74,6 +74,33 @@ class MainActivity : AppCompatActivity() {
         list!!.addItemDecoration(DividerItemDecoration(list!!.context, layoutManager.orientation))
         list!!.adapter = recyclerAdapter
 
+
+        if(!SingletonServiceManager.isSMSServiceRunning) {
+
+            val pending_sms = databaseHandler.getAllPendingSMS()
+
+            if(pending_sms.size > 0) {
+
+                // delete failed sms so that in next try they don't duplicate in db
+                databaseHandler.deleteAllPendingSMS()
+
+                val databaseHandler = DatabaseHandler(baseContext)
+
+                for (msg in pending_sms) {
+                    databaseHandler.addSMS(SMSItem(number = msg.number, text = msg.text, status = msg.status, date = msg.date))
+                }
+
+                // append pending sms
+                appendMessagesToFile(pending_sms)
+
+                recyclerAdapter!!.notifyDataSetChanged()
+
+                writeMessageToLogFile("Starting service for ${pending_sms.size} Pending SMS")
+                startService(Intent(this@MainActivity, SMSDispatcherService::class.java))
+            }
+
+        }
+
         val clearLogsButton = findViewById<Button>(R.id.clearLogButton)
         val showLogsButton = findViewById<Button>(R.id.showLogs)
         val shareLogsButton = findViewById<Button>(R.id.shareLogs)
@@ -141,6 +168,9 @@ class MainActivity : AppCompatActivity() {
                 appendMessagesToFile(failedMessages)
 
                 recyclerAdapter!!.notifyDataSetChanged()
+
+                writeMessageToLogFile("Starting service for resend all messages")
+
                 startService(Intent(this@MainActivity, SMSDispatcherService::class.java))
             } else {
                 Toast.makeText(baseContext, "No sms to resend", Toast.LENGTH_SHORT).show()
@@ -166,7 +196,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
 
         textview_sent.text = "Sent: $sms_sent"
         textview_pending.text = "Pending: $sms_pending"
@@ -260,6 +289,7 @@ class MainActivity : AppCompatActivity() {
 
         try {
             if(parsed.messages.isNotEmpty()) {
+                writeMessageToLogFile("Service is starting at: ${formattedDate} for MIS")
                 startService(Intent(this, SMSDispatcherService::class.java))
             }
         } catch(e: Exception) {
@@ -277,6 +307,25 @@ class MainActivity : AppCompatActivity() {
                 textview_logs.text = text
             }
         }
+    }
+
+    private  fun writeMessageToLogFile(message: String) {
+
+        val file = File(applicationContext.filesDir, logFileName)
+
+        Log.d(TAG, "appending messages to log file.....")
+
+        var content = if(file.exists()) {
+            val bytes = file.readBytes()
+            message + "\n" + String(bytes)
+        } else {
+            message
+        }
+
+        file.writeBytes(content.toByteArray())
+
+        Log.d(TAG, "DONE writing")
+
     }
 
 
@@ -299,16 +348,16 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG,"content of pending messages is $content")
         }
 
-         val newList = if(content == null) {
-            messages
-        } else {
-            val parsed = Klaxon().parseArray<SMSItem>(content)
-            parsed.orEmpty() + messages
-        }
+//         val newList = if(content == null) {
+//            messages
+//        } else {
+//            val parsed = Klaxon().parseArray<SMSItem>(content)
+//            parsed.orEmpty() + messages
+//        }
 
-        Log.d(TAG, "new list is $newList")
+//        Log.d(TAG, "new list is $newList")
 
-        val res = Klaxon().toJsonString(newList)
+        val res = Klaxon().toJsonString(messages)
         file.writeBytes(res.toByteArray())
 
         Log.d(TAG, "DONE writing")
@@ -378,7 +427,7 @@ class MainActivity : AppCompatActivity() {
 
             holder.resend.setOnClickListener(View.OnClickListener {
 
-                Toast.makeText(context,"retrying",Toast.LENGTH_LONG).show()
+                Toast.makeText(context,"Resending SMS",Toast.LENGTH_LONG).show()
 
                 val messages = arrayListOf<SMSItem>()
                 messages.add(arraylist[position])
@@ -393,6 +442,7 @@ class MainActivity : AppCompatActivity() {
 
                 notifyDataSetChanged()
 
+                writeMessageToLogFile("Starting service for resend SMS")
                 startService(Intent(this@MainActivity, SMSDispatcherService::class.java))
             })
 
