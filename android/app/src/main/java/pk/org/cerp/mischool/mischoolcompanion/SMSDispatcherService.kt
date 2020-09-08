@@ -1,9 +1,7 @@
 package pk.org.cerp.mischool.mischoolcompanion
 
 import android.annotation.TargetApi
-import android.app.Activity
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -13,6 +11,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.IBinder
 import android.support.annotation.RequiresApi
+import android.support.v4.app.NotificationCompat
+import android.support.v4.app.NotificationManagerCompat
 import android.telephony.SmsManager
 import android.util.Log
 import com.beust.klaxon.Converter
@@ -23,7 +23,13 @@ import java.util.*
 
 class SMSDispatcherService : Service() {
 
-    var multipart_sms_counter = 0
+    private var multipart_sms_counter = 0
+    private var num_messages = 0
+    private var sent_sms_counter = 0
+    private val notification_id = 777
+    private val channel_id = "Progress Notification" as String
+    private lateinit var notification_manager: NotificationManagerCompat
+    private lateinit var notification: NotificationCompat.Builder
 
     companion object {
         const val SENT_KEY = "SENT"
@@ -33,21 +39,40 @@ class SMSDispatcherService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        createNotificationChannels()
         Log.d("tryStartService","on create called")
+
+        //Create a Notification Manager
+        notification_manager = NotificationManagerCompat.from(this)
     }
 
     @TargetApi(Build.VERSION_CODES.O)
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+
+        // Call notification builder
+        notificationBuilder(intent)
+
+        //Initial Alert
+        notification_manager.notify(1, notification.build())
+
         Thread(Runnable {
             kotlin.run {
                 prepareSendingSms()
             }
+
+            notification.setContentText("SMS sending has been completed!")
+                    .setProgress(0, 0, false)
+                    .setOngoing(false)
+            notification_manager.notify(1, notification.build())
+
         }).start()
 
         updateLogText("Service has been start")
         SingletonServiceManager.isSMSServiceRunning = true
-        return Service.START_STICKY
+
+        // start sticky service
+        return START_STICKY
     }
 
     override fun onBind(p0: Intent?): IBinder? {
@@ -67,7 +92,8 @@ class SMSDispatcherService : Service() {
             Log.d(TAG, "doing run job using service")
 
             val pending = readMessagesFromFile()
-            val num_messages = pending.size
+
+            num_messages = pending.size
 
             val history = messageHistory()
             val last_min_messages = history.first
@@ -128,7 +154,10 @@ class SMSDispatcherService : Service() {
 
     private fun sendBatchSMS(messages: List<SMSItem>) {
         for(message in messages) {
-            Log.d(TAG, "send " + message.text + " to " + message.number)
+
+            notification.setContentText("SMS sending  ${++sent_sms_counter} of ${num_messages}")
+            notification_manager.notify(1, notification.build())
+
             sendSMS(message)
             Thread.sleep(8_000)
         }
@@ -316,6 +345,40 @@ class SMSDispatcherService : Service() {
         catch (e : Exception) {
             Log.e(TAG, e.message)
         }
+    }
+
+    //Check if the Android version is greater than 8. (Android Oreo)
+    private fun createNotificationChannels(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                    channel_id,
+                    "Progress Notification",
+                    //IMPORTANCE_HIGH = shows a notification as peek notification.
+                    //IMPORTANCE_LOW = shows the notification in the status bar.
+                    NotificationManager.IMPORTANCE_HIGH
+            )
+            channel.description = "Progress Notification Channel"
+            val manager = getSystemService(
+                    NotificationManager::class.java
+            )
+            manager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun notificationBuilder(intent: Intent?) {
+
+        //Sets the maximum progress as 100
+        val progressMax = 100
+        //Creating a notification and setting its various attributes
+        notification = NotificationCompat.Builder(this, channel_id)
+                .setSmallIcon(R.mipmap.ic_android)
+                .setContentTitle("MISchool Companion")
+                .setContentText("Starting sending SMS")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setOngoing(true)
+                .setOnlyAlertOnce(true)
+                .setProgress(progressMax, 0, true)
+                .setAutoCancel(true)
     }
 
 }
