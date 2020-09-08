@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { hash } from 'utils'
 import moment from 'moment'
 
-import { createLogout, resetTrial, markPurchased } from 'actions'
+import { createLogout, resetTrial, markPurchased, addMultiplePayments } from 'actions'
 import Layout from 'components/Layout'
 import Modal from 'components/Modal'
 import { numberWithCommas } from 'utils/numberWithCommas'
@@ -34,6 +34,7 @@ import diary from './icons/Diary/diary.svg'
 import { IlmxLogo } from 'assets/icons'
 import { showScroll, hideScroll } from 'utils/helpers'
 import IlmxRedirectModal from 'components/Ilmx/redirectModal'
+import { checkStudentDuesReturning } from 'utils/checkStudentDues'
 
 /**
  * line for adding new badge just copy / paste it
@@ -60,6 +61,8 @@ class Landing extends Component {
 	//They will still be able to access other components if they typed their Url e.g /attendance.
 	//Need to do something about that ..
 	componentDidMount() {
+		localStorage.setItem('date', moment().format('MM-DD-YYYY'));
+        localStorage.setItem('generatePayments', false);
 
 		// for redirect to ilmx
 		const phone = localStorage.getItem("ilmx")
@@ -73,6 +76,40 @@ class Landing extends Component {
 		this.setState({
 			scroll: container.scrollLeft
 		})
+
+		const date = localStorage.getItem('date');
+		if(date !== moment().format('MM-DD-YYYY')) {
+			localStorage.setItem('generatePayments', true);
+		}
+		const generatePayments = localStorage.getItem('generatePayments');
+		if(generatePayments) {
+			const students = Object.values(this.props.students)
+			.filter((std) => std && std.id && std.Active && std.section_id && !std.prospective_section_id)
+
+			this.generatePayments(students);
+			localStorage.setItem('generatePayments', false);
+		}
+	}
+
+	generatePayments = (students) => {
+
+		if (students.length > 0) {
+			const sibling_payments = students
+				.reduce((agg, curr) => {
+					const curr_student_payments = checkStudentDuesReturning(curr)
+					if (curr_student_payments.length > 0) {
+						return [
+							...agg,
+							...curr_student_payments
+						]
+					}
+					return agg
+				}, [])
+
+			if (sibling_payments.length > 0) {
+				this.props.addMultiplePayments(sibling_payments)
+			}
+		}
 	}
 
 	componentWillUnmount() {
@@ -527,5 +564,6 @@ export default connect(state => ({
 }), dispatch => ({
 	resetTrial: () => dispatch(resetTrial()),
 	markPurchased: () => dispatch(markPurchased()),
-	logout: () => dispatch(createLogout())
+	logout: () => dispatch(createLogout()),
+	addMultiplePayments: (payments) => dispatch(addMultiplePayments(payments)),
 }))(Landing)
