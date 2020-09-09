@@ -46,7 +46,16 @@
                     android:pathPattern="/android-sms" />
             </intent-filter>
         </activity>
-        <service android:name=".SMSDispatcherService" />
+        <service
+            android:name=".SMSDispatcherService"
+            android:enabled="true">
+        </service>
+        <receiver
+            android:name=".SMSRestarterBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:label="RestartServiceWhenStopped">
+        </receiver>
     </application>
 
 </manifest>

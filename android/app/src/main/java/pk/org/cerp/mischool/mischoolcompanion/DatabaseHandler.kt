@@ -7,7 +7,6 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteException
 import android.os.Build
-import android.provider.Telephony
 import android.support.annotation.RequiresApi
 import android.util.Log
 import java.text.SimpleDateFormat

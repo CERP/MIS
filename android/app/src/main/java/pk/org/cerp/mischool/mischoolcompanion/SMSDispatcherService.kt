@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.icu.util.UniversalTimeScale.toLong
 import android.net.Uri
 import android.os.Build
 import android.os.IBinder
@@ -15,7 +14,6 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.telephony.SmsManager
 import android.util.Log
-import com.beust.klaxon.Converter
 import com.beust.klaxon.Klaxon
 import java.io.File
 import java.text.DateFormat
@@ -26,23 +24,19 @@ class SMSDispatcherService : Service() {
     private var multipart_sms_counter = 0
     private var num_messages = 0
     private var sent_sms_counter = 0
+
     private val notification_id = 777
     private val channel_id = "Progress Notification" as String
     private lateinit var notification_manager: NotificationManagerCompat
     private lateinit var notification: NotificationCompat.Builder
 
-    companion object {
-        const val SENT_KEY = "SENT"
-        const val PENDING_KEY = "PENDING"
-        const val FAILED_KEY = "FAILED"
-    }
+    private lateinit var databaseHandler: DatabaseHandler
 
     override fun onCreate() {
         super.onCreate()
-        createNotificationChannels()
-        Log.d("tryStartService","on create called")
 
-        //Create a Notification Manager
+        //Create a notification channel and manager
+        createNotificationChannels()
         notification_manager = NotificationManagerCompat.from(this)
     }
 
@@ -50,11 +44,14 @@ class SMSDispatcherService : Service() {
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
+        // get database connect
+        databaseHandler = DatabaseHandler(this)
+
         // Call notification builder
-        notificationBuilder(intent)
+        notificationBuilder()
 
         //Initial Alert
-        notification_manager.notify(1, notification.build())
+        notification_manager.notify(notification_id, notification.build())
 
         Thread(Runnable {
             kotlin.run {
@@ -64,7 +61,7 @@ class SMSDispatcherService : Service() {
             notification.setContentText("SMS sending has been completed!")
                     .setProgress(0, 0, false)
                     .setOngoing(false)
-            notification_manager.notify(1, notification.build())
+            notification_manager.notify(notification_id, notification.build())
 
         }).start()
 
@@ -81,7 +78,21 @@ class SMSDispatcherService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        updateLogText("Service has been destroyed")
+        updateLogText("Service has been destroyed in onDestroy")
+        SingletonServiceManager.isSMSServiceRunning = false
+
+        databaseHandler.close()
+
+        // restarting the service when the user killed the app
+//        val broadcastIntent = Intent(this, SMSRestarterBroadcastReceiver::class.java)
+//        sendBroadcast(broadcastIntent)
+    }
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+//        val broadcastIntent = Intent(this, SMSRestarterBroadcastReceiver::class.java)
+//        sendBroadcast(broadcastIntent)
+        updateLogText("Service has been destroyed in onTaskRemoved")
         SingletonServiceManager.isSMSServiceRunning = false
     }
 
@@ -90,60 +101,60 @@ class SMSDispatcherService : Service() {
         return try {
 
             Log.d(TAG, "doing run job using service")
-
-            val pending = readMessagesFromFile()
-
+            val pending = databaseHandler.getAllPendingSMS()
             num_messages = pending.size
 
-            val history = messageHistory()
-            val last_min_messages = history.first
-            val last_15_min_messages = history.second
-            val max_per_minute = 30 // this should be variable depending on android version
-            val max_per_pta_rule = 12
-            val max_sendable = max_per_minute - last_min_messages
+            sendBatchSMS(pending)
 
-            Log.d(TAG, "${pending.size} items queued")
-            updateLogText("Pending: ${pending.size} items queued")
-
-
-            // we assume that sending messages will not error for now.
-            // because when they do error they tend to show up in the messages app for manual retry
-            Log.d("tryMMessage", "max = $max_per_minute last min msgs = $last_min_messages current msgs = $num_messages")
-
-            val nextList = when {
-
-                last_min_messages > max_per_minute -> {
-                    Log.d(TAG, "too many messages sent last minute. waiting until next round")
-                    pending
-                }
-                (last_min_messages + num_messages) < max_per_minute -> {
-                    Log.d(TAG, "sending all messages right now")
-                    Log.d("tryMMessage", "sending all messages right now")
-                    sendBatchSMS(pending)
-                    emptyList<SMSItem>()
-                }
-                (last_15_min_messages + num_messages) in 30..185 -> {
-                    // we don't need to worry about the pta rule, so fire off max per minute this round.
-                    Log.d("tryMMessage", "between 30 and 185")
-                    Log.d(TAG, "between 30 and 185 messages")
-                    sendBatchSMS(pending.take(max_sendable))
-                    pending.drop(max_sendable)
-                }
-                (num_messages + last_15_min_messages) > 200 -> {
-                    Log.d("tryMMessage", "Snum + last 15")
-                    // fire the messages off at a rate that cares about the pta limit (200 / 15 min) 12 per minute...
-                    sendBatchSMS(pending.take(max_per_pta_rule))
-                    pending.drop(max_per_pta_rule)
-                }
-                else -> {
-                    Log.d(TAG, "unforseen combination of numbers. last_min: $last_min_messages, 15 min: $last_15_min_messages, pending: $num_messages")
-                    sendBatchSMS(pending.take(max_sendable))
-                    pending.drop(max_sendable)
-                }
-            }
-
-            // write message to file
-            writeMessagesToFile(nextList)
+//            val history = messageHistory()
+//            val last_min_messages = history.first
+//            val last_15_min_messages = history.second
+//            val max_per_minute = 30 // this should be variable depending on android version
+//            val max_per_pta_rule = 12
+//            val max_sendable = max_per_minute - last_min_messages
+//
+//            Log.d(TAG, "${pending.size} items queued")
+//            updateLogText("Pending: ${pending.size} items queued")
+//
+//
+//            // we assume that sending messages will not error for now.
+//            // because when they do error they tend to show up in the messages app for manual retry
+//            Log.d("tryMMessage", "max = $max_per_minute last min msgs = $last_min_messages current msgs = $num_messages")
+//
+//            val nextList = when {
+//
+//                last_min_messages > max_per_minute -> {
+//                    Log.d(TAG, "too many messages sent last minute. waiting until next round")
+//                    pending
+//                }
+//                (last_min_messages + num_messages) < max_per_minute -> {
+//                    Log.d(TAG, "sending all messages right now")
+//                    Log.d("tryMMessage", "sending all messages right now")
+//                    sendBatchSMS(pending)
+//                    emptyList<SMSItem>()
+//                }
+//                (last_15_min_messages + num_messages) in 30..185 -> {
+//                    // we don't need to worry about the pta rule, so fire off max per minute this round.
+//                    Log.d("tryMMessage", "between 30 and 185")
+//                    Log.d(TAG, "between 30 and 185 messages")
+//                    sendBatchSMS(pending.take(max_sendable))
+//                    pending.drop(max_sendable)
+//                }
+//                (num_messages + last_15_min_messages) > 200 -> {
+//                    Log.d("tryMMessage", "Snum + last 15")
+//                    // fire the messages off at a rate that cares about the pta limit (200 / 15 min) 12 per minute...
+//                    sendBatchSMS(pending.take(max_per_pta_rule))
+//                    pending.drop(max_per_pta_rule)
+//                }
+//                else -> {
+//                    Log.d(TAG, "unforeseen combination of numbers. last_min: $last_min_messages, 15 min: $last_15_min_messages, pending: $num_messages")
+//                    sendBatchSMS(pending.take(max_sendable))
+//                    pending.drop(max_sendable)
+//                }
+//            }
+//
+//            // write message to file
+//            writeMessagesToFile(nextList)
 
         } catch(e: Exception) {
             e.printStackTrace()
@@ -154,10 +165,6 @@ class SMSDispatcherService : Service() {
 
     private fun sendBatchSMS(messages: List<SMSItem>) {
         for(message in messages) {
-
-            notification.setContentText("SMS sending  ${++sent_sms_counter} of ${num_messages}")
-            notification_manager.notify(1, notification.build())
-
             sendSMS(message)
             Thread.sleep(8_000)
         }
@@ -174,7 +181,6 @@ class SMSDispatcherService : Service() {
 
             val currentTime = DateFormat.getDateTimeInstance().format(Date())
             val sentPI = PendingIntent.getBroadcast(this, 0, Intent("SENT"), 0)
-            val databaseHandler: DatabaseHandler = DatabaseHandler(this)
 
             val broadCastReceiver = object: BroadcastReceiver() {
                 @RequiresApi(Build.VERSION_CODES.O)
@@ -184,8 +190,14 @@ class SMSDispatcherService : Service() {
 
                     when (resultCode) {
                         Activity.RESULT_OK -> {
-                            sms.status = SENT_KEY
-                            updateLogText("Message: ${sms.number}-${SENT_KEY}-$currentTime")
+                            sms.status = SMSStatus.SENT_KEY
+                            updateLogText("Message: ${sms.number}-${SMSStatus.SENT_KEY}-$currentTime")
+
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                notification.setContentText("SMS sending  ${++sent_sms_counter} of ${num_messages}. Sent to ${sms.number}")
+                                notification_manager.notify(notification_id, notification.build())
+                            }
+
                             databaseHandler.updateSMS(sms)
                         }
 //                        SmsManager.RESULT_ERROR_GENERIC_FAILURE -> {
@@ -205,8 +217,13 @@ class SMSDispatcherService : Service() {
 //                            databaseHandler.updateSMS(sms)
 //                        }
                         else -> {
-                            sms.status = FAILED_KEY
-                            updateLogText("Message: ${sms.number}-${FAILED_KEY}-$currentTime")
+                            sms.status = SMSStatus.FAILED_KEY
+                            updateLogText("Message: ${sms.number}-${SMSStatus.FAILED_KEY}-$currentTime")
+
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                notification.setContentText("SMS sending  ${++sent_sms_counter} of ${num_messages}. Failed to ${sms.number}")
+                                notification_manager.notify(notification_id, notification.build())
+                            }
                             databaseHandler.updateSMS(sms)
                         }
                     }
@@ -238,6 +255,7 @@ class SMSDispatcherService : Service() {
              smsManager.sendTextMessage(sms.number, null, sms.text, sentPI, null)
                 updateLogText("Message: ${sms.number}-${sms.status}-$currentTime")
             }
+
             registerReceiver(broadCastReceiver, IntentFilter("SENT"))
 
         } catch( e: Exception) {
@@ -347,8 +365,8 @@ class SMSDispatcherService : Service() {
         }
     }
 
-    //Check if the Android version is greater than 8. (Android Oreo)
-    private fun createNotificationChannels(){
+    // Check if the Android version is greater than 8. (Android Oreo)
+    private fun createNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                     channel_id,
@@ -358,6 +376,7 @@ class SMSDispatcherService : Service() {
                     NotificationManager.IMPORTANCE_HIGH
             )
             channel.description = "Progress Notification Channel"
+
             val manager = getSystemService(
                     NotificationManager::class.java
             )
@@ -365,20 +384,22 @@ class SMSDispatcherService : Service() {
         }
     }
 
-    private fun notificationBuilder(intent: Intent?) {
+    private fun notificationBuilder() {
 
-        //Sets the maximum progress as 100
-        val progressMax = 100
-        //Creating a notification and setting its various attributes
-        notification = NotificationCompat.Builder(this, channel_id)
-                .setSmallIcon(R.mipmap.ic_android)
-                .setContentTitle("MISchool Companion")
-                .setContentText("Starting sending SMS")
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setOngoing(true)
-                .setOnlyAlertOnce(true)
-                .setProgress(progressMax, 0, true)
-                .setAutoCancel(true)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            //Sets the maximum progress as 100
+            val progressMax = 100
+            //Creating a notification and setting its various attributes
+            notification = NotificationCompat.Builder(this, channel_id)
+                    .setSmallIcon(R.mipmap.ic_android)
+                    .setContentTitle("MISchool Companion")
+                    .setContentText("Starting sending SMS")
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setOngoing(true)
+                    .setOnlyAlertOnce(true)
+                    .setProgress(progressMax, 0, true)
+                    .setAutoCancel(true)
+        }
     }
 
 }
