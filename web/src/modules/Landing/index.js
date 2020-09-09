@@ -61,8 +61,11 @@ class Landing extends Component {
 	//They will still be able to access other components if they typed their Url e.g /attendance.
 	//Need to do something about that ..
 	componentDidMount() {
-		localStorage.setItem('date', moment().format('MM-DD-YYYY'));
-        localStorage.setItem('generatePayments', false);
+		const paymentObj = {
+			'date': moment().format('MM-DD-YYYY'),
+			'isGeneratePayments': false
+		}
+        localStorage.setItem('paymentObj', JSON.stringify(paymentObj));
 
 		// for redirect to ilmx
 		const phone = localStorage.getItem("ilmx")
@@ -76,25 +79,25 @@ class Landing extends Component {
 		this.setState({
 			scroll: container.scrollLeft
 		})
-
-		const date = localStorage.getItem('date');
-		if(date !== moment().format('MM-DD-YYYY')) {
-			localStorage.setItem('generatePayments', true);
+		
+		if(JSON.parse(localStorage.getItem('paymentObj')).date !== moment().format('MM-DD-YYYY')) {
+			paymentObj.isGeneratePayments = true
+			localStorage.setItem('paymentObj', JSON.stringify(paymentObj));
 		}
-		const generatePayments = localStorage.getItem('generatePayments');
-		if(generatePayments) {
+		if(JSON.parse(localStorage.getItem('paymentObj')).isGeneratePayments) {
 			const students = Object.values(this.props.students)
 			.filter((std) => std && std.id && std.Active && std.section_id && !std.prospective_section_id)
 
 			this.generatePayments(students);
-			localStorage.setItem('generatePayments', false);
+			paymentObj.isGeneratePayments = false
+			localStorage.setItem('paymentObj', JSON.stringify(paymentObj));
 		}
 	}
 
 	generatePayments = (students) => {
 
 		if (students.length > 0) {
-			const sibling_payments = students
+			const payments = students
 				.reduce((agg, curr) => {
 					const curr_student_payments = checkStudentDuesReturning(curr)
 					if (curr_student_payments.length > 0) {
@@ -106,8 +109,8 @@ class Landing extends Component {
 					return agg
 				}, [])
 
-			if (sibling_payments.length > 0) {
-				this.props.addMultiplePayments(sibling_payments)
+			if (payments.length > 0) {
+				this.props.addMultiplePayments(payments)
 			}
 		}
 	}
