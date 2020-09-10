@@ -8,14 +8,12 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.icu.util.UniversalTimeScale.toLong
 import android.net.Uri
 import android.os.Build
 import android.os.IBinder
 import android.support.annotation.RequiresApi
 import android.telephony.SmsManager
 import android.util.Log
-import com.beust.klaxon.Converter
 import com.beust.klaxon.Klaxon
 import java.io.File
 import java.text.DateFormat
@@ -56,7 +54,13 @@ class SMSDispatcherService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        updateLogText("Service has been destroyed")
+        updateLogText("Service has been destroyed in onDestroy")
+        SingletonServiceManager.isSMSServiceRunning = false
+    }
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        updateLogText("Service has been destroyed in onTaskRemoved")
         SingletonServiceManager.isSMSServiceRunning = false
     }
 
