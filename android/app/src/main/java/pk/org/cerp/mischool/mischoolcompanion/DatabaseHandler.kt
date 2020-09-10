@@ -6,31 +6,24 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteException
-import android.os.Build
-import android.support.annotation.RequiresApi
-import android.util.Log
-import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.collections.ArrayList
-
-//create the database logic, extending the SQLiteOpenHelper base class
 
 class DatabaseHandler(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     
     companion object {
-        private val DATABASE_VERSION = 1
-        private val DATABASE_NAME = "SMSDatabase"
-        private val TABLE_CONTACTS = "SMSTable"
-        private val KEY_ID = "id"
-        private val KEY_TEXT = "text"
-        private val KEY_PHONE = "phone"
-        private val KEY_DATE = "date"
-        private val KEY_STATUS = "status"
+        private const val DATABASE_VERSION = 1
+        private const val DATABASE_NAME = "SMSDatabase"
+        private const val TABLE_CONTACTS = "SMSTable"
+
+        private const val KEY_ID = "id"
+        private const val KEY_TEXT = "text"
+        private const val KEY_PHONE = "phone"
+        private const val KEY_DATE = "date"
+        private const val KEY_STATUS = "status"
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
         
-        //prepare database table query string
         val createTableQuery = ("CREATE TABLE " + TABLE_CONTACTS + "("
                 + KEY_ID + " INTEGER PRIMARY KEY," + KEY_TEXT + " TEXT,"+ KEY_DATE + " TEXT,"
                 + KEY_PHONE + " TEXT,"+ KEY_STATUS + " TEXT" + ")")
@@ -43,10 +36,9 @@ class DatabaseHandler(context: Context): SQLiteOpenHelper(context, DATABASE_NAME
         onCreate(db)
     }
 
-    // store sms
-    fun addSMS(sms: SMSItem): Long {
+    fun add_message(sms: SMSItem): Long {
 
-        // open connection for write query
+        // open connection
         val db = this.writableDatabase
 
         val contentValues = ContentValues()
@@ -57,7 +49,6 @@ class DatabaseHandler(context: Context): SQLiteOpenHelper(context, DATABASE_NAME
         contentValues.put(KEY_DATE, sms.date )
 
         // run insert query
-        // 2nd argument is String containing nullColumnHack
         val success = db.insert(TABLE_CONTACTS, null, contentValues)
 
         // close db connection
@@ -67,12 +58,15 @@ class DatabaseHandler(context: Context): SQLiteOpenHelper(context, DATABASE_NAME
         return success
     }
 
-    // get all sms
-    fun getAllSMS(): ArrayList<SMSItem> {
+    fun get_messages(status: String?): ArrayList<SMSItem> {
 
-        val smsList: ArrayList<SMSItem> = ArrayList<SMSItem>()
+        val list = ArrayList<SMSItem>()
 
-        val selectQuery = "SELECT  * FROM $TABLE_CONTACTS"
+        val query = if(status == null) {
+            "SELECT  * FROM $TABLE_CONTACTS"
+        } else {
+            "SELECT * FROM $TABLE_CONTACTS WHERE status='$status'"
+        }
 
         // open connection for read action
         val db = this.readableDatabase
@@ -80,189 +74,76 @@ class DatabaseHandler(context: Context): SQLiteOpenHelper(context, DATABASE_NAME
         var cursor: Cursor? = null
 
         try {
-            cursor = db.rawQuery(selectQuery, null)
+            cursor = db.rawQuery(query, null)
         } catch (e: SQLiteException) {
-            db.execSQL(selectQuery)
+            db.execSQL(query)
             return ArrayList()
         }
 
-        var recipientId: Int
-        var recipientPhone: String
-        var smsText: String
-        var smsStatus: String
-        var smsDate: String
+        var message_id: Int
+        var recipient_phone: String
+        var sms_text: String
+        var sms_status: String
+        var sms_date: String
 
         if (cursor.moveToFirst()) {
             do {
-                recipientId = cursor.getInt(cursor.getColumnIndex("id"))
-                recipientPhone = cursor.getString(cursor.getColumnIndex("phone"))
-                smsText = cursor.getString(cursor.getColumnIndex("text"))
-                smsDate = cursor.getString(cursor.getColumnIndex("date"))
-                smsStatus = cursor.getString(cursor.getColumnIndex("status"))
 
-                Log.d("sms data from db", "phone: $recipientPhone text: $smsText status: $smsStatus")
+                message_id = cursor.getInt(cursor.getColumnIndex("id"))
+                recipient_phone = cursor.getString(cursor.getColumnIndex("phone"))
+                sms_text = cursor.getString(cursor.getColumnIndex("text"))
+                sms_date = cursor.getString(cursor.getColumnIndex("date"))
+                sms_status = cursor.getString(cursor.getColumnIndex("status"))
 
-                val sms = SMSItem( number = recipientPhone, text = smsText, status = smsStatus, date = smsDate)
+                val sms = SMSItem( number = recipient_phone, text = sms_text, status = sms_status, date = sms_date)
 
                 // add to list
-                smsList.add(sms)
+                list.add(sms)
             } while (cursor.moveToNext())
         }
-        return smsList
+        return list
     }
 
-    // get all sms with status failed
-    fun getAllFailedSMS(): ArrayList<SMSItem> {
-
-        val smsList: ArrayList<SMSItem> = ArrayList<SMSItem>()
-
-        val selectQuery = "SELECT  * FROM $TABLE_CONTACTS WHERE status='FAILED'"
-
-        val db = this.readableDatabase
-        var cursor: Cursor? = null
-
-        try {
-            cursor = db.rawQuery(selectQuery, null)
-        } catch (e: SQLiteException) {
-            db.execSQL(selectQuery)
-            return ArrayList()
-        }
-
-        var recipientId: Int
-        var recipientPhone: String
-        var smsText: String
-        var smsStatus: String
-        var smsDate: String
-
-        if (cursor.moveToFirst()) {
-            do {
-                recipientId = cursor.getInt(cursor.getColumnIndex("id"))
-                recipientPhone = cursor.getString(cursor.getColumnIndex("phone"))
-                smsText = cursor.getString(cursor.getColumnIndex("text"))
-                smsDate = cursor.getString(cursor.getColumnIndex("date"))
-                smsStatus = cursor.getString(cursor.getColumnIndex("status"))
-
-                Log.d("sms data from db", recipientPhone + " " + smsText + "  " + smsStatus);
-
-                val sms = SMSItem( number = recipientPhone, text = smsText, status = smsStatus, date = smsDate)
-
-                smsList.add(sms)
-            } while (cursor.moveToNext())
-        }
-        return smsList
-    }
-
-    // get all sms with status PENDING
-    fun getAllPendingSMS(): ArrayList<SMSItem> {
-
-        val smsList: ArrayList<SMSItem> = ArrayList<SMSItem>()
-
-        val selectQuery = "SELECT  * FROM $TABLE_CONTACTS WHERE status='PENDING'"
-
-        val db = this.readableDatabase
-        var cursor: Cursor? = null
-
-        try {
-            cursor = db.rawQuery(selectQuery, null)
-        } catch (e: SQLiteException) {
-            db.execSQL(selectQuery)
-            return ArrayList()
-        }
-
-        var recipientId: Int
-        var recipientPhone: String
-        var smsText: String
-        var smsStatus: String
-        var smsDate: String
-
-        if (cursor.moveToFirst()) {
-            do {
-                recipientId = cursor.getInt(cursor.getColumnIndex("id"))
-                recipientPhone = cursor.getString(cursor.getColumnIndex("phone"))
-                smsText = cursor.getString(cursor.getColumnIndex("text"))
-                smsDate = cursor.getString(cursor.getColumnIndex("date"))
-                smsStatus = cursor.getString(cursor.getColumnIndex("status"))
-
-                Log.d("sms data from db", recipientPhone + " " + smsText + "  " + smsStatus);
-
-                val sms = SMSItem( number = recipientPhone, text = smsText, status = smsStatus, date = smsDate)
-
-                smsList.add(sms)
-            } while (cursor.moveToNext())
-        }
-        return smsList
-    }
-
-    // update single sms
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun updateSMS(sms: SMSItem): Int {
+    fun update_message(sms: SMSItem): Int {
         
         val db = this.writableDatabase
-        
-        // update the sms status
-        val contentValues = ContentValues()
-        contentValues.put(KEY_STATUS, sms.status)
-        
-        // update the sms timestamp
+        val values = ContentValues()
+        val timestamp = get_timestamp()
 
-        val date = Calendar.getInstance().time
-        val formatter = SimpleDateFormat.getDateTimeInstance() //or use getDateInstance()
-        val formattedDate = formatter.format(date)
-
-        contentValues.put(KEY_DATE, formattedDate)
+        // update the values
+        values.put(KEY_STATUS, sms.status)
+        values.put(KEY_DATE, timestamp)
         
         // execute update query
-        val success = db.update(TABLE_CONTACTS, contentValues, "text=? AND phone=? AND status !=?", arrayOf(sms.text, sms.number, "SENT"))
+        val success = db.update(TABLE_CONTACTS, values, "text=? AND phone=? AND status !=?", arrayOf(sms.text, sms.number, SMSStatus.SENT))
         
-        // close database connection
         db.close()
         
         return success
     }
 
-    // delete all sms
-    fun deleteAllSMS(): Int {
+    fun delete_messages(): Int {
 
         val db = this.writableDatabase
         val success = db.delete(TABLE_CONTACTS, null, null)
-        
-        // close database connection
         db.close()
 
         return success
     }
 
-    // delete single sms
-    fun deleteSMS(sms: SMSItem): Int {
-        
+    fun delete_messages(status: String?): Int {
+
         val db = this.writableDatabase
-        val success = db.delete(TABLE_CONTACTS, "phone=? AND status=?", arrayOf(sms.number, "FAILED"))
-        
-        // close database connection
+        val success = db.delete(TABLE_CONTACTS, "status=?", arrayOf(status))
         db.close()
-        
+
         return success
     }
 
-    // delete all FAILED sms
-    fun deleteAllFailedSMS(): Int {
-
-        val db = this.writableDatabase
-        val success = db.delete(TABLE_CONTACTS, "status=?", arrayOf("FAILED"))
+    fun delete_message(sms: SMSItem): Int {
         
-        // close database connection
-        db.close()
-        
-        return success
-    }
-
-    // delete all PENDING SMS
-    fun deleteAllPendingSMS(): Int {
-
         val db = this.writableDatabase
-        val success = db.delete(TABLE_CONTACTS, "status=?", arrayOf("PENDING"))
-
-        // close database connection
+        val success = db.delete(TABLE_CONTACTS, "phone=? AND status=?", arrayOf(sms.number, SMSStatus.FAILED))
         db.close()
 
         return success
