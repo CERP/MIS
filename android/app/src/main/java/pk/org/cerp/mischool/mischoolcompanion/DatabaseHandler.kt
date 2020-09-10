@@ -153,6 +153,47 @@ class DatabaseHandler(context: Context): SQLiteOpenHelper(context, DATABASE_NAME
         return smsList
     }
 
+    // get all sms with status PENDING
+    fun getAllPendingSMS(): ArrayList<SMSItem> {
+
+        val smsList: ArrayList<SMSItem> = ArrayList<SMSItem>()
+
+        val selectQuery = "SELECT  * FROM $TABLE_CONTACTS WHERE status='PENDING'"
+
+        val db = this.readableDatabase
+        var cursor: Cursor? = null
+
+        try {
+            cursor = db.rawQuery(selectQuery, null)
+        } catch (e: SQLiteException) {
+            db.execSQL(selectQuery)
+            return ArrayList()
+        }
+
+        var recipientId: Int
+        var recipientPhone: String
+        var smsText: String
+        var smsStatus: String
+        var smsDate: String
+
+        if (cursor.moveToFirst()) {
+            do {
+                recipientId = cursor.getInt(cursor.getColumnIndex("id"))
+                recipientPhone = cursor.getString(cursor.getColumnIndex("phone"))
+                smsText = cursor.getString(cursor.getColumnIndex("text"))
+                smsDate = cursor.getString(cursor.getColumnIndex("date"))
+                smsStatus = cursor.getString(cursor.getColumnIndex("status"))
+
+                Log.d("sms data from db", recipientPhone + " " + smsText + "  " + smsStatus);
+
+                val sms = SMSItem( number = recipientPhone, text = smsText, status = smsStatus, date = smsDate)
+
+                smsList.add(sms)
+            } while (cursor.moveToNext())
+        }
+        return smsList
+    }
+
     // update single sms
     @RequiresApi(Build.VERSION_CODES.O)
     fun updateSMS(sms: SMSItem): Int {
@@ -213,6 +254,18 @@ class DatabaseHandler(context: Context): SQLiteOpenHelper(context, DATABASE_NAME
         // close database connection
         db.close()
         
+        return success
+    }
+
+    // delete all PENDING SMS
+    fun deleteAllPendingSMS(): Int {
+
+        val db = this.writableDatabase
+        val success = db.delete(TABLE_CONTACTS, "status=?", arrayOf("PENDING"))
+
+        // close database connection
+        db.close()
+
         return success
     }
 }

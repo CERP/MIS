@@ -8,20 +8,20 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.icu.util.UniversalTimeScale.toLong
 import android.net.Uri
 import android.os.Build
 import android.os.IBinder
 import android.support.annotation.RequiresApi
 import android.telephony.SmsManager
 import android.util.Log
-import com.beust.klaxon.Converter
 import com.beust.klaxon.Klaxon
 import java.io.File
 import java.text.DateFormat
 import java.util.*
 
 class SMSDispatcherService : Service() {
+
+    var multipart_sms_counter = 0
 
     companion object {
         const val SENT_KEY = "SENT"
@@ -42,11 +42,26 @@ class SMSDispatcherService : Service() {
                 prepareSendingSms()
             }
         }).start()
+
+        updateLogText("Service has been start")
+        SingletonServiceManager.isSMSServiceRunning = true
         return Service.START_STICKY
     }
 
     override fun onBind(p0: Intent?): IBinder? {
         TODO("not implemented")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        updateLogText("Service has been destroyed in onDestroy")
+        SingletonServiceManager.isSMSServiceRunning = false
+    }
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        updateLogText("Service has been destroyed in onTaskRemoved")
+        SingletonServiceManager.isSMSServiceRunning = false
     }
 
     private fun prepareSendingSms() {
@@ -175,6 +190,8 @@ class SMSDispatcherService : Service() {
 
             if(messages.size > 1) {
 
+                multipart_sms_counter += messages.size
+
                 Log.d("trySend", "SENDING MULTIPART")
 
                 var plist = arrayListOf<PendingIntent>()
@@ -189,7 +206,8 @@ class SMSDispatcherService : Service() {
                 Thread.sleep((messages.size * 4000 - (4_000)).toLong())
 
                 smsManager.sendMultipartTextMessage(sms.number, null, messages, plist, null)
-                updateLogText("Multipart Message: ${sms.number}-${sms.status}-$currentTime")
+                updateLogText("Multipart SMS count: ${multipart_sms_counter}")
+                updateLogText("Multipart Message(${messages.size}): ${sms.number}-${sms.status}-$currentTime")
 
             } else {
              smsManager.sendTextMessage(sms.number, null, sms.text, sentPI, null)

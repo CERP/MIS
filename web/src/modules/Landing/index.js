@@ -207,7 +207,7 @@ class Landing extends Component {
 
 	render() {
 
-		const { logout, user, students, faculty, lastSnapshot, unsyncd, permissions, package_info } = this.props;
+		const { logout, user, students, faculty, lastSnapshot, unsyncd, package_info } = this.props;
 
 		const current_page = Math.floor(this.state.scroll / window.innerWidth)
 
@@ -218,13 +218,12 @@ class Landing extends Component {
 		let today_payment_students = 0;
 		const today_teacher_attendance = { PRESENT: 0, LEAVE: 0, ABSENT: 0 }
 
-		const setupPage = permissions && permissions.setupPage ? permissions.setupPage.teacher : true
-		const dailyStats = permissions && permissions.dailyStats ? permissions.dailyStats.teacher : true
-		const teacher_fee_permission = permissions && permissions.fee ? permissions.fee.teacher : true;
-		const teacher_expense_permission = permissions && permissions.expense ? permissions.expense.teacher : true;
-		const prospective_permission = permissions && permissions.prospective ? permissions.prospective.teacher : true;
-		const family_permission = permissions && permissions.family ? permissions.family.teacher : true;
-
+		const setupPage = user.permissions && user.permissions.setupPage;
+		const dailyStats = user.permissions && user.permissions.dailyStats;
+		const teacher_fee_permission = user.permissions && user.permissions.fee;
+		const teacher_expense_permission = user.permissions && user.permissions.expense;
+		const prospective_permission = user.permissions && user.permissions.prospective;
+		const family_permission = user.permissions && user.permissions.family;
 
 		for (const student of Object.values(students)) {
 
@@ -519,7 +518,6 @@ export default connect(state => ({
 	user: state.db.faculty[state.auth.faculty_id],
 	students: state.db.students,
 	faculty: state.db.faculty,
-	permissions: state.db.settings.permissions,
 	lastSnapshot: state.lastSnapshot,
 	unsyncd: Object.keys(state.queued.mutations || {}).length,
 	package_info: state.db.package_info || { date: -1, trial_period: 15, paid: false }, //If package info is undefined

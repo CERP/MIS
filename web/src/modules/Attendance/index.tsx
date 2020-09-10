@@ -20,7 +20,6 @@ interface P {
 	current_faculty: MISTeacher
 	students: RootDBState["students"]
 	classes: RootDBState["classes"]
-	settings: RootDBState["settings"]
 	connected: RootReducerState["connected"]
 	attendance_message_template: RootDBState["sms_templates"]["attendance"]
 	markStudent: (student: MISStudent, date: string, status: MISStudentAttendanceEntry["status"]) => any
@@ -313,9 +312,9 @@ class Attendance extends Component<propTypes, S> {
 			messages,
 			return_link: window.location.href
 		});
-		const { settings, current_faculty, students, classes } = this.props;
+		const { current_faculty, students, classes } = this.props;
 		const isAdmin = current_faculty.Admin
-		const setupPage = settings.permissions && settings.permissions.setupPage ? settings.permissions.setupPage.teacher : true
+		const setupPage = current_faculty.permissions && current_faculty.permissions.setupPage
 
 		const sortedSections = getSectionsFromClasses(classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0));
 
@@ -406,7 +405,6 @@ export default connect((state: RootReducerState) => ({
 	current_faculty: state.db.faculty[state.auth.faculty_id],
 	students: state.db.students,
 	classes: state.db.classes,
-	settings: state.db.settings,
 	connected: state.connected,
 	attendance_message_template: (state.db.sms_templates || {} as RootDBState["sms_templates"]).attendance || "",
 }), (dispatch: Function) => ({
