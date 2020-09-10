@@ -110,11 +110,11 @@ interface S {
 	percentage: number
 }
 
-interface routeInfo {
+interface RouteInfo {
 	id: string
 }
 
-type propTypes = RouteComponentProps<routeInfo> & P
+type propTypes = RouteComponentProps<RouteInfo> & P
 
 class ExpenseAnalytics extends Component<propTypes, S> {
 
@@ -171,7 +171,7 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 		this.calculate()
 	}
 
-	componentWillReceiveProps(nextProps: propTypes) {
+	UNSAFE_componentWillReceiveProps(nextProps: propTypes) {
 
 		const parsed_query = queryString.parse(nextProps.location.search);
 
@@ -193,6 +193,10 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 		this.calculate()
 	}
 
+	parseAmount = (val: any) => {
+		return parseFloat(val) || 0
+	}
+
 	calculate = () => {
 
 		let i = 0;
@@ -207,7 +211,7 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 		const collective_obj: { [month: string]: { income: number; expense: number } } = {}
 
 		let total_income = 0;
-		let total_expense = 0;;
+		let total_expense = 0;
 
 		const { students, expenses } = this.props
 
@@ -224,7 +228,7 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 
 		const reducify = () => {
 
-			const interval = Math.floor(s_length/10)
+			const interval = Math.floor(s_length / 10)
 			if (i % interval === 0) {
 				this.setState({
 					percentage: (i / s_length) * 100
@@ -252,8 +256,9 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 					const inc_month = moment(payment.date).format(period_format)
 
 					if (payment.type === "SUBMITTED"
-						&& moment(payment.date).isSameOrAfter(start_date,"day")
-						&& moment(payment.date).isSameOrBefore(end_date,"day")) {
+						&& moment(payment.date).isSameOrAfter(start_date, "day")
+						&& moment(payment.date).isSameOrBefore(end_date, "day")) {
+
 						collective_obj[inc_month] = collective_obj[inc_month] ?
 							{
 								income: collective_obj[inc_month].income + payment.amount,
@@ -274,21 +279,23 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 				j += 1;
 
 				if (expense.type === "PAYMENT_GIVEN"
-					&& moment(expense.date).isSameOrAfter(start_date,"day")
-					&& moment(expense.date).isSameOrBefore(end_date,"day")) {
+					&& moment(expense.date).isSameOrAfter(start_date, "day")
+					&& moment(expense.date).isSameOrBefore(end_date, "day")) {
 					const inc_month = moment(expense.date).format(period_format)
 					const curr_amount = typeof (expense.amount) === "string" ? parseFloat(expense.amount) : expense.amount
+					//@ts-ignore
+					const deduction = this.parseAmount(expense.deduction)
 
 					collective_obj[inc_month] = collective_obj[inc_month] ?
 						{
 							income: collective_obj[inc_month].income,
-							expense: collective_obj[inc_month].expense + curr_amount
+							expense: collective_obj[inc_month].expense + (expense.expense === "SALARY_EXPENSE" ? curr_amount - deduction : curr_amount)
 						} : {
 							income: 0,
-							expense: expense.amount
+							expense: expense.expense === "SALARY_EXPENSE" ? curr_amount - deduction : curr_amount
 						}
 
-					total_expense += curr_amount
+					total_expense += (curr_amount - deduction)
 				}
 			}
 			this.background_calculation = setTimeout(reducify, 0)
