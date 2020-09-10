@@ -8,7 +8,7 @@ import Layout, { PrintHeader } from 'components/Layout'
 import Banner from 'components/Banner'
 import { addPayment, logSms, editPayment } from 'actions'
 import { sendSMS } from 'actions/core'
-// import { checkStudentDuesReturning } from 'utils/checkStudentDues'
+import { checkStudentDuesReturning } from 'utils/checkStudentDues'
 import { smsIntentLink } from 'utils/intent'
 import { numberWithCommas } from 'utils/numberWithCommas'
 import { getFeeLabel } from 'utils/getFeeLabel'
@@ -30,7 +30,7 @@ interface P {
 	feeSMSTemplate: RootDBState["sms_templates"]["fee"]
 	schoolLogo: RootDBState["assets"]["schoolLogo"]
 	addPayment: (student: MISStudent, id: string, amount: number, date: number, type: MISStudentPayment["type"], fee_id?: string, fee_name?: string) => any
-	// addMultiplePayments: (payments: payment[]) => any
+	addMultiplePayments: (payments: payment[]) => any
 	sendSMS: (text: string, number: string) => any
 	logSms: (history: any) => any
 	editPayment: (payments: AugmentedMISPaymentMap) => any
@@ -263,41 +263,41 @@ class StudentFees extends Component<propTypes, S> {
 		})
 	}
 
-	// componentDidMount() {
+	componentDidMount() {
 
-	// 	const famId = this.familyID()
-	// 	// loop through fees, check if we have added
-	// 	if (famId === undefined || famId === "") {
-	// 		const owedPayments = checkStudentDuesReturning(this.student());
-	// 		if (owedPayments.length > 0) {
-	// 			this.props.addMultiplePayments(owedPayments);
-	// 		}
-	// 	} else {
-	// 		const siblings = this.siblings()
-	// 		this.generateSiblingsPayments(siblings)
-	// 	}
-	// }
+		const famId = this.familyID()
+		// loop through fees, check if we have added
+		if (famId === undefined || famId === "") {
+			const owedPayments = checkStudentDuesReturning(this.student());
+			if (owedPayments.length > 0) {
+				this.props.addMultiplePayments(owedPayments);
+			}
+		} else {
+			const siblings = this.siblings()
+			this.generateSiblingsPayments(siblings)
+		}
+	}
 
-	// generateSiblingsPayments = (siblings: MISStudent[]) => {
+	generateSiblingsPayments = (siblings: MISStudent[]) => {
 
-	// 	if (siblings.length > 0) {
-	// 		const sibling_payments = siblings
-	// 			.reduce((agg, curr) => {
-	// 				const curr_student_payments = checkStudentDuesReturning(curr)
-	// 				if (curr_student_payments.length > 0) {
-	// 					return [
-	// 						...agg,
-	// 						...curr_student_payments
-	// 					]
-	// 				}
-	// 				return agg
-	// 			}, [])
+		if (siblings.length > 0) {
+			const sibling_payments = siblings
+				.reduce((agg, curr) => {
+					const curr_student_payments = checkStudentDuesReturning(curr)
+					if (curr_student_payments.length > 0) {
+						return [
+							...agg,
+							...curr_student_payments
+						]
+					}
+					return agg
+				}, [])
 
-	// 		if (sibling_payments.length > 0) {
-	// 			this.props.addMultiplePayments(sibling_payments)
-	// 		}
-	// 	}
-	// }
+			if (sibling_payments.length > 0) {
+				this.props.addMultiplePayments(sibling_payments)
+			}
+		}
+	}
 
 	componentWillReceiveProps(nextProps: propTypes) {
 		// This will make we get the lates changes
@@ -309,17 +309,17 @@ class StudentFees extends Component<propTypes, S> {
 		let payments
 
 		// generating payments from fees if any
-		// if (famId === undefined || famId === "") {
-		// 	const owedPayments = checkStudentDuesReturning(student);
-		// 	if (owedPayments.length > 0) {
-		// 		this.props.addMultiplePayments(owedPayments);
-		// 	}
-		// } else {
-		// 	siblings = Object.values(nextProps.students)
-		// 		.filter(s => s && s.Name && s.FamilyID && s.FamilyID === famId)
+		if (famId === undefined || famId === "") {
+			const owedPayments = checkStudentDuesReturning(student);
+			if (owedPayments.length > 0) {
+				this.props.addMultiplePayments(owedPayments);
+			}
+		} else {
+			siblings = Object.values(nextProps.students)
+				.filter(s => s && s.Name && s.FamilyID && s.FamilyID === famId)
 
-		// 	this.generateSiblingsPayments(siblings)
-		// }
+			this.generateSiblingsPayments(siblings)
+		}
 
 		// getting payments if against any single student or siblings
 		if (famId === undefined || famId === "") {
@@ -588,7 +588,7 @@ export default connect((state: RootReducerState) => ({
 	schoolLogo: state.db.assets ? state.db.assets.schoolLogo || "" : ""
 }), (dispatch: Function) => ({
 	addPayment: (student: MISStudent, id: string, amount: number, date: number, type: MISStudentPayment["type"], fee_id: string, fee_name: string) => dispatch(addPayment(student, id, amount, date, type, fee_id, fee_name)),
-	// addMultiplePayments: (payments: payment[]) => dispatch(addMultiplePayments(payments)),
+	addMultiplePayments: (payments: payment[]) => dispatch(addMultiplePayments(payments)),
 	sendSMS: (text: string, number: string) => dispatch(sendSMS(text, number)),
 	logSms: (history: any) => dispatch(logSms(history)),
 	editPayment: (payments: AugmentedMISPaymentMap) => dispatch(editPayment(payments)),
