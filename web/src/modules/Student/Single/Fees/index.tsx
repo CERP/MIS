@@ -6,7 +6,7 @@ import { v4 } from 'node-uuid'
 import former from 'utils/former';
 import Layout, { PrintHeader } from 'components/Layout'
 import Banner from 'components/Banner'
-import { addPayment, logSms, editPayment } from 'actions'
+import { addMultiplePayments, addPayment, logSms, editPayment } from 'actions'
 import { sendSMS } from 'actions/core'
 import { checkStudentDuesReturning } from 'utils/checkStudentDues'
 import { smsIntentLink } from 'utils/intent'
