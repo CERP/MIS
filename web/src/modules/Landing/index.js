@@ -61,12 +61,7 @@ class Landing extends Component {
 	//They will still be able to access other components if they typed their Url e.g /attendance.
 	//Need to do something about that ..
 	componentDidMount() {
-		const paymentObj = {
-			'date': moment().format('MM-DD-YYYY'),
-			'isGeneratePayments': false
-		}
-        localStorage.setItem('paymentObj', JSON.stringify(paymentObj));
-
+		const paymentObj = {}
 		// for redirect to ilmx
 		const phone = localStorage.getItem("ilmx")
 
@@ -79,23 +74,26 @@ class Landing extends Component {
 		this.setState({
 			scroll: container.scrollLeft
 		})
-		
-		if(JSON.parse(localStorage.getItem('paymentObj')).date !== moment().format('MM-DD-YYYY')) {
+		if(JSON.parse(localStorage.getItem('paymentObj')) === null) {
 			paymentObj.isGeneratePayments = true
+			paymentObj.date = moment().format('MM-DD-YYYY')
+			localStorage.setItem('paymentObj', JSON.stringify(paymentObj));
+		} else if(JSON.parse(localStorage.getItem('paymentObj')).date !== moment().format('MM-DD-YYYY')) {
+			paymentObj.isGeneratePayments = true
+			paymentObj.date = moment().format('MM-DD-YYYY')
 			localStorage.setItem('paymentObj', JSON.stringify(paymentObj));
 		}
 		if(JSON.parse(localStorage.getItem('paymentObj')).isGeneratePayments) {
 			const students = Object.values(this.props.students)
 			.filter((std) => std && std.id && std.Active && std.section_id && !std.prospective_section_id)
-
 			this.generatePayments(students);
 			paymentObj.isGeneratePayments = false
+			paymentObj.date = moment().format('MM-DD-YYYY')
 			localStorage.setItem('paymentObj', JSON.stringify(paymentObj));
 		}
 	}
 
 	generatePayments = (students) => {
-
 		if (students.length > 0) {
 			const payments = students
 				.reduce((agg, curr) => {
