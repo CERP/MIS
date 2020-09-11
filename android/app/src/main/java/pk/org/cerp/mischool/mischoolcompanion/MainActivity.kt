@@ -275,7 +275,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        // close the conection
+        // close the connection
         db_handler.close()
     }
 

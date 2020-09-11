@@ -115,7 +115,7 @@ class SMSDispatcherService : Service() {
         for(message in messages) {
             sendSMS(message)
             // put delay for next SMS
-            Thread.sleep(5_000)
+            Thread.sleep(6_000)
         }
     }
 
