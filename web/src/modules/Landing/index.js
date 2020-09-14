@@ -62,7 +62,7 @@ class Landing extends Component {
 	//Need to do something about that ..
 	componentDidMount() {
 
-		curr_date = moment().format('MM-DD-YYYY')
+		const curr_date = moment().format('MM-DD-YYYY')
 		const auto_payments = JSON.parse(localStorage.getItem('paymentObj'))
 		const paymentObj = {}
 		// for redirect to ilmx
@@ -77,7 +77,7 @@ class Landing extends Component {
 		this.setState({
 			scroll: container.scrollLeft
 		})
-		
+
 		if(auto_payments === null || auto_payments.date !== curr_date) {
 			paymentObj.isGeneratePayments = true
 			paymentObj.date = curr_date
