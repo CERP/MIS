@@ -243,7 +243,7 @@ class SMSJob : Job() {
 
     fun writeMessageToLogFile(message : String) {
 
-        val file = File(context.filesDir, "$logFileName")
+        val file = File(context.filesDir, "$LOG_FILE_NAME")
 
         Log.d(TAG, "appending messages to log file.....")
 

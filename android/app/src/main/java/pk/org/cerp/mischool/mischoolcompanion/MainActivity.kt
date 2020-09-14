@@ -4,10 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.support.annotation.RequiresApi
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
@@ -25,28 +23,29 @@ import android.widget.TextView
 import android.widget.Toast
 import com.beust.klaxon.Klaxon
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
 
 const val TAG = "MISchool-Companion"
 const val MY_PERMISSIONS_SEND_SMS = 1
+const val LOG_FILE_NAME = "logFile.txt"
 const val filename = "pending_messages.json"
-const val logFileName = "logFile.txt"
+private lateinit var db_handler: DatabaseHandler
 
 class MainActivity : AppCompatActivity() {
 
     private var list: RecyclerView? = null
-    private var recyclerAdapter: SMSAdapter? = null
-    var arraylist = arrayListOf<SMSItem>()
+    private var adapter: SMSAdapter? = null
+    var sms_array_list = arrayListOf<SMSItem>()
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // get database handler
+        db_handler = DatabaseHandler(this)
+
         val intent = this.intent
         val data = intent.data
-        val dataString = intent.dataString
+        val data_string = intent.dataString
 
         val textview_logs = findViewById<TextView>(R.id.logtext)
         val textview_sent = findViewById<TextView>(R.id.textViewsent)
@@ -56,49 +55,39 @@ class MainActivity : AppCompatActivity() {
         // ask for permissions
         getPermissions()
 
-        val logMessages = readLogMessages()
-        val databaseHandler: DatabaseHandler = DatabaseHandler(this)
-        arraylist = databaseHandler.getAllSMS()
+        sms_array_list = db_handler.get_messages(null)
 
-        textview_logs.text = logMessages
+        val log_messages = read_log_messages()
+
+        textview_logs.text = log_messages
         textview_logs.movementMethod = ScrollingMovementMethod()
 
-        list = findViewById<RecyclerView>(R.id.recyclerV)
+        list = findViewById(R.id.recyclerV)
 
-        val layoutManager = LinearLayoutManager(this)
-        layoutManager.reverseLayout = true
-        layoutManager.stackFromEnd = true
-        list!!.layoutManager = layoutManager
+        val layout_manager = LinearLayoutManager(this)
+        layout_manager.reverseLayout = true
+        layout_manager.stackFromEnd = true
+        list!!.layoutManager = layout_manager
 
-        recyclerAdapter = SMSAdapter(this@MainActivity)
-        list!!.addItemDecoration(DividerItemDecoration(list!!.context, layoutManager.orientation))
-        list!!.adapter = recyclerAdapter
-
+        adapter = SMSAdapter(this@MainActivity)
+        list!!.addItemDecoration(DividerItemDecoration(list!!.context, layout_manager.orientation))
+        list!!.adapter = adapter
 
         if(!SingletonServiceManager.isSMSServiceRunning) {
 
-            val pending_sms = databaseHandler.getAllPendingSMS()
+            val messages = db_handler.get_messages(SMSStatus.PENDING)
 
-            if(pending_sms.size > 0) {
+            if(messages.size > 0 && data == null && data_string == null) {
 
-                // delete failed sms so that in next try they don't duplicate in db
-                databaseHandler.deleteAllPendingSMS()
-
-                val databaseHandler = DatabaseHandler(baseContext)
-
-                for (msg in pending_sms) {
-                    databaseHandler.addSMS(SMSItem(number = msg.number, text = msg.text, status = msg.status, date = msg.date))
-                }
-
-                // append pending sms
-                appendMessagesToFile(pending_sms)
-
-                recyclerAdapter!!.notifyDataSetChanged()
-
-                writeMessageToLogFile("Starting service for ${pending_sms.size} Pending SMS")
+                adapter!!.notifyDataSetChanged()
+                update_log_text("Starting service for ${messages.size} pending messages")
                 startService(Intent(this@MainActivity, SMSDispatcherService::class.java))
             }
+        }
 
+        if(data !== null || data_string !=null) {
+            // first stop the service if running so that pending messages sent with new intent
+            stopServiceIfRunning()
         }
 
         val clearLogsButton = findViewById<Button>(R.id.clearLogButton)
@@ -113,14 +102,13 @@ class MainActivity : AppCompatActivity() {
                 showLogsButton.text = "Show Logs"
             }
 
-            clearLogMessages()
-            clearPendingMessages()
-            databaseHandler.deleteAllSMS()
             textview_logs.text = ""
-            arraylist.clear()
+            sms_array_list.clear()
+            db_handler.delete_messages()
+            clear_log_messages()
 
             Toast.makeText(baseContext, "Logs cleared!", Toast.LENGTH_SHORT).show()
-            recyclerAdapter!!.notifyDataSetChanged()
+            adapter!!.notifyDataSetChanged()
         }
 
         showLogsButton.setOnClickListener{
@@ -135,63 +123,68 @@ class MainActivity : AppCompatActivity() {
 
         shareLogsButton.setOnClickListener{
 
-            val logs = readLogMessages()
+            val logs = read_log_messages()
 
-            val sendIntent: Intent = Intent().apply {
-                action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, logs)
-                type = "text/plain"
+            if(logs.isNotEmpty()) {
+
+                val sendIntent: Intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, logs)
+                    type = "text/plain"
+                }
+
+                val shareIntent = Intent.createChooser(sendIntent, "Share SMS Logs")
+                startActivity(shareIntent)
+
+            } else {
+                Toast.makeText(baseContext, "No logs to share!", Toast.LENGTH_SHORT).show()
             }
-
-            val shareIntent = Intent.createChooser(sendIntent, "Share SMS Logs")
-            startActivity(shareIntent)
         }
 
         resendFailedSMSButton.setOnClickListener {
 
-            val failedMessages = databaseHandler.getAllFailedSMS()
-            val failedMessagesSize = failedMessages.size
+            val messages = db_handler.get_messages(SMSStatus.FAILED)
 
-            if(failedMessagesSize > 0) {
+            if(messages.isNotEmpty()) {
 
-                Toast.makeText(baseContext, "resending $failedMessagesSize failed sms", Toast.LENGTH_SHORT).show()
+                Toast.makeText(baseContext, "Resending ${messages.size} failed messages", Toast.LENGTH_SHORT).show()
 
                 // delete failed sms so that in next try they don't duplicate in db
-                databaseHandler.deleteAllFailedSMS()
+                db_handler.delete_messages(SMSStatus.FAILED)
 
-                val databaseHandler: DatabaseHandler = DatabaseHandler(baseContext)
-                for (msg in failedMessages) {
-                    databaseHandler.addSMS(SMSItem(number = msg.number, text = msg.text, status = msg.status, date = msg.date))
+                for (msg in messages) {
+                    val sms_item = SMSItem(number = msg.number, text = msg.text, status = "PENDING", date = msg.date)
+
+                    // add in the message
+                    db_handler.add_message(sms_item)
                 }
 
-                // appending failed sms to file
-                appendMessagesToFile(failedMessages)
+                // first stop the service if running so that pending messages don't sent again in new service
+                stopServiceIfRunning()
 
-                recyclerAdapter!!.notifyDataSetChanged()
-
-                writeMessageToLogFile("Starting service for resend all messages")
-
+                adapter!!.notifyDataSetChanged()
+                update_log_text("Starting service for resend all messages")
                 startService(Intent(this@MainActivity, SMSDispatcherService::class.java))
             } else {
-                Toast.makeText(baseContext, "No sms to resend", Toast.LENGTH_SHORT).show()
+                Toast.makeText(baseContext, "No message to resend!", Toast.LENGTH_SHORT).show()
             }
         }
 
         var sms_sent= 0
-        var sms_total = arraylist.size
+        var sms_total = sms_array_list.size
         var sms_pending = 0
         var sms_failed = 0
 
-        for(sms in arraylist) {
+        for(sms in sms_array_list) {
 
             when {
-                sms.status.equals("SENT") -> {
+                sms.status.equals(SMSStatus.SENT) -> {
                     sms_sent++
                 }
-                sms.status.equals("PENDING") -> {
+                sms.status.equals(SMSStatus.PENDING) -> {
                     sms_pending++
                 }
-                sms.status.equals("FAILED") -> {
+                sms.status.equals(SMSStatus.FAILED) -> {
                     sms_failed++
                 }
             }
@@ -202,94 +195,80 @@ class MainActivity : AppCompatActivity() {
         textview_failed.text = "Failed: $sms_failed"
 
         val handler = Handler()
-        var pre_logged_text = readLogMessages()
+        var pre_logged_text = read_log_messages()
 
         handler.postDelayed(object : Runnable {
             override fun run() {
 
-                arraylist = databaseHandler.getAllSMS()
+            sms_array_list = db_handler.get_messages(null)
 
-                Log.d("tryArrayListSize","in handler" + arraylist.size.toString())
+            Log.d("tryArrayListSize","in handler" + sms_array_list.size.toString())
 
-                // add delay in sms sending
-                handler.postDelayed(this, 2000)
-                
-                val logged_text = readLogMessages()
+            // add delay to see update from service
+            handler.postDelayed(this, 2000)
 
-                if(pre_logged_text != logged_text) {
-                    updateLogText(logged_text)
-                    pre_logged_text = logged_text
-                }
+            val logged_text = read_log_messages()
 
-                sms_sent = 0
-                sms_failed = 0
-                sms_pending = 0
+            if(pre_logged_text != logged_text) {
+                updateLogText(logged_text)
+                pre_logged_text = logged_text
+            }
 
-                for(sms in arraylist) {
-                    
-                    Log.d("SMS-Status", sms.status)
+            sms_sent = 0
+            sms_failed = 0
+            sms_pending = 0
 
-                    when {
-                        sms.status.equals("SENT") -> {
-                            sms_sent++
-                        }
-                        sms.status.equals("PENDING") -> {
-                            sms_pending++
-                        }
-                        sms.status.equals("FAILED") -> {
-                            sms_failed++
-                        }
+            for(sms in sms_array_list) {
+
+                Log.d("SMS-Status", sms.status)
+
+                when {
+                    sms.status.equals(SMSStatus.SENT) -> {
+                        sms_sent++
+                    }
+                    sms.status.equals(SMSStatus.PENDING) -> {
+                        sms_pending++
+                    }
+                    sms.status.equals(SMSStatus.FAILED) -> {
+                        sms_failed++
                     }
                 }
+            }
 
-                sms_total = arraylist.size
+            sms_total = sms_array_list.size
 
-                textview_sent.text = "Sent: $sms_sent"
-                textview_pending.text = "Pending: $sms_pending"
-                textview_failed.text = "Failed: $sms_failed"
+            textview_sent.text = "Sent: $sms_sent"
+            textview_pending.text = "Pending: $sms_pending"
+            textview_failed.text = "Failed: $sms_failed"
 
-                recyclerAdapter!!.notifyDataSetChanged()
+            adapter!!.notifyDataSetChanged()
             }
         }, 2000)
 
-        if(data == null || dataString == null) {
+        if(data == null || data_string == null) {
             return
         }
 
-        val json_string = java.net.URLDecoder.decode(dataString.split("=")[1], "UTF-8")
-        
+        val json_string = java.net.URLDecoder.decode(data_string.split("=")[1], "UTF-8")
+
         textview_logs.append(json_string)
 
         val parsed: SMSPayload? = Klaxon().parse(json_string)
-        
-        if(parsed === null) {
+
+        if(parsed === null || parsed.messages.isEmpty()) {
             return
         }
 
-        // open file, append messages and quit
-        // task which runs every minute will consume from here
-        // do I need to acquire a lock on this file?
-        
-        val date = Calendar.getInstance().time
-        val formatter = SimpleDateFormat.getDateTimeInstance()
-        val formattedDate = formatter.format(date)
+        val curr_date = get_timestamp()
 
         for(sms in parsed.messages) {
-            databaseHandler.addSMS(SMSItem(number = sms.number, text = sms.text, status =  sms.status, date =  formattedDate))
+            val sms_item = SMSItem(number = sms.number, text = sms.text, status =  sms.status, date =  curr_date)
+            db_handler.add_message(sms_item)
         }
-
-        try {
-            appendMessagesToFile(parsed.messages)
-        } catch(e: Exception){
-            Log.e(TAG, e.message)
-            Log.e(TAG, e.toString())
-        }
-
-        Log.d(TAG, "scheduling....")
 
         try {
             if(parsed.messages.isNotEmpty()) {
-                writeMessageToLogFile("Service is starting at: ${formattedDate} for MIS")
+                update_log_text("Service is starting at: ${curr_date} for MIS")
                 startService(Intent(this, SMSDispatcherService::class.java))
             }
         } catch(e: Exception) {
@@ -297,6 +276,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // close the connection
+        db_handler.close()
+    }
+
+    private fun stopServiceIfRunning() {
+        if(SingletonServiceManager.isSMSServiceRunning && SingletonServiceManager.mCurrentService !=null) {
+            SingletonServiceManager.isSMSServiceRunning = false
+            SingletonServiceManager.mCurrentService.stopSelf()
+        }
     }
 
     fun updateLogText(text: String) {
@@ -309,13 +301,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private  fun writeMessageToLogFile(message: String) {
 
-        val file = File(applicationContext.filesDir, logFileName)
+    private  fun update_log_text(message: String) {
 
-        Log.d(TAG, "appending messages to log file.....")
+        val file = File(applicationContext.filesDir, LOG_FILE_NAME)
 
-        var content = if(file.exists()) {
+        Log.d(TAG, "Appending message to log file")
+
+        val content = if(file.exists()) {
             val bytes = file.readBytes()
             message + "\n" + String(bytes)
         } else {
@@ -324,49 +317,13 @@ class MainActivity : AppCompatActivity() {
 
         file.writeBytes(content.toByteArray())
 
-        Log.d(TAG, "DONE writing")
+        Log.d(TAG, "DONE writing logs to file")
 
     }
 
+    private fun read_log_messages(): String {
 
-    private fun appendMessagesToFile(messages: List<SMSItem>) {
-
-        // first read the file as json
-
-        Log.d(TAG, "appending messages to file.....")
-
-        val path = filesDir
-        val file = File(path, filename)
-
-        Log.d(TAG, file.absolutePath)
-
-        var content: String? = null
-
-        if(file.exists()) {
-            val bytes = file.readBytes()
-            content = String(bytes)
-            Log.d(TAG,"content of pending messages is $content")
-        }
-
-//         val newList = if(content == null) {
-//            messages
-//        } else {
-//            val parsed = Klaxon().parseArray<SMSItem>(content)
-//            parsed.orEmpty() + messages
-//        }
-
-//        Log.d(TAG, "new list is $newList")
-
-        val res = Klaxon().toJsonString(messages)
-        file.writeBytes(res.toByteArray())
-
-        Log.d(TAG, "DONE writing")
-
-    }
-
-    private fun readLogMessages(): String {
-
-        val file = File(filesDir, logFileName)
+        val file = File(filesDir, LOG_FILE_NAME)
 
         return if(file.exists()) {
             val bytes = file.readBytes()
@@ -376,19 +333,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun clearLogMessages() {
-
-        val file = File(filesDir, logFileName)
-       if(file.exists()) {
+    private fun clear_log_messages() {
+        val file = File(filesDir, LOG_FILE_NAME)
+        if(file.exists()) {
          file.delete()
        }
-    }
-
-    private fun clearPendingMessages() {
-        val file = File(filesDir, filename)
-        if(file.exists()) {
-            file.delete()
-        }
     }
 
     private inner class SMSAdapter(internal var context: Context): RecyclerView.Adapter<SMSAdapter.SMSViewHolder >() {
@@ -401,9 +350,9 @@ class MainActivity : AppCompatActivity() {
         @SuppressLint("ResourceAsColor")
         override fun onBindViewHolder(holder: SMSAdapter.SMSViewHolder, position: Int) {
 
-            holder.messsage_card.text =arraylist[position].number+"\n"+arraylist[position].text
+            holder.messsage_card.text =sms_array_list[position].number+"\n"+sms_array_list[position].text
 
-            if(!arraylist[position].status.equals("SENT") && !arraylist[position].status.equals("PENDING")){
+            if(!sms_array_list[position].status.equals(SMSStatus.SENT) && !sms_array_list[position].status.equals(SMSStatus.PENDING)){
                 holder.resend.visibility =  View.VISIBLE
                 holder.resendcard.visibility = View.VISIBLE
             } else {
@@ -411,44 +360,48 @@ class MainActivity : AppCompatActivity() {
                 holder.resendcard.visibility = View.GONE
             }
 
-            if(!arraylist[position].date.equals("-1")) {
-                holder.date.text = arraylist[position].date
+            if(!sms_array_list[position].date.equals("-1")) {
+                holder.date.text = sms_array_list[position].date
             }
 
-            holder.status.text = arraylist[position].status
+            holder.status.text = sms_array_list[position].status
 
-            if(arraylist[position].status.equals("SENT")) {
-                holder.status.setBackgroundResource(R.color.green)
-            } else if(arraylist[position].status.equals("FAILED")) {
-                holder.status.setBackgroundResource(R.color.red)
-            } else if(arraylist[position].status.equals("PENDING")) {
-                holder.status.setBackgroundResource(R.color.gray)
+            when {
+                sms_array_list[position].status.equals(SMSStatus.SENT) -> {
+                    holder.status.setBackgroundResource(R.color.green)
+                }
+                sms_array_list[position].status.equals(SMSStatus.PENDING) -> {
+                    holder.status.setBackgroundResource(R.color.gray)
+                }
+                sms_array_list[position].status.equals(SMSStatus.FAILED) -> {
+                    holder.status.setBackgroundResource(R.color.red)
+                }
             }
 
             holder.resend.setOnClickListener(View.OnClickListener {
 
-                Toast.makeText(context,"Resending SMS",Toast.LENGTH_LONG).show()
+                val curr_messsage = sms_array_list[position]
 
-                val messages = arrayListOf<SMSItem>()
-                messages.add(arraylist[position])
-                // append failed messages to file
-                appendMessagesToFile(messages)
+                db_handler.delete_message(curr_messsage)
 
-                // add sms to database
-                val databaseHandler: DatabaseHandler = DatabaseHandler(context)
-                databaseHandler.deleteSMS(arraylist[position])
-                databaseHandler.addSMS(SMSItem(number = arraylist[position].number,text = arraylist[position].text, status =  arraylist[position].status,date = arraylist[position].date))
-                arraylist.remove(arraylist[position])
+                Toast.makeText(context,"Resending message to ${curr_messsage.status}",Toast.LENGTH_LONG).show()
+
+                val sms_item = SMSItem(number = curr_messsage.number,text = curr_messsage.text, status =  SMSStatus.PENDING, date = curr_messsage.date)
+
+                db_handler.add_message(sms_item)
+                sms_array_list.remove(curr_messsage)
+
+                // first stop the service if running so that pending messages don't sent again in new service
+                stopServiceIfRunning()
 
                 notifyDataSetChanged()
-
-                writeMessageToLogFile("Starting service for resend SMS")
+                update_log_text("Starting service for resending single message")
                 startService(Intent(this@MainActivity, SMSDispatcherService::class.java))
             })
-
+0
         }
         override fun getItemCount(): Int {
-            return arraylist.size
+            return sms_array_list.size
         }
 
         inner class SMSViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
