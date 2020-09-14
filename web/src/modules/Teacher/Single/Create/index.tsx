@@ -10,6 +10,7 @@ import { hash } from 'utils'
 import Hyphenator from 'utils/Hyphenator'
 import Banner from 'components/Banner'
 import checkCompulsoryFields from 'utils/checkCompulsoryFields'
+import { isMobile } from 'utils/helpers'
 
 import './style.css'
 
@@ -326,7 +327,6 @@ class CreateTeacher extends Component<propTypes, S> {
 	}
 
 	render() {
-
 		if (this.state.redirect) {
 			return <Redirect to={this.state.redirect} />
 		}
@@ -443,7 +443,10 @@ class CreateTeacher extends Component<propTypes, S> {
 						<div className="divider">Contact Information</div>
 						<div className="row">
 							<label>Phone Number</label>
-							<input type="tel" {...this.former.super_handle(["Phone"], (num) => num.length <= 11)} placeholder="Phone Number" disabled={!canEdit} />
+							<div className="row" style={{ flexDirection: "row" }}>
+								<input style={{ width: "100%" }} type="tel" {...this.former.super_handle(["Phone"], (num) => num.length <= 11)} placeholder="Phone Number" disabled={!canEdit} />
+								{isMobile() && !this.isNew() && <a className="button blue call-link" href={`tel:${this.state.profile.Phone}`} > Call</a>}
+							</div>
 						</div>
 						<div className="row">
 							<label>Address</label>
