@@ -34,6 +34,7 @@ interface S {
 	selected_section: string
 	selected_students: { [id: string]: boolean }
 	qr_mode: boolean
+	student_name: string
 }
 
 interface RouteInfo {
@@ -67,7 +68,8 @@ class Attendance extends Component<propTypes, S> {
 			sending: false,
 			selected_section,
 			selected_students: deriveSelectedStudents(selected_section, props.students),
-			qr_mode: false
+			qr_mode: false,
+			student_name: ''
 		}
 
 		this.Former = new Former(this, [])
@@ -252,7 +254,7 @@ class Attendance extends Component<propTypes, S> {
 		if (this.props.students[potential_id]) {
 			this.props.markStudent(this.props.students[potential_id], moment().format("YYYY-MM-DD"), "PRESENT")
 			this.setState({
-				qr_mode: false
+				student_name: this.props.students[potential_id].Name
 			})
 		}
 		else {
@@ -321,14 +323,19 @@ class Attendance extends Component<propTypes, S> {
 		return <Layout history={this.props.history}>
 
 			{this.state.qr_mode && <Modal>
-				<div className="button red" onClick={() => this.setState({ qr_mode: false })}>X</div>
-				<QrReader
-					delay={300}
-					onError={console.error}
-					onScan={this.onQrScan}
-					style={{ width: '300px' }}
-					facingMode="environment"
-				/>
+				<div className="scan-modal-div modal-container inner">
+					<div className="close button red" onClick={() => this.setState({ qr_mode: false, student_name: '' })}>X</div>
+					<QrReader
+						delay={300}
+						onError={console.error}
+						onScan={this.onQrScan}
+						style={{ width: '300px' }}
+						facingMode="environment"
+					/>
+					<div className="row">
+						{this.state.student_name && <div className="stdName">Student Name : {this.state.student_name}</div>}
+					</div>
+				</div>
 			</Modal>}
 			<div className="attendance">
 				<div className="title">Attendance</div>

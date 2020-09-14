@@ -408,7 +408,7 @@ class Front extends Component {
 						</div>
 					</div>
 
-					<div className="package-container" >
+					{/* <div className="package-container" >
 						<div className="card-heading">Packages</div>
 						<div className="pcard-container slider">
 							<div className="pcard slide"> 
@@ -447,7 +447,7 @@ class Front extends Component {
 								</div>
 							</div> 
 						</div>
-					</div>
+					</div> */}
 
 					<div className="card-heading"> Sign Up</div>
 
