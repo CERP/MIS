@@ -79,11 +79,9 @@ class Landing extends Component {
 		})
 
 		if(auto_payments === null || auto_payments.date !== curr_date) {
-			paymentObj.isGeneratePayments = true
-			paymentObj.date = curr_date
-			localStorage.setItem('paymentObj', JSON.stringify(paymentObj));
+			auto_payments = { date: curr_date, isGenerated: true }
 		} 
-		if(JSON.parse(localStorage.getItem('paymentObj')).isGeneratePayments) {
+		if(auto_payments.isGeneratePayments) {
 			const students = Object.values(this.props.students)
 			.filter((std) => std && std.id && std.Active && std.section_id && !std.prospective_section_id)
 			this.generatePayments(students);
