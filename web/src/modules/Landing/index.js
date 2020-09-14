@@ -62,9 +62,6 @@ class Landing extends Component {
 	//Need to do something about that ..
 	componentDidMount() {
 
-		const curr_date = moment().format('MM-DD-YYYY')
-		const auto_payments = JSON.parse(localStorage.getItem('paymentObj'))
-		const paymentObj = {}
 		// for redirect to ilmx
 		const phone = localStorage.getItem("ilmx")
 
@@ -78,16 +75,18 @@ class Landing extends Component {
 			scroll: container.scrollLeft
 		})
 
-		if(auto_payments === null || auto_payments.date !== curr_date) {
+		const curr_date = moment().format('MM-DD-YYYY')
+		let auto_payments = JSON.parse(localStorage.getItem('auto-payments'))
+		if (auto_payments === null || auto_payments.date !== curr_date) {
 			auto_payments = { date: curr_date, isGenerated: true }
-		} 
-		if(auto_payments.isGeneratePayments) {
+		}
+		if (auto_payments.isGenerated) {
 			const students = Object.values(this.props.students)
-			.filter((std) => std && std.id && std.Active && std.section_id && !std.prospective_section_id)
-			this.generatePayments(students);
-			paymentObj.isGeneratePayments = false
-			paymentObj.date = moment().format('MM-DD-YYYY')
-			localStorage.setItem('paymentObj', JSON.stringify(paymentObj));
+				.filter((std) => std && std.id && std.Name && std.Active && std.section_id && !std.prospective_section_id)
+			// generate payments async
+			this.generatePayments(students)
+			auto_payments = { date: curr_date, isGenerated: false }
+			localStorage.setItem('auto-payments', JSON.stringify(auto_payments))
 		}
 	}
 
