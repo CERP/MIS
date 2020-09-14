@@ -13,6 +13,7 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.telephony.SmsManager
 import android.util.Log
+import pk.org.cerp.mischool.mischoolcompanion.SingletonServiceManager.mCurrentService
 import java.io.File
 import java.text.DateFormat
 import java.util.*
@@ -25,6 +26,7 @@ class SMSDispatcherService : Service() {
 
     private val notification_id = 777
     private val channel_id = "Progress Notification"
+
     private lateinit var notification_manager: NotificationManagerCompat
     private lateinit var notification: NotificationCompat.Builder
 
@@ -33,9 +35,11 @@ class SMSDispatcherService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        //Create a notification channel and manager
-        create_notification_channel()
-        notification_manager = NotificationManagerCompat.from(this)
+        // Create a notification channel and manager
+        // create_notification_channel()
+        // notification_manager = NotificationManagerCompat.from(this)
+
+        mCurrentService = this;
     }
 
     @TargetApi(Build.VERSION_CODES.O)
@@ -46,20 +50,20 @@ class SMSDispatcherService : Service() {
         db_handler = DatabaseHandler(this)
 
         // Call notification builder
-        notification_builder()
+        // notification_builder()
 
-        //Initial Alert
-        notification_manager.notify(notification_id, notification.build())
+        // Initial Alert
+        // notification_manager.notify(notification_id, notification.build())
 
         Thread(Runnable {
             kotlin.run {
                 prepareSendingSms()
             }
 
-            notification.setContentText("SMS sending has been completed. Sent $pending_messages_size")
-                    .setProgress(0, 0, false)
-                    .setOngoing(false)
-            notification_manager.notify(notification_id, notification.build())
+//            notification.setContentText("SMS sending has been completed. Sent $pending_messages_size")
+//                    .setProgress(0, 0, false)
+//                    .setOngoing(false)
+//            notification_manager.notify(notification_id, notification.build())
 
         }).start()
 
@@ -80,16 +84,10 @@ class SMSDispatcherService : Service() {
         SingletonServiceManager.isSMSServiceRunning = false
 
         db_handler.close()
-
-        // restarting the service when the user killed the app
-//        val broadcastIntent = Intent(this, SMSRestarterBroadcastReceiver::class.java)
-//        sendBroadcast(broadcastIntent)
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
-//        val broadcastIntent = Intent(this, SMSRestarterBroadcastReceiver::class.java)
-//        sendBroadcast(broadcastIntent)
         update_log_text("Service has been destroyed in onTaskRemoved")
         SingletonServiceManager.isSMSServiceRunning = false
     }
@@ -143,10 +141,10 @@ class SMSDispatcherService : Service() {
                             
                             update_log_text("Message: ${sms.number}-${SMSStatus.SENT}-$currentTime")
 
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                notification.setContentText("SMS sending  ${++sent_sms_counter} of ${pending_messages_size}. Sent ${sms.number}")
-                                notification_manager.notify(notification_id, notification.build())
-                            }
+//                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                                notification.setContentText("SMS sending  ${++sent_sms_counter} of ${pending_messages_size}. Sent ${sms.number}")
+//                                notification_manager.notify(notification_id, notification.build())
+//                            }
 
                             db_handler.update_message(sms)
                         }
@@ -155,10 +153,10 @@ class SMSDispatcherService : Service() {
                             
                             update_log_text("Message: ${sms.number}-${SMSStatus.FAILED}-$currentTime")
 
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                notification.setContentText("SMS sending  ${++sent_sms_counter} of ${pending_messages_size}. Failed  ${sms.number}")
-
-                            }
+//                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                                notification.setContentText("SMS sending  ${++sent_sms_counter} of ${pending_messages_size}. Failed  ${sms.number}")
+//                                notification_manager.notify(notification_id, notification.build())
+//                            }
                             db_handler.update_message(sms)
                         }
                     }
@@ -232,40 +230,37 @@ class SMSDispatcherService : Service() {
     }
 
     // Check if the Android version is greater than 8. (Android Oreo)
-    private fun create_notification_channel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                    channel_id,
-                    "Progress Notification",
-                    //IMPORTANCE_HIGH = shows a notification as peek notification.
-                    //IMPORTANCE_LOW = shows the notification in the status bar.
-                    NotificationManager.IMPORTANCE_HIGH
-            )
-            channel.description = "Progress Notification Channel"
+//    private fun create_notification_channel() {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            val channel = NotificationChannel(
+//                    channel_id,
+//                    "Progress Notification",
+//                    //IMPORTANCE_HIGH = shows a notification as peek notification.
+//                    //IMPORTANCE_LOW = shows the notification in the status bar.
+//                    NotificationManager.IMPORTANCE_HIGH
+//            )
+//            channel.description = "Progress Notification Channel"
+//
+//            val manager = getSystemService(
+//                    NotificationManager::class.java
+//            )
+//            manager.createNotificationChannel(channel)
+//        }
+//    }
 
-            val manager = getSystemService(
-                    NotificationManager::class.java
-            )
-            manager.createNotificationChannel(channel)
-        }
-    }
-
-    private fun notification_builder() {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            //Sets the maximum progress as 100
-            val progress_max = 100
-            //Creating a notification and setting its various attributes
-            notification = NotificationCompat.Builder(this, channel_id)
-                    .setSmallIcon(R.mipmap.ic_android)
-                    .setContentTitle("MISchool SMS Companion")
-                    .setContentText("Starting sending SMS")
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
-                    .setOngoing(true)
-                    .setOnlyAlertOnce(true)
-                    .setProgress(progress_max, 0, true)
-                    .setAutoCancel(true)
-        }
-    }
+//    private fun notification_builder() {
+//            //Sets the maximum progress as 100
+//            val progress_max = 100
+//            //Creating a notification and setting its various attributes
+//            notification = NotificationCompat.Builder(this, channel_id)
+//                    .setSmallIcon(R.mipmap.ic_android)
+//                    .setContentTitle("MISchool SMS Companion")
+//                    .setContentText("Starting sending SMS")
+//                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+//                    .setOngoing(true)
+//                    .setOnlyAlertOnce(true)
+//                    .setProgress(progress_max, 0, true)
+//                    .setAutoCancel(true)
+//    }
 
 }

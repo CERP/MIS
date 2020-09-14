@@ -73,19 +73,21 @@ class MainActivity : AppCompatActivity() {
         list!!.addItemDecoration(DividerItemDecoration(list!!.context, layout_manager.orientation))
         list!!.adapter = adapter
 
-
         if(!SingletonServiceManager.isSMSServiceRunning) {
 
             val messages = db_handler.get_messages(SMSStatus.PENDING)
 
-            if(messages.size > 0) {
+            if(messages.size > 0 && data == null && data_string == null) {
 
                 adapter!!.notifyDataSetChanged()
-                
                 update_log_text("Starting service for ${messages.size} pending messages")
                 startService(Intent(this@MainActivity, SMSDispatcherService::class.java))
             }
+        }
 
+        if(data !== null || data_string !=null) {
+            // first stop the service if running so that pending messages sent with new intent
+            stopServiceIfRunning()
         }
 
         val clearLogsButton = findViewById<Button>(R.id.clearLogButton)
@@ -157,6 +159,9 @@ class MainActivity : AppCompatActivity() {
                     db_handler.add_message(sms_item)
                 }
 
+                // first stop the service if running so that pending messages don't sent again in new service
+                stopServiceIfRunning()
+
                 adapter!!.notifyDataSetChanged()
                 update_log_text("Starting service for resend all messages")
                 startService(Intent(this@MainActivity, SMSDispatcherService::class.java))
@@ -199,7 +204,7 @@ class MainActivity : AppCompatActivity() {
 
             Log.d("tryArrayListSize","in handler" + sms_array_list.size.toString())
 
-            // add delay in sms sending
+            // add delay to see update from service
             handler.postDelayed(this, 2000)
 
             val logged_text = read_log_messages()
@@ -279,6 +284,13 @@ class MainActivity : AppCompatActivity() {
         db_handler.close()
     }
 
+    private fun stopServiceIfRunning() {
+        if(SingletonServiceManager.isSMSServiceRunning && SingletonServiceManager.mCurrentService !=null) {
+            SingletonServiceManager.isSMSServiceRunning = false
+            SingletonServiceManager.mCurrentService.stopSelf()
+        }
+    }
+
     fun updateLogText(text: String) {
 
         runOnUiThread {
@@ -288,6 +300,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
 
     private  fun update_log_text(message: String) {
 
@@ -378,8 +391,11 @@ class MainActivity : AppCompatActivity() {
                 db_handler.add_message(sms_item)
                 sms_array_list.remove(curr_messsage)
 
+                // first stop the service if running so that pending messages don't sent again in new service
+                stopServiceIfRunning()
+
                 notifyDataSetChanged()
-                update_log_text("Starting service for resending message")
+                update_log_text("Starting service for resending single message")
                 startService(Intent(this@MainActivity, SMSDispatcherService::class.java))
             })
 0
