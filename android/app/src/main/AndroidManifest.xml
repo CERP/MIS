@@ -46,7 +46,10 @@
                     android:pathPattern="/android-sms" />
             </intent-filter>
         </activity>
-        <service android:name=".SMSDispatcherService" />
+        <service
+            android:name=".SMSDispatcherService"
+            android:enabled="true">
+        </service>
     </application>
 
 </manifest>
