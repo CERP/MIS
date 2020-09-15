@@ -13,6 +13,10 @@ import { get_host } from 'config'
 
 import { connected, disconnected } from 'actions/core'
 
+import './styles/helper.css'
+import './styles/main.css'
+
+
 const host = get_host()
 
 const syncr = new Syncr(`wss://${host}/ws`)
