@@ -441,3 +441,71 @@ export const getEndPointResource = (point: string, school_id: string, start_date
 			console.error(`Error Getting ${point}-Resource`)
 		})
 }
+
+export const CREATE_BRANCH_MGR = "CREATE_BRANCH_MANAGER"
+export const UPDATE_BRANCHES = "UPDATE_BRANCHES"
+export const UPDATE_BRANCH_MANAGER_PASSWORD = "UPDATE_BRANCH_MANAGER_PASSWORD"
+
+export const creatteBranchManager = (username: string, password: string, value: any) => (dispatch: Dispatch, getState: GetState, syncr: Syncr) => {
+
+	const state = getState()
+
+	syncr.send({
+		type: CREATE_BRANCH_MGR,
+		client_type: state.auth.client_type,
+		payload: {
+			username,
+			password,
+			value
+		}
+	})
+		.then((res) => {
+			window.alert(res)
+		})
+		.catch(res => {
+			console.log(res)
+			window.alert("Unable to create branch manager")
+		})
+}
+
+export const createBranchManager = (username: string, value: any) => (dispatch: Dispatch, getState: GetState, syncr: Syncr) => {
+
+	const state = getState()
+
+	syncr.send({
+		type: UPDATE_BRANCHES,
+		client_type: state.auth.client_type,
+		payload: {
+			username,
+			value
+		}
+	})
+		.then((res) => {
+			window.alert(res)
+		})
+		.catch(res => {
+			console.log(res)
+			window.alert("Unable to update branches")
+		})
+}
+
+export const updateBranchManagerPassword = (username: string, value: any) => (dispatch: Dispatch, getState: GetState, syncr: Syncr) => {
+
+	const state = getState()
+
+	syncr.send({
+		type: UPDATE_BRANCH_MANAGER_PASSWORD,
+		client_type: state.auth.client_type,
+		payload: {
+			username,
+			value
+		}
+	})
+		.then((res) => {
+			window.alert(res)
+		})
+		.catch(res => {
+			console.log(res)
+			window.alert("Unable to update branches")
+		})
+}
