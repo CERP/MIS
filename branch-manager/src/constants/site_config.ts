@@ -1,15 +1,14 @@
-const config: Config = {
+export const SiteConfig: Config = {
 	siteTitle: 'MIS Branch Manager',
 	siteTitleShort: 'MIS Branch Manager',
 	siteTitleAlt: 'MISchool Branch Manager',
 	email: '',
 	siteLogo: '',
 	siteUrl: '',
-	googleAnalyticsID: '',
+	//@ts-ignore
+	googleAnalyticsID: window.ga_id || '',
 	siteDescription: '',
 	menuLinks: [],
 	themeColor: '#3F80FF',
-	backgroundColor: '#ffffff',
+	backgroundColor: '#ffffff'
 }
-
-export default config

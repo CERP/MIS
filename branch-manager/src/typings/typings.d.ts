@@ -43,4 +43,3 @@ interface RootReducerState {
 	accept_snapshot: boolean
 	connected: boolean
 }
-

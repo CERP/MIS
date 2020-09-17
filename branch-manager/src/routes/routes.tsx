@@ -1,14 +1,11 @@
 import React from 'react'
-import { Provider } from 'react-redux'
 import { connect } from 'react-redux'
-import { Store } from 'redux'
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
-import ErrorComponent from 'components/Error'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { ErrorPage } from 'components/error'
 
 import { submitError } from 'actions/core'
 
 interface P {
-	store: Store
 	sendError: (err: Error, errInfo: React.ErrorInfo) => void
 }
 
@@ -19,7 +16,7 @@ interface S {
 	}
 }
 
-class Routes extends React.Component<P, S> {
+class AppRoute extends React.Component<P, S> {
 
 	constructor(props: P) {
 		super(props)
@@ -39,31 +36,26 @@ class Routes extends React.Component<P, S> {
 				errInfo
 			}
 		})
-
 	}
 
 	render() {
 
-		const store = this.props.store
-
 		if (this.state.error) {
-			return <ErrorComponent error={this.state.error.err} errInfo={this.state.error.errInfo} />
+			return <ErrorPage error={this.state.error.err} errInfo={this.state.error.errInfo} />
 		}
 
-		return <Provider store={store}>
-			<BrowserRouter>
-				<Switch>
+		return (<Router>
+			<Switch>
 
-				</Switch>
-			</BrowserRouter>
-		</Provider>
-
+			</Switch>
+		</Router>
+		)
 	}
 }
 
-export default connect(
+export const Routes = connect(
 	(state: RootReducerState) => ({}),
 	(dispatch: Function) => ({
 		sendError: (err: Error, errInfo: React.ErrorInfo) => dispatch(submitError(err, errInfo))
 	})
-)(Routes)
+)(AppRoute)
