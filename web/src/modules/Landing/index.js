@@ -28,7 +28,7 @@ import cerificate from './icons/Certificate/certificate1.svg'
 import expense from './icons/Expense/expense.svg'
 // import newBadge from "./icons/New/new.svg";
 import family from "./icons/family/family.svg"
-
+import test from './icons/Test/test.svg'
 import Help from './icons/Help/help.svg'
 import diary from './icons/Diary/diary.svg'
 import { IlmxLogo } from 'assets/icons'
@@ -449,7 +449,13 @@ class Landing extends Component {
 									: false
 							}
 
-							{
+								<Link
+									className="button yellow-shadow"
+									to="/targeted-instruction/diagnostic"
+									style={{ backgroundImage: `url(${test})` }}>
+									Tests
+								</Link>
+							{/* {
 								(user.Admin || teacher_expense_permission) && <div className="badge-container">
 									<Link
 										className="button yellow-shadow"
@@ -458,7 +464,7 @@ class Landing extends Component {
 										Expenses
 								</Link>
 								</div>
-							}
+							} */}
 						</div>
 					</div>
 

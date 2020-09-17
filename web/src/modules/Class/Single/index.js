@@ -28,6 +28,7 @@ return <Layout history={props.history}>
 
 			<Route path="/class/new" component={Create} />
 			<Route path="/class/:id/profile" component={Create} />
+			<Route path="/class/:id/subjects" component={Create} />
 			<Route path="/class/:class_id/:section_id/report-menu" component={ReportMenu} />
 			<Route path="/class/:id/fee-menu" component={FeeMenu} />
 

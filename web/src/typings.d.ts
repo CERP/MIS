@@ -253,6 +253,15 @@ interface MISStudent {
 	certificates: {
 		[id: string]: MISCertificate
 	}
+	diagnostic_result: {
+		[test_id: string]: {
+			[question_id: string]: {
+				answer: string
+				isCorrect: boolean
+				slo: string[]
+			}
+		}
+	}
 }
 
 interface MISFamilyInfo {
