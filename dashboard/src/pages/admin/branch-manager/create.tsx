@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import school from '../school'
 
 type CreateBranchManagerProps = {
 	schoolList: string[]
