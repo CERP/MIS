@@ -17,6 +17,20 @@ interface MenuLink {
 	link: string
 }
 
+interface AuthReducerState {
+	auth: Auth
+	loggingIn: false
+}
+interface Auth {
+	id?: string
+	token?: string
+}
+
+interface AlertState {
+	type: string
+	message: string
+}
+
 interface SyncState {
 
 }

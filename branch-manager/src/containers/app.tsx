@@ -1,11 +1,12 @@
 import React from 'react'
 import { Provider } from 'react-redux'
+import { RootReducerCombinedState } from 'reducers'
 import { Store } from 'redux'
 
 import { Routes } from 'routes'
 
 type P = {
-	store: Store<RootReducerState>
+	store: Store<RootReducerCombinedState>
 }
 
 const App: React.FC<P> = ({ store }) => (
