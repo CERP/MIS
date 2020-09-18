@@ -1,7 +1,15 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { ErrorPage } from 'components/error'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { AuthRoute } from 'routes'
+
+import {
+	Landing,
+	Login,
+	Home,
+	PageNoteFound
+} from 'pages'
 
 import { submitError } from 'actions/core'
 
@@ -46,7 +54,10 @@ class AppRoute extends React.Component<P, S> {
 
 		return (<Router>
 			<Switch>
-
+				<Route exact path="/" component={Landing} />
+				<Route exact path="/login" component={Login} />
+				<AuthRoute exact path="/home" component={Home} />
+				<Route path="*" component={PageNoteFound} />
 			</Switch>
 		</Router>
 		)

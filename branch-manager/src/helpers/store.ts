@@ -12,11 +12,11 @@ const create_store: Store<RootReducerState> = createStore(
     applyMiddleware(thunkMiddleware as ThunkMiddleware<RootReducerState, AnyAction>)
 )
 
-const saveBounce = debounce(() => {
+const save_bounce = debounce(() => {
     const state = create_store.getState()
     saveDB(state)
 }, 500)
 
-create_store.subscribe(saveBounce as () => void)
+create_store.subscribe(save_bounce as () => void)
 
 export const store = create_store
