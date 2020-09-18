@@ -1,13 +1,11 @@
-import { useHistory } from 'react-router'
 import { Dispatch } from 'redux'
 
 import { UserLoginConstants } from 'constants/index'
 import { alert_actions } from './alert_actions'
 import { user_service } from 'services'
+import { history } from 'helpers'
 
-const login = (username: string, password: string, from: string) => {
-
-    const history = useHistory()
+const login = (username: string, password: string, from: any) => {
 
     return (dispatch: Dispatch) => {
 

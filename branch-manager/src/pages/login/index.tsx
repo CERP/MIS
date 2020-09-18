@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-
 import { AppLayout } from 'components/layout'
+import { RootReducerCombinedState } from 'reducers'
+
+import { user_actions } from 'actions'
 
 type P = {
 
@@ -25,6 +27,10 @@ export const Login: React.FC<P> = ({ }) => {
 
 	const dispatch = useDispatch()
 	const location = useLocation()
+	// @ts-ignore
+	const loggingIn = useSelector((state: RootReducerCombinedState) => state.authentication.logginIn)
+
+	console.log(loggingIn)
 
 	const { username, password } = state
 
@@ -39,7 +45,9 @@ export const Login: React.FC<P> = ({ }) => {
 		set_submitted(true)
 
 		if (username && password) {
-
+			// @ts-ignore
+			const { from } = location.state || { from: { pathname: "/login" } }
+			dispatch(user_actions.login(username, password, from))
 		}
 	}
 
@@ -61,7 +69,9 @@ export const Login: React.FC<P> = ({ }) => {
 						<input className="h-4 w-4 mr-2" type="checkbox" onChange={(e) => handle_change(e)} />
 						<label className="text-md text-gray-700">Remember me</label>
 					</div>
-					<button className="bg-gray-500 hover:bg-gray-600 rounded text-white font-bold w-full py-3">Login</button>
+					<button className="bg-gray-500 hover:bg-gray-600 rounded text-white font-bold w-full py-3">
+						Login
+					</button>
 				</div>
 			</form>
 		</AppLayout>

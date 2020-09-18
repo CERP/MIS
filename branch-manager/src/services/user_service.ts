@@ -28,7 +28,7 @@ const get_branches = () => {
 	const request_options = get_request_options()
 
 	// @ts-ignore
-	return fetch(`${host}/branches/`, request_options).then(handle_response)
+	return fetch(`${host}/school-branches/`, request_options).then(handle_response)
 }
 
 
@@ -39,7 +39,7 @@ const handle_response = (response: any) => {
 			if (response.status === 401) {
 				// auto logout if 401 response returned from api
 				logout()
-				location.reload()
+				window.location.reload()
 			}
 			const error = (data && data.message) || response.statusText
 			return Promise.reject(error)
