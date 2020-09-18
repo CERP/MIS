@@ -16,12 +16,15 @@ const CreateBranchManager: React.FC<CreateBranchManagerProps> = ({ schoolList, o
 	})
 
 	const hanleClickAddButton = () => {
-		// @ts-ignore
-		const unique_schools = [...new Set([...branches["schools"], schoolId])] as string[]
-		setBranches({
-			...branches,
-			schools: unique_schools
-		})
+
+		if (schoolId) {
+			// @ts-ignore
+			const unique_schools = [...new Set([...branches["schools"], schoolId])] as string[]
+			setBranches({
+				...branches,
+				schools: unique_schools
+			})
+		}
 	}
 
 	const hanleClickRemoveButton = (id: string) => {
