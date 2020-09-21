@@ -25,7 +25,7 @@ import DailyStats from 'modules/Analytics/DailyStats'
 import Analytics from 'modules/Analytics'
 import ReportsMenu from 'modules/ReportsMenu'
 import PromotionPage from 'modules/Settings/promote-students'
-import TargetedInstruction from 'modules/TargetedInstruction/Test.tsx'
+import TargetedInstruction from 'modules/TargetedInstruction/index.tsx'
 import Help from "modules/Help"
 import Diary from 'modules/Diary'
 import Front from 'modules/Front'

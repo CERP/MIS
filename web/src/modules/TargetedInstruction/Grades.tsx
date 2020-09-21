@@ -19,32 +19,33 @@ const StudentGrades: React.FC<P> = (props: any) => {
     const [stdObj, setStdObj] = useState(props.students[id])
     const [questions, setQuestions] = useState([])
 
-    useEffect(() => {
-        console.log('targeted_instruction', props.targeted_instruction)
-        const sections = getSectionsFromClasses(props.classes)
-            .sort((a, b) => (a.classYear || 0) - (b.classYear || 0))
-
-        const getClassNameFromSections = (): string => {
-            const section = sections.find(section => section.id === props.students[id].section_id)
-            return section ? section.className : undefined
-        }
-
-        const className = getClassNameFromSections()
-        const testArr = []
-        for (let [id, obj] of Object.entries(props.targeted_instruction.tests)) {
-            //@ts-ignore
-            if (obj.class === className && className) {
-                //@ts-ignore
-                testArr.push(obj.name)
-            }
-        }
-        setTests(testArr)
-    }, [])
 
     const getSelectedTestType = (e: any) => {
         setSelectedTestType(e.target.value)
         getQuestionList(selectedTest)
     }
+    // useEffect(() => {
+    //     console.log('targeted_instruction', props.targeted_instruction)
+    //     const sections = getSectionsFromClasses(props.classes)
+    //         .sort((a, b) => (a.classYear || 0) - (b.classYear || 0))
+
+    //     const getClassNameFromSections = (): string => {
+    //         const section = sections.find(section => section.id === props.students[id].section_id)
+    //         return section ? section.className : undefined
+    //     }
+
+    //     const className = getClassNameFromSections()
+    //     const testArr = []
+    //     for (let [id, obj] of Object.entries(props.targeted_instruction.tests)) {
+    //         //@ts-ignore
+    //         if (obj.class === className && className) {
+    //             //@ts-ignore
+    //             testArr.push(obj.name)
+    //         }
+    //     }
+    //     setTests(testArr)
+    // }, [])
+
 
     const getSelectedTest = (e: any) => {
         setSelectedTest(e.target.value)
@@ -68,35 +69,33 @@ const StudentGrades: React.FC<P> = (props: any) => {
         }
     }
 
-    const handleChange = () => {
+    // const handleChange = () => {
 
-    }
+    // }
 
-    const capitalize = (str: string) => {
-        return str.charAt(0).toUpperCase() + str.slice(1, 8) + ' ' + str.slice(8);
-    }
+    // const capitalize = (str: string) => {
+    //     return str.charAt(0).toUpperCase() + str.slice(1, 8) + ' ' + str.slice(8);
+    // }
 
     return <div className="section form">
+        <div className="row">
+            <label>Test</label>
+            <select onClick={getSelectedTest}>
+                <option value="">Select Test</option>
+                {
+                    tests && tests.map((c) => <option key={c} value={c}>{c}</option>)
+                }
+            </select>
+        </div>
         <div className="table">
             <div className="row">
-                <label>Test Type</label>
+                <label>Student</label>
                 <select onClick={getSelectedTestType}>
                     <option value="">Select Test Type</option>
-                    <option value="Diagnostic">Diagnostic</option>
-                    <option value="Monthly">Monthly</option>
-                </select>
-            </div>
-            <div className="row">
-                <label>Test</label>
-                <select onClick={getSelectedTest}>
-                    <option value="">Select Test</option>
-                    {
-                        tests && tests.map((c) => <option key={c} value={c}>{c}</option>)
-                    }
                 </select>
             </div>
         </div>
-        <div className="questions-container">
+        {/* <div className="questions-container">
             {questions && questions.map((question) => {
                 return <div key={question.key} className="form">
                     <div className="row">
@@ -109,7 +108,7 @@ const StudentGrades: React.FC<P> = (props: any) => {
                     </div>
                 </div>
             })}
-        </div>
+        </div> */}
     </div >
 
 }
