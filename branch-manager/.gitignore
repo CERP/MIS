@@ -17,3 +17,7 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+# dependencies
+
+# auto generated css
+/src/styles/main.css
