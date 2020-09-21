@@ -1,6 +1,5 @@
 
-// const debug_url = "69def37f.ngrok.io"
-const debug_url = "https://ilmexchange.com"
+const debug_url = "http://localhost:8080"
 
 export function get_host(): string {
     // @ts-ignore

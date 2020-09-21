@@ -1,19 +1,25 @@
-import { get_host } from 'helpers'
+//@ts-nocheck
+
+import { get_client_id, get_host } from 'helpers'
 import { auth_header, save_auth, clear_auth } from 'helpers'
 
 const host = get_host()
+const client_id = get_client_id()
 
 const login = (username: string, password: string) => {
 
 	const request_options = {
 		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ username, password })
+		mode: 'cors',
+		cache: 'no-cache',
+		headers: { 'content-type': 'application/json' },
+		body: JSON.stringify({ username, password, client_id })
 	}
 
-	return fetch(`${host}/users/authenticate`, request_options)
+	return fetch(`${host}/branch-manager/users/authenticate`, request_options)
 		.then(handle_response)
-		.then(auth => {
+		.then(auth_token => {
+			const auth = { id: username, token: auth_token }
 			save_auth(auth)
 			return auth
 		})
@@ -44,6 +50,8 @@ const handle_response = (response: any) => {
 			const error = (data && data.message) || response.statusText
 			return Promise.reject(error)
 		}
+
+		console.log("RESPONSE", data);
 		return data
 	})
 }
