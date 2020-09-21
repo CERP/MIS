@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { targeted_instruction } from './dummyData'
 import { connect } from 'react-redux'
 import PDFViewer from 'pdf-viewer-reactjs'
-
+import './style.css'
 
 interface P {
 
@@ -13,9 +13,10 @@ const Diagnostic: React.SFC<P> = (props: any) => {
     const [selectedClass, setSelectedClass] = useState('')
     const [selectedSubject, setSelectedSubject] = useState('')
     const [url, setUrl] = useState('')
+    const [label, setLabel] = useState('')
 
     const classes = [
-        "class 1", "class 2", "class 3", "class 4", "class 5", "class 6", "class 7", "class 8", "class 9", "class 10"
+        "Class 1", "Class 2", "Class 3", "Class 4", "Class 5", "Class 6", "Class 7", "Class 8", "Class 9", "Class 10"
     ]
     const subjects = [
         "Mathematics", "English", "Urdu", "Pak Study", "Science", "Islamiat"
@@ -28,12 +29,13 @@ const Diagnostic: React.SFC<P> = (props: any) => {
     const getSelectedSubject = (e: any) => {
         setSelectedSubject(e.target.value)
         for (let [id, obj] of Object.entries(targeted_instruction['tests'])) {
-            debugger
             if (obj.class === selectedClass && obj.subject === e.target.value) {
-                debugger
                 setUrl(obj.pdf_url)
+                setLabel(obj.label)
+                break;
             } else {
                 setUrl('')
+                setLabel('')
             }
         }
     }
@@ -55,18 +57,16 @@ const Diagnostic: React.SFC<P> = (props: any) => {
                     }
                 </select>
             </div>
-            {
-                url ? <PDFViewer
-                    document={{
-                        url: url,
-                    }}
-                /> : null
-            }
+            {label ? <div className="pdfLabel no-print"><label className="">{label}</label></div> : null}
+            {url ? <PDFViewer
+                document={{
+                    url: url,
+                }}
+            /> : null}
 
         </div>
     </>;
 }
 
 export default connect((state: RootReducerState) => ({
-    classes: state.db.classes
 }))(Diagnostic)

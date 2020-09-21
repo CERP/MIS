@@ -54,7 +54,33 @@ interface RootDBState {
 			[lesson_id: string]: IlmxLesson
 		}
 	}
+	// targeted_instruction: {
+	// 	tests: {
+	// 		[id: string]: {
+	// 			name: string
+	// 			subject: string
+	// 			class: string
+	// 			type: string
+	// 			label: string
+	// 			pdf_url: string
+
+	// 			questions: {
+	// 				[question_id: string]: {
+	// 					answer: string
+	// 					slo: string[]
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// 	slo_mapping: {
+	// 		[slo_id: string]: {
+	// 			description: string
+	// 			parent: string
+	// 		}
+	// 	}
+	// }
 }
+
 
 interface BaseAnalyticsEvent {
 	type: string

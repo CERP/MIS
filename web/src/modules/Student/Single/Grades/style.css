@@ -1,0 +1,21 @@
+.questions-container {
+    margin: 30px;
+}
+.question-row {
+    display: "flex";
+    flex-direction: "row";
+    justify-content: "space-between";
+    margin-top: 10px;
+}
+.toggle-btn-div {
+    width: 6%;
+    background-color: rgb(218, 218, 218);
+    border-radius: 20px;
+}
+.toggle-true {
+    background-color: green;
+    border-radius: 50%;
+    width: 2%;
+    height: 5%;
+    position: absolute;
+}

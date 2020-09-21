@@ -48,7 +48,6 @@ import MISActivation from 'modules/Activation'
 import BulkExam from 'modules/Marks/BulkExam'
 import Diagnostic from 'modules/TargetedInstruction/Diagnostic'
 import Monthly from 'modules/TargetedInstruction/Monthly'
-import { Worker } from '@phuocng/react-pdf-viewer';
 
 export default class Routes extends React.Component {
 
@@ -77,8 +76,7 @@ export default class Routes extends React.Component {
 			return <ErrorComponent err={this.state.err} errInfo={this.state.errInfo} />
 		}
 
-		return <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.4.456/build/pdf.worker.min.js">
-		<Provider store={this.props.store}>
+		return <Provider store={this.props.store}>
 			<BrowserRouter>
 				<Switch>
 					<TrackedRoute exact path="/landing" component={Landing} />
@@ -142,6 +140,5 @@ export default class Routes extends React.Component {
 				</Switch>
 			</BrowserRouter>
 		</Provider>
-		</Worker>
 	}
 }
