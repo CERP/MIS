@@ -39,8 +39,7 @@ const get_branches = () => {
 
 
 const handle_response = (response: any) => {
-	return response.text().then((text: any) => {
-		const data = text && JSON.parse(text)
+	return response.json().then((data: any) => {
 		if (!response.ok) {
 			if (response.status === 401) {
 				// auto logout if 401 response returned from api
