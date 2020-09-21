@@ -20,4 +20,4 @@ yarn-error.log*
 # dependencies
 
 # auto generated css
-/src/styles/main.css
+branch-manager/src/styles/main.css
