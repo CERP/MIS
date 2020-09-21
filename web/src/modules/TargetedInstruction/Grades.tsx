@@ -20,6 +20,7 @@ const StudentGrades: React.FC<P> = (props: any) => {
     const [questions, setQuestions] = useState([])
 
     useEffect(() => {
+        console.log('targeted_instruction', props.targeted_instruction)
         const sections = getSectionsFromClasses(props.classes)
             .sort((a, b) => (a.classYear || 0) - (b.classYear || 0))
 
@@ -97,13 +98,15 @@ const StudentGrades: React.FC<P> = (props: any) => {
         </div>
         <div className="questions-container">
             {questions && questions.map((question) => {
-                return <div key={question.key} className="row question-row">
-                    <div style={{ width: "95%" }}>{capitalize(question.key)}</div>
-                    <Switch
-                        onChange={handleChange}
-                        checked={question.value}
-                        id="normal-switch"
-                    />
+                return <div key={question.key} className="form">
+                    <div className="row">
+                        <div>{capitalize(question.key)}</div>
+                        <Switch
+                            onChange={handleChange}
+                            checked={question.value}
+                            id="normal-switch"
+                        />
+                    </div>
                 </div>
             })}
         </div>

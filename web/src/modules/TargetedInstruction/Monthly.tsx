@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 interface WelcomeProps {
     name: string
 }
-const Monthly: React.SFC<WelcomeProps> = (props: any) => {
+const Monthly: React.FC<WelcomeProps> = (props: any) => {
     return <h1>Hello Monthly</h1>;
 }
 

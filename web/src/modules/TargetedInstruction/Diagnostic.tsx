@@ -1,17 +1,16 @@
-import React, { useState } from 'react';
-import { targeted_instruction } from './dummyData'
-import { connect } from 'react-redux'
+import React, { useState } from 'react'; import { connect } from 'react-redux'
 import PDFViewer from 'pdf-viewer-reactjs'
 import './style.css'
 
 interface P {
-
     classes: RootDBState["classes"]
+    targeted_instruction: RootDBState["targeted_instruction"]
 }
 
-const Diagnostic: React.SFC<P> = (props: any) => {
+const Diagnostic: React.FC<P> = (props: any) => {
     const [selectedClass, setSelectedClass] = useState('')
     const [selectedSubject, setSelectedSubject] = useState('')
+    const [type, setType] = useState('test')
     const [url, setUrl] = useState('')
     const [label, setLabel] = useState('')
 
@@ -24,13 +23,21 @@ const Diagnostic: React.SFC<P> = (props: any) => {
 
     const getSelectedClass = (e: any) => {
         setSelectedClass(e.target.value)
+        getPDF(selectedSubject, e.target.value)
     }
 
     const getSelectedSubject = (e: any) => {
         setSelectedSubject(e.target.value)
-        for (let [id, obj] of Object.entries(targeted_instruction['tests'])) {
-            if (obj.class === selectedClass && obj.subject === e.target.value) {
+        getPDF(e.target.value, selectedClass)
+    }
+
+    const getPDF = (selectedSubject: any, selectedClass: any) => {
+        for (let [id, obj] of Object.entries(props.targeted_instruction['tests'])) {
+            //@ts-ignore
+            if (obj.type === 'Diagnostic' && obj.class === selectedClass && obj.subject === selectedSubject) {
+                //@ts-ignore
                 setUrl(obj.pdf_url)
+                //@ts-ignore
                 setLabel(obj.label)
                 break;
             } else {
@@ -42,15 +49,27 @@ const Diagnostic: React.SFC<P> = (props: any) => {
 
 
     return <>
-        <div className="section section-container">
-            <div className="row" style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-                <select className="no-print" style={{ width: "49%" }} onClick={getSelectedClass}>
+        <div className="section form">
+            <div className="row">
+                <label className="no-print">Test Type</label>
+                <select className="no-print" onClick={getSelectedClass}>
+                    <option value="">Select Test Type</option>
+                    <option value="Diagnostic">Diagnostic</option>
+                    <option value="Monthly">Monthly</option>
+                </select>
+            </div>
+            <div className="row">
+                <label className="no-print">Class/Section</label>
+                <select className="no-print" onClick={getSelectedClass}>
                     <option value="">Select Class</option>
                     {
                         classes.map((c) => <option key={c} value={c}>{c}</option>)
                     }
                 </select>
-                <select className="no-print" style={{ width: "49%" }} onClick={getSelectedSubject}>
+            </div>
+            <div className="row">
+                <label className="no-print">Test Subject</label>
+                <select className="no-print" onClick={getSelectedSubject}>
                     <option value="">Select Subject</option>
                     {
                         subjects.map((sub) => <option key={sub} value={sub}>{sub}</option>)
@@ -59,6 +78,7 @@ const Diagnostic: React.SFC<P> = (props: any) => {
             </div>
             {label ? <div className="pdfLabel no-print"><label className="">{label}</label></div> : null}
             {url ? <PDFViewer
+                hideNavbar={true}
                 document={{
                     url: url,
                 }}
@@ -69,4 +89,5 @@ const Diagnostic: React.SFC<P> = (props: any) => {
 }
 
 export default connect((state: RootReducerState) => ({
+    targeted_instruction: state.db.targeted_instruction
 }))(Diagnostic)

@@ -451,7 +451,7 @@ class Landing extends Component {
 
 								<Link
 									className="button yellow-shadow"
-									to="/targeted-instruction/diagnostic"
+									to="/targeted-instruction/test"
 									style={{ backgroundImage: `url(${test})` }}>
 									Tests
 								</Link>
