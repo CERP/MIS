@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
+import getSubjectsFromClasses from 'utils/getSubjectsFromClasses'
 import { connect } from 'react-redux'
 import Switch from "react-switch";
 import './style.css'
@@ -10,6 +11,8 @@ interface P {
     sections: AugmentedSection[]
     classes: RootDBState["classes"]
 }
+
+
 
 const StudentGrades: React.FC<P> = (props: any) => {
     const [id,] = useState(props.match.params.id)
@@ -24,28 +27,6 @@ const StudentGrades: React.FC<P> = (props: any) => {
         setSelectedTestType(e.target.value)
         getQuestionList(selectedTest)
     }
-    // useEffect(() => {
-    //     console.log('targeted_instruction', props.targeted_instruction)
-    //     const sections = getSectionsFromClasses(props.classes)
-    //         .sort((a, b) => (a.classYear || 0) - (b.classYear || 0))
-
-    //     const getClassNameFromSections = (): string => {
-    //         const section = sections.find(section => section.id === props.students[id].section_id)
-    //         return section ? section.className : undefined
-    //     }
-
-    //     const className = getClassNameFromSections()
-    //     const testArr = []
-    //     for (let [id, obj] of Object.entries(props.targeted_instruction.tests)) {
-    //         //@ts-ignore
-    //         if (obj.class === className && className) {
-    //             //@ts-ignore
-    //             testArr.push(obj.name)
-    //         }
-    //     }
-    //     setTests(testArr)
-    // }, [])
-
 
     const getSelectedTest = (e: any) => {
         setSelectedTest(e.target.value)
@@ -68,14 +49,6 @@ const StudentGrades: React.FC<P> = (props: any) => {
             setQuestions(questionArr)
         }
     }
-
-    // const handleChange = () => {
-
-    // }
-
-    // const capitalize = (str: string) => {
-    //     return str.charAt(0).toUpperCase() + str.slice(1, 8) + ' ' + str.slice(8);
-    // }
 
     return <div className="section form">
         <div className="row">

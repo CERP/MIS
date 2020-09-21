@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import Layout from 'components/Layout'
 import { RouteComponentProps } from 'react-router-dom'
-import { Route, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import Grades from './Grades'
 import Diagnostic from './Diagnostic'
-
 import { connect } from 'react-redux'
+import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
+import getSubjectsFromClasses from 'utils/getSubjectsFromClasses'
 import './style.css'
 // type P = RootReducerState & RouteComponentProps
 
@@ -20,22 +21,20 @@ const Test: React.FC<PropsType> = (props) => {
 
 
 	const loc = props.location.pathname.split('/').slice(-1).pop();
-	const [selectedClass, setSelectedClass] = useState('')
 	const [selectedSubject, setSelectedSubject] = useState('')
-	const [type, setType] = useState('test')
-	const [url, setUrl] = useState('')
+	const [selectedClass, setSelectedClass] = useState('')
+	const [subjects, setSubjects] = useState([])
+	const [testType, setTestType] = useState('')
+	const [tests, setTests] = useState([])
 	const [label, setLabel] = useState('')
+	const [url, setUrl] = useState('')
 
-	const classes = [
-		"Class 1", "Class 2", "Class 3", "Class 4", "Class 5", "Class 6", "Class 7", "Class 8", "Class 9", "Class 10"
-	]
-	const subjects = [
-		"Mathematics", "English", "Urdu", "Pak Study", "Science", "Islamiat"
-	]
+	const sortedSections = getSectionsFromClasses(props.classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0));
 
 	const getSelectedClass = (e: any) => {
 		setSelectedClass(e.target.value)
 		getPDF(selectedSubject, e.target.value)
+		setSubjects(getSubjectsFromClasses(props.classes, e.target.value))
 	}
 
 	const getSelectedSubject = (e: any) => {
@@ -58,6 +57,25 @@ const Test: React.FC<PropsType> = (props) => {
 			}
 		}
 	}
+
+	const getTests = () => {
+
+	}
+
+	const getTestType = (e: any) => {
+		setTestType(e.target.value)
+		const testArr = []
+		for (let [id, obj] of Object.entries(props.targeted_instruction.tests)) {
+			debugger
+			//@ts-ignore
+			if (obj.class === selectedClass) {
+				//@ts-ignore
+				testArr.push(obj.name)
+			}
+		}
+		setTests(testArr)
+	}
+
 	return <Layout history={props.history}>
 		<div className="analytics">
 			<div className="row tabs">
@@ -66,49 +84,62 @@ const Test: React.FC<PropsType> = (props) => {
 			</div>
 			<div className="section form">
 				<div className="row">
+					<label className="no-print">Class/Section</label>
+					<select onClick={getSelectedClass}>
+						<option value="">Select Section</option>
+						{
+							sortedSections.map(s => <option key={s.id} value={s.namespaced_name}>{s.namespaced_name}</option>)
+						}
+					</select>
+				</div>
+				<div className="row">
+					<label className="no-print">Subject</label>
+					<select className="no-print" onClick={getSelectedSubject}>
+						<option value="">Select Subject</option>
+						{
+							subjects && subjects.map((sub) => <option key={sub} value={sub}>{sub}</option>)
+						}
+					</select>
+				</div>
+				<div className="row">
 					<label className="no-print">Test Type</label>
-					<select className="no-print" onClick={getSelectedClass}>
+					<select className="no-print" onClick={getTestType}>
 						<option value="">Select Test Type</option>
 						<option value="Diagnostic">Diagnostic</option>
 						<option value="Monthly">Monthly</option>
 					</select>
 				</div>
-				<div className="row">
-					<label className="no-print">Class/Section</label>
-					<select className="no-print" onClick={getSelectedClass}>
-						<option value="">Select Class</option>
-						{
-							classes.map((c) => <option key={c} value={c}>{c}</option>)
-						}
-					</select>
-				</div>
-				<div className="row">
-					<label className="no-print">Test Subject</label>
-					<select className="no-print" onClick={getSelectedSubject}>
-						<option value="">Select Subject</option>
-						{
-							subjects.map((sub) => <option key={sub} value={sub}>{sub}</option>)
-						}
-					</select>
-				</div>
+				{loc === 'grades' &&
+					<>
+						<div className="row">
+							<label className="no-print">Test</label>
+							<select className="no-print" onClick={getTests}>
+								<option value="">Select Test</option>
+								{
+									tests && tests.map((sub) => <option key={sub} value={sub}>{sub}</option>)
+								}
+							</select>
+						</div>
+						<div className="row">
+							<label className="no-print">Students</label>
+							<select className="no-print" onClick={getSelectedSubject}>
+								<option value="">Select Students</option>
+								{
+									subjects && subjects.map((sub) => <option key={sub} value={sub}>{sub}</option>)
+								}
+							</select>
+						</div>
+					</>
+				}
 				{loc === 'test' && <Diagnostic label={label} url={url} />}
-				{/* {label ? <div className="pdfLabel no-print"><label className="">{label}</label></div> : null}
-				{url ? <PDFViewer
-					hideNavbar={true}
-					document={{
-						url: url,
-					}}
-				/> : null} */}
-
 			</div>
-			{/* <Route path="/targeted-instruction/test" component={Diagnostic} />
-			<Route path="/targeted-instruction/grades" component={Grades} /> */}
 		</div>
 	</Layout>
 
 }
 
 export default connect((state: RootReducerState) => ({
-	targeted_instruction: state.db.targeted_instruction
+	targeted_instruction: state.db.targeted_instruction,
+	classes: state.db.classes
 }))(Test)
 // export default Test
