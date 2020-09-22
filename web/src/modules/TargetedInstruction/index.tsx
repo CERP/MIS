@@ -26,6 +26,7 @@ const Test: React.FC<PropsType> = (props) => {
 	const [questions, setQuestions] = useState([])
 	const [students, setStudents] = useState([])
 	const [subjects, setSubjects] = useState([])
+	const [testId, setTestId] = useState('')
 	const [testType, setTestType] = useState('')
 	const [stdId, setStdId] = useState('')
 	const [tests, setTests] = useState([])
@@ -58,7 +59,6 @@ const Test: React.FC<PropsType> = (props) => {
 
 	const getSubject = (e: any) => {
 		setSelectedSubject(e.target.value)
-		getPDF(e.target.value, selectedClass)
 	}
 
 	const getPDF = (selectedSubject: any, selectedClass: any) => {
@@ -78,15 +78,18 @@ const Test: React.FC<PropsType> = (props) => {
 	}
 
 	const getTest = (e: any) => {
+		setTestId(e.target.value)
 		getQuestionList(e.target.value, props.students[stdId])
 	}
 
 	const getTestType = (e: any) => {
 		setTestType(e.target.value)
+		debugger
+		getPDF(selectedSubject, selectedClass)
 		const testArr = []
 		for (let [id, obj] of Object.entries(props.targeted_instruction.tests)) {
 			//@ts-ignore
-			if (obj.class === selectedClass && obj.type === testType && obj.subject === selectedSubject) {
+			if (obj.class === selectedClass && obj.type === e.target.value && obj.subject === selectedSubject) {
 				//@ts-ignore
 				testArr.push(obj.name)
 			}
@@ -141,6 +144,14 @@ const Test: React.FC<PropsType> = (props) => {
 						}
 					</select>
 				</div>
+				<div className="row">
+					<label className="no-print">Test Type</label>
+					<select className="no-print" onClick={getTestType}>
+						<option value="">Select Test Type</option>
+						<option value="Diagnostic">Diagnostic</option>
+						<option value="Monthly">Monthly</option>
+					</select>
+				</div>
 				{loc === 'grades' &&
 					<>
 						<div className="row">
@@ -154,14 +165,6 @@ const Test: React.FC<PropsType> = (props) => {
 						</div>
 					</>
 				}
-				<div className="row">
-					<label className="no-print">Test Type</label>
-					<select className="no-print" onClick={getTestType}>
-						<option value="">Select Test Type</option>
-						<option value="Diagnostic">Diagnostic</option>
-						<option value="Monthly">Monthly</option>
-					</select>
-				</div>
 				{loc === 'grades' &&
 					<>
 						<div className="row">
@@ -175,7 +178,7 @@ const Test: React.FC<PropsType> = (props) => {
 						</div>
 					</>
 				}
-				{loc === 'test' ? <Diagnostic label={label} url={url} /> : <StudentGrades questions={questions} />}
+				{loc === 'test' ? <Diagnostic label={label} url={url} /> : <StudentGrades questions={questions} stdId={stdId} testId={testId} stdObj={props.students[stdId]} />}
 			</div>
 		</div>
 	</Layout>
