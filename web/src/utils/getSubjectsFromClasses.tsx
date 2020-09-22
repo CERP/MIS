@@ -2,7 +2,7 @@ export const getSubjectsFromClasses = (classes: RootDBState['classes'], classNam
     const subjects = Object.values(classes)
         .reduce((agg, c) => {
             if (className === c.name) {
-                return [...Object.entries(c.subjects)
+                return [...agg, ...Object.entries(c.subjects)
                     .reduce((agg2, [sub]) => {
                         return [
                             ...agg2,
@@ -10,6 +10,7 @@ export const getSubjectsFromClasses = (classes: RootDBState['classes'], classNam
                         ]
                     }, [])]
             }
+            return agg
         }, [])
     return subjects;
 }

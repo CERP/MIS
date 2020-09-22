@@ -8,10 +8,10 @@ import { connect } from 'react-redux'
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
 import getSubjectsFromClasses from 'utils/getSubjectsFromClasses'
 import './style.css'
-// type P = RootReducerState & RouteComponentProps
 
 interface P {
 	classes: RootDBState["classes"]
+	students: RootDBState["students"]
 	targeted_instruction: RootDBState["targeted_instruction"]
 }
 
@@ -23,21 +23,39 @@ const Test: React.FC<PropsType> = (props) => {
 	const loc = props.location.pathname.split('/').slice(-1).pop();
 	const [selectedSubject, setSelectedSubject] = useState('')
 	const [selectedClass, setSelectedClass] = useState('')
+	const [students, setStudents] = useState([])
 	const [subjects, setSubjects] = useState([])
 	const [testType, setTestType] = useState('')
+	const [stdId, setStdId] = useState('')
 	const [tests, setTests] = useState([])
 	const [label, setLabel] = useState('')
 	const [url, setUrl] = useState('')
 
 	const sortedSections = getSectionsFromClasses(props.classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0));
 
-	const getSelectedClass = (e: any) => {
+	const getClass = (e: any) => {
+		let index = e.target.selectedIndex;
+		let el = e.target.childNodes[index]
 		setSelectedClass(e.target.value)
+		setStudents(getAllStudnets(el.dataset.id))
 		getPDF(selectedSubject, e.target.value)
 		setSubjects(getSubjectsFromClasses(props.classes, e.target.value))
 	}
 
-	const getSelectedSubject = (e: any) => {
+	const getAllStudnets = (sectionId: string) => {
+		const students = Object.values(props.students)
+			.reduce((agg, student) => {
+				if (student.section_id === sectionId) {
+					return [...agg,
+					{ id: student.id, name: student.Name }
+					]
+				}
+				return [...agg,]
+			}, [])
+		return students
+	}
+
+	const getSubject = (e: any) => {
 		setSelectedSubject(e.target.value)
 		getPDF(e.target.value, selectedClass)
 	}
@@ -66,7 +84,6 @@ const Test: React.FC<PropsType> = (props) => {
 		setTestType(e.target.value)
 		const testArr = []
 		for (let [id, obj] of Object.entries(props.targeted_instruction.tests)) {
-			debugger
 			//@ts-ignore
 			if (obj.class === selectedClass) {
 				//@ts-ignore
@@ -74,6 +91,10 @@ const Test: React.FC<PropsType> = (props) => {
 			}
 		}
 		setTests(testArr)
+	}
+
+	const getStudent = (e: any) => {
+		setStdId(e.target.value)
 	}
 
 	return <Layout history={props.history}>
@@ -85,16 +106,16 @@ const Test: React.FC<PropsType> = (props) => {
 			<div className="section form">
 				<div className="row">
 					<label className="no-print">Class/Section</label>
-					<select onClick={getSelectedClass}>
-						<option value="">Select Section</option>
+					<select onClick={getClass}>
+						<option id="0" value="">Select Section</option>
 						{
-							sortedSections.map(s => <option key={s.id} value={s.namespaced_name}>{s.namespaced_name}</option>)
+							sortedSections.map(s => <option key={s.id} data-id={s.id} value={s.namespaced_name}>{s.namespaced_name}</option>)
 						}
 					</select>
 				</div>
 				<div className="row">
 					<label className="no-print">Subject</label>
-					<select className="no-print" onClick={getSelectedSubject}>
+					<select className="no-print" onClick={getSubject}>
 						<option value="">Select Subject</option>
 						{
 							subjects && subjects.map((sub) => <option key={sub} value={sub}>{sub}</option>)
@@ -122,10 +143,10 @@ const Test: React.FC<PropsType> = (props) => {
 						</div>
 						<div className="row">
 							<label className="no-print">Students</label>
-							<select className="no-print" onClick={getSelectedSubject}>
+							<select className="no-print" onClick={getStudent}>
 								<option value="">Select Students</option>
 								{
-									subjects && subjects.map((sub) => <option key={sub} value={sub}>{sub}</option>)
+									students && students.map((std) => <option key={std.id} value={std.id}>{std.name}</option>)
 								}
 							</select>
 						</div>
@@ -140,6 +161,6 @@ const Test: React.FC<PropsType> = (props) => {
 
 export default connect((state: RootReducerState) => ({
 	targeted_instruction: state.db.targeted_instruction,
-	classes: state.db.classes
+	classes: state.db.classes,
+	students: state.db.students
 }))(Test)
-// export default Test
