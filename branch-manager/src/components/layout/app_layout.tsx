@@ -5,18 +5,18 @@ import { Navigation } from 'components/navigation'
 import { useDocumentTitle } from 'utils'
 
 type P = {
-    children: React.ReactNode
-    title?: string
+	children: React.ReactNode
+	title?: string
 }
 
 export const AppLayout: React.FC<P> = ({ children, title }) => {
 
-    const doc_title = title ? title + " | " + config.siteTitleAlt : config.siteTitleAlt
+	const doc_title = title ? title + " | " + config.siteTitleAlt : config.siteTitleAlt
 
-    useDocumentTitle(doc_title)
+	useDocumentTitle(doc_title)
 
-    return <>
-        <Navigation />
-        {children}
-    </>
+	return <>
+		<Navigation />
+		{children}
+	</>
 }

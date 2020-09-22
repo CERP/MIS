@@ -29,7 +29,8 @@
 	"editor.formatOnSave": true,
 	"eslint.workingDirectories": [
 		"./web",
-		"./dashboard"
+		"./dashboard",
+		"./branch-manager"
 	],
 	"[typescriptreact]": {
 		"editor.defaultFormatter": "vscode.typescript-language-features"

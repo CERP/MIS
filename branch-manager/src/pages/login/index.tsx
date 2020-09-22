@@ -51,13 +51,14 @@ export const Login: React.FC<P> = () => {
 					<div className="mb-4">
 						<label className="sr-only">Password</label>
 						<input className="border-solid border border-gray-400 rounded px-2 py-3" type="password"
-							name="password" placeholder="Password" onChange={(e) => handle_change(e)} required />
+							name="password" placeholder="Password" onChange={(e) => handle_change(e)} required>
+						</input>
 					</div>
 					<button className="bg-gray-500 hover:bg-gray-600 rounded text-white font-bold w-full py-3">
 						Login
 					</button>
 				</div>
-			</form>
-		</AppLayout>
+			</form >
+		</AppLayout >
 	)
 }

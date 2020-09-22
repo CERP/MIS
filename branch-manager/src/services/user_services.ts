@@ -6,7 +6,7 @@ import { auth_header, save_auth, clear_auth } from 'helpers'
 const host = get_host()
 const client_id = get_client_id()
 
-const login = (username: string, password: string) => {
+const login = async (username: string, password: string) => {
 
 	const request_options = {
 		method: 'POST',
@@ -16,13 +16,13 @@ const login = (username: string, password: string) => {
 		body: JSON.stringify({ username, password, client_id })
 	}
 
-	return fetch(`${host}/branch-manager/users/authenticate`, request_options)
-		.then(handle_response)
-		.then(auth_token => {
-			const auth = { id: username, token: auth_token }
-			save_auth(auth)
-			return auth
-		})
+	const response = await fetch(`${host}/branch-manager/users/authenticate`, request_options)
+
+	const auth_token = await handle_response(response)
+	const auth = { id: username, token: auth_token }
+	save_auth(auth)
+
+	return auth
 }
 
 const logout = () => {

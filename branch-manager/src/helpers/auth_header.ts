@@ -1,10 +1,10 @@
 export const auth_header = () => {
 
-    const auth = JSON.parse(localStorage.getItem('auth') || '')
+	const auth = JSON.parse(localStorage.getItem('auth') || '')
 
-    if (auth && auth.token) {
-        return { 'authorization': auth.token }
-    }
+	if (auth && auth.token) {
+		return { 'authorization': auth.token }
+	}
 
-    return {}
+	return {}
 }
