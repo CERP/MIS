@@ -1,93 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import getSectionsFromClasses from 'utils/getSectionsFromClasses'
-import getSubjectsFromClasses from 'utils/getSubjectsFromClasses'
+import React from 'react';
 import { connect } from 'react-redux'
 import Switch from "react-switch";
 import './style.css'
 
 interface P {
-    students: RootDBState["students"]
-    targeted_instruction: RootDBState["targeted_instruction"]
-    sections: AugmentedSection[]
-    classes: RootDBState["classes"]
+    questions: any
 }
 
+const handleChange = (checked: any) => {
+    debugger
 
+}
 
 const StudentGrades: React.FC<P> = (props: any) => {
-    const [id,] = useState(props.match.params.id)
-    const [selectedTest, setSelectedTest] = useState('')
-    const [selectedTestType, setSelectedTestType] = useState('')
-    const [tests, setTests] = useState([])
-    const [stdObj, setStdObj] = useState(props.students[id])
-    const [questions, setQuestions] = useState([])
 
-
-    const getSelectedTestType = (e: any) => {
-        setSelectedTestType(e.target.value)
-        getQuestionList(selectedTest)
-    }
-
-    const getSelectedTest = (e: any) => {
-        setSelectedTest(e.target.value)
-        getQuestionList(e.target.value)
-    }
-
-    const getQuestionList = (selectedTest: any) => {
-        let questionArr = []
-        //@ts-ignore
-        const res = stdObj.diagnostic[selectedTest]
-        if (res && selectedTestType === 'Diagnostic') {
-            for (let obj of Object.entries(res && res)) {
-                questionArr.push({
-                    "key": obj[0],
-                    //@ts-ignore
-                    "value": obj[1].isCorrect
-                })
-
-            }
-            setQuestions(questionArr)
-        }
-    }
-
-    return <div className="section form">
-        <div className="row">
-            <label>Test</label>
-            <select onClick={getSelectedTest}>
-                <option value="">Select Test</option>
-                {
-                    tests && tests.map((c) => <option key={c} value={c}>{c}</option>)
-                }
-            </select>
-        </div>
-        <div className="table">
-            <div className="row">
-                <label>Student</label>
-                <select onClick={getSelectedTestType}>
-                    <option value="">Select Test Type</option>
-                </select>
-            </div>
-        </div>
-        {/* <div className="questions-container">
-            {questions && questions.map((question) => {
-                return <div key={question.key} className="form">
-                    <div className="row">
-                        <div>{capitalize(question.key)}</div>
-                        <Switch
-                            onChange={handleChange}
-                            checked={question.value}
-                            id="normal-switch"
-                        />
-                    </div>
+    return <div className="questions-container">
+        {props.questions && props.questions.map((question: any) => {
+            return <div key={question.key} className="form">
+                <div className="row">
+                    <div>{(question.key)}</div>
+                    <Switch
+                        onChange={handleChange}
+                        checked={question.value}
+                        id="normal-switch"
+                    />
                 </div>
-            })}
-        </div> */}
-    </div >
-
+            </div>
+        })}
+    </div>
 }
 
 export default connect((state: RootReducerState) => ({
-    students: state.db.students,
-    classes: state.db.classes,
-    targeted_instruction: state.db.targeted_instruction
+
 }))(StudentGrades)

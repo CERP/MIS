@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Layout from 'components/Layout'
 import { RouteComponentProps } from 'react-router-dom'
 import { Link } from 'react-router-dom'
-import Grades from './Grades'
+import StudentGrades from './Grades'
 import Diagnostic from './Diagnostic'
 import { connect } from 'react-redux'
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
@@ -23,6 +23,7 @@ const Test: React.FC<PropsType> = (props) => {
 	const loc = props.location.pathname.split('/').slice(-1).pop();
 	const [selectedSubject, setSelectedSubject] = useState('')
 	const [selectedClass, setSelectedClass] = useState('')
+	const [questions, setQuestions] = useState([])
 	const [students, setStudents] = useState([])
 	const [subjects, setSubjects] = useState([])
 	const [testType, setTestType] = useState('')
@@ -76,8 +77,8 @@ const Test: React.FC<PropsType> = (props) => {
 		}
 	}
 
-	const getTests = () => {
-
+	const getTest = (e: any) => {
+		getQuestionList(e.target.value, props.students[stdId])
 	}
 
 	const getTestType = (e: any) => {
@@ -85,7 +86,7 @@ const Test: React.FC<PropsType> = (props) => {
 		const testArr = []
 		for (let [id, obj] of Object.entries(props.targeted_instruction.tests)) {
 			//@ts-ignore
-			if (obj.class === selectedClass) {
+			if (obj.class === selectedClass && obj.type === testType && obj.subject === selectedSubject) {
 				//@ts-ignore
 				testArr.push(obj.name)
 			}
@@ -96,6 +97,24 @@ const Test: React.FC<PropsType> = (props) => {
 	const getStudent = (e: any) => {
 		setStdId(e.target.value)
 	}
+
+	const getQuestionList = (selectedTest: any, stdObj: any) => {
+		let questionArr = []
+		//@ts-ignore
+		const res = stdObj.diagnostic[selectedTest]
+		if (res && testType === 'Diagnostic') {
+			for (let obj of Object.entries(res && res)) {
+				questionArr.push({
+					"key": obj[0],
+					//@ts-ignore
+					"value": obj[1].isCorrect
+				})
+
+			}
+			setQuestions(questionArr)
+		}
+	}
+
 
 	return <Layout history={props.history}>
 		<div className="analytics">
@@ -122,6 +141,19 @@ const Test: React.FC<PropsType> = (props) => {
 						}
 					</select>
 				</div>
+				{loc === 'grades' &&
+					<>
+						<div className="row">
+							<label className="no-print">Students</label>
+							<select className="no-print" onClick={getStudent}>
+								<option value="">Select Students</option>
+								{
+									students && students.map((std) => <option key={std.id} value={std.id}>{std.name}</option>)
+								}
+							</select>
+						</div>
+					</>
+				}
 				<div className="row">
 					<label className="no-print">Test Type</label>
 					<select className="no-print" onClick={getTestType}>
@@ -134,25 +166,16 @@ const Test: React.FC<PropsType> = (props) => {
 					<>
 						<div className="row">
 							<label className="no-print">Test</label>
-							<select className="no-print" onClick={getTests}>
+							<select className="no-print" onClick={getTest}>
 								<option value="">Select Test</option>
 								{
-									tests && tests.map((sub) => <option key={sub} value={sub}>{sub}</option>)
-								}
-							</select>
-						</div>
-						<div className="row">
-							<label className="no-print">Students</label>
-							<select className="no-print" onClick={getStudent}>
-								<option value="">Select Students</option>
-								{
-									students && students.map((std) => <option key={std.id} value={std.id}>{std.name}</option>)
+									tests && tests.map((test) => <option key={test} value={test}>{test}</option>)
 								}
 							</select>
 						</div>
 					</>
 				}
-				{loc === 'test' && <Diagnostic label={label} url={url} />}
+				{loc === 'test' ? <Diagnostic label={label} url={url} /> : <StudentGrades questions={questions} />}
 			</div>
 		</div>
 	</Layout>
