@@ -40,9 +40,49 @@ const Test: React.FC<PropsType> = (props) => {
 		let el = e.target.childNodes[index]
 		setSelectedClass(e.target.value)
 		setStudents(getAllStudnets(el.dataset.id))
-		getPDF(selectedSubject, e.target.value)
+		getPDF(selectedSubject, e.target.value, testType)
 		setSubjects(getSubjectsFromClasses(props.classes, e.target.value))
 	}
+
+	const getSubject = (e: any) => {
+		setSelectedSubject(e.target.value)
+		if (testType) {
+			getPDF(e.target.value, selectedClass, testType)
+			setTests(getTestList(testType, e.target.value))
+		}
+	}
+
+	const getTestType = (e: any) => {
+		setTestType(e.target.value)
+		getPDF(selectedSubject, selectedClass, e.target.value)
+		setTests(getTestList(e.target.value, selectedSubject))
+	}
+
+	const getTestList = (testType: any, selectedSubject: any) => {
+		const testArr = []
+		for (let [id, obj] of Object.entries(props.targeted_instruction.tests)) {
+			//@ts-ignore
+			if (obj.class === selectedClass && obj.type === testType && obj.subject === selectedSubject) {
+				//@ts-ignore
+				testArr.push(obj.name)
+				setQuestions([])
+			}
+		}
+		return testArr
+	}
+
+	const getStudent = (e: any) => {
+		setStdId(e.target.value)
+		if (testId) {
+			getQuestionList(testId, props.students[e.target.value])
+		}
+	}
+
+	const getTest = (e: any) => {
+		setTestId(e.target.value)
+		getQuestionList(e.target.value, props.students[stdId])
+	}
+
 
 	const getAllStudnets = (sectionId: string) => {
 		const students = Object.values(props.students)
@@ -57,14 +97,10 @@ const Test: React.FC<PropsType> = (props) => {
 		return students
 	}
 
-	const getSubject = (e: any) => {
-		setSelectedSubject(e.target.value)
-	}
-
-	const getPDF = (selectedSubject: any, selectedClass: any) => {
+	const getPDF = (selectedSubject: any, selectedClass: any, testType: any) => {
 		for (let [id, obj] of Object.entries(props.targeted_instruction['tests'])) {
 			//@ts-ignore
-			if (obj.type === 'Diagnostic' && obj.class === selectedClass && obj.subject === selectedSubject) {
+			if (obj.type === testType && obj.class === selectedClass && obj.subject === selectedSubject) {
 				//@ts-ignore
 				setUrl(obj.pdf_url)
 				//@ts-ignore
@@ -77,36 +113,14 @@ const Test: React.FC<PropsType> = (props) => {
 		}
 	}
 
-	const getTest = (e: any) => {
-		setTestId(e.target.value)
-		getQuestionList(e.target.value, props.students[stdId])
-	}
-
-	const getTestType = (e: any) => {
-		setTestType(e.target.value)
-		debugger
-		getPDF(selectedSubject, selectedClass)
-		const testArr = []
-		for (let [id, obj] of Object.entries(props.targeted_instruction.tests)) {
-			//@ts-ignore
-			if (obj.class === selectedClass && obj.type === e.target.value && obj.subject === selectedSubject) {
-				//@ts-ignore
-				testArr.push(obj.name)
-			}
-		}
-		setTests(testArr)
-	}
-
-	const getStudent = (e: any) => {
-		setStdId(e.target.value)
-	}
-
 	const getQuestionList = (selectedTest: any, stdObj: any) => {
 		let questionArr = []
 		//@ts-ignore
 		const res = stdObj.diagnostic[selectedTest]
+		debugger
 		if (res && testType === 'Diagnostic') {
 			for (let obj of Object.entries(res && res)) {
+				debugger
 				questionArr.push({
 					"key": obj[0],
 					//@ts-ignore
@@ -163,10 +177,6 @@ const Test: React.FC<PropsType> = (props) => {
 								}
 							</select>
 						</div>
-					</>
-				}
-				{loc === 'grades' &&
-					<>
 						<div className="row">
 							<label className="no-print">Test</label>
 							<select className="no-print" onClick={getTest}>
@@ -178,7 +188,12 @@ const Test: React.FC<PropsType> = (props) => {
 						</div>
 					</>
 				}
-				{loc === 'test' ? <Diagnostic label={label} url={url} /> : <StudentGrades questions={questions} stdId={stdId} testId={testId} stdObj={props.students[stdId]} />}
+				{loc === 'test' ? <Diagnostic label={label} url={url} /> :
+					<StudentGrades
+						questions={questions}
+						stdId={stdId}
+						testId={testId}
+						stdObj={props.students[stdId]} />}
 			</div>
 		</div>
 	</Layout>

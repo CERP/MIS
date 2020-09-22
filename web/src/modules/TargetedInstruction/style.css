@@ -5,3 +5,12 @@
     margin-top: 20px;
     margin-bottom: 20px;
 }
+.questionName {
+    margin-right: 90%;
+}
+.saveBtnDiv {
+    margin-top: 45px !important;
+}
+.saveBtn {
+    padding: 10px 15px 10px 15px !important;
+}
