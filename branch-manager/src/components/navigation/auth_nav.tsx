@@ -17,15 +17,14 @@ const AuthNavigation = () => {
 				<div className="hidden md:flex md:items-center md:w-auto w-full order-3 md:order-1">
 					<nav>
 						<ul className="md:flex items-center justify-between text-base text-red-500 pt-4 md:pt-0">
-							<li><Link to="/" className="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2">Home</Link></li>
-							<li><Link to="/about" className="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2">About</Link></li>
+							<li><Link to="/home" className="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2">Home</Link></li>
 						</ul>
 					</nav>
 				</div>
 
 				<div className="order-2 md:order-3 flex flex-wrap items-center justify-end mr-0 md:mr-4">
 					<div className="auth flex items-center w-full md:w-full">
-						<Link to="/login" className="bg-transparent text-red-500 px-6 py-2 rounded border border-red-500 mr-4 hover:bg-red-400 hover:text-white">Login</Link>
+						<Link to="/login" className="bg-transparent text-red-500 px-4 py-1 rounded border border-red-500 mr-4 hover:bg-red-400 hover:text-white">Logout</Link>
 					</div>
 				</div>
 			</div>

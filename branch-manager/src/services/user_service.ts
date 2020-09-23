@@ -10,16 +10,16 @@ const login = async (username: string, password: string) => {
 
 	const request_options = {
 		method: 'POST',
-		mode: 'cors',
-		cache: 'no-cache',
 		headers: { 'content-type': 'application/json' },
 		body: JSON.stringify({ username, password, client_id })
 	}
 
 	const response = await fetch(`${host}/branch-manager/users/authenticate`, request_options)
-
 	const auth_token = await handle_response(response)
-	const auth = { id: username, token: auth_token }
+
+	const auth = { id: username, ...auth_token }
+
+	// save to localstorage
 	save_auth(auth)
 
 	return auth
@@ -50,8 +50,7 @@ const handle_response = (response: any) => {
 			return Promise.reject(error)
 		}
 
-		console.log("RESPONSE", data);
-		return data
+		return data && data.data
 	})
 }
 

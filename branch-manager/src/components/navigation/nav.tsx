@@ -25,7 +25,7 @@ const Navigation = () => {
 
 				<div className="order-2 md:order-3 flex flex-wrap items-center justify-end mr-0 md:mr-4">
 					<div className="auth flex items-center w-full md:w-full">
-						<Link to="/login" className="bg-transparent text-red-500 px-6 py-2 rounded border border-red-500 mr-4 hover:bg-red-400 hover:text-white">Login</Link>
+						<Link to="/login" className="bg-transparent text-red-500 px-4 py-1 rounded border border-red-500 mr-4 hover:bg-red-400 hover:text-white">Login</Link>
 					</div>
 				</div>
 			</div>

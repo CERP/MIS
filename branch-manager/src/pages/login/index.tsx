@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
-import { AppLayout } from 'components/layout'
+import React, { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
-import { user_actions } from 'actions'
+import { alert_actions, user_actions } from 'actions'
+import { AppLayout } from 'components/layout'
+import { Spinner } from 'components/animation'
+import { ShowPassword, HidePassword } from 'components/password'
 
 type P = {
 
@@ -15,14 +17,28 @@ type S = {
 
 export const Login: React.FC<P> = () => {
 
-	const [submitted, set_submitted] = useState(false)
+	const dispatch = useDispatch()
+	const alert = useSelector((state: any) => state.alert)
+	const logging = useSelector((state: any) => state.authentication.loggingIn)
+
+	const [toggle, set_toggle] = useState(false)
 	const [state, set_state] = useState<S>({
 		username: '',
 		password: ''
 	})
 
-	const dispatch = useDispatch()
-	const { username, password } = state
+	useEffect(() => {
+
+		dispatch(user_actions.logout())
+
+		// don't dispatch to many time, just it when alert message set
+		if (alert && alert.type) {
+			setTimeout(() => {
+				dispatch(alert_actions.clear())
+			}, 5000)
+		}
+
+	}, [alert, dispatch])
 
 	const handle_change = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target
@@ -32,11 +48,15 @@ export const Login: React.FC<P> = () => {
 	const handle_login = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 
-		set_submitted(true)
+		const { username, password } = state
 
 		if (username && password) {
 			dispatch(user_actions.login(username, password))
 		}
+	}
+
+	const handle_show_hide = () => {
+		set_toggle(!toggle)
 	}
 
 	return (
@@ -45,18 +65,25 @@ export const Login: React.FC<P> = () => {
 				<div className="mb-4 mt-8">
 					<div className="mb-4">
 						<label className="sr-only">Username</label>
-						<input className="border-solid border border-gray-400 rounded px-2 py-3" type="text"
+						<input className="border-solid border border-gray-400 rounded px-2 py-2" type="text"
 							name="username" placeholder="usernmae" onChange={(e) => handle_change(e)} required />
 					</div>
 					<div className="mb-4">
 						<label className="sr-only">Password</label>
-						<input className="border-solid border border-gray-400 rounded px-2 py-3" type="password"
-							name="password" placeholder="Password" onChange={(e) => handle_change(e)} required>
-						</input>
+						<div className="relative">
+							<input className="border-solid border border-gray-400 rounded px-2 py-2" type={`${toggle ? 'text' : 'password'}`}
+								name="password" placeholder="Password" onChange={(e) => handle_change(e)} required />
+							<div className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 cursor-pointer">
+								{toggle ? <HidePassword onHide={handle_show_hide} /> : <ShowPassword onShow={handle_show_hide} />}
+							</div>
+						</div>
 					</div>
-					<button className="bg-gray-500 hover:bg-gray-600 rounded text-white font-bold w-full py-3">
+					<button className={`inline-flex items-center justify-center px-4 py-2 border text-base font-medium leading-6 text-center 
+										rounded text-white bg-red-600 hover:bg-red-500 w-full ${logging ? 'cursor-not-allowed' : ''}`}>
+						{logging && <Spinner />}
 						Login
 					</button>
+					<p className="text-sm my-2 text-red-700">{alert && alert.message}</p>
 				</div>
 			</form >
 		</AppLayout >

@@ -3,7 +3,7 @@ import { Provider } from 'react-redux'
 import { RootReducerCombinedState } from 'reducers'
 import { Store } from 'redux'
 
-import { Routes } from 'routes'
+import { AppRoutes } from 'routes'
 
 type P = {
 	store: Store<RootReducerCombinedState>
@@ -11,7 +11,7 @@ type P = {
 
 const App: React.FC<P> = ({ store }) => (
 	<Provider store={store}>
-		<Routes />
+		<AppRoutes />
 	</Provider>
 )
 

@@ -16,6 +16,7 @@ const login = (username: string, password: string) => {
 				auth => {
 					dispatch(success(auth))
 					history.push("/home")
+					window.location.reload()
 				},
 				error => {
 					dispatch(failure(error.toString()))

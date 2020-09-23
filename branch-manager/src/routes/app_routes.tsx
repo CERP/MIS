@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { ErrorPage } from 'components/error'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
-import { AuthRoute } from 'routes'
+import { AuthRoute } from 'components/auth_route'
 
 import {
 	Landing,
@@ -64,9 +64,11 @@ class AppRoute extends React.Component<P, S> {
 	}
 }
 
-export const Routes = connect(
+const AppRoutes = connect(
 	(state: RootReducerState) => ({}),
 	(dispatch: Function) => ({
 		sendError: (err: Error, errInfo: React.ErrorInfo) => dispatch(submitError(err, errInfo))
 	})
 )(AppRoute)
+
+export { AppRoutes }
