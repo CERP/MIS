@@ -4,6 +4,7 @@ import { RouteComponentProps } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import StudentGrades from './Grades'
 import Diagnostic from './Diagnostic'
+import Report from './Report'
 import { connect } from 'react-redux'
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
 import getSubjectsFromClasses from 'utils/getSubjectsFromClasses'
@@ -116,7 +117,7 @@ const Test: React.FC<PropsType> = (props) => {
 	const getQuestionList = (selectedTest: any, stdObj: any) => {
 		let questionArr = []
 		//@ts-ignore
-		const res = stdObj.diagnostic[selectedTest]
+		const res = stdObj.diagnostic_result[selectedTest]
 		debugger
 		if (res && testType === 'Diagnostic') {
 			for (let obj of Object.entries(res && res)) {
@@ -138,6 +139,7 @@ const Test: React.FC<PropsType> = (props) => {
 			<div className="row tabs">
 				<Link className={`button ${loc === "test" ? "orange" : ''}`} to="test" replace={true}>Test</Link>
 				<Link className={`button ${loc === "grades" ? "blue" : ''}`} to="grades" replace={true}>Grades</Link>
+				<Link className={`button ${loc === "report" ? "green" : ''}`} to="report" replace={true}>Report</Link>
 			</div>
 			<div className="section form">
 				<div className="row">
@@ -166,7 +168,7 @@ const Test: React.FC<PropsType> = (props) => {
 						<option value="Monthly">Monthly</option>
 					</select>
 				</div>
-				{loc === 'grades' &&
+				{(loc === 'grades' || loc === 'report') &&
 					<>
 						<div className="row">
 							<label className="no-print">Students</label>
@@ -189,11 +191,13 @@ const Test: React.FC<PropsType> = (props) => {
 					</>
 				}
 				{loc === 'test' ? <Diagnostic label={label} url={url} /> :
-					<StudentGrades
-						questions={questions}
-						stdId={stdId}
-						testId={testId}
-						stdObj={props.students[stdId]} />}
+					loc === 'grades' ?
+						<StudentGrades
+							questions={questions}
+							stdId={stdId}
+							testId={testId}
+							stdObj={props.students[stdId]} /> :
+						<Report name="Humna" />}
 			</div>
 		</div>
 	</Layout>

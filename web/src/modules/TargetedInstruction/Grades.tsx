@@ -22,7 +22,7 @@ const StudentGrades: React.FC<P> = (props: any) => {
         }
     })
     const handleChange = (checked: any, questionId: any, stdId: any, testId: any) => {
-        const tests = props.stdObj.diagnostic[testId]
+        const tests = props.stdObj.diagnostic_result[testId]
         tests[questionId].isCorrect = checked
     }
 
@@ -50,7 +50,6 @@ const StudentGrades: React.FC<P> = (props: any) => {
         }, 1000)
     }
 
-    console.log(props.stdId)
     return <>
         {state.banner.active ? <Banner isGood={state.banner.good} text={state.banner.text} /> : false}
         {props.questions.length > 0 &&

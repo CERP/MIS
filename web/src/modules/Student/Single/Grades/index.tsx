@@ -53,7 +53,7 @@ const StudentGrades: React.FC<P> = (props: any) => {
     const getQuestionList = (selectedTest: any) => {
         let questionArr = []
         //@ts-ignore
-        const res = stdObj.diagnostic[selectedTest]
+        const res = stdObj.diagnostic_result[selectedTest]
         if (res && selectedTestType === 'Diagnostic') {
             for (let obj of Object.entries(res && res)) {
                 questionArr.push({
