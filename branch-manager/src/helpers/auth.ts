@@ -12,6 +12,7 @@ const load_auth = (): Auth => {
 	const initial_auth: Auth = {
 		id: undefined,
 		token: undefined,
+		schools: undefined
 	}
 
 	const auth = localStorage.getItem("auth")

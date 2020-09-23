@@ -24,6 +24,7 @@ interface AuthReducerState {
 interface Auth {
 	id?: string
 	token?: string
+	schools?: string[]
 }
 
 interface AlertState {

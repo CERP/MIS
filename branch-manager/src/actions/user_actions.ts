@@ -9,7 +9,7 @@ const login = (username: string, password: string) => {
 
 	return (dispatch: Dispatch) => {
 
-		dispatch(request({ id: username, token: undefined }))
+		dispatch(request({ id: username, token: undefined, schools: undefined }))
 
 		user_service.login(username, password)
 			.then(

@@ -18,6 +18,7 @@ const AuthNavigation = () => {
 					<nav>
 						<ul className="md:flex items-center justify-between text-base text-red-500 pt-4 md:pt-0">
 							<li><Link to="/home" className="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2">Home</Link></li>
+							<li><Link to="/analytics" className="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2">Analytics</Link></li>
 						</ul>
 					</nav>
 				</div>

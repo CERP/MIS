@@ -57,6 +57,7 @@ class AppRoute extends React.Component<P, S> {
 				<Route exact path="/" component={Landing} />
 				<Route exact path="/login" component={Login} />
 				<AuthRoute exact path="/home" component={Home} />
+				<AuthRoute exact path="/analytics" component={Home} />
 				<Route path="*" component={PageNoteFound} />
 			</Switch>
 		</Router>
