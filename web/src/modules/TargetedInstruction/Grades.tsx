@@ -75,12 +75,16 @@ const StudentGrades: React.FC<P> = (props: any) => {
                 }
             }
         }
+
+        for (let [key, obj] of Object.entries(report)) {
+            obj.percentage = (obj.correct / obj.possible) * 100;
+        }
+
         props.students[props.stdId].report = {
             [props.testType]: {
                 [props.testId]: report
             }
         }
-        console.log(props.students[props.stdId])
         setState({
             banner: {
                 active: true,
@@ -111,7 +115,7 @@ const StudentGrades: React.FC<P> = (props: any) => {
                     {props.questions && props.questions.map((question: any) => {
                         return <div key={question.key} className="form">
                             <div className="row">
-                                <div className="questionName">{(question.key)}</div>
+                                <div className="question-name">{(question.key)}</div>
                                 <Switch
                                     onChange={(e) => handleChange(e, question.key)}
                                     checked={question.value}
@@ -121,8 +125,8 @@ const StudentGrades: React.FC<P> = (props: any) => {
                         </div>
                     })}
                     {props.questions.length > 0 &&
-                        <div className="row saveBtnDiv">
-                            <button className="button green saveBtn" onClick={onSave}>SAVE</button>
+                        <div className="row save-btn-div">
+                            <button className="button green save-btn" onClick={onSave}>SAVE</button>
                         </div>}
                 </div>
             </div>
