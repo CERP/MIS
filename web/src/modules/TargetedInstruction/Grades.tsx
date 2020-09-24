@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useState } from 'react';
 import { connect } from 'react-redux'
 import Switch from "react-switch";
@@ -8,6 +9,7 @@ interface P {
     questions: any
     stdId: any
     testId: any
+    testType: any
     stdObj: any
     students: RootDBState["students"]
     targeted_instruction: RootDBState["targeted_instruction"]
@@ -21,8 +23,9 @@ const StudentGrades: React.FC<P> = (props: any) => {
             text: "Saved!"
         }
     })
-    const handleChange = (checked: any, questionId: any, stdId: any, testId: any) => {
-        const tests = props.stdObj.diagnostic_result[testId]
+
+    const handleChange = (checked: any, questionId: any) => {
+        const tests = props.stdObj.diagnostic_result[props.testId]
         tests[questionId].isCorrect = checked
     }
 
@@ -31,6 +34,53 @@ const StudentGrades: React.FC<P> = (props: any) => {
     }
 
     const onSave = () => {
+        let slo_keys = []
+        const tests = props.stdObj.diagnostic_result[props.testId]
+        for (let [id, obj] of Object.entries(tests)) {
+            slo_keys.push({
+                slo: obj.slo[0],
+                answer: obj.isCorrect
+            })
+        }
+        let report = {}
+        for (let [id, sloObj] of Object.entries(slo_keys)) {
+            const category = props.targeted_instruction.SLO_Mapping[sloObj.slo].category
+            if (report[category]) {
+                if (sloObj.answer) {
+                    const countCorrect = ++report[category].correct
+                    const countPossible = ++report[category].possible
+                    report[category] = {
+                        correct: countCorrect,
+                        possible: countPossible
+                    }
+                } else {
+                    const countPossible = ++report[category].possible
+                    report[category] = {
+                        correct: report[category].correct,
+                        possible: countPossible
+                    }
+                }
+
+            } else {
+                if (sloObj.answer) {
+                    report[category] = {
+                        correct: 1,
+                        possible: 1
+                    }
+                } else {
+                    report[category] = {
+                        correct: 0,
+                        possible: 1
+                    }
+                }
+            }
+        }
+        props.students[props.stdId].report = {
+            [props.testType]: {
+                [props.testId]: report
+            }
+        }
+        console.log(props.students[props.stdId])
         setState({
             banner: {
                 active: true,
@@ -63,7 +113,7 @@ const StudentGrades: React.FC<P> = (props: any) => {
                             <div className="row">
                                 <div className="questionName">{(question.key)}</div>
                                 <Switch
-                                    onChange={(e) => handleChange(e, question.key, props.stdId, props.testId)}
+                                    onChange={(e) => handleChange(e, question.key)}
                                     checked={question.value}
                                     id="normal-switch"
                                 />

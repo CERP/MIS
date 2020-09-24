@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useState } from 'react';
 import Layout from 'components/Layout'
 import { RouteComponentProps } from 'react-router-dom'
@@ -62,9 +63,7 @@ const Test: React.FC<PropsType> = (props) => {
 	const getTestList = (testType: any, selectedSubject: any) => {
 		const testArr = []
 		for (let [id, obj] of Object.entries(props.targeted_instruction.tests)) {
-			//@ts-ignore
 			if (obj.class === selectedClass && obj.type === testType && obj.subject === selectedSubject) {
-				//@ts-ignore
 				testArr.push(obj.name)
 				setQuestions([])
 			}
@@ -100,11 +99,8 @@ const Test: React.FC<PropsType> = (props) => {
 
 	const getPDF = (selectedSubject: any, selectedClass: any, testType: any) => {
 		for (let [id, obj] of Object.entries(props.targeted_instruction['tests'])) {
-			//@ts-ignore
 			if (obj.type === testType && obj.class === selectedClass && obj.subject === selectedSubject) {
-				//@ts-ignore
 				setUrl(obj.pdf_url)
-				//@ts-ignore
 				setLabel(obj.label)
 				break;
 			} else {
@@ -116,15 +112,11 @@ const Test: React.FC<PropsType> = (props) => {
 
 	const getQuestionList = (selectedTest: any, stdObj: any) => {
 		let questionArr = []
-		//@ts-ignore
 		const res = stdObj.diagnostic_result[selectedTest]
-		debugger
 		if (res && testType === 'Diagnostic') {
 			for (let obj of Object.entries(res && res)) {
-				debugger
 				questionArr.push({
 					"key": obj[0],
-					//@ts-ignore
 					"value": obj[1].isCorrect
 				})
 
@@ -196,6 +188,7 @@ const Test: React.FC<PropsType> = (props) => {
 							questions={questions}
 							stdId={stdId}
 							testId={testId}
+							testType={testType}
 							stdObj={props.students[stdId]} /> :
 						<Report name="Humna" />}
 			</div>
