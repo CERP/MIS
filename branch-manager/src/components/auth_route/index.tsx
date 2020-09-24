@@ -13,7 +13,7 @@ const PrivateRoute = ({ component, auth: { id, token }, ...rest }: any) => {
 }
 
 const AuthRoute = connect((state: any) => ({
-    auth: state.authentication.auth
+    auth: state.authentication.auth || { id: undefined, token: undefined }
 }))(PrivateRoute)
 
 export { AuthRoute }

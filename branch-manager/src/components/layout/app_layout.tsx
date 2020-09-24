@@ -20,7 +20,7 @@ const Layout: React.FC<P> = ({ children, title, auth }) => {
 	const auth_user = auth ? auth.id && auth.token : false
 
 	return <>
-		{ auth_user ? <AuthNavigation /> : <Navigation />}
+		{auth_user ? <AuthNavigation /> : <Navigation />}
 		{children}
 	</>
 }

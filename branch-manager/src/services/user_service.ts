@@ -37,7 +37,7 @@ const fetch_school_branches = async () => {
 
 const fetch_daily_stats = async (school_id: string) => {
 	const options = get_request_options()
-	const response = await fetch(`${host}/daily-stats?${school_id}`, options)
+	const response = await fetch(`${host}/daily-stats?school_id=${school_id}`, options)
 	return handle_response(response)
 }
 
