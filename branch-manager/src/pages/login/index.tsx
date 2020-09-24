@@ -15,7 +15,7 @@ type S = {
 	password: string
 }
 
-export const Login: React.FC<P> = () => {
+const Login: React.FC<P> = () => {
 
 	const dispatch = useDispatch()
 	const alert = useSelector((state: any) => state.alert)
@@ -89,3 +89,5 @@ export const Login: React.FC<P> = () => {
 		</AppLayout >
 	)
 }
+
+export { Login }
