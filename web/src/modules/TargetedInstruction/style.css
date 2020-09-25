@@ -19,6 +19,7 @@
     font-size: 20px;
     font-weight: 700;
     text-align: center;
+    text-transform: capitalize;
 }
 .table-data {
     font-size: 18px;

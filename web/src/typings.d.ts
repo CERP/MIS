@@ -289,6 +289,15 @@ interface MISStudent {
 			}
 		}
 	}
+	report: {
+		[test_type: string]: {
+			[test_id: string]: {
+				correct: number 
+				possible: number 
+				percentage: number
+			}
+		}
+	}
 }
 
 interface MISFamilyInfo {

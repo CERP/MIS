@@ -77,11 +77,12 @@ const StudentGrades: React.FC<P> = (props: any) => {
         }
 
         for (let [key, obj] of Object.entries(report)) {
-            obj.percentage = (obj.correct / obj.possible) * 100;
+            obj.percentage = ((obj.correct / obj.possible) * 100);
         }
 
-        props.students[props.stdId].report = {
+        props.students[props.stdId]['report'] = {
             [props.testType]: {
+                ...props.students[props.stdId].report[props.testType],
                 [props.testId]: report
             }
         }

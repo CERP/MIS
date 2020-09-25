@@ -30,6 +30,7 @@ const Test: React.FC<PropsType> = (props) => {
 	const [subjects, setSubjects] = useState([])
 	const [testId, setTestId] = useState('')
 	const [testType, setTestType] = useState('')
+	const [report, setReport] = useState('')
 	const [stdId, setStdId] = useState('')
 	const [tests, setTests] = useState([])
 	const [label, setLabel] = useState('')
@@ -83,13 +84,17 @@ const Test: React.FC<PropsType> = (props) => {
 		getQuestionList(e.target.value, props.students[stdId])
 	}
 
+	const getSelected = (e: any) => {
+		setReport(e.target.value)
+	}
+
 
 	const getAllStudnets = (sectionId: string) => {
 		const students = Object.values(props.students)
 			.reduce((agg, student) => {
 				if (student.section_id === sectionId) {
 					return [...agg,
-					{ id: student.id, name: student.Name }
+						student
 					]
 				}
 				return [...agg,]
@@ -167,7 +172,7 @@ const Test: React.FC<PropsType> = (props) => {
 							<select className="no-print" onClick={getStudent}>
 								<option value="">Select Students</option>
 								{
-									students && students.map((std) => <option key={std.id} value={std.id}>{std.name}</option>)
+									students && students.map((std) => <option key={std.id} value={std.id}>{std.Name}</option>)
 								}
 							</select>
 						</div>
@@ -182,6 +187,14 @@ const Test: React.FC<PropsType> = (props) => {
 						</div>
 					</>
 				}
+				{loc === 'report' && <div className="row">
+					<label className="no-print">Select</label>
+					<select className="no-print" onClick={getSelected}>
+						<option value="">Select Test</option>
+						<option value="Single Student">Single Student</option>
+						<option value="All Students">All Students</option>
+					</select>
+				</div>}
 				{loc === 'test' ? <Diagnostic label={label} url={url} /> :
 					loc === 'grades' ?
 						<StudentGrades
@@ -193,7 +206,10 @@ const Test: React.FC<PropsType> = (props) => {
 						<Report
 							testId={testId}
 							testType={testType}
-							stdObj={props.students[stdId]} />}
+							type={report}
+							stdId={stdId}
+							stdObj={props.students[stdId]}
+							allStudents={students} />}
 			</div>
 		</div>
 	</Layout>
