@@ -12,7 +12,7 @@ const Home = () => {
 		<AppLayout title={'Home'}>
 			<div className="pt-8">
 				<div className="flex items-center my-5">
-					<h1 className="text-2xl font-serif font-bold leading-6 mx-auto">Daily Schools Statics</h1>
+					<h1 className="text-2xl font-serif font-bold leading-6 mx-auto">Daily Schools Statistics</h1>
 				</div>
 				{
 					schools?.sort().map(id => (
@@ -22,6 +22,9 @@ const Home = () => {
 						</div>
 					))
 				}
+				<div className="flex items-center my-5">
+					<h1 className="text-2xl font-serif font-bold leading-6 mx-auto">Schools Enrollment Statistcs</h1>
+				</div>
 			</div>
 		</AppLayout>
 	)

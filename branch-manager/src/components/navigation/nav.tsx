@@ -26,7 +26,7 @@ const Navigation = () => {
 					<Link to="/about" className=" block mt-4 md:inline-block md:mt-0 px-4 py-2 rounded mr-2"> About </Link>
 				</div>
 				<div className="flex ">
-					<Link to="/login" className=" block text-md pl-2 md:pr-2  ml-2 py-1 text-red-500 font-bold md:mt-0 md:rounded md:border md:border-red-500 md:hover:bg-red-400 md:hover:text-white">Login</Link>
+					<Link to="/login" className="w-20 text-center block text-md px-3  ml-2 py-1 text-red-500 font-bold mt-4 md:mt-0 md:rounded md:border md:border-red-500 md:hover:bg-red-400 md:hover:text-white">Login</Link>
 				</div>
 			</div>
 

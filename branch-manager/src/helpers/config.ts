@@ -1,5 +1,5 @@
 
-const debug_url = "http://localhost:8080"
+const debug_url = "http://421c8d18d442.ngrok.io"
 
 const get_host = () => {
     // @ts-ignore
