@@ -1,7 +1,5 @@
-//@ts-nocheck
-
 import { get_client_id, get_host } from 'helpers'
-import { auth_header, save_auth, clear_auth } from 'helpers'
+import { auth_header, clear_state } from 'helpers'
 
 const host = get_host() + '/branch-manager'
 const client_id = get_client_id()
@@ -15,18 +13,13 @@ const login = async (username: string, password: string) => {
 	}
 
 	const response = await fetch(`${host}/users/authenticate`, request_options)
-	const branch_mgr = await handle_response(response)
+	const auth_resp = await handle_response(response)
 
-	const auth = { id: username, ...branch_mgr }
-
-	// save to localstorage
-	save_auth(auth)
-
-	return auth
+	return auth_resp
 }
 
 const logout = () => {
-	clear_auth()
+	clear_state()
 }
 
 const fetch_school_branches = async () => {
@@ -61,7 +54,7 @@ const get_request_options = () => {
 	return {
 		method: 'GET',
 		headers: auth_header()
-	}
+	} as RequestInit
 }
 
 export const user_service = {

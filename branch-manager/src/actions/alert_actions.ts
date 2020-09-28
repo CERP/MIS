@@ -1,11 +1,11 @@
 import { AlertConstants } from 'constants/index'
 
-const success = (message: string) => {
-	return { type: AlertConstants.SUCCESS, message }
+const success = (data: AlertState) => {
+	return { type: AlertConstants.SUCCESS, data }
 }
 
-const error = (message: string) => {
-	return { type: AlertConstants.ERROR, message }
+const error = (data: AlertState) => {
+	return { type: AlertConstants.ERROR, data }
 }
 
 const clear = () => {

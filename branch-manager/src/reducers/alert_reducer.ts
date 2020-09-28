@@ -1,3 +1,4 @@
+import { AnyAction } from 'redux'
 import { AlertConstants } from 'constants/index'
 
 const initial_state: AlertState = {
@@ -5,21 +6,27 @@ const initial_state: AlertState = {
 	message: ''
 }
 
-export const alert = (state = initial_state, action: any) => {
+const alert = (state: AlertState = initial_state, action: AnyAction): AlertState => {
 	switch (action.type) {
 		case AlertConstants.SUCCESS:
 			return {
-				type: 'alert-success',
-				message: action.message
+				...state,
+				...action.data,
 			}
 		case AlertConstants.ERROR:
 			return {
-				type: 'alert-danger',
-				message: action.message
+				...state,
+				...action.data
 			}
 		case AlertConstants.CLEAR:
-			return {}
+			return {
+				...state,
+				message: '',
+				type: ''
+			}
 		default:
 			return state
 	}
-} 
+}
+
+export { alert }

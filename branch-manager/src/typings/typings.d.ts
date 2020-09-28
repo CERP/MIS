@@ -17,19 +17,20 @@ interface MenuLink {
 	link: string
 }
 
-interface AuthReducerState {
-	auth: Auth
-	loggingIn: false
-}
-interface Auth {
-	id?: string
-	token?: string
-	schools?: string[]
+interface AuthReducerState extends Auth {
+	loggingIn: boolean
+	loggedIn: boolean
 }
 
 interface AlertState {
 	type: string
 	message: string
+}
+
+interface Auth {
+	id?: string
+	token?: string
+	schools?: string[]
 }
 
 interface SyncState {

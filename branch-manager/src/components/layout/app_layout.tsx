@@ -1,5 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { AppState } from 'reducers'
 
 import { SiteConfig as config } from 'constants/index'
 import { AuthNavigation, Navigation } from 'components/navigation'
@@ -25,8 +26,8 @@ const Layout: React.FC<P> = ({ children, title, auth }) => {
 	</>
 }
 
-const AppLayout = connect((state: any) => ({
-	auth: state.authentication.auth
+const AppLayout = connect((state: AppState) => ({
+	auth: state.auth
 }))(Layout)
 
 export { AppLayout }

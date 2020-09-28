@@ -1,12 +1,13 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
+import { AppState } from 'reducers'
 
 import { AppLayout } from 'components/layout'
-import { load_auth } from 'helpers'
 import { DailyStats } from 'components/home/daily_stats'
 
 const Home = () => {
 
-	const schools = load_auth().schools
+	const schools = useSelector((state: AppState) => state.auth.schools)
 
 	return (
 		<AppLayout title={'Home'}>

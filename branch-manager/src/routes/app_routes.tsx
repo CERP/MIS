@@ -1,10 +1,8 @@
 import React from 'react'
-import { connect } from 'react-redux'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
 import { ErrorPage } from 'components/error'
 import { AuthRoute } from 'components/auth_route'
-import { submitError } from 'actions/core'
 
 import {
 	Landing,
@@ -14,10 +12,6 @@ import {
 	About
 } from 'pages'
 
-interface P {
-	sendError: (err: Error, errInfo: React.ErrorInfo) => void
-}
-
 interface S {
 	error?: {
 		err: Error
@@ -25,20 +19,13 @@ interface S {
 	}
 }
 
-class AppRoute extends React.Component<P, S> {
+class AppRoutes extends React.Component<S> {
 
-	constructor(props: P) {
-		super(props)
-
-		this.state = {
-			error: undefined
-		}
+	state = {
+		error: undefined
 	}
 
 	componentDidCatch(err: Error, errInfo: React.ErrorInfo) {
-
-		this.props.sendError(err, errInfo)
-
 		this.setState({
 			error: {
 				err,
@@ -50,6 +37,7 @@ class AppRoute extends React.Component<P, S> {
 	render() {
 
 		if (this.state.error) {
+			//@ts-ignore
 			return <ErrorPage error={this.state.error.err} errInfo={this.state.error.errInfo} />
 		}
 
@@ -67,11 +55,4 @@ class AppRoute extends React.Component<P, S> {
 	}
 }
 
-const AppRoutes = connect(
-	(state: RootReducerState) => ({}),
-	(dispatch: Function) => ({
-		sendError: (err: Error, errInfo: React.ErrorInfo) => dispatch(submitError(err, errInfo))
-	})
-)(AppRoute)
-
-export { AppRoutes }
+export { AppRoutes } 

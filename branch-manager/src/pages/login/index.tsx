@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { AppState } from 'reducers'
 
 import { alert_actions, user_actions } from 'actions'
 import { AppLayout } from 'components/layout'
@@ -18,8 +19,8 @@ type S = {
 const Login: React.FC<P> = () => {
 
 	const dispatch = useDispatch()
-	const alert = useSelector((state: any) => state.alert)
-	const logging = useSelector((state: any) => state.authentication.loggingIn)
+	const alert = useSelector((state: AppState) => state.alert)
+	const logging = useSelector((state: AppState) => state.auth.loggingIn)
 
 	const [toggle, set_toggle] = useState(false)
 	const [state, set_state] = useState<S>({
@@ -32,7 +33,7 @@ const Login: React.FC<P> = () => {
 		dispatch(user_actions.logout())
 
 		// don't dispatch to many time, just it when alert message set
-		if (alert && alert.type) {
+		if (alert && alert.message) {
 			setTimeout(() => {
 				dispatch(alert_actions.clear())
 			}, 5000)

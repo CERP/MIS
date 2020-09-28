@@ -9,7 +9,7 @@ const login = (username: string, password: string) => {
 
 	return (dispatch: Dispatch) => {
 
-		dispatch(request({ id: username, token: undefined, schools: undefined }))
+		dispatch(request({ id: username }))
 
 		user_service.login(username, password)
 			.then(
@@ -19,16 +19,17 @@ const login = (username: string, password: string) => {
 					window.location.reload()
 				},
 				error => {
-					dispatch(failure(error.toString()))
-					dispatch(alert_actions.error(error.toString()))
+					const message = error.toString()
+					dispatch(failure())
+					dispatch(alert_actions.error({ type: 'login-error', message }))
 				}
 			)
 	}
 }
 
-const request = (auth: Auth) => { return { type: UserLoginConstants.LOGIN_REQUEST, auth } }
-const success = (auth: Auth) => { return { type: UserLoginConstants.LOGIN_SUCCESS, auth } }
-const failure = (error: string) => { return { type: UserLoginConstants.LOGIN_FAILURE, error } }
+const request = (auth: Auth) => { return { type: UserLoginConstants.LOGIN_REQUEST, data: auth } }
+const success = (auth: Auth) => { return { type: UserLoginConstants.LOGIN_SUCCESS, data: auth } }
+const failure = (error?: string) => { return { type: UserLoginConstants.LOGIN_FAILURE } }
 
 const logout = () => {
 	user_service.logout()

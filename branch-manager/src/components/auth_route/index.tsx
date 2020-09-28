@@ -1,19 +1,18 @@
 import * as React from 'react'
 import { Route, Redirect } from 'react-router-dom'
-import { connect } from 'react-redux'
+import { useSelector } from 'react-redux'
+import { AppState } from 'reducers'
 
-const PrivateRoute = ({ component, auth: { id, token }, ...rest }: any) => {
+const AuthRoute = ({ component, ...rest }: any) => {
 
-    if (token && id) {
+	const auth = useSelector((state: AppState) => state.auth)
 
-        return <Route component={component} {...rest} />
-    }
+	if (auth.token && auth.id) {
 
-    return <Redirect to="/login" />
+		return <Route component={component} {...rest} />
+	}
+
+	return <Redirect to="/login" />
 }
-
-const AuthRoute = connect((state: any) => ({
-    auth: state.authentication.auth || { id: undefined, token: undefined }
-}))(PrivateRoute)
 
 export { AuthRoute }
