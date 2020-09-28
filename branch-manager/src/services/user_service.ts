@@ -34,6 +34,12 @@ const fetch_daily_stats = async (school_id: string) => {
 	return handle_response(response)
 }
 
+const fetch_students_attendance = async (school_id: string) => {
+	const options = get_request_options()
+	const response = await fetch(`${host}/analytics-students-attendance?school_id=${school_id}`, options)
+	return handle_response(response)
+}
+
 const handle_response = (response: any) => {
 	return response.json().then((resp: any) => {
 		if (!response.ok) {
@@ -61,5 +67,6 @@ export const user_service = {
 	login,
 	logout,
 	fetch_school_branches,
-	fetch_daily_stats
+	fetch_daily_stats,
+	fetch_students_attendance
 }

@@ -9,7 +9,8 @@ import {
 	Login,
 	Home,
 	PageNotFound,
-	About
+	About,
+	Analytics
 } from 'pages'
 
 interface S {
@@ -46,7 +47,7 @@ class AppRoutes extends React.Component<S> {
 				<Route exact path="/" component={Landing} />
 				<Route exact path="/login" component={Login} />
 				<AuthRoute exact path="/home" component={Home} />
-				<AuthRoute exact path="/analytics" component={Home} />
+				<AuthRoute exact path="/analytics" component={Analytics} />
 				<Route path="/about" component={About} />
 				<Route path="*" component={PageNotFound} />
 			</Switch>
