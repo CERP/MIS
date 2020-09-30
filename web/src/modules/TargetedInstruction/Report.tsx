@@ -36,7 +36,6 @@ const Report: React.FC<P> = (props: any) => {
                 stdObj]
         }, [])
 
-    debugger
     return <>
         {
             props.type === 'Single Student' ? <div className="section">

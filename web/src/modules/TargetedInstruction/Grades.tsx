@@ -113,15 +113,23 @@ const StudentGrades: React.FC<P> = (props: any) => {
                     <div style={{ textAlign: 'center' }}>
                         <label className="title" >{capitalize(props.testId)}</label>
                     </div>
-                    {props.questions && props.questions.map((question: any) => {
-                        return <div key={question.key} className="form">
-                            <div className="row">
-                                <div className="question-name">{(question.key)}</div>
-                                <Switch
-                                    onChange={(e) => handleChange(e, question.key)}
-                                    checked={question.value}
+                    <div className="flex-view">
+                        <div className="table-header" style={{ textAlign: "left" }}>Question Title</div>
+                        <div className="table-header">Answers</div>
+                        <div className="table-header">Correct Answers</div>
+                    </div>
+                    {props.questions && props.questions.map((obj: any) => {
+                        return <div key={obj.question} className="form">
+                            <div className="flex-view">
+                                <div className="question-name" style={{ textAlign: "left" }}>{(obj.question)}</div>
+                                <div className="question-name tale-data">{(obj.correctAnswer)}</div>
+                                <div className="question-name">  <Switch
+                                    height={25}
+                                    width={50}
+                                    onChange={(e) => handleChange(e, obj.question)}
+                                    checked={obj.answer}
                                     id="normal-switch"
-                                />
+                                /></div>
                             </div>
                         </div>
                     })}

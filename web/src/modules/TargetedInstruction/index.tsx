@@ -21,7 +21,6 @@ type PropsType = P & RouteComponentProps
 
 const Test: React.FC<PropsType> = (props) => {
 
-
 	const loc = props.location.pathname.split('/').slice(-1).pop();
 	const [selectedSubject, setSelectedSubject] = useState('')
 	const [selectedClass, setSelectedClass] = useState('')
@@ -121,12 +120,13 @@ const Test: React.FC<PropsType> = (props) => {
 		if (res && testType === 'Diagnostic') {
 			for (let obj of Object.entries(res && res)) {
 				questionArr.push({
-					"key": obj[0],
-					"value": obj[1].isCorrect
+					"question": obj[0],
+					"answer": obj[1].isCorrect,
+					"correctAnswer": obj[1].answer
 				})
 
 			}
-			setQuestions(questionArr)
+			setQuestions(questionArr.reverse())
 		}
 	}
 
@@ -167,7 +167,7 @@ const Test: React.FC<PropsType> = (props) => {
 				</div>
 				{(loc === 'grades' || loc === 'report') &&
 					<>
-						<div className="row">
+						{report  !== 'All Students' && <div className="row">
 							<label className="no-print">Students</label>
 							<select className="no-print" onClick={getStudent}>
 								<option value="">Select Students</option>
@@ -175,7 +175,7 @@ const Test: React.FC<PropsType> = (props) => {
 									students && students.map((std) => <option key={std.id} value={std.id}>{std.Name}</option>)
 								}
 							</select>
-						</div>
+						</div>}
 						<div className="row">
 							<label className="no-print">Test</label>
 							<select className="no-print" onClick={getTest}>
