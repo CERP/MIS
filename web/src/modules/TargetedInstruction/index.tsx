@@ -5,6 +5,7 @@ import { RouteComponentProps } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import StudentGrades from './Grades'
 import Diagnostic from './Diagnostic'
+import ReportGraph from './Graph'
 import Report from './Report'
 import { connect } from 'react-redux'
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
@@ -137,11 +138,12 @@ const Test: React.FC<PropsType> = (props) => {
 				<Link className={`button ${loc === "test" ? "orange" : ''}`} to="test" replace={true}>Test</Link>
 				<Link className={`button ${loc === "grades" ? "blue" : ''}`} to="grades" replace={true}>Grades</Link>
 				<Link className={`button ${loc === "report" ? "green" : ''}`} to="report" replace={true}>Report</Link>
+				<Link className={`button ${loc === "graph" ? "red" : ''}`} to="graph" replace={true}>Graph</Link>
 			</div>
 			<div className="section form">
 				<div className="row">
 					<label className="no-print">Class/Section</label>
-					<select onClick={getClass}>
+					<select className="no-print" onClick={getClass}>
 						<option id="0" value="">Select Section</option>
 						{
 							sortedSections.map(s => <option key={s.id} data-id={s.id} value={s.namespaced_name}>{s.namespaced_name}</option>)
@@ -165,9 +167,9 @@ const Test: React.FC<PropsType> = (props) => {
 						<option value="Monthly">Monthly</option>
 					</select>
 				</div>
-				{(loc === 'grades' || loc === 'report') &&
+				{(loc !== "test") &&
 					<>
-						{report !== 'All Students' && <div className="row">
+						{((report !== 'All Students' && loc === "report") || loc === "grades") && <div className="row">
 							<label className="no-print">Students</label>
 							<select className="no-print" onClick={getStudent}>
 								<option value="">Select Students</option>
@@ -190,7 +192,7 @@ const Test: React.FC<PropsType> = (props) => {
 				{loc === 'report' && <div className="row">
 					<label className="no-print">Select</label>
 					<select className="no-print" onClick={getSelected}>
-						<option value="">Select Test</option>
+						<option value="">Select Type</option>
 						<option value="Single Student">Single Student</option>
 						<option value="All Students">All Students</option>
 					</select>
@@ -203,14 +205,16 @@ const Test: React.FC<PropsType> = (props) => {
 							testId={testId}
 							testType={testType}
 							stdObj={props.students[stdId]} /> :
-						<Report
-							testId={testId}
-							testType={testType}
-							type={report}
-							stdId={stdId}
-							stdObj={props.students[stdId]}
-							setReport={setReport}
-							allStudents={students} />}
+						loc === 'report' ?
+							<Report
+								testId={testId}
+								testType={testType}
+								type={report}
+								stdId={stdId}
+								stdObj={props.students[stdId]}
+								setReport={setReport}
+								allStudents={students} /> :
+							<ReportGraph />}
 			</div>
 		</div>
 	</Layout>

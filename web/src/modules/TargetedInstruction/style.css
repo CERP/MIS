@@ -21,8 +21,7 @@
     text-transform: capitalize;
 }
 .slo {
-    font-size: 20px;
-    font-weight: 700;
+    font-size: 18px;
     text-align: left;
     text-transform: capitalize; 
     cursor: pointer;
@@ -52,6 +51,10 @@
     flex-direction: row;
     justify-content: space-between;
     padding: 10px 0px;
+}
+
+.report-table {
+    width: 100%;
 }
 
 @media screen and (max-width: 525px) {
@@ -85,5 +88,27 @@
         text-align: center;
         padding: 7px;
         text-transform: capitalize;
+    }
+    .slo {
+        font-size: 12px;
+        text-align: left;
+        text-transform: capitalize; 
+        cursor: pointer;
+    }
+    .std-name:hover, .slo:hover {
+        color: #5ecdb9;
+    }
+    .std-name {
+        font-size: 12px;
+        padding: 7px;
+        text-transform: capitalize;
+        text-align: "left";
+        cursor: "pointer";
+    }
+    .report-table {
+        width: 100%;
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
     }
 }
