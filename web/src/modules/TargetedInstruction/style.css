@@ -20,6 +20,23 @@
     text-align: center;
     text-transform: capitalize;
 }
+.slo {
+    font-size: 20px;
+    font-weight: 700;
+    text-align: left;
+    text-transform: capitalize; 
+    cursor: pointer;
+}
+.std-name:hover, .slo:hover {
+    color: #5ecdb9;
+}
+.std-name {
+    font-size: 18px;
+    padding: 7px;
+    text-transform: capitalize;
+    text-align: "left";
+    cursor: "pointer";
+}
 .table-data {
     font-size: 18px;
     text-align: center;

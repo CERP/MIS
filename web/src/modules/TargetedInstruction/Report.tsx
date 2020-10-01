@@ -14,7 +14,7 @@ interface P {
 
 const Report: React.FC<P> = (props: any) => {
 
-    const test = props.students && props.students[props.stdId].report[props.testType][props.testId && props.testId]
+    let test = props.students && props.students[props.stdId].report[props.testType][props.testId && props.testId]
     const allStds = Object.values(props.students)
         .reduce((agg, std) => {
             let stdObj = {}
@@ -22,7 +22,10 @@ const Report: React.FC<P> = (props: any) => {
             if (report) {
                 stdObj = {
                     ...stdObj,
-                    "Student Name": std.Name
+                    "Student": {
+                        "id": std.id,
+                        "name": std.Name
+                    }
                 }
                 for (let [slo, sloObj] of Object.entries(report)) {
                     stdObj = {
@@ -36,12 +39,17 @@ const Report: React.FC<P> = (props: any) => {
                 stdObj]
         }, [])
 
+    const getStudentId = (e: any) => {
+        props.setReport("Single Student")
+        test = props.students && props.students[e.target.id].report[props.testType][props.testId && props.testId]
+    }
+
     return <>
         {
             props.type === 'Single Student' ? <div className="section">
                 <div className="table">
                     <div className="row ">
-                        <div className="table-header" style={{ textAlign: "left" }}>SLO</div>
+                        <div className="slo">SLO</div>
                         <div className="table-header" >POSSIBLE</div>
                         <div className="table-header" >CORRECT</div>
                         <div className="table-header" >PERCENTAGE</div>
@@ -62,7 +70,7 @@ const Report: React.FC<P> = (props: any) => {
                             <div className="row ">
                                 {allStds && allStds.slice(0, 1).map((std) => {
                                     return <> {Object.keys(std).map(function (key) {
-                                        if (key === 'Student Name') {
+                                        if (key === 'Student') {
                                             return <div className="table-header" style={{ textAlign: "left" }} key={std}>{key}</div>
                                         } else {
                                             return <div className="table-header" key={std}>{key}</div>
@@ -72,8 +80,8 @@ const Report: React.FC<P> = (props: any) => {
                             </div>
                             {allStds && allStds.map((std) => {
                                 return <div className="row" key={std}> {Object.keys(std).map(function (key) {
-                                    if (key === 'Student Name') {
-                                        return <div className="table-data" style={{ textAlign: "left" }} key={std}>{std[key]}</div>
+                                    if (key === 'Student') {
+                                        return <div className="std-name" key={std} id={std[key].id} onClick={getStudentId}>{std[key].name}</div>
                                     } else {
                                         return <div className="table-data" key={std}>{`${std[key]}%`}</div>
                                     }

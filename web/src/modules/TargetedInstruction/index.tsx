@@ -167,7 +167,7 @@ const Test: React.FC<PropsType> = (props) => {
 				</div>
 				{(loc === 'grades' || loc === 'report') &&
 					<>
-						{report  !== 'All Students' && <div className="row">
+						{report !== 'All Students' && <div className="row">
 							<label className="no-print">Students</label>
 							<select className="no-print" onClick={getStudent}>
 								<option value="">Select Students</option>
@@ -209,6 +209,7 @@ const Test: React.FC<PropsType> = (props) => {
 							type={report}
 							stdId={stdId}
 							stdObj={props.students[stdId]}
+							setReport={setReport}
 							allStudents={students} />}
 			</div>
 		</div>
