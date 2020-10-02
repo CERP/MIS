@@ -61,6 +61,8 @@ const StudentGrades: React.FC<P> = (props: any) => {
                     }
                 }
 
+                report[category].percentage = (report[category].correct / report[category].possible) * 100
+
             } else {
                 if (sloObj.answer) {
                     report[category] = {
@@ -74,10 +76,6 @@ const StudentGrades: React.FC<P> = (props: any) => {
                     }
                 }
             }
-        }
-
-        for (let [key, obj] of Object.entries(report)) {
-            obj.percentage = ((obj.correct / obj.possible) * 100);
         }
 
         props.students[props.stdId]['report'] = {

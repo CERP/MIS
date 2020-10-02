@@ -214,7 +214,10 @@ const Test: React.FC<PropsType> = (props) => {
 								stdObj={props.students[stdId]}
 								setReport={setReport}
 								allStudents={students} /> :
-							<ReportGraph />}
+							<ReportGraph
+								testId={testId}
+								testType={testType}
+							/>}
 			</div>
 		</div>
 	</Layout>
