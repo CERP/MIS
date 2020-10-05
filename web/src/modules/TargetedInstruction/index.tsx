@@ -5,7 +5,6 @@ import { RouteComponentProps } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import StudentGrades from './Grades'
 import Diagnostic from './Diagnostic'
-import ReportGraph from './Graph'
 import Report from './Report'
 import { connect } from 'react-redux'
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
@@ -35,6 +34,7 @@ const Test: React.FC<PropsType> = (props) => {
 	const [tests, setTests] = useState([])
 	const [label, setLabel] = useState('')
 	const [url, setUrl] = useState('')
+	const [data, setData] = useState([])
 
 	const sortedSections = getSectionsFromClasses(props.classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0));
 
@@ -86,6 +86,7 @@ const Test: React.FC<PropsType> = (props) => {
 
 	const getSelected = (e: any) => {
 		setReport(e.target.value)
+		graphData()
 	}
 
 
@@ -132,13 +133,39 @@ const Test: React.FC<PropsType> = (props) => {
 	}
 
 
+	const graphData = () => {
+
+		let graphData = {}
+		if (testId) {
+			for (let [, student] of Object.entries(props.students)) {
+				const test = student.report && student.report[testType][testId]
+				if (test) {
+					for (let [testId, testObj] of Object.entries(test)) {
+						if (graphData[testId]) {
+							graphData[testId] += testObj.percentage
+						} else {
+							graphData[testId] = testObj.percentage
+						}
+					}
+				}
+			}
+			let arr = []
+			for (let [id, graphObj] of Object.entries(graphData)) {
+				arr.push(
+					{ name: id, percentage: Math.round(graphObj / Object.entries(props.students).length) }
+				)
+			}
+			setData(arr)
+		}
+	}
+
+
 	return <Layout history={props.history}>
 		<div className="analytics">
 			<div className="row tabs">
 				<Link className={`button ${loc === "test" ? "orange" : ''}`} to="test" replace={true}>Test</Link>
 				<Link className={`button ${loc === "grades" ? "blue" : ''}`} to="grades" replace={true}>Grades</Link>
 				<Link className={`button ${loc === "report" ? "green" : ''}`} to="report" replace={true}>Report</Link>
-				<Link className={`button ${loc === "graph" ? "red" : ''}`} to="graph" replace={true}>Graph</Link>
 			</div>
 			<div className="section form">
 				<div className="row">
@@ -205,19 +232,15 @@ const Test: React.FC<PropsType> = (props) => {
 							testId={testId}
 							testType={testType}
 							stdObj={props.students[stdId]} /> :
-						loc === 'report' ?
-							<Report
-								testId={testId}
-								testType={testType}
-								type={report}
-								stdId={stdId}
-								stdObj={props.students[stdId]}
-								setReport={setReport}
-								allStudents={students} /> :
-							<ReportGraph
-								testId={testId}
-								testType={testType}
-							/>}
+						<Report
+							testId={testId}
+							testType={testType}
+							type={report}
+							stdId={stdId}
+							setReport={setReport}
+							allStudents={students}
+							data={data}
+						/>}
 			</div>
 		</div>
 	</Layout>
