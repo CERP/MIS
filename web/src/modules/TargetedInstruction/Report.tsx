@@ -121,54 +121,60 @@ const Report: React.FC<P> = ({ settings, students, auth, client_id, testType, te
             count: messages.length,
         }
 
-        logSms(historyObj)
+        // logSms(historyObj)
     }
 
-    const reportString = (): string => {
+    const reportString = (stdId): string => {
         const curr_date = `Date: ${moment().format("DD MMMM YYYY")}\n`
         const section_name = `Class: ${selectedClass}\n`
-        const diary_message = ["Humna", "ALeem", "Software", "Develper"]
-        // const diary_message = Object.entries(this.state.diary[this.state.selected_section_id])
-        //     .map(([subject, { homework }]) => `${subject}: ${homework}`)
-
-        const raw_diary_string = curr_date + section_name + diary_message.join("\n")
-        const diary_string = replaceSpecialCharsWithUTFChars(raw_diary_string)
-
-        return diary_string
+        const test_type = `Test Type: ${testType}\n`
+        const test_name = `Test Name: ${testId}\n`
+        const stdReport = students[stdId].report && students[stdId].report[testType][testId]
+        if (stdReport) {
+            const stdName = students[stdId].Name
+            let message = []
+            message.push(`${stdName} secure`)
+            for (let [testName, testObj] of Object.entries(stdReport)) {
+                message.push(`${testObj.percentage}% marks in ${testName}`)
+            }
+            const raw_report_string = curr_date + section_name + test_type + test_name + message.join(", ")
+            const report_string = replaceSpecialCharsWithUTFChars(raw_report_string)
+            return report_string
+        }
     }
 
     const getMessages = (): MISSms[] => {
-        let phone
-        if (stdId) {
-            phone = students[stdId].Phone
-        }
-        const report = reportString()
-
         // in case of single student
-        if (phone) {
+        if (phone && type === 'Single Student') {
+
+            let phone
+            if (stdId) {
+                phone = students[stdId].Phone
+            }
+            const report = reportString(stdId)
             return [{ number: phone, text: report }]
-        }
-        const messages = allStudents
-            .reduce((agg, student) => {
 
-                const index = agg.findIndex(s => s.number === student.Phone)
+        } else if (type === 'All Students') {
 
-                if (index >= 0) {
-                    return agg
-                }
+            const messages = allStudents
+                .reduce((agg, student) => {
+                    const index = agg.findIndex(s => s.number === student.Phone)
 
-                return [
-                    ...agg,
-                    {
-                        number: student.Phone,
-                        text: report
+                    if (index >= 0) {
+                        return agg
                     }
-                ]
-
-            }, [])
-
-        return messages
+                    return [
+                        ...agg,
+                        {
+                            number: student.Phone,
+                            text: reportString(student.id)
+                        }
+                    ]
+                }, [])
+            return messages
+        }
     }
+
     let messages
     if (type) {
         messages = getMessages()
@@ -186,34 +192,36 @@ const Report: React.FC<P> = ({ settings, students, auth, client_id, testType, te
         {
             type === 'Single Student' ? <div className="section form">
                 <table className="report-table">
-                    <tr>
-                        <th className="table-header" style={{ textAlign: "left" }}>SLO</th>
-                        <th className="table-header" >POSSIBLE</th>
-                        <th className="table-header" >CORRECT</th>
-                        <th className="table-header" >PERCENTAGE</th>
-                    </tr>
-                    {Object.keys(test && test).map(function (key) {
-                        return <tr key={key}>
-                            <td className="slo" onClick={handleRedirectToIlmx}>{key}</td>
-                            <td className="table-data">{test[key].possible}</td>
-                            <td className="table-data">{test[key].correct}</td>
-                            <td className="table-data">{`${test[key].percentage}%`}</td>
+                    <tbody>
+                        <tr>
+                            <th className="table-header" style={{ textAlign: "left" }}>SLO</th>
+                            <th className="table-header" >POSSIBLE</th>
+                            <th className="table-header" >CORRECT</th>
+                            <th className="table-header" >PERCENTAGE</th>
                         </tr>
+                        {Object.keys(test && test).map(function (key) {
+                            return <tr key={key}>
+                                <td className="slo" onClick={handleRedirectToIlmx}>{key}</td>
+                                <td className="table-data">{test[key].possible}</td>
+                                <td className="table-data">{test[key].correct}</td>
+                                <td className="table-data">{`${test[key].percentage}%`}</td>
+                            </tr>
 
-                    })}
+                        })}
+                    </tbody>
                 </table>
                 <div className="send-btn-div">
                     {
                         settings.sendSMSOption === "SIM" ?
-                            <a className="button blue mb"
+                            <a className="button blue mb mobile-mode"
                                 href={smsIntentLink({
-                                    // messages,
+                                    messages,
                                     return_link: window.location.href
                                 })}
                                 onClick={() => logSms(messages)}>
                                 Send Report using Local SIM </a>
                             :
-                            <div className="row button" onClick={() => sendBatchMessages(messages)} style={{ width: "20%" }}>Send</div>
+                            <div className="button" onClick={() => sendBatchMessages(messages)} style={{ width: "20%" }}>Send</div>
                     }
                 </div>
             </div> :
@@ -264,7 +272,7 @@ const Report: React.FC<P> = ({ settings, students, auth, client_id, testType, te
                             <div className="send-btn-div">
                                 {
                                     settings.sendSMSOption === "SIM" ?
-                                        <a className="button blue mb"
+                                        <a className="button blue mb mobile-mode"
                                             href={smsIntentLink({
                                                 messages,
                                                 return_link: window.location.href

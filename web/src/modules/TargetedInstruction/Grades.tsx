@@ -132,8 +132,8 @@ const StudentGrades: React.FC<P> = (props: any) => {
                         </div>
                     })}
                     {props.questions.length > 0 &&
-                        <div className="row save-btn-div">
-                            <button className="button green save-btn" onClick={onSave}>SAVE</button>
+                        <div className="save-btn-div">
+                            <button className="button green save-btn mobile-mode" onClick={onSave}>SAVE</button>
                         </div>}
                 </div>
             </div>
