@@ -84,22 +84,22 @@ const Report: React.FC<P> = ({ settings, students, auth, client_id, testType, te
         test = students && students[e.target.id].report[testType][testId && testId]
     }
 
-    const handleRedirectToIlmx = (input_phone?: string) => {
+    const handleRedirectToIlmx = (redirectLink, input_phone?: string) => {
+        debugger
+        // const link = `http://localhost:3001/auto-login?type=SCHOOL&id=${auth.school_id}&key=${auth.token}&cid=${client_id}&phone=${phone || input_phone}`
 
-        const link = `http://localhost:3001/auto-login?type=SCHOOL&id=${auth.school_id}&key=${auth.token}&cid=${client_id}&phone=${phone || input_phone}`
+        // if (input_phone) {
+        //     localStorage.setItem("ilmx", input_phone)
+        //     window.location.href = redirectLink
+        //     return
+        // }
 
-        if (input_phone) {
-            localStorage.setItem("ilmx", input_phone)
-            window.location.href = link
-            return
-        }
-
-        if (phone) {
-            window.location.href = link
-        } else {
-            setToggleModal(!toggleModal)
-            hideScroll()
-        }
+        // if (phone) {
+        window.location.href = redirectLink
+        // } else {
+        //     setToggleModal(!toggleModal)
+        //     hideScroll()
+        // }
     }
 
     const handleToggleModal = () => {
@@ -200,8 +200,9 @@ const Report: React.FC<P> = ({ settings, students, auth, client_id, testType, te
                             <th className="table-header" >PERCENTAGE</th>
                         </tr>
                         {Object.keys(test && test).map(function (key) {
+                            debugger
                             return <tr key={key}>
-                                <td className="slo" onClick={handleRedirectToIlmx}>{key}</td>
+                                <td className="slo" id={test[key].link} onClick={() => handleRedirectToIlmx(test[key].link)}>{key}</td>
                                 <td className="table-data">{test[key].possible}</td>
                                 <td className="table-data">{test[key].correct}</td>
                                 <td className="table-data">{`${test[key].percentage}%`}</td>
