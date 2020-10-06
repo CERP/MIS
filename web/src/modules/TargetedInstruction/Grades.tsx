@@ -77,7 +77,6 @@ const StudentGrades: React.FC<P> = (props: any) => {
                 }
             }
         }
-
         props.students[props.stdId]['report'] = {
             [props.testType]: {
                 ...props.students[props.stdId].report[props.testType],
@@ -113,8 +112,8 @@ const StudentGrades: React.FC<P> = (props: any) => {
                     </div>
                     <div className="flex-view">
                         <div className="table-header" style={{ textAlign: "left" }}>Question Title</div>
-                        <div className="table-header">Answers</div>
                         <div className="table-header">Correct Answers</div>
+                        <div className="table-header">Answers</div>
                     </div>
                     {props.questions && props.questions.map((obj: any) => {
                         return <div key={obj.question} className="form">

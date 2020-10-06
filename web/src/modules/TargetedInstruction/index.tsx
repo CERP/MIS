@@ -1,5 +1,5 @@
 //@ts-nocheck
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Layout from 'components/Layout'
 import { RouteComponentProps } from 'react-router-dom'
 import { Link } from 'react-router-dom'
@@ -22,11 +22,10 @@ type PropsType = P & RouteComponentProps
 const Test: React.FC<PropsType> = (props) => {
 
 	const loc = props.location.pathname.split('/').slice(-1).pop();
+
 	const [selectedSubject, setSelectedSubject] = useState('')
 	const [selectedClass, setSelectedClass] = useState('')
 	const [questions, setQuestions] = useState([])
-	const [students, setStudents] = useState([])
-	const [subjects, setSubjects] = useState([])
 	const [testId, setTestId] = useState('')
 	const [testType, setTestType] = useState('')
 	const [report, setReport] = useState('')
@@ -35,16 +34,27 @@ const Test: React.FC<PropsType> = (props) => {
 	const [label, setLabel] = useState('')
 	const [url, setUrl] = useState('')
 	const [data, setData] = useState([])
+	const [allSubjects, setAllSubjects] = useState({})
+	const [sortedSections, setSortedSections] = useState([])
+	const [sectionId, setSectionId] = useState('')
 
-	const sortedSections = getSectionsFromClasses(props.classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0));
+	useEffect(() => {
+		setSortedSections(getSectionsFromClasses(props.classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0)))
+		setAllSubjects(getSubjectsFromClasses(props.classes))
+	}, [])
+
+	const students = useMemo(
+		() => getAllStudents(sectionId, props.students),
+		[sectionId]
+	)
 
 	const getClass = (e: any) => {
+		setSelectedClass(e.target.value)
 		let index = e.target.selectedIndex;
 		let el = e.target.childNodes[index]
-		setSelectedClass(e.target.value)
-		setStudents(getAllStudnets(el.dataset.id))
+		setSectionId(el.dataset.id)
 		getPDF(selectedSubject, e.target.value, testType)
-		setSubjects(getSubjectsFromClasses(props.classes, e.target.value))
+
 	}
 
 	const getSubject = (e: any) => {
@@ -89,20 +99,6 @@ const Test: React.FC<PropsType> = (props) => {
 		graphData()
 	}
 
-
-	const getAllStudnets = (sectionId: string) => {
-		const students = Object.values(props.students)
-			.reduce((agg, student) => {
-				if (student.section_id === sectionId) {
-					return [...agg,
-						student
-					]
-				}
-				return [...agg,]
-			}, [])
-		return students
-	}
-
 	const getPDF = (selectedSubject: any, selectedClass: any, testType: any) => {
 		for (let [id, obj] of Object.entries(props.targeted_instruction['tests'])) {
 			if (obj.type === testType && obj.class === selectedClass && obj.subject === selectedSubject) {
@@ -118,7 +114,7 @@ const Test: React.FC<PropsType> = (props) => {
 
 	const getQuestionList = (selectedTest: any, stdObj: any) => {
 		let questionArr = []
-		const res = stdObj.diagnostic_result[selectedTest]
+		const res = stdObj.diagnostic_result && stdObj.diagnostic_result[selectedTest]
 		if (res && testType === 'Diagnostic') {
 			for (let obj of Object.entries(res && res)) {
 				questionArr.push({
@@ -132,13 +128,12 @@ const Test: React.FC<PropsType> = (props) => {
 		}
 	}
 
-
 	const graphData = () => {
 
 		let graphData = {}
 		if (testId) {
 			for (let [, student] of Object.entries(props.students)) {
-				const test = student.report && student.report[testType][testId]
+				const test = student.report && student.report[testType] && student.report[testType][testId]
 				if (test) {
 					for (let [testId, testObj] of Object.entries(test)) {
 						if (graphData[testId]) {
@@ -170,25 +165,25 @@ const Test: React.FC<PropsType> = (props) => {
 			<div className="section form">
 				<div className="row">
 					<label className="no-print">Class/Section</label>
-					<select className="no-print" onClick={getClass}>
+					<select className="no-print" onChange={(e) => getClass(e)}>
 						<option id="0" value="">Select Section</option>
 						{
-							sortedSections.map(s => <option key={s.id} data-id={s.id} value={s.namespaced_name}>{s.namespaced_name}</option>)
+							sortedSections && sortedSections.map(s => <option key={s.id} data-id={s.id} value={s.className}>{s.className}</option>)
 						}
 					</select>
 				</div>
 				<div className="row">
 					<label className="no-print">Subject</label>
-					<select className="no-print" onClick={getSubject}>
+					<select className="no-print" onChange={(e) => getSubject(e)}>
 						<option value="">Select Subject</option>
 						{
-							subjects && subjects.map((sub) => <option key={sub} value={sub}>{sub}</option>)
+							(allSubjects[selectedClass] || []).map((sub) => <option key={sub} value={sub}>{sub}</option>)
 						}
 					</select>
 				</div>
 				<div className="row">
 					<label className="no-print">Test Type</label>
-					<select className="no-print" onClick={getTestType}>
+					<select className="no-print" onChange={(e) => getTestType(e)}>
 						<option value="">Select Test Type</option>
 						<option value="Diagnostic">Diagnostic</option>
 						<option value="Monthly">Monthly</option>
@@ -198,7 +193,7 @@ const Test: React.FC<PropsType> = (props) => {
 					<>
 						{((report !== 'All Students' && loc === "report") || loc === "grades") && <div className="row">
 							<label className="no-print">Students</label>
-							<select className="no-print" onClick={getStudent}>
+							<select className="no-print" onChange={(e) => getStudent(e)}>
 								<option value="">Select Students</option>
 								{
 									students && students.map((std) => <option key={std.id} value={std.id}>{std.Name}</option>)
@@ -207,7 +202,7 @@ const Test: React.FC<PropsType> = (props) => {
 						</div>}
 						<div className="row">
 							<label className="no-print">Test</label>
-							<select className="no-print" onClick={getTest}>
+							<select className="no-print" onChange={(e) => getTest(e)}>
 								<option value="">Select Test</option>
 								{
 									tests && tests.map((test) => <option key={test} value={test}>{test}</option>)
@@ -218,7 +213,7 @@ const Test: React.FC<PropsType> = (props) => {
 				}
 				{loc === 'report' && <div className="row">
 					<label className="no-print">Select</label>
-					<select className="no-print" onClick={getSelected}>
+					<select className="no-print" onChange={(e) => getSelected(e)}>
 						<option value="">Select Type</option>
 						<option value="Single Student">Single Student</option>
 						<option value="All Students">All Students</option>
@@ -252,3 +247,20 @@ export default connect((state: RootReducerState) => ({
 	classes: state.db.classes,
 	students: state.db.students
 }))(Test)
+
+type getAllStudents = {
+	(sectionId: sectionId, studentsObj: P["students"])
+}
+
+const getAllStudents: getAllStudents = (sectionId, studentsObj) => {
+	const students = Object.values(studentsObj)
+		.reduce((agg, student) => {
+			if (student.section_id === sectionId) {
+				return [...agg,
+					student
+				]
+			}
+			return [...agg,]
+		}, [])
+	return students
+}
