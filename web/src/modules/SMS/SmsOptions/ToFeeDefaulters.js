@@ -44,7 +44,9 @@ class ToFeeDefaulters extends Component {
 		let i = 0;
 
 		const total_student_debts = {}
-		const student_list = Object.values(this.props.students)
+		const student_list = (Object.values(this.props.students) || [])
+			.filter((student) => (student && student.id && student.Name && student.section_id && (student.tags === undefined || !student.tags["PROSPECTIVE"])) && student.Phone)
+
 
 		const reducify = () => {
 

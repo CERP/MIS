@@ -39,7 +39,7 @@ class ToAllStudents extends Component {
 
 		const messages = Object.values(students)
 			.filter(s => {
-				return (s.tags === undefined || !s.tags["PROSPECTIVE"]) &&
+				return (s && s.id && s.Name && s.section_id && s.tags === undefined || !s.tags["PROSPECTIVE"]) &&
 					s.Phone && (s.Phone.length >= 11 && s.Phone.length <= 15)
 			})
 			.reduce((agg, student) => {

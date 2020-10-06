@@ -45,7 +45,8 @@ class ToSingleClass extends Component {
 		const messages = Object.values(students)
 			.filter(s => {
 				return s.section_id === this.state.selected_section_id &&
-					(s.tags === undefined || !s.tags["PROSPECTIVE"]) &&
+					s.Name && s.id
+						(s.tags === undefined || !s.tags["PROSPECTIVE"]) &&
 					s.Phone && (s.Phone.length >= 11 && s.Phone.length <= 15)
 			})
 			.reduce((agg, student) => {
