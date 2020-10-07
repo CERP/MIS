@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux'
 import Banner from 'components/Banner'
+import { addReport } from 'actions'
 import './style.css'
 
 interface P {
@@ -9,12 +10,13 @@ interface P {
     stdId: any
     testId: any
     testType: any
-    stdObj: any
     students: RootDBState["students"]
     targeted_instruction: RootDBState["targeted_instruction"]
+
+    saveReport: (stdId, report, diagnostic_result) => void
 }
 
-const StudentGrades: React.FC<P> = (props: any) => {
+const StudentGrades: React.FC<P> = ({ questions, stdId, testId, testType, students, targeted_instruction, saveReport }) => {
 
     const [state, setState] = useState({
         banner: {
@@ -22,22 +24,26 @@ const StudentGrades: React.FC<P> = (props: any) => {
             good: true,
             text: "Saved!"
         },
-        questionsArr: []
+        questionsArr: [],
+        result: null
     })
 
     useEffect(() => {
         setState({
             ...state,
-            questionsArr: props.questions
+            questionsArr: questions
         })
-    }, [props.questions])
+    }, [questions])
 
     const handleChange = (e: any, questionId: any) => {
         const index = state.questionsArr.findIndex((obj) => { return obj.question === questionId })
         state.questionsArr[index].answer = e.target.checked
+        let diagnostic_res = students[stdId].diagnostic_result[testId]
+        diagnostic_res[questionId].isCorrect = e.target.checked
         setState({
             ...state,
-            questionsArr: state.questionsArr
+            questionsArr: state.questionsArr,
+            result: diagnostic_res
         })
     }
 
@@ -57,7 +63,7 @@ const StudentGrades: React.FC<P> = (props: any) => {
 
         let report = {}
         for (let [, sloObj] of Object.entries(slo_keys)) {
-            const category = props.targeted_instruction.SLO_Mapping[sloObj.slo].category
+            const category = targeted_instruction.SLO_Mapping[sloObj.slo].category
             if (report[category]) {
                 if (sloObj.answer) {
                     const countCorrect = ++report[category].correct
@@ -74,7 +80,7 @@ const StudentGrades: React.FC<P> = (props: any) => {
                     }
                 }
                 report[category].percentage = (report[category].correct / report[category].possible) * 100
-                report[category].link = props.targeted_instruction.SLO_Mapping[sloObj.slo].link
+                report[category].link = targeted_instruction.SLO_Mapping[sloObj.slo].link
             } else {
                 if (sloObj.answer) {
                     report[category] = {
@@ -94,12 +100,19 @@ const StudentGrades: React.FC<P> = (props: any) => {
 
     const onSave = () => {
 
-        props.students[props.stdId]['report'] = {
-            [props.testType]: {
-                ...props.students[props.stdId].report[props.testType],
-                [props.testId]: createReport()
+        const diagnostic_result = {
+            ...students[stdId].diagnostic_result,
+            [testId]: state.result
+        }
+
+        const report = {
+            [testType]: {
+                ...students[stdId].report[testType],
+                [testId]: createReport()
             }
         }
+
+        saveReport(stdId, report, diagnostic_result)
 
         setState({
             ...state,
@@ -128,7 +141,7 @@ const StudentGrades: React.FC<P> = (props: any) => {
             < div className="section">
                 <div className="questions-container">
                     <div style={{ textAlign: 'center' }}>
-                        <label className="title" >{capitalize(props.testId)}</label>
+                        <label className="title" >{capitalize(testId)}</label>
                     </div>
                     <div className="flex-view">
                         <div className="table-header" style={{ textAlign: "left" }}>Question Title</div>
@@ -160,4 +173,6 @@ const StudentGrades: React.FC<P> = (props: any) => {
 export default connect((state: RootReducerState) => ({
     targeted_instruction: state.db.targeted_instruction,
     students: state.db.students
+}), (dispatch: Function) => ({
+    saveReport: (stdId, report, diagnostic_result) => dispatch(addReport(stdId, report, diagnostic_result)),
 }))(StudentGrades)

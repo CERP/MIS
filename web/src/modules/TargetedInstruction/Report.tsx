@@ -37,7 +37,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
             allStds = Object.values(students)
                 .reduce((agg, std) => {
                     let stdObj = {}
-                    const report = std.report && std.report[testType][testId]
+                    const report = std.report && std.report[testType] && std.report[testType][testId]
                     if (report) {
                         stdObj = {
                             ...stdObj,
@@ -90,7 +90,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
         const section_name = `Class: ${selectedClass}\n`
         const test_type = `Test Type: ${testType}\n`
         const test_name = `Test Name: ${testId}\n`
-        const stdReport = students[stdId].report && students[stdId].report[testType][testId]
+        const stdReport = students[stdId].report && students[stdId].report[testType] && students[stdId].report[testType][testId]
         if (stdReport) {
             const stdName = students[stdId].Name
             let message = []

@@ -544,6 +544,19 @@ export const addPayment = (student: MISStudent, payment_id: string, amount: numb
 
 }
 
+export const addReport = (studentId: string, report: any, diagnostic_result: any) => (dispatch: Function) => {
+	dispatch(createMerges([
+		{
+			path: ["db", "students", studentId, "report"],
+			value: report
+		},
+		{
+			path: ["db", "students", studentId, "diagnostic_result"],
+			value: diagnostic_result
+		}
+	]))
+}
+
 type PaymentAddItem = {
 	student: MISStudent
 	payment_id: string

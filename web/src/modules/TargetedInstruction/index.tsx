@@ -226,7 +226,7 @@ const Test: React.FC<PropsType> = (props) => {
 							stdId={stdId}
 							testId={testId}
 							testType={testType}
-							stdObj={props.students[stdId]} /> :
+						/> :
 						<Report
 							testId={testId}
 							testType={testType}
