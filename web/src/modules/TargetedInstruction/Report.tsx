@@ -16,10 +16,8 @@ interface P {
     testId: any
     testType: any
     allStudents: any
-    client_id: string
     faculty_id: string
     selectedClass: string
-    auth: RootReducerState["auth"]
     students: RootDBState["students"]
 
     setReport: () => any
@@ -31,7 +29,6 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
 
     let test, allStds;
     if (stdId) {
-
         test = students && students[stdId] && students[stdId].report[testType][testId && testId]
         if (type === "All Students") {
             allStds = Object.values(students)
@@ -109,7 +106,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
     }
 
     const getMessages = (): MISSms[] => {
-        // in case of single student
+
         if (type === 'Single Student') {
             let phone
             if (stdId) {
@@ -203,19 +200,14 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
                                             })}</>
                                         })}
                                     </tr>
-                                    {Object.keys(test && test).map(function () {
-                                        return <>
-                                            {allStds && allStds.map((std, index) => {
-                                                return <tr key={index}> {Object.keys(std).map(function (key) {
-                                                    if (key === 'Student') {
-                                                        return <td className="std-name" id={std[key].id} onClick={getStudentId}>{std[key].name}</td>
-                                                    } else {
-                                                        return <td className="table-data">{`${std[key]}%`}</td>
-                                                    }
-                                                })}</tr>
-                                            })}
-                                        </>
-
+                                    {allStds && allStds.map((std, index) => {
+                                        return <tr key={index}> {Object.keys(std).map(function (key) {
+                                            if (key === 'Student') {
+                                                return <td className="std-name" id={std[key].id} onClick={getStudentId}>{std[key].name}</td>
+                                            } else {
+                                                return <td className="table-data">{`${std[key]}%`}</td>
+                                            }
+                                        })}</tr>
                                     })}
                                 </tbody>
                             </table>
@@ -236,8 +228,6 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
 }
 
 export default connect((state: RootReducerState) => ({
-    auth: state.auth,
-    client_id: state.client_id,
     students: state.db.students,
     faculty_id: state.auth.faculty_id,
 }), (dispatch: Function) => ({
