@@ -25,8 +25,9 @@ const StudentGrades: React.FC<P> = (props: any) => {
     })
 
     const handleChange = (checked: any, questionId: any) => {
-        const tests = props.stdObj.diagnostic_result[props.testId]
+        const tests = props.students[props.stdId].diagnostic_result[props.testId]
         tests[questionId].isCorrect = checked
+        debugger
     }
 
     const capitalize = (str: string) => {
@@ -36,14 +37,14 @@ const StudentGrades: React.FC<P> = (props: any) => {
     const onSave = () => {
         let slo_keys = []
         const tests = props.stdObj.diagnostic_result[props.testId]
-        for (let [id, obj] of Object.entries(tests)) {
+        for (let [, obj] of Object.entries(tests)) {
             slo_keys.push({
                 slo: obj.slo[0],
                 answer: obj.isCorrect
             })
         }
         let report = {}
-        for (let [id, sloObj] of Object.entries(slo_keys)) {
+        for (let [, sloObj] of Object.entries(slo_keys)) {
             const category = props.targeted_instruction.SLO_Mapping[sloObj.slo].category
             if (report[category]) {
                 if (sloObj.answer) {
@@ -60,9 +61,8 @@ const StudentGrades: React.FC<P> = (props: any) => {
                         possible: countPossible
                     }
                 }
-
                 report[category].percentage = (report[category].correct / report[category].possible) * 100
-
+                report[category].link = props.targeted_instruction.SLO_Mapping[sloObj.slo].link
             } else {
                 if (sloObj.answer) {
                     report[category] = {

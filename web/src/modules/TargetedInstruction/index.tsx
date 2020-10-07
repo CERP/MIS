@@ -73,7 +73,7 @@ const Test: React.FC<PropsType> = (props) => {
 
 	const getTestList = (testType: any, selectedSubject: any) => {
 		const testArr = []
-		for (let [id, obj] of Object.entries(props.targeted_instruction.tests)) {
+		for (let [, obj] of Object.entries(props.targeted_instruction.tests)) {
 			if (obj.class === selectedClass && obj.type === testType && obj.subject === selectedSubject) {
 				testArr.push(obj.name)
 				setQuestions([])
@@ -100,7 +100,7 @@ const Test: React.FC<PropsType> = (props) => {
 	}
 
 	const getPDF = (selectedSubject: any, selectedClass: any, testType: any) => {
-		for (let [id, obj] of Object.entries(props.targeted_instruction['tests'])) {
+		for (let [, obj] of Object.entries(props.targeted_instruction['tests'])) {
 			if (obj.type === testType && obj.class === selectedClass && obj.subject === selectedSubject) {
 				setUrl(obj.pdf_url)
 				setLabel(obj.label)
@@ -235,6 +235,7 @@ const Test: React.FC<PropsType> = (props) => {
 							setReport={setReport}
 							allStudents={students}
 							data={data}
+							selectedClass={selectedClass}
 						/>}
 			</div>
 		</div>

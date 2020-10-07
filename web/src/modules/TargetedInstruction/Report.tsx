@@ -94,7 +94,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
         if (stdReport) {
             const stdName = students[stdId].Name
             let message = []
-            message.push(`${stdName} secure`)
+            message.push(`${stdName} scored`)
             for (let [testName, testObj] of Object.entries(stdReport)) {
                 if (testObj.percentage <= 50) {
                     message.push(`${testObj.percentage}% marks in ${testName} kindly follow this link ${testObj.link}`)
@@ -102,7 +102,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
                     message.push(`${testObj.percentage}% marks in ${testName}`)
                 }
             }
-            const raw_report_string = curr_date + section_name + test_type + test_name + message.join("\n")
+            const raw_report_string = curr_date + section_name + test_type + test_name + message.join(" \n ")
             const report_string = replaceSpecialCharsWithUTFChars(raw_report_string)
             return report_string
         }

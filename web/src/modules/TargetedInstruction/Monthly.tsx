@@ -1,6 +1,4 @@
 import * as React from 'react';
-import Layout from 'components/Layout'
-import { Link } from 'react-router-dom'
 
 interface WelcomeProps {
     name: string
