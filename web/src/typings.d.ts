@@ -63,6 +63,7 @@ interface RootDBState {
 			[slo_id: string]: {
 				description: string
 				parent: string
+				link: strng
 			}
 		}
 	}
