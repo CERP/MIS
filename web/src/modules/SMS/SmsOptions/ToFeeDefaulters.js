@@ -115,7 +115,7 @@ class ToFeeDefaulters extends Component {
 
 		const messages = Object.values(this.state.total_student_debts)
 			.filter(({ student, debt }) => {
-				return student.id !== undefined && student.Phone !== undefined &&
+				return student && student.Name && student.id && student.section_id && student.Phone !== undefined &&
 					(student.tags === undefined || !student.tags["PROSPECTIVE"]) &&
 					this.calculateDebt(debt) > 0
 			})
@@ -155,7 +155,7 @@ class ToFeeDefaulters extends Component {
 				{limit_exceed && <SMSLimitExceed />}
 				{smsOption === "SIM" ?
 					<a href={smsIntentLink({ messages, return_link: window.location.href })}
-						onClick={this.logSms(messages)}
+						onClick={() => this.logSms(messages)}
 						className="button blue">Send using Local SIM</a> :
 					<div className="button" onClick={() => sendBatchMessages(messages)}>Send using API</div>
 				}

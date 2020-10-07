@@ -44,9 +44,8 @@ class ToSingleClass extends Component {
 
 		const messages = Object.values(students)
 			.filter(s => {
-				return s.section_id === this.state.selected_section_id &&
-					s.Name && s.id
-						(s.tags === undefined || !s.tags["PROSPECTIVE"]) &&
+				return s.section_id === this.state.selected_section_id && s.Name && s.id &&
+					(s.tags === undefined || !s.tags["PROSPECTIVE"]) &&
 					s.Phone && (s.Phone.length >= 11 && s.Phone.length <= 15)
 			})
 			.reduce((agg, student) => {
@@ -95,7 +94,7 @@ class ToSingleClass extends Component {
 				{limit_exceed && <SMSLimitExceed />}
 				{smsOption === "SIM" ?
 					<a href={smsIntentLink({ messages, return_link: window.location.href })}
-						onClick={this.logSms(messages)}
+						onClick={() => this.logSms(messages)}
 						className="button blue">Send using Local SIM</a> :
 					<div className="button" onClick={() => sendBatchMessages(messages)}>Send using API</div>
 				}

@@ -76,7 +76,7 @@ class ToProspectiveStudents extends Component {
 				{limit_exceed && <SMSLimitExceed />}
 				{smsOption === "SIM" ?
 					<a href={smsIntentLink({ messages, return_link: window.location.href })}
-						onClick={this.logSms(messages)}
+						onClick={() => this.logSms(messages)}
 						className="button blue">Send using Local SIM</a> :
 					<div className="button" onClick={() => sendBatchMessages(messages)}>Send using API</div>
 				}
