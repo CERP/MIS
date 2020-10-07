@@ -1,7 +1,6 @@
 //@ts-nocheck
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux'
-import Switch from "react-switch";
 import Banner from 'components/Banner'
 import './style.css'
 
@@ -16,33 +15,46 @@ interface P {
 }
 
 const StudentGrades: React.FC<P> = (props: any) => {
+
     const [state, setState] = useState({
         banner: {
             active: false,
             good: true,
             text: "Saved!"
-        }
+        },
+        questionsArr: []
     })
 
-    const handleChange = (checked: any, questionId: any) => {
-        const tests = props.students[props.stdId].diagnostic_result[props.testId]
-        tests[questionId].isCorrect = checked
-        debugger
+    useEffect(() => {
+        setState({
+            ...state,
+            questionsArr: props.questions
+        })
+    }, [props.questions])
+
+    const handleChange = (e: any, questionId: any) => {
+        const index = state.questionsArr.findIndex((obj) => { return obj.question === questionId })
+        state.questionsArr[index].answer = e.target.checked
+        setState({
+            ...state,
+            questionsArr: state.questionsArr
+        })
     }
 
     const capitalize = (str: string) => {
         return str.charAt(0).toUpperCase() + str.slice(1, 5);
     }
 
-    const onSave = () => {
+    const createReport = () => {
+
         let slo_keys = []
-        const tests = props.stdObj.diagnostic_result[props.testId]
-        for (let [, obj] of Object.entries(tests)) {
+        state.questionsArr.forEach(function (item) {
             slo_keys.push({
-                slo: obj.slo[0],
-                answer: obj.isCorrect
+                slo: item.slo,
+                answer: item.answer
             })
-        }
+        });
+
         let report = {}
         for (let [, sloObj] of Object.entries(slo_keys)) {
             const category = props.targeted_instruction.SLO_Mapping[sloObj.slo].category
@@ -77,13 +89,20 @@ const StudentGrades: React.FC<P> = (props: any) => {
                 }
             }
         }
+        return report
+    }
+
+    const onSave = () => {
+
         props.students[props.stdId]['report'] = {
             [props.testType]: {
                 ...props.students[props.stdId].report[props.testType],
-                [props.testId]: report
+                [props.testId]: createReport()
             }
         }
+
         setState({
+            ...state,
             banner: {
                 active: true,
                 good: true,
@@ -93,6 +112,7 @@ const StudentGrades: React.FC<P> = (props: any) => {
 
         setTimeout(() => {
             setState({
+                ...state,
                 banner: {
                     active: false,
                     good: true,
@@ -104,7 +124,7 @@ const StudentGrades: React.FC<P> = (props: any) => {
 
     return <>
         {state.banner.active ? <Banner isGood={state.banner.good} text={state.banner.text} /> : false}
-        {props.questions.length > 0 &&
+        {state.questionsArr && state.questionsArr.length > 0 &&
             < div className="section">
                 <div className="questions-container">
                     <div style={{ textAlign: 'center' }}>
@@ -115,22 +135,19 @@ const StudentGrades: React.FC<P> = (props: any) => {
                         <div className="table-header">Correct Answers</div>
                         <div className="table-header">Answers</div>
                     </div>
-                    {props.questions && props.questions.map((obj: any) => {
+                    {state.questionsArr && state.questionsArr.map((obj: any) => {
                         return <div key={obj.question} className="form">
                             <div className="flex-view">
                                 <div className="question-name" style={{ textAlign: "left" }}>{(obj.question)}</div>
                                 <div className="question-name tale-data">{(obj.correctAnswer)}</div>
-                                <div className="question-name">  <Switch
-                                    height={25}
-                                    width={50}
-                                    onChange={(e) => handleChange(e, obj.question)}
-                                    checked={obj.answer}
-                                    id="normal-switch"
-                                /></div>
+                                <label className="switch">
+                                    <input type="checkbox" checked={obj.answer} onChange={(e) => handleChange(e, obj.question)} />
+                                    <span className="slider round"></span>
+                                </label>
                             </div>
                         </div>
                     })}
-                    {props.questions.length > 0 &&
+                    {state.questionsArr.length > 0 &&
                         <div className="save-btn-div">
                             <button className="button green save-btn mobile-mode" onClick={onSave}>SAVE</button>
                         </div>}

@@ -114,13 +114,14 @@ const Test: React.FC<PropsType> = (props) => {
 
 	const getQuestionList = (selectedTest: any, stdObj: any) => {
 		let questionArr = []
-		const res = stdObj.diagnostic_result && stdObj.diagnostic_result[selectedTest]
+		const res = stdObj && stdObj.diagnostic_result && stdObj.diagnostic_result[selectedTest]
 		if (res && testType === 'Diagnostic') {
 			for (let obj of Object.entries(res && res)) {
 				questionArr.push({
 					"question": obj[0],
 					"answer": obj[1].isCorrect,
-					"correctAnswer": obj[1].answer
+					"correctAnswer": obj[1].answer,
+					"slo": obj[1].slo[0]
 				})
 
 			}
@@ -153,7 +154,6 @@ const Test: React.FC<PropsType> = (props) => {
 			setData(arr)
 		}
 	}
-
 
 	return <Layout history={props.history}>
 		<div className="analytics">
@@ -237,6 +237,7 @@ const Test: React.FC<PropsType> = (props) => {
 							data={data}
 							selectedClass={selectedClass}
 						/>}
+
 			</div>
 		</div>
 	</Layout>
