@@ -6,14 +6,14 @@ import { addReport } from 'actions'
 import './style.css'
 
 interface P {
-    questions: any
-    stdId: any
-    testId: any
-    testType: any
+    questions: string[]
+    stdId: string
+    testId: string
+    testType: string
     students: RootDBState["students"]
     targeted_instruction: RootDBState["targeted_instruction"]
 
-    saveReport: (stdId, report, diagnostic_result) => void
+    saveReport: (stdId: string, report: object[], diagnostic_result: object[]) => void
 }
 
 const StudentGrades: React.FC<P> = ({ questions, stdId, testId, testType, students, targeted_instruction, saveReport }) => {
@@ -35,7 +35,7 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, testType, studen
         })
     }, [questions])
 
-    const handleChange = (e: any, questionId: any) => {
+    const handleChange = (e: any, questionId: string) => {
         const index = state.questionsArr.findIndex((obj) => { return obj.question === questionId })
         state.questionsArr[index].answer = e.target.checked
         let diagnostic_res = students[stdId].diagnostic_result[testId]
@@ -155,7 +155,7 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, testType, studen
                                 <div className="question-name tale-data">{(obj.correctAnswer)}</div>
                                 <label className="switch">
                                     <input type="checkbox" checked={obj.answer} onChange={(e) => handleChange(e, obj.question)} />
-                                    <span className="slider round"></span>
+                                    <span className="toggleSlider round"></span>
                                 </label>
                             </div>
                         </div>

@@ -19,24 +19,23 @@ interface P {
 
 type PropsType = P & RouteComponentProps
 
-const Test: React.FC<PropsType> = (props) => {
+const Test: React.FC<PropsType> = (props: any) => {
 
 	const loc = props.location.pathname.split('/').slice(-1).pop();
-
 	const [selectedSubject, setSelectedSubject] = useState('')
+	const [sortedSections, setSortedSections] = useState([])
 	const [selectedClass, setSelectedClass] = useState('')
+	const [allSubjects, setAllSubjects] = useState({})
 	const [questions, setQuestions] = useState([])
+	const [sectionId, setSectionId] = useState('')
 	const [testId, setTestId] = useState('')
 	const [testType, setTestType] = useState('')
 	const [report, setReport] = useState('')
 	const [stdId, setStdId] = useState('')
 	const [tests, setTests] = useState([])
 	const [label, setLabel] = useState('')
-	const [url, setUrl] = useState('')
 	const [data, setData] = useState([])
-	const [allSubjects, setAllSubjects] = useState({})
-	const [sortedSections, setSortedSections] = useState([])
-	const [sectionId, setSectionId] = useState('')
+	const [url, setUrl] = useState('')
 
 	useEffect(() => {
 		setSortedSections(getSectionsFromClasses(props.classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0)))
@@ -71,7 +70,7 @@ const Test: React.FC<PropsType> = (props) => {
 		setTests(getTestList(e.target.value, selectedSubject))
 	}
 
-	const getTestList = (testType: any, selectedSubject: any) => {
+	const getTestList = (testType: string, selectedSubject: string) => {
 		const testArr = []
 		for (let [, obj] of Object.entries(props.targeted_instruction.tests)) {
 			if (obj.class === selectedClass && obj.type === testType && obj.subject === selectedSubject) {
@@ -99,7 +98,7 @@ const Test: React.FC<PropsType> = (props) => {
 		graphData()
 	}
 
-	const getPDF = (selectedSubject: any, selectedClass: any, testType: any) => {
+	const getPDF = (selectedSubject: string, selectedClass: string, testType: string) => {
 		for (let [, obj] of Object.entries(props.targeted_instruction['tests'])) {
 			if (obj.type === testType && obj.class === selectedClass && obj.subject === selectedSubject) {
 				setUrl(obj.pdf_url)
@@ -112,7 +111,7 @@ const Test: React.FC<PropsType> = (props) => {
 		}
 	}
 
-	const getQuestionList = (selectedTest: any, stdObj: any) => {
+	const getQuestionList = (selectedTest: string, stdObj: object[]) => {
 		let questionArr = []
 		const res = stdObj && stdObj.diagnostic_result && stdObj.diagnostic_result[selectedTest]
 		if (res && testType === 'Diagnostic') {
@@ -177,7 +176,7 @@ const Test: React.FC<PropsType> = (props) => {
 					<select className="no-print" onChange={(e) => getSubject(e)}>
 						<option value="">Select Subject</option>
 						{
-							(allSubjects[selectedClass] || []).map((sub) => <option key={sub} value={sub}>{sub}</option>)
+							(allSubjects[selectedClass] || []).map((sub: any) => <option key={sub} value={sub}>{sub}</option>)
 						}
 					</select>
 				</div>
@@ -196,7 +195,7 @@ const Test: React.FC<PropsType> = (props) => {
 							<select className="no-print" onChange={(e) => getStudent(e)}>
 								<option value="">Select Students</option>
 								{
-									students && students.map((std) => <option key={std.id} value={std.id}>{std.Name}</option>)
+									students && students.map((std: any) => <option key={std.id} value={std.id}>{std.Name}</option>)
 								}
 							</select>
 						</div>}

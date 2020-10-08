@@ -7,15 +7,15 @@ interface P {
     url: string
 }
 
-const Diagnostic: React.FC<P> = (props: any) => {
+const Diagnostic: React.FC<P> = ({ label, url }) => {
 
     return <>
         <div>
-            {props.label ? <div className="pdf-label no-print"><label className="">{props.label}</label></div> : null}
-            {props.url ? <PDFViewer
+            {label ? <div className="pdf-label no-print"><label className="">{label}</label></div> : null}
+            {url ? <PDFViewer
                 hideNavbar={true}
                 document={{
-                    url: props.url,
+                    url: url,
                 }}
             /> : null}
 

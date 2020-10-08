@@ -10,11 +10,11 @@ import { replaceSpecialCharsWithUTFChars } from 'utils/stringHelper'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 interface P {
-    type: any
-    data: any
-    stdId: any
-    testId: any
-    testType: any
+    type: string
+    data: string
+    stdId: string
+    testId: string
+    testType: string
     allStudents: any
     faculty_id: string
     selectedClass: string
