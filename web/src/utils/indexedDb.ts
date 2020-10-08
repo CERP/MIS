@@ -54,7 +54,7 @@ export const initState: RootReducerState = {
 		},
 		targeted_instruction: {
 			tests: {},
-			slo_mapping: {}
+			SLO_Mapping: {}
 		}
 	},
 	auth: {

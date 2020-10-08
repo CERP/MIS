@@ -51,7 +51,7 @@ const initState: RootReducerState = {
 		},
 		targeted_instruction: {
 			tests: {},
-			slo_mapping: {}
+			SLO_Mapping: {}
 		}
 	},
 	// this part of the tree i want to obscure.

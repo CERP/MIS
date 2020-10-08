@@ -55,17 +55,21 @@ interface RootDBState {
 		}
 	}
 	targeted_instruction: {
-		tests: {
-			[id: string]: 
-				MISTest
-		}
-		slo_mapping: {
-			[slo_id: string]: {
-				description: string
-				parent: string
-				link: strng
-			}
-		}
+		tests: Tests
+	    SLO_Mapping: SLOMapping
+	}
+}
+
+interface Tests {
+	[id: string]: 
+	MISTest
+}
+
+interface SLOMapping {
+	[slo_id: string]: {
+		description: string
+		category: string
+		link: strng
 	}
 }
 
@@ -283,22 +287,29 @@ interface MISStudent {
 	}
 	diagnostic_result: {
 		[test_id: string]: {
-			[question_id: string]: {
-				answer: string
-				isCorrect: boolean
-				slo: string[]
-			}
+			[question_id: string]: DiagnosticQuestion
 		}
 	}
 	report: {
 		[test_type: string]: {
-			[test_id: string]: {
-				correct: number 
-				possible: number 
-				percentage: number
-			}
+			[test_id: string]: MISReport
 		}
 	}
+}
+
+interface DiagnosticQuestion {
+	answer: string
+	isCorrect: boolean
+	slo: string[]
+}
+
+interface MISReport {
+	[name: string]: {
+		correct: number 
+		possible: number 
+		percentage?: number
+		link?: string
+	}	
 }
 
 interface MISFamilyInfo {

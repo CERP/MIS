@@ -1,4 +1,3 @@
-//@ts-nocheck
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux'
 import Banner from 'components/Banner'
@@ -13,7 +12,18 @@ interface P {
     students: RootDBState["students"]
     targeted_instruction: RootDBState["targeted_instruction"]
 
-    saveReport: (stdId: string, report: object[], diagnostic_result: object[]) => void
+    saveReport: (stdId: string, report: Report, diagnostic_result: MISStudent['diagnostic_result']) => void
+}
+
+type Report = {
+    [id: string]: {
+        [id: string]: MISReport
+    }
+}
+
+interface SLO {
+    slo: string
+    answer: string
 }
 
 const StudentGrades: React.FC<P> = ({ questions, stdId, testId, testType, students, targeted_instruction, saveReport }) => {
@@ -53,7 +63,7 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, testType, studen
 
     const createReport = () => {
 
-        let slo_keys = []
+        let slo_keys: SLO[] = []
         state.questionsArr.forEach(function (item) {
             slo_keys.push({
                 slo: item.slo,
@@ -61,7 +71,7 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, testType, studen
             })
         });
 
-        let report = {}
+        let report: MISReport = {}
         for (let [, sloObj] of Object.entries(slo_keys)) {
             const category = targeted_instruction.SLO_Mapping[sloObj.slo].category
             if (report[category]) {
@@ -111,7 +121,6 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, testType, studen
                 [testId]: createReport()
             }
         }
-
         saveReport(stdId, report, diagnostic_result)
 
         setState({
@@ -174,5 +183,5 @@ export default connect((state: RootReducerState) => ({
     targeted_instruction: state.db.targeted_instruction,
     students: state.db.students
 }), (dispatch: Function) => ({
-    saveReport: (stdId, report, diagnostic_result) => dispatch(addReport(stdId, report, diagnostic_result)),
+    saveReport: (stdId: string, report: Report, diagnostic_result: MISStudent['diagnostic_result']) => dispatch(addReport(stdId, report, diagnostic_result)),
 }))(StudentGrades)

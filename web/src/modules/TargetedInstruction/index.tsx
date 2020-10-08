@@ -17,15 +17,23 @@ interface P {
 	targeted_instruction: RootDBState["targeted_instruction"]
 }
 
+type Subjects = {
+	[id: string]: string[]
+}
+
+type DiagnosticResult = {
+	[id: string]: DiagnosticQuestion
+}
+
 type PropsType = P & RouteComponentProps
 
-const Test: React.FC<PropsType> = (props: any) => {
+const Test: React.FC<PropsType> = (props) => {
 
 	const loc = props.location.pathname.split('/').slice(-1).pop();
 	const [selectedSubject, setSelectedSubject] = useState('')
 	const [sortedSections, setSortedSections] = useState([])
 	const [selectedClass, setSelectedClass] = useState('')
-	const [allSubjects, setAllSubjects] = useState({})
+	const [allSubjects, setAllSubjects] = useState<Subjects>({})
 	const [questions, setQuestions] = useState([])
 	const [sectionId, setSectionId] = useState('')
 	const [testId, setTestId] = useState('')
@@ -43,7 +51,7 @@ const Test: React.FC<PropsType> = (props: any) => {
 	}, [])
 
 	const students = useMemo(
-		() => getAllStudents(sectionId, props.students),
+		() => getAllStudents(sectionId, Object.values(props.students)),
 		[sectionId]
 	)
 
@@ -72,7 +80,8 @@ const Test: React.FC<PropsType> = (props: any) => {
 
 	const getTestList = (testType: string, selectedSubject: string) => {
 		const testArr = []
-		for (let [, obj] of Object.entries(props.targeted_instruction.tests)) {
+		const misTest: Tests = props.targeted_instruction['tests']
+		for (let [, obj] of Object.entries(misTest)) {
 			if (obj.class === selectedClass && obj.type === testType && obj.subject === selectedSubject) {
 				testArr.push(obj.name)
 				setQuestions([])
@@ -99,7 +108,8 @@ const Test: React.FC<PropsType> = (props: any) => {
 	}
 
 	const getPDF = (selectedSubject: string, selectedClass: string, testType: string) => {
-		for (let [, obj] of Object.entries(props.targeted_instruction['tests'])) {
+		let misTest: Tests = props.targeted_instruction['tests']
+		for (let [, obj] of Object.entries(misTest)) {
 			if (obj.type === testType && obj.class === selectedClass && obj.subject === selectedSubject) {
 				setUrl(obj.pdf_url)
 				setLabel(obj.label)
@@ -111,9 +121,9 @@ const Test: React.FC<PropsType> = (props: any) => {
 		}
 	}
 
-	const getQuestionList = (selectedTest: string, stdObj: object[]) => {
+	const getQuestionList = (selectedTest: string, stdObj: MISStudent) => {
 		let questionArr = []
-		const res = stdObj && stdObj.diagnostic_result && stdObj.diagnostic_result[selectedTest]
+		const res: DiagnosticResult = stdObj && stdObj.diagnostic_result && stdObj.diagnostic_result[selectedTest]
 		if (res && testType === 'Diagnostic') {
 			for (let obj of Object.entries(res && res)) {
 				questionArr.push({
@@ -128,16 +138,20 @@ const Test: React.FC<PropsType> = (props: any) => {
 		}
 	}
 
+	type GraphData = {
+		[name: string]: number
+	}
 	const graphData = () => {
 
-		let graphData = {}
+		let graphData: GraphData = {}
+		let students: MISStudent[] = Object.values(props.students)
 		if (testId) {
-			for (let [, student] of Object.entries(props.students)) {
-				const test = student.report && student.report[testType] && student.report[testType][testId]
+			for (let student of students) {
+				const test: MISReport = student.report && student.report[testType] && student.report[testType][testId]
 				if (test) {
 					for (let [testId, testObj] of Object.entries(test)) {
 						if (graphData[testId]) {
-							graphData[testId] += testObj.percentage
+							graphData[testId] = graphData[testId] + testObj.percentage
 						} else {
 							graphData[testId] = testObj.percentage
 						}
@@ -145,10 +159,9 @@ const Test: React.FC<PropsType> = (props: any) => {
 				}
 			}
 			let arr = []
-			for (let [id, graphObj] of Object.entries(graphData)) {
-				arr.push(
-					{ name: id, percentage: Math.round(graphObj / Object.entries(props.students).length) }
-				)
+
+			for (let [id, percentage] of Object.entries(graphData)) {
+				arr.push({ name: id, percentage: Math.round(percentage / Object.entries(props.students).length) })
 			}
 			setData(arr)
 		}
@@ -211,7 +224,7 @@ const Test: React.FC<PropsType> = (props: any) => {
 					</>
 				}
 				{loc === 'report' && <div className="row">
-					<label className="no-print">Select</label>
+					<label className="no-print">Type</label>
 					<select className="no-print" onChange={(e) => getSelected(e)}>
 						<option value="">Select Type</option>
 						<option value="Single Student">Single Student</option>
@@ -227,8 +240,8 @@ const Test: React.FC<PropsType> = (props: any) => {
 							testType={testType}
 						/> :
 						<Report
-							testId={testId}
 							testType={testType}
+							testId={testId}
 							type={report}
 							stdId={stdId}
 							setReport={setReport}
@@ -249,13 +262,9 @@ export default connect((state: RootReducerState) => ({
 	students: state.db.students
 }))(Test)
 
-type getAllStudents = {
-	(sectionId: sectionId, studentsObj: P["students"])
-}
-
-const getAllStudents: getAllStudents = (sectionId, studentsObj) => {
-	const students = Object.values(studentsObj)
-		.reduce((agg, student) => {
+const getAllStudents = (sectionId: string, students: MISStudent[]) => {
+	return students = Object.values(students)
+		.reduce<MISStudent[]>((agg, student) => {
 			if (student.section_id === sectionId) {
 				return [...agg,
 					student
@@ -263,5 +272,4 @@ const getAllStudents: getAllStudents = (sectionId, studentsObj) => {
 			}
 			return [...agg,]
 		}, [])
-	return students
 }

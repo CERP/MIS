@@ -1,8 +1,6 @@
-//@ts-nocheck
 import React from 'react'
 import { logSms } from 'actions'
 import { connect } from 'react-redux'
-import { withRouter } from 'react-router-dom'
 import { smsIntentLink } from 'utils/intent'
 import moment from 'moment'
 import { isMobile } from 'utils/helpers'
@@ -11,25 +9,24 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'rec
 
 interface P {
     type: string
-    data: string
+    data: object[]
     stdId: string
     testId: string
     testType: string
-    allStudents: any
+    allStudents: MISStudent[]
     faculty_id: string
     selectedClass: string
     students: RootDBState["students"]
 
-    setReport: () => any
-    sendMessage: (text: string, number: string) => any
-    logSms: (history: MISSMSHistory) => any
+    setReport?: (type: string) => any
+    logSms?: (history: MISSMSHistory) => any
 }
 
 const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, type, faculty_id, selectedClass, data, setReport, logSms }) => {
 
-    let test, allStds;
+    let test: MISReport, allStds;
     if (stdId) {
-        test = students && students[stdId] && students[stdId].report[testType][testId && testId]
+        test = students && students[stdId] && students[stdId].report[testType][testId]
         if (type === "All Students") {
             allStds = Object.values(students)
                 .reduce((agg, std) => {
@@ -62,10 +59,6 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
         test = students && students[e.target.id].report[testType][testId && testId]
     }
 
-    const handleRedirectToIlmx = (redirectLink) => {
-        window.location.href = redirectLink
-    }
-
     const logMessages = (messages: MISSms[]) => {
         if (messages.length === 0) {
             console.log("No Messaged to Log")
@@ -82,7 +75,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
         logSms(historyObj)
     }
 
-    const reportString = (stdId): string => {
+    const reportString = (stdId: string): string => {
         const curr_date = `Date: ${moment().format("DD MMMM YYYY")}\n`
         const section_name = `Class: ${selectedClass}\n`
         const test_type = `Test Type: ${testType}\n`
@@ -151,7 +144,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
                         </tr>
                         {Object.keys(test && test).map(function (key) {
                             return <tr key={key}>
-                                <td className="slo" id={test[key].link} onClick={() => handleRedirectToIlmx(test[key].link)}>{key}</td>
+                                <td className="slo" id={test[key].link}>{key}</td>
                                 <td className="table-data">{test[key].possible}</td>
                                 <td className="table-data">{test[key].correct}</td>
                                 <td className="table-data">{`${test[key].percentage}%`}</td>
@@ -231,7 +224,6 @@ export default connect((state: RootReducerState) => ({
     students: state.db.students,
     faculty_id: state.auth.faculty_id,
 }), (dispatch: Function) => ({
-    sendMessage: (text: string, number: string) => dispatch(sendSMS(text, number)),
     logSms: (history: MISSMSHistory) => dispatch(logSms(history)),
-}))(withRouter(Report))
+}))(Report)
 
