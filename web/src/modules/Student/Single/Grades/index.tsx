@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { connect } from 'react-redux'
-import Switch from "react-switch";
+// import Switch from "react-switch";
 import './style.css'
 
 interface P {
@@ -99,11 +99,11 @@ const StudentGrades: React.FC<P> = (props: any) => {
             {questions && questions.map((question) => {
                 return <div key={question.key} className="row question-row">
                     <div style={{ width: "95%" }}>{capitalize(question.key)}</div>
-                    <Switch
+                    {/* <Switch
                         onChange={handleChange}
                         checked={question.value}
                         id="normal-switch"
-                    />
+                    /> */}
                 </div>
             })}
         </div>
