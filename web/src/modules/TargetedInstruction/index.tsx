@@ -24,6 +24,10 @@ type DiagnosticResult = {
 	[id: string]: DiagnosticQuestion
 }
 
+type GraphData = {
+	[name: string]: number
+}
+
 type PropsType = P & RouteComponentProps
 
 const Test: React.FC<PropsType> = (props) => {
@@ -137,9 +141,6 @@ const Test: React.FC<PropsType> = (props) => {
 		}
 	}
 
-	type GraphData = {
-		[name: string]: number
-	}
 	const graphData = () => {
 
 		let graphData: GraphData = {}
