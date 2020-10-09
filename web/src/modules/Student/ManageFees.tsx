@@ -177,7 +177,7 @@ class ManageFees extends Component<propTypes, S> {
 		if (this.state.fee_filter === "to_all_students" || (this.state.fee_filter === "to_single_class")) {
 
 			const fees = Object.values(students)
-				.filter(s => s.Name && s.Active && this.state.selected_section_id === "" ? true : s.section_id === this.state.selected_section_id)
+				.filter(s => s && s.id && s.Name && s.Active && (this.state.selected_section_id === "" ? true : s.section_id === this.state.selected_section_id))
 				.map(student => {
 					const fee_id = v4()
 					return {
@@ -243,9 +243,6 @@ class ManageFees extends Component<propTypes, S> {
 
 		const { reset_fee_filter, reset_of_selected_section_id, reset_of_selected_student_id } = this.state
 
-		console.log("SELECTED ID", reset_of_selected_student_id, reset_fee_filter, reset_of_selected_section_id)
-
-
 		let students = Object.values(this.props.students)
 			.filter(student => {
 
@@ -253,7 +250,7 @@ class ManageFees extends Component<propTypes, S> {
 					return true
 				}
 
-				if (reset_fee_filter === "to_single_class" && student.section_id && student.section_id === reset_of_selected_section_id) {
+				if (reset_fee_filter === "to_single_class" && student && student.Name && student.Active && student.section_id && student.section_id === reset_of_selected_section_id) {
 					return true
 				}
 
@@ -266,10 +263,7 @@ class ManageFees extends Component<propTypes, S> {
 
 			})
 
-		console.log(students)
-
 		const student_count = students.length
-
 
 		const alert_message = `Warning this action cannot be undo! ${student_count} student will be affected. Are you sure you want to reset fees?`
 

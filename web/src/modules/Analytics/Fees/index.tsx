@@ -219,11 +219,14 @@ class FeeAnalytics extends Component<propTypes, S> {
 
 	componentDidMount() {
 		// first update fees
-		const { students, addPayments } = this.props
+		const { addPayments } = this.props
 
 		const s1 = new Date().getTime()
 		console.log('computing dues')
-		checkDuesAsync(Object.values(students))
+
+		const filtered_students = this.filterPropsStudents()
+
+		checkDuesAsync(filtered_students)
 			.then(nextPayments => {
 				console.log('done computing dues', (new Date().getTime()) - s1)
 				if (nextPayments.length > 0) {
@@ -248,7 +251,7 @@ class FeeAnalytics extends Component<propTypes, S> {
 		this.calculate()
 	}
 
-	componentWillReceiveProps(nextProps: propTypes) {
+	UNSAFE_componentWillReceiveProps(nextProps: propTypes) {
 
 		const parsed_query = queryString.parse(nextProps.location.search);
 
@@ -267,8 +270,11 @@ class FeeAnalytics extends Component<propTypes, S> {
 			selected_period
 		})
 
-		const { students, addPayments } = nextProps
-		checkDuesAsync(Object.values(students))
+		const { addPayments } = nextProps
+
+		const filtered_students = this.filterPropsStudents()
+
+		checkDuesAsync(filtered_students)
 			.then(nextPayments => {
 				if (nextPayments.length > 0) {
 					addPayments(nextPayments)
@@ -303,9 +309,7 @@ class FeeAnalytics extends Component<propTypes, S> {
 		const temp_ed = moment(this.state.end_date)
 		const period_format = this.state.selected_period === "Daily" ? "DD/MM/YYYY" : "MM/YYYY"
 
-		const { students } = this.props
-
-		const student_list = Object.values(students).filter(student => student && student.Name)
+		const student_list = this.filterPropsStudents()
 
 		const reducify = () => {
 
@@ -402,6 +406,11 @@ class FeeAnalytics extends Component<propTypes, S> {
 
 		this.background_calculation = setTimeout(reducify, 0)
 
+	}
+
+	filterPropsStudents = () => {
+		return Object.values(this.props.students)
+			.filter(student => student && student.id && student.Name && student.Active && student.section_id)
 	}
 
 	render() {

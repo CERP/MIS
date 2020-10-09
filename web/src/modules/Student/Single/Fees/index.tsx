@@ -52,6 +52,7 @@ interface S {
 	month: string
 	year: string
 	edits: AugmentedMISPaymentMap
+	student_id: string
 }
 
 interface RouteInfo {
@@ -60,7 +61,6 @@ interface RouteInfo {
 }
 
 type propTypes = RouteComponentProps<RouteInfo> & P
-
 
 
 class StudentFees extends Component<propTypes, S> {
@@ -98,14 +98,17 @@ class StudentFees extends Component<propTypes, S> {
 			},
 			month: "",
 			year: moment().format("YYYY"),
-			edits
+			edits,
+			student_id: undefined
 		}
 
 		this.Former = new former(this, []);
 	}
 
-	student = (): MISStudent => {
-		const id = this.props.match.params.id;
+	student = (student_id?: string): MISStudent => {
+
+		const id = student_id || this.props.match.params.id
+
 		return id === undefined ? this.siblings()[0] : this.props.students[id]
 	}
 
@@ -201,15 +204,22 @@ class StudentFees extends Component<propTypes, S> {
 		})
 	}
 
-	addPayment = () => {
-		// dispatch addPayment action 
+	addPayment = (fam_id: string | undefined) => {
 
 		const { amount, type, date } = this.state.payment
+		const { student_id } = this.state
 		const parsed_amount = parseInt(amount)
 
 		if (isNaN(parsed_amount)) {
 			alert("Please enter valid amount")
 			return
+		}
+
+		if (fam_id) {
+			if (!student_id) {
+				alert("Please select student to submit amount")
+				return
+			}
 		}
 
 		const id = v4()
@@ -223,7 +233,7 @@ class StudentFees extends Component<propTypes, S> {
 		const balance = [...Object.values(this.mergedPayments()), payment]
 			.reduce((agg, curr) => agg - (curr.type === "SUBMITTED" || curr.type === "FORGIVEN" ? 1 : -1) * curr.amount, 0)
 
-		const student = this.student()
+		const student = this.student(student_id)
 
 		if (this.state.payment.sendSMS) {
 			// send SMS with replace text for regex etc.
@@ -555,6 +565,20 @@ class StudentFees extends Component<propTypes, S> {
 							placeholder="Enter Date"
 							value={moment(this.state.payment.date).format("YYYY-MM-DD")} />
 					</div>
+					{
+						famId && <>
+							<div className="row">
+								<label>{this.state.payment.type === "SUBMITTED" ? "Paid" : "Scholarship"} against</label>
+								<select {...this.Former.super_handle(["student_id"])}>
+									<option value="">Select Student</option>
+									{
+										[...this.siblings()]
+											.map(student => <option key={student.id + student.section_id} value={student.id}>{student.Name}</option>)
+									}
+								</select>
+							</div>
+						</>
+					}
 					<div className="table row">
 						<label>Send SMS</label>
 						<select {...this.Former.super_handle(["payment", "sendSMS"])}>
@@ -562,7 +586,7 @@ class StudentFees extends Component<propTypes, S> {
 							<option value={"true"}>Send SMS Notification</option>
 						</select>
 					</div>
-					<div className="button save" onClick={this.addPayment}>Add Payment</div>
+					<div className="button save" onClick={() => this.addPayment(famId)}>Add Payment</div>
 				</div>}
 				<Link className="print button" to={this.getPreviewRoute()}> Print Preview</Link>
 			</div>
