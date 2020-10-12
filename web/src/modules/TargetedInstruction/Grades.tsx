@@ -171,7 +171,7 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, testType, studen
                     })}
                     {state.questionsArr.length > 0 &&
                         <div className="save-btn-div">
-                            <button className="button green save-btn mobile-mode" onClick={onSave}>SAVE</button>
+                            <button className="button blue save-btn mobile-mode" onClick={onSave}>SAVE</button>
                         </div>}
                 </div>
             </div>

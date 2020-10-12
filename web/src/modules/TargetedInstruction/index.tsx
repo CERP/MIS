@@ -163,6 +163,9 @@ const Test: React.FC<PropsType> = (props) => {
 			for (let [id, percentage] of Object.entries(graphData)) {
 				arr.push({ name: id, percentage: Math.round(percentage / Object.entries(props.students).length) })
 			}
+			arr.sort((a, b) => {
+				return b.percentage - a.percentage;
+			});
 			setData(arr)
 		}
 	}
