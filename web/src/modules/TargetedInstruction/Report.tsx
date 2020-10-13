@@ -33,8 +33,8 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
 
     let testReport: MISReport, allStds, singleStd, columns: columns[] = [];
 
-    const getSingleStdData = () => {
-        testReport = students && students[stdId] && students[stdId].report[testType][testId]
+    const getSingleStdData = (id: string) => {
+        testReport = students && students[id] && students[id].report && students[id].report[testType][testId]
         if (testReport) {
             singleStd = Object.entries(testReport)
                 .reduce((agg, [slo, obj]) => {
@@ -43,7 +43,8 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
                         "slo": slo,
                         "correct": obj.correct,
                         "possible": obj.possible,
-                        "percentage": obj.percentage
+                        "percentage": obj.percentage,
+                        "link": obj.link
                     }
                     return [...agg,
                         stdObject]
@@ -59,7 +60,8 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
                 if (report) {
                     stdObj = {
                         ...stdObj,
-                        "student": std.Name
+                        "student": std.Name,
+                        "id": std.id
                     }
                     if (!columns.find(col => col.name === 'student name')) {
                         columns.push({
@@ -88,7 +90,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
     }
 
     if (stdId) {
-        getSingleStdData()
+        getSingleStdData(stdId)
         if (type === "All Students") {
             getAllStdData()
         }
@@ -96,7 +98,11 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
 
     const getStudentId = (e: any) => {
         setReport("Single Student")
-        getSingleStdData()
+        getSingleStdData(e.id)
+    }
+
+    const redirectToIlmx = (e: any) => {
+        window.location.href = e.link
     }
 
     const logMessages = (messages: MISSms[]) => {
@@ -149,7 +155,6 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
 
             return [{ number: phone, text: report }]
         } else if (type === 'All Students') {
-
             const messages = allStudents
                 .reduce((agg, student) => {
                     const index = agg.findIndex(s => s.number === student.Phone)
@@ -174,14 +179,13 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
     const customStyles = {
         rows: {
             style: {
-                minHeight: "48px",
+                minHeight: "48px"
             },
         },
         headCells: {
             style: {
                 fontSize: isMobile ? "14px" : "18px",
                 fontWeight: 700,
-                color: "black",
                 backgroundColor: "rgb(250, 250, 250)",
                 textTransform: "capitalize"
             },
@@ -190,9 +194,12 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
             style: {
                 paddingLeft: "20px",
                 paddingRight: "20px",
-                color: "black",
                 fontSize: isMobile ? "12px" : "14px",
-                backgroundColor: "rgb(250, 250, 250)"
+                backgroundColor: "rgb(250, 250, 250)",
+                '&:hover': {
+                    color: "rgb(116, 216, 159)",
+                    cursor: "pointer"
+                }
             },
         },
         pagination: {
@@ -241,7 +248,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
                     noHeader={true}
                     highlightOnHover={true}
                     responsive={true}
-                    style={{ backgroundColor: "rgb(250, 250, 250)" }}
+                    onRowClicked={redirectToIlmx}
                 />
                 <div className="send-btn-div">
                     <a className="button blue mb mobile-mode"
@@ -278,7 +285,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
                                 noHeader={true}
                                 highlightOnHover={true}
                                 responsive={true}
-                                style={{ backgroundColor: "rgb(250, 250, 250)" }}
+                                onRowClicked={getStudentId}
                             />
                             <div className="send-btn-div">
                                 <a className="button blue mb mobile-mode"
