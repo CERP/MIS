@@ -8,7 +8,7 @@ type S = {
 }
 
 type MonthlyAttendance = {
-	[data: string]: Attendance
+	[date: string]: Attendance
 }
 
 type Attendance = {
