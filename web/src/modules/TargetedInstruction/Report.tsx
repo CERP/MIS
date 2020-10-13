@@ -6,6 +6,7 @@ import moment from 'moment'
 import { isMobile } from 'utils/helpers'
 import { replaceSpecialCharsWithUTFChars } from 'utils/stringHelper'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import DataTable from 'react-data-table-component';
 
 interface P {
     type: string
@@ -22,41 +23,80 @@ interface P {
     logSms?: (history: MISSMSHistory) => any
 }
 
+type columns = {
+    name: string
+    selector: string
+    sortable: boolean
+}
+
 const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, type, faculty_id, selectedClass, data, setReport, logSms }) => {
 
-    let test: MISReport, allStds;
-    if (stdId) {
-        test = students && students[stdId] && students[stdId].report[testType][testId]
-        if (type === "All Students") {
-            allStds = Object.values(students)
-                .reduce((agg, std) => {
-                    let stdObj = {}
-                    const report = std.report && std.report[testType] && std.report[testType][testId]
-                    if (report) {
-                        stdObj = {
-                            ...stdObj,
-                            "Student": {
-                                "id": std.id,
-                                "name": std.Name
-                            }
-                        }
-                        for (let [slo, sloObj] of Object.entries(report)) {
-                            stdObj = {
-                                ...stdObj,
-                                [slo]: sloObj.percentage
-                            }
-                        }
+    let testReport: MISReport, allStds, singleStd, columns: columns[] = [];
 
+    const getSingleStdData = () => {
+        testReport = students && students[stdId] && students[stdId].report[testType][testId]
+        if (testReport) {
+            singleStd = Object.entries(testReport)
+                .reduce((agg, [slo, obj]) => {
+                    let stdObject = {}
+                    stdObject = {
+                        "slo": slo,
+                        "correct": obj.correct,
+                        "possible": obj.possible,
+                        "percentage": obj.percentage
                     }
                     return [...agg,
-                        stdObj]
+                        stdObject]
                 }, [])
+        }
+    }
+
+    const getAllStdData = () => {
+        allStds = Object.values(students)
+            .reduce((agg, std) => {
+                let stdObj = {}
+                const report = std.report && std.report[testType] && std.report[testType][testId]
+                if (report) {
+                    stdObj = {
+                        ...stdObj,
+                        "student": std.Name
+                    }
+                    if (!columns.find(col => col.name === 'student name')) {
+                        columns.push({
+                            "name": "student name",
+                            "selector": "student",
+                            "sortable": true
+                        })
+                    }
+                    for (let [slo, sloObj] of Object.entries(report)) {
+                        stdObj = {
+                            ...stdObj,
+                            [slo]: sloObj.percentage
+                        }
+                        if (!columns.find(col => col.name === slo)) {
+                            columns.push({
+                                "name": slo,
+                                "selector": slo,
+                                "sortable": true
+                            })
+                        }
+                    }
+                }
+                return [...agg,
+                    stdObj]
+            }, [])
+    }
+
+    if (stdId) {
+        getSingleStdData()
+        if (type === "All Students") {
+            getAllStdData()
         }
     }
 
     const getStudentId = (e: any) => {
         setReport("Single Student")
-        test = students && students[e.target.id].report[testType][testId && testId]
+        getSingleStdData()
     }
 
     const logMessages = (messages: MISSms[]) => {
@@ -131,10 +171,80 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
 
     let messages = getMessages()
 
+    const customStyles = {
+        rows: {
+            style: {
+                minHeight: "48px",
+            },
+        },
+        headCells: {
+            style: {
+                padding: "20px 20px 30px 20px ",
+                fontSize: "18px",
+                fontWeight: 700,
+                color: "black",
+                backgroundColor: "rgb(250, 250, 250)",
+                textTransform: "capitalize"
+            },
+        },
+        cells: {
+            style: {
+                paddingLeft: "20px",
+                paddingRight: "20px",
+                color: "black",
+                fontSize: "14px",
+                backgroundColor: "rgb(250, 250, 250)"
+            },
+        },
+        pagination: {
+            style: {
+                backgroundColor: "rgb(250, 250, 250)",
+                color: "black",
+            },
+        },
+    };
+
+    const singleStdColumns = [
+        {
+            name: 'SLO',
+            selector: 'slo',
+            sortable: true,
+
+        },
+        {
+            name: 'Correct',
+            selector: 'correct',
+            sortable: true,
+
+        },
+        {
+            name: 'Possible',
+            selector: 'possible',
+            sortable: true,
+
+        },
+        {
+            name: 'Percentage',
+            selector: 'percentage',
+            sortable: true,
+
+        }
+    ]
+
     return <>
         {
             type === 'Single Student' ? <div className="section form">
-                <table className="report-table">
+                <DataTable
+                    columns={singleStdColumns}
+                    customStyles={customStyles}
+                    data={singleStd && singleStd}
+                    pagination={true}
+                    noHeader={true}
+                    highlightOnHover={true}
+                    responsive={true}
+                    style={{ backgroundColor: "rgb(250, 250, 250)" }}
+                />
+                {/* <table className="report-table">
                     <tbody>
                         <tr>
                             <th className="table-header" style={{ textAlign: "left" }}>SLO</th>
@@ -152,7 +262,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
 
                         })}
                     </tbody>
-                </table>
+                </table> */}
                 <div className="send-btn-div">
                     <a className="button blue mb mobile-mode"
                         href={smsIntentLink({
@@ -180,30 +290,16 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
                             </BarChart>
                         </div>
                         <div className="section">
-                            <table className="report-table">
-                                <tbody>
-                                    <tr>
-                                        {allStds && allStds.slice(0, 1).map((std) => {
-                                            return <> {Object.keys(std).map(function (key) {
-                                                if (key === 'Student') {
-                                                    return <th className="table-header" style={{ textAlign: "left" }} key={std}>{key}</th>
-                                                } else {
-                                                    return <th className="table-header" key={std}>{key}</th>
-                                                }
-                                            })}</>
-                                        })}
-                                    </tr>
-                                    {allStds && allStds.map((std, index) => {
-                                        return <tr key={index}> {Object.keys(std).map(function (key) {
-                                            if (key === 'Student') {
-                                                return <td className="std-name" id={std[key].id} onClick={getStudentId}>{std[key].name}</td>
-                                            } else {
-                                                return <td className="table-data">{`${std[key]}%`}</td>
-                                            }
-                                        })}</tr>
-                                    })}
-                                </tbody>
-                            </table>
+                            <DataTable
+                                columns={columns}
+                                customStyles={customStyles}
+                                data={allStds && allStds}
+                                pagination={true}
+                                noHeader={true}
+                                highlightOnHover={true}
+                                responsive={true}
+                                style={{ backgroundColor: "rgb(250, 250, 250)" }}
+                            />
                             <div className="send-btn-div">
                                 <a className="button blue mb mobile-mode"
                                     href={smsIntentLink({
