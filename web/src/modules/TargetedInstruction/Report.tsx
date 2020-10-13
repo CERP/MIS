@@ -179,8 +179,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
         },
         headCells: {
             style: {
-                padding: "20px 20px 30px 20px ",
-                fontSize: "18px",
+                fontSize: isMobile ? "14px" : "18px",
                 fontWeight: 700,
                 color: "black",
                 backgroundColor: "rgb(250, 250, 250)",
@@ -192,7 +191,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
                 paddingLeft: "20px",
                 paddingRight: "20px",
                 color: "black",
-                fontSize: "14px",
+                fontSize: isMobile ? "12px" : "14px",
                 backgroundColor: "rgb(250, 250, 250)"
             },
         },
@@ -244,25 +243,6 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
                     responsive={true}
                     style={{ backgroundColor: "rgb(250, 250, 250)" }}
                 />
-                {/* <table className="report-table">
-                    <tbody>
-                        <tr>
-                            <th className="table-header" style={{ textAlign: "left" }}>SLO</th>
-                            <th className="table-header" >POSSIBLE</th>
-                            <th className="table-header" >CORRECT</th>
-                            <th className="table-header" >PERCENTAGE</th>
-                        </tr>
-                        {Object.keys(test && test).map(function (key) {
-                            return <tr key={key}>
-                                <td className="slo" id={test[key].link}>{key}</td>
-                                <td className="table-data">{test[key].possible}</td>
-                                <td className="table-data">{test[key].correct}</td>
-                                <td className="table-data">{`${test[key].percentage}%`}</td>
-                            </tr>
-
-                        })}
-                    </tbody>
-                </table> */}
                 <div className="send-btn-div">
                     <a className="button blue mb mobile-mode"
                         href={smsIntentLink({
