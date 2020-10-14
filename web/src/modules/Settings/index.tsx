@@ -37,7 +37,6 @@ interface S {
 	templates: RootDBState["sms_templates"]
 	settings: RootDBState["settings"]
 	templateMenu: boolean
-	permissionMenu: boolean
 	gradeMenu: boolean
 	banner: {
 		active: boolean
@@ -58,15 +57,6 @@ interface NewGrade {
 }
 
 type propsType = RouteComponentProps & P
-
-export const defaultPermissions = {
-	fee: { teacher: true },
-	dailyStats: { teacher: true },
-	setupPage: { teacher: true },
-	expense: { teacher: true },
-	prospective: { teacher: true },
-	family: { teacher: true }
-}
 
 export const defaultExams = {
 	grades: {
@@ -118,7 +108,6 @@ function getDefaultSettings(): RootDBState["settings"] {
 		},
 		vouchersPerPage: "1",
 		sendSMSOption: "SIM", // API
-		permissions: defaultPermissions,
 		devices: {},
 		exams: defaultExams,
 		classes: {
@@ -154,10 +143,6 @@ class Settings extends Component<propsType, S>{
 		const settings = {
 			...(props.settings || defaultSettings),
 			schoolSession: props.settings ? (props.settings.schoolSession || defaultSettings.schoolSession) : defaultSettings.schoolSession,
-			permissions: {
-				...defaultPermissions,
-				...(props.settings || defaultSettings).permissions
-			},
 			devices: (props.settings ? (props.settings.devices || {}) : {}),
 			exams: {
 				...defaultExams,
@@ -172,7 +157,6 @@ class Settings extends Component<propsType, S>{
 			templates: this.props.sms_templates,
 			settings,
 			templateMenu: false,
-			permissionMenu: false,
 			gradeMenu: false,
 			banner: {
 				active: false,
@@ -257,55 +241,6 @@ class Settings extends Component<propsType, S>{
 		})
 
 		showScroll()
-	}
-
-	changeTeacherPermissions = () => {
-
-		return <div className="table">
-			<div className="row">
-				<label> Allow teacher to view Setup Page ? </label>
-				<select {...this.former.super_handle(["settings", "permissions", "setupPage", "teacher"])}>
-					<option value="true">Yes</option>
-					<option value="false">No</option>
-				</select>
-			</div>
-
-			<div className="row">
-				<label> Allow teacher to view Fee Information ? </label>
-				<select {...this.former.super_handle(["settings", "permissions", "fee", "teacher"])}>
-					<option value="true">Yes</option>
-					<option value="false">No</option>
-				</select>
-			</div>
-			<div className="row">
-				<label> Allow teacher to view Daily Statistics ? </label>
-				<select {...this.former.super_handle(["settings", "permissions", "dailyStats", "teacher"])}>
-					<option value="true">Yes</option>
-					<option value="false">No</option>
-				</select>
-			</div>
-			<div className="row">
-				<label> Allow teacher to view Expense Information? </label>
-				<select {...this.former.super_handle(["settings", "permissions", "expense", "teacher"])}>
-					<option value="true">Yes</option>
-					<option value="false">No</option>
-				</select>
-			</div>
-			<div className="row">
-				<label> Allow teacher to view Family Information? </label>
-				<select {...this.former.super_handle(["settings", "permissions", "family", "teacher"])}>
-					<option value="true">Yes</option>
-					<option value="false">No</option>
-				</select>
-			</div>
-			<div className="row">
-				<label> Allow teacher to view Prospective Information? </label>
-				<select {...this.former.super_handle(["settings", "permissions", "prospective", "teacher"])}>
-					<option value="true">Yes</option>
-					<option value="false">No</option>
-				</select>
-			</div>
-		</div>
 	}
 
 	changeSMStemplates = () => {
@@ -509,10 +444,6 @@ class Settings extends Component<propsType, S>{
 
 		const settings = {
 			...(nextProps.settings || getDefaultSettings()),
-			permissions: {
-				...defaultPermissions,
-				...(nextProps.settings || getDefaultSettings()).permissions
-			},
 			devices: (nextProps.settings ? (nextProps.settings.devices || {}) : {})
 		} as RootDBState["settings"]
 
@@ -687,16 +618,6 @@ class Settings extends Component<propsType, S>{
 					}
 					{
 						this.state.templateMenu ? this.changeSMStemplates() : false
-					}
-					{
-						this.props.user.Admin ?
-							<div className="button grey" onClick={() => this.setState({ permissionMenu: !this.state.permissionMenu })}>
-								Change Teacher Permissions
-							</div>
-							: false
-					}
-					{
-						this.state.permissionMenu ? this.changeTeacherPermissions() : false
 					}
 					<div className="button grey" onClick={() => this.setState({ gradeMenu: !this.state.gradeMenu })}>
 						Grade Settings

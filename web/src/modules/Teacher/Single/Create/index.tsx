@@ -10,6 +10,7 @@ import { hash } from 'utils'
 import Hyphenator from 'utils/Hyphenator'
 import Banner from 'components/Banner'
 import checkCompulsoryFields from 'utils/checkCompulsoryFields'
+import { isMobile } from 'utils/helpers'
 
 import './style.css'
 
@@ -39,7 +40,15 @@ const blankTeacher = (isFirst = false): MISTeacher => ({
 	Admin: isFirst,
 	HasLogin: true,
 	tags: {},
-	attendance: {}
+	attendance: {},
+	permissions: {
+		fee: false,
+		setupPage: false,
+		dailyStats: false,
+		expense: false,
+		prospective: false,
+		family: false
+	}
 })
 
 interface P {
@@ -82,7 +91,8 @@ class CreateTeacher extends Component<propTypes, S> {
 		this.state = {
 			profile: {
 				...faculty || blankTeacher(this.isFirst()),
-				HasLogin: this.isFirst() || this.isNew() ? true : faculty && faculty.HasLogin
+				HasLogin: this.isFirst() || this.isNew() ? true : faculty && faculty.HasLogin,
+				permissions: this.isFirst() || this.isNew() ? blankTeacher().permissions : faculty && faculty.permissions
 			},
 			redirect: false,
 			banner: {
@@ -267,8 +277,56 @@ class CreateTeacher extends Component<propTypes, S> {
 		this.setState({ toggleMoreInfo: !this.state.toggleMoreInfo })
 	}
 
-	render() {
+	changeTeacherPermissions = () => {
 
+		return <div className="table">
+			<div className="row">
+				<label> Allow teacher to view Setup Page ? </label>
+				<select {...this.former.super_handle(["permissions", "setupPage"])}>
+					<option value="true">Yes</option>
+					<option value="false">No</option>
+				</select>
+			</div>
+
+			<div className="row">
+				<label> Allow teacher to view Fee Information ? </label>
+				<select {...this.former.super_handle(["permissions", "fee"])}>
+					<option value="true">Yes</option>
+					<option value="false">No</option>
+				</select>
+			</div>
+			<div className="row">
+				<label> Allow teacher to view Daily Statistics ? </label>
+				<select {...this.former.super_handle(["permissions", "dailyStats"])}>
+					<option value="true">Yes</option>
+					<option value="false">No</option>
+				</select>
+			</div>
+			<div className="row">
+				<label> Allow teacher to view Expense Information? </label>
+				<select {...this.former.super_handle(["permissions", "expense"])}>
+					<option value="true">Yes</option>
+					<option value="false">No</option>
+				</select>
+			</div>
+			<div className="row">
+				<label> Allow teacher to view Family Information? </label>
+				<select {...this.former.super_handle(["permissions", "family"])}>
+					<option value="true">Yes</option>
+					<option value="false">No</option>
+				</select>
+			</div>
+			<div className="row">
+				<label> Allow teacher to view Prospective Information? </label>
+				<select {...this.former.super_handle(["permissions", "prospective"])}>
+					<option value="true">Yes</option>
+					<option value="false">No</option>
+				</select>
+			</div>
+		</div>
+	}
+
+	render() {
 		if (this.state.redirect) {
 			return <Redirect to={this.state.redirect} />
 		}
@@ -365,6 +423,9 @@ class CreateTeacher extends Component<propTypes, S> {
 								<option value="false">Not an Admin</option>
 							</select>
 						</div>
+						{
+							!this.state.profile.Admin && this.changeTeacherPermissions()
+						}
 						<div className="row">
 							<label>User status</label>
 							<select {...this.former.super_handle(["HasLogin"])} disabled={!admin}>
@@ -382,7 +443,10 @@ class CreateTeacher extends Component<propTypes, S> {
 						<div className="divider">Contact Information</div>
 						<div className="row">
 							<label>Phone Number</label>
-							<input type="tel" {...this.former.super_handle(["Phone"], (num) => num.length <= 11)} placeholder="Phone Number" disabled={!canEdit} />
+							<div className="row" style={{ flexDirection: "row" }}>
+								<input style={{ width: "100%" }} type="tel" {...this.former.super_handle(["Phone"], (num) => num.length <= 11)} placeholder="Phone Number" disabled={!canEdit} />
+								{isMobile() && !this.isNew() && <a className="button blue call-link" href={`tel:${this.state.profile.Phone}`} > Call</a>}
+							</div>
 						</div>
 						<div className="row">
 							<label>Address</label>

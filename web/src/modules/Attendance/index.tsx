@@ -20,7 +20,6 @@ interface P {
 	current_faculty: MISTeacher
 	students: RootDBState["students"]
 	classes: RootDBState["classes"]
-	settings: RootDBState["settings"]
 	connected: RootReducerState["connected"]
 	attendance_message_template: RootDBState["sms_templates"]["attendance"]
 	markStudent: (student: MISStudent, date: string, status: MISStudentAttendanceEntry["status"]) => any
@@ -35,6 +34,7 @@ interface S {
 	selected_section: string
 	selected_students: { [id: string]: boolean }
 	qr_mode: boolean
+	student_name: string
 }
 
 interface RouteInfo {
@@ -68,7 +68,8 @@ class Attendance extends Component<propTypes, S> {
 			sending: false,
 			selected_section,
 			selected_students: deriveSelectedStudents(selected_section, props.students),
-			qr_mode: false
+			qr_mode: false,
+			student_name: ''
 		}
 
 		this.Former = new Former(this, [])
@@ -253,7 +254,7 @@ class Attendance extends Component<propTypes, S> {
 		if (this.props.students[potential_id]) {
 			this.props.markStudent(this.props.students[potential_id], moment().format("YYYY-MM-DD"), "PRESENT")
 			this.setState({
-				qr_mode: false
+				student_name: this.props.students[potential_id].Name
 			})
 		}
 		else {
@@ -313,23 +314,28 @@ class Attendance extends Component<propTypes, S> {
 			messages,
 			return_link: window.location.href
 		});
-		const { settings, current_faculty, students, classes } = this.props;
+		const { current_faculty, students, classes } = this.props;
 		const isAdmin = current_faculty.Admin
-		const setupPage = settings.permissions && settings.permissions.setupPage ? settings.permissions.setupPage.teacher : true
+		const setupPage = current_faculty.permissions && current_faculty.permissions.setupPage
 
 		const sortedSections = getSectionsFromClasses(classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0));
 
 		return <Layout history={this.props.history}>
 
 			{this.state.qr_mode && <Modal>
-				<div className="button red" onClick={() => this.setState({ qr_mode: false })}>X</div>
-				<QrReader
-					delay={300}
-					onError={console.error}
-					onScan={this.onQrScan}
-					style={{ width: '300px' }}
-					facingMode="environment"
-				/>
+				<div className="scan-modal-div modal-container inner">
+					<div className="close button red" onClick={() => this.setState({ qr_mode: false, student_name: '' })}>X</div>
+					<QrReader
+						delay={300}
+						onError={console.error}
+						onScan={this.onQrScan}
+						style={{ width: '300px' }}
+						facingMode="environment"
+					/>
+					<div className="row">
+						{this.state.student_name && <div className="stdName">Student Name : {this.state.student_name}</div>}
+					</div>
+				</div>
 			</Modal>}
 			<div className="attendance">
 				<div className="title">Attendance</div>
@@ -406,7 +412,6 @@ export default connect((state: RootReducerState) => ({
 	current_faculty: state.db.faculty[state.auth.faculty_id],
 	students: state.db.students,
 	classes: state.db.classes,
-	settings: state.db.settings,
 	connected: state.connected,
 	attendance_message_template: (state.db.sms_templates || {} as RootDBState["sms_templates"]).attendance || "",
 }), (dispatch: Function) => ({

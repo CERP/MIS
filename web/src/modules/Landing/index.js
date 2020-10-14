@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { hash } from 'utils'
 import moment from 'moment'
 
-import { createLogout, resetTrial, markPurchased } from 'actions'
+import { createLogout, resetTrial, markPurchased, addMultiplePayments } from 'actions'
 import Layout from 'components/Layout'
 import Modal from 'components/Modal'
 import { numberWithCommas } from 'utils/numberWithCommas'
@@ -34,6 +34,7 @@ import diary from './icons/Diary/diary.svg'
 import { IlmxLogo } from 'assets/icons'
 import { showScroll, hideScroll } from 'utils/helpers'
 import IlmxRedirectModal from 'components/Ilmx/redirectModal'
+import { checkStudentDuesReturning } from 'utils/checkStudentDues'
 
 /**
  * line for adding new badge just copy / paste it
@@ -73,6 +74,40 @@ class Landing extends Component {
 		this.setState({
 			scroll: container.scrollLeft
 		})
+
+		const curr_date = moment().format('MM-DD-YYYY')
+		let auto_payments = JSON.parse(localStorage.getItem('auto-payments'))
+		if (auto_payments === null || auto_payments.date !== curr_date) {
+			auto_payments = { date: curr_date, isGenerated: true }
+		}
+		if (auto_payments.isGenerated) {
+			const students = Object.values(this.props.students)
+				.filter((std) => std && std.id && std.Name && std.Active && std.section_id && !std.prospective_section_id)
+			// generate payments async
+			this.generatePayments(students)
+			auto_payments = { date: curr_date, isGenerated: false }
+			localStorage.setItem('auto-payments', JSON.stringify(auto_payments))
+		}
+	}
+
+	generatePayments = (students) => {
+		if (students.length > 0) {
+			const payments = students
+				.reduce((agg, curr) => {
+					const curr_student_payments = checkStudentDuesReturning(curr)
+					if (curr_student_payments.length > 0) {
+						return [
+							...agg,
+							...curr_student_payments
+						]
+					}
+					return agg
+				}, [])
+
+			if (payments.length > 0) {
+				this.props.addMultiplePayments(payments)
+			}
+		}
 	}
 
 	componentWillUnmount() {
@@ -207,7 +242,7 @@ class Landing extends Component {
 
 	render() {
 
-		const { logout, user, students, faculty, lastSnapshot, unsyncd, permissions, package_info } = this.props;
+		const { logout, user, students, faculty, lastSnapshot, unsyncd, package_info } = this.props;
 
 		const current_page = Math.floor(this.state.scroll / window.innerWidth)
 
@@ -218,13 +253,12 @@ class Landing extends Component {
 		let today_payment_students = 0;
 		const today_teacher_attendance = { PRESENT: 0, LEAVE: 0, ABSENT: 0 }
 
-		const setupPage = permissions && permissions.setupPage ? permissions.setupPage.teacher : true
-		const dailyStats = permissions && permissions.dailyStats ? permissions.dailyStats.teacher : true
-		const teacher_fee_permission = permissions && permissions.fee ? permissions.fee.teacher : true;
-		const teacher_expense_permission = permissions && permissions.expense ? permissions.expense.teacher : true;
-		const prospective_permission = permissions && permissions.prospective ? permissions.prospective.teacher : true;
-		const family_permission = permissions && permissions.family ? permissions.family.teacher : true;
-
+		const setupPage = user.permissions && user.permissions.setupPage;
+		const dailyStats = user.permissions && user.permissions.dailyStats;
+		const teacher_fee_permission = user.permissions && user.permissions.fee;
+		const teacher_expense_permission = user.permissions && user.permissions.expense;
+		const prospective_permission = user.permissions && user.permissions.prospective;
+		const family_permission = user.permissions && user.permissions.family;
 
 		for (const student of Object.values(students)) {
 
@@ -519,7 +553,6 @@ export default connect(state => ({
 	user: state.db.faculty[state.auth.faculty_id],
 	students: state.db.students,
 	faculty: state.db.faculty,
-	permissions: state.db.settings.permissions,
 	lastSnapshot: state.lastSnapshot,
 	unsyncd: Object.keys(state.queued.mutations || {}).length,
 	package_info: state.db.package_info || { date: -1, trial_period: 15, paid: false }, //If package info is undefined
@@ -529,5 +562,6 @@ export default connect(state => ({
 }), dispatch => ({
 	resetTrial: () => dispatch(resetTrial()),
 	markPurchased: () => dispatch(markPurchased()),
-	logout: () => dispatch(createLogout())
+	logout: () => dispatch(createLogout()),
+	addMultiplePayments: (payments) => dispatch(addMultiplePayments(payments)),
 }))(Landing)

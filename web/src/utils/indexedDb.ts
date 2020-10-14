@@ -256,7 +256,7 @@ const addFacultyID = (state: RootReducerState) => {
 
 const checkPermissions = (state: RootReducerState) => {
 
-	const permission = state.db.settings.permissions
+	const permission = state.db.faculty[state.auth.faculty_id].permissions
 
 	if (permission.dailyStats !== undefined && permission.fee !== undefined &&
 		permission.setupPage !== undefined && permission.expense !== undefined) {
@@ -265,14 +265,16 @@ const checkPermissions = (state: RootReducerState) => {
 	}
 	console.log("Running Permissions Scripts");
 
-	state.db.settings = {
-		...state.db.settings,
+	state.db.faculty[state.auth.faculty_id] = {
+		...state.db.faculty[state.auth.faculty_id],
 		permissions: {
-			fee: { teacher: true },
-			dailyStats: { teacher: true },
-			setupPage: { teacher: true },
-			expense: { teacher: true },
-			...state.db.settings.permissions
+			fee: true,
+			dailyStats: true,
+			setupPage: true,
+			expense: true,
+			family: true,
+			prospective: true,
+			...state.db.faculty[state.auth.faculty_id].permissions
 		}
 	}
 	return state;
