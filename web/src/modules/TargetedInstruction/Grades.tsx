@@ -72,18 +72,18 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, testType, studen
         });
 
         let report: MISReport = {}
-        for (let [, sloObj] of Object.entries(slo_keys)) {
-            const category = targeted_instruction.slo_mapping[sloObj.slo].category
+        slo_keys.forEach((sloObj) => {
+            const category = targeted_instruction.slo_mapping && targeted_instruction.slo_mapping[sloObj.slo].category
             if (report[category]) {
                 if (sloObj.answer) {
-                    const countCorrect = ++report[category].correct
-                    const countPossible = ++report[category].possible
+                    const countCorrect = report[category].correct + 1
+                    const countPossible = report[category].possible + 1
                     report[category] = {
                         correct: countCorrect,
                         possible: countPossible
                     }
                 } else {
-                    const countPossible = ++report[category].possible
+                    const countPossible = report[category].possible + 1
                     report[category] = {
                         correct: report[category].correct,
                         possible: countPossible
@@ -104,7 +104,7 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, testType, studen
                     }
                 }
             }
-        }
+        })
         return report
     }
 

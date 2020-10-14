@@ -21,7 +21,7 @@ type Subjects = {
 }
 
 type DiagnosticResult = {
-	[id: string]: DiagnosticQuestion
+	[id: string]: MISDiagnosticReport
 }
 
 type GraphData = {

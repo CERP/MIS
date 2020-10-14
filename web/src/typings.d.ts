@@ -61,8 +61,7 @@ interface RootDBState {
 }
 
 interface Tests {
-	[id: string]: 
-	MISTest
+	[id: string]: MISTest
 }
 
 interface SLOMapping {
@@ -287,7 +286,7 @@ interface MISStudent {
 	}
 	diagnostic_result: {
 		[test_id: string]: {
-			[question_id: string]: DiagnosticQuestion
+			[question_id: string]: MISDiagnosticReport
 		}
 	}
 	report: {
@@ -297,7 +296,7 @@ interface MISStudent {
 	}
 }
 
-interface DiagnosticQuestion {
+interface MISDiagnosticReport {
 	answer: string
 	isCorrect: boolean
 	slo: string[]
