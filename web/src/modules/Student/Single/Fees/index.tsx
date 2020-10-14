@@ -6,7 +6,7 @@ import { v4 } from 'node-uuid'
 import former from 'utils/former';
 import Layout, { PrintHeader } from 'components/Layout'
 import Banner from 'components/Banner'
-import { addMultiplePayments, addPayment, logSms, editPayment } from 'actions'
+import { addMultiplePayments, addPayment, logSms, editPayment, deletePayment } from 'actions'
 import { sendSMS } from 'actions/core'
 import { checkStudentDuesReturning } from 'utils/checkStudentDues'
 import { smsIntentLink } from 'utils/intent'
@@ -29,11 +29,12 @@ interface P {
 	settings: RootDBState["settings"]
 	feeSMSTemplate: RootDBState["sms_templates"]["fee"]
 	schoolLogo: RootDBState["assets"]["schoolLogo"]
-	addPayment: (student: MISStudent, id: string, amount: number, date: number, type: MISStudentPayment["type"], fee_id?: string, fee_name?: string) => any
-	addMultiplePayments: (payments: payment[]) => any
-	sendSMS: (text: string, number: string) => any
-	logSms: (history: any) => any
-	editPayment: (payments: AugmentedMISPaymentMap) => any
+	addPayment: (student: MISStudent, id: string, amount: number, date: number, type: MISStudentPayment["type"], fee_id?: string, fee_name?: string) => void
+	addMultiplePayments: (payments: payment[]) => void
+	deletePayment: (student_id: string, payment_id: string) => void
+	sendSMS: (text: string, number: string) => void
+	logSms: (history: any) => void
+	editPayment: (payments: AugmentedMISPaymentMap) => void
 }
 
 interface S {
@@ -120,7 +121,7 @@ class StudentFees extends Component<propTypes, S> {
 	siblings = (): MISStudent[] => {
 		const famId = this.familyID()
 		return Object.values(this.props.students)
-			.filter(s => s && s.Name && s.FamilyID && s.FamilyID === famId)
+			.filter(s => s && s.Name && s.Active && s.section_id && s.FamilyID && s.FamilyID === famId)
 	}
 
 	paymentEditTracker = (pid: string) => () => {
@@ -157,6 +158,7 @@ class StudentFees extends Component<propTypes, S> {
 			return merged_payments;
 
 		}
+
 
 		return Object.entries(this.student().payments)
 			.reduce((agg, [pid, curr]) => ({
@@ -309,7 +311,7 @@ class StudentFees extends Component<propTypes, S> {
 		}
 	}
 
-	componentWillReceiveProps(nextProps: propTypes) {
+	UNSAFE_componentWillReceiveProps(nextProps: propTypes) {
 		// This will make we get the lates changes
 		const id = nextProps.match.params.id
 		const student = nextProps.students[id]
@@ -447,6 +449,37 @@ class StudentFees extends Component<propTypes, S> {
 		return `${redirectTo}/fee-print-preview?month=${this.state.month}&year=${this.state.year}`
 	}
 
+	onDelete = (pid: string) => {
+
+		if (window.confirm("Are you sure you want to delete paid entry?")) {
+
+			if (this.familyID()) {
+
+				const student_id = this.getStudentByPaymentId(pid)
+				if (student_id) {
+					this.props.deletePayment(student_id, pid)
+				} else {
+					window.alert("Unable to delete")
+				}
+
+			} else {
+				const student_id = this.props.match.params.id
+				this.props.deletePayment(student_id, pid)
+			}
+
+		}
+
+	}
+
+	getStudentByPaymentId = (pid: string): string => {
+
+		const student = [...this.siblings()].find(student => {
+			return student.payments && student.payments[pid]
+		})
+
+		return student && student.id
+	}
+
 	render() {
 
 		const merged_payments = this.mergedPayments()
@@ -526,8 +559,17 @@ class StudentFees extends Component<propTypes, S> {
 									<div className="row" style={{ color: "rgb(94, 205, 185)" }}>
 										<input style={{ textAlign: "right", border: "none" }} type="number" {...this.Former.super_handle(["edits", id, "amount"], () => true, this.paymentEditTracker(id))} />
 										<span className="no-print" style={{ width: "min-content" }}>*</span>
+										{payment.type === "FORGIVEN" && moment(payment.date).isSame(moment(), 'M') &&
+											<div className="button red delete" onClick={() => this.onDelete(id)}>x</div>
+										}
 									</div>
-									: <div> {numberWithCommas(payment.amount)}</div>}
+									: <div className="row">
+										<div>  {numberWithCommas(payment.amount)} </div>
+										{(payment.type === "SUBMITTED" || payment.type === "FORGIVEN") &&
+											moment(payment.date).isSame(moment(), 'M') &&
+											<div className="button red delete" onClick={() => this.onDelete(id)}>x</div>
+										}
+									</div>}
 							</div>
 						</div>
 					})
@@ -613,6 +655,7 @@ export default connect((state: RootReducerState) => ({
 }), (dispatch: Function) => ({
 	addPayment: (student: MISStudent, id: string, amount: number, date: number, type: MISStudentPayment["type"], fee_id: string, fee_name: string) => dispatch(addPayment(student, id, amount, date, type, fee_id, fee_name)),
 	addMultiplePayments: (payments: payment[]) => dispatch(addMultiplePayments(payments)),
+	deletePayment: (sid: string, pid: string) => dispatch(deletePayment(sid, pid)),
 	sendSMS: (text: string, number: string) => dispatch(sendSMS(text, number)),
 	logSms: (history: any) => dispatch(logSms(history)),
 	editPayment: (payments: AugmentedMISPaymentMap) => dispatch(editPayment(payments)),

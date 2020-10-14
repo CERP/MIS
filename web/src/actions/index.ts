@@ -38,11 +38,11 @@ export const createFacultyMerge = (faculty: MISTeacher, is_first?: boolean) => (
 		}
 	]))
 
-	if(is_first) {
+	if (is_first) {
 		dispatch({
 			type: LOCAL_LOGIN,
 			name: faculty.Name,
-			password: faculty.Password 
+			password: faculty.Password
 		})
 	}
 }
@@ -781,16 +781,16 @@ export const mergeExam = (exam: Exam, class_id: string, section_id: string) => (
 }
 
 export const updateBulkExams = (exam_marks_sheet: ExamScoreSheet) => (dispatch: Function) => {
-	
+
 	let merges = []
 
-	for(const student of Object.values(exam_marks_sheet)) {
+	for (const student of Object.values(exam_marks_sheet)) {
 
 		const exams = student.scoreSheetExams
 
-		for(const exam of Object.values(exams)){
+		for (const exam of Object.values(exams)) {
 			// only create merges for those students' exams which are updated
-			if(exam.edited) {
+			if (exam.edited) {
 				merges.push({
 					path: ["db", "students", student.id, "exams", exam.id],
 					value: {
@@ -800,7 +800,7 @@ export const updateBulkExams = (exam_marks_sheet: ExamScoreSheet) => (dispatch: 
 			}
 		}
 	}
-	
+
 	if (merges.length > 0) {
 		dispatch(createMerges(merges))
 	}
@@ -1000,7 +1000,7 @@ export const resetFees = (students: MISStudent[]) => (dispatch: Function) => {
 export const RESET_ADMIN_PASSWORD = "RESET_ADMIN_PASSWORD"
 export const sendTempPassword = (faculty: MISTeacher, password: string) => (dispatch: Function, getState: () => RootReducerState, syncr: Syncr) => {
 
-	if(!syncr.ready) {
+	if (!syncr.ready) {
 		syncr.onNext('connect', () => {
 			dispatch(sendTempPassword(faculty, password))
 		})
@@ -1024,3 +1024,12 @@ export const sendTempPassword = (faculty: MISTeacher, password: string) => (disp
 			console.error(err)
 		})
 }
+
+export const deletePayment = (student_id: string, payment_id: string) => (dispatch: Function) => {
+
+	dispatch(createDeletes([
+		{
+			path: ["db", "students", student_id, "payments", payment_id]
+		}
+	]))
+} 
