@@ -457,10 +457,9 @@ class StudentFees extends Component<propTypes, S> {
 
 				const student_id = this.getStudentByPaymentId(pid)
 				if (student_id) {
-					console.log(student_id)
 					this.props.deletePayment(student_id, pid)
 				} else {
-					alert("Unable to delete")
+					window.alert("Unable to delete")
 				}
 
 			} else {
