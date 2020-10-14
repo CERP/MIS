@@ -73,7 +73,7 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, testType, studen
 
         let report: MISReport = {}
         for (let [, sloObj] of Object.entries(slo_keys)) {
-            const category = targeted_instruction.SLO_Mapping[sloObj.slo].category
+            const category = targeted_instruction.slo_mapping[sloObj.slo].category
             if (report[category]) {
                 if (sloObj.answer) {
                     const countCorrect = ++report[category].correct
@@ -90,7 +90,7 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, testType, studen
                     }
                 }
                 report[category].percentage = (report[category].correct / report[category].possible) * 100
-                report[category].link = targeted_instruction.SLO_Mapping[sloObj.slo].link
+                report[category].link = targeted_instruction.slo_mapping[sloObj.slo].link
             } else {
                 if (sloObj.answer) {
                     report[category] = {

@@ -56,7 +56,7 @@ interface RootDBState {
 	}
 	targeted_instruction: {
 		tests: Tests
-	    SLO_Mapping: SLOMapping
+	    slo_mapping: SLOMapping
 	}
 }
 

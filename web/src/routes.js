@@ -47,7 +47,6 @@ import ClassSettings from 'modules/Settings/ClassSettings/Index'
 import MISActivation from 'modules/Activation'
 import BulkExam from 'modules/Marks/BulkExam'
 import Diagnostic from 'modules/TargetedInstruction/Diagnostic'
-import Monthly from 'modules/TargetedInstruction/Monthly'
 
 export default class Routes extends React.Component {
 
