@@ -121,7 +121,7 @@ class StudentFees extends Component<propTypes, S> {
 	siblings = (): MISStudent[] => {
 		const famId = this.familyID()
 		return Object.values(this.props.students)
-			.filter(s => s && s.Name && s.FamilyID && s.FamilyID === famId)
+			.filter(s => s && s.Name && s.Active && s.section_id && s.FamilyID && s.FamilyID === famId)
 	}
 
 	paymentEditTracker = (pid: string) => () => {
@@ -311,7 +311,7 @@ class StudentFees extends Component<propTypes, S> {
 		}
 	}
 
-	componentWillReceiveProps(nextProps: propTypes) {
+	UNSAFE_componentWillReceiveProps(nextProps: propTypes) {
 		// This will make we get the lates changes
 		const id = nextProps.match.params.id
 		const student = nextProps.students[id]
@@ -451,16 +451,34 @@ class StudentFees extends Component<propTypes, S> {
 
 	onDelete = (pid: string) => {
 
-		if (this.familyID()) {
+		if (window.confirm("Are you sure you want to delete paid entry?")) {
 
-			// find the student_id who has the payment id
-			// pass the pid and student id to deletePayment
+			if (this.familyID()) {
 
-		} else {
-			const student_id = this.props.match.params.id
-			this.props.deletePayment(student_id, pid)
+				const student_id = this.getStudentByPaymentId(pid)
+				if (student_id) {
+					console.log(student_id)
+					this.props.deletePayment(student_id, pid)
+				} else {
+					alert("Unable to delete")
+				}
+
+			} else {
+				const student_id = this.props.match.params.id
+				this.props.deletePayment(student_id, pid)
+			}
+
 		}
 
+	}
+
+	getStudentByPaymentId = (pid: string): string => {
+
+		const student = [...this.siblings()].find(student => {
+			return student.payments && student.payments[pid]
+		})
+
+		return student && student.id
 	}
 
 	render() {
@@ -542,13 +560,14 @@ class StudentFees extends Component<propTypes, S> {
 									<div className="row" style={{ color: "rgb(94, 205, 185)" }}>
 										<input style={{ textAlign: "right", border: "none" }} type="number" {...this.Former.super_handle(["edits", id, "amount"], () => true, this.paymentEditTracker(id))} />
 										<span className="no-print" style={{ width: "min-content" }}>*</span>
-										{payment.type === "FORGIVEN" &&
+										{payment.type === "FORGIVEN" && moment(payment.date).isSame(moment(), 'M') &&
 											<div className="button red delete" onClick={() => this.onDelete(id)}>x</div>
 										}
 									</div>
 									: <div className="row">
 										<div>  {numberWithCommas(payment.amount)} </div>
 										{(payment.type === "SUBMITTED" || payment.type === "FORGIVEN") &&
+											moment(payment.date).isSame(moment(), 'M') &&
 											<div className="button red delete" onClick={() => this.onDelete(id)}>x</div>
 										}
 									</div>}
