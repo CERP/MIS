@@ -12,21 +12,11 @@ interface P {
     students: RootDBState["students"]
     targeted_instruction: RootDBState["targeted_instruction"]
 
-    saveReport: (stdId: string, report: Report, diagnostic_result: MISStudent['diagnostic_result']) => void
+    setQuestions: (type: string[]) => any
+    saveReport: (stdId: string, diagnostic_result: MISStudent['diagnostic_result'], testId: string) => void
 }
 
-type Report = {
-    [id: string]: {
-        [id: string]: MISReport
-    }
-}
-
-interface SLO {
-    slo: string
-    answer: string
-}
-
-const StudentGrades: React.FC<P> = ({ questions, stdId, testId, testType, students, targeted_instruction, saveReport }) => {
+const StudentGrades: React.FC<P> = ({ questions, stdId, testId, students, saveReport, setQuestions }) => {
 
     const [state, setState] = useState({
         banner: {
@@ -61,67 +51,11 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, testType, studen
         return str.charAt(0).toUpperCase() + str.slice(1, 5);
     }
 
-    const createReport = () => {
-
-        let slo_keys: SLO[] = []
-        state.questionsArr.forEach(function (item) {
-            slo_keys.push({
-                slo: item.slo,
-                answer: item.answer
-            })
-        });
-
-        let report: MISReport = {}
-        slo_keys.forEach((sloObj) => {
-            const category = targeted_instruction.slo_mapping && targeted_instruction.slo_mapping[sloObj.slo].category
-            if (report[category]) {
-                if (sloObj.answer) {
-                    const countCorrect = report[category].correct + 1
-                    const countPossible = report[category].possible + 1
-                    report[category] = {
-                        correct: countCorrect,
-                        possible: countPossible
-                    }
-                } else {
-                    const countPossible = report[category].possible + 1
-                    report[category] = {
-                        correct: report[category].correct,
-                        possible: countPossible
-                    }
-                }
-                report[category].percentage = (report[category].correct / report[category].possible) * 100
-                report[category].link = targeted_instruction.slo_mapping[sloObj.slo].link
-            } else {
-                if (sloObj.answer) {
-                    report[category] = {
-                        correct: 1,
-                        possible: 1
-                    }
-                } else {
-                    report[category] = {
-                        correct: 0,
-                        possible: 1
-                    }
-                }
-            }
-        })
-        return report
-    }
-
     const onSave = () => {
 
-        const diagnostic_result = {
-            ...students[stdId].diagnostic_result,
-            [testId]: state.result
-        }
+        setQuestions(state.questionsArr)
 
-        const report = {
-            [testType]: {
-                ...students[stdId].report[testType],
-                [testId]: createReport()
-            }
-        }
-        saveReport(stdId, report, diagnostic_result)
+        saveReport(stdId, state.result && state.result, testId)
 
         setState({
             ...state,
@@ -183,5 +117,5 @@ export default connect((state: RootReducerState) => ({
     targeted_instruction: state.db.targeted_instruction,
     students: state.db.students
 }), (dispatch: Function) => ({
-    saveReport: (stdId: string, report: Report, diagnostic_result: MISStudent['diagnostic_result']) => dispatch(addReport(stdId, report, diagnostic_result)),
+    saveReport: (stdId: string, diagnostic_result: MISStudent['diagnostic_result'], testId: string) => dispatch(addReport(stdId, diagnostic_result, testId)),
 }))(StudentGrades)

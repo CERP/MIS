@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react'
 import { logSms } from 'actions'
 import { connect } from 'react-redux'
@@ -17,7 +18,9 @@ interface P {
     allStudents: MISStudent[]
     faculty_id: string
     selectedClass: string
+    stdReport: Report
     students: RootDBState["students"]
+    targeted_instruction?: RootDBState["targeted_instruction"]
 
     setReport?: (type: string) => any
     logSms?: (history: MISSMSHistory) => any
@@ -29,39 +32,35 @@ type columns = {
     sortable: boolean
 }
 
-const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, type, faculty_id, selectedClass, data, setReport, logSms }) => {
+const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, type, faculty_id, selectedClass, data, stdReport, setReport, logSms }) => {
 
-    let testReport: MISReport, allStds, singleStd, columns: columns[] = [];
+    let allStds, singleStd, columns: columns[] = [];
 
     const getSingleStdData = (id: string) => {
-        testReport = students && students[id] && students[id].report && students[id].report[testType][testId]
-        if (testReport) {
-            singleStd = Object.entries(testReport)
-                .reduce((agg, [slo, obj]) => {
-                    let stdObject = {}
-                    stdObject = {
-                        "slo": slo,
-                        "correct": obj.correct,
-                        "possible": obj.possible,
-                        "percentage": obj.percentage,
-                        "link": obj.link
-                    }
-                    return [...agg,
-                        stdObject]
-                }, [])
-        }
+        singleStd = Object.entries(stdReport && stdReport[id] && stdReport[id].report || {})
+            .reduce((agg, [slo, obj]) => {
+                let stdObject = {}
+                stdObject = {
+                    "slo": slo,
+                    "correct": obj.correct,
+                    "possible": obj.possible,
+                    "percentage": obj.percentage,
+                    "link": obj.link
+                }
+                return [...agg,
+                    stdObject]
+            }, [])
     }
 
     const getAllStdData = () => {
-        allStds = Object.values(students)
-            .reduce((agg, std) => {
+        allStds = Object.entries(stdReport)
+            .reduce((agg, [id, reportObj]) => {
                 let stdObj = {}
-                const report = std.report && std.report[testType] && std.report[testType][testId]
-                if (report) {
+                if (reportObj) {
                     stdObj = {
                         ...stdObj,
-                        "student": std.Name,
-                        "id": std.id
+                        "student": reportObj.name,
+                        "id": id
                     }
                     if (!columns.find(col => col.name === 'student name')) {
                         columns.push({
@@ -70,7 +69,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
                             "sortable": true
                         })
                     }
-                    for (let [slo, sloObj] of Object.entries(report)) {
+                    for (let [slo, sloObj] of Object.entries(reportObj.report)) {
                         stdObj = {
                             ...stdObj,
                             [slo]: sloObj.percentage
@@ -126,16 +125,15 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
         const section_name = `Class: ${selectedClass}\n`
         const test_type = `Test Type: ${testType}\n`
         const test_name = `Test Name: ${testId}\n`
-        const stdReport = students[stdId].report && students[stdId].report[testType] && students[stdId].report[testType][testId]
         if (stdReport) {
             const stdName = students[stdId].Name
             let message = []
             message.push(`${stdName} scored`)
             for (let [testName, testObj] of Object.entries(stdReport)) {
-                if (testObj.percentage <= 50) {
-                    message.push(`${testObj.percentage}% marks in ${testName} kindly follow this link ${testObj.link}`)
+                if (testObj.report.percentage <= 50) {
+                    message.push(`${testObj.report.percentage}% marks in ${testName} kindly follow this link ${testObj.report.link}`)
                 } else {
-                    message.push(`${testObj.percentage}% marks in ${testName}`)
+                    message.push(`${testObj.report.percentage}% marks in ${testName}`)
                 }
             }
             const raw_report_string = curr_date + section_name + test_type + test_name + message.join(" \n ")
@@ -305,8 +303,8 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
 
 export default connect((state: RootReducerState) => ({
     students: state.db.students,
+    targeted_instruction: state.db.targeted_instruction,
     faculty_id: state.auth.faculty_id,
 }), (dispatch: Function) => ({
     logSms: (history: MISSMSHistory) => dispatch(logSms(history)),
 }))(Report)
-

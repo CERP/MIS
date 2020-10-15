@@ -58,6 +58,8 @@ const Test: React.FC<PropsType> = (props) => {
 		[sectionId]
 	)
 
+	const stdReport: Report = useMemo(() => createReport(students, props.targeted_instruction, testId), [students, props.targeted_instruction, testId]);
+
 	const getClass = (e: any) => {
 		setSelectedClass(e.target.value)
 		let index = e.target.selectedIndex;
@@ -144,30 +146,25 @@ const Test: React.FC<PropsType> = (props) => {
 	const graphData = () => {
 
 		let graphData: GraphData = {}
-		let students: MISStudent[] = Object.values(props.students)
-		if (testId) {
-			for (let student of students) {
-				const test: MISReport = student.report && student.report[testType] && student.report[testType][testId]
-				if (test) {
-					for (let [testId, testObj] of Object.entries(test)) {
-						if (graphData[testId]) {
-							graphData[testId] = graphData[testId] + testObj.percentage
-						} else {
-							graphData[testId] = testObj.percentage
-						}
-					}
-				}
+		debugger
+		for (let [testId, testObj] of Object.entries(stdReport && stdReport || {})) {
+			debugger
+			if (graphData[testId]) {
+				graphData[testId] = graphData[testId] + testObj.report.percentage
+			} else {
+				graphData[testId] = testObj.report.percentage
 			}
-			let arr = []
-
-			for (let [id, percentage] of Object.entries(graphData)) {
-				arr.push({ name: id, percentage: Math.round(percentage / Object.entries(props.students).length) })
-			}
-			arr.sort((a, b) => {
-				return b.percentage - a.percentage;
-			});
-			setData(arr)
 		}
+
+		let arr = []
+
+		for (let [id, percentage] of Object.entries(graphData)) {
+			arr.push({ name: id, percentage: Math.round(percentage / Object.entries(props.students).length) })
+		}
+		arr.sort((a, b) => {
+			return b.percentage - a.percentage;
+		});
+		setData(arr)
 	}
 
 	return <Layout history={props.history}>
@@ -241,16 +238,18 @@ const Test: React.FC<PropsType> = (props) => {
 							stdId={stdId}
 							testId={testId}
 							testType={testType}
+							setQuestions={setQuestions}
 						/> :
 						<Report
 							testType={testType}
 							testId={testId}
 							type={report}
 							stdId={stdId}
-							setReport={setReport}
 							allStudents={students}
 							data={data}
 							selectedClass={selectedClass}
+							setReport={setReport}
+							stdReport={stdReport}
 						/>}
 
 			</div>
@@ -275,4 +274,40 @@ const getAllStudents = (sectionId: string, students: MISStudent[]) => {
 			}
 			return [...agg,]
 		}, [])
+}
+
+const createReport = (students: MISStudent[], targeted_instruction: RootDBState["targeted_instruction"], testId: string) => {
+	return Object.values(students)
+		.reduce((agg, std) => {
+			return {
+				...agg,
+				[std.id]: {
+					name: std.Name,
+					report: Object.values(std.diagnostic_result && std.diagnostic_result[testId] || {})
+						.reduce((agg2: MISReport, { isCorrect, slo }) => {
+							const category = targeted_instruction && targeted_instruction.slo_mapping[slo[0]].category;
+							const c = isCorrect ? 1 : 0
+							if (agg2[category]) {
+								return {
+									...agg2,
+									[category]: {
+										correct: agg2[category].correct + c,
+										possible: agg2[category].possible + 1,
+										percentage: (agg2[category].correct / agg2[category].possible) * 100,
+										link: targeted_instruction.slo_mapping[slo[0]].link
+									}
+								}
+							} else {
+								return {
+									...agg2,
+									[category]: {
+										correct: c,
+										possible: 1
+									}
+								}
+							}
+						}, {})
+				}
+			}
+		}, {})
 }

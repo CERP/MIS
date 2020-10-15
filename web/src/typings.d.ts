@@ -289,10 +289,18 @@ interface MISStudent {
 			[question_id: string]: MISDiagnosticReport
 		}
 	}
-	report: {
-		[test_type: string]: {
-			[test_id: string]: MISReport
-		}
+}
+
+interface Report {
+	[stdId: string]: MISReport
+}
+
+interface MISReport {
+	[name: string]: {
+		correct: number
+		possible: number
+		percentage?: number
+		link?: string
 	}
 }
 
@@ -300,15 +308,6 @@ interface MISDiagnosticReport {
 	answer: string
 	isCorrect: boolean
 	slo: string[]
-}
-
-interface MISReport {
-	[name: string]: {
-		correct: number 
-		possible: number 
-		percentage?: number
-		link?: string
-	}	
 }
 
 interface MISFamilyInfo {

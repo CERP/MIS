@@ -11,7 +11,7 @@ interface P {
     classes: RootDBState["classes"]
 }
 
-const StudentGrades: React.FC<P> = (props: any) => {
+const DiagnosticGrades: React.FC<P> = (props: any) => {
     const [id,] = useState(props.match.params.id)
     const [selectedTest, setSelectedTest] = useState('')
     const [selectedTestType, setSelectedTestType] = useState('')
@@ -115,4 +115,4 @@ export default connect((state: RootReducerState) => ({
     students: state.db.students,
     classes: state.db.classes,
     targeted_instruction: state.db.targeted_instruction
-}))(StudentGrades)
+}))(DiagnosticGrades)

@@ -10,6 +10,7 @@ import StudentFees from './Fees'
 import Marks from './Marks'
 import StudentCertificates from './Certificates'
 import PrintPreview from './Fees/printPreview'
+import DiagnosticGrades from './Grades/index'
 import StudentGrades from './Grades/index'
 import { getIlmxUser } from 'utils/helpers'
 
@@ -53,6 +54,7 @@ class StudentPage extends Component {
 						<Route path="/student/prospective-student/new" component={Create} />
 						<Route path="/student/:id/certificates" component={StudentCertificates} />
 						<Route path="/student/:id/grades" component={StudentGrades} />
+						<Route path="/student/:id/grades" component={DiagnosticGrades} />
 					</>
 				}
 			</div>
