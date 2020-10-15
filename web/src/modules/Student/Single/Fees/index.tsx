@@ -564,7 +564,7 @@ class StudentFees extends Component<propTypes, S> {
 										}
 									</div>
 									: <div className="row">
-										<div>  {numberWithCommas(payment.amount)} </div>
+										<div style={{ textAlign: 'end' }}>  {numberWithCommas(payment.amount)} </div>
 										{(payment.type === "SUBMITTED" || payment.type === "FORGIVEN") &&
 											moment(payment.date).isSame(moment(), 'M') &&
 											<div className="button red delete" onClick={() => this.onDelete(id)}>x</div>
