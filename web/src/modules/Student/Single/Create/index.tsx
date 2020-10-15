@@ -271,14 +271,17 @@ class SingleStudent extends Component<propTypes, S> {
 
 			for (const fee of Object.values(this.state.profile.fees)) {
 
-				if (fee.type === "" || fee.amount === "" || fee.name.trim() === "" || fee.period === "") {
-					return this.setState({
-						banner: {
-							active: true,
-							good: false,
-							text: "Please fill out all Fee Information"
-						}
-					})
+				if (fee) {
+
+					if (fee.type === "" || fee.amount === "" || (fee.name ? fee.name.trim() : true) === "" || fee.period === "") {
+						return this.setState({
+							banner: {
+								active: true,
+								good: false,
+								text: "Please fill out all Fee Information"
+							}
+						})
+					}
 				}
 			}
 
@@ -323,7 +326,7 @@ class SingleStudent extends Component<propTypes, S> {
 						date: current_payment.date,
 						type: current_payment.type,
 						fee_id: current_payment.fee_id,
-						fee_name: corresponding_fee.name.trim()
+						fee_name: corresponding_fee.name ? corresponding_fee.name.trim() : ''
 					}
 				}
 
