@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 export const createReport = (students: MISStudent[], targeted_instruction: RootDBState["targeted_instruction"], testId: string) => {
     return Object.values(students)
         .reduce((agg, std) => {
@@ -32,4 +34,20 @@ export const createReport = (students: MISStudent[], targeted_instruction: RootD
                 }
             }
         }, {})
+}
+
+export const getSingleStdData = (id: string, stdReport: Report) => {
+    return Object.entries(stdReport && stdReport[id] && stdReport[id].report || {})
+        .reduce((agg, [slo, obj]) => {
+            return [
+                ...agg,
+                {
+                    "slo": slo,
+                    "correct": obj.correct,
+                    "possible": obj.possible,
+                    "percentage": obj.percentage,
+                    "link": obj.link
+                }
+            ]
+        }, [])
 }

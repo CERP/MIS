@@ -6,7 +6,7 @@ import StudentGrades from './Grades'
 import Diagnostic from './Diagnostic'
 import Report from './Report'
 import { connect } from 'react-redux'
-import { createReport } from 'utils/createReport'
+import { createReport } from 'utils/targetedInstruction'
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
 import getSubjectsFromClasses from 'utils/getSubjectsFromClasses'
 import { logSms } from 'actions'
@@ -21,8 +21,6 @@ interface P {
 
 	logSms: (history: MISSMSHistory) => any
 	saveReport: (stdId: string, diagnostic_result: MISStudent['diagnostic_result'], testId: string) => void
-	createReport: (students: MISStudent[], targeted_instruction: RootDBState["targeted_instruction"], testId: string) => any
-
 }
 
 type DiagnosticResult = {
@@ -175,7 +173,7 @@ const Test: React.FC<PropsType> = (props) => {
 			<div className="section form">
 				<div className="row">
 					<label className="no-print">Class/Section</label>
-					<select className="no-print" onChange={(e) => getClass(e)}>
+					<select className="no-print" onChange={getClass}>
 						<option id="0" value="">Select Section</option>
 						{
 							sortedSections && sortedSections.map(s => <option key={s.id} data-id={s.id} value={s.className}>{s.className}</option>)
@@ -184,7 +182,7 @@ const Test: React.FC<PropsType> = (props) => {
 				</div>
 				<div className="row">
 					<label className="no-print">Subject</label>
-					<select className="no-print" onChange={(e) => getSubject(e)}>
+					<select className="no-print" onChange={getSubject}>
 						<option value="">Select Subject</option>
 						{
 							(allSubjects[selectedClass] || []).map((sub: any) => <option key={sub} value={sub}>{sub}</option>)
@@ -193,7 +191,7 @@ const Test: React.FC<PropsType> = (props) => {
 				</div>
 				<div className="row">
 					<label className="no-print">Test Type</label>
-					<select className="no-print" onChange={(e) => getTestType(e)}>
+					<select className="no-print" onChange={getTestType}>
 						<option value="">Select Test Type</option>
 						<option value="Diagnostic">Diagnostic</option>
 						<option value="Monthly">Monthly</option>
@@ -203,7 +201,7 @@ const Test: React.FC<PropsType> = (props) => {
 					<>
 						{((report !== 'All Students' && loc === "report") || loc === "grades") && <div className="row">
 							<label className="no-print">Students</label>
-							<select className="no-print" onChange={(e) => getStudent(e)}>
+							<select className="no-print" onChange={getStudent}>
 								<option value="">Select Students</option>
 								{
 									students && students.map((std: any) => <option key={std.id} value={std.id}>{std.Name}</option>)
@@ -212,7 +210,7 @@ const Test: React.FC<PropsType> = (props) => {
 						</div>}
 						<div className="row">
 							<label className="no-print">Test</label>
-							<select className="no-print" onChange={(e) => getTest(e)}>
+							<select className="no-print" onChange={getTest}>
 								<option value="">Select Test</option>
 								{
 									tests && tests.map((test) => <option key={test} value={test}>{test}</option>)
@@ -223,7 +221,7 @@ const Test: React.FC<PropsType> = (props) => {
 				}
 				{loc === 'report' && <div className="row">
 					<label className="no-print">Type</label>
-					<select className="no-print" onChange={(e) => getSelected(e)}>
+					<select className="no-print" onChange={getSelected}>
 						<option value="">Select Type</option>
 						<option value="Single Student">Single Student</option>
 						<option value="All Students">All Students</option>

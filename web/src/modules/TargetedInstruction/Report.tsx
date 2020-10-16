@@ -7,6 +7,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'rec
 import DataTable from 'react-data-table-component';
 import { isMobile } from 'utils/helpers'
 import { customStyles, singleStdColumns } from 'constants/targetedInstruction'
+import { getSingleStdData } from 'utils/targetedInstruction'
 
 interface P {
     type: string
@@ -33,22 +34,6 @@ type columns = {
 const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, type, faculty_id, selectedClass, data, stdReport, setReport, logSms }) => {
 
     let allStds, singleStd, columns: columns[] = [];
-
-    const getSingleStdData = (id: string) => {
-        singleStd = Object.entries(stdReport && stdReport[id] && stdReport[id].report || {})
-            .reduce((agg, [slo, obj]) => {
-                return [
-                    ...agg,
-                    {
-                        "slo": slo,
-                        "correct": obj.correct,
-                        "possible": obj.possible,
-                        "percentage": obj.percentage,
-                        "link": obj.link
-                    }
-                ]
-            }, [])
-    }
 
     const getAllStdData = () => {
         allStds = Object.entries(stdReport)
@@ -81,11 +66,11 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
             }, [])
     }
 
-    type === "Single Student" ? getSingleStdData(stdId) : type === "All Students" && getAllStdData()
+    type === "Single Student" ? singleStd = getSingleStdData(stdId, stdReport) : type === "All Students" && getAllStdData()
 
     const getStudentId = (e: any) => {
         setReport("Single Student")
-        getSingleStdData(e.id)
+        singleStd = getSingleStdData(e.id, stdReport)
     }
 
     const redirectToIlmx = (e: any) => {
