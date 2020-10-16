@@ -44,10 +44,6 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, students, saveRe
         })
     }
 
-    const capitalize = (str: string) => {
-        return str.charAt(0).toUpperCase() + str.slice(1, 5);
-    }
-
     const onSave = () => {
 
         setQuestions(state.questionsArr)
@@ -80,18 +76,18 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, students, saveRe
             < div className="section">
                 <div className="questions-container">
                     <div style={{ textAlign: 'center' }}>
-                        <label className="title" >{capitalize(testId)}</label>
+                        <label className="title capitalize" >{testId}</label>
                     </div>
                     <div className="flex-view">
-                        <div className="table-header" style={{ textAlign: "left" }}>Question Title</div>
-                        <div className="table-header">Correct Answers</div>
-                        <div className="table-header">Answers</div>
+                        <div className="table-header capitalize" style={{ textAlign: "left" }}>Question Title</div>
+                        <div className="table-header capitalize">Correct Answers</div>
+                        <div className="table-header capitalize">Answers</div>
                     </div>
                     {state.questionsArr && state.questionsArr.map((obj: any) => {
                         return <div key={obj.question} className="form">
                             <div className="flex-view">
-                                <div className="question-name" style={{ textAlign: "left" }}>{(obj.question)}</div>
-                                <div className="question-name tale-data">{(obj.correctAnswer)}</div>
+                                <div className="capitalize" style={{ textAlign: "left" }}>{(obj.question)}</div>
+                                <div className="capitalize">{(obj.correctAnswer)}</div>
                                 <label className="switch">
                                     <input type="checkbox" checked={obj.answer} onChange={(e) => handleChange(e, obj.question)} />
                                     <span className="toggleSlider round"></span>

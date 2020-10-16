@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { connect } from 'react-redux'
-// import Switch from "react-switch";
-import './style.css'
 
 interface P {
     students: RootDBState["students"]

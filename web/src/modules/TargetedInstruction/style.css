@@ -5,42 +5,11 @@
     margin-top: 20px;
     margin-bottom: 20px;
 }
-.question-name {
+.capitalize {
     text-transform: capitalize;
 }
 .save-btn-div {
-    margin-top: 45px !important;
-}
-.save-btn {
-    padding: 10px 15px !important;
-}
-.table-header {
-    font-size: 20px;
-    font-weight: 700;
-    text-align: center;
-    text-transform: capitalize;
-}
-.slo {
-    font-size: 18px;
-    text-align: left;
-    text-transform: capitalize; 
-    cursor: pointer;
-}
-.std-name:hover {
-    color: #5ecdb9;
-}
-.std-name {
-    font-size: 18px;
-    padding: 7px;
-    text-transform: capitalize;
-    text-align: "left";
-    cursor: "pointer";
-}
-.table-data {
-    font-size: 18px;
-    text-align: center;
-    padding: 7px;
-    text-transform: capitalize;
+    margin-top: 45px;
 }
 .questions-container {
     margin: 30px;
@@ -51,20 +20,17 @@
     justify-content: space-between;
     padding: 10px 0px;
 }
-.report-table {
-    width: 100%;
-}
 .send-btn-div {
-    width: 100%;
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
-    margin-top: 20px;
 }
 .graph-div {
     text-align: -webkit-center;
     margin-top: 50px;
 }
+
+/* toggle button */
 .switch {
     position: relative;
     display: inline-block;
@@ -129,49 +95,6 @@ input:checked + .toggleSlider:before {
         margin-top: 20px;
         margin-bottom: 20px;
     }
-    .question-name {
-        text-transform: capitalize;
-    }
-    .save-btn-div {
-        margin-top: 45px !important;
-    }
-    .save-btn {
-        padding: 10px 15px 10px 15px !important;
-    }
-    .table-header {
-        font-size: 14px;
-        font-weight: 700;
-        text-align: center;
-        text-transform: capitalize;
-    }
-    .table-data {
-        font-size: 12px;
-        text-align: center;
-        padding: 7px;
-        text-transform: capitalize;
-    }
-    .slo {
-        font-size: 12px;
-        text-align: left;
-        text-transform: capitalize; 
-        cursor: pointer;
-    }
-    .std-name:hover {
-        color: #5ecdb9;
-    }
-    .std-name {
-        font-size: 12px;
-        padding: 7px;
-        text-transform: capitalize;
-        text-align: "left";
-        cursor: "pointer";
-    }
-    .report-table {
-        width: 100%;
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
-    }
     .graph-div {
         padding-left: 0%;
         margin-top: 50px;
@@ -181,6 +104,7 @@ input:checked + .toggleSlider:before {
     .mobile-mode {
         width: 100%;
     }
+    /* toggle button */
     .switch {
         position: relative;
         display: inline-block;
