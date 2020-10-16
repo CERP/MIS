@@ -1,7 +1,3 @@
-type Subjects = {
-    [id: string]: string[]
-}
-
 export const getSubjectsFromClasses = (classes: RootDBState['classes']) => {
     const subjects = Object.values(classes)
         .reduce<Subjects>((agg, c) => {

@@ -4,10 +4,11 @@ import { logSms } from 'actions'
 import { connect } from 'react-redux'
 import { smsIntentLink } from 'utils/intent'
 import moment from 'moment'
-import { isMobile } from 'utils/helpers'
 import { replaceSpecialCharsWithUTFChars } from 'utils/stringHelper'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import DataTable from 'react-data-table-component';
+import { isMobile } from 'utils/helpers'
+import { customStyles, singleStdColumns } from 'constants/targetedInstruction'
 
 interface P {
     type: string
@@ -15,14 +16,13 @@ interface P {
     stdId: string
     testId: string
     testType: string
-    allStudents: MISStudent[]
+    students: MISStudent[]
     faculty_id: string
     selectedClass: string
     stdReport: Report
-    students: RootDBState["students"]
-    targeted_instruction?: RootDBState["targeted_instruction"]
+    allStudents: RootDBState["students"]
 
-    setReport?: (type: string) => any
+    setReport: (type: string) => any
     logSms?: (history: MISSMSHistory) => any
 }
 
@@ -39,16 +39,16 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
     const getSingleStdData = (id: string) => {
         singleStd = Object.entries(stdReport && stdReport[id] && stdReport[id].report || {})
             .reduce((agg, [slo, obj]) => {
-                let stdObject = {}
-                stdObject = {
-                    "slo": slo,
-                    "correct": obj.correct,
-                    "possible": obj.possible,
-                    "percentage": obj.percentage,
-                    "link": obj.link
-                }
-                return [...agg,
-                    stdObject]
+                return [
+                    ...agg,
+                    {
+                        "slo": slo,
+                        "correct": obj.correct,
+                        "possible": obj.possible,
+                        "percentage": obj.percentage,
+                        "link": obj.link
+                    }
+                ]
             }, [])
     }
 
@@ -56,44 +56,34 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
         allStds = Object.entries(stdReport)
             .reduce((agg, [id, reportObj]) => {
                 let stdObj = {}
-                if (reportObj) {
+                stdObj = {
+                    ...stdObj,
+                    "student": reportObj.name,
+                    "id": id
+                }
+                !columns.find(col => col.name === 'student name') &&
+                    columns.push({
+                        "name": "student name",
+                        "selector": "student",
+                        "sortable": true
+                    })
+                for (let [slo, sloObj] of Object.entries(reportObj.report)) {
                     stdObj = {
                         ...stdObj,
-                        "student": reportObj.name,
-                        "id": id
+                        [slo]: sloObj.percentage
                     }
-                    if (!columns.find(col => col.name === 'student name')) {
-                        columns.push({
-                            "name": "student name",
-                            "selector": "student",
-                            "sortable": true
-                        })
-                    }
-                    for (let [slo, sloObj] of Object.entries(reportObj.report)) {
-                        stdObj = {
-                            ...stdObj,
-                            [slo]: sloObj.percentage
-                        }
-                        if (!columns.find(col => col.name === slo)) {
-                            columns.push({
-                                "name": slo,
-                                "selector": slo,
-                                "sortable": true
-                            })
-                        }
-                    }
+                    !columns.find(col => col.name === slo) && columns.push({
+                        "name": slo,
+                        "selector": slo,
+                        "sortable": true
+                    })
                 }
                 return [...agg,
                     stdObj]
             }, [])
     }
 
-    if (stdId) {
-        getSingleStdData(stdId)
-        if (type === "All Students") {
-            getAllStdData()
-        }
-    }
+    type === "Single Student" ? getSingleStdData(stdId) : type === "All Students" && getAllStdData()
 
     const getStudentId = (e: any) => {
         setReport("Single Student")
@@ -105,11 +95,11 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
     }
 
     const logMessages = (messages: MISSms[]) => {
+
         if (messages.length === 0) {
             console.log("No Messaged to Log")
             return
         }
-
         const historyObj = {
             faculty: faculty_id,
             date: new Date().getTime(),
@@ -126,7 +116,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
         const test_type = `Test Type: ${testType}\n`
         const test_name = `Test Name: ${testId}\n`
         if (stdReport) {
-            const stdName = students[stdId].Name
+            const stdName = allStudents[stdId].Name
             let message = []
             message.push(`${stdName} scored`)
             for (let [testName, testObj] of Object.entries(stdReport)) {
@@ -146,17 +136,13 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
 
         if (type === 'Single Student') {
             let phone
-            if (stdId) {
-                phone = students[stdId].Phone
-            }
+            phone = allStudents[stdId].Phone
             const report = reportString(stdId)
-
             return [{ number: phone, text: report }]
         } else if (type === 'All Students') {
-            const messages = allStudents
+            const messages = students
                 .reduce((agg, student) => {
                     const index = agg.findIndex(s => s.number === student.Phone)
-
                     if (index >= 0) {
                         return agg
                     }
@@ -174,137 +160,68 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
 
     let messages = getMessages()
 
-    const customStyles = {
-        rows: {
-            style: {
-                minHeight: "48px"
-            },
-        },
-        headCells: {
-            style: {
-                fontSize: isMobile ? "14px" : "18px",
-                fontWeight: 700,
-                backgroundColor: "rgb(250, 250, 250)",
-                textTransform: "capitalize"
-            },
-        },
-        cells: {
-            style: {
-                paddingLeft: "20px",
-                paddingRight: "20px",
-                fontSize: isMobile ? "12px" : "14px",
-                backgroundColor: "rgb(250, 250, 250)",
-                '&:hover': {
-                    color: "rgb(116, 216, 159)",
-                    cursor: "pointer"
-                }
-            },
-        },
-        pagination: {
-            style: {
-                backgroundColor: "rgb(250, 250, 250)",
-                color: "black",
-            },
-        },
-    };
-
-    const singleStdColumns = [
-        {
-            name: 'SLO',
-            selector: 'slo',
-            sortable: true,
-
-        },
-        {
-            name: 'Correct',
-            selector: 'correct',
-            sortable: true,
-
-        },
-        {
-            name: 'Possible',
-            selector: 'possible',
-            sortable: true,
-
-        },
-        {
-            name: 'Percentage',
-            selector: 'percentage',
-            sortable: true,
-
-        }
-    ]
-
     return <>
-        {
-            type === 'Single Student' ? <div className="section form">
-                <DataTable
-                    columns={singleStdColumns}
-                    customStyles={customStyles}
-                    data={singleStd && singleStd}
-                    pagination={true}
-                    noHeader={true}
-                    highlightOnHover={true}
-                    responsive={true}
-                    onRowClicked={redirectToIlmx}
-                />
-                <div className="send-btn-div">
-                    <a className="button blue mb mobile-mode"
-                        href={smsIntentLink({
-                            messages,
-                            return_link: window.location.href
-                        })}
-                        onClick={() => logMessages(messages)}>
-                        Send Report using Local SIM </a>
-                </div>
-            </div> :
-                type === 'All Students' ?
-                    <>
-                        <div className="graph-div">
-                            <BarChart
-                                width={isMobile() ? 350 : 700}
-                                height={500}
-                                data={data && data}
-                            >
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="name" />
-                                <YAxis />
-                                <Tooltip />
-                                <Legend />
-                                <Bar dataKey="percentage" fill="#82ca9d" />
-                            </BarChart>
-                        </div>
-                        <div className="section">
-                            <DataTable
-                                columns={columns}
-                                customStyles={customStyles}
-                                data={allStds && allStds}
-                                pagination={true}
-                                noHeader={true}
-                                highlightOnHover={true}
-                                responsive={true}
-                                onRowClicked={getStudentId}
-                            />
-                            <div className="send-btn-div">
-                                <a className="button blue mb mobile-mode"
-                                    href={smsIntentLink({
-                                        messages,
-                                        return_link: window.location.href
-                                    })}
-                                    onClick={() => logMessages(messages)}>
-                                    Send Report using Local SIM </a>
-                            </div>
-                        </div>
-                    </> :
-                    null
+        {type === 'Single Student' ? <div className="section form">
+            <DataTable
+                columns={singleStdColumns}
+                customStyles={customStyles}
+                data={singleStd && singleStd}
+                pagination={true}
+                noHeader={true}
+                highlightOnHover={true}
+                responsive={true}
+                onRowClicked={redirectToIlmx}
+            />
+            <div className="send-btn-div">
+                <a className="button blue mb mobile-mode"
+                    href={smsIntentLink({
+                        messages,
+                        return_link: window.location.href
+                    })}
+                    onClick={() => logMessages(messages)}>
+                    Send Report using Local SIM </a>
+            </div>
+        </div> :
+            type === 'All Students' &&
+            <><div className="graph-div">
+                <BarChart
+                    width={isMobile() ? 350 : 700}
+                    height={500}
+                    data={data && data}
+                >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="percentage" fill="#82ca9d" />
+                </BarChart>
+            </div>
+                <div className="section">
+                    <DataTable
+                        columns={columns}
+                        customStyles={customStyles}
+                        data={allStds && allStds}
+                        pagination={true}
+                        noHeader={true}
+                        highlightOnHover={true}
+                        responsive={true}
+                        onRowClicked={getStudentId}
+                    />
+                    <div className="send-btn-div">
+                        <a className="button blue mb mobile-mode"
+                            href={smsIntentLink({
+                                messages,
+                                return_link: window.location.href
+                            })}
+                            onClick={() => logMessages(messages)}>
+                            Send Report using Local SIM </a>
+                    </div>
+                </div></>
         }
     </>
 }
 
-export default connect((state: RootReducerState) => ({
-    students: state.db.students,
-    targeted_instruction: state.db.targeted_instruction,
-    faculty_id: state.auth.faculty_id,
-}), (dispatch: Function) => ({
+export default connect((dispatch: Function) => ({
     logSms: (history: MISSMSHistory) => dispatch(logSms(history)),
 }))(Report)

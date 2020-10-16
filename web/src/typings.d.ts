@@ -304,6 +304,10 @@ interface MISReport {
 	}
 }
 
+type Subjects = {
+    [id: string]: string[]
+}
+
 interface MISDiagnosticReport {
 	answer: string
 	isCorrect: boolean

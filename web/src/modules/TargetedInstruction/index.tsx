@@ -6,18 +6,18 @@ import StudentGrades from './Grades'
 import Diagnostic from './Diagnostic'
 import Report from './Report'
 import { connect } from 'react-redux'
+import { createReport } from 'utils/createReport'
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
 import getSubjectsFromClasses from 'utils/getSubjectsFromClasses'
 import './style.css'
 
 interface P {
+	faculty_id: string
 	classes: RootDBState["classes"]
 	students: RootDBState["students"]
 	targeted_instruction: RootDBState["targeted_instruction"]
-}
 
-type Subjects = {
-	[id: string]: string[]
+	createReport: (students: MISStudent[], targeted_instruction: RootDBState["targeted_instruction"], testId: string) => any
 }
 
 type DiagnosticResult = {
@@ -145,19 +145,12 @@ const Test: React.FC<PropsType> = (props) => {
 
 	const graphData = () => {
 
-		let graphData: GraphData = {}
-		debugger
-		for (let [testId, testObj] of Object.entries(stdReport && stdReport || {})) {
-			debugger
-			if (graphData[testId]) {
-				graphData[testId] = graphData[testId] + testObj.report.percentage
-			} else {
-				graphData[testId] = testObj.report.percentage
+		let graphData: GraphData = {}, arr = []
+		for (let testObj of Object.values(stdReport && stdReport || {})) {
+			for (let [slo, rep] of Object.entries(testObj.report)) {//@ts-ignore
+				graphData[slo] ? graphData[slo] = graphData[slo] + rep.percentage : graphData[slo] = rep.percentage
 			}
 		}
-
-		let arr = []
-
 		for (let [id, percentage] of Object.entries(graphData)) {
 			arr.push({ name: id, percentage: Math.round(percentage / Object.entries(props.students).length) })
 		}
@@ -245,21 +238,22 @@ const Test: React.FC<PropsType> = (props) => {
 							testId={testId}
 							type={report}
 							stdId={stdId}
-							allStudents={students}
+							allStudents={props.students}
+							students={students}
 							data={data}
 							selectedClass={selectedClass}
 							setReport={setReport}
 							stdReport={stdReport}
+							faculty_id={props.faculty_id}
 						/>}
-
 			</div>
 		</div>
 	</Layout>
-
 }
 
 export default connect((state: RootReducerState) => ({
 	targeted_instruction: state.db.targeted_instruction,
+	faculty_id: state.auth.faculty_id,
 	classes: state.db.classes,
 	students: state.db.students
 }))(Test)
@@ -276,38 +270,3 @@ const getAllStudents = (sectionId: string, students: MISStudent[]) => {
 		}, [])
 }
 
-const createReport = (students: MISStudent[], targeted_instruction: RootDBState["targeted_instruction"], testId: string) => {
-	return Object.values(students)
-		.reduce((agg, std) => {
-			return {
-				...agg,
-				[std.id]: {
-					name: std.Name,
-					report: Object.values(std.diagnostic_result && std.diagnostic_result[testId] || {})
-						.reduce((agg2: MISReport, { isCorrect, slo }) => {
-							const category = targeted_instruction && targeted_instruction.slo_mapping[slo[0]].category;
-							const c = isCorrect ? 1 : 0
-							if (agg2[category]) {
-								return {
-									...agg2,
-									[category]: {
-										correct: agg2[category].correct + c,
-										possible: agg2[category].possible + 1,
-										percentage: (agg2[category].correct / agg2[category].possible) * 100,
-										link: targeted_instruction.slo_mapping[slo[0]].link
-									}
-								}
-							} else {
-								return {
-									...agg2,
-									[category]: {
-										correct: c,
-										possible: 1
-									}
-								}
-							}
-						}, {})
-				}
-			}
-		}, {})
-}
