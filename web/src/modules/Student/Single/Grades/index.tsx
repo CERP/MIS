@@ -1,20 +1,24 @@
 //@ts-nocheck
 import React, { useState, useEffect } from 'react';
-import getSectionsFromClasses from 'utils/getSectionsFromClasses'
-import getSubjectsFromClasses from 'utils/getSubjectsFromClasses'
 import { connect } from 'react-redux'
 import DataTable from 'react-data-table-component';
+import { RouteComponentProps } from 'react-router-dom'
+import getSectionsFromClasses from 'utils/getSectionsFromClasses'
+import getSubjectsFromClasses from 'utils/getSubjectsFromClasses'
 import { customStyles, singleStdColumns } from 'constants/targetedInstruction'
 import { getSingleStdData, createReport } from 'utils/targetedInstruction'
 
-interface P {
-    students: RootDBState["students"]
-    sections: AugmentedSection[]
+interface P extends RouteComponentProps<RouteInfo> {
     classes: RootDBState["classes"]
+    students: RootDBState["students"]
     targeted_instruction: RootDBState["targeted_instruction"]
 }
 
-const DiagnosticGrades: React.FC<P> = (props) => {
+interface RouteInfo {
+    id: string
+}
+
+const DiagnosticGrades: React.FC<P> = ({ students, classes, targeted_instruction, match }) => {
 
     const [testType, setTestType] = useState('')
     const [allSubjects, setAllSubjects] = useState<Subjects>({})
@@ -24,18 +28,18 @@ const DiagnosticGrades: React.FC<P> = (props) => {
     const [selectedSubject, setSelectedSubject] = useState('')
     const [singleStd, setSingleStd] = useState([])
 
-    let stdId = props.match.params.id
+    let stdId = match.params.id
 
-    const getClassNameFromSections = (sections): string => {
-        const section = sections.find(section => section.id === props.students[stdId].section_id)
+    const getClassNameFromSections = (sections: AugmentedSection[]): string => {
+        const section = sections.find(section => section.id === students[stdId].section_id)
         return section ? section.className : undefined
     }
 
     useEffect(() => {
-        const sections = getSectionsFromClasses(props.classes)
+        const sections = getSectionsFromClasses(classes)
             .sort((a, b) => (a.classYear || 0) - (b.classYear || 0))
         setClassName(getClassNameFromSections(sections))
-        setAllSubjects(getSubjectsFromClasses(props.classes))
+        setAllSubjects(getSubjectsFromClasses(classes))
     }, [])
 
     const getSubject = (e: any) => {
@@ -52,13 +56,13 @@ const DiagnosticGrades: React.FC<P> = (props) => {
 
     const getTest = (e: any) => {
         setShowTable(true)
-        const stdReport = createReport(props.students, props.targeted_instruction, e.target.value)
+        const stdReport = createReport(students, targeted_instruction, e.target.value)
         setSingleStd(getSingleStdData(stdId, stdReport))
     }
 
     const getTestList = (testType: string, selectedSubject: string) => {
         const testArr = []
-        const misTest: Tests = props.targeted_instruction['tests']
+        const misTest: Tests = targeted_instruction['tests']
         for (let [, obj] of Object.entries(misTest)) {
             if (obj.class === className && obj.type === testType && obj.subject === selectedSubject) {
                 testArr.push(obj.name)
@@ -113,7 +117,6 @@ const DiagnosticGrades: React.FC<P> = (props) => {
             />
         </div>}
     </div >
-
 }
 
 export default connect((state: RootReducerState) => ({

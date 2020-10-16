@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useState, useEffect, useMemo } from 'react';
 import Layout from 'components/Layout'
 import { RouteComponentProps } from 'react-router-dom'
@@ -40,7 +41,7 @@ const Test: React.FC<PropsType> = (props) => {
 	const [sortedSections, setSortedSections] = useState([])
 	const [selectedClass, setSelectedClass] = useState('')
 	const [allSubjects, setAllSubjects] = useState<Subjects>({})
-	const [questions, setQuestions] = useState([])
+	const [questions, setQuestions] = useState({})
 	const [sectionId, setSectionId] = useState('')
 	const [testId, setTestId] = useState('')
 	const [testType, setTestType] = useState('')
@@ -92,7 +93,7 @@ const Test: React.FC<PropsType> = (props) => {
 		for (let [, obj] of Object.entries(misTest)) {
 			if (obj.class === selectedClass && obj.type === testType && obj.subject === selectedSubject) {
 				testArr.push(obj.name)
-				setQuestions([])
+				setQuestions({})
 			}
 		}
 		return testArr
@@ -101,13 +102,13 @@ const Test: React.FC<PropsType> = (props) => {
 	const getStudent = (e: any) => {
 		setStdId(e.target.value)
 		if (testId) {
-			getQuestionList(testId, props.students[e.target.value])
+			setQuestions(getQuestionList(testId, props.students[e.target.value]))
 		}
 	}
 
 	const getTest = (e: any) => {
 		setTestId(e.target.value)
-		getQuestionList(e.target.value, props.students[stdId])
+		setQuestions(getQuestionList(e.target.value, props.students[stdId]))
 	}
 
 	const getSelected = (e: any) => {
@@ -130,19 +131,18 @@ const Test: React.FC<PropsType> = (props) => {
 	}
 
 	const getQuestionList = (selectedTest: string, stdObj: MISStudent) => {
-		let questionArr = []
 		const res: DiagnosticResult = stdObj && stdObj.diagnostic_result && stdObj.diagnostic_result[selectedTest]
 		if (res && testType === 'Diagnostic') {
-			for (let obj of Object.entries(res && res)) {
-				questionArr.push({
-					"question": obj[0],
-					"answer": obj[1].isCorrect,
-					"correctAnswer": obj[1].answer,
-					"slo": obj[1].slo[0]
-				})
-
-			}
-			setQuestions(questionArr.reverse())
+			return Object.entries(res).reduce((acc, [key, value]) => {
+				return {
+					[key]: {
+						"answer": value.isCorrect,
+						"correctAnswer": value.answer,
+						"slo": value.slo[0]
+					},
+					...acc
+				}
+			}, {})
 		}
 	}
 

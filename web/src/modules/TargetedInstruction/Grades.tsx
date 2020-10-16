@@ -1,16 +1,23 @@
+//@ts-nocheck
 import React, { useState, useEffect } from 'react';
 import Banner from 'components/Banner'
 import './style.css'
 
 interface P {
-    questions: string[]
+    questions: Question[]
     stdId: string
     testId: string
     testType: string
     students: RootDBState["students"]
 
-    setQuestions: (type: string[]) => any
+    setQuestions: (type: Question[]) => any
     saveReport: (stdId: string, diagnostic_result: MISStudent['diagnostic_result'], testId: string) => void
+}
+
+interface Question {
+    answer: string
+    correctAnswer: string
+    slo: string
 }
 
 const StudentGrades: React.FC<P> = ({ questions, stdId, testId, students, saveReport, setQuestions }) => {
@@ -21,7 +28,7 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, students, saveRe
             good: true,
             text: "Saved!"
         },
-        questionsArr: [],
+        questionsArr: {},
         result: null
     })
 
@@ -33,8 +40,7 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, students, saveRe
     }, [questions])
 
     const handleChange = (e: any, questionId: string) => {
-        const index = state.questionsArr.findIndex((obj) => { return obj.question === questionId })
-        state.questionsArr[index].answer = e.target.checked
+        state.questionsArr[questionId].answer = e.target.checked
         let diagnostic_res = students[stdId].diagnostic_result[testId]
         diagnostic_res[questionId].isCorrect = e.target.checked
         setState({
@@ -69,10 +75,10 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, students, saveRe
             })
         }, 1000)
     }
-
+    console.log("jnf", Object.keys(state.questionsArr).length)
     return <>
         {state.banner.active ? <Banner isGood={state.banner.good} text={state.banner.text} /> : false}
-        {state.questionsArr && state.questionsArr.length > 0 &&
+        {Object.keys(state.questionsArr).length > 0 &&
             < div className="section">
                 <div className="questions-container">
                     <div style={{ textAlign: 'center' }}>
@@ -83,22 +89,23 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, students, saveRe
                         <div className="table-header capitalize">Correct Answers</div>
                         <div className="table-header capitalize">Answers</div>
                     </div>
-                    {state.questionsArr && state.questionsArr.map((obj: any) => {
-                        return <div key={obj.question} className="form">
-                            <div className="flex-view">
-                                <div className="capitalize" style={{ textAlign: "left" }}>{(obj.question)}</div>
-                                <div className="capitalize">{(obj.correctAnswer)}</div>
-                                <label className="switch">
-                                    <input type="checkbox" checked={obj.answer} onChange={(e) => handleChange(e, obj.question)} />
-                                    <span className="toggleSlider round"></span>
-                                </label>
+                    {
+                        Object.keys(state.questionsArr).map(function (key) {
+                            return <div key={key} className="form">
+                                <div className="flex-view">
+                                    <div className="capitalize" style={{ textAlign: "left" }}>{key}</div>
+                                    <div className="capitalize">{(state.questionsArr[key].correctAnswer)}</div>
+                                    <label className="switch">
+                                        <input type="checkbox" checked={state.questionsArr[key].answer} onChange={(e) => handleChange(e, obj.question)} />
+                                        <span className="toggleSlider round"></span>
+                                    </label>
+                                </div>
                             </div>
-                        </div>
-                    })}
-                    {state.questionsArr.length > 0 &&
-                        <div className="save-btn-div">
-                            <button className="button blue save-btn mobile-mode" onClick={onSave}>SAVE</button>
-                        </div>}
+                        })
+                    }
+                    <div className="save-btn-div">
+                        <button className="button blue save-btn mobile-mode" onClick={onSave}>SAVE</button>
+                    </div>
                 </div>
             </div>
         }
