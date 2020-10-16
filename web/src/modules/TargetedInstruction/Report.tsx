@@ -1,7 +1,5 @@
 //@ts-nocheck
 import React from 'react'
-import { logSms } from 'actions'
-import { connect } from 'react-redux'
 import { smsIntentLink } from 'utils/intent'
 import moment from 'moment'
 import { replaceSpecialCharsWithUTFChars } from 'utils/stringHelper'
@@ -23,7 +21,7 @@ interface P {
     allStudents: RootDBState["students"]
 
     setReport: (type: string) => any
-    logSms?: (history: MISSMSHistory) => any
+    logSms: (history: MISSMSHistory) => any
 }
 
 type columns = {
@@ -222,6 +220,4 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
     </>
 }
 
-export default connect((dispatch: Function) => ({
-    logSms: (history: MISSMSHistory) => dispatch(logSms(history)),
-}))(Report)
+export default Report

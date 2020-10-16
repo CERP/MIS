@@ -9,6 +9,8 @@ import { connect } from 'react-redux'
 import { createReport } from 'utils/createReport'
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
 import getSubjectsFromClasses from 'utils/getSubjectsFromClasses'
+import { logSms } from 'actions'
+import { addReport } from 'actions'
 import './style.css'
 
 interface P {
@@ -17,7 +19,10 @@ interface P {
 	students: RootDBState["students"]
 	targeted_instruction: RootDBState["targeted_instruction"]
 
+	logSms: (history: MISSMSHistory) => any
+	saveReport: (stdId: string, diagnostic_result: MISStudent['diagnostic_result'], testId: string) => void
 	createReport: (students: MISStudent[], targeted_instruction: RootDBState["targeted_instruction"], testId: string) => any
+
 }
 
 type DiagnosticResult = {
@@ -231,7 +236,9 @@ const Test: React.FC<PropsType> = (props) => {
 							stdId={stdId}
 							testId={testId}
 							testType={testType}
+							students={props.students}
 							setQuestions={setQuestions}
+							saveReport={props.saveReport}
 						/> :
 						<Report
 							testType={testType}
@@ -242,9 +249,10 @@ const Test: React.FC<PropsType> = (props) => {
 							students={students}
 							data={data}
 							selectedClass={selectedClass}
-							setReport={setReport}
 							stdReport={stdReport}
 							faculty_id={props.faculty_id}
+							setReport={setReport}
+							logSms={props.logSms}
 						/>}
 			</div>
 		</div>
@@ -256,6 +264,9 @@ export default connect((state: RootReducerState) => ({
 	faculty_id: state.auth.faculty_id,
 	classes: state.db.classes,
 	students: state.db.students
+}), (dispatch: Function) => ({
+	logSms: (history: MISSMSHistory) => dispatch(logSms(history)),
+	saveReport: (stdId: string, diagnostic_result: MISStudent['diagnostic_result'], testId: string) => dispatch(addReport(stdId, diagnostic_result, testId)),
 }))(Test)
 
 const getAllStudents = (sectionId: string, students: MISStudent[]) => {

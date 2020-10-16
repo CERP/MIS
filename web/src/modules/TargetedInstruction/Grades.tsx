@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux'
 import Banner from 'components/Banner'
-import { addReport } from 'actions'
 import './style.css'
 
 interface P {
@@ -10,7 +8,6 @@ interface P {
     testId: string
     testType: string
     students: RootDBState["students"]
-    targeted_instruction: RootDBState["targeted_instruction"]
 
     setQuestions: (type: string[]) => any
     saveReport: (stdId: string, diagnostic_result: MISStudent['diagnostic_result'], testId: string) => void
@@ -54,8 +51,7 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, students, saveRe
     const onSave = () => {
 
         setQuestions(state.questionsArr)
-
-        saveReport(stdId, state.result && state.result, testId)
+        saveReport(stdId, state.result, testId)
 
         setState({
             ...state,
@@ -113,9 +109,4 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, students, saveRe
     </>
 }
 
-export default connect((state: RootReducerState) => ({
-    targeted_instruction: state.db.targeted_instruction,
-    students: state.db.students
-}), (dispatch: Function) => ({
-    saveReport: (stdId: string, diagnostic_result: MISStudent['diagnostic_result'], testId: string) => dispatch(addReport(stdId, diagnostic_result, testId)),
-}))(StudentGrades)
+export default StudentGrades
