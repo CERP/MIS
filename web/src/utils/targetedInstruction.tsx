@@ -1,4 +1,4 @@
-export const createReport = (students: MISStudent[], targeted_instruction: RootDBState["targeted_instruction"], testId: string) => {
+export const createReport = (students: RootDBState["students"], targeted_instruction: RootDBState["targeted_instruction"], testId: string) => {
     return Object.values(students)
         .reduce((agg, std) => {
             return {

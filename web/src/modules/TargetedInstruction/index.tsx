@@ -53,7 +53,7 @@ const Test: React.FC<PropsType> = (props) => {
 	}, [])
 
 	const students = useMemo(
-		() => getAllStudents(sectionId, Object.values(props.students)),
+		() => getAllStudents(sectionId, props.students),
 		[sectionId]
 	)
 
@@ -199,7 +199,9 @@ const Test: React.FC<PropsType> = (props) => {
 							<select className="no-print" onChange={getStudent}>
 								<option value="">Select Students</option>
 								{
-									students && students.map((std: any) => <option key={std.id} value={std.id}>{std.Name}</option>)
+									Object.keys(students).map(function (key) {
+										return <option key={students[key].id} value={students[key].id}>{students[key].Name}</option>
+									})
 								}
 							</select>
 						</div>}
@@ -262,15 +264,16 @@ export default connect((state: RootReducerState) => ({
 	saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport, testId: string) => dispatch(addReport(stdId, diagnostic_report, testId)),
 }))(Test)
 
-const getAllStudents = (sectionId: string, students: MISStudent[]) => {
+const getAllStudents = (sectionId: string, students: RootDBState["students"]) => {
 	return students = Object.values(students)
-		.reduce<MISStudent[]>((agg, student) => {
+		.reduce<RootDBState["students"]>((agg, student) => {
 			if (student.section_id === sectionId) {
-				return [...agg,
-					student
-				]
+				return {
+					...agg,
+					[student.id]: student
+				}
 			}
-			return [...agg,]
-		}, [])
+			return { ...agg, }
+		}, {})
 }
 

@@ -14,7 +14,7 @@ interface P {
     stdId: string
     testId: string
     testType: string
-    students: MISStudent[]
+    students: RootDBState["students"]
     faculty_id: string
     selectedClass: string
     stdReport: Report
@@ -122,12 +122,8 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
             const report = reportString(stdId)
             return [{ number: phone, text: report }]
         } else if (type === 'All Students') {
-            const messages = students
+            const messages = Object.values(students)
                 .reduce((agg, student) => {
-                    const index = agg.findIndex(s => s.number === student.Phone)
-                    if (index >= 0) {
-                        return agg
-                    }
                     return [
                         ...agg,
                         {
