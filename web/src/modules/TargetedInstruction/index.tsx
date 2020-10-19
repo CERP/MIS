@@ -85,7 +85,7 @@ const Test: React.FC<PropsType> = (props) => {
 	const getTestList = (testType: string, selectedSubject: string) => {
 		const testArr = []
 		const misTest: Tests = props.targeted_instruction['tests']
-		for (let [, obj] of Object.entries(misTest)) {
+		for (let obj of Object.values(misTest)) {
 			if (obj.class === selectedClass && obj.type === testType && obj.subject === selectedSubject) {
 				testArr.push(obj.name)
 				setQuestions({})
@@ -113,7 +113,7 @@ const Test: React.FC<PropsType> = (props) => {
 
 	const getPDF = (selectedSubject: string, selectedClass: string, testType: string) => {
 		let misTest: Tests = props.targeted_instruction['tests']
-		for (let [, obj] of Object.entries(misTest)) {
+		for (let obj of Object.values(misTest)) {
 			if (obj.type === testType && obj.class === selectedClass && obj.subject === selectedSubject) {
 				setUrl(obj.pdf_url)
 				setLabel(obj.label)
@@ -128,14 +128,14 @@ const Test: React.FC<PropsType> = (props) => {
 	const getQuestionList = (selectedTest: string, stdObj: MISStudent) => {
 		const res: MISDiagnosticReport = stdObj && stdObj.diagnostic_result && stdObj.diagnostic_result[selectedTest]
 		if (res && testType === 'Diagnostic') {
-			return Object.entries(res).reduce((acc, [key, value]) => {
+			return Object.entries(res).reduce((agg, [key, value]) => {
 				return {
 					[key]: {
 						"answer": value.isCorrect,
 						"correctAnswer": value.answer,
 						"slo": value.slo[0]
 					},
-					...acc
+					...agg
 				}
 			}, {})
 		}

@@ -82,6 +82,7 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, students, saveRe
             })
         }, 1000)
     }
+
     return <>
         {state.banner.active ? <Banner isGood={state.banner.good} text={state.banner.text} /> : false}
         {Object.keys(state.questionsArr).length > 0 &&

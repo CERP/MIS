@@ -62,7 +62,7 @@ const DiagnosticGrades: React.FC<P> = ({ students, classes, targeted_instruction
     const getTestList = (testType: string, selectedSubject: string) => {
         const testArr = []
         const misTest: Tests = targeted_instruction['tests']
-        for (let [, obj] of Object.entries(misTest)) {
+        for (let obj of Object.values(misTest)) {
             if (obj.class === className && obj.type === testType && obj.subject === selectedSubject) {
                 testArr.push(obj.name)
             }
