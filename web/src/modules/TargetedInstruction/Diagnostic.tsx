@@ -11,7 +11,7 @@ const Diagnostic: React.FC<P> = ({ label, url }) => {
 
     return <>
         <div>
-            {label && <div className="pdf-label no-print"><label>{label}</label></div>}
+            {label && <div className="pdf-label text-center no-print bold"><label>{label}</label></div>}
             {url && <PDFViewer
                 hideNavbar={true}
                 document={{

@@ -166,6 +166,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
                     width={isMobile() ? 350 : 700}
                     height={500}
                     data={data && data}
+                    style={{ margin: 'auto' }}
                 >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />

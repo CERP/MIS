@@ -9,8 +9,7 @@ import { connect } from 'react-redux'
 import { createReport } from 'utils/targetedInstruction'
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
 import getSubjectsFromClasses from 'utils/getSubjectsFromClasses'
-import { logSms } from 'actions'
-import { addReport } from 'actions'
+import { logSms, addReport } from 'actions'
 import './style.css'
 
 interface P {
@@ -169,7 +168,7 @@ const Test: React.FC<PropsType> = (props) => {
 				<div className="row">
 					<label className="no-print">Class/Section</label>
 					<select className="no-print" onChange={getClass}>
-						<option id="0" value="">Select Section</option>
+						<option id="" value="">Select Section</option>
 						{
 							sortedSections && sortedSections.map(s => <option key={s.id} data-id={s.id} value={s.className}>{s.className}</option>)
 						}

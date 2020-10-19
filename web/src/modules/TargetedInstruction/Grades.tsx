@@ -88,19 +88,19 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, students, saveRe
         {Object.keys(state.questionsArr).length > 0 &&
             < div className="section">
                 <div className="questions-container">
-                    <div style={{ textAlign: 'center' }}>
+                    <div className="text-center">
                         <label className="title capitalize" >{testId}</label>
                     </div>
                     <div className="flex-view">
-                        <div className="table-header capitalize" style={{ textAlign: "left" }}>Question Title</div>
-                        <div className="table-header capitalize">Correct Answers</div>
-                        <div className="table-header capitalize">Answers</div>
+                        <div className="table-header capitalize text-left bold">Question Title</div>
+                        <div className="table-header capitalize bold">Correct Answers</div>
+                        <div className="table-header capitalize bold">Answers</div>
                     </div>
                     {
                         Object.keys(state.questionsArr).map(function (key) {
                             return <div key={key} className="form">
                                 <div className="flex-view">
-                                    <div className="capitalize" style={{ textAlign: "left" }}>{key}</div>
+                                    <div className="capitalize text-left">{key}</div>
                                     <div className="capitalize">{(state.questionsArr[key].correctAnswer)}</div>
                                     <label className="switch">
                                         <input type="checkbox" checked={state.questionsArr[key].answer} onChange={(e) => handleChange(e, key)} />

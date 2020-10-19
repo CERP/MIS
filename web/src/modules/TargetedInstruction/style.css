@@ -1,18 +1,15 @@
 .pdf-label {
-    text-align: center;
     font-size: 22px;
-    font-weight: bold;
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin: 20px 0px;
 }
 .capitalize {
     text-transform: capitalize;
 }
 .save-btn-div {
-    margin-top: 45px;
+    margin-top: 2rem;
 }
 .questions-container {
-    margin: 30px;
+    margin: 2rem;
 }
 .flex-view {
     display: flex;
@@ -26,8 +23,7 @@
     justify-content: flex-end;
 }
 .graph-div {
-    text-align: -webkit-center;
-    margin-top: 50px;
+    margin-top: 2rem;
 }
 
 /* toggle button */
@@ -86,14 +82,12 @@ input:checked + .toggleSlider:before {
 
 @media screen and (max-width: 525px) {
     .questions-container {
-        margin: 0px;
+        margin: 0;
     }
     .pdf-label {
-        text-align: center;
         font-size: 14px;
         font-weight: bold;
-        margin-top: 20px;
-        margin-bottom: 20px;
+        margin: 20px 0px;
     }
     .graph-div {
         padding-left: 0%;
