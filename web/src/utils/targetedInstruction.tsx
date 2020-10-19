@@ -1,5 +1,3 @@
-//@ts-nocheck
-
 export const createReport = (students: MISStudent[], targeted_instruction: RootDBState["targeted_instruction"], testId: string) => {
     return Object.values(students)
         .reduce((agg, std) => {
@@ -7,7 +5,7 @@ export const createReport = (students: MISStudent[], targeted_instruction: RootD
                 ...agg,
                 [std.id]: {
                     name: std.Name,
-                    report: Object.values(std.diagnostic_result && std.diagnostic_result[testId] || {})
+                    report: Object.values((std.diagnostic_result && std.diagnostic_result[testId]) || {})
                         .reduce((agg2: MISReport, { isCorrect, slo }) => {
                             const category = targeted_instruction && targeted_instruction.slo_mapping[slo[0]].category;
                             const c = isCorrect ? 1 : 0
@@ -37,7 +35,7 @@ export const createReport = (students: MISStudent[], targeted_instruction: RootD
 }
 
 export const getSingleStdData = (id: string, stdReport: Report) => {
-    return Object.entries(stdReport && stdReport[id] && stdReport[id].report || {})
+    return Object.entries(stdReport && stdReport[id] && stdReport[id].report)
         .reduce((agg, [slo, obj]) => {
             return [
                 ...agg,

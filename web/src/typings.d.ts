@@ -284,18 +284,17 @@ interface MISStudent {
 	certificates: {
 		[id: string]: MISCertificate
 	}
-	diagnostic_result: {
-		[test_id: string]: {
-			[question_id: string]: MISDiagnosticReport
-		}
+	diagnostic_result: DiagnosticResult
+}
+
+type Report = {
+	[stdId: string]: {
+		name: string
+		report: MISReport
 	}
 }
 
-interface Report {
-	[stdId: string]: MISReport
-}
-
-interface MISReport {
+type MISReport = {
 	[name: string]: {
 		correct: number
 		possible: number
@@ -308,10 +307,17 @@ type Subjects = {
     [id: string]: string[]
 }
 
-interface MISDiagnosticReport {
-	answer: string
-	isCorrect: boolean
-	slo: string[]
+type DiagnosticResult = {
+	[test_id: string]: MISDiagnosticReport
+	
+}
+
+type MISDiagnosticReport = {
+	[question_id: string]: {
+		answer: string
+		isCorrect: boolean
+		slo: string[]
+	}
 }
 
 interface MISFamilyInfo {

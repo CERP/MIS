@@ -1,28 +1,35 @@
-//@ts-nocheck
 import React, { useState, useEffect } from 'react';
 import Banner from 'components/Banner'
 import './style.css'
 
 interface P {
-    questions: Question[]
+    questions: Question
     stdId: string
     testId: string
     testType: string
     students: RootDBState["students"]
 
-    setQuestions: (type: Question[]) => any
-    saveReport: (stdId: string, diagnostic_result: MISStudent['diagnostic_result'], testId: string) => void
+    setQuestions: (type: Question) => any
+    saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport, testId: string) => void
 }
 
 interface Question {
-    answer: string
-    correctAnswer: string
-    slo: string
+    [questionId: string]: {
+        answer: boolean
+        correctAnswer: string
+        slo: string
+    }
+}
+
+type S = {
+    banner: MISBanner
+    questionsArr: Question
+    result: MISDiagnosticReport
 }
 
 const StudentGrades: React.FC<P> = ({ questions, stdId, testId, students, saveReport, setQuestions }) => {
 
-    const [state, setState] = useState({
+    const [state, setState] = useState<S>({
         banner: {
             active: false,
             good: true,
@@ -75,7 +82,6 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, students, saveRe
             })
         }, 1000)
     }
-    console.log("jnf", Object.keys(state.questionsArr).length)
     return <>
         {state.banner.active ? <Banner isGood={state.banner.good} text={state.banner.text} /> : false}
         {Object.keys(state.questionsArr).length > 0 &&
@@ -96,7 +102,7 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, students, saveRe
                                     <div className="capitalize" style={{ textAlign: "left" }}>{key}</div>
                                     <div className="capitalize">{(state.questionsArr[key].correctAnswer)}</div>
                                     <label className="switch">
-                                        <input type="checkbox" checked={state.questionsArr[key].answer} onChange={(e) => handleChange(e, obj.question)} />
+                                        <input type="checkbox" checked={state.questionsArr[key].answer} onChange={(e) => handleChange(e, key)} />
                                         <span className="toggleSlider round"></span>
                                     </label>
                                 </div>

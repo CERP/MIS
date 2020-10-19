@@ -1,4 +1,3 @@
-//@ts-nocheck
 import React, { useState, useEffect, useMemo } from 'react';
 import Layout from 'components/Layout'
 import { RouteComponentProps } from 'react-router-dom'
@@ -21,11 +20,7 @@ interface P {
 	targeted_instruction: RootDBState["targeted_instruction"]
 
 	logSms: (history: MISSMSHistory) => any
-	saveReport: (stdId: string, diagnostic_result: MISStudent['diagnostic_result'], testId: string) => void
-}
-
-type DiagnosticResult = {
-	[id: string]: MISDiagnosticReport
+	saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport, testId: string) => void
 }
 
 type GraphData = {
@@ -131,7 +126,7 @@ const Test: React.FC<PropsType> = (props) => {
 	}
 
 	const getQuestionList = (selectedTest: string, stdObj: MISStudent) => {
-		const res: DiagnosticResult = stdObj && stdObj.diagnostic_result && stdObj.diagnostic_result[selectedTest]
+		const res: MISDiagnosticReport = stdObj && stdObj.diagnostic_result && stdObj.diagnostic_result[selectedTest]
 		if (res && testType === 'Diagnostic') {
 			return Object.entries(res).reduce((acc, [key, value]) => {
 				return {
@@ -149,8 +144,8 @@ const Test: React.FC<PropsType> = (props) => {
 	const graphData = () => {
 
 		let graphData: GraphData = {}, arr = []
-		for (let testObj of Object.values(stdReport && stdReport || {})) {
-			for (let [slo, rep] of Object.entries(testObj.report)) {//@ts-ignore
+		for (let testObj of Object.values((stdReport && stdReport) || {})) {
+			for (let [slo, rep] of Object.entries(testObj.report)) {
 				graphData[slo] ? graphData[slo] = graphData[slo] + rep.percentage : graphData[slo] = rep.percentage
 			}
 		}
@@ -264,7 +259,7 @@ export default connect((state: RootReducerState) => ({
 	students: state.db.students
 }), (dispatch: Function) => ({
 	logSms: (history: MISSMSHistory) => dispatch(logSms(history)),
-	saveReport: (stdId: string, diagnostic_result: MISStudent['diagnostic_result'], testId: string) => dispatch(addReport(stdId, diagnostic_result, testId)),
+	saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport, testId: string) => dispatch(addReport(stdId, diagnostic_report, testId)),
 }))(Test)
 
 const getAllStudents = (sectionId: string, students: MISStudent[]) => {

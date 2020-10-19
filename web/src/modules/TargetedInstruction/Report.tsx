@@ -1,4 +1,3 @@
-//@ts-nocheck
 import React from 'react'
 import { smsIntentLink } from 'utils/intent'
 import moment from 'moment'
@@ -102,11 +101,11 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
             const stdName = allStudents[stdId].Name
             let message = []
             message.push(`${stdName} scored`)
-            for (let [testName, testObj] of Object.entries(stdReport)) {
-                if (testObj.report.percentage <= 50) {
-                    message.push(`${testObj.report.percentage}% marks in ${testName} kindly follow this link ${testObj.report.link}`)
+            for (let [testName, testObj] of Object.entries(stdReport[stdId].report)) {
+                if (testObj.percentage <= 50) {
+                    message.push(`${testObj.percentage}% marks in ${testName} kindly follow this link ${testObj.link}`)
                 } else {
-                    message.push(`${testObj.report.percentage}% marks in ${testName}`)
+                    message.push(`${testObj.percentage}% marks in ${testName}`)
                 }
             }
             const raw_report_string = curr_date + section_name + test_type + test_name + message.join(" \n ")
