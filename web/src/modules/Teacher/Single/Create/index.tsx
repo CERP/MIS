@@ -358,6 +358,9 @@ class CreateTeacher extends Component<propTypes, S> {
 						<option value="false">Not an Admin</option>
 					</select>
 				</div>
+				{
+					!this.state.profile.Admin && this.changeTeacherPermissions()
+				}
 			</div>
 			}
 
