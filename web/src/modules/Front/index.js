@@ -35,6 +35,7 @@ import expense from 'modules/Landing/icons/Expense/expense.svg'
 
 import SignUp from './SignUp'
 import AboutTeam from './AboutTeam/team'
+import siteConfig from 'constants/siteConfig.json'
 
 import './style.css'
 
@@ -57,7 +58,7 @@ class Front extends Component {
 	}
 
 	render() {
-
+		const helpLine = siteConfig["helpLineIlmx"]
 		if(this.props.initialized && this.props.auth.faculty_id)
 		{
 			return <Redirect to="/landing" />
@@ -479,7 +480,7 @@ class Front extends Component {
 				<div className="footer bg-red">
 					<div className="contact-us">
 						<div className="title">Contact Us</div>
-						<a href="tel:+923481112004">+92 348 111 2004</a>
+				<a href="tel:+923481112004">{helpLine.phoneAlt}</a>
 						<a href="mailto:mischool@cerp.org.pk" >mischool@cerp.org.pk</a>
 						<a href="https://maps.app.goo.gl/1fZycGncNDEritNT9">29-P Gulberg II, Lahore 54660, Pakistan</a>
 					</div>
