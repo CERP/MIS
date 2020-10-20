@@ -10,7 +10,7 @@ import { hash } from 'utils'
 import Hyphenator from 'utils/Hyphenator'
 import Banner from 'components/Banner'
 import checkCompulsoryFields from 'utils/checkCompulsoryFields'
-import { isMobile } from 'utils/helpers'
+import { isMobile, getIlmxUser } from 'utils/helpers'
 
 import './style.css'
 
@@ -55,6 +55,7 @@ interface P {
 	faculty: RootDBState['faculty']
 	user: MISTeacher
 	auth: RootReducerState["auth"]
+	ilmxUser: string
 
 	save: (teacher: MISTeacher, is_first?: boolean) => void
 	delete: (faculty_id: string) => void
@@ -279,51 +280,54 @@ class CreateTeacher extends Component<propTypes, S> {
 
 	changeTeacherPermissions = () => {
 
-		return <div className="table">
-			<div className="row">
-				<label> Allow teacher to view Setup Page ? </label>
-				<select {...this.former.super_handle(["permissions", "setupPage"])}>
-					<option value="true">Yes</option>
-					<option value="false">No</option>
-				</select>
-			</div>
+		return <>
+			{!this.props.ilmxUser && <div className="table">
+				<div className="row">
+					<label> Allow teacher to view Setup Page ? </label>
+					<select {...this.former.super_handle(["permissions", "setupPage"])}>
+						<option value="true">Yes</option>
+						<option value="false">No</option>
+					</select>
+				</div>
 
-			<div className="row">
-				<label> Allow teacher to view Fee Information ? </label>
-				<select {...this.former.super_handle(["permissions", "fee"])}>
-					<option value="true">Yes</option>
-					<option value="false">No</option>
-				</select>
+				<div className="row">
+					<label> Allow teacher to view Fee Information ? </label>
+					<select {...this.former.super_handle(["permissions", "fee"])}>
+						<option value="true">Yes</option>
+						<option value="false">No</option>
+					</select>
+				</div>
+				<div className="row">
+					<label> Allow teacher to view Daily Statistics ? </label>
+					<select {...this.former.super_handle(["permissions", "dailyStats"])}>
+						<option value="true">Yes</option>
+						<option value="false">No</option>
+					</select>
+				</div>
+				<div className="row">
+					<label> Allow teacher to view Expense Information? </label>
+					<select {...this.former.super_handle(["permissions", "expense"])}>
+						<option value="true">Yes</option>
+						<option value="false">No</option>
+					</select>
+				</div>
+				<div className="row">
+					<label> Allow teacher to view Family Information? </label>
+					<select {...this.former.super_handle(["permissions", "family"])}>
+						<option value="true">Yes</option>
+						<option value="false">No</option>
+					</select>
+				</div>
+				<div className="row">
+					<label> Allow teacher to view Prospective Information? </label>
+					<select {...this.former.super_handle(["permissions", "prospective"])}>
+						<option value="true">Yes</option>
+						<option value="false">No</option>
+					</select>
+				</div>
 			</div>
-			<div className="row">
-				<label> Allow teacher to view Daily Statistics ? </label>
-				<select {...this.former.super_handle(["permissions", "dailyStats"])}>
-					<option value="true">Yes</option>
-					<option value="false">No</option>
-				</select>
-			</div>
-			<div className="row">
-				<label> Allow teacher to view Expense Information? </label>
-				<select {...this.former.super_handle(["permissions", "expense"])}>
-					<option value="true">Yes</option>
-					<option value="false">No</option>
-				</select>
-			</div>
-			<div className="row">
-				<label> Allow teacher to view Family Information? </label>
-				<select {...this.former.super_handle(["permissions", "family"])}>
-					<option value="true">Yes</option>
-					<option value="false">No</option>
-				</select>
-			</div>
-			<div className="row">
-				<label> Allow teacher to view Prospective Information? </label>
-				<select {...this.former.super_handle(["permissions", "prospective"])}>
-					<option value="true">Yes</option>
-					<option value="false">No</option>
-				</select>
-			</div>
-		</div>
+			}
+		</>
 	}
 
 	render() {
@@ -337,7 +341,7 @@ class CreateTeacher extends Component<propTypes, S> {
 		return <div className="single-teacher-create">
 			{this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
 
-			{this.isNew() && !this.state.toggleMoreInfo && <div className="form">
+			{this.props.ilmxUser && this.isNew() && !this.state.toggleMoreInfo && <div className="form">
 				<div className="divider">Personal Information</div>
 				<div className="row">
 					<label>Full Name</label>
@@ -365,13 +369,13 @@ class CreateTeacher extends Component<propTypes, S> {
 			}
 
 			{
-				this.isNew() && <div className="section-container" style={{ marginTop: "1.25rem" }}>
+				this.props.ilmxUser && this.isNew() && <div className="section-container" style={{ marginTop: "1.25rem" }}>
 					<div className="button green" onClick={this.toggleMoreInfo}>{this.state.toggleMoreInfo ? "Show Less Fields" : "Show Additional Fields"}</div>
 				</div>
 			}
 
 			{
-				(this.isNew() ? this.state.toggleMoreInfo : true) && <div className="form">
+				(this.props.ilmxUser && this.isNew() ? this.state.toggleMoreInfo : true) && <div className="form">
 					<div className="divider">Personal Information</div>
 					<div className="row">
 						<label>Full Name</label>
@@ -541,7 +545,8 @@ class CreateTeacher extends Component<propTypes, S> {
 export default connect((state: RootReducerState) => ({
 	auth: state.auth,
 	faculty: state.db.faculty,
-	user: state.db.faculty[state.auth.faculty_id]
+	user: state.db.faculty[state.auth.faculty_id],
+	ilmxUser: getIlmxUser()
 }), (dispatch: Function) => ({
 	save: (teacher: MISTeacher, is_first?: boolean) => dispatch(createFacultyMerge(teacher, is_first)),
 	delete: (faculty_id: string) => dispatch(deleteFaculty(faculty_id))

@@ -91,7 +91,6 @@ interface S {
 		[id: string]: boolean
 	}
 	show_hide_fee: boolean
-	toggleMoreInfo: boolean
 }
 
 interface RouteInfo {
@@ -127,8 +126,7 @@ class SingleStudent extends Component<propTypes, S> {
 			},
 			new_tag: "",
 			edit: {},
-			show_hide_fee: true,
-			toggleMoreInfo: false
+			show_hide_fee: true
 		}
 
 		this.former = new Former(this, ["profile"])
@@ -608,10 +606,6 @@ class SingleStudent extends Component<propTypes, S> {
 			// When the modal is hidden
 			document.body.style.position = ''
 		})
-	}
-
-	toggleMoreInfo = () => {
-		this.setState({ toggleMoreInfo: !this.state.toggleMoreInfo })
 	}
 
 	render() {

@@ -9,6 +9,7 @@ import checkCompulsoryFields from 'utils/checkCompulsoryFields'
 import Banner from 'components/Banner'
 import Dropdown from 'components/Dropdown'
 import { createEditClass, addStudentToSection, removeStudentFromSection, deleteClass, mergeSettings } from 'actions'
+import { getIlmxUser } from 'utils/helpers'
 
 import './style.css'
 
@@ -17,6 +18,7 @@ interface P {
 	classes: RootDBState["classes"]
 	faculty: RootDBState["faculty"]
 	students: RootDBState["students"]
+	ilmxUser: string
 
 	save: (mis_class: AugmentedMISClass) => void
 	addStudent: (section_id: string, student: MISStudent) => void
@@ -336,7 +338,7 @@ class SingleClass extends Component<propsType, S> {
 								}
 
 								{
-									!this.isNew() && <>
+									(this.props.ilmxUser ? !this.isNew() : true) && <>
 										<div className="row">
 											<label>{arr.length === 1 ? "Teacher" : "Section Teacher"}</label>
 											<select {...this.former.super_handle(["sections", id, "faculty_id"])}>
@@ -399,7 +401,8 @@ export default connect((state: RootReducerState) => ({
 	settings: state.db.settings,
 	classes: state.db.classes,
 	faculty: state.db.faculty,
-	students: state.db.students
+	students: state.db.students,
+	ilmxUser: getIlmxUser()
 }), (dispatch: Function) => ({
 	save: (mis_class: AugmentedMISClass) => dispatch(createEditClass(mis_class)),
 	addStudent: (section_id: string, student: MISStudent) => dispatch(addStudentToSection(section_id, student)),
