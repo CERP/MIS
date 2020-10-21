@@ -6,7 +6,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'rec
 import DataTable from 'react-data-table-component';
 import { isMobile } from 'utils/helpers'
 import { customStyles, singleStdColumns } from 'constants/targetedInstruction'
-import { getSingleStdData } from 'utils/targetedInstruction'
+import { getSingleStdData, redirectToIlmx } from 'utils/targetedInstruction'
 
 interface P {
     type: string
@@ -71,10 +71,6 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_
         singleStd = getSingleStdData(e.id, stdReport)
     }
 
-    const redirectToIlmx = (e: any) => {
-        window.location.href = e.link
-    }
-
     const logMessages = (messages: MISSms[]) => {
 
         if (messages.length === 0) {
@@ -97,15 +93,12 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_
         const test_type = `Test Type: ${testType}\n`
         const test_name = `Test Name: ${testId}\n`
         if (stdReport) {
-            const stdName = students[stdId].Name
             let message = []
-            message.push(`${stdName} scored`)
+            message.push(`${students[stdId].Name} scored`)
             for (let [testName, testObj] of Object.entries(stdReport[stdId].report)) {
-                if (testObj.percentage <= 50) {
-                    message.push(`${testObj.percentage}% marks in ${testName} kindly follow this link ${testObj.link}`)
-                } else {
+                testObj.percentage <= 50 ?
+                    message.push(`${testObj.percentage}% marks in ${testName} kindly follow this link ${testObj.link}`) :
                     message.push(`${testObj.percentage}% marks in ${testName}`)
-                }
             }
             const raw_report_string = curr_date + section_name + test_type + test_name + message.join(" \n ")
             const report_string = replaceSpecialCharsWithUTFChars(raw_report_string)
@@ -147,7 +140,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_
                 noHeader={true}
                 highlightOnHover={true}
                 responsive={true}
-                onRowClicked={redirectToIlmx}
+                onRowClicked={(e) => redirectToIlmx(e.id)}
             />
             <div className="send-btn-div">
                 <a className="button blue mb mobile-mode"

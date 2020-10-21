@@ -49,3 +49,18 @@ export const getSingleStdData = (id: string, stdReport: Report) => {
             ]
         }, [])
 }
+
+export const getTestList = (testType: string, selectedSubject: string, targeted_instruction: RootDBState["targeted_instruction"], className: string) => {
+    const testArr = []
+    const misTest: Tests = targeted_instruction['tests']
+    for (let obj of Object.values(misTest)) {
+        if (obj.class === className && obj.type === testType && obj.subject === selectedSubject) {
+            testArr.push(obj.name)
+        }
+    }
+    return testArr
+}
+
+export const redirectToIlmx = (id: string) => {
+    window.location.href = id
+}

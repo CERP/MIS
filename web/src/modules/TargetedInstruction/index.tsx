@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import Layout from 'components/Layout'
 import { RouteComponentProps } from 'react-router-dom'
 import { Link } from 'react-router-dom'
@@ -6,7 +6,7 @@ import StudentGrades from './Grades'
 import Diagnostic from './Diagnostic'
 import Report from './Report'
 import { connect } from 'react-redux'
-import { createReport } from 'utils/targetedInstruction'
+import { createReport, getTestList } from 'utils/targetedInstruction'
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
 import getSubjectsFromClasses from 'utils/getSubjectsFromClasses'
 import { logSms, addReport } from 'actions'
@@ -32,31 +32,22 @@ const Test: React.FC<PropsType> = (props) => {
 
 	const loc = props.location.pathname.split('/').slice(-1).pop();
 	const [selectedSubject, setSelectedSubject] = useState('')
-	const [sortedSections, setSortedSections] = useState([])
 	const [selectedClass, setSelectedClass] = useState('')
-	const [allSubjects, setAllSubjects] = useState<Subjects>({})
 	const [questions, setQuestions] = useState({})
 	const [sectionId, setSectionId] = useState('')
 	const [testId, setTestId] = useState('')
 	const [testType, setTestType] = useState('')
-	const [report, setReport] = useState('')
+	const [type, setType] = useState('')
 	const [stdId, setStdId] = useState('')
-	const [tests, setTests] = useState([])
 	const [label, setLabel] = useState('')
 	const [data, setData] = useState([])
 	const [url, setUrl] = useState('')
 
-	useEffect(() => {
-		setSortedSections(getSectionsFromClasses(props.classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0)))
-		setAllSubjects(getSubjectsFromClasses(props.classes))
-	}, [])
-
-	const students = useMemo(
-		() => getAllStudents(sectionId, props.students),
-		[sectionId]
-	)
-
+	const students = useMemo(() => getAllStudents(sectionId, props.students), [sectionId])
+	const sortedSections = useMemo(() => getSectionsFromClasses(props.classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0)), [])
+	const allSubjects: Subjects = useMemo(() => getSubjectsFromClasses(props.classes), [props.classes])
 	const stdReport: Report = useMemo(() => createReport(students, props.targeted_instruction, testId), [students, props.targeted_instruction, testId]);
+	const tests = useMemo(() => getTestList(testType, selectedSubject, props.targeted_instruction, selectedClass), [testType, selectedSubject])
 
 	const getClass = (e: any) => {
 		setSelectedClass(e.target.value)
@@ -71,26 +62,12 @@ const Test: React.FC<PropsType> = (props) => {
 		setSelectedSubject(e.target.value)
 		if (testType) {
 			getPDF(e.target.value, selectedClass, testType)
-			setTests(getTestList(testType, e.target.value))
 		}
 	}
 
 	const getTestType = (e: any) => {
 		setTestType(e.target.value)
 		getPDF(selectedSubject, selectedClass, e.target.value)
-		setTests(getTestList(e.target.value, selectedSubject))
-	}
-
-	const getTestList = (testType: string, selectedSubject: string) => {
-		const testArr = []
-		const misTest: Tests = props.targeted_instruction['tests']
-		for (let obj of Object.values(misTest)) {
-			if (obj.class === selectedClass && obj.type === testType && obj.subject === selectedSubject) {
-				testArr.push(obj.name)
-				setQuestions({})
-			}
-		}
-		return testArr
 	}
 
 	const getStudent = (e: any) => {
@@ -106,7 +83,7 @@ const Test: React.FC<PropsType> = (props) => {
 	}
 
 	const getSelected = (e: any) => {
-		setReport(e.target.value)
+		setType(e.target.value)
 		graphData()
 	}
 
@@ -193,7 +170,7 @@ const Test: React.FC<PropsType> = (props) => {
 				</div>
 				{(loc !== "test") &&
 					<>
-						{((report !== 'All Students' && loc === "report") || loc === "grades") && <div className="row">
+						{((type !== 'All Students' && loc === "report") || loc === "grades") && <div className="row">
 							<label className="no-print">Students</label>
 							<select className="no-print" onChange={getStudent}>
 								<option value="">Select Students</option>
@@ -237,14 +214,14 @@ const Test: React.FC<PropsType> = (props) => {
 						<Report
 							testType={testType}
 							testId={testId}
-							type={report}
+							type={type}
 							stdId={stdId}
 							students={students}
 							data={data}
 							selectedClass={selectedClass}
 							stdReport={stdReport}
 							faculty_id={props.faculty_id}
-							setReport={setReport}
+							setReport={setType}
 							logSms={props.logSms}
 						/>}
 			</div>
