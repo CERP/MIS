@@ -14,11 +14,10 @@ interface P {
     stdId: string
     testId: string
     testType: string
-    students: RootDBState["students"]
     faculty_id: string
     selectedClass: string
     stdReport: Report
-    allStudents: RootDBState["students"]
+    students: RootDBState["students"]
 
     setReport: (type: string) => any
     logSms: (history: MISSMSHistory) => any
@@ -30,7 +29,7 @@ type columns = {
     sortable: boolean
 }
 
-const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, type, faculty_id, selectedClass, data, stdReport, setReport, logSms }) => {
+const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_id, selectedClass, data, stdReport, setReport, logSms }) => {
 
     let allStds, singleStd, columns: columns[] = [];
 
@@ -98,7 +97,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
         const test_type = `Test Type: ${testType}\n`
         const test_name = `Test Name: ${testId}\n`
         if (stdReport) {
-            const stdName = allStudents[stdId].Name
+            const stdName = students[stdId].Name
             let message = []
             message.push(`${stdName} scored`)
             for (let [testName, testObj] of Object.entries(stdReport[stdId].report)) {
@@ -118,7 +117,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
 
         if (type === 'Single Student') {
             let phone
-            phone = allStudents[stdId].Phone
+            phone = students[stdId].Phone
             const report = reportString(stdId)
             return [{ number: phone, text: report }]
         } else if (type === 'All Students') {
@@ -165,7 +164,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
                 <BarChart
                     width={isMobile() ? 350 : 700}
                     height={500}
-                    data={data && data}
+                    data={data}
                     style={{ margin: 'auto' }}
                 >
                     <CartesianGrid strokeDasharray="3 3" />
@@ -180,7 +179,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, allStudents, t
                     <DataTable
                         columns={columns}
                         customStyles={customStyles}
-                        data={allStds && allStds}
+                        data={allStds}
                         pagination={true}
                         noHeader={true}
                         highlightOnHover={true}

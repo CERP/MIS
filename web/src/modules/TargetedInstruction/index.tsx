@@ -165,27 +165,27 @@ const Test: React.FC<PropsType> = (props) => {
 				<Link className={`button ${loc === "report" ? "green" : ''}`} to="report" replace={true}>Report</Link>
 			</div>
 			<div className="section form">
-				<div className="row">
-					<label className="no-print">Class/Section</label>
-					<select className="no-print" onChange={getClass}>
+				<div className="row no-print">
+					<label>Class/Section</label>
+					<select onChange={getClass}>
 						<option id="" value="">Select Section</option>
 						{
 							sortedSections && sortedSections.map(s => <option key={s.id} data-id={s.id} value={s.className}>{s.className}</option>)
 						}
 					</select>
 				</div>
-				<div className="row">
-					<label className="no-print">Subject</label>
-					<select className="no-print" onChange={getSubject}>
+				<div className="row no-print">
+					<label>Subject</label>
+					<select onChange={getSubject}>
 						<option value="">Select Subject</option>
 						{
 							(allSubjects[selectedClass] || []).map((sub: any) => <option key={sub} value={sub}>{sub}</option>)
 						}
 					</select>
 				</div>
-				<div className="row">
-					<label className="no-print">Test Type</label>
-					<select className="no-print" onChange={getTestType}>
+				<div className="row no-print">
+					<label>Test Type</label>
+					<select onChange={getTestType}>
 						<option value="">Select Test Type</option>
 						<option value="Diagnostic">Diagnostic</option>
 						<option value="Monthly">Monthly</option>
@@ -204,9 +204,9 @@ const Test: React.FC<PropsType> = (props) => {
 								}
 							</select>
 						</div>}
-						<div className="row">
-							<label className="no-print">Test</label>
-							<select className="no-print" onChange={getTest}>
+						<div className="row no-print">
+							<label>Test</label>
+							<select onChange={getTest}>
 								<option value="">Select Test</option>
 								{
 									tests && tests.map((test) => <option key={test} value={test}>{test}</option>)
@@ -239,7 +239,6 @@ const Test: React.FC<PropsType> = (props) => {
 							testId={testId}
 							type={report}
 							stdId={stdId}
-							allStudents={props.students}
 							students={students}
 							data={data}
 							selectedClass={selectedClass}
