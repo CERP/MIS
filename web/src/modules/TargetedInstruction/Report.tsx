@@ -140,6 +140,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_
                 noHeader={true}
                 highlightOnHover={true}
                 responsive={true}
+                striped={true}
                 onRowClicked={(e) => redirectToIlmx(e.id)}
             />
             <div className="send-btn-div">
@@ -159,6 +160,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_
                     height={500}
                     data={data}
                     style={{ margin: 'auto' }}
+                    onClick={(e) => redirectToIlmx(e.activePayload[0].payload.link)}
                 >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
@@ -177,6 +179,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_
                         noHeader={true}
                         highlightOnHover={true}
                         responsive={true}
+                        striped={true}
                         onRowClicked={getStudentId}
                     />
                     <div className="send-btn-div">

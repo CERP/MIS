@@ -23,7 +23,10 @@ interface P {
 }
 
 type GraphData = {
-	[name: string]: number
+	[name: string]: {
+		percentage: number
+		link: string
+	}
 }
 
 type PropsType = P & RouteComponentProps
@@ -122,11 +125,12 @@ const Test: React.FC<PropsType> = (props) => {
 		let graphData: GraphData = {}, arr = []
 		for (let testObj of Object.values((stdReport && stdReport) || {})) {
 			for (let [slo, rep] of Object.entries(testObj.report)) {
-				graphData[slo] ? graphData[slo] = graphData[slo] + rep.percentage : graphData[slo] = rep.percentage
+				graphData[slo] ? graphData[slo] = { percentage: graphData[slo].percentage + rep.percentage, link: rep.link } :
+					graphData[slo] = { percentage: rep.percentage, link: rep.link }
 			}
 		}
-		for (let [id, percentage] of Object.entries(graphData)) {
-			arr.push({ name: id, percentage: Math.round(percentage / Object.entries(props.students).length) })
+		for (let [id, obj] of Object.entries(graphData)) {
+			arr.push({ name: id, percentage: Math.round(obj.percentage / Object.entries(props.students).length), link: obj.link })
 		}
 		arr.sort((a, b) => {
 			return b.percentage - a.percentage;
@@ -143,7 +147,7 @@ const Test: React.FC<PropsType> = (props) => {
 			</div>
 			<div className="section form">
 				<div className="row no-print">
-					<label>Class/Section</label>
+					<label>Grades</label>
 					<select onChange={getClass}>
 						<option id="" value="">Select Section</option>
 						{
