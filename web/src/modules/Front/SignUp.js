@@ -4,6 +4,7 @@ import checkCompulsoryFields from 'utils/checkCompulsoryFields'
 import Banner from 'components/Banner'
 import { createSignUp } from 'actions'
 import {connect} from 'react-redux'
+import { getStrategies } from 'constants/generic'
 
 import './style.css'
 import moment from 'moment';
@@ -19,13 +20,16 @@ class SignUp extends Component {
           phone:"",
           city:"",
           schoolName:"",
-          packageName: "Free-Trial"
+          schoolPassword:"",
+          packageName: "Free-Trial",
+          typeOfLogin: ""
         },
         banner: {
           active: false,
           good: true,
           text: "Saved!"
-        }
+        },
+        isOtherLogin: false
       }
 
       this.former = new former(this, [])
@@ -101,9 +105,26 @@ class SignUp extends Component {
       }
     }
 
+    getTypeOfLogin = (e) => {
+      e.target.value === 'OTHER' ?
+        this.setState({ isOtherLogin: true }) :
+        this.setState({ 
+          profile: { 
+            ...this.state.profile, 
+            typeOfLogin: e.target.value } 
+        })
+    }
+
+    setOther = (e) => {
+      this.setState({ 
+        profile: { 
+          ...this.state.profile, 
+          typeOfLogin: e.target.value } 
+      })
+    }
 
   render() {
-    
+    const Span = () => <span style={{ color: "red" }}>*</span>
 
     return (
       <div className=" section card sign-up">
@@ -124,6 +145,30 @@ class SignUp extends Component {
             <label> School Name </label>
             <input type="text" {...this.former.super_handle(["profile","schoolName"])}></input>
           </div>
+          <div className="row">
+            <label> School Password </label>
+            <input type="password" {...this.former.super_handle(["profile","schoolPassword"])}></input>
+          </div>
+          <div className="row">
+						<label>Strategy <Span /></label>
+						<select {...this.former.super_handle(["profile", "typeOfLogin"])} onChange={this.getTypeOfLogin}>
+							<option value="">Select Strategy</option>
+							{
+								[...getStrategies()]
+									.sort()
+									.map(strategy => {
+										const str = strategy.replace(' ', "_").toUpperCase()
+										return <option key={str} value={str}>{strategy}</option>
+									})
+							}
+						</select>
+					</div>
+        { this.state.isOtherLogin &&
+          <div className="row">
+          <label> Other </label>
+          <input type="text" onChange={this.setOther}></input>
+        </div>
+        }
           <div className="row">
             <label> Select Package </label>
             <select {...this.former.super_handle(["profile","packageName"])}>
