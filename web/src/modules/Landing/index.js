@@ -32,9 +32,10 @@ import family from "./icons/family/family.svg"
 import Help from './icons/Help/help.svg'
 import diary from './icons/Diary/diary.svg'
 import { IlmxLogo } from 'assets/icons'
-import { showScroll, hideScroll } from 'utils/helpers'
+import { showScroll, hideScroll, getIlmxUser } from 'utils/helpers'
 import IlmxRedirectModal from 'components/Ilmx/redirectModal'
 import { checkStudentDuesReturning } from 'utils/checkStudentDues'
+import IlmxLanding from './ilmxLanding'
 
 /**
  * line for adding new badge just copy / paste it
@@ -321,8 +322,14 @@ class Landing extends Component {
 				{!package_info.paid && package_info.date !== -1 && <div onClick={() => this.onActivationCodeModal()} className="trial-bar">
 					{this.getTrialWarningMessage()}
 				</div>}
-				<div className="horizontal-scroll-container">
-					<div className="page">
+				<div className="horizontal-scroll-container">	
+			{this.props.ilmxUser === "ILMX" ?
+						<IlmxLanding
+							faculty={this.props.user}
+							onLogout={logout}
+							onRedirectToIlmx={this.redirectToIlmx}
+						/>
+						: <><div className="page">
 						<div className="title">Setup</div>
 						{user.Admin || setupPage ? <div className="row">
 							<Link to="/teacher" className="button green-shadow" style={{ backgroundImage: `url(${teachersIcon})` }}>Teachers</Link>
@@ -535,6 +542,8 @@ class Landing extends Component {
 						</div>
 
 					</div> : false}
+					</>
+				}
 				</div>
 			</div>
 
@@ -558,7 +567,8 @@ export default connect(state => ({
 	package_info: state.db.package_info || { date: -1, trial_period: 15, paid: false }, //If package info is undefined
 	school_id: state.auth.school_id,
 	auth: state.auth,
-	client_id: state.client_id
+	client_id: state.client_id,
+	ilmxUser: getIlmxUser()
 }), dispatch => ({
 	resetTrial: () => dispatch(resetTrial()),
 	markPurchased: () => dispatch(markPurchased()),
