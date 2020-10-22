@@ -41,8 +41,9 @@ class Analytics extends Component<P> {
 						<Route path="/analytics/expenses" component={ExpenseAnalytics} />
 						<Route path="/analytics/teacher-attendance" component={TeacherAttendanceAnalytics} />
 						<Route path="/analytics/exams" component={ExamsAnalytics} />
-						<Route path="/analytics/ilmexchange" component={IlmExchangeAnalytics} />					</>
+					</>
 				}
+				<Route path="/analytics/ilmexchange" component={IlmExchangeAnalytics} />
 			</div>
 		</Layout>
 	}

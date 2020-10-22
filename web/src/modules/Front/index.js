@@ -480,7 +480,7 @@ class Front extends Component {
 				<div className="footer bg-red">
 					<div className="contact-us">
 						<div className="title">Contact Us</div>
-				<a href="tel:+923481112004">{helpLine.phoneAlt}</a>
+				<a href={`tel:${helpLine.phoneInt}`}>{helpLine.phoneAlt}</a>
 						<a href="mailto:mischool@cerp.org.pk" >mischool@cerp.org.pk</a>
 						<a href="https://maps.app.goo.gl/1fZycGncNDEritNT9">29-P Gulberg II, Lahore 54660, Pakistan</a>
 					</div>

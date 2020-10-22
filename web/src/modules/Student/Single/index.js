@@ -38,10 +38,10 @@ class StudentPage extends Component {
 						}
 					</div>
 				}
-
+					<Route path="/student/new" component={Create} />
+					<Route path="/student/:id/profile" component={Create} />
 				{
-					!this.props.ilmxUser && <> <Route path="/student/new" component={Create} />
-						<Route path="/student/:id/profile" component={Create} />
+					!this.props.ilmxUser && <>
 						<Route path="/student/:id/payment" component={StudentFees} />
 						<Route path="/student/:id/fee-print-preview" component={printPreview} />
 						<Route path="/student/:id/attendance" component={Attendance} />
