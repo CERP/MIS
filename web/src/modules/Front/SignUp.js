@@ -4,6 +4,7 @@ import checkCompulsoryFields from 'utils/checkCompulsoryFields'
 import Banner from 'components/Banner'
 import { createSignUp } from 'actions'
 import {connect} from 'react-redux'
+import { getStrategies } from 'constants/generic'
 
 import './style.css'
 import moment from 'moment';
@@ -19,13 +20,16 @@ class SignUp extends Component {
           phone:"",
           city:"",
           schoolName:"",
-          packageName: "Free-Trial"
+          schoolPassword:"",
+          packageName: "Free-Trial",
+          typeOfLogin: ""
         },
         banner: {
           active: false,
           good: true,
           text: "Saved!"
-        }
+        },
+        otherLogin: ''
       }
 
       this.former = new former(this, [])
@@ -50,7 +54,12 @@ class SignUp extends Component {
         })
       }
 
-      this.props.createSignUp({...this.state.profile, date: moment.now()})
+      if(this.state.otherLogin) {
+        const signup  = { ...this.state.profile, typeOfLogin: this.state.otherLogin, date: moment.now() }
+		    this.props.createSignup(signup)
+      } else {
+        this.props.createSignUp({...this.state.profile, date: moment.now()})
+      }
     }
     
     componentWillReceiveProps(props) {
@@ -101,9 +110,8 @@ class SignUp extends Component {
       }
     }
 
-
   render() {
-    
+    const Span = () => <span style={{ color: "red" }}>*</span>
 
     return (
       <div className=" section card sign-up">
@@ -125,14 +133,39 @@ class SignUp extends Component {
             <input type="text" {...this.former.super_handle(["profile","schoolName"])}></input>
           </div>
           <div className="row">
+            <label> School Password </label>
+            <input type="password" {...this.former.super_handle(["profile","schoolPassword"])}></input>
+          </div>
+          <div className="row">
+						<label>Strategy <Span /></label>
+						<select {...this.former.super_handle(["profile", "typeOfLogin"])}>
+							<option value="">Select Strategy</option>
+							{
+								[...getStrategies()]
+									.sort()
+									.map(strategy => {
+										const str = strategy.replace(' ', "_").toUpperCase()
+										return <option key={str} value={str}>{strategy}</option>
+									})
+							}
+						</select>
+					</div>
+        { this.state.profile.typeOfLogin === 'OTHER' &&
+          <div className="row">
+          <label> Other </label>
+          <input type="text" {...this.former.super_handle(["otherLogin"])}></input>
+        </div>
+        }
+          <div className="row">
             <label> Select Package </label>
-            <select {...this.former.super_handle(["profile","packageName"])}>
+            <select style={{marginTop: 5}} {...this.former.super_handle(["profile","packageName"])}>
               <option value="Free-Trial">Free-Trial</option>
-              <option value="Taleem-1">Taleem-1</option>
+              {/* <option value="Taleem-1">Taleem-1</option>
               <option value="Taleem-2">Taleem-2</option>
-              <option value="Taleem-3">Taleem-3</option>
+              <option value="Taleem-3">Taleem-3</option> */}
             </select>
           </div>
+
           <div className="button red" onClick={() => this.onSave()}> Submit</div>
 
       </div>
