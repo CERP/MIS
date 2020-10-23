@@ -6,7 +6,7 @@ import StudentGrades from './Grades'
 import Diagnostic from './Diagnostic'
 import Report from './Report'
 import { connect } from 'react-redux'
-import { createReport, getTestList } from 'utils/targetedInstruction'
+import { createReport } from 'utils/targetedInstruction'
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
 import getSubjectsFromClasses from 'utils/getSubjectsFromClasses'
 import { logSms, addReport } from 'actions'
@@ -19,7 +19,7 @@ interface P {
 	targeted_instruction: RootDBState["targeted_instruction"]
 
 	logSms: (history: MISSMSHistory) => any
-	saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport, testId: string) => void
+	saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport, selectedSubject: string) => void
 }
 
 type GraphData = {
@@ -38,7 +38,6 @@ const Test: React.FC<PropsType> = (props) => {
 	const [selectedClass, setSelectedClass] = useState('')
 	const [questions, setQuestions] = useState({})
 	const [sectionId, setSectionId] = useState('')
-	const [testId, setTestId] = useState('')
 	const [testType, setTestType] = useState('')
 	const [type, setType] = useState('')
 	const [stdId, setStdId] = useState('')
@@ -49,8 +48,7 @@ const Test: React.FC<PropsType> = (props) => {
 	const students = useMemo(() => getAllStudents(sectionId, props.students), [sectionId])
 	const sortedSections = useMemo(() => getSectionsFromClasses(props.classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0)), [])
 	const allSubjects: Subjects = useMemo(() => getSubjectsFromClasses(props.classes), [props.classes])
-	const stdReport: Report = useMemo(() => createReport(students, props.targeted_instruction, testId), [students, props.targeted_instruction, testId]);
-	const tests = useMemo(() => getTestList(testType, selectedSubject, props.targeted_instruction, selectedClass), [testType, selectedSubject])
+	const stdReport: Report = useMemo(() => createReport(students, props.targeted_instruction, selectedSubject), [students, props.targeted_instruction, selectedSubject]);
 
 	const getClass = (e: any) => {
 		setSelectedClass(e.target.value)
@@ -75,14 +73,7 @@ const Test: React.FC<PropsType> = (props) => {
 
 	const getStudent = (e: any) => {
 		setStdId(e.target.value)
-		if (testId) {
-			setQuestions(getQuestionList(testId, props.students[e.target.value]))
-		}
-	}
-
-	const getTest = (e: any) => {
-		setTestId(e.target.value)
-		setQuestions(getQuestionList(e.target.value, props.students[stdId]))
+		setQuestions(getQuestionList(selectedSubject, props.students[e.target.value]))
 	}
 
 	const getSelected = (e: any) => {
@@ -185,15 +176,6 @@ const Test: React.FC<PropsType> = (props) => {
 								}
 							</select>
 						</div>}
-						<div className="row no-print">
-							<label>Test</label>
-							<select onChange={getTest}>
-								<option value="">Select Test</option>
-								{
-									tests && tests.map((test) => <option key={test} value={test}>{test}</option>)
-								}
-							</select>
-						</div>
 					</>
 				}
 				{loc === 'report' && <div className="row">
@@ -209,7 +191,7 @@ const Test: React.FC<PropsType> = (props) => {
 						<StudentGrades
 							questions={questions}
 							stdId={stdId}
-							testId={testId}
+							testId={selectedSubject}
 							testType={testType}
 							students={props.students}
 							setQuestions={setQuestions}
@@ -217,7 +199,7 @@ const Test: React.FC<PropsType> = (props) => {
 						/> :
 						<Report
 							testType={testType}
-							testId={testId}
+							testId={selectedSubject}
 							type={type}
 							stdId={stdId}
 							students={students}
@@ -240,7 +222,7 @@ export default connect((state: RootReducerState) => ({
 	students: state.db.students
 }), (dispatch: Function) => ({
 	logSms: (history: MISSMSHistory) => dispatch(logSms(history)),
-	saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport, testId: string) => dispatch(addReport(stdId, diagnostic_report, testId)),
+	saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport, selectedSubject: string) => dispatch(addReport(stdId, diagnostic_report, selectedSubject)),
 }))(Test)
 
 const getAllStudents = (sectionId: string, students: RootDBState["students"]) => {

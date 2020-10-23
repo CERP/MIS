@@ -7,7 +7,7 @@ export const createReport = (students: RootDBState["students"], targeted_instruc
                     name: std.Name,
                     report: Object.values((std.diagnostic_result && std.diagnostic_result[testId]) || {})
                         .reduce((agg2: MISReport, { isCorrect, slo }) => {
-                            const category = targeted_instruction && targeted_instruction.slo_mapping[slo[0]].category;
+                            const category = targeted_instruction && targeted_instruction.slo_mapping[slo[0]] && targeted_instruction.slo_mapping[slo[0]].category;
                             const c = isCorrect ? 1 : 0
                             if (agg2[category]) {
                                 return {
@@ -16,7 +16,7 @@ export const createReport = (students: RootDBState["students"], targeted_instruc
                                         correct: agg2[category].correct + c,
                                         possible: agg2[category].possible + 1,
                                         percentage: (agg2[category].correct / agg2[category].possible) * 100,
-                                        link: targeted_instruction.slo_mapping[slo[0]].link
+                                        link: targeted_instruction.slo_mapping[slo[0]] && targeted_instruction.slo_mapping[slo[0]].link
                                     }
                                 }
                             } else {
@@ -48,17 +48,6 @@ export const getSingleStdData = (id: string, stdReport: Report) => {
                 }
             ]
         }, [])
-}
-
-export const getTestList = (testType: string, selectedSubject: string, targeted_instruction: RootDBState["targeted_instruction"], className: string) => {
-    const testArr = []
-    const misTest: Tests = targeted_instruction['tests']
-    for (let obj of Object.values(misTest)) {
-        if (obj.class === className && obj.type === testType && obj.subject === selectedSubject) {
-            testArr.push(obj.name)
-        }
-    }
-    return testArr
 }
 
 export const redirectToIlmx = (id: string) => {

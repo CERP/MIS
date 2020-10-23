@@ -5,7 +5,7 @@ import { RouteComponentProps } from 'react-router-dom'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import getSubjectsFromClasses from 'utils/getSubjectsFromClasses'
 import { customStyles, singleStdColumns } from 'constants/targetedInstruction'
-import { getSingleStdData, createReport, getTestList, redirectToIlmx } from 'utils/targetedInstruction'
+import { getSingleStdData, createReport, redirectToIlmx } from 'utils/targetedInstruction'
 
 interface P extends RouteComponentProps<RouteInfo> {
     classes: RootDBState["classes"]
@@ -19,9 +19,8 @@ interface RouteInfo {
 
 const DiagnosticGrades: React.FC<P> = ({ students, classes, targeted_instruction, match }) => {
 
-    const [testType, setTestType] = useState('')
+    // const [testType, setTestType] = useState('')
     const [selectedSubject, setSelectedSubject] = useState('')
-    const [testId, setTestId] = useState('')
 
     let stdId = match.params.id
 
@@ -34,9 +33,8 @@ const DiagnosticGrades: React.FC<P> = ({ students, classes, targeted_instruction
         .sort((a, b) => (a.classYear || 0) - (b.classYear || 0))
     const className = useMemo(() => getClassNameFromSections(sections), [sections]);
     const allSubjects: Subjects = useMemo(() => getSubjectsFromClasses(classes), [classes])
-    const stdReport: Report = useMemo(() => createReport(students, targeted_instruction, testId), [testId]);
+    const stdReport: Report = useMemo(() => createReport(students, targeted_instruction, selectedSubject), [selectedSubject]);
     const singleStd = useMemo(() => getSingleStdData(stdId, stdReport), [stdId, stdReport]);
-    const tests = useMemo(() => getTestList(testType, selectedSubject, targeted_instruction, className), [testType, selectedSubject])
 
     return <div className="section form">
         <div className="table">
@@ -49,25 +47,16 @@ const DiagnosticGrades: React.FC<P> = ({ students, classes, targeted_instruction
                     }
                 </select>
             </div>
-            <div className="row no-print">
+            {/* <div className="row no-print">
                 <label>Test Type</label>
                 <select onChange={(e) => setTestType(e.target.value)}>
                     <option value="">Select Test Type</option>
                     <option value="Diagnostic">Diagnostic</option>
                     <option value="Monthly">Monthly</option>
                 </select>
-            </div>
-            <div className="row no-print">
-                <label>Test</label>
-                <select onChange={(e) => { setTestId(e.target.value) }}>
-                    <option value="">Select Test</option>
-                    {
-                        tests && tests.map((test) => <option key={test} value={test}>{test}</option>)
-                    }
-                </select>
-            </div>
+            </div> */}
         </div>
-        {testId && <div className="section">
+        {selectedSubject && <div className="section">
             <DataTable
                 columns={singleStdColumns}
                 customStyles={customStyles}
