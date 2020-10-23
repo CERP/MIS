@@ -377,8 +377,12 @@ class Diary extends Component<propTypes, S> {
 									<option value="" disabled>Select Students</option>
 									<option value="all_students"> All students</option>
 									<option value="single_student"> Single student</option>
-									<option value="absent_students"> Only Absent students</option>
-									<option value="leave_students"> Only Leave students</option>
+									{
+										!this.props.ilmxUser && <>
+											<option value="absent_students"> Only Absent students</option>
+											<option value="leave_students"> Only Leave students</option>
+										</>
+									}
 								</select>
 							</div>
 						}

@@ -278,7 +278,7 @@
         }
         .card.sign-up .button{
             margin: 10px;
-            width: 100%
+            width: 95%
         }
 
     .mischool-resume .footer {
@@ -353,5 +353,9 @@
       .slide {
         flex-shrink: 0;
       }
+      
+      .card.sign-up .button{
+        width: 90%
+    }
 
 }

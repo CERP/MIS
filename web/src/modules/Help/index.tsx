@@ -40,7 +40,7 @@ const Help: React.FC<P> = ({ auth, ilmxUser, school_address, faculty_id, smsOpti
 	}
 
 	const text = `School Name : ${auth.school_id}\nSchool Address: ${school_address}\nTeacher Name: ${auth.name}\nMessage: ${smsText}`
-	const helpLine = ilmxUser ? siteConfig["helpLineIlmx"] : siteConfig["helpLine"]
+	const helpLine = siteConfig["helpLineIlmx"]
 
 	return (
 		<Layout history={history}>

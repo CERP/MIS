@@ -279,51 +279,54 @@ class CreateTeacher extends Component<propTypes, S> {
 
 	changeTeacherPermissions = () => {
 
-		return <div className="table">
-			<div className="row">
-				<label> Allow teacher to view Setup Page ? </label>
-				<select {...this.former.super_handle(["permissions", "setupPage"])}>
-					<option value="true">Yes</option>
-					<option value="false">No</option>
-				</select>
-			</div>
+		return <>
+			{<div className="table">
+				<div className="row">
+					<label> Allow teacher to view Setup Page ? </label>
+					<select {...this.former.super_handle(["permissions", "setupPage"])}>
+						<option value="true">Yes</option>
+						<option value="false">No</option>
+					</select>
+				</div>
 
-			<div className="row">
-				<label> Allow teacher to view Fee Information ? </label>
-				<select {...this.former.super_handle(["permissions", "fee"])}>
-					<option value="true">Yes</option>
-					<option value="false">No</option>
-				</select>
+				<div className="row">
+					<label> Allow teacher to view Fee Information ? </label>
+					<select {...this.former.super_handle(["permissions", "fee"])}>
+						<option value="true">Yes</option>
+						<option value="false">No</option>
+					</select>
+				</div>
+				<div className="row">
+					<label> Allow teacher to view Daily Statistics ? </label>
+					<select {...this.former.super_handle(["permissions", "dailyStats"])}>
+						<option value="true">Yes</option>
+						<option value="false">No</option>
+					</select>
+				</div>
+				<div className="row">
+					<label> Allow teacher to view Expense Information? </label>
+					<select {...this.former.super_handle(["permissions", "expense"])}>
+						<option value="true">Yes</option>
+						<option value="false">No</option>
+					</select>
+				</div>
+				<div className="row">
+					<label> Allow teacher to view Family Information? </label>
+					<select {...this.former.super_handle(["permissions", "family"])}>
+						<option value="true">Yes</option>
+						<option value="false">No</option>
+					</select>
+				</div>
+				<div className="row">
+					<label> Allow teacher to view Prospective Information? </label>
+					<select {...this.former.super_handle(["permissions", "prospective"])}>
+						<option value="true">Yes</option>
+						<option value="false">No</option>
+					</select>
+				</div>
 			</div>
-			<div className="row">
-				<label> Allow teacher to view Daily Statistics ? </label>
-				<select {...this.former.super_handle(["permissions", "dailyStats"])}>
-					<option value="true">Yes</option>
-					<option value="false">No</option>
-				</select>
-			</div>
-			<div className="row">
-				<label> Allow teacher to view Expense Information? </label>
-				<select {...this.former.super_handle(["permissions", "expense"])}>
-					<option value="true">Yes</option>
-					<option value="false">No</option>
-				</select>
-			</div>
-			<div className="row">
-				<label> Allow teacher to view Family Information? </label>
-				<select {...this.former.super_handle(["permissions", "family"])}>
-					<option value="true">Yes</option>
-					<option value="false">No</option>
-				</select>
-			</div>
-			<div className="row">
-				<label> Allow teacher to view Prospective Information? </label>
-				<select {...this.former.super_handle(["permissions", "prospective"])}>
-					<option value="true">Yes</option>
-					<option value="false">No</option>
-				</select>
-			</div>
-		</div>
+			}
+		</>
 	}
 
 	render() {
@@ -358,6 +361,9 @@ class CreateTeacher extends Component<propTypes, S> {
 						<option value="false">Not an Admin</option>
 					</select>
 				</div>
+				{
+					!this.state.profile.Admin && this.changeTeacherPermissions()
+				}
 			</div>
 			}
 
@@ -538,7 +544,7 @@ class CreateTeacher extends Component<propTypes, S> {
 export default connect((state: RootReducerState) => ({
 	auth: state.auth,
 	faculty: state.db.faculty,
-	user: state.db.faculty[state.auth.faculty_id]
+	user: state.db.faculty[state.auth.faculty_id],
 }), (dispatch: Function) => ({
 	save: (teacher: MISTeacher, is_first?: boolean) => dispatch(createFacultyMerge(teacher, is_first)),
 	delete: (faculty_id: string) => dispatch(deleteFaculty(faculty_id))

@@ -41,13 +41,6 @@ const TeamMembers: Array<Team> = [
 		phone: "+923410924945"
 	},
 	{
-		name: "Kamran Anwar",
-		avatar_url: "/images/kamran.jpg",
-		designation: "Area Manager",
-		district: "Faisalabad",
-		phone: "+923460089864"
-	},
-	{
 		name: "Zahid Riaz",
 		avatar_url: "/images/zahid.jpg",
 		designation: "Area Manager",
@@ -55,25 +48,11 @@ const TeamMembers: Array<Team> = [
 		phone: "+923460089862"
 	},
 	{
-		name: "Nouman",
-		avatar_url: "/images/nouman.jpg",
-		designation: "Area Manager",
-		district: "Islamabad & Rawalpindi",
-		phone: "+923460089863"
-	},
-	{
 		name: "Ali Zohaib",
 		avatar_url: "/images/ali_zohaib.jpg",
 		designation: "Area Manager",
 		district: "Lahore, Kasur & Sheikhupura",
 		phone: "+923410924944"
-	},
-	{
-		name: "M. Farooq",
-		avatar_url: "/images/m_farooq.jpg",
-		designation: "Sales Assistant",
-		district: "Faisalabad",
-		phone: "+923474604333"
 	}
 ]
 

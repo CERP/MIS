@@ -13,13 +13,8 @@ export const MISTutorialLinks: TutorialLink = {
 		link: "https://www.youtube.com/embed/SHnVsuqp6G8?controls=0"
 	},
 	"SCHOOL-LOGIN": {
-		title: "What is school login?",
+		title: "How to school and staff login?",
 		titleShort: "School Login",
-		link: "https://www.youtube-nocookie.com/embed/4TymLLhu4GM?controls=0"
-	},
-	"LOGIN": {
-		title: "What is staff login?",
-		titleShort: "Staff Login",
 		link: "https://www.youtube-nocookie.com/embed/4TymLLhu4GM?controls=0"
 	},
 	"LANDING": {
