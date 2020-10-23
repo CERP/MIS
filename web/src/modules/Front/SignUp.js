@@ -29,7 +29,7 @@ class SignUp extends Component {
           good: true,
           text: "Saved!"
         },
-        isOtherLogin: false
+        otherLogin: ''
       }
 
       this.former = new former(this, [])
@@ -54,7 +54,12 @@ class SignUp extends Component {
         })
       }
 
-      this.props.createSignUp({...this.state.profile, date: moment.now()})
+      if(this.state.otherLogin) {
+        const signup  = { ...this.state.profile, typeOfLogin: this.state.otherLogin, date: moment.now() }
+		    this.props.createSignup(signup)
+      } else {
+        this.props.createSignUp({...this.state.profile, date: moment.now()})
+      }
     }
     
     componentWillReceiveProps(props) {
@@ -105,24 +110,6 @@ class SignUp extends Component {
       }
     }
 
-    getTypeOfLogin = (e) => {
-      e.target.value === 'OTHER' ?
-        this.setState({ isOtherLogin: true }) :
-        this.setState({ 
-          profile: { 
-            ...this.state.profile, 
-            typeOfLogin: e.target.value } 
-        })
-    }
-
-    setOther = (e) => {
-      this.setState({ 
-        profile: { 
-          ...this.state.profile, 
-          typeOfLogin: e.target.value } 
-      })
-    }
-
   render() {
     const Span = () => <span style={{ color: "red" }}>*</span>
 
@@ -151,7 +138,7 @@ class SignUp extends Component {
           </div>
           <div className="row">
 						<label>Strategy <Span /></label>
-						<select {...this.former.super_handle(["profile", "typeOfLogin"])} onChange={this.getTypeOfLogin}>
+						<select {...this.former.super_handle(["profile", "typeOfLogin"])}>
 							<option value="">Select Strategy</option>
 							{
 								[...getStrategies()]
@@ -163,10 +150,10 @@ class SignUp extends Component {
 							}
 						</select>
 					</div>
-        { this.state.isOtherLogin &&
+        { this.state.profile.typeOfLogin === 'OTHER' &&
           <div className="row">
           <label> Other </label>
-          <input type="text" onChange={this.setOther}></input>
+          <input type="text" {...this.former.super_handle(["otherLogin"])}></input>
         </div>
         }
           <div className="row">
