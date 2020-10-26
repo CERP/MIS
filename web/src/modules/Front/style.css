@@ -271,7 +271,7 @@
         }
         .card.sign-up .row input{
             width: 70%;
-            margin: 5px;
+            margin: 5px 0px 5px 5px;
         }
         .card.sign-up .row select{
             width: 70%;

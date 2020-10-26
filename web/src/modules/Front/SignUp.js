@@ -5,6 +5,8 @@ import Banner from 'components/Banner'
 import { createSignUp } from 'actions'
 import { connect } from 'react-redux'
 import { getStrategies } from 'constants/generic'
+import { Redirect } from 'react-router-dom'
+import { getDistrictTehsilList } from 'utils/getDistrictTehsilList'
 
 import './style.css'
 import moment from 'moment'
@@ -61,6 +63,7 @@ class SignUp extends Component {
 		if (this.state.otherLogin) {
 			const signup = { ...this.state.profile, typeOfLogin: this.state.otherLogin, date: moment.now() }
 			this.props.createSignup(signup)
+			return <Redirect to="/school-login" />
 		} else {
 			this.props.createSignUp({ ...this.state.profile, date: moment.now() })
 		}
@@ -127,6 +130,7 @@ class SignUp extends Component {
 	}
 
 	render() {
+		const district_tehsils = getDistrictTehsilList()['PUNJAB']
 
 		return (
 			<div className="section-container section card sign-up">
@@ -136,12 +140,21 @@ class SignUp extends Component {
 					<input type="text" {...this.former.super_handle(["profile", "name"])}></input>
 				</div>
 				<div className="row">
-					<label> Phone </label>
+					<label> Mobile # (School ID)</label>
 					<input type="text" {...this.former.super_handle(["profile", "phone"])}></input>
 				</div>
 				<div className="row">
 					<label> City/District </label>
-					<input type="text" {...this.former.super_handle(["profile", "city"])}></input>
+					<select {...this.former.super_handle(["profile", "city"])}>
+						<option value="">Select District</option>
+						{
+							Object.values(district_tehsils).map((district) => {
+								return district.map((dist)=> {
+									return <option key={dist} value={dist}>{dist && dist}</option>
+								})
+							})
+						}
+					</select>
 				</div>
 				<div className="row">
 					<label> School Name </label>
@@ -152,7 +165,7 @@ class SignUp extends Component {
 					<input type="password" {...this.former.super_handle(["profile", "schoolPassword"])}></input>
 				</div>
 				<div className="row">
-					<label>Strategy</label>
+					<label>How did you hear about MISchool?</label>
 					<select {...this.former.super_handle(["profile", "typeOfLogin"])}>
 						<option value="">Select Strategy</option>
 						{
@@ -178,7 +191,7 @@ class SignUp extends Component {
 					</select>
 				</div>
 
-				<div className="button red" onClick={() => this.onSave()}> Submit</div>
+				<div className="button red" onClick={() => this.onSave()}> Create Login</div>
 
 			</div>
 		)

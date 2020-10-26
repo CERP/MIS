@@ -4,10 +4,10 @@ const login_strategies = [
 	"Association",
 	"Edfin",
 	"School Referral",
-	"Individual",
+	"Area Manager",
 	"Ilm Exchange",
     "Facebook",
-    "other"
+    "Other"
 ]
 
 export const getStrategies = () => login_strategies
