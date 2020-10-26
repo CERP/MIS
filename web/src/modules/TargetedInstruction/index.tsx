@@ -48,7 +48,7 @@ const Test: React.FC<PropsType> = (props) => {
 	const students = useMemo(() => getAllStudents(sectionId, props.students), [sectionId])
 	const sortedSections = useMemo(() => getSectionsFromClasses(props.classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0)), [])
 	const allSubjects: Subjects = useMemo(() => getSubjectsFromClasses(props.classes), [props.classes])
-	const stdReport: Report = useMemo(() => createReport(students, props.targeted_instruction, selectedSubject), [students, props.targeted_instruction, selectedSubject]);
+	const stdReport: Report = useMemo(() => createReport(students, props.targeted_instruction, selectedSubject), [selectedSubject]);
 
 	const getClass = (e: any) => {
 		setSelectedClass(e.target.value)

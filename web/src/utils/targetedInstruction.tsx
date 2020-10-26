@@ -24,7 +24,9 @@ export const createReport = (students: RootDBState["students"], targeted_instruc
                                     ...agg2,
                                     [category]: {
                                         correct: c,
-                                        possible: 1
+                                        possible: 1,
+                                        percentage: c / 1 * 100,
+                                        link: targeted_instruction.slo_mapping[slo[0]] && targeted_instruction.slo_mapping[slo[0]].link
                                     }
                                 }
                             }
