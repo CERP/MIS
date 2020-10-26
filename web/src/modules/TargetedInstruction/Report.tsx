@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { smsIntentLink } from 'utils/intent'
 import moment from 'moment'
 import { replaceSpecialCharsWithUTFChars } from 'utils/stringHelper'
@@ -31,6 +31,7 @@ type columns = {
 
 const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_id, selectedClass, data, stdReport, setReport, logSms }) => {
 
+    const [toggle, setToggle] = useState(true);
     let allStds, singleStd, columns: columns[] = [];
 
     const getAllStdData = () => {
@@ -154,23 +155,30 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_
             </div>
         </div> :
             type === 'All Students' &&
-            <><div className="graph-div">
-                <BarChart
-                    width={isMobile() ? 350 : 700}
-                    height={500}
-                    data={data}
-                    style={{ margin: 'auto' }}
-                    onClick={(e) => redirectToIlmx(e.activePayload[0].payload.link)}
-                >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="percentage" fill="#82ca9d" />
-                </BarChart>
-            </div>
-                <div className="section">
+            <>
+                <div className="inner-tabs">
+                    <div className="row">
+                        <button className={`button ${toggle && "orange"}`} onClick={() => setToggle(!toggle)}>Graph</button>
+                        <button className={`button ${!toggle && "blue"}`} onClick={() => setToggle(!toggle)}>Table</button>
+                    </div>
+                </div>
+                {toggle && <div className="graph-div">
+                    <BarChart
+                        width={isMobile() ? 350 : 700}
+                        height={500}
+                        data={data}
+                        style={{ margin: 'auto' }}
+                        onClick={(e) => redirectToIlmx(e.activePayload[0].payload.link)}
+                    >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="percentage" fill="#82ca9d" />
+                    </BarChart>
+                </div>}
+                {!toggle && <div className="section">
                     <DataTable
                         columns={columns}
                         customStyles={customStyles}
@@ -191,7 +199,8 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_
                             onClick={() => logMessages(messages)}>
                             Send Report using Local SIM </a>
                     </div>
-                </div></>
+                </div>}
+            </>
         }
     </>
 }

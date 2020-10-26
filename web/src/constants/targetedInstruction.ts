@@ -40,7 +40,7 @@ export const singleStdColumns = [
 
     },
     {
-        name: 'Percentage',
+        name: 'Percentage (%)',
         selector: 'percentage',
         sortable: true,
 

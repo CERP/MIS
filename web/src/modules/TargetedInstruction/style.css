@@ -25,7 +25,10 @@
 .graph-div {
     margin-top: 2rem;
 }
-
+.inner-tabs {
+    margin: auto;
+    width: 10%;
+}
 /* toggle button */
 .switch {
     position: relative;
