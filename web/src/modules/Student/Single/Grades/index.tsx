@@ -19,7 +19,6 @@ interface RouteInfo {
 
 const DiagnosticGrades: React.FC<P> = ({ students, classes, targeted_instruction, match }) => {
 
-    // const [testType, setTestType] = useState('')
     const [selectedSubject, setSelectedSubject] = useState('')
 
     let stdId = match.params.id
@@ -47,14 +46,6 @@ const DiagnosticGrades: React.FC<P> = ({ students, classes, targeted_instruction
                     }
                 </select>
             </div>
-            {/* <div className="row no-print">
-                <label>Test Type</label>
-                <select onChange={(e) => setTestType(e.target.value)}>
-                    <option value="">Select Test Type</option>
-                    <option value="Diagnostic">Diagnostic</option>
-                    <option value="Monthly">Monthly</option>
-                </select>
-            </div> */}
         </div>
         {selectedSubject && <div className="section">
             <DataTable

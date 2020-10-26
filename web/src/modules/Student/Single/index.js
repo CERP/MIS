@@ -11,7 +11,6 @@ import Marks from './Marks'
 import StudentCertificates from './Certificates'
 import PrintPreview from './Fees/printPreview'
 import DiagnosticGrades from './Grades/index'
-import StudentGrades from './Grades/index'
 import { getIlmxUser } from 'utils/helpers'
 
 import './style.css'
@@ -36,7 +35,7 @@ class StudentPage extends Component {
 								<Link className={`button ${loc === "attendance" ? "purple" : false}`} to="attendance" replace={true}>Attendance</Link>
 								<Link className={`button ${loc === "marks" ? "blue" : false}`} to="marks" replace={true}>Marks</Link>
 								<Link className={`button ${loc === "certificates" ? "yellow" : false}`} to="certificates" replace={true}>Certificates</Link>
-								<Link className={`button ${loc === "grades" ? "grey" : false}`} to="grades" replace={true}>Grades</Link>
+								<Link className={`button ${loc === "grades" ? "grey" : false}`} to="grades" replace={true}>Diagnostic Grades</Link>
 							</>
 						}
 					</div>
@@ -53,7 +52,6 @@ class StudentPage extends Component {
 						<Route path="/student/:id/prospective-student" component={Create} />
 						<Route path="/student/prospective-student/new" component={Create} />
 						<Route path="/student/:id/certificates" component={StudentCertificates} />
-						<Route path="/student/:id/grades" component={StudentGrades} />
 						<Route path="/student/:id/grades" component={DiagnosticGrades} />
 					</>
 				}
