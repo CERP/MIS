@@ -87,6 +87,19 @@ interface MISTest {
 	}
 }
 
+interface Columns {
+    name: string
+    selector: string
+    sortable: boolean
+}
+
+interface GraphData {
+	[name: string]: {
+		percentage: number
+		link: string
+	}
+}
+
 interface BaseAnalyticsEvent {
 	type: string
 	meta: any

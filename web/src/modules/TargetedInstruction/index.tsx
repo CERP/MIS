@@ -22,13 +22,6 @@ interface P {
 	saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport, selectedSubject: string) => void
 }
 
-type GraphData = {
-	[name: string]: {
-		percentage: number
-		link: string
-	}
-}
-
 type PropsType = P & RouteComponentProps
 
 const Test: React.FC<PropsType> = (props) => {
@@ -42,13 +35,12 @@ const Test: React.FC<PropsType> = (props) => {
 	const [type, setType] = useState('')
 	const [stdId, setStdId] = useState('')
 	const [label, setLabel] = useState('')
-	const [data, setData] = useState([])
 	const [url, setUrl] = useState('')
 
 	const students = useMemo(() => getAllStudents(sectionId, props.students), [sectionId])
 	const sortedSections = useMemo(() => getSectionsFromClasses(props.classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0)), [])
 	const allSubjects: Subjects = useMemo(() => getSubjectsFromClasses(props.classes), [props.classes])
-	const stdReport: Report = useMemo(() => createReport(students, props.targeted_instruction, selectedSubject), [students, props.targeted_instruction, selectedSubject]);
+	const stdReport: Report = useMemo(() => createReport(students, props.targeted_instruction, selectedSubject), [selectedSubject]);
 
 	const getClass = (e: any) => {
 		setSelectedClass(e.target.value)
@@ -74,11 +66,6 @@ const Test: React.FC<PropsType> = (props) => {
 	const getStudent = (e: any) => {
 		setStdId(e.target.value)
 		setQuestions(getQuestionList(selectedSubject, props.students[e.target.value]))
-	}
-
-	const getSelected = (e: any) => {
-		setType(e.target.value)
-		graphData()
 	}
 
 	const getPDF = (selectedSubject: string, selectedClass: string, testType: string) => {
@@ -109,24 +96,6 @@ const Test: React.FC<PropsType> = (props) => {
 				}
 			}, {})
 		}
-	}
-
-	const graphData = () => {
-
-		let graphData: GraphData = {}, arr = []
-		for (let testObj of Object.values((stdReport && stdReport) || {})) {
-			for (let [slo, rep] of Object.entries(testObj.report)) {
-				graphData[slo] ? graphData[slo] = { percentage: graphData[slo].percentage + rep.percentage, link: rep.link } :
-					graphData[slo] = { percentage: rep.percentage, link: rep.link }
-			}
-		}
-		for (let [id, obj] of Object.entries(graphData)) {
-			arr.push({ name: id, percentage: Math.round(obj.percentage / Object.entries(props.students).length), link: obj.link })
-		}
-		arr.sort((a, b) => {
-			return b.percentage - a.percentage;
-		});
-		setData(arr)
 	}
 
 	return <Layout history={props.history}>
@@ -180,7 +149,7 @@ const Test: React.FC<PropsType> = (props) => {
 				}
 				{loc === 'report' && <div className="row">
 					<label className="no-print">Type</label>
-					<select className="no-print" onChange={getSelected}>
+					<select className="no-print" onChange={(e) => setType(e.target.value)}>
 						<option value="">Select Type</option>
 						<option value="Single Student">Single Student</option>
 						<option value="All Students">All Students</option>
@@ -203,7 +172,6 @@ const Test: React.FC<PropsType> = (props) => {
 							type={type}
 							stdId={stdId}
 							students={students}
-							data={data}
 							selectedClass={selectedClass}
 							stdReport={stdReport}
 							faculty_id={props.faculty_id}

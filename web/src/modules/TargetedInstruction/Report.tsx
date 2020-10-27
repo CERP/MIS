@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { smsIntentLink } from 'utils/intent'
 import moment from 'moment'
 import { replaceSpecialCharsWithUTFChars } from 'utils/stringHelper'
@@ -6,11 +6,10 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'rec
 import DataTable from 'react-data-table-component';
 import { isMobile } from 'utils/helpers'
 import { customStyles, singleStdColumns } from 'constants/targetedInstruction'
-import { getSingleStdData, redirectToIlmx } from 'utils/targetedInstruction'
+import { getSingleStdData, redirectToIlmx, getAllStdData, graphData } from 'utils/targetedInstruction'
 
 interface P {
     type: string
-    data: object[]
     stdId: string
     testId: string
     testType: string
@@ -23,54 +22,23 @@ interface P {
     logSms: (history: MISSMSHistory) => any
 }
 
-type columns = {
-    name: string
-    selector: string
-    sortable: boolean
-}
-
-const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_id, selectedClass, data, stdReport, setReport, logSms }) => {
+const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_id, selectedClass, stdReport, setReport, logSms }) => {
 
     const [toggle, setToggle] = useState(true);
-    let allStds, singleStd, columns: columns[] = [];
+    const [studentId, setStudentId] = useState(stdId);
+    const [allStds, columns] = useMemo(() => getAllStdData(stdReport), [stdReport]);
+    const singleStd = useMemo(() => getSingleStdData(studentId, stdReport), [studentId]);
+    const data = useMemo(() => graphData(stdReport, students), [stdReport]);
 
-    const getAllStdData = () => {
-        allStds = Object.entries(stdReport)
-            .reduce((agg, [id, reportObj]) => {
-                let stdObj = {}
-                stdObj = {
-                    ...stdObj,
-                    "student": reportObj.name,
-                    "id": id
-                }
-                !columns.find(col => col.name === 'student name') &&
-                    columns.push({
-                        "name": "student name",
-                        "selector": "student",
-                        "sortable": true
-                    })
-                for (let [slo, sloObj] of Object.entries(reportObj.report)) {
-                    stdObj = {
-                        ...stdObj,
-                        [slo]: sloObj.percentage
-                    }
-                    !columns.find(col => col.name === slo) && columns.push({
-                        "name": slo,
-                        "selector": slo,
-                        "sortable": true
-                    })
-                }
-                return [...agg,
-                    stdObj]
-            }, [])
-    }
-
-    type === "Single Student" ? singleStd = getSingleStdData(stdId, stdReport) : type === "All Students" && getAllStdData()
+    useEffect(() => {
+        setStudentId(stdId)
+    }, [])
 
     const getStudentId = (e: any) => {
         setReport("Single Student")
-        singleStd = getSingleStdData(e.id, stdReport)
+        setStudentId(e.id)
     }
+
 
     const logMessages = (messages: MISSms[]) => {
 
@@ -136,7 +104,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_
             <DataTable
                 columns={singleStdColumns}
                 customStyles={customStyles}
-                data={singleStd && singleStd}
+                data={singleStd}
                 pagination={true}
                 noHeader={true}
                 highlightOnHover={true}
