@@ -6,7 +6,7 @@ import { createSignUp } from 'actions'
 import { connect } from 'react-redux'
 import { getStrategies } from 'constants/generic'
 import { Redirect } from 'react-router-dom'
-import { getDistrictTehsilList } from 'utils/getDistrictTehsilList'
+import { getDistrictTehsilList } from 'constants/getDistrictTehsilList'
 
 import './style.css'
 import moment from 'moment'
@@ -36,7 +36,8 @@ class SignUp extends Component {
 				good: true,
 				text: "Saved!"
 			},
-			otherLogin: ''
+			otherLogin: '',
+			success: false
 		}
 
 		this.former = new former(this, [])
@@ -63,7 +64,6 @@ class SignUp extends Component {
 		if (this.state.otherLogin) {
 			const signup = { ...this.state.profile, typeOfLogin: this.state.otherLogin, date: moment.now() }
 			this.props.createSignup(signup)
-			return <Redirect to="/school-login" />
 		} else {
 			this.props.createSignUp({ ...this.state.profile, date: moment.now() })
 		}
@@ -113,7 +113,8 @@ class SignUp extends Component {
 					active: true,
 					good: true,
 					text: "Your account has been created. Please visit login page to use MISchool."
-				}
+				},
+				success: true
 			})
 
 			setTimeout(() => {
@@ -131,7 +132,6 @@ class SignUp extends Component {
 
 	render() {
 		const district_tehsils = getDistrictTehsilList()['PUNJAB']
-
 		return (
 			<div className="section-container section card sign-up">
 				{ this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
@@ -190,9 +190,8 @@ class SignUp extends Component {
 						<option value="Free-Trial">Free-Trial</option>
 					</select>
 				</div>
-
 				<div className="button red" onClick={() => this.onSave()}> Create Login</div>
-
+				{this.props.success && <Redirect to="/school-login" />}
 			</div>
 		)
 	}
