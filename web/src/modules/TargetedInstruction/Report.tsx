@@ -27,18 +27,17 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_
     const [toggle, setToggle] = useState(true);
     const [studentId, setStudentId] = useState(stdId);
     const [allStds, columns] = useMemo(() => getAllStdData(stdReport), [stdReport]);
-    const singleStd = useMemo(() => getSingleStdData(studentId, stdReport), [studentId]);
     const data = useMemo(() => graphData(stdReport, students), [stdReport]);
+    const singleStd = useMemo(() => getSingleStdData(stdId, stdReport), [studentId, stdReport]);
 
     useEffect(() => {
         setStudentId(stdId)
-    }, [])
+    }, [stdId])
 
     const getStudentId = (e: any) => {
         setReport("Single Student")
         setStudentId(e.id)
     }
-
 
     const logMessages = (messages: MISSms[]) => {
 

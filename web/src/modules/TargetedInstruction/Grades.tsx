@@ -58,7 +58,7 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, students, saveRe
 
     const onSave = () => {
 
-        saveReport(stdId, state.result, testId)
+        state.result && saveReport(stdId, state.result, testId)
         setState({
             ...state,
             banner: {
