@@ -9,7 +9,6 @@ interface P {
     testType: string
     students: RootDBState["students"]
 
-    setQuestions: (type: Question) => any
     saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport, testId: string) => void
 }
 
@@ -27,7 +26,7 @@ type S = {
     result: MISDiagnosticReport
 }
 
-const StudentGrades: React.FC<P> = ({ questions, stdId, testId, students, saveReport, setQuestions }) => {
+const StudentGrades: React.FC<P> = ({ questions, stdId, testId, students, saveReport }) => {
 
     const [state, setState] = useState<S>({
         banner: {
@@ -59,9 +58,7 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, students, saveRe
 
     const onSave = () => {
 
-        setQuestions(state.questionsArr)
         saveReport(stdId, state.result, testId)
-
         setState({
             ...state,
             banner: {
@@ -85,7 +82,7 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, students, saveRe
 
     return <>
         {state.banner.active ? <Banner isGood={state.banner.good} text={state.banner.text} /> : false}
-        {Object.keys(state.questionsArr).length > 0 &&
+        {Object.keys(state.questionsArr || {}).length > 0 &&
             < div className="section">
                 <div className="questions-container">
                     <div className="text-center">

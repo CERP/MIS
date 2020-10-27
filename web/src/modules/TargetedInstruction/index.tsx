@@ -6,7 +6,7 @@ import StudentGrades from './Grades'
 import Diagnostic from './Diagnostic'
 import Report from './Report'
 import { connect } from 'react-redux'
-import { createReport } from 'utils/targetedInstruction'
+import { createReport, getQuestionList } from 'utils/targetedInstruction'
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
 import getSubjectsFromClasses from 'utils/getSubjectsFromClasses'
 import { logSms, addReport } from 'actions'
@@ -29,73 +29,23 @@ const Test: React.FC<PropsType> = (props) => {
 	const loc = props.location.pathname.split('/').slice(-1).pop();
 	const [selectedSubject, setSelectedSubject] = useState('')
 	const [selectedClass, setSelectedClass] = useState('')
-	const [questions, setQuestions] = useState({})
 	const [sectionId, setSectionId] = useState('')
 	const [testType, setTestType] = useState('')
 	const [type, setType] = useState('')
 	const [stdId, setStdId] = useState('')
-	const [label, setLabel] = useState('')
-	const [url, setUrl] = useState('')
 
 	const students = useMemo(() => getAllStudents(sectionId, props.students), [sectionId])
 	const sortedSections = useMemo(() => getSectionsFromClasses(props.classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0)), [])
 	const allSubjects: Subjects = useMemo(() => getSubjectsFromClasses(props.classes), [props.classes])
 	const stdReport: Report = useMemo(() => createReport(students, props.targeted_instruction, selectedSubject), [selectedSubject]);
+	const questions = useMemo(() => getQuestionList(selectedSubject, props.students[stdId], testType), [selectedSubject, stdId]);
+	const [pdfUrl, pdfLabel] = useMemo(() => getPDF(selectedSubject, selectedClass, testType, props.targeted_instruction), [selectedSubject, testType]);
 
 	const getClass = (e: any) => {
 		setSelectedClass(e.target.value)
 		let index = e.target.selectedIndex;
 		let el = e.target.childNodes[index]
 		setSectionId(el.dataset.id)
-		getPDF(selectedSubject, e.target.value, testType)
-
-	}
-
-	const getSubject = (e: any) => {
-		setSelectedSubject(e.target.value)
-		if (testType) {
-			getPDF(e.target.value, selectedClass, testType)
-		}
-	}
-
-	const getTestType = (e: any) => {
-		setTestType(e.target.value)
-		getPDF(selectedSubject, selectedClass, e.target.value)
-	}
-
-	const getStudent = (e: any) => {
-		setStdId(e.target.value)
-		setQuestions(getQuestionList(selectedSubject, props.students[e.target.value]))
-	}
-
-	const getPDF = (selectedSubject: string, selectedClass: string, testType: string) => {
-		let misTest: Tests = props.targeted_instruction['tests']
-		for (let obj of Object.values(misTest)) {
-			if (obj.type === testType && obj.class === selectedClass && obj.subject === selectedSubject) {
-				setUrl(obj.pdf_url)
-				setLabel(obj.label)
-				break;
-			} else {
-				setUrl('')
-				setLabel('')
-			}
-		}
-	}
-
-	const getQuestionList = (selectedTest: string, stdObj: MISStudent) => {
-		const res: MISDiagnosticReport = stdObj && stdObj.diagnostic_result && stdObj.diagnostic_result[selectedTest]
-		if (res && testType === 'Diagnostic') {
-			return Object.entries(res).reduce((agg, [key, value]) => {
-				return {
-					[key]: {
-						"answer": value.isCorrect,
-						"correctAnswer": value.answer,
-						"slo": value.slo[0]
-					},
-					...agg
-				}
-			}, {})
-		}
 	}
 
 	return <Layout history={props.history}>
@@ -117,7 +67,7 @@ const Test: React.FC<PropsType> = (props) => {
 				</div>
 				<div className="row no-print">
 					<label>Subject</label>
-					<select onChange={getSubject}>
+					<select onChange={(e) => setSelectedSubject(e.target.value)}>
 						<option value="">Select Subject</option>
 						{
 							(allSubjects[selectedClass] || []).map((sub: any) => <option key={sub} value={sub}>{sub}</option>)
@@ -126,7 +76,7 @@ const Test: React.FC<PropsType> = (props) => {
 				</div>
 				<div className="row no-print">
 					<label>Test Type</label>
-					<select onChange={getTestType}>
+					<select onChange={(e) => setTestType(e.target.value)}>
 						<option value="">Select Test Type</option>
 						<option value="Diagnostic">Diagnostic</option>
 						<option value="Monthly">Monthly</option>
@@ -136,7 +86,7 @@ const Test: React.FC<PropsType> = (props) => {
 					<>
 						{((type !== 'All Students' && loc === "report") || loc === "grades") && <div className="row">
 							<label className="no-print">Students</label>
-							<select className="no-print" onChange={getStudent}>
+							<select className="no-print" onChange={(e) => setStdId(e.target.value)}>
 								<option value="">Select Students</option>
 								{
 									Object.keys(students).map(function (key) {
@@ -155,7 +105,7 @@ const Test: React.FC<PropsType> = (props) => {
 						<option value="All Students">All Students</option>
 					</select>
 				</div>}
-				{loc === 'test' ? <Diagnostic label={label} url={url} /> :
+				{loc === 'test' ? <Diagnostic label={pdfLabel} url={pdfUrl} /> :
 					loc === 'grades' ?
 						<StudentGrades
 							questions={questions}
@@ -163,7 +113,6 @@ const Test: React.FC<PropsType> = (props) => {
 							testId={selectedSubject}
 							testType={testType}
 							students={props.students}
-							setQuestions={setQuestions}
 							saveReport={props.saveReport}
 						/> :
 						<Report
@@ -206,3 +155,18 @@ const getAllStudents = (sectionId: string, students: RootDBState["students"]) =>
 		}, {})
 }
 
+const getPDF = (selectedSubject: string, selectedClass: string, testType: string, targeted_instruction: RootDBState["targeted_instruction"]) => {
+	let url, label
+	let misTest: Tests = targeted_instruction['tests']
+	for (let obj of Object.values(misTest)) {
+		if (obj.type === testType && obj.class === selectedClass && obj.subject === selectedSubject) {
+			url = obj.pdf_url
+			label = obj.label
+			break
+		} else {
+			url = ''
+			label = ''
+		}
+	}
+	return [url, label]
+}

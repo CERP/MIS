@@ -86,7 +86,6 @@ export const getAllStdData = (stdReport: Report) => {
 }
 
 export const graphData = (stdReport: Report, students: RootDBState["students"]) => {
-
     let graphData: GraphData = {}, arr = []
     for (let testObj of Object.values((stdReport && stdReport) || {})) {
         for (let [slo, rep] of Object.entries(testObj.report)) {
@@ -101,6 +100,22 @@ export const graphData = (stdReport: Report, students: RootDBState["students"]) 
         return b.percentage - a.percentage;
     });
     return arr
+}
+
+export const getQuestionList = (selectedTest: string, stdObj: MISStudent, testType: string) => {
+    const res: MISDiagnosticReport = stdObj && stdObj.diagnostic_result && stdObj.diagnostic_result[selectedTest]
+    if (res && testType === 'Diagnostic') {
+        return Object.entries(res).reduce((agg, [key, value]) => {
+            return {
+                [key]: {
+                    "answer": value.isCorrect,
+                    "correctAnswer": value.answer,
+                    "slo": value.slo[0]
+                },
+                ...agg
+            }
+        }, {})
+    }
 }
 
 export const redirectToIlmx = (id: string) => {
