@@ -137,11 +137,11 @@ class SignUp extends Component {
 				{ this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
 				<div className="row">
 					<label> Name </label>
-					<input type="text" {...this.former.super_handle(["profile", "name"])}></input>
+					<input type="text" {...this.former.super_handle(["profile", "name"])} placeholder='Enter full-name'></input>
 				</div>
 				<div className="row">
 					<label> Mobile # (School ID)</label>
-					<input type="text" {...this.former.super_handle(["profile", "phone"])}></input>
+					<input type="text" {...this.former.super_handle(["profile", "phone"])} placeholder='Enter mobile # e.g 0301xxxxxxx'></input>
 				</div>
 				<div className="row">
 					<label> City/District </label>
@@ -156,11 +156,11 @@ class SignUp extends Component {
 				</div>
 				<div className="row">
 					<label> School Name </label>
-					<input type="text" {...this.former.super_handle(["profile", "schoolName"])}></input>
+					<input type="text" {...this.former.super_handle(["profile", "schoolName"])} placeholder='Enter school-name'></input>
 				</div>
 				<div className="row">
 					<label> School Password </label>
-					<input type="password" {...this.former.super_handle(["profile", "schoolPassword"])}></input>
+					<input type="password" {...this.former.super_handle(["profile", "schoolPassword"])} placeholder='Enter password'></input>
 				</div>
 				<div className="row">
 					<label>How did you hear about MISchool?</label>
