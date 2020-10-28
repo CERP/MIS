@@ -409,15 +409,15 @@ class Front extends Component {
 						</div>
 					</div>
 
-					{/* <div className="package-container" >
+					<div className="package-container" >
 						<div className="card-heading">Packages</div>
 						<div className="pcard-container slider">
 							<div className="pcard slide"> 
 								<div className="bg-blue pcard-title" >Taleem-1</div>
 								<div className="para" >
-									<li>150 Students </li>
+									<li>200 Students </li>
 									<li>Price: <strong>7,500 Pkr</strong></li>
-									<li>Annual: <strong>1,000 Pkr</strong></li>
+									<li>Annual: <strong>2,000 Pkr</strong></li>
 								</div>
 							</div>
 
@@ -425,8 +425,35 @@ class Front extends Component {
 								<div className="bg-green pcard-title" >Taleem-2</div>
 								<div className="para">
 									<li>300 Students</li>
-									<li>Price: <strong>10,500 Pkr</strong></li>
-									<li>Annual: <strong>1,500 Pkr</strong></li>
+									<li>Price: <strong>12,500 Pkr</strong></li>
+									<li>Annual: <strong>3,000 Pkr</strong></li>
+								</div>
+							</div>
+
+							<div className="pcard slide">
+								<div className="bg-green pcard-title" >Taleem-2</div>
+								<div className="para">
+									<li>400 Students</li>
+									<li>Price: <strong>17,500 Pkr</strong></li>
+									<li>Annual: <strong>4,000 Pkr</strong></li>
+								</div>
+							</div>
+
+							<div className="pcard slide">
+								<div className="bg-green pcard-title" >Taleem-2</div>
+								<div className="para">
+									<li>500 Students</li>
+									<li>Price: <strong>22,500 Pkr</strong></li>
+									<li>Annual: <strong>5,000 Pkr</strong></li>
+								</div>
+							</div>
+
+							<div className="pcard slide">
+								<div className="bg-green pcard-title" >Taleem-2</div>
+								<div className="para">
+									<li>600 Students</li>
+									<li>Price: <strong>27,500 Pkr</strong></li>
+									<li>Annual: <strong>6,000 Pkr</strong></li>
 								</div>
 							</div>
 
@@ -434,8 +461,8 @@ class Front extends Component {
 								<div className="bg-red pcard-title" >Taleem-3</div>
 								<div className="para">
 									<li>Unlimited Students</li>
-									<li>Price: <strong>14,500 Pkr</strong></li>
-									<li>Annual: <strong>2,000 Pkr</strong></li>
+									<li>Price: <strong>35,000 Pkr</strong></li>
+									<li>Annual: <strong>9,000 Pkr</strong></li>
 								</div>
 							</div>
 
@@ -448,7 +475,7 @@ class Front extends Component {
 								</div>
 							</div> 
 						</div>
-					</div> */}
+					</div>
 
 					<div className="card-heading"> Sign Up</div>
 

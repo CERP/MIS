@@ -5,10 +5,12 @@ import Banner from 'components/Banner'
 import { createSignUp } from 'actions'
 import { connect } from 'react-redux'
 import { getStrategies } from 'constants/generic'
+import { Redirect } from 'react-router-dom'
+import { getDistricts } from 'constants/locations'
+import moment from 'moment'
+import toTitleCase from 'utils/toTitleCase'
 
 import './style.css'
-import moment from 'moment'
-
 
 function emptyProfile() {
 	return {
@@ -34,7 +36,8 @@ class SignUp extends Component {
 				good: true,
 				text: "Saved!"
 			},
-			otherLogin: ''
+			otherLogin: '',
+			redirect: false
 		}
 
 		this.former = new former(this, [])
@@ -109,50 +112,58 @@ class SignUp extends Component {
 				banner: {
 					active: true,
 					good: true,
-					text: "Your account has been created. Please visit login page to use MISchool."
+					text: "Your account has been created."
 				}
 			})
 
 			setTimeout(() => {
 				this.setState({
-					profile: emptyProfile(),
 					banner: {
 						active: false,
 						good: true,
 					},
-					otherLogin: ''
+					redirect: true
 				})
-			}, 3000)
+			}, 2000)
 		}
 	}
 
 	render() {
-
+		if (this.state.redirect){
+			return <Redirect to="/school-login" />	
+		}
 		return (
 			<div className="section-container section card sign-up">
 				{ this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
 				<div className="row">
 					<label> Name </label>
-					<input type="text" {...this.former.super_handle(["profile", "name"])}></input>
+					<input type="text" {...this.former.super_handle(["profile", "name"])} placeholder='Enter full-name'></input>
 				</div>
 				<div className="row">
-					<label> Phone </label>
-					<input type="text" {...this.former.super_handle(["profile", "phone"])}></input>
+					<label> Mobile # (School ID)</label>
+					<input type="text" {...this.former.super_handle(["profile", "phone"])} placeholder='Enter mobile # e.g 0301xxxxxxx'></input>
 				</div>
 				<div className="row">
 					<label> City/District </label>
-					<input type="text" {...this.former.super_handle(["profile", "city"])}></input>
+					<select {...this.former.super_handle(["profile", "city"])}>
+						<option value="">Select District</option>
+						{
+								getDistricts().sort().map((dist)=> {
+									return <option key={dist} value={dist}>{toTitleCase(dist)}</option>
+								})
+						}
+					</select>
 				</div>
 				<div className="row">
 					<label> School Name </label>
-					<input type="text" {...this.former.super_handle(["profile", "schoolName"])}></input>
+					<input type="text" {...this.former.super_handle(["profile", "schoolName"])} placeholder='Enter school-name'></input>
 				</div>
 				<div className="row">
 					<label> School Password </label>
-					<input type="password" {...this.former.super_handle(["profile", "schoolPassword"])}></input>
+					<input type="password" {...this.former.super_handle(["profile", "schoolPassword"])} placeholder='Enter password'></input>
 				</div>
 				<div className="row">
-					<label>Strategy</label>
+					<label>How did you hear about MISchool?</label>
 					<select {...this.former.super_handle(["profile", "typeOfLogin"])}>
 						<option value="">Select Strategy</option>
 						{
@@ -177,9 +188,7 @@ class SignUp extends Component {
 						<option value="Free-Trial">Free-Trial</option>
 					</select>
 				</div>
-
-				<div className="button red" onClick={() => this.onSave()}> Submit</div>
-
+				<div className="button red" onClick={() => this.onSave()}> Create Signup</div>
 			</div>
 		)
 	}
