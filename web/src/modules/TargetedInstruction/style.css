@@ -129,4 +129,11 @@ input:checked + .toggleSlider:before {
         background-color: white;
         transition: .4s;
     }
+    .inner-tabs {
+        margin: auto;
+        width: 100%;
+    }
+    .form .row>.button {
+        width:100%
+    }
 }

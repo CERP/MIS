@@ -1,6 +1,19 @@
 
 import { isMobile } from 'utils/helpers'
 
+export const conditionalRowStyles = [
+    {
+        //@ts-ignore
+        when: row => row.slo === '',
+        style: {
+            color: 'blue',
+            '&:hover': {
+                cursor: 'pointer',
+            },
+        },
+    },
+];
+
 export const customStyles = {
     headCells: {
         style: {

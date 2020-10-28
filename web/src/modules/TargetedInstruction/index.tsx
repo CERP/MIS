@@ -82,21 +82,6 @@ const Test: React.FC<PropsType> = (props) => {
 						<option value="Monthly">Monthly</option>
 					</select>
 				</div>
-				{(loc !== "test") &&
-					<>
-						{((type !== 'All Students' && loc === "report") || loc === "grades") && <div className="row">
-							<label className="no-print">Students</label>
-							<select className="no-print" onChange={(e) => setStdId(e.target.value)}>
-								<option value="">Select Students</option>
-								{
-									Object.keys(students).map(function (key) {
-										return <option key={students[key].id} value={students[key].id}>{students[key].Name}</option>
-									})
-								}
-							</select>
-						</div>}
-					</>
-				}
 				{loc === 'report' && <div className="row">
 					<label className="no-print">Type</label>
 					<select className="no-print" onChange={(e) => setType(e.target.value)}>
@@ -105,6 +90,21 @@ const Test: React.FC<PropsType> = (props) => {
 						<option value="All Students">All Students</option>
 					</select>
 				</div>}
+				{(loc !== "test") &&
+					<>
+						{((type !== 'All Students' && loc === "report") || loc === "grades") && <div className="row">
+							<label className="no-print">Students</label>
+							<select className="no-print" onChange={(e) => setStdId(e.target.value)}>
+								<option value="">Select Students</option>
+								{
+									Object.values(students)
+										.sort((a, b) => a.Name.localeCompare(b.Name))
+										.map((std) => (<option key={std.id} value={std.id}>{std.Name}</option>))
+								}
+							</select>
+						</div>}
+					</>
+				}
 				{loc === 'test' ? <Diagnostic label={pdfLabel} url={pdfUrl} /> :
 					loc === 'grades' ?
 						<StudentGrades
@@ -124,7 +124,7 @@ const Test: React.FC<PropsType> = (props) => {
 							selectedClass={selectedClass}
 							stdReport={stdReport}
 							faculty_id={props.faculty_id}
-							setReport={setType}
+							setType={setType}
 							logSms={props.logSms}
 						/>}
 			</div>

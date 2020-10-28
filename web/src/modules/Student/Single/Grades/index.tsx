@@ -4,7 +4,7 @@ import DataTable from 'react-data-table-component';
 import { RouteComponentProps } from 'react-router-dom'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import getSubjectsFromClasses from 'utils/getSubjectsFromClasses'
-import { customStyles, singleStdColumns } from 'constants/targetedInstruction'
+import { customStyles, singleStdColumns, conditionalRowStyles } from 'constants/targetedInstruction'
 import { getSingleStdData, createReport, redirectToIlmx } from 'utils/targetedInstruction'
 
 interface P extends RouteComponentProps<RouteInfo> {
@@ -56,6 +56,7 @@ const DiagnosticGrades: React.FC<P> = ({ students, classes, targeted_instruction
                 noHeader={true}
                 highlightOnHover={true}
                 responsive={true}
+                conditionalRowStyles={conditionalRowStyles}
                 onRowClicked={(e) => redirectToIlmx(e.id)}
             />
         </div>}

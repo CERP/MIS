@@ -37,19 +37,30 @@ export const createReport = (students: RootDBState["students"], targeted_instruc
 }
 
 export const getSingleStdData = (id: string, stdReport: Report) => {
-    return Object.entries(stdReport && stdReport[id] && stdReport[id].report || {})
+    let total = 0, obtained = 0
+    let students = Object.entries(stdReport && stdReport[id] && stdReport[id].report || {})
         .reduce((agg, [slo, obj]) => {
+            obtained = obj.correct + obtained
+            total = obj.possible + total
             return [
                 ...agg,
                 {
-                    "slo": slo,
-                    "correct": obj.correct,
-                    "possible": obj.possible,
-                    "percentage": obj.percentage,
-                    "link": obj.link
+                    slo: slo,
+                    correct: obj.correct,
+                    possible: obj.possible,
+                    percentage: Math.round(obj.percentage),
+                    link: obj.link
                 }
             ]
         }, [])
+    students[Object.keys(students).length] = {
+        slo: '',
+        correct: obtained,
+        possible: total,
+        percentage: Math.round((obtained / total) * 100),
+        link: ''
+    }
+    return students
 }
 
 export const getAllStdData = (stdReport: Report) => {
@@ -59,29 +70,41 @@ export const getAllStdData = (stdReport: Report) => {
             let stdObj = {}
             stdObj = {
                 ...stdObj,
-                "student": reportObj.name,
-                "id": id
+                student: reportObj.name,
+                id: id
             }
             !columns.find(col => col.name === 'student name') &&
                 columns.push({
-                    "name": "student name",
-                    "selector": "student",
-                    "sortable": true
+                    name: "student name",
+                    selector: "student",
+                    sortable: true
                 })
+            let total = 0
             for (let [slo, sloObj] of Object.entries(reportObj.report)) {
+                total = sloObj.percentage + total
                 stdObj = {
                     ...stdObj,
-                    [slo]: sloObj.percentage
+                    [slo]: Math.round(sloObj.percentage)
                 }
                 !columns.find(col => col.name === slo) && columns.push({
-                    "name": slo,
-                    "selector": slo,
-                    "sortable": true
+                    name: slo,
+                    selector: slo,
+                    sortable: true
                 })
+            }
+            total = (total / (Object.keys(reportObj.report).length * 100)) * 100
+            stdObj = {
+                ...stdObj,
+                total: Math.round(total)
             }
             return [...agg,
                 stdObj]
         }, [])
+    columns[Object.keys(columns).length] = {
+        name: "total",
+        selector: "total",
+        sortable: true
+    }
     return [allStds, columns]
 }
 

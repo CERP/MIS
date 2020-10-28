@@ -5,7 +5,7 @@ import { replaceSpecialCharsWithUTFChars } from 'utils/stringHelper'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import DataTable from 'react-data-table-component';
 import { isMobile } from 'utils/helpers'
-import { customStyles, singleStdColumns } from 'constants/targetedInstruction'
+import { customStyles, singleStdColumns, conditionalRowStyles } from 'constants/targetedInstruction'
 import { getSingleStdData, redirectToIlmx, getAllStdData, graphData } from 'utils/targetedInstruction'
 
 interface P {
@@ -18,11 +18,11 @@ interface P {
     stdReport: Report
     students: RootDBState["students"]
 
-    setReport: (type: string) => any
+    setType: (type: string) => any
     logSms: (history: MISSMSHistory) => any
 }
 
-const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_id, selectedClass, stdReport, setReport, logSms }) => {
+const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_id, selectedClass, stdReport, setType, logSms }) => {
 
     const [toggle, setToggle] = useState(true);
     const [studentId, setStudentId] = useState(stdId);
@@ -35,7 +35,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_
     }, [stdId])
 
     const getStudentId = (e: any) => {
-        setReport("Single Student")
+        setType("Single Student")
         setStudentId(e.id)
     }
 
@@ -75,8 +75,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_
     }
 
     const getMessages = (): MISSms[] => {
-
-        if (type === 'Single Student') {
+        if (type === 'Single Student' && stdId) {
             let phone
             phone = students[stdId].Phone
             const report = reportString(stdId)
@@ -99,7 +98,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_
     let messages = getMessages()
 
     return <>
-        {type === 'Single Student' ? <div className="section form">
+        {type === 'Single Student' && stdId ? <div className="section form">
             <DataTable
                 columns={singleStdColumns}
                 customStyles={customStyles}
@@ -110,6 +109,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_
                 responsive={true}
                 striped={true}
                 onRowClicked={(e) => redirectToIlmx(e.id)}
+                conditionalRowStyles={conditionalRowStyles}
             />
             <div className="send-btn-div">
                 <a className="button blue mb mobile-mode"
