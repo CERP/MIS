@@ -59,7 +59,7 @@ const Test: React.FC<PropsType> = (props) => {
 				<div className="row no-print">
 					<label>Grades</label>
 					<select onChange={getClass}>
-						<option id="" value="">Select Section</option>
+						<option id="" value="">Select Grade</option>
 						{
 							sortedSections && sortedSections.map(s => <option key={s.id} data-id={s.id} value={s.className}>{s.className}</option>)
 						}

@@ -108,7 +108,6 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_
                 highlightOnHover={true}
                 responsive={true}
                 striped={true}
-                onRowClicked={(e) => redirectToIlmx(e.id)}
                 conditionalRowStyles={conditionalRowStyles}
             />
             <div className="send-btn-div">
