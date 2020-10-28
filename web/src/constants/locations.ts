@@ -1,4 +1,4 @@
-export const getDistrictTehsilList = () => ({
+const Locations = {
 	"AZAD KASHMIR": {
 		BAGH: [
 			"BAGH",
@@ -826,4 +826,15 @@ export const getDistrictTehsilList = () => ({
 			"NEW KARACHI TOWN"
 		]
 	}
-})
+}
+
+const getDistricts = () => {
+	return Object.values(Locations)
+		.reduce<string[]>((agg, curr) => {
+			return [
+				...agg,
+				...Object.keys(curr)
+			]
+		}, [])
+}
+export {getDistricts, Locations}

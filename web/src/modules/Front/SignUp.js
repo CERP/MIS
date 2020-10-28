@@ -6,11 +6,11 @@ import { createSignUp } from 'actions'
 import { connect } from 'react-redux'
 import { getStrategies } from 'constants/generic'
 import { Redirect } from 'react-router-dom'
-import { getDistrictTehsilList } from 'constants/getDistrictTehsilList'
+import { getDistricts } from 'constants/locations'
+import moment from 'moment'
+import toTitleCase from 'utils/toTitleCase'
 
 import './style.css'
-import moment from 'moment'
-
 
 function emptyProfile() {
 	return {
@@ -37,7 +37,7 @@ class SignUp extends Component {
 				text: "Saved!"
 			},
 			otherLogin: '',
-			success: false
+			redirect: false
 		}
 
 		this.former = new former(this, [])
@@ -112,26 +112,26 @@ class SignUp extends Component {
 				banner: {
 					active: true,
 					good: true,
-					text: "Your account has been created. Please visit login page to use MISchool."
-				},
-				success: true
+					text: "Your account has been created."
+				}
 			})
 
 			setTimeout(() => {
 				this.setState({
-					profile: emptyProfile(),
 					banner: {
 						active: false,
 						good: true,
 					},
-					otherLogin: ''
+					redirect: true
 				})
-			}, 3000)
+			}, 2000)
 		}
 	}
 
 	render() {
-		const district_tehsils = getDistrictTehsilList()['PUNJAB']
+		if (this.state.redirect){
+			return <Redirect to="/school-login" />	
+		}
 		return (
 			<div className="section-container section card sign-up">
 				{ this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
@@ -148,11 +148,9 @@ class SignUp extends Component {
 					<select {...this.former.super_handle(["profile", "city"])}>
 						<option value="">Select District</option>
 						{
-							Object.values(district_tehsils).map((district) => {
-								return district.map((dist)=> {
-									return <option key={dist} value={dist}>{dist && dist}</option>
+								getDistricts().sort().map((dist)=> {
+									return <option key={dist} value={dist}>{toTitleCase(dist)}</option>
 								})
-							})
 						}
 					</select>
 				</div>
@@ -190,8 +188,7 @@ class SignUp extends Component {
 						<option value="Free-Trial">Free-Trial</option>
 					</select>
 				</div>
-				<div className="button red" onClick={() => this.onSave()}> Create Login</div>
-				{this.props.success && <Redirect to="/school-login" />}
+				<div className="button red" onClick={() => this.onSave()}> Create Signup</div>
 			</div>
 		)
 	}
