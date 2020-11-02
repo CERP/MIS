@@ -20,6 +20,7 @@ import Modal from 'components/Modal'
 import Banner from 'components/Banner'
 import Former from 'utils/former'
 import AdmissionForm from 'components/Printable/Student/admissionform'
+import { getIlmxUser } from 'utils/helpers'
 
 import './style.css'
 
@@ -71,6 +72,7 @@ interface P {
 	logo: RootDBState["assets"]["schoolLogo"]
 	max_limit: RootDBState['max_limit']
 	user: MISTeacher
+	ilmxUser: string
 
 	save: (student: MISStudent) => any
 	delete: (student: MISStudent) => any
@@ -1030,7 +1032,8 @@ export default connect((state: RootReducerState) => ({
 	settings: state.db.settings,
 	logo: state.db.assets ? state.db.assets.schoolLogo || "" : "",
 	max_limit: state.db.max_limit || -1,
-	user: state.db.faculty[state.auth.faculty_id]
+	user: state.db.faculty[state.auth.faculty_id],
+	ilmxUser: getIlmxUser()
 }),
 	(dispatch: Function) => ({
 		uploadImage: (student: MISStudent, image_string: string) => dispatch(uploadStudentProfilePicture(student, image_string)),
