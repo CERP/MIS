@@ -825,7 +825,7 @@ class SingleStudent extends Component<propTypes, S> {
 						<Link to={`/families/${oldStudent.FamilyID}`} className="button purple">Family Profile</Link>
 					</div>}
 
-					{!prospective && <div className="row">
+					{!prospective && !this.props.ilmxUser && <div className="row">
 						<label>Family ID Code</label>
 						<datalist id="families">
 							{
@@ -1011,8 +1011,8 @@ class SingleStudent extends Component<propTypes, S> {
 						<div className="button green" style={{ width: "initial", marginLeft: "auto" }} onClick={this.addTag}>+</div>
 					</div>}
 
-					{!prospective && Object.keys(this.state.profile.certificates || {}).length > 0 && <div className="divider"> Certificates </div>}
-					{!prospective && <div>
+					{!prospective && !this.props.ilmxUser && Object.keys(this.state.profile.certificates || {}).length > 0 && <div className="divider"> Certificates </div>}
+					{!prospective && !this.props.ilmxUser && <div>
 						{
 							Object.entries(this.state.profile.certificates || {})
 								.map(([c_id, cert_info]) => {
