@@ -93,6 +93,7 @@ interface S {
 		[id: string]: boolean
 	}
 	show_hide_fee: boolean
+	toggleMoreInfo: boolean
 }
 
 interface RouteInfo {
@@ -128,7 +129,8 @@ class SingleStudent extends Component<propTypes, S> {
 			},
 			new_tag: "",
 			edit: {},
-			show_hide_fee: true
+			show_hide_fee: true,
+			toggleMoreInfo: false
 		}
 
 		this.former = new Former(this, ["profile"])
@@ -610,6 +612,10 @@ class SingleStudent extends Component<propTypes, S> {
 		})
 	}
 
+	toggleMoreInfo = () => {
+		this.setState({ toggleMoreInfo: !this.state.toggleMoreInfo })
+	}
+
 	render() {
 
 		if (this.state.redirect) {
@@ -627,6 +633,35 @@ class SingleStudent extends Component<propTypes, S> {
 
 		return <div className="single-student">
 			{this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
+			{this.isNew() && this.props.ilmxUser && !this.state.toggleMoreInfo && <div className="form">
+				<div className="divider">Personal Information</div>
+				<div className="row">
+					<label>Full Name</label>
+					<input type="text" {...this.former.super_handle_flex(["Name"], { styles: (val: string) => { return val === "" ? { borderColor: "#fc6171" } : {} } })} placeholder="Full Name" />
+				</div>
+				<div className="row">
+					<label>Password</label>
+					<input type="password" {...this.former.super_handle_flex(["Password"], { styles: (val: string) => { return val === "" ? { borderColor: "#fc6171" } : {} } })} placeholder="Password" />
+				</div>
+				<div className="row">
+					<label>Phone Number</label>
+					<input type="tel" {...this.former.super_handle(["Phone"], (num) => num.length <= 11)} placeholder="Phone Number" />
+				</div>
+				<div className="row">
+					<label>Admin Status</label>
+					<select {...this.former.super_handle(["Admin"])} disabled={!admin}>
+						<option value="true">Admin</option>
+						<option value="false">Not an Admin</option>
+					</select>
+				</div>
+			</div>
+			}
+
+			{
+				this.isNew() && this.props.ilmxUser && !this.state.toggleMoreInfo && <div className="section-container" style={{ marginTop: "1.25rem" }}>
+					<div className="button green" onClick={this.toggleMoreInfo}>{this.state.toggleMoreInfo ? "Show Less Fields" : "Show Additional Fields"}</div>
+				</div>
+			}
 			<div className="form no-print">
 				<div className="divider">Student Information</div>
 				<div className="row profile-picture-upload">
