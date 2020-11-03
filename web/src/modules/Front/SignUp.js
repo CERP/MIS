@@ -42,7 +42,7 @@ class SignUp extends Component {
 			redirect: false
 		}
 
-		this.former = new Former(this, [])
+		this.former = new former(this, [])
 	}
 
 	onSave = () => {
@@ -218,7 +218,7 @@ class SignUp extends Component {
 		}
 }
 export default connect(state => ({
-	sign_up_form: state.sign_up_form,
+	sign_up_form: state.sign_up_form
 }), dispatch => ({
 	createSignUp: (profile) => dispatch(createSignUp(profile)),
 }))(SignUp);
