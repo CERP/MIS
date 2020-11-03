@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import former from 'utils/former'
 import checkCompulsoryFields from 'utils/checkCompulsoryFields'
 import Banner from 'components/Banner'
 import { createSignUp } from 'actions'
@@ -8,7 +9,6 @@ import { Redirect } from 'react-router-dom'
 import { getDistricts } from 'constants/locations'
 import moment from 'moment'
 import toTitleCase from 'utils/toTitleCase'
-import Former from '@cerp/former';
 
 import './style.css'
 
@@ -42,7 +42,7 @@ class SignUp extends Component {
 			redirect: false
 		}
 
-		this.former = new Former(this, [] )
+		this.former = new Former(this, [])
 	}
 
 	onSave = () => {
