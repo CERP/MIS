@@ -46,11 +46,14 @@ class SignUp extends Component {
 	}
 
 	onSave = () => {
-
-		const compulsoryFields = checkCompulsoryFields(this.state.profile, [
-			["name"], ["phone"], ["referralSchoolName"]
-		]);
-
+		let compulsoryFields
+        this.state.profile.typeOfLogin === 'SCHOOL_REFERRAL' ?
+			compulsoryFields = checkCompulsoryFields(this.state.profile, [
+				["name"], ["phone"], ['referralSchoolName']
+			]):
+			compulsoryFields = checkCompulsoryFields(this.state.profile, [
+				["name"], ["phone"]
+			]);
 		if (compulsoryFields) {
 			const errorText = "Please Fill " + compulsoryFields + " !!!";
 
