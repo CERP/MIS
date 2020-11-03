@@ -195,24 +195,18 @@ class SignUp extends Component {
 						<option value="Free-Trial">Free-Trial</option>
 					</select>
 				</div>
-					{this.state.profile.typeOfLogin === 'SCHOOL_REFERRAL' && <div className="section form referrals">
+					{this.state.profile.typeOfLogin === 'SCHOOL_REFERRAL' && <>
 						<div className="divider"> Referral School Information </div>
-
 						<div className="row">
 							<label>School Name <Span /></label>
 							<input list="schl-list" {...this.former.super_handle(["profile", "referralSchoolName"])} placeholder="school name" />
-							<datalist id="schl-list">
-								{
-									this.props.schoolList && this.props.schoolList.map(s => <option key={s} value={s} />)
-								}
-							</datalist>
 						</div>
 
 						<div className="row">
 							<label>Owner Easy Paisa <Span /></label>
 							<input type="number" {...this.former.super_handle(["profile", "ownerEasypaisaNumber"])} placeholder="Easy Paisa" />
 						</div>
-					</div>}				
+					</>}				
 				<div className="button red" onClick={() => this.onSave()}> Create Signup</div>
 			</div>
 		}
