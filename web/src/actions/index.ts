@@ -455,6 +455,10 @@ export const saveFamilyInfo = (siblings: MISStudent[], info: MISFamilyInfo) => (
 			value: info.Phone
 		},
 		{
+			path: ["db", "students", s.id, "AlternatePhone"],
+			value: info.AlternatePhone
+		},
+		{
 			path: ["db", "students", s.id, "ManCNIC"],
 			value: info.ManCNIC
 		},
