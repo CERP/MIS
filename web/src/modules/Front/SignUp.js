@@ -157,9 +157,7 @@ class SignUp extends Component {
 				<select {...this.former.super_handle(["profile", "city"])}>
 					<option value="">Select District</option>
 					{
-						getDistricts().sort().map((dist) => {
-							return <option key={dist} value={dist}>{toTitleCase(dist)}</option>
-						})
+						getDistricts().sort().map(d => (<option key={d} value={d}>{toTitleCase(d)}</option>))
 					}
 				</select>
 			</div>
