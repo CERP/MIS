@@ -20,6 +20,7 @@ function emptyProfile() {
 		schoolName: "",
 		schoolPassword: "",
 		packageName: "Free-Trial",
+		
 		typeOfLogin: "",
 		referralSchoolName: "",
 		ownerEasypaisaNumber: ""

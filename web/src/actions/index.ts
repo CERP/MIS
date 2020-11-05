@@ -227,8 +227,13 @@ type Profile = {
 	name: string
 	phone: string
 	city: string
+	password: string
 	schoolName: string
-	packageName: "Free-Trial" | "Taleem-1" | "Taleem-2" | "Taleem-3"
+	packageName: "FREE_TRIAL" | "TALEEM1" | "TALEEM2" | "TALEEM3"
+
+	typeOfLogin: string
+	referralSchoolName: string
+	ownerEasypaisaNumber: string
 }
 
 export const createSignUp = (profile: Profile) => (dispatch: Function, getState: () => RootReducerState, syncr: Syncr) => {
@@ -238,13 +243,35 @@ export const createSignUp = (profile: Profile) => (dispatch: Function, getState:
 		type: SIGN_UP_LOADING
 	})
 
+	const  signup_obj = {
+		"signup": profile,
+		"referral": {
+			school_name: profile.schoolName,
+			city: profile.city,
+			office: profile.city,
+			user: "",
+         	notes: "",
+         	agent_name: "",
+         	owner_name: profile.name,
+			owner_phone: profile.phone,
+         	school_type: "",
+         	package_name: profile.packageName,
+         	type_of_login: profile.typeOfLogin,
+         	owner_other_job: "",
+         	association_name: "",     
+         	area_manager_name: "",
+         	computer_operator: "",
+         	owner_easypaisa_number: profile.ownerEasypaisaNumber,
+         	previous_software_name: "", 
+         	previous_management_system: ""
+		}
+	}
+
 	syncr.send({
 		type: "SIGN_UP",
 		client_type,
 		sign_up_id: v4(),
-		payload: {
-			...profile,
-		}
+		payload: signup_obj
 	})
 		.then(res => {
 			console.log(res)
