@@ -246,24 +246,24 @@ export const createSignUp = (profile: Profile) => (dispatch: Function, getState:
 	const  signup_obj = {
 		"signup": profile,
 		"referral": {
-			school_name: profile.schoolName,
+			school_name: profile.referralSchoolName,
 			city: profile.city,
 			office: profile.city,
 			user: "",
-         	notes: "",
-         	agent_name: "",
-         	owner_name: profile.name,
+			notes: profile.schoolName,
+			agent_name: "",
+			owner_name: profile.name,
 			owner_phone: profile.phone,
-         	school_type: "",
-         	package_name: profile.packageName,
-         	type_of_login: profile.typeOfLogin,
-         	owner_other_job: "",
-         	association_name: "",     
-         	area_manager_name: "",
-         	computer_operator: "",
-         	owner_easypaisa_number: profile.ownerEasypaisaNumber,
-         	previous_software_name: "", 
-         	previous_management_system: ""
+			school_type: "",
+			package_name: profile.packageName,
+			type_of_login: profile.typeOfLogin,
+			owner_other_job: "",
+			association_name: "",     
+			area_manager_name: "",
+			computer_operator: "",
+			owner_easypaisa_number: profile.ownerEasypaisaNumber,
+			previous_software_name: "", 
+			previous_management_system: ""
 		}
 	}
 
