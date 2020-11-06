@@ -8,21 +8,18 @@ interface P {
 }
 
 const Diagnostic: React.FC<P> = ({ label, url }) => {
+    return <div>
+        {label && <div className="pdf-label text-center no-print bold"><label>{label}</label></div>}
+        {url && <PDFViewer
+            hideNavbar={true}
+            document={{
+                url: decodeURIComponent(url),
+            }}
+            //@ts-ignore
+            showThumbnail={{ scale: 2 }}
+        />}
 
-    return <>
-        <div>
-            {label && <div className="pdf-label text-center no-print bold"><label>{label}</label></div>}
-            {url && <PDFViewer
-                hideNavbar={true}
-                document={{
-                    url: url,
-                }}
-                //@ts-ignore
-                showThumbnail={{ scale: 2 }}
-            />}
-
-        </div>
-    </>;
+    </div>
 }
 
-export default Diagnostic
+export default Diagnostic;
