@@ -19,7 +19,7 @@ function emptyProfile() {
 		city: "",
 		schoolName: "",
 		schoolPassword: "",
-		packageName: "Free-Trial",
+		packageName: "FREE_TRIAL",
 		
 		typeOfLogin: "",
 		referralSchoolName: "",
@@ -76,6 +76,7 @@ class SignUp extends Component {
 	}
 
 	checkNumberExistReason = (reason) => {
+		console.log(reason)
 		if (reason) {
 			return reason.includes(this.state.profile.phone) ?
 				this.state.profile.phone + " already exist. Please login or contact us at our helpline number" : reason
@@ -193,7 +194,7 @@ class SignUp extends Component {
 			<div className="row">
 				<label> Select Package </label>
 				<select style={{ marginTop: 5 }} {...this.former.super_handle(["profile", "packageName"])}>
-					<option value="Free-Trial">Free-Trial</option>
+					<option value="FREE_TRIAL">Free-Trial</option>
 				</select>
 			</div>
 			{this.state.profile.typeOfLogin === 'SCHOOL_REFERRAL' && <>
