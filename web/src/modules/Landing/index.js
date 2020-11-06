@@ -243,8 +243,9 @@ class Landing extends Component {
 
 	render() {
 
-		const { logout, user, students, faculty, lastSnapshot, unsyncd, package_info } = this.props;
 
+		const { logout, user, students, faculty, lastSnapshot, unsyncd, package_info, visible } = this.props;
+		
 		const current_page = Math.floor(this.state.scroll / window.innerWidth)
 
 		const today_date = moment().format("YYYY-MM-DD");
@@ -448,23 +449,27 @@ class Landing extends Component {
 									<Link to="/analytics/fees" className="button purple-shadow" style={{ backgroundImage: `url(${analyticsIcon})` }}>Analytics</Link>
 									: false
 							}
-
-								<Link
-									className="button yellow-shadow"
-									to="/targeted-instruction/test"
-									style={{ backgroundImage: `url(${test})` }}>
-									Tests
-								</Link>
-							{/* {
+								
+							{
 								(user.Admin || teacher_expense_permission) && <div className="badge-container">
 									<Link
 										className="button yellow-shadow"
 										to="/expenses/general"
 										style={{ backgroundImage: `url(${expense})` }}>
 										Expenses
-								</Link>
+									</Link>
 								</div>
-							} */}
+							}
+						</div>
+						<div className="row">
+							{
+								visible && <Link
+									className="button yellow-shadow"
+									to="/targeted-instruction/test"
+									style={{ backgroundImage: `url(${test})` }}>
+									Tests
+								</Link>
+							}
 						</div>
 					</div>
 
@@ -574,7 +579,8 @@ export default connect(state => ({
 	school_id: state.auth.school_id,
 	auth: state.auth,
 	client_id: state.client_id,
-	ilmxUser: getIlmxUser()
+	ilmxUser: getIlmxUser(),
+	visible: state.db.targeted_instruction.visible
 }), dispatch => ({
 	resetTrial: () => dispatch(resetTrial()),
 	markPurchased: () => dispatch(markPurchased()),

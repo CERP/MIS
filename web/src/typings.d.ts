@@ -55,6 +55,7 @@ interface RootDBState {
 		}
 	}
 	targeted_instruction: {
+		visible: boolean
 		tests: Tests
 	    slo_mapping: SLOMapping
 	}

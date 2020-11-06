@@ -50,6 +50,7 @@ const initState: RootReducerState = {
 			lessons: {}
 		},
 		targeted_instruction: {
+			visible: false,
 			tests: {},
 			slo_mapping: {}
 		}
