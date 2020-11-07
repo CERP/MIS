@@ -213,9 +213,10 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 		let total_income = 0;
 		let total_expense = 0;
 
-		const { students, expenses } = this.props
+		const { expenses } = this.props
 
-		const student_list = Object.values(students)
+		const student_list = this.filterPropsStudents()
+
 		const expense_list = Object.values(expenses)
 
 		const s_length = student_list.length
@@ -302,6 +303,11 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 		}
 
 		this.background_calculation = setTimeout(reducify, 0)
+	}
+
+	filterPropsStudents = () => {
+		return Object.values(this.props.students)
+			.filter(student => student && student.id && student.Name && student.Active && student.section_id)
 	}
 
 	render() {

@@ -5,10 +5,12 @@ import Banner from 'components/Banner'
 import { createSignUp } from 'actions'
 import { connect } from 'react-redux'
 import { getStrategies } from 'constants/generic'
+import { Redirect } from 'react-router-dom'
+import { getDistricts } from 'constants/locations'
+import moment from 'moment'
+import toTitleCase from 'utils/toTitleCase'
 
 import './style.css'
-import moment from 'moment'
-
 
 function emptyProfile() {
 	return {
@@ -17,8 +19,11 @@ function emptyProfile() {
 		city: "",
 		schoolName: "",
 		schoolPassword: "",
-		packageName: "Free-Trial",
-		typeOfLogin: ""
+		packageName: "FREE_TRIAL",
+		
+		typeOfLogin: "",
+		referralSchoolName: "",
+		ownerEasypaisaNumber: ""
 	}
 }
 
@@ -34,20 +39,24 @@ class SignUp extends Component {
 				good: true,
 				text: "Saved!"
 			},
-			otherLogin: ''
+			otherLogin: '',
+			redirect: false
 		}
 
 		this.former = new former(this, [])
 	}
 
 	onSave = () => {
-
-		const compulsoryFields = checkCompulsoryFields(this.state.profile, [
-			["name"], ["phone"]
-		]);
+		const compulsoryFields = this.state.profile.typeOfLogin === 'SCHOOL_REFERRAL' ?
+			checkCompulsoryFields(this.state.profile, [
+				["name"], ["phone"], ['referralSchoolName']
+			]) :
+			checkCompulsoryFields(this.state.profile, [
+				["name"], ["phone"]
+			])
 
 		if (compulsoryFields) {
-			const errorText = "Please Fill " + compulsoryFields + " !!!";
+			const errorText = "Please Fill " + compulsoryFields + " !";
 
 			return this.setState({
 				banner: {
@@ -67,8 +76,13 @@ class SignUp extends Component {
 	}
 
 	checkNumberExistReason = (reason) => {
-		return reason.includes(this.state.profile.phone) ?
-			this.state.profile.phone + " already exist. Please login or contact at our helpline" : reason
+		console.log(reason)
+		if (reason) {
+			return reason.includes(this.state.profile.phone) ?
+				this.state.profile.phone + " already exist. Please login or contact us at our helpline number" : reason
+		}
+
+		return "Please contact us at out helpline number"
 	}
 
 	UNSAFE_componentWillReceiveProps(props) {
@@ -109,83 +123,100 @@ class SignUp extends Component {
 				banner: {
 					active: true,
 					good: true,
-					text: "Your account has been created. Please visit login page to use MISchool."
+					text: "Your account has been created."
 				}
 			})
 
 			setTimeout(() => {
 				this.setState({
-					profile: emptyProfile(),
 					banner: {
 						active: false,
 						good: true,
 					},
-					otherLogin: ''
+					redirect: true
 				})
-			}, 3000)
+			}, 2000)
 		}
 	}
 
 	render() {
 
-		return (
-			<div className="section-container section card sign-up">
-				{ this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
-				<div className="row">
-					<label> Name </label>
-					<input type="text" {...this.former.super_handle(["profile", "name"])}></input>
-				</div>
-				<div className="row">
-					<label> Phone </label>
-					<input type="text" {...this.former.super_handle(["profile", "phone"])}></input>
-				</div>
-				<div className="row">
-					<label> City/District </label>
-					<input type="text" {...this.former.super_handle(["profile", "city"])}></input>
-				</div>
-				<div className="row">
-					<label> School Name </label>
-					<input type="text" {...this.former.super_handle(["profile", "schoolName"])}></input>
-				</div>
-				<div className="row">
-					<label> School Password </label>
-					<input type="password" {...this.former.super_handle(["profile", "schoolPassword"])}></input>
-				</div>
-				<div className="row">
-					<label>Strategy</label>
-					<select {...this.former.super_handle(["profile", "typeOfLogin"])}>
-						<option value="">Select Strategy</option>
-						{
-							[...getStrategies()]
-								.sort()
-								.map(strategy => {
-									const str = strategy.replace(' ', "_").toUpperCase()
-									return <option key={str} value={str}>{strategy}</option>
-								})
-						}
-					</select>
-				</div>
-				{ this.state.profile.typeOfLogin === 'OTHER' &&
-					<div className="row">
-						<label> Other </label>
-						<input type="text" {...this.former.super_handle(["otherLogin"])}></input>
-					</div>
-				}
-				<div className="row">
-					<label> Select Package </label>
-					<select style={{ marginTop: 5 }} {...this.former.super_handle(["profile", "packageName"])}>
-						<option value="Free-Trial">Free-Trial</option>
-					</select>
-				</div>
-
-				<div className="button red" onClick={() => this.onSave()}> Submit</div>
-
+		if (this.state.redirect) {
+			return <Redirect to="/school-login" />
+		}
+		return <div className="section-container section card sign-up">
+			{this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
+			<div className="row">
+				<label> Name<Span /> </label>
+				<input type="text" {...this.former.super_handle(["profile", "name"])} placeholder='Enter full-name'></input>
 			</div>
-		)
+			<div className="row">
+				<label> Mobile # (School Id)<Span /></label>
+				<input type="text" {...this.former.super_handle(["profile", "phone"])} placeholder='Enter mobile # e.g 0301xxxxxxx'></input>
+			</div>
+			<div className="row">
+				<label> City/District<Span /></label>
+				<select {...this.former.super_handle(["profile", "city"])}>
+					<option value="">Select District</option>
+					{
+						getDistricts().sort().map(d => (<option key={d} value={d}>{toTitleCase(d)}</option>))
+					}
+				</select>
+			</div>
+			<div className="row">
+				<label> School Name<Span /></label>
+				<input type="text" {...this.former.super_handle(["profile", "schoolName"])} placeholder='Enter school-name'></input>
+			</div>
+			<div className="row">
+				<label> School Password<Span /></label>
+				<input type="password" {...this.former.super_handle(["profile", "schoolPassword"])} placeholder='Enter password'></input>
+			</div>
+			<div className="row">
+				<label>How did you hear about MISchool?</label>
+				<select {...this.former.super_handle(["profile", "typeOfLogin"])}>
+					<option value="">Select Strategy</option>
+					{
+						[...getStrategies()]
+							.sort()
+							.map(strategy => {
+								const str = strategy.replace(' ', "_").toUpperCase()
+								return <option key={str} value={str}>{strategy}</option>
+							})
+					}
+				</select>
+			</div>
+			{this.state.profile.typeOfLogin === 'OTHER' &&
+				<div className="row">
+					<label> Other </label>
+					<input type="text" {...this.former.super_handle(["otherLogin"])} placeholder="e.g. internet"></input>
+				</div>
+			}
+			<div className="row">
+				<label> Select Package </label>
+				<select style={{ marginTop: 5 }} {...this.former.super_handle(["profile", "packageName"])}>
+					<option value="FREE_TRIAL">Free-Trial</option>
+				</select>
+			</div>
+			{this.state.profile.typeOfLogin === 'SCHOOL_REFERRAL' && <>
+				<div className="divider"> Referral School Information </div>
+				<div className="row">
+					<label>School Name<Span /></label>
+					<input list="schl-list" {...this.former.super_handle(["profile", "referralSchoolName"])} placeholder="school name" />
+				</div>
+
+				<div className="row">
+					<label>Owner Easy Paisa<Span /></label>
+					<input type="number" {...this.former.super_handle(["profile", "ownerEasypaisaNumber"])} placeholder="Easy Paisa" />
+				</div>
+			</>}
+			<div className="button red" onClick={() => this.onSave()}> Create Signup</div>
+		</div>
 	}
 }
 export default connect(state => ({
 	sign_up_form: state.sign_up_form
 }), dispatch => ({
 	createSignUp: (profile) => dispatch(createSignUp(profile)),
-}))(SignUp);
+}))(SignUp)
+
+const Span = () => <span style={{ color: "var(mis-primary)" }}>*</span>

@@ -10,9 +10,10 @@ import Banner from 'components/Banner';
 import chunkify from 'utils/chunkify';
 import { GeneralExpensePrintableList } from 'components/Printable/Expense/General/list';
 import { ExpenseCategories } from 'constants/expense'
+import months from 'constants/months'
+import toTitleCase from 'utils/toTitleCase'
 
-import '../style.css';
-import months from 'constants/months';
+import '../style.css'
 
 interface P {
 	teachers: RootDBState["faculty"]
@@ -238,7 +239,7 @@ class Expenses extends Component<propTypes, S> {
 			return
 		}
 
-		this.props.addExpense(amount, payment.label, "PAYMENT_GIVEN", payment.category, quantity, payment.date)
+		this.props.addExpense(amount, payment.label, "PAYMENT_GIVEN", payment.category.toUpperCase(), quantity, payment.date)
 
 		this.setState({
 			banner: {
@@ -362,11 +363,11 @@ class Expenses extends Component<propTypes, S> {
 
 		for (const e of Object.values(expenses)) {
 			Years.add(moment(e.date).format("YYYY"))
-			Categories.add(e.category)
+			Categories.add(e.category.trim().toUpperCase())
 		}
 
 		for (const [key,] of Object.entries(ExpenseCategories)) {
-			Categories.add(key)
+			Categories.add(key.trim())
 		}
 
 		let total_filtered_expense = 0
@@ -410,6 +411,7 @@ class Expenses extends Component<propTypes, S> {
 							return <option key={month} value={month}>{month}</option>
 						})
 					}
+
 				</select>
 
 				<select {...this.former.super_handle(["yearFilter"])}>
@@ -425,7 +427,8 @@ class Expenses extends Component<propTypes, S> {
 					<option value="">Select Category</option>
 					{
 						[...Categories]
-							.map((category: string) => <option value={category} key={category}>{category}</option>)
+							.sort((a, b) => a.localeCompare(b))
+							.map((category: string) => <option value={category} key={category}>{toTitleCase(category)}</option>)
 					}
 				</select>
 			</div>
@@ -446,7 +449,7 @@ class Expenses extends Component<propTypes, S> {
 								return <div key={id} className={expense.type === "PAYMENT_DUE" ? "table row no-print" : "table row"}>
 									<label> {moment(expense.date).format("DD-MM-YY")} </label>
 									<label> {expense.label}</label>
-									<label> {expense.category}</label>
+									<label> {toTitleCase(expense.category)}</label>
 									<label> - </label>
 									<label> {expense.deduction}{expense.deduction_reason ? `(${expense.deduction_reason})` : ""} </label>
 									{this.state.edits[id] !== undefined ? (<div className="row edit">
@@ -459,7 +462,7 @@ class Expenses extends Component<propTypes, S> {
 								return <div key={id} className="table row">
 									<label> {moment(expense.date).format("DD-MM-YY")} </label>
 									<label> {expense.label}</label>
-									<label> {expense.category}</label>
+									<label> {toTitleCase(expense.category)}</label>
 									<label> {expense.quantity} </label>
 									<label> {`-`} </label>
 									{
@@ -498,7 +501,8 @@ class Expenses extends Component<propTypes, S> {
 						<datalist id="expense-categories">
 							{
 								[...Categories]
-									.map((category: string) => <option value={category} key={category}>{category}</option>)
+									.sort((a, b) => a.localeCompare(b))
+									.map((category: string) => <option value={category} key={category}>{toTitleCase(category)}</option>)
 							}
 						</datalist>
 						<input list="expense-categories" {...this.former.super_handle(["payment", "category"])} />

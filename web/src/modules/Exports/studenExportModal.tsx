@@ -32,6 +32,7 @@ type PropsType = {
 const StudentExportModal: React.FC<PropsType> = ({ students, classes, onClose }) => {
 
 	const [sectionID, setSectionID] = useState("")
+	const [active, setActive] = useState(true)
 	const sections = useMemo(
 		() => getSectionsFromClasses(classes),
 		[classes]
@@ -45,26 +46,29 @@ const StudentExportModal: React.FC<PropsType> = ({ students, classes, onClose })
 
 		const csv_data = Object.values(students)
 			.filter(student => {
-				return sectionID ? sectionID === student.section_id : true
+				return student && student.Name && active === student.Active && (sectionID ? sectionID === student.section_id : true)
 			})
 			.reduce((agg, curr) => {
+
+				const dob = moment(curr.Birthdate).format("DD/MM/YYYY")
+
 				return [
 					...agg,
 					{
 						Name: curr.Name,
-						BForm: curr.BForm,
-						Gender: curr.Gender,
-						Phone: curr.Phone,
-						AlternatePhone: curr.AlternatePhone,
+						BForm: curr.BForm || '',
+						Gender: curr.Gender || '',
+						Phone: curr.Phone || '',
+						AlternatePhone: curr.AlternatePhone || '',
 						Active: curr.Active ? "Yes" : "No",
-						FatherName: curr.ManName,
-						FatherCNIC: curr.ManCNIC,
-						Birthdate: curr.Birthdate,
-						Address: curr.Address,
-						StartDate: moment(curr.StartDate).format("DD/MM/YYYY"),
-						AdmissionNumber: curr.AdmissionNumber,
-						BloodType: curr.BloodType,
-						Religion: curr.Religion
+						FatherName: curr.ManName || '',
+						FatherCNIC: curr.ManCNIC || '',
+						Birthdate: dob.toLowerCase() !== "invalid date" ? dob : '',
+						Address: curr.Address ? curr.Address.split(",").join("-").split("#").join(" no. ") : '',
+						StartDate: moment(curr.StartDate).format("DD/MM/YYYY") || '',
+						AdmissionNumber: curr.AdmissionNumber || '',
+						BloodType: curr.BloodType || '',
+						Religion: curr.Religion || ''
 					}
 				]
 			}, [])
@@ -89,8 +93,11 @@ const StudentExportModal: React.FC<PropsType> = ({ students, classes, onClose })
 						}
 					</select>
 				</div>
-				<div className="row">
-					<label></label>
+				<div className="row" style={{ alignItems: 'center' }}>
+					<div className="row" style={{ alignItems: 'center' }}>
+						<input type="checkbox" onChange={(e) => setActive(e.target.checked)} defaultChecked={active}></input>
+						<label>Only Active</label>
+					</div>
 					<div className="button blue" onClick={generateCSV}>Export as CSV</div>
 				</div>
 			</div>

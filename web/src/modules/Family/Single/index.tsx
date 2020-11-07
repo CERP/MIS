@@ -20,13 +20,8 @@ interface RouteInfo {
 	id: string
 }
 
-interface S {
-	Phone: string
-	AlternatePhone?: string
-	ManName: string
-	ManCNIC: string
-	Address: string
-}
+type S = MISFamilyInfo
+
 
 class SingleFamily extends React.Component<P, S> {
 
@@ -109,7 +104,7 @@ class SingleFamily extends React.Component<P, S> {
 							{...this.former.super_handle(
 								["ManCNIC"],
 								(num) => num.length <= 15,
-								this.addHyphens(["profile", "ManCNIC"]))
+								this.addHyphens(["ManCNIC"]))
 							}
 							placeholder="Father CNIC" />
 					</div>

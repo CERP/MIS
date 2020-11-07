@@ -260,6 +260,7 @@ interface MISFamilyInfo {
 	Phone: string
 	ManCNIC: string
 	Address?: string
+	AlternatePhone?: string
 	children?: AugmentedSibling[]
 }
 
@@ -368,9 +369,9 @@ interface MISTeacher {
 	tags: { [tag: string]: boolean }
 	attendance: MISTeacherAttendance
 	permissions: {
-		fee: boolean 
+		fee: boolean
 		dailyStats: boolean
-		setupPage: boolean 
+		setupPage: boolean
 		expense: boolean
 		family: boolean
 		prospective: boolean
@@ -432,7 +433,7 @@ interface ExamFilter {
 	subject?: string
 	exam_title: string
 }
-type AugmentedStudent = { 
+type AugmentedStudent = {
 	section?: AugmentedSection
 	forwardTo?: string
 } & MISStudent
@@ -445,7 +446,7 @@ type AugmentedStudent = {
 
 type MISGrades = RootDBState["settings"]["exams"]["grades"]
 
-interface MISPackage  {
+interface MISPackage {
 	date: number
 	trial_period: number
 	paid: boolean

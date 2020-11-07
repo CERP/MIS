@@ -8,9 +8,11 @@ import Banner from 'components/Banner';
 import chunkify from 'utils/chunkify';
 import { IncomeExpenditurePrintableList } from 'components/Printable/Expense/Other/list';
 import { ProgressBar } from 'components/ProgressBar';
+import months from 'constants/months';
+import toTitleCase from 'utils/toTitleCase';
 
 import '../style.css';
-import months from 'constants/months';
+
 
 interface P {
 	teachers: RootDBState["faculty"]
@@ -105,6 +107,12 @@ class IncomeExpenditure extends Component<propTypes, S> {
 			return moment(payment.date).format("MMMM") === month && moment(payment.date).format("YYYY") === year;
 		}
 	}
+
+	filterPropsStudents = () => {
+		return Object.values(this.props.students)
+			.filter(student => student && student.id && student.Name && student.Active && student.section_id)
+	}
+
 	calculate = () => {
 
 		let i = 0;
@@ -121,10 +129,10 @@ class IncomeExpenditure extends Component<propTypes, S> {
 		let total_income = 0;
 		let total_expense = 0;;
 
-		const { students, expenses } = this.props
+		const { expenses } = this.props
 		const { monthFilter, yearFilter } = this.state
 
-		const student_list = Object.values(students)
+		const student_list = this.filterPropsStudents()
 		const expense_list = Object.values(expenses)
 
 		const Years = new Set([])
@@ -283,7 +291,7 @@ class IncomeExpenditure extends Component<propTypes, S> {
 							return <div key={id} className="table row">
 								<label> {moment(expense.date).format(viewBy === "DAILY" ? "DD-MM-YY" : "MM-YYYY")} </label>
 								<label> {expense.label} </label>
-								<label> {expense.category} </label>
+								<label> {toTitleCase(expense.category)}</label>
 								<label> {expense.quantity === 1 ? `${expense.quantity} Entry` : `${expense.quantity} Entries`}</label>
 								<label> {expense.amount} </label>
 							</div>
