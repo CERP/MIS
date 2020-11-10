@@ -57,7 +57,22 @@ interface RootDBState {
 	targeted_instruction: {
 		visible: boolean
 		tests: Tests
-	    slo_mapping: SLOMapping
+		slo_mapping: SLOMapping
+		curriculam: Curriculam
+	}
+}
+
+interface Curriculam {
+	[learning_level: string]: LearningLevels
+}
+
+interface LearningLevels {
+	[lesson_id: string]: {
+		lesson_number: number
+		name: string 
+		description: string 
+		video_links: string[]
+		pdf_links: string
 	}
 }
 
@@ -299,6 +314,12 @@ interface MISStudent {
 		[id: string]: MISCertificate
 	}
 	diagnostic_result: DiagnosticResult
+	learning_levels: {
+		[learning_level_id: string]: { 
+			test_id: string 
+			date_assigned: string 
+		}
+	 }
 }
 
 type Report = {
