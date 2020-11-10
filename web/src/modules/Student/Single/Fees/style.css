@@ -63,11 +63,9 @@
 		width: 100%;
 	}
 	.payment-history.section .row.info * {
-		font-size: 0.75rem;
+		font-size: 0.70rem;
 	}
-	.payment-history.section .row.info label {
-		font-weight: bold;
-	}
+	
 	.payment-history {
 		margin: 10px 10px;
 	}
