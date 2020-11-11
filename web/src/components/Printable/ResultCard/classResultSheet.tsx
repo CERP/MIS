@@ -20,6 +20,10 @@ export const ClassResultSheet = (props: PropsTypes) => {
 	const widthForSubjectName = 70 / Object.keys(props.relevant_exams).length
 	const formatMarks = (marks_obtained: number): string => {
 		// if a number is decimal, fix it to only 2 decimal positions
+
+		if (marks_obtained === 0)
+			return ""
+
 		return Number.isInteger(marks_obtained) ? marks_obtained.toString() : marks_obtained.toFixed(2)
 	}
 
@@ -53,7 +57,7 @@ export const ClassResultSheet = (props: PropsTypes) => {
 					{
 						props.students
 							.map((student: StudentMarksSheet, index) => {
-								return <tr key={index}>
+								return <tr key={index + student.id}>
 									<td>{student.rollNo || ''}</td>
 									<td>{toTitleCase(student.name)}</td>
 									{
@@ -65,7 +69,7 @@ export const ClassResultSheet = (props: PropsTypes) => {
 													return <td key={exam.id} className="cell-center">-</td>
 												}
 
-												return <td key={aug_exam.id} className="cell-center"> {aug_exam.stats.score || 0} </td>
+												return <td key={aug_exam.id} className="cell-center"> {aug_exam.stats.score} </td>
 											})
 									}
 									<td className="cell-center">{`${formatMarks(student.marks.obtained)}/${student.marks.total}`}</td>
