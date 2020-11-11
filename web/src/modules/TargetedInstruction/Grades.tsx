@@ -88,15 +88,15 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, students, saveRe
                     <div className="text-center">
                         <label className="title capitalize" >{testId}</label>
                     </div>
-                    <div className="flex-view">
-                        <div className="table-header capitalize text-left bold">Question Title</div>
-                        <div className="table-header capitalize bold">Correct Answers</div>
-                        <div className="table-header capitalize bold">Answers</div>
+                    <div className="flex-view capitalize bold heading-font">
+                        <div className="table-header text-left">Question Title</div>
+                        <div className="table-header">Correct Answers</div>
+                        <div className="table-header">Answers</div>
                     </div>
                     {
                         Object.keys(state.questionsArr).map(function (key) {
                             return <div key={key} className="form">
-                                <div className="flex-view">
+                                <div className="flex-view text-font">
                                     <div className="capitalize text-left">{key}</div>
                                     <div className="capitalize">{(state.questionsArr[key].correctAnswer)}</div>
                                     <label className="switch">

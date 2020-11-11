@@ -154,6 +154,8 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_
                         highlightOnHover={true}
                         responsive={true}
                         striped={true}
+                        paginationPerPage={45}
+                        paginationRowsPerPageOptions={[45, 65, 85, 105, 125]}
                         onRowClicked={getStudentId}
                     />
                     <div className="send-btn-div">

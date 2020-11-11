@@ -101,6 +101,12 @@ input:checked + .toggleSlider:before {
     .mobile-mode {
         width: 100%;
     }
+    .heading-font {
+        font-size: 14px;
+    }
+    .text-font {
+        font-size: 12px;
+    }
     /* toggle button */
     .switch {
         position: relative;
