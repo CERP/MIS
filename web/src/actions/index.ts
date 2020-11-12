@@ -2,8 +2,12 @@ import { hash } from 'utils'
 import { createMerges, createDeletes, createLoginFail, analyticsEvent, uploadImages } from './core'
 import moment from 'moment'
 import { v4 } from "node-uuid"
-import Syncr from '@cerp/syncr';
-import { historicalPayment } from 'modules/Settings/HistoricalFees/historical-fee';
+import Syncr from '@cerp/syncr'
+import { Dispatch } from 'redux'
+
+import { historicalPayment } from 'modules/Settings/HistoricalFees/historical-fee'
+import { AppActionTypes } from 'constants/index'
+import { AppService } from 'services'
 
 const client_type = "mis";
 
@@ -243,7 +247,7 @@ export const createSignUp = (profile: Profile) => (dispatch: Function, getState:
 		type: SIGN_UP_LOADING
 	})
 
-	const  signup_obj = {
+	const signup_obj = {
 		"signup": profile,
 		"referral": {
 			school_name: profile.referralSchoolName,
@@ -258,11 +262,11 @@ export const createSignUp = (profile: Profile) => (dispatch: Function, getState:
 			package_name: profile.packageName,
 			type_of_login: profile.typeOfLogin,
 			owner_other_job: "",
-			association_name: "",     
+			association_name: "",
 			area_manager_name: "",
 			computer_operator: "",
 			owner_easypaisa_number: profile.ownerEasypaisaNumber,
-			previous_software_name: "", 
+			previous_software_name: "",
 			previous_management_system: ""
 		}
 	}
@@ -1063,4 +1067,22 @@ export const deletePayment = (student_id: string, payment_id: string) => (dispat
 			path: ["db", "students", student_id, "payments", payment_id]
 		}
 	]))
-} 
+}
+
+export const getServerTime = () => (dispatch: Dispatch) => {
+
+	dispatch({ type: AppActionTypes.SERVER_TIME_REQUEST })
+
+	AppService.getServerTime()
+		.then(resp => {
+
+			// big question when and from where to dispatch this action
+			// find the client and server time diff
+			// set some flag or time diff in hour
+
+			dispatch({ type: AppActionTypes.SERVER_TIME_SUCCESS, data: resp })
+		}, error => {
+			console.log("Server Error", error)
+			dispatch({ type: AppActionTypes.SERVER_TIME_FAILURE })
+		})
+}

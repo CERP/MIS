@@ -4,14 +4,14 @@
  * @param time
 */
 
-export const getTimeString = (time: number): string => {
-	
+const getTimeString = (time: number): string => {
+
 	// using tilde(~) instead of Math.floor()
 
 	const hrs = ~~(time / 3600)
 	const mins = ~~((time % 3600) / 60)
 	const secs = ~~time % 60
-	
+
 	let ret = ""
 	if (hrs > 0) {
 		ret = "" + hrs + "h:" + (mins < 10 ? "0" : "")
@@ -23,23 +23,44 @@ export const getTimeString = (time: number): string => {
 }
 
 /**
+ * description: utility to get the UTC time in milliseconds
+ * @param 
+ * @return big integer
+*/
+
+const getUTCMilliseconds = () => {
+	const d = new Date()
+	return d.getTime() + d.getTimezoneOffset() * 60 * 1000
+}
+
+/**
  *  description: Make position of <body> fixed to hide scroll on modal popup
  * 	There are numbers of ways to achieve this but I'm using simple approach
  */
- export const hideScroll = (): void => {
+const hideScroll = (): void => {
 	document.body.style.position = 'fixed'
- }
- export const showScroll = (): void => {
-	 document.body.style.position = ''
- }
- 
- /**
-  *  check it's mobile device or not
-  */
-export const isMobile = () => {
-	 return /Mobi|Android/i.test(navigator.userAgent)
+}
+const showScroll = (): void => {
+	document.body.style.position = ''
 }
 
-export const getIlmxUser = (): string => {
+/**
+ *  check it's mobile device or not
+ */
+const isMobile = () => {
+	return /Mobi|Android/i.test(navigator.userAgent)
+}
+
+const getIlmxUser = (): string => {
 	return localStorage.getItem("user")
+}
+
+
+export {
+	getTimeString,
+	getUTCMilliseconds,
+	getIlmxUser,
+	isMobile,
+	hideScroll,
+	showScroll
 }
