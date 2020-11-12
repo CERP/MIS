@@ -14,18 +14,29 @@ const getRequestOptions = (): RequestInit => {
 
 	return {
 		method: 'GET',
-		headers: {},
-		mode: 'no-cors'
+		headers: {
+			'Content-Type': 'application/json'
+		}
 	}
 }
 
 const handleResponse = (response: Response): any | Promise<any> => {
-	return response.json().then((resp: any) => {
+	return response.text().then((text: string) => {
+
+		let json_resp = {} as any
+
+		try {
+			json_resp = JSON.parse(text)
+		} catch (err) {
+			console.log(text)
+		}
+
 		if (!response.ok) {
-			const error = (resp && resp.message) || response.statusText || 'fetch error'
+			const error = (json_resp && json_resp.message) || text || response.statusText || 'fetch-error'
 			return Promise.reject(error)
 		}
-		return resp
+
+		return json_resp
 	})
 }
 

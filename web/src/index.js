@@ -11,18 +11,16 @@ import Routes from './routes'
 import { saveDb, initState } from './utils/indexedDb'
 import debounce from 'utils/debounce'
 import { loadDB, connected, disconnected, processImageQueue } from './actions/core'
+import { getOriginWSS } from 'helpers'
 
 import './index.css';
 import './styles/main.css'
 
-// window.debug_host = '936d43b537a4.ngrok.io';
-window.debug_host = 'mis-socket.metal.fish'
+const initialState = initState
 
-const host = window.api_url || window.debug_host;
+const host = getOriginWSS()
 
-const initialState = initState // loadDB();
-
-const syncr = new Syncr(`wss://${host}/ws`)
+const syncr = new Syncr(host)
 syncr.on('connect', () => store.dispatch(connected()))
 syncr.on('disconnect', () => store.dispatch(disconnected()))
 syncr.on('message', (msg) => store.dispatch(msg))

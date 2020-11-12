@@ -1,6 +1,12 @@
 //@ts-ignore
-const hostOrigin = window.api_url || "mis-socket.metal.fish"
+const hostOrigin = window.api_url || "be96031fde33.ngrok.io"
 
-export const getOriginWSS = (): string => "wss://" + hostOrigin + "/ws"
+const getOriginWSS = (): string => "wss://" + hostOrigin + "/ws"
 
-export const getOriginHttps = (): string => "https://" + hostOrigin
+const getOriginHttps = (): string => "https://" + hostOrigin
+
+export {
+	hostOrigin,
+	getOriginHttps,
+	getOriginWSS
+}
