@@ -63,6 +63,7 @@ export const initState: RootReducerState = {
 		loading: false
 	},
 	connected: false,
+	is_correct_device_time: true,
 	sign_up_form: {
 		loading: false,
 		succeed: false,

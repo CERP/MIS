@@ -28,10 +28,6 @@ const getTimeString = (time: number): string => {
  * @return big integer
 */
 
-const getUTCMilliseconds = () => {
-	const d = new Date()
-	return d.getTime() + d.getTimezoneOffset() * 60 * 1000
-}
 
 /**
  *  description: Make position of <body> fixed to hide scroll on modal popup
@@ -58,7 +54,6 @@ const getIlmxUser = (): string => {
 
 export {
 	getTimeString,
-	getUTCMilliseconds,
 	getIlmxUser,
 	isMobile,
 	hideScroll,

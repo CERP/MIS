@@ -1,5 +1,5 @@
 import Dynamic from '@cerp/dynamic'
-import { 
+import {
 	MERGES,
 	DELETES,
 	CONFIRM_SYNC_DIFF,
@@ -12,7 +12,7 @@ import {
 	ConfirmSyncAction,
 	SnapshotDiffAction,
 	ConfirmAnalyticsSyncAction,
-	QueueAction, 
+	QueueAction,
 	ImageUploadConfirmation,
 	IMAGE_QUEUE_LOCK,
 	IMAGE_QUEUE_UNLOCK,
@@ -31,6 +31,7 @@ import {
 } from 'actions'
 
 import { AnyAction } from 'redux'
+import { AppActionTypes } from 'constants/index'
 
 const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerState => {
 
@@ -431,7 +432,7 @@ const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerSta
 			ilmxLessons: { isLoading: true, hasError: false }
 		}
 		case GET_LESSONS_FAILURE: return {
-			...state, 
+			...state,
 			ilmxLessons: { isLoading: false, hasError: true }
 		}
 		case GET_LESSONS_SUCCESS: return {
@@ -445,6 +446,21 @@ const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerSta
 			},
 			ilmxLessons: { isLoading: false, hasError: false }
 		}
+
+		case AppActionTypes.SERVER_TIME_SUCCESS:
+			{
+				const client_time = new Date().getTime()
+				const { os_time } = action.data
+
+				const diff = Math.abs(client_time - os_time)
+
+				const threshold = 1 * 60 * 60 * 1000
+
+				return {
+					...state,
+					is_correct_device_time: diff < threshold
+				}
+			}
 
 		default:
 			return state;

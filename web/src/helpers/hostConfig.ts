@@ -1,5 +1,5 @@
 //@ts-ignore
-const hostOrigin = window.api_url || "be96031fde33.ngrok.io"
+const hostOrigin = window.api_url || "dc5aca5d2803.ngrok.io"
 
 const getOriginWSS = (): string => "wss://" + hostOrigin + "/ws"
 

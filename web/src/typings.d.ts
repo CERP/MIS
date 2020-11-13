@@ -111,6 +111,7 @@ interface RootReducerState {
 		loading: boolean
 	}
 	connected: boolean
+	is_correct_device_time: boolean
 	sign_up_form: {
 		loading: boolean
 		succeed: boolean

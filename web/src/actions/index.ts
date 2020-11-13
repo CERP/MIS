@@ -1075,11 +1075,6 @@ export const getServerTime = () => (dispatch: Dispatch) => {
 
 	AppService.getServerTime()
 		.then(resp => {
-
-			// big question when and from where to dispatch this action
-			// find the client and server time diff
-			// set some flag or time diff in hour
-
 			dispatch({ type: AppActionTypes.SERVER_TIME_SUCCESS, data: resp })
 		}, error => {
 			console.log("Server Error", error)
