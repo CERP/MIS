@@ -9,10 +9,10 @@ interface P {
 	start_date: number
 	end_date: number
 	diary: RootReducerState["stats"]["diary"]
-	getEndPointResource: ( point: string, school_id: string, start_date: number, end_date: number ) => any
+	getEndPointResource: (point: string, school_id: string, start_date: number, end_date: number) => any
 }
 
-interface S {}
+interface S { }
 
 class Diary extends React.Component<P, S> {
 
@@ -24,11 +24,11 @@ class Diary extends React.Component<P, S> {
 
 	componentDidMount() {
 
-		const {school_id, start_date, end_date } = this.props
+		const { school_id, start_date, end_date } = this.props
 		this.props.getEndPointResource("DIARY_DATA", school_id, start_date, end_date)
 	}
 
-	componentWillReceiveProps (newProps: P) {
+	componentWillReceiveProps(newProps: P) {
 
 		const { school_id, start_date, end_date } = newProps
 
@@ -51,7 +51,7 @@ class Diary extends React.Component<P, S> {
 						diary_usage
 					}
 				]
-			},[] as any)
+			}, [] as any)
 
 		return <div className="stat-card">
 			<ResponsiveContainer width="90%" height={300}>
@@ -61,11 +61,11 @@ class Diary extends React.Component<P, S> {
 						tickFormatter={(unixTime) => moment(unixTime * 1000).format('MM/DD/YYYY')}
 						domain={['auto', 'auto']}
 						minTickGap={0}
-						type="number"/>
+						type="number" />
 					<YAxis />
 					<Tooltip
-						labelFormatter={(a) => moment(parseInt(a as string)*1000).format("MM/DD/YYYY")}
-						/>>
+						labelFormatter={(a) => moment(parseInt(a as string) * 1000).format("MM/DD/YYYY")}
+					/>
 
 					<Bar dataKey="diary_usage" fill="#8884d8" />
 				</BarChart>
@@ -75,7 +75,7 @@ class Diary extends React.Component<P, S> {
 	}
 }
 
-export default connect(( state: RootReducerState) => ({
+export default connect((state: RootReducerState) => ({
 	diary: state.stats.diary
 }), (dispatch: Function) => ({
 	getEndPointResource: (point: string, school_id: string, start_date: number, end_date: number) => dispatch(getEndPointResource(point, school_id, start_date, end_date))

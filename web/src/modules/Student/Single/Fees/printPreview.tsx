@@ -24,7 +24,7 @@ interface RouteInfo {
 
 type propTypes = RouteComponentProps<RouteInfo> & P
 
-class printPreview extends Component<propTypes>{
+class PrintPreview extends Component<propTypes>{
 
 	month = (): string => queryString.parse(this.props.location.search).month.toString() || moment().format("MMMM")
 	year = (): string => queryString.parse(this.props.location.search).year.toString() || moment().format("YYYY")
@@ -163,4 +163,4 @@ export default connect((state: RootReducerState) => ({
 	students: state.db.students,
 	settings: state.db.settings,
 	schoolLogo: state.db.assets ? state.db.assets.schoolLogo || "" : ""
-}))(withRouter(printPreview))
+}))(withRouter(PrintPreview))

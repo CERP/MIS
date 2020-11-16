@@ -176,7 +176,7 @@ class UpdateLoginInfo extends Component<PropsType, S> {
 					</div>
 
 					<div className="row">
-						<label>City/Area <Span /></label>
+						<label>District <Span /></label>
 						<input type="text" {...this.former.super_handle(["schoolLoginInfo", "city"])} placeholder="city" />
 					</div>
 

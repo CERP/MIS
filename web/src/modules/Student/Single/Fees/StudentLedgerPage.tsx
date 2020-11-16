@@ -25,7 +25,7 @@ const DefaultOptions: RootDBState["settings"]["classes"]["feeVoucher"]["options"
 	showBankInfo: false
 }
 
-export const StudentLedgerPage: React.SFC<StudentLedgerPageProp> = ({ payments, student, settings, section, voucherNo, css_style, family, logo, month, year }) => {
+export const StudentLedgerPage: React.FC<StudentLedgerPageProp> = ({ payments, student, settings, section, voucherNo, css_style, family, logo, month, year }) => {
 
 	const siblingsCount = family && family.ID ? family.children.length : 1 // 1 in case of single student fee voucher
 	const voucherFor = family && family.ID ? "Family" : "Student"
@@ -49,10 +49,23 @@ export const StudentLedgerPage: React.SFC<StudentLedgerPageProp> = ({ payments, 
 	}
 
 	const fees = getMergedFees(family, student)
-	const owed = payments.reduce((agg, [, curr]) => agg - (curr.type === "SUBMITTED" || curr.type === "FORGIVEN" ? 1 : -1) * curr.amount, 0)
 
-	const totalMonthlyFees = Object.values(fees).reduce((agg, curr) => curr.type === "FEE" && curr.period === "MONTHLY" ? agg + parseFloat(curr.amount) : agg, 0)
-	const totalOneTimeFees = Object.values(fees).reduce((agg, curr) => curr.type === "FEE" && curr.period === "SINGLE" ? agg + parseFloat(curr.amount) : agg, 0)
+
+	// agg + (amount < 0 ? Math.abs(amount) : 0) this scholarship amount which is entered negative but as OWED type
+	const scholarship = payments.reduce((agg, [, curr]) => {
+		const amount = getParsedAmount(curr.amount)
+		return curr.type === "FORGIVEN" ? agg + amount : curr.type === "OWED" ? agg + (amount < 0 ? Math.abs(amount) : 0) : agg
+	}, 0)
+
+
+	const owed = payments.reduce((agg, [, curr]) => {
+		const amount = getParsedAmount(curr.amount)
+		return curr.type === "OWED" ? agg + (amount > 0 ? amount : 0) : curr.type === "SUBMITTED" ? agg - amount : agg
+	}, 0) - scholarship
+
+
+	const totalMonthlyFees = Object.values(fees).reduce((agg, curr) => curr.type === "FEE" && curr.period === "MONTHLY" ? agg + getParsedAmount(curr.amount) : agg, 0)
+	const totalOneTimeFees = Object.values(fees).reduce((agg, curr) => curr.type === "FEE" && curr.period === "SINGLE" ? agg + getParsedAmount(curr.amount) : agg, 0)
 
 
 	return <div className={`payment-history section print-page ${css_style}`}>
@@ -130,6 +143,10 @@ export const StudentLedgerPage: React.SFC<StudentLedgerPageProp> = ({ payments, 
 					<tr>
 						<td className={owed > 0 ? "pending-amount" : ""} >Balance/Arrears</td>
 						<td className="bold text-center">{owed > 0 ? numberWithCommas(owed) : "-"}</td>
+					</tr>
+					<tr>
+						<td>Total Scholarship</td>
+						<td className="text-center">{scholarship > 0 ? numberWithCommas(scholarship) : "-"}</td>
 					</tr>
 					<tr>
 						<td className={owed <= 0 ? "advance-amount" : ""}>Advance</td>
@@ -221,4 +238,9 @@ export const getMergedFees = (family: AugmentedMISFamily, single_student: MISStu
 			}, {} as MISStudent['fees'])
 	}), {} as { [id: string]: MISStudentFee })
 
+}
+
+const getParsedAmount = (amount: number | string) => {
+	const parsed_amount = typeof (amount) === "string" ? parseFloat(amount) : amount
+	return !isNaN(parsed_amount) ? parsed_amount : 0
 }

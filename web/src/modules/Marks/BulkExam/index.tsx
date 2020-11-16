@@ -22,6 +22,10 @@ import months from 'constants/months'
 import { ExamTitles } from 'constants/exam'
 import { EditIcon, DeleteIcon } from 'assets/icons'
 
+import { ClassResultSheet } from 'components/Printable/ResultCard/classResultSheet'
+import chunkify from 'utils/chunkify'
+import getStudentExamMarksSheet from 'utils/studentExamMarksSheet'
+
 import './style.css'
 
 type P = {
@@ -392,6 +396,57 @@ class BulkExam extends Component<P, S> {
 		window.history.replaceState(this.state, "Bulk Exams", `${url}?${params}`)
 	}
 
+
+	renderClassResultSheet = (section: AugmentedSection) => {
+
+		const { selectedSection, examFilter, } = this.state
+		const { exams, students, grades, schoolName } = this.props
+
+		const chunkSize = 22
+		let filtered_exams: MISExam[] = []
+
+		for (const exam of Object.values(exams)) {
+
+			if (exam.name === examFilter.exam_title && moment(exam.date).format("YYYY") === examFilter.year && exam.section_id === selectedSection &&
+				(examFilter.exam_title === "Test" && examFilter.month ? moment(exam.date).format("MMMM") === examFilter.month : true)) {
+				filtered_exams.push(exam)
+			}
+		}
+
+		const exam_students = Object.values(students)
+			.filter(student => student && student.Name && student.section_id && student.exams)
+			.reduce<MergeStudentsExams[]>((agg, curr) => {
+
+				const merge_exams: AugmentedMISExam[] = []
+
+				for (const exam of filtered_exams) {
+					const stats = curr.exams[exam.id]
+					if (stats != null) {
+						merge_exams.push({ ...exam, stats })
+					}
+				}
+				// in case there is no exams for the curr student, no need to put into list
+				if (merge_exams.length === 0)
+					return agg
+
+				return [...agg, { ...curr, merge_exams }]
+
+			}, [])
+
+		const marks_sheet = getStudentExamMarksSheet(exam_students, grades)
+
+		return chunkify(marks_sheet, chunkSize)
+			.map((chunkItems: StudentMarksSheet[], index: number) => <ClassResultSheet key={index}
+				sectionName={section ? section.namespaced_name : ''}
+				relevant_exams={filtered_exams}
+				examName={examFilter.exam_title}
+				schoolName={schoolName}
+				students={chunkItems}
+				chunkSize={index === 0 ? 0 : chunkSize * index} />)
+
+	}
+
+
 	render() {
 
 		const { exams, history, students } = this.props
@@ -399,6 +454,9 @@ class BulkExam extends Component<P, S> {
 		const { selectedSection, examFilter, showCreateExam, sections, scoreSheet } = this.state
 
 		const { exam_title, year } = examFilter
+
+		const curr_section = sections.find(section => section.id === selectedSection)
+
 
 		let years = new Set<string>()
 		let filtered_exams: MISExam[] = []
@@ -415,7 +473,7 @@ class BulkExam extends Component<P, S> {
 		const subjects = this.getSubjects()
 
 		return <Layout history={history}>
-			<div className="bulk-exams">
+			<div className="bulk-exams no-print">
 				{this.state.banner.active && <Banner isGood={this.state.banner.good} text={this.state.banner.text} />}
 				<div className="title">Manage Bulk Exams</div>
 				<div className="section-container section">
@@ -480,6 +538,9 @@ class BulkExam extends Component<P, S> {
 						onSaveBulkExams={this.saveBulkExams} />
 				}
 			</div>
+			{
+				selectedSection && exam_title && year && <div className="print-only">{this.renderClassResultSheet(curr_section)}</div>
+			}
 		</Layout>
 	}
 }
@@ -542,6 +603,7 @@ const ExamScoreSheet: React.FC<ExamScoreSheetProps> = ({ scoreSheet, exams, onSu
 				</table>
 			</div>
 			<div className="score-sheet row">
+				<div className="button grey" onClick={() => window.print()} style={{ marginRight: 5 }}>Print Marks Sheet</div>
 				<div className="button blue" onClick={onSaveBulkExams}>Save Marks Sheet</div>
 			</div>
 		</div>
