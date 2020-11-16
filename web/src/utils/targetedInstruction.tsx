@@ -1,3 +1,4 @@
+//@ts-nocheck
 export const createReport = (students: RootDBState["students"], targeted_instruction: RootDBState["targeted_instruction"], testId: string) => {
     return Object.values(students)
         .reduce((agg, std) => {
@@ -7,7 +8,7 @@ export const createReport = (students: RootDBState["students"], targeted_instruc
                     name: std.Name,
                     report: Object.values((std.diagnostic_result && std.diagnostic_result[testId]) || {})
                         .reduce((report: MISReport, { isCorrect, slo }) => {
-                            const category = targeted_instruction && targeted_instruction.slo_mapping[slo[0]] && targeted_instruction.slo_mapping[slo[0]].category;
+                            const category = targeted_instruction && targeted_instruction.slo_mapping[slo] && targeted_instruction.slo_mapping[slo].category;
                             const c = isCorrect ? 1 : 0
                             if (report[category]) {
                                 return {
@@ -15,8 +16,7 @@ export const createReport = (students: RootDBState["students"], targeted_instruc
                                     [category]: {
                                         correct: report[category].correct + c,
                                         possible: report[category].possible + 1,
-                                        percentage: (report[category].correct / report[category].possible) * 100,
-                                        link: targeted_instruction.slo_mapping[slo[0]] && targeted_instruction.slo_mapping[slo[0]].link
+                                        link: targeted_instruction.slo_mapping[slo] && targeted_instruction.slo_mapping[slo].link
                                     }
                                 }
                             } else {
@@ -25,8 +25,7 @@ export const createReport = (students: RootDBState["students"], targeted_instruc
                                     [category]: {
                                         correct: c,
                                         possible: 1,
-                                        percentage: c / 1 * 100,
-                                        link: targeted_instruction.slo_mapping[slo[0]] && targeted_instruction.slo_mapping[slo[0]].link
+                                        link: targeted_instruction.slo_mapping[slo] && targeted_instruction.slo_mapping[slo].link
                                     }
                                 }
                             }
@@ -35,7 +34,7 @@ export const createReport = (students: RootDBState["students"], targeted_instruc
             }
         }, {})
 }
-
+// prepare Data Structure for data table (single student)
 export const getSingleStdData = (id: string, stdReport: Report) => {
     let total = 0, obtained = 0
     let students = Object.entries(stdReport && stdReport[id] && stdReport[id].report || {})
@@ -48,7 +47,7 @@ export const getSingleStdData = (id: string, stdReport: Report) => {
                     slo: slo,
                     correct: obj.correct,
                     possible: obj.possible,
-                    percentage: obj.percentage,
+                    percentage: (obj.correct / obj.possible) * 100,
                     link: obj.link
                 }
             ]
@@ -62,7 +61,7 @@ export const getSingleStdData = (id: string, stdReport: Report) => {
     }
     return students
 }
-
+// prepare Data Structure for data table (All students)
 export const getAllStdData = (stdReport: Report) => {
     let allStds, columns: Columns[] = [];
     allStds = Object.entries(stdReport)
@@ -81,10 +80,10 @@ export const getAllStdData = (stdReport: Report) => {
                 })
             let total = 0
             for (let [slo, sloObj] of Object.entries(reportObj.report)) {
-                total = sloObj.percentage + total
+                total = ((sloObj.correct / sloObj.possible) * 100) + total
                 stdObj = {
                     ...stdObj,
-                    [slo]: sloObj.percentage
+                    [slo]: (sloObj.correct / sloObj.possible) * 100
                 }
                 !columns.find(col => col.name === slo) && columns.push({
                     name: slo,
@@ -107,13 +106,13 @@ export const getAllStdData = (stdReport: Report) => {
     }
     return [allStds, columns]
 }
-
+// prepare Data Structure for Graph (All student)
 export const graphData = (stdReport: Report, students: RootDBState["students"]) => {
     let graphData: GraphData = {}, arr = []
     for (let testObj of Object.values((stdReport && stdReport) || {})) {
         for (let [slo, rep] of Object.entries(testObj.report)) {
-            graphData[slo] ? graphData[slo] = { percentage: graphData[slo].percentage + rep.percentage, link: rep.link } :
-                graphData[slo] = { percentage: rep.percentage, link: rep.link }
+            graphData[slo] ? graphData[slo] = { percentage: graphData[slo].percentage + ((rep.correct / rep.possible) * 100), link: rep.link } :
+                graphData[slo] = { percentage: (rep.correct / rep.possible) * 100, link: rep.link }
         }
     }
     for (let [id, obj] of Object.entries(graphData)) {
@@ -143,4 +142,13 @@ export const getQuestionList = (selectedTest: string, stdObj: MISStudent, testTy
 
 export const redirectToIlmx = (id: string) => {
     window.location.href = id
+}
+
+export const getSubjectsFromTests = (targeted_instruction: RootDBState["targeted_instruction"]): string[] => {
+    return Object.values(targeted_instruction.tests).reduce((agg, test) => {
+        return [
+            ...agg,
+            test.subject
+        ]
+    }, [])
 }

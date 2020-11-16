@@ -339,10 +339,6 @@ type MISReport = {
 	}
 }
 
-type Subjects = {
-    [id: string]: string[]
-}
-
 type DiagnosticResult = {
 	[test_id: string]: MISDiagnosticReport
 	

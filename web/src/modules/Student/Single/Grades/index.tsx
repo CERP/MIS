@@ -2,10 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { connect } from 'react-redux'
 import DataTable from 'react-data-table-component';
 import { RouteComponentProps } from 'react-router-dom'
-import getSectionsFromClasses from 'utils/getSectionsFromClasses'
-import getSubjectsFromClasses from 'utils/getSubjectsFromClasses'
 import { customStyles, singleStdColumns, conditionalRowStyles } from 'constants/targetedInstruction'
-import { getSingleStdData, createReport, redirectToIlmx } from 'utils/targetedInstruction'
+import { getSingleStdData, createReport, redirectToIlmx, getSubjectsFromTests } from 'utils/targetedInstruction'
 
 interface P extends RouteComponentProps<RouteInfo> {
     classes: RootDBState["classes"]
@@ -17,21 +15,13 @@ interface RouteInfo {
     id: string
 }
 
-const DiagnosticGrades: React.FC<P> = ({ students, classes, targeted_instruction, match }) => {
+const DiagnosticGrades: React.FC<P> = ({ students, targeted_instruction, match }) => {
 
     const [selectedSubject, setSelectedSubject] = useState('')
 
     let stdId = match.params.id
 
-    const getClassNameFromSections = (sections: AugmentedSection[]): string => {
-        const section = sections.find(section => section.id === students[stdId].section_id)
-        return section ? section.className : undefined
-    }
-
-    const sections = getSectionsFromClasses(classes)
-        .sort((a, b) => (a.classYear || 0) - (b.classYear || 0))
-    const className = useMemo(() => getClassNameFromSections(sections), [sections]);
-    const allSubjects: Subjects = useMemo(() => getSubjectsFromClasses(classes), [classes])
+    const Subjects: string[] = useMemo(() => getSubjectsFromTests(targeted_instruction), [])
     const stdReport: Report = useMemo(() => createReport(students, targeted_instruction, selectedSubject), [selectedSubject]);
     const singleStd = useMemo(() => getSingleStdData(stdId, stdReport), [stdId, stdReport]);
 
@@ -42,7 +32,7 @@ const DiagnosticGrades: React.FC<P> = ({ students, classes, targeted_instruction
                 <select className="no-print" onChange={(e) => setSelectedSubject(e.target.value)}>
                     <option value="">Select Subject</option>
                     {
-                        (allSubjects[className] || []).map((sub: any) => <option key={sub} value={sub}>{sub}</option>)
+                        Subjects.map((sub: any) => <option key={sub} value={sub}>{sub}</option>)
                     }
                 </select>
             </div>

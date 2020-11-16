@@ -110,7 +110,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_
                 striped={true}
                 conditionalRowStyles={conditionalRowStyles}
             />
-            <div className="send-btn-div">
+            <div className="flex-view flex-end">
                 <a className="button blue mb mobile-mode"
                     href={smsIntentLink({
                         messages,
@@ -158,7 +158,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_
                         paginationRowsPerPageOptions={[45, 65, 85, 105, 125]}
                         onRowClicked={getStudentId}
                     />
-                    <div className="send-btn-div">
+                    <div className="flex-view flex-end">
                         <a className="button blue mb mobile-mode"
                             href={smsIntentLink({
                                 messages,

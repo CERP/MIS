@@ -6,9 +6,8 @@ import StudentGrades from './Grades'
 import Diagnostic from './Diagnostic'
 import Report from './Report'
 import { connect } from 'react-redux'
-import { createReport, getQuestionList } from 'utils/targetedInstruction'
+import { createReport, getQuestionList, getSubjectsFromTests } from 'utils/targetedInstruction'
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
-import getSubjectsFromClasses from 'utils/getSubjectsFromClasses'
 import { logSms, addReport } from 'actions'
 import './style.css'
 
@@ -24,28 +23,38 @@ interface P {
 
 type PropsType = P & RouteComponentProps
 
+type S = {
+	selectedSection: string
+	selectedSubject: string
+	sectionId: string
+	testType: "" | "Diagnostic" | "Monthly"
+	type: string
+	stdId: string
+}
+
 const Test: React.FC<PropsType> = (props) => {
 
 	const loc = props.location.pathname.split('/').slice(-1).pop();
-	const [selectedSubject, setSelectedSubject] = useState('')
-	const [selectedClass, setSelectedClass] = useState('')
-	const [sectionId, setSectionId] = useState('')
-	const [testType, setTestType] = useState('')
-	const [type, setType] = useState('')
-	const [stdId, setStdId] = useState('')
+	const [state, setState] = useState<S>({
+		selectedSection: '',
+		selectedSubject: '',
+		sectionId: '',
+		testType: '',
+		type: '',
+		stdId: ''
+	})
 
-	const students = useMemo(() => getAllStudents(sectionId, props.students), [sectionId])
+	const { selectedSubject, selectedSection, sectionId, testType, type, stdId } = state
+
+	const students = useMemo(() => getStudentsBySectionId(sectionId, props.students), [sectionId])
 	const sortedSections = useMemo(() => getSectionsFromClasses(props.classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0)), [])
-	const allSubjects: Subjects = useMemo(() => getSubjectsFromClasses(props.classes), [props.classes])
+	const Subjects: string[] = useMemo(() => getSubjectsFromTests(props.targeted_instruction), [])
 	const stdReport: Report = useMemo(() => createReport(students, props.targeted_instruction, selectedSubject), [selectedSubject]);
 	const questions = useMemo(() => getQuestionList(selectedSubject, props.students[stdId], testType), [selectedSubject, stdId]);
-	const [pdfUrl, pdfLabel] = useMemo(() => getPDF(selectedSubject, selectedClass, testType, props.targeted_instruction), [selectedSubject, testType]);
+	const [pdfUrl, pdfLabel] = useMemo(() => getPDF(selectedSubject, selectedSection, testType, props.targeted_instruction), [selectedSubject, testType]);
 
-	const getClass = (e: any) => {
-		setSelectedClass(e.target.value)
-		let index = e.target.selectedIndex;
-		let el = e.target.childNodes[index]
-		setSectionId(el.dataset.id)
+	const setType = (type: string) => {
+		setState({ ...state, type: type })
 	}
 
 	return <Layout history={props.history}>
@@ -58,25 +67,25 @@ const Test: React.FC<PropsType> = (props) => {
 			<div className="section form">
 				<div className="row no-print">
 					<label>Grades</label>
-					<select onChange={getClass}>
+					<select onChange={(e) => setState({ ...state, sectionId: e.target.value })}>
 						<option id="" value="">Select Grade</option>
 						{
-							sortedSections && sortedSections.map(s => <option key={s.id} data-id={s.id} value={s.className}>{s.className}</option>)
+							sortedSections && sortedSections.map(s => <option key={s.id} value={s.id}>{s.className}</option>)
 						}
 					</select>
 				</div>
 				<div className="row no-print">
 					<label>Subject</label>
-					<select onChange={(e) => setSelectedSubject(e.target.value)}>
+					<select onChange={(e) => setState({ ...state, selectedSubject: e.target.value })}>
 						<option value="">Select Subject</option>
 						{
-							(allSubjects[selectedClass] || []).map((sub: any) => <option key={sub} value={sub}>{sub}</option>)
+							Subjects.map((sub: any) => <option key={sub} value={sub}>{sub}</option>)
 						}
 					</select>
 				</div>
 				<div className="row no-print">
 					<label>Test Type</label>
-					<select onChange={(e) => setTestType(e.target.value)}>
+					<select onChange={(e) => setState({ ...state, testType: e.target.value as S["testType"] })}>
 						<option value="">Select Test Type</option>
 						<option value="Diagnostic">Diagnostic</option>
 						<option value="Monthly">Monthly</option>
@@ -84,7 +93,7 @@ const Test: React.FC<PropsType> = (props) => {
 				</div>
 				{loc === 'report' && <div className="row">
 					<label className="no-print">Type</label>
-					<select className="no-print" onChange={(e) => setType(e.target.value)}>
+					<select className="no-print" onChange={(e) => setState({ ...state, type: e.target.value })}>
 						<option value="">Select Type</option>
 						<option value="Single Student">Single Student</option>
 						<option value="All Students">All Students</option>
@@ -94,7 +103,7 @@ const Test: React.FC<PropsType> = (props) => {
 					<>
 						{((type !== 'All Students' && loc === "report") || loc === "grades") && <div className="row">
 							<label className="no-print">Students</label>
-							<select className="no-print" onChange={(e) => setStdId(e.target.value)}>
+							<select className="no-print" onChange={(e) => setState({ ...state, stdId: e.target.value })}>
 								<option value="">Select Students</option>
 								{
 									Object.values(students)
@@ -121,7 +130,7 @@ const Test: React.FC<PropsType> = (props) => {
 							type={type}
 							stdId={stdId}
 							students={students}
-							selectedClass={selectedClass}
+							selectedClass={selectedSection}
 							stdReport={stdReport}
 							faculty_id={props.faculty_id}
 							setType={setType}
@@ -142,7 +151,7 @@ export default connect((state: RootReducerState) => ({
 	saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport, selectedSubject: string) => dispatch(addReport(stdId, diagnostic_report, selectedSubject)),
 }))(Test)
 
-const getAllStudents = (sectionId: string, students: RootDBState["students"]) => {
+const getStudentsBySectionId = (sectionId: string, students: RootDBState["students"]) => {
 	return students = Object.values(students)
 		.reduce<RootDBState["students"]>((agg, student) => {
 			if (student.section_id === sectionId) {
@@ -151,15 +160,15 @@ const getAllStudents = (sectionId: string, students: RootDBState["students"]) =>
 					[student.id]: student
 				}
 			}
-			return { ...agg, }
+			return agg
 		}, {})
 }
 
-const getPDF = (selectedSubject: string, selectedClass: string, testType: string, targeted_instruction: RootDBState["targeted_instruction"]) => {
+const getPDF = (selectedSubject: string, selectedSection: string, testType: string, targeted_instruction: RootDBState["targeted_instruction"]) => {
 	let url, label
 	let misTest: Tests = targeted_instruction['tests']
 	for (let obj of Object.values(misTest)) {
-		if (obj.type === testType && obj.class === selectedClass && obj.subject === selectedSubject) {
+		if (obj.type === testType && obj.class === selectedSection && obj.subject === selectedSubject) {
 			url = obj.pdf_url
 			label = obj.label
 			break
