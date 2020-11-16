@@ -53,7 +53,7 @@ const initState: RootReducerState = {
 			visible: false,
 			tests: {},
 			slo_mapping: {},
-			curriculam: {}
+			curriculum: {}
 		}
 	},
 	// this part of the tree i want to obscure.

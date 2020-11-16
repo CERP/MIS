@@ -56,7 +56,7 @@ export const initState: RootReducerState = {
 			visible: false,
 			tests: {},
 			slo_mapping: {},
-			curriculam: {}
+			curriculum: {}
 		}
 	},
 	auth: {

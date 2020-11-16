@@ -58,11 +58,11 @@ interface RootDBState {
 		visible: boolean
 		tests: Tests
 		slo_mapping: SLOMapping
-		curriculam: Curriculam
+		curriculum: Curriculum
 	}
 }
 
-interface Curriculam {
+interface Curriculum {
 	[learning_level: string]: LearningLevels
 }
 
@@ -70,6 +70,7 @@ interface LearningLevels {
 	[lesson_id: string]: {
 		lesson_number: number
 		name: string 
+		subject: string
 		description: string 
 		video_links: string[]
 		pdf_links: string

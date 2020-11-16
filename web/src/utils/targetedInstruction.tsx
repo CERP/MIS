@@ -6,22 +6,22 @@ export const createReport = (students: RootDBState["students"], targeted_instruc
                 [std.id]: {
                     name: std.Name,
                     report: Object.values((std.diagnostic_result && std.diagnostic_result[testId]) || {})
-                        .reduce((agg2: MISReport, { isCorrect, slo }) => {
+                        .reduce((report: MISReport, { isCorrect, slo }) => {
                             const category = targeted_instruction && targeted_instruction.slo_mapping[slo[0]] && targeted_instruction.slo_mapping[slo[0]].category;
                             const c = isCorrect ? 1 : 0
-                            if (agg2[category]) {
+                            if (report[category]) {
                                 return {
-                                    ...agg2,
+                                    ...report,
                                     [category]: {
-                                        correct: agg2[category].correct + c,
-                                        possible: agg2[category].possible + 1,
-                                        percentage: (agg2[category].correct / agg2[category].possible) * 100,
+                                        correct: report[category].correct + c,
+                                        possible: report[category].possible + 1,
+                                        percentage: (report[category].correct / report[category].possible) * 100,
                                         link: targeted_instruction.slo_mapping[slo[0]] && targeted_instruction.slo_mapping[slo[0]].link
                                     }
                                 }
                             } else {
                                 return {
-                                    ...agg2,
+                                    ...report,
                                     [category]: {
                                         correct: c,
                                         possible: 1,
@@ -48,7 +48,7 @@ export const getSingleStdData = (id: string, stdReport: Report) => {
                     slo: slo,
                     correct: obj.correct,
                     possible: obj.possible,
-                    percentage: Math.round(obj.percentage),
+                    percentage: obj.percentage,
                     link: obj.link
                 }
             ]
@@ -57,7 +57,7 @@ export const getSingleStdData = (id: string, stdReport: Report) => {
         slo: '',
         correct: obtained,
         possible: total,
-        percentage: Math.round((obtained / total) * 100),
+        percentage: (obtained / total) * 100,
         link: ''
     }
     return students
@@ -84,7 +84,7 @@ export const getAllStdData = (stdReport: Report) => {
                 total = sloObj.percentage + total
                 stdObj = {
                     ...stdObj,
-                    [slo]: Math.round(sloObj.percentage)
+                    [slo]: sloObj.percentage
                 }
                 !columns.find(col => col.name === slo) && columns.push({
                     name: slo,
@@ -95,7 +95,7 @@ export const getAllStdData = (stdReport: Report) => {
             total = (total / (Object.keys(reportObj.report).length * 100)) * 100
             stdObj = {
                 ...stdObj,
-                total: Math.round(total)
+                total: total
             }
             return [...agg,
                 stdObj]
@@ -117,7 +117,7 @@ export const graphData = (stdReport: Report, students: RootDBState["students"]) 
         }
     }
     for (let [id, obj] of Object.entries(graphData)) {
-        arr.push({ name: id, percentage: Math.round(obj.percentage / Object.entries(students).length), link: obj.link })
+        arr.push({ name: id, percentage: obj.percentage / Object.entries(students).length, link: obj.link })
     }
     arr.sort((a, b) => {
         return b.percentage - a.percentage;

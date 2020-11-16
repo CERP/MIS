@@ -244,7 +244,7 @@ class Landing extends Component {
 	render() {
 
 
-		const { logout, user, students, faculty, lastSnapshot, unsyncd, package_info, visible } = this.props;
+		const { logout, user, students, faculty, lastSnapshot, unsyncd, package_info, visible, targeted_instruction } = this.props;
 		
 		const current_page = Math.floor(this.state.scroll / window.innerWidth)
 
@@ -463,7 +463,7 @@ class Landing extends Component {
 						</div>
 						<div className="row">
 							{
-								visible && <Link
+								(targeted_instruction && visible) && <Link
 									className="button yellow-shadow"
 									to="/targeted-instruction/test"
 									style={{ backgroundImage: `url(${test})` }}>
@@ -580,7 +580,8 @@ export default connect(state => ({
 	auth: state.auth,
 	client_id: state.client_id,
 	ilmxUser: getIlmxUser(),
-	visible: state.db.targeted_instruction.visible
+	visible: state.db.targeted_instruction.visible,
+	targeted_instruction: state.db.targeted_instruction
 }), dispatch => ({
 	resetTrial: () => dispatch(resetTrial()),
 	markPurchased: () => dispatch(markPurchased()),

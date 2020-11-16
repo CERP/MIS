@@ -17,7 +17,7 @@ export const conditionalRowStyles = [
 export const customStyles = {
     headCells: {
         style: {
-            fontSize: isMobile ? "14px" : "18px",
+            fontSize: "1rem",
             fontWeight: 700,
             backgroundColor: "rgb(250, 250, 250)",
             textTransform: "capitalize"
@@ -25,7 +25,7 @@ export const customStyles = {
     },
     cells: {
         style: {
-            fontSize: isMobile ? "12px" : "14px",
+            fontSize: "0.8rem",
             '&:hover': {
                 cursor: "pointer"
             }
