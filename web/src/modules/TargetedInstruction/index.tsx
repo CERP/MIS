@@ -49,7 +49,7 @@ const Test: React.FC<PropsType> = (props) => {
 	const sortedSections = useMemo(() => getSectionsFromClasses(props.classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0)), [])
 	const selectedClassName = useMemo(() => getClassnameFromSectionId(sortedSections, sectionId), [sectionId])
 	const Subjects: string[] = useMemo(() => getSubjectsFromTests(props.targeted_instruction), [])
-	const singleStdReport = useMemo(() => createSingleStdReport(students[stdId] && students[stdId].diagnostic_result, props.targeted_instruction, selectedSubject), [stdId]);
+	const singleStdReport = useMemo(() => createSingleStdReport(students[stdId] && students[stdId].diagnostic_result, props.targeted_instruction, selectedSubject), [stdId, type]);
 	const allStdReport = useMemo(() => createAllStdReport(students, props.targeted_instruction, selectedSubject, type), [type])
 	const questions = useMemo(() => getQuestionList(selectedSubject, props.students[stdId], testType), [selectedSubject, stdId]);
 	const [pdfUrl, pdfLabel] = useMemo(() => getPDF(selectedSubject, selectedClassName, testType, props.targeted_instruction), [selectedSubject, testType]);
