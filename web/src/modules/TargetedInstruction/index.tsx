@@ -47,11 +47,12 @@ const Test: React.FC<PropsType> = (props) => {
 
 	const students = useMemo(() => getStudentsBySectionId(sectionId, props.students), [sectionId])
 	const sortedSections = useMemo(() => getSectionsFromClasses(props.classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0)), [])
+	const selectedClassName = useMemo(() => getClassnameFromSectionId(sortedSections, sectionId), [sectionId])
 	const Subjects: string[] = useMemo(() => getSubjectsFromTests(props.targeted_instruction), [])
 	const singleStdReport = useMemo(() => createSingleStdReport(students[stdId] && students[stdId].diagnostic_result, props.targeted_instruction, selectedSubject), [stdId]);
-	const allStdReport = useMemo(() => createAllStdReport(students, props.targeted_instruction, selectedSubject), [type])
+	const allStdReport = useMemo(() => createAllStdReport(students, props.targeted_instruction, selectedSubject, type), [type])
 	const questions = useMemo(() => getQuestionList(selectedSubject, props.students[stdId], testType), [selectedSubject, stdId]);
-	const [pdfUrl, pdfLabel] = useMemo(() => getPDF(selectedSubject, selectedSection, testType, props.targeted_instruction), [selectedSubject, testType]);
+	const [pdfUrl, pdfLabel] = useMemo(() => getPDF(selectedSubject, selectedClassName, testType, props.targeted_instruction), [selectedSubject, testType]);
 
 	const setType = (type: string) => {
 		setState({ ...state, type: type })
@@ -96,7 +97,7 @@ const Test: React.FC<PropsType> = (props) => {
 		</div>}
 		{(loc !== "test") &&
 			<>
-				{(type !== 'All Students' && loc !== "tests") && <div className="row">
+				{type !== 'All Students' && loc === 'report' || (loc === 'grades') && <div className="row">
 					<label className="no-print">Students</label>
 					<select className="no-print" onChange={(e) => setState({ ...state, stdId: e.target.value })}>
 						<option value="">Select Students</option>
@@ -172,4 +173,13 @@ const getPDF = (selectedSubject: string, selectedSection: string, testType: stri
 		}
 	}
 	return [url, label]
+}
+
+const getClassnameFromSectionId = (sortedSections: AugmentedSection[], sectionId: string) => {
+	return sortedSections.reduce((agg: string, section: AugmentedSection) => {
+		if (section.id === sectionId) {
+			return section.className
+		}
+		return agg
+	}, '')
 }

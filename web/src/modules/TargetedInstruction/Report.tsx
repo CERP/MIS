@@ -1,4 +1,3 @@
-//@ts-nocheck
 import React, { useState, useMemo, useEffect } from 'react'
 import { smsIntentLink } from 'utils/intent'
 import moment from 'moment'
@@ -30,7 +29,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_
     const [studentId, setStudentId] = useState(stdId);
     const [allStds, columns] = useMemo(() => getAllStdData(allStdReport), [allStdReport]);
     const data = useMemo(() => graphData(allStdReport, students), [allStdReport]);
-    const singleStd = useMemo(() => getSingleStdData(singleStdReport), [studentId]);
+    const singleStd = useMemo(() => getSingleStdData(singleStdReport), [studentId, type]);
 
     useEffect(() => {
         setStudentId(stdId)
@@ -66,7 +65,6 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_
             let message = []
             message.push(`${students[stdId].Name} scored`)
             for (let [testName, testObj] of Object.entries(singleStd)) {
-                // debugger
                 ((testObj.correct / testObj.possible) * 100) <= 50 ?
                     message.push(`${(testObj.correct / testObj.possible) * 100}% marks in ${testName} kindly follow this link ${testObj.link}`) :
                     message.push(`${(testObj.correct / testObj.possible) * 100}% marks in ${testName}`)
@@ -113,7 +111,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_
                 striped={true}
                 conditionalRowStyles={conditionalRowStyles}
             />
-            <div className="flex-view flex-end">
+            <div className="flex-row-view  flex-end">
                 <a className="button blue mb mobile-mode"
                     href={smsIntentLink({
                         messages,
@@ -161,7 +159,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_
                         paginationRowsPerPageOptions={[45, 65, 85, 105, 125]}
                         onRowClicked={getStudentId}
                     />
-                    <div className="flex-view flex-end">
+                    <div className="flex-row-view flex-end">
                         <a className="button blue mb mobile-mode"
                             href={smsIntentLink({
                                 messages,

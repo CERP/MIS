@@ -33,18 +33,20 @@ export const createSingleStdReport = (diagnostic_result: MISStudent["diagnostic_
         }, {})
 }
 
-export const createAllStdReport = (students: RootDBState["students"], targeted_instruction: RootDBState["targeted_instruction"], testId: string) => {
-    return Object.values((students))
-        .reduce((agg, std) => {
-            const report = createSingleStdReport(students[std.id].diagnostic_result, targeted_instruction, testId)
-            return {
-                ...agg,
-                [std.id]: {
-                    name: std.Name,
-                    report: report
+export const createAllStdReport = (students: RootDBState["students"], targeted_instruction: RootDBState["targeted_instruction"], testId: string, type: string) => {
+    if (type === 'All Students') {
+        return Object.values((students))
+            .reduce((agg, std) => {
+                const report = createSingleStdReport(students[std.id].diagnostic_result, targeted_instruction, testId)
+                return {
+                    ...agg,
+                    [std.id]: {
+                        name: std.Name,
+                        report: report
+                    }
                 }
-            }
-        }, {})
+            }, {})
+    }
 }
 
 // prepare Data Structure for data table (single student)
@@ -159,9 +161,11 @@ export const redirectToIlmx = (id: string) => {
 
 export const getSubjectsFromTests = (targeted_instruction: RootDBState["targeted_instruction"]): string[] => {
     return Object.values(targeted_instruction.tests).reduce((agg, test) => {
-        return [
-            ...agg,
-            test.subject
-        ]
+        if (test.subject !== '') {
+            return [
+                ...agg,
+                test.subject
+            ]
+        }
     }, [])
 }

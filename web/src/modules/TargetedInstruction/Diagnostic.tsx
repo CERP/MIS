@@ -18,7 +18,6 @@ const Diagnostic: React.FC<P> = ({ label, url }) => {
             //@ts-ignore
             showThumbnail={{ scale: 2 }}
         />}
-
     </div>
 }
 
