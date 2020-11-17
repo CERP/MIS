@@ -1,43 +1,42 @@
-//@ts-nocheck
-export const createReport = (students: RootDBState["students"], targeted_instruction: RootDBState["targeted_instruction"], testId: string) => {
-    return Object.values(students)
-        .reduce((agg, std) => {
-            return {
-                ...agg,
-                [std.id]: {
-                    name: std.Name,
-                    report: Object.values((std.diagnostic_result && std.diagnostic_result[testId]) || {})
-                        .reduce((report: MISReport, { isCorrect, slo }) => {
-                            const category = targeted_instruction && targeted_instruction.slo_mapping[slo] && targeted_instruction.slo_mapping[slo].category;
-                            const c = isCorrect ? 1 : 0
-                            if (report[category]) {
-                                return {
-                                    ...report,
-                                    [category]: {
-                                        correct: report[category].correct + c,
-                                        possible: report[category].possible + 1,
-                                        link: targeted_instruction.slo_mapping[slo] && targeted_instruction.slo_mapping[slo].link
-                                    }
-                                }
-                            } else {
-                                return {
-                                    ...report,
-                                    [category]: {
-                                        correct: c,
-                                        possible: 1,
-                                        link: targeted_instruction.slo_mapping[slo] && targeted_instruction.slo_mapping[slo].link
-                                    }
-                                }
-                            }
-                        }, {})
+export const createReport = (diagnostic_result: MISStudent["diagnostic_result"], targeted_instruction: RootDBState["targeted_instruction"], testId: string) => {
+    return Object.values(((diagnostic_result && diagnostic_result[testId]) || {} as MISStudent["diagnostic_result"]))
+        .reduce<MISReport>((report, { isCorrect, slo }) => {
+            const c = isCorrect ? 1 : 0
+            const inner = slo.reduce((updated_report: MISReport, curr_slo: string) => {
+                const category = targeted_instruction && targeted_instruction.slo_mapping[curr_slo] && targeted_instruction.slo_mapping[curr_slo].category
+                return {
+                    ...updated_report,
+                    [category]: {
+                        correct: c,
+                        possible: 1,
+                        link: targeted_instruction.slo_mapping[curr_slo] && targeted_instruction.slo_mapping[curr_slo].link as string
+                    }
+                } as MISReport
+            }, {})
+
+            return Object.entries(inner).reduce<MISReport>((agg, [category, value]) => {
+                if (agg[category]) {
+                    return {
+                        ...agg,
+                        [category]: {
+                            ...agg[category],
+                            correct: agg[category].correct + c,
+                            possible: agg[category].possible + 1,
+                        }
+                    } as MISReport
                 }
-            }
+                return {
+                    ...agg,
+                    [category]: value
+                } as MISReport
+            }, report)
         }, {})
 }
+
 // prepare Data Structure for data table (single student)
-export const getSingleStdData = (id: string, stdReport: Report) => {
+export const getSingleStdData = (id: string, stdReport: MISReport) => {
     let total = 0, obtained = 0
-    let students = Object.entries(stdReport && stdReport[id] && stdReport[id].report || {})
+    let students = Object.entries(stdReport || {})
         .reduce((agg, [slo, obj]) => {
             obtained = obj.correct + obtained
             total = obj.possible + total
@@ -64,7 +63,7 @@ export const getSingleStdData = (id: string, stdReport: Report) => {
 // prepare Data Structure for data table (All students)
 export const getAllStdData = (stdReport: Report) => {
     let allStds, columns: Columns[] = [];
-    allStds = Object.entries(stdReport)
+    allStds = Object.entries(stdReport || {})
         .reduce((agg, [id, reportObj]) => {
             let stdObj = {}
             stdObj = {

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useState, useMemo, useEffect } from 'react'
 import { smsIntentLink } from 'utils/intent'
 import moment from 'moment'
@@ -15,7 +16,7 @@ interface P {
     testType: string
     faculty_id: string
     selectedClass: string
-    stdReport: Report
+    stdReport: MISReport
     students: RootDBState["students"]
 
     setType: (type: string) => any

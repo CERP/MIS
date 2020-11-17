@@ -334,7 +334,6 @@ type MISReport = {
 	[name: string]: {
 		correct: number
 		possible: number
-		percentage?: number
 		link?: string
 	}
 }

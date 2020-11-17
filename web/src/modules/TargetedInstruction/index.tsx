@@ -33,6 +33,7 @@ type S = {
 const Test: React.FC<PropsType> = (props) => {
 
 	const loc = props.location.pathname.split('/').slice(-1).pop();
+
 	const [state, setState] = useState<S>({
 		selectedSection: '',
 		selectedSubject: '',
@@ -47,7 +48,7 @@ const Test: React.FC<PropsType> = (props) => {
 	const students = useMemo(() => getStudentsBySectionId(sectionId, props.students), [sectionId])
 	const sortedSections = useMemo(() => getSectionsFromClasses(props.classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0)), [])
 	const Subjects: string[] = useMemo(() => getSubjectsFromTests(props.targeted_instruction), [])
-	const stdReport: Report = useMemo(() => createReport(students, props.targeted_instruction, selectedSubject), [selectedSubject]);
+	const stdReport = useMemo(() => createReport(students[stdId] && students[stdId].diagnostic_result, props.targeted_instruction, selectedSubject), [stdId]);
 	const questions = useMemo(() => getQuestionList(selectedSubject, props.students[stdId], testType), [selectedSubject, stdId]);
 	const [pdfUrl, pdfLabel] = useMemo(() => getPDF(selectedSubject, selectedSection, testType, props.targeted_instruction), [selectedSubject, testType]);
 
@@ -55,13 +56,15 @@ const Test: React.FC<PropsType> = (props) => {
 		setState({ ...state, type: type })
 	}
 
+	console.log(pdfLabel, pdfUrl)
+
 	return <div className="section form">
 		<div className="row no-print">
 			<label>Grades</label>
 			<select onChange={(e) => setState({ ...state, sectionId: e.target.value })}>
 				<option id="" value="">Select Grade</option>
 				{
-					sortedSections && sortedSections.map(s => <option key={s.id} value={s.id}>{s.className}</option>)
+					sortedSections && sortedSections.map(s => <option key={s.id} value={s.id}>{s.namespaced_name}</option>)
 				}
 			</select>
 		</div>
