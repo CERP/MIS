@@ -11,15 +11,15 @@
 .questions-container {
     margin: 2rem;
 }
-.flex-view {
+.flex-row-view {
     display: flex;
     flex-direction: row;
+}
+.space-between {
     justify-content: space-between;
     padding: 10px 0px;
 }
-.send-btn-div {
-    display: flex;
-    flex-direction: row;
+.flex-end {
     justify-content: flex-end;
 }
 .graph-div {

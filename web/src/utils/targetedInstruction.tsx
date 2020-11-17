@@ -1,4 +1,4 @@
-export const createReport = (diagnostic_result: MISStudent["diagnostic_result"], targeted_instruction: RootDBState["targeted_instruction"], testId: string) => {
+export const createSingleStdReport = (diagnostic_result: MISStudent["diagnostic_result"], targeted_instruction: RootDBState["targeted_instruction"], testId: string) => {
     return Object.values(((diagnostic_result && diagnostic_result[testId]) || {} as MISStudent["diagnostic_result"]))
         .reduce<MISReport>((report, { isCorrect, slo }) => {
             const c = isCorrect ? 1 : 0
@@ -33,8 +33,22 @@ export const createReport = (diagnostic_result: MISStudent["diagnostic_result"],
         }, {})
 }
 
+export const createAllStdReport = (students: RootDBState["students"], targeted_instruction: RootDBState["targeted_instruction"], testId: string) => {
+    return Object.values((students))
+        .reduce((agg, std) => {
+            const report = createSingleStdReport(students[std.id].diagnostic_result, targeted_instruction, testId)
+            return {
+                ...agg,
+                [std.id]: {
+                    name: std.Name,
+                    report: report
+                }
+            }
+        }, {})
+}
+
 // prepare Data Structure for data table (single student)
-export const getSingleStdData = (id: string, stdReport: MISReport) => {
+export const getSingleStdData = (stdReport: MISReport) => {
     let total = 0, obtained = 0
     let students = Object.entries(stdReport || {})
         .reduce((agg, [slo, obj]) => {

@@ -16,20 +16,21 @@ interface P {
     testType: string
     faculty_id: string
     selectedClass: string
-    stdReport: MISReport
+    singleStdReport: MISReport
+    allStdReport: Report
     students: RootDBState["students"]
 
     setType: (type: string) => any
     logSms: (history: MISSMSHistory) => any
 }
 
-const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_id, selectedClass, stdReport, setType, logSms }) => {
+const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_id, selectedClass, singleStdReport, allStdReport, setType, logSms }) => {
 
     const [toggle, setToggle] = useState(true);
     const [studentId, setStudentId] = useState(stdId);
-    const [allStds, columns] = useMemo(() => getAllStdData(stdReport), [stdReport]);
-    const data = useMemo(() => graphData(stdReport, students), [stdReport]);
-    const singleStd = useMemo(() => getSingleStdData(stdId, stdReport), [studentId, stdReport]);
+    const [allStds, columns] = useMemo(() => getAllStdData(allStdReport), [allStdReport]);
+    const data = useMemo(() => graphData(allStdReport, students), [allStdReport]);
+    const singleStd = useMemo(() => getSingleStdData(singleStdReport), [studentId]);
 
     useEffect(() => {
         setStudentId(stdId)
@@ -61,13 +62,14 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_
         const section_name = `Class: ${selectedClass}\n`
         const test_type = `Test Type: ${testType}\n`
         const test_name = `Test Name: ${testId}\n`
-        if (stdReport) {
+        if (singleStd) {
             let message = []
             message.push(`${students[stdId].Name} scored`)
-            for (let [testName, testObj] of Object.entries(stdReport[stdId].report)) {
-                testObj.percentage <= 50 ?
-                    message.push(`${testObj.percentage}% marks in ${testName} kindly follow this link ${testObj.link}`) :
-                    message.push(`${testObj.percentage}% marks in ${testName}`)
+            for (let [testName, testObj] of Object.entries(singleStd)) {
+                // debugger
+                ((testObj.correct / testObj.possible) * 100) <= 50 ?
+                    message.push(`${(testObj.correct / testObj.possible) * 100}% marks in ${testName} kindly follow this link ${testObj.link}`) :
+                    message.push(`${(testObj.correct / testObj.possible) * 100}% marks in ${testName}`)
             }
             const raw_report_string = curr_date + section_name + test_type + test_name + message.join(" \n ")
             const report_string = replaceSpecialCharsWithUTFChars(raw_report_string)

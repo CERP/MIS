@@ -4,7 +4,7 @@ import StudentGrades from './Grades'
 import Diagnostic from './Diagnostic'
 import Report from './Report'
 import { connect } from 'react-redux'
-import { createReport, getQuestionList, getSubjectsFromTests } from 'utils/targetedInstruction'
+import { createAllStdReport, createSingleStdReport, getQuestionList, getSubjectsFromTests } from 'utils/targetedInstruction'
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
 import { logSms, addReport } from 'actions'
 import './style.css'
@@ -48,7 +48,8 @@ const Test: React.FC<PropsType> = (props) => {
 	const students = useMemo(() => getStudentsBySectionId(sectionId, props.students), [sectionId])
 	const sortedSections = useMemo(() => getSectionsFromClasses(props.classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0)), [])
 	const Subjects: string[] = useMemo(() => getSubjectsFromTests(props.targeted_instruction), [])
-	const stdReport = useMemo(() => createReport(students[stdId] && students[stdId].diagnostic_result, props.targeted_instruction, selectedSubject), [stdId]);
+	const singleStdReport = useMemo(() => createSingleStdReport(students[stdId] && students[stdId].diagnostic_result, props.targeted_instruction, selectedSubject), [stdId]);
+	const allStdReport = useMemo(() => createAllStdReport(students, props.targeted_instruction, selectedSubject), [type])
 	const questions = useMemo(() => getQuestionList(selectedSubject, props.students[stdId], testType), [selectedSubject, stdId]);
 	const [pdfUrl, pdfLabel] = useMemo(() => getPDF(selectedSubject, selectedSection, testType, props.targeted_instruction), [selectedSubject, testType]);
 
@@ -125,7 +126,8 @@ const Test: React.FC<PropsType> = (props) => {
 					stdId={stdId}
 					students={students}
 					selectedClass={selectedSection}
-					stdReport={stdReport}
+					singleStdReport={singleStdReport}
+					allStdReport={allStdReport}
 					faculty_id={props.faculty_id}
 					setType={setType}
 					logSms={props.logSms}

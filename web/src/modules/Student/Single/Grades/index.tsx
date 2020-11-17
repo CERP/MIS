@@ -1,9 +1,10 @@
+//@ts-nocheck
 import React, { useState, useMemo } from 'react';
 import { connect } from 'react-redux'
 import DataTable from 'react-data-table-component';
 import { RouteComponentProps } from 'react-router-dom'
 import { customStyles, singleStdColumns, conditionalRowStyles } from 'constants/targetedInstruction'
-import { getSingleStdData, createReport, redirectToIlmx, getSubjectsFromTests } from 'utils/targetedInstruction'
+import { getSingleStdData, createSingleStdReport, redirectToIlmx, getSubjectsFromTests } from 'utils/targetedInstruction'
 
 interface P extends RouteComponentProps<RouteInfo> {
     classes: RootDBState["classes"]
@@ -22,8 +23,8 @@ const DiagnosticGrades: React.FC<P> = ({ students, targeted_instruction, match }
     let stdId = match.params.id
 
     const Subjects: string[] = useMemo(() => getSubjectsFromTests(targeted_instruction), [])
-    const stdReport: MISReport = useMemo(() => createReport(students[stdId] && students[stdId].diagnostic_result, targeted_instruction, selectedSubject), [stdId]);
-    const singleStd = useMemo(() => getSingleStdData(stdId, stdReport), [stdId, stdReport]);
+    const singleStdReport: MISReport = useMemo(() => createSingleStdReport(students[stdId] && students[stdId].diagnostic_result, targeted_instruction, selectedSubject), [stdId]);
+    const singleStd = useMemo(() => getSingleStdData(singleStdReport), [stdId]);
 
     return <div className="section form">
         <div className="table">
