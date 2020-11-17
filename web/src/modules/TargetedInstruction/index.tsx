@@ -1,7 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import Layout from 'components/Layout'
 import { RouteComponentProps } from 'react-router-dom'
-import { Link } from 'react-router-dom'
 import StudentGrades from './Grades'
 import Diagnostic from './Diagnostic'
 import Report from './Report'
@@ -57,88 +55,79 @@ const Test: React.FC<PropsType> = (props) => {
 		setState({ ...state, type: type })
 	}
 
-	return <Layout history={props.history}>
-		<div className="analytics">
-			<div className="row tabs">
-				<Link className={`button ${loc === "test" ? "orange" : ''}`} to="test" replace={true}>Test</Link>
-				<Link className={`button ${loc === "grades" ? "blue" : ''}`} to="grades" replace={true}>Grades</Link>
-				<Link className={`button ${loc === "report" ? "green" : ''}`} to="report" replace={true}>Report</Link>
-			</div>
-			<div className="section form">
-				<div className="row no-print">
-					<label>Grades</label>
-					<select onChange={(e) => setState({ ...state, sectionId: e.target.value })}>
-						<option id="" value="">Select Grade</option>
+	return <div className="section form">
+		<div className="row no-print">
+			<label>Grades</label>
+			<select onChange={(e) => setState({ ...state, sectionId: e.target.value })}>
+				<option id="" value="">Select Grade</option>
+				{
+					sortedSections && sortedSections.map(s => <option key={s.id} value={s.id}>{s.className}</option>)
+				}
+			</select>
+		</div>
+		<div className="row no-print">
+			<label>Subject</label>
+			<select onChange={(e) => setState({ ...state, selectedSubject: e.target.value })}>
+				<option value="">Select Subject</option>
+				{
+					Subjects.map((sub: any) => <option key={sub} value={sub}>{sub}</option>)
+				}
+			</select>
+		</div>
+		<div className="row no-print">
+			<label>Test Type</label>
+			<select onChange={(e) => setState({ ...state, testType: e.target.value as S["testType"] })}>
+				<option value="">Select Test Type</option>
+				<option value="Diagnostic">Diagnostic</option>
+				<option value="Monthly">Monthly</option>
+			</select>
+		</div>
+		{loc === 'report' && <div className="row">
+			<label className="no-print">Type</label>
+			<select className="no-print" onChange={(e) => setState({ ...state, type: e.target.value })}>
+				<option value="">Select Type</option>
+				<option value="Single Student">Single Student</option>
+				<option value="All Students">All Students</option>
+			</select>
+		</div>}
+		{(loc !== "test") &&
+			<>
+				{(type !== 'All Students' && loc !== "tests") && <div className="row">
+					<label className="no-print">Students</label>
+					<select className="no-print" onChange={(e) => setState({ ...state, stdId: e.target.value })}>
+						<option value="">Select Students</option>
 						{
-							sortedSections && sortedSections.map(s => <option key={s.id} value={s.id}>{s.className}</option>)
+							Object.values(students)
+								.sort((a, b) => a.Name.localeCompare(b.Name))
+								.map((std) => (<option key={std.id} value={std.id}>{std.Name}</option>))
 						}
-					</select>
-				</div>
-				<div className="row no-print">
-					<label>Subject</label>
-					<select onChange={(e) => setState({ ...state, selectedSubject: e.target.value })}>
-						<option value="">Select Subject</option>
-						{
-							Subjects.map((sub: any) => <option key={sub} value={sub}>{sub}</option>)
-						}
-					</select>
-				</div>
-				<div className="row no-print">
-					<label>Test Type</label>
-					<select onChange={(e) => setState({ ...state, testType: e.target.value as S["testType"] })}>
-						<option value="">Select Test Type</option>
-						<option value="Diagnostic">Diagnostic</option>
-						<option value="Monthly">Monthly</option>
-					</select>
-				</div>
-				{loc === 'report' && <div className="row">
-					<label className="no-print">Type</label>
-					<select className="no-print" onChange={(e) => setState({ ...state, type: e.target.value })}>
-						<option value="">Select Type</option>
-						<option value="Single Student">Single Student</option>
-						<option value="All Students">All Students</option>
 					</select>
 				</div>}
-				{(loc !== "test") &&
-					<>
-						{((type !== 'All Students' && loc === "report") || loc === "grades") && <div className="row">
-							<label className="no-print">Students</label>
-							<select className="no-print" onChange={(e) => setState({ ...state, stdId: e.target.value })}>
-								<option value="">Select Students</option>
-								{
-									Object.values(students)
-										.sort((a, b) => a.Name.localeCompare(b.Name))
-										.map((std) => (<option key={std.id} value={std.id}>{std.Name}</option>))
-								}
-							</select>
-						</div>}
-					</>
-				}
-				{loc === 'test' ? <Diagnostic label={pdfLabel} url={pdfUrl} /> :
-					loc === 'grades' ?
-						<StudentGrades
-							questions={questions}
-							stdId={stdId}
-							testId={selectedSubject}
-							testType={testType}
-							students={props.students}
-							saveReport={props.saveReport}
-						/> :
-						<Report
-							testType={testType}
-							testId={selectedSubject}
-							type={type}
-							stdId={stdId}
-							students={students}
-							selectedClass={selectedSection}
-							stdReport={stdReport}
-							faculty_id={props.faculty_id}
-							setType={setType}
-							logSms={props.logSms}
-						/>}
-			</div>
-		</div>
-	</Layout>
+			</>
+		}
+		{loc === 'test' ? <Diagnostic label={pdfLabel} url={pdfUrl} /> :
+			loc === 'grades' ?
+				<StudentGrades
+					questions={questions}
+					stdId={stdId}
+					testId={selectedSubject}
+					testType={testType}
+					students={props.students}
+					saveReport={props.saveReport}
+				/> :
+				<Report
+					testType={testType}
+					testId={selectedSubject}
+					type={type}
+					stdId={stdId}
+					students={students}
+					selectedClass={selectedSection}
+					stdReport={stdReport}
+					faculty_id={props.faculty_id}
+					setType={setType}
+					logSms={props.logSms}
+				/>}
+	</div>
 }
 
 export default connect((state: RootReducerState) => ({

@@ -1,6 +1,3 @@
-
-import { isMobile } from 'utils/helpers'
-
 export const conditionalRowStyles = [
     {
         //@ts-ignore

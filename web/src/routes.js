@@ -25,7 +25,7 @@ import DailyStats from 'modules/Analytics/DailyStats'
 import Analytics from 'modules/Analytics'
 import ReportsMenu from 'modules/ReportsMenu'
 import PromotionPage from 'modules/Settings/promote-students'
-import TargetedInstruction from 'modules/TargetedInstruction/index.tsx'
+import TargetedInstruction from 'modules/TargetedInstruction/Routing'
 import Help from "modules/Help"
 import Diary from 'modules/Diary'
 import Front from 'modules/Front'
@@ -46,7 +46,6 @@ import ExcelImport from './modules/Settings/ExcelImport';
 import ClassSettings from 'modules/Settings/ClassSettings/Index'
 import MISActivation from 'modules/Activation'
 import BulkExam from 'modules/Marks/BulkExam'
-import Diagnostic from 'modules/TargetedInstruction/Diagnostic'
 
 export default class Routes extends React.Component {
 
