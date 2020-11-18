@@ -62,7 +62,7 @@ export const getSingleStdData = (stdReport: MISReport) => {
                     slo: slo,
                     correct: obj.correct,
                     possible: obj.possible,
-                    percentage: (obj.correct / obj.possible) * 100,
+                    percentage: Math.trunc((obj.correct / obj.possible) * 100),
                     link: obj.link
                 }
             ]
@@ -98,7 +98,7 @@ export const getAllStdData = (stdReport: Report) => {
                 total = ((sloObj.correct / sloObj.possible) * 100) + total
                 stdObj = {
                     ...stdObj,
-                    [slo]: (sloObj.correct / sloObj.possible) * 100
+                    [slo]: Math.trunc((sloObj.correct / sloObj.possible) * 100)
                 }
                 !columns.find(col => col.name === slo) && columns.push({
                     name: slo,
@@ -106,7 +106,7 @@ export const getAllStdData = (stdReport: Report) => {
                     sortable: true
                 })
             }
-            total = (total / (Object.keys(reportObj.report).length * 100)) * 100
+            total = Math.trunc((total / (Object.keys(reportObj.report).length * 100)) * 100)
             stdObj = {
                 ...stdObj,
                 total: total
@@ -127,7 +127,7 @@ export const graphData = (stdReport: Report, students: RootDBState["students"]) 
     for (let testObj of Object.values((stdReport && stdReport) || {})) {
         for (let [slo, rep] of Object.entries(testObj.report)) {
             graphData[slo] ? graphData[slo] = { percentage: graphData[slo].percentage + ((rep.correct / rep.possible) * 100), link: rep.link } :
-                graphData[slo] = { percentage: (rep.correct / rep.possible) * 100, link: rep.link }
+                graphData[slo] = { percentage: Math.trunc((rep.correct / rep.possible) * 100), link: rep.link }
         }
     }
     for (let [id, obj] of Object.entries(graphData)) {

@@ -97,7 +97,7 @@ const Test: React.FC<PropsType> = (props) => {
 		</div>}
 		{(loc !== "test") &&
 			<>
-				{type !== 'All Students' && loc === 'report' || (loc === 'grades') && <div className="row">
+				{(type !== 'All Students' && loc === 'report' || loc === 'grades') && <div className="row">
 					<label className="no-print">Students</label>
 					<select className="no-print" onChange={(e) => setState({ ...state, stdId: e.target.value })}>
 						<option value="">Select Students</option>
