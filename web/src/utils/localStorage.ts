@@ -48,12 +48,6 @@ const initState: RootReducerState = {
 		ilmx: {
 			events: {},
 			lessons: {}
-		},
-		targeted_instruction: {
-			visible: false,
-			tests: {},
-			slo_mapping: {},
-			curriculum: {}
 		}
 	},
 	// this part of the tree i want to obscure.
@@ -77,6 +71,12 @@ const initState: RootReducerState = {
 		isLoading: false,
 		hasError: false
 	},
+	targeted_instruction: {
+		visible: false,
+		tests: {},
+		slo_mapping: {},
+		curriculum: {}
+	}
 }
 
 export const loadDB = () => {

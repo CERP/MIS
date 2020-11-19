@@ -54,12 +54,6 @@ interface RootDBState {
 			[lesson_id: string]: IlmxLesson
 		}
 	}
-	targeted_instruction: {
-		visible: boolean
-		tests: Tests
-		slo_mapping: SLOMapping
-		curriculum: Curriculum
-	}
 }
 
 interface Curriculum {
@@ -180,6 +174,12 @@ interface RootReducerState {
 	ilmxLessons: {
 		isLoading: boolean
 		hasError: boolean
+	}
+	targeted_instruction: {
+		visible: boolean
+		tests: Tests
+		slo_mapping: SLOMapping
+		curriculum: Curriculum
 	}
 }
 

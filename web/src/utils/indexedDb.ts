@@ -51,12 +51,6 @@ export const initState: RootReducerState = {
 		ilmx: {
 			events: {},
 			lessons: {}
-		},
-		targeted_instruction: {
-			visible: false,
-			tests: {},
-			slo_mapping: {},
-			curriculum: {}
 		}
 	},
 	auth: {
@@ -78,6 +72,12 @@ export const initState: RootReducerState = {
 		isLoading: false,
 		hasError: false
 	},
+	targeted_instruction: {
+		visible: false,
+		tests: {},
+		slo_mapping: {},
+		curriculum: {}
+	}
 }
 
 export const loadDb = async () => {

@@ -1,4 +1,4 @@
-export const createSingleStdReport = (diagnostic_result: MISStudent["diagnostic_result"], targeted_instruction: RootDBState["targeted_instruction"], testId: string) => {
+export const createSingleStdReport = (diagnostic_result: MISStudent["diagnostic_result"], targeted_instruction: RootReducerState["targeted_instruction"], testId: string) => {
     return Object.values(((diagnostic_result && diagnostic_result[testId]) || {} as MISStudent["diagnostic_result"]))
         .reduce<MISReport>((report, { isCorrect, slo }) => {
             const c = isCorrect ? 1 : 0
@@ -33,7 +33,7 @@ export const createSingleStdReport = (diagnostic_result: MISStudent["diagnostic_
         }, {})
 }
 
-export const createAllStdReport = (students: RootDBState["students"], targeted_instruction: RootDBState["targeted_instruction"], testId: string, type: string) => {
+export const createAllStdReport = (students: RootDBState["students"], targeted_instruction: RootReducerState["targeted_instruction"], testId: string, type: string) => {
     if (type === 'All Students') {
         return Object.values((students))
             .reduce((agg, std) => {
@@ -159,7 +159,7 @@ export const redirectToIlmx = (id: string) => {
     window.location.href = id
 }
 
-export const getSubjectsFromTests = (targeted_instruction: RootDBState["targeted_instruction"]): string[] => {
+export const getSubjectsFromTests = (targeted_instruction: RootReducerState["targeted_instruction"]): string[] => {
     return Object.values(targeted_instruction.tests).reduce((agg, test) => {
         if (test.subject !== '') {
             return [

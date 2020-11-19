@@ -446,6 +446,29 @@ const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerSta
 			ilmxLessons: { isLoading: false, hasError: false }
 		}
 
+		case "GET_TARGETED_INSTRUCTIONS": return {
+			...state,
+			targeted_instruction: { 
+				visible: false,
+				tests: {},
+				slo_mapping: {},
+				curriculum: {}
+			}
+		}
+		case "GET_TARGETED_INSTRUCTION_FAILURE": return {
+			...state, 
+			targeted_instruction: { 
+				visible: false,
+				tests: {},
+				slo_mapping: {},
+				curriculum: {}
+			}
+		}
+		case "GET_TARGETED_INSTRUCTION_SUCCESS": return {
+			...state,
+				targeted_instruction: action.payload
+		}
+
 		default:
 			return state;
 	}

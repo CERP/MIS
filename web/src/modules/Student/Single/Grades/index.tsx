@@ -8,7 +8,7 @@ import { getSingleStdData, createSingleStdReport, redirectToIlmx, getSubjectsFro
 interface P extends RouteComponentProps<RouteInfo> {
     classes: RootDBState["classes"]
     students: RootDBState["students"]
-    targeted_instruction: RootDBState["targeted_instruction"]
+    targeted_instruction: RootReducerState["targeted_instruction"]
 }
 
 interface RouteInfo {
@@ -56,5 +56,5 @@ const DiagnosticGrades: React.FC<P> = ({ students, targeted_instruction, match }
 export default connect((state: RootReducerState) => ({
     students: state.db.students,
     classes: state.db.classes,
-    targeted_instruction: state.db.targeted_instruction
+    targeted_instruction: state.targeted_instruction
 }))(DiagnosticGrades)

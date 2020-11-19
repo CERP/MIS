@@ -13,7 +13,7 @@ interface P {
 	faculty_id: string
 	classes: RootDBState["classes"]
 	students: RootDBState["students"]
-	targeted_instruction: RootDBState["targeted_instruction"]
+	targeted_instruction: RootReducerState["targeted_instruction"]
 
 	logSms: (history: MISSMSHistory) => any
 	saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport, selectedSubject: string) => void
@@ -137,7 +137,7 @@ const Test: React.FC<PropsType> = (props) => {
 }
 
 export default connect((state: RootReducerState) => ({
-	targeted_instruction: state.db.targeted_instruction,
+	targeted_instruction: state.targeted_instruction,
 	faculty_id: state.auth.faculty_id,
 	classes: state.db.classes,
 	students: state.db.students
@@ -159,7 +159,7 @@ const getStudentsBySectionId = (sectionId: string, students: RootDBState["studen
 		}, {})
 }
 
-const getPDF = (selectedSubject: string, selectedSection: string, testType: string, targeted_instruction: RootDBState["targeted_instruction"]) => {
+const getPDF = (selectedSubject: string, selectedSection: string, testType: string, targeted_instruction: RootReducerState["targeted_instruction"]) => {
 	let url, label
 	let misTest: Tests = targeted_instruction['tests']
 	for (let obj of Object.values(misTest)) {
