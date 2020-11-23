@@ -163,7 +163,7 @@ const getPDF = (selectedSubject: string, selectedSection: string, testType: stri
 	let url, label
 	let misTest: Tests = targeted_instruction['tests']
 	for (let obj of Object.values(misTest)) {
-		if (obj.type === testType && obj.class === selectedSection && obj.subject === selectedSubject) {
+		if (obj.type === testType && obj.grade === selectedSection && obj.subject === selectedSubject) {
 			url = obj.pdf_url
 			label = obj.label
 			break

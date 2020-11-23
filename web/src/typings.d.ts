@@ -86,7 +86,7 @@ interface SLOMapping {
 interface MISTest {
 	name: string
 	subject: string
-	class: string
+	grade: string
 	type: string
 	label: string
 	pdf_url: string
