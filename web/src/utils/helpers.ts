@@ -29,6 +29,7 @@ export const getTimeString = (time: number): string => {
 export const hideScroll = (): void => {
 	document.body.style.position = 'fixed'
 }
+
 export const showScroll = (): void => {
 	document.body.style.position = ''
 }
