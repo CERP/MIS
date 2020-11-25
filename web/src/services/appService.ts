@@ -1,4 +1,4 @@
-import { getOriginHttps } from 'helpers'
+import { getOriginHttps } from 'utils/hostConfig'
 
 const host = getOriginHttps()
 

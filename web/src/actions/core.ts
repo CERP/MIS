@@ -2,7 +2,6 @@ import { Dispatch } from 'redux'
 import Syncr from '@cerp/syncr'
 import { loadDb } from 'utils/indexedDb';
 import { v4 } from 'node-uuid';
-import { getServerTime } from './index'
 
 const SYNC = "SYNC"
 const client_type = "mis";
@@ -535,8 +534,6 @@ export const connected = () => (dispatch: (a: any) => any, getState: () => RootR
 				console.log("VERIFYY")
 				syncr.verify()
 				dispatch(Sync(state.queued))
-
-				dispatch(getServerTime())
 			})
 			.catch(err => {
 				console.error(err)

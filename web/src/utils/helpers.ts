@@ -1,5 +1,5 @@
 /**
- * description: takes time in seconds and return string in format
+ * description: takes time in seconds and return time in hours, mins and secs in form of string
  *              like "1:01" or "4:03:59" or "123:03:59"
  * @param time
 */
@@ -21,13 +21,6 @@ const getTimeString = (time: number): string => {
 
 	return ret
 }
-
-/**
- * description: utility to get the UTC time in milliseconds
- * @param 
- * @return big integer
-*/
-
 
 /**
  *  description: Make position of <body> fixed to hide scroll on modal popup

@@ -322,7 +322,7 @@ class Landing extends Component {
 				{!package_info.paid && package_info.date !== -1 && <div onClick={() => this.onActivationCodeModal()} className="trial-bar">
 					{this.getTrialWarningMessage()}
 				</div>}
-				{!device_time && <div onClick={() => this.onActivationCodeModal()} className="trial-bar">
+				{!device_time && <div className="trial-bar">
 					Please set your device time and timezone correctly!
 				</div>}
 				<div className="horizontal-scroll-container">

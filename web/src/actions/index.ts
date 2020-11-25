@@ -3,7 +3,6 @@ import { createMerges, createDeletes, createLoginFail, analyticsEvent, uploadIma
 import moment from 'moment'
 import { v4 } from "node-uuid"
 import Syncr from '@cerp/syncr'
-import { Dispatch } from 'redux'
 
 import { historicalPayment } from 'modules/Settings/HistoricalFees/historical-fee'
 import { AppActionTypes } from 'constants/index'
@@ -1069,7 +1068,7 @@ export const deletePayment = (student_id: string, payment_id: string) => (dispat
 	]))
 }
 
-export const getServerTime = () => (dispatch: Dispatch) => {
+export const getServerTime = () => (dispatch: Function) => {
 
 	dispatch({ type: AppActionTypes.SERVER_TIME_REQUEST })
 
