@@ -4,7 +4,7 @@
  * @param time
 */
 
-const getTimeString = (time: number): string => {
+export const getTimeString = (time: number): string => {
 
 	// using tilde(~) instead of Math.floor()
 
@@ -26,29 +26,20 @@ const getTimeString = (time: number): string => {
  *  description: Make position of <body> fixed to hide scroll on modal popup
  * 	There are numbers of ways to achieve this but I'm using simple approach
  */
-const hideScroll = (): void => {
+export const hideScroll = (): void => {
 	document.body.style.position = 'fixed'
 }
-const showScroll = (): void => {
+export const showScroll = (): void => {
 	document.body.style.position = ''
 }
 
 /**
  *  check it's mobile device or not
  */
-const isMobile = () => {
+export const isMobile = () => {
 	return /Mobi|Android/i.test(navigator.userAgent)
 }
 
-const getIlmxUser = (): string => {
+export const getIlmxUser = (): string => {
 	return localStorage.getItem("user")
-}
-
-
-export {
-	getTimeString,
-	getIlmxUser,
-	isMobile,
-	hideScroll,
-	showScroll
 }

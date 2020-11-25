@@ -5,8 +5,6 @@ import { v4 } from "node-uuid"
 import Syncr from '@cerp/syncr'
 
 import { historicalPayment } from 'modules/Settings/HistoricalFees/historical-fee'
-import { AppActionTypes } from 'constants/index'
-import { AppService } from 'services'
 
 const client_type = "mis";
 
@@ -1066,17 +1064,4 @@ export const deletePayment = (student_id: string, payment_id: string) => (dispat
 			path: ["db", "students", student_id, "payments", payment_id]
 		}
 	]))
-}
-
-export const getServerTime = () => (dispatch: Function) => {
-
-	dispatch({ type: AppActionTypes.SERVER_TIME_REQUEST })
-
-	AppService.getServerTime()
-		.then(resp => {
-			dispatch({ type: AppActionTypes.SERVER_TIME_SUCCESS, data: resp })
-		}, error => {
-			console.log("Server Error", error)
-			dispatch({ type: AppActionTypes.SERVER_TIME_FAILURE })
-		})
 }

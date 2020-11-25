@@ -31,7 +31,7 @@ import {
 } from 'actions'
 
 import { AnyAction } from 'redux'
-import { AppActionTypes } from 'constants/index'
+import { ActionTypes } from 'constants/index'
 
 const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerState => {
 
@@ -447,18 +447,11 @@ const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerSta
 			ilmxLessons: { isLoading: false, hasError: false }
 		}
 
-		case AppActionTypes.SERVER_TIME_SUCCESS:
+		case ActionTypes.SERVER_TIME_SUCCESS:
 			{
-				const client_time = new Date().getTime()
-				const { os_time } = action.data
-
-				const diff = Math.abs(client_time - os_time)
-
-				const threshold = 1 * 60 * 60 * 1000
-
 				return {
 					...state,
-					is_correct_device_time: diff < threshold
+					is_correct_device_time: action.data
 				}
 			}
 
