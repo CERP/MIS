@@ -447,11 +447,11 @@ const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerSta
 			ilmxLessons: { isLoading: false, hasError: false }
 		}
 
-		case ActionTypes.SERVER_TIME_SUCCESS:
+		case ActionTypes.ALERT_BANNER_TEXT:
 			{
 				return {
 					...state,
-					is_correct_device_time: action.data
+					alert_banner: action.data
 				}
 			}
 

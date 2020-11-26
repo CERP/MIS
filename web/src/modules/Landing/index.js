@@ -243,7 +243,7 @@ class Landing extends Component {
 
 	render() {
 
-		const { logout, user, students, faculty, lastSnapshot, unsyncd, package_info, device_time } = this.props;
+		const { logout, user, students, faculty, lastSnapshot, unsyncd, package_info, alert_banner } = this.props;
 
 		const current_page = Math.floor(this.state.scroll / window.innerWidth)
 
@@ -322,9 +322,11 @@ class Landing extends Component {
 				{!package_info.paid && package_info.date !== -1 && <div onClick={() => this.onActivationCodeModal()} className="trial-bar">
 					{this.getTrialWarningMessage()}
 				</div>}
-				{!device_time && <div className="trial-bar">
-					Please set your device time and timezone correctly!
-				</div>}
+				{
+					alert_banner && <div className="trial-bar">
+						{alert_banner}
+					</div>
+				}
 				<div className="horizontal-scroll-container">
 					{this.props.ilmxUser === "ILMX" ?
 						<IlmxLanding
@@ -565,7 +567,7 @@ export default connect(state => ({
 	user: state.db.faculty[state.auth.faculty_id],
 	students: state.db.students,
 	faculty: state.db.faculty,
-	device_time: state.is_correct_device_time,
+	alert_banner: state.alert_banner,
 	lastSnapshot: state.lastSnapshot,
 	unsyncd: Object.keys(state.queued.mutations || {}).length,
 	package_info: state.db.package_info || { date: -1, trial_period: 15, paid: false }, //If package info is undefined

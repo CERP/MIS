@@ -24,8 +24,11 @@ const syncr = new Syncr(hostWSS)
 syncr.on('connect', () => store.dispatch(connected()))
 
 syncr.on('connect', () => checkTime()
-	.then(is_correct => {
-		store.dispatch({ type: ActionTypes.SERVER_TIME_SUCCESS, data: is_correct })
+	.then(correct => {
+		const text = correct ? '' : 'Your device time or timezone is incorrect!'
+		store.dispatch({
+			type: ActionTypes.ALERT_BANNER_TEXT, data: text
+		})
 	})
 )
 
