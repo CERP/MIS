@@ -11,6 +11,7 @@ const defaultTemplates = () => ({
 
 const initState: RootReducerState = {
 	client_id: v4(),
+	targeted_instruction_access: false,
 	initialized: false,
 	queued: {
 		mutations: {},
@@ -72,7 +73,6 @@ const initState: RootReducerState = {
 		hasError: false
 	},
 	targeted_instruction: {
-		visible: false,
 		tests: {},
 		slo_mapping: {},
 		curriculum: {}

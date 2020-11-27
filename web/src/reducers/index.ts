@@ -449,7 +449,6 @@ const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerSta
 		case "GET_TARGETED_INSTRUCTIONS": return {
 			...state,
 			targeted_instruction: { 
-				visible: false,
 				tests: {},
 				slo_mapping: {},
 				curriculum: {}
@@ -458,7 +457,6 @@ const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerSta
 		case "GET_TARGETED_INSTRUCTION_FAILURE": return {
 			...state, 
 			targeted_instruction: { 
-				visible: false,
 				tests: {},
 				slo_mapping: {},
 				curriculum: {}

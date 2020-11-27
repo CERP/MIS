@@ -136,6 +136,7 @@ interface ImagesQueuable {
 interface RootReducerState {
 	client_id: string
 	initialized: boolean
+	targeted_instruction_access: boolean
 	queued: {
 		mutations: {
 			[path: string]: {
@@ -176,7 +177,6 @@ interface RootReducerState {
 		hasError: boolean
 	}
 	targeted_instruction: {
-		visible: boolean
 		tests: Tests
 		slo_mapping: SLOMapping
 		curriculum: Curriculum
