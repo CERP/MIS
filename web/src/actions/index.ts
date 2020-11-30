@@ -1065,6 +1065,28 @@ export const sendTempPassword = (faculty: MISTeacher, password: string) => (disp
 		})
 }
 
+export const fetchTargetedInstruction = () => (dispatch: Function, getState: () => RootReducerState, syncr: Syncr) => {
+	const state = getState()
+	dispatch({
+		type: "GET_TARGETED_INSTRUCTIONS"
+	})
+	syncr.send({
+		type: "GET_TARGETED_INSTRUCTIONS",
+		client_type: client_type,
+		payload: {
+			school_id: state.auth.school_id,
+			token: state.auth.token,
+			client_id: state.client_id
+		}
+	})
+		.then(response => dispatch({
+			type: "GET_TARGETED_INSTRUCTION_SUCCESS",
+			payload: response
+		}))
+		.catch(err => dispatch({
+			type: "GET_TARGETED_INSTRUCTION_FAILURE"
+		}))
+}
 export const deletePayment = (student_id: string, payment_id: string) => (dispatch: Function) => {
 
 	dispatch(createDeletes([

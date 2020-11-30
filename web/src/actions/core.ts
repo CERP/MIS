@@ -2,7 +2,7 @@ import { Dispatch } from 'redux'
 import Syncr from '@cerp/syncr'
 import { loadDb } from 'utils/indexedDb';
 import { v4 } from 'node-uuid';
-
+import { fetchTargetedInstruction } from 'actions/'
 const SYNC = "SYNC"
 const client_type = "mis";
 
@@ -650,33 +650,4 @@ export const fetchLessons = () => (dispatch: Function, getState: () => RootReduc
 	})
 		.then(response => dispatch(getLessonsSuccess(response)))
 		.catch(err => dispatch(getLessonsFailure()))
-}
-
-export const getTargetedInstruction = () => ({
-	type: "GET_TARGETED_INSTRUCTIONS"
-})
-
-export const getTargetedInstructionSuccess = (targeted_instruction: any) => ({
-	type: "GET_TARGETED_INSTRUCTION_SUCCESS",
-	payload: targeted_instruction
-})
-
-export const getTargetedInstructionFailure = () => ({
-	type: "GET_TARGETED_INSTRUCTION_FAILURE"
-})
-
-export const fetchTargetedInstruction = () => (dispatch: Dispatch, getState: () => RootReducerState, syncr: Syncr) => {
-	const state = getState()
-	dispatch(getTargetedInstruction())
-	syncr.send({
-		type: "GET_TARGETED_INSTRUCTIONS",
-		client_type: client_type,
-		payload: {
-			school_id: state.auth.school_id,
-			token: state.auth.token,
-			client_id: state.client_id
-		}
-	})
-		.then(response => dispatch(getTargetedInstructionSuccess(response)))
-		.catch(err => dispatch(getTargetedInstructionFailure()))
 }
