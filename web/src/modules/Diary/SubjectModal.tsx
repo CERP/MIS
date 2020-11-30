@@ -20,12 +20,11 @@ const SubjectModal: React.FC<PropsType> = ({ events, lessons, onClose }) => {
     const [subjectFilter, setSubjectFilter] = useState('')
 
     const { classTitles, subjects } = useMemo(() => getClassSubjectsInfo(events), [events])
-    const lessons_data = useMemo(
-        () => computeLessonsData(events, lessons, classFilter, subjectFilter),
-        [events, lessons, classFilter, subjectFilter]
-    )
 
-    const sorted_entries = getSortedEntries(lessons_data)
+    const lessons_data = useMemo(
+        () => computeLessonsData(lessons, classFilter, subjectFilter),
+        [lessons, classFilter, subjectFilter]
+    )
 
     const copyLink = (link: string) => {
         navigator.clipboard.writeText(link)
@@ -70,7 +69,7 @@ const SubjectModal: React.FC<PropsType> = ({ events, lessons, onClose }) => {
                 </div>
                 <div className="container">
                     {
-                        sorted_entries
+                        Object.entries(lessons_data)
                             .map(([lesson_id, lesson_meta]) => (
                                 <div className="card" key={lesson_id}>
                                     <div className="card-row">
@@ -101,17 +100,9 @@ const SubjectModal: React.FC<PropsType> = ({ events, lessons, onClose }) => {
 
 export default SubjectModal
 
-type AugmentedIlmxLessons = {
-    [id: string]: AugmentedIlmxLesson
-}
+const computeLessonsData = (lessons: IlmxLessonVideos, class_title: string, subject: string) => {
 
-type ComputeLessonsData = {
-    (events: PropsType["events"], lessons: PropsType["lessons"], class_title: string, subject: string): AugmentedIlmxLessons
-}
-
-const computeLessonsData: ComputeLessonsData = (events, lessons, class_title, subject) => {
-
-    let agg: AugmentedIlmxLessons = {}
+    let agg: IlmxLessonVideos = {}
 
     const lessons_meta = lessons || {}
 
@@ -119,54 +110,21 @@ const computeLessonsData: ComputeLessonsData = (events, lessons, class_title, su
         return agg
     }
 
-    Object.entries(events || {})
-        .forEach(([, lessons_history]) => {
+    let lessonVideos
 
-            for (const [, item] of Object.entries(lessons_history)) {
+    for (let [id, lessonObj] of Object.entries(lessons_meta || {})) {
 
-                if (item.type === "VIDEO" && true) {
+        const s_title = getSubjectTitleFromLessonId(id)
+        const c_title = getClassTitleFromLessonId(id)
 
-                    const { lesson_id, duration, student_id } = item
-
-                    const s_title = getSubjectTitleFromLessonId(lesson_id)
-                    const c_title = getClassTitleFromLessonId(lesson_id)
-
-                    if ((subject ? s_title === subject : true) && (class_title ? c_title === class_title : true)) {
-
-                        if (agg[lesson_id]) {
-
-                            agg[lesson_id] = {
-                                ...agg[lesson_id],
-                                watchCount: agg[lesson_id].watchCount + 1,
-                                watchTime: agg[lesson_id].watchTime + duration,
-                                viewers: {
-                                    ...agg[lesson_id].viewers,
-                                    [student_id]: {
-                                        watchCount: agg[lesson_id].viewers[student_id] ? agg[lesson_id].viewers[student_id].watchCount + 1 : 1,
-                                        watchTime: agg[lesson_id].viewers[student_id] ? agg[lesson_id].viewers[student_id].watchTime + duration : duration
-                                    }
-                                }
-                            }
-                        } else {
-                            agg[lesson_id] = {
-                                watchCount: 1,
-                                watchTime: duration,
-                                // @ts-ignore
-                                ...lessons_meta[lesson_id],
-                                viewers: {
-                                    [student_id]: {
-                                        watchCount: 1,
-                                        watchTime: duration
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+        if ((subject ? s_title === subject : true) && (class_title ? c_title === class_title : true)) {
+            lessonVideos = {
+                ...lessonVideos as IlmxLesson,
+                [id]: lessonObj
             }
-        })
-
-    return agg
+        }
+    }
+    return lessonVideos
 }
 
 const getClassSubjectsInfo = (events: PropsType["events"]) => {
@@ -187,11 +145,6 @@ const getClassSubjectsInfo = (events: PropsType["events"]) => {
         })
 
     return { classTitles: [...class_titles], subjects: [...subjects] }
-}
-
-const getSortedEntries = (lessons_data: AugmentedIlmxLessons) => {
-    return Object.entries(lessons_data)
-        .sort(([, a], [_, b]) => b.watchCount - a.watchCount)
 }
 
 const getClassTitleFromLessonId = (lessonId: string): string => {

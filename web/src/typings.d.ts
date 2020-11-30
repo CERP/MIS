@@ -481,6 +481,10 @@ interface IlmxExamEvent {
 	}
 }
 
+interface IlmxLessonVideos {
+	[id: string]: IlmxLesson
+}
+
 interface IlmxLesson {
 	name: string
 	type: "VIDEO" | ""
