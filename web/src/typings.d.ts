@@ -487,7 +487,7 @@ interface IlmxLessonVideos {
 
 interface IlmxLesson {
 	name: string
-	type: "VIDEO" | ""
+	type: "Video" | ""
 	link: string
 	chapter_name: string
 }

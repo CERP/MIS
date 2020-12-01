@@ -69,7 +69,7 @@ const SubjectModal: React.FC<PropsType> = ({ events, lessons, onClose }) => {
                 </div>
                 <div className="container">
                     {
-                        Object.entries(lessons_data)
+                        Object.entries(lessons_data || {})
                             .map(([lesson_id, lesson_meta]) => (
                                 <div className="card" key={lesson_id}>
                                     <div className="card-row">
@@ -116,11 +116,12 @@ const computeLessonsData = (lessons: IlmxLessonVideos, class_title: string, subj
 
         const s_title = getSubjectTitleFromLessonId(id)
         const c_title = getClassTitleFromLessonId(id)
-
-        if ((subject ? s_title === subject : true) && (class_title ? c_title === class_title : true)) {
-            lessonVideos = {
-                ...lessonVideos as IlmxLesson,
-                [id]: lessonObj
+        if (lessonObj.type === "Video" && true) {
+            if ((subject ? s_title === subject : true) && (class_title ? c_title === class_title : true)) {
+                lessonVideos = {
+                    ...lessonVideos as IlmxLesson,
+                    [id]: lessonObj
+                }
             }
         }
     }
