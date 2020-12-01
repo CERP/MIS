@@ -2,7 +2,7 @@ import React from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
 import { AppError } from 'components/error'
-import { AuthRoute } from 'components/authRoute'
+
 
 import {
 	Landing,
@@ -48,8 +48,10 @@ export class AppRoutes extends React.Component<S> {
 					<Switch>
 						<Route exact path="/" component={Landing} />
 						<Route exact path="/login" component={Login} />
-						<AuthRoute exact path="/home" component={Home} />
-						<AuthRoute exact path="/analytics" component={Analytics} />
+						<Route exact path="/home" component={Home} />
+						<Route exact path="/student-analytics" component={Analytics} />
+						<Route exact path="/teacher-analytics" component={Analytics} />
+						<Route exact path="/fee-analytics" component={Analytics} />
 						<Route path="/about" component={About} />
 						<Route path="*" component={PageNotFound} />
 					</Switch>

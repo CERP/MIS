@@ -1,10 +1,10 @@
 import React from 'react'
 
 import { AppState } from 'reducers'
-import { AuthNavigation, Navigation } from 'components/navigation'
 import { useDocumentTitle } from 'hooks'
 import { SiteConfig } from 'constants/index'
 import { useSelector } from 'react-redux'
+import { Sidebar } from 'components/home/sidebar'
 
 type P = {
 	children: React.ReactNode
@@ -21,9 +21,9 @@ export const AppLayout: React.FC<P> = ({ children, title }) => {
 	const { auth } = useSelector((state: AppState) => state.user)
 
 	return (
-		<>
-			{auth && auth.token ? <AuthNavigation /> : <Navigation />}
+		<div className="w-full md:flex">
+			{true && <Sidebar />}
 			{children}
-		</>
+		</div>
 	)
 }
