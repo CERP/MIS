@@ -1,108 +1,53 @@
-import { v4 } from 'uuid';
+import { v4 } from 'uuid'
+import { AppState } from 'reducers'
 
-export const saveDB = (db: RootReducerState) => {
+export const getClientId = () => {
 
-	try {
+	const clientId = localStorage.getItem("client_id") || v4()
 
-		saveAuth(db.auth)
-		saveSyncState(db.sync_state);
-		saveSnapshot(db.last_snapshot);
-		saveQueue(db.queued)
-	}
+	localStorage.setItem("client_id", clientId)
 
-	catch (err) {
-		console.error(err);
-	}
+	return clientId
 }
 
-export const clearDB = () => {
-	localStorage.removeItem("auth")
-	localStorage.removeItem("sync_state")
-	localStorage.removeItem("last_snapshot")
-	localStorage.removeItem("school_db")
-}
+export const loadState = (): AppState => {
 
-export const loadAuth = (): RootReducerState['auth'] => {
+	const initial_state: AppState = {
+		user: {
+			auth: {},
+			profile: {},
+			schools: {}
+		},
+		alert: {
+			type: '',
+			message: ''
+		}
+	}
 
-	let init_auth: RootReducerState['auth'] = {
-		id: undefined,
-		token: undefined,
-		client_type: "tech_demo"
-	};
+	const state = localStorage.getItem("state")
 
 	try {
-		const str = localStorage.getItem("auth")
-		if (str === null) {
-			return init_auth;
+		if (state === null) {
+			return initial_state
 		}
 
-		return JSON.parse(str);
+		return JSON.parse(state) as AppState
 	}
-	catch (err) {
-		console.error(err);
-		return init_auth;
+	catch (ex) {
+		console.log(ex)
+		return initial_state
 	}
 }
 
-export const saveAuth = (auth: RootReducerState['auth']) => {
-	localStorage.setItem("auth", JSON.stringify(auth))
+export const saveState = (state: AppState) => {
+	const stateString = JSON.stringify(state)
+	localStorage.setItem("state", stateString)
 }
 
-const loadClientId = () => {
-
-	const client_id = localStorage.getItem("client_id") || v4();
-	localStorage.setItem("client_id", client_id)
-
-	return client_id;
+export const clearState = () => {
+	localStorage.removeItem("state")
 }
 
-const loadSyncState = (): RootReducerState['sync_state'] => {
-
-	const str = localStorage.getItem("sync_state");
-
-	if (str) {
-		const curr = JSON.parse(str) as RootReducerState['sync_state']
-		return curr;
-	}
-
-	return {};
-
-}
-
-const saveSyncState = (sync_state: RootReducerState['sync_state']) => {
-
-	localStorage.setItem("sync_state", JSON.stringify(sync_state));
-}
-
-const saveQueue = (queue: RootReducerState['queued']) => {
-
-	localStorage.setItem("queued", JSON.stringify(queue))
-
-}
-
-const loadQueue = () => {
-	return JSON.parse(localStorage.getItem("queued") || "{}") as RootReducerState['queued']
-}
-
-const saveSnapshot = (last_snapshot: number) => {
-
-	//@ts-ignore
-	localStorage.setItem("last_snapshot", last_snapshot);
-}
-
-const loadSnapshot = () => {
-	return parseInt(localStorage.getItem("last_snapshot") || "0")
-}
-
-export const loadDB = (): RootReducerState => {
-
-	return {
-		client_id: loadClientId(),
-		auth: loadAuth(),
-		queued: loadQueue(),
-		accept_snapshot: false,
-		last_snapshot: loadSnapshot(),
-		connected: false,
-		sync_state: loadSyncState()
-	}
+export const clearClientId = () => {
+	localStorage.removeItem("client_id")
 }

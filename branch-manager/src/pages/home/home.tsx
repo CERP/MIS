@@ -3,11 +3,11 @@ import { useSelector } from 'react-redux'
 import { AppState } from 'reducers'
 
 import { AppLayout } from 'components/layout'
-import { DailyStats } from 'components/home/daily_stats'
+import { DailyStats } from 'components/home/dailyStats'
 
-const Home = () => {
+export const Home = () => {
 
-	const schools = useSelector((state: AppState) => state.auth.schools)
+	const schools = useSelector((state: AppState) => state.user.schools)
 
 	return (
 		<AppLayout title={'Home'}>
@@ -16,7 +16,7 @@ const Home = () => {
 					<h1 className="text-2xl font-serif font-bold leading-6 mx-auto">Daily Schools Statistics</h1>
 				</div>
 				{
-					schools?.sort().map(id => (
+					Object.keys(schools).sort().map(id => (
 						<div key={id} className="font-serif">
 							<div className="text-lg font-bold leading-6 text-center mb-2">{id}</div>
 							<DailyStats school_id={id} />
@@ -30,5 +30,3 @@ const Home = () => {
 		</AppLayout>
 	)
 }
-
-export { Home }

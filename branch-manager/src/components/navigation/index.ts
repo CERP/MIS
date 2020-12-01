@@ -1,2 +1,2 @@
-export * from './auth_nav'
+export * from './authNav'
 export * from './nav'

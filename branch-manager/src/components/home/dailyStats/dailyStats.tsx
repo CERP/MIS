@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { user_service } from 'services'
+import { getDailyStats } from 'services'
 import { AttendanceCard, CardWrapper, PaymentReceivedCard } from './cards'
 
 
@@ -36,7 +36,7 @@ const DailyStats: React.FC<P> = ({ school_id }) => {
 
 	useEffect(() => {
 
-		user_service.fetch_daily_stats(school_id)
+		getDailyStats(school_id)
 			.then(
 				data => {
 					console.log(data)

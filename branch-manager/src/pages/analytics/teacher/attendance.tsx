@@ -2,7 +2,8 @@ import moment from 'moment'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { AppState } from 'reducers'
-import { user_service } from 'services'
+
+import { getTeachersAttendance } from 'services'
 
 type S = {
 	faculty: {
@@ -15,6 +16,7 @@ type S = {
 	filter: {
 		year: string
 		period: string
+		school: string
 	}
 }
 
@@ -32,24 +34,26 @@ type Attendance = {
 	leave: number
 }
 
-const TeacherAttendanceAnalytics = () => {
+export const TeacherAttendanceAnalytics = () => {
 
-	const schools = useSelector((state: AppState) => state.auth.schools)
-	const [attendance, set_attendance] = useState<S["faculty"]>({})
-	const [filter, set_filter] = useState<S["filter"]>({
+	const schools = useSelector((state: AppState) => state.user.schools)
+
+	const [attendance, setAttendance] = useState<S["faculty"]>({})
+	const [filter, setFilter] = useState<S["filter"]>({
 		year: '',
 		period: 'monthly',
+		school: '',
 	})
 
-	const [school, setSchool] = useState('')
+	const { school } = filter
 
 	useEffect(() => {
 		if (school) {
-			user_service.teacher_attendance(school)
+			getTeachersAttendance(school)
 				.then(
 					data => {
 						console.log(data)
-						set_attendance(data)
+						setAttendance(data)
 					},
 					error => {
 						console.log(error)
@@ -59,11 +63,11 @@ const TeacherAttendanceAnalytics = () => {
 		}
 	}, [school])
 
-	const attendance_stats = useMemo(() => process_attendance_stats(attendance, filter), [attendance, filter])
+	const attendance_stats = useMemo(() => processAttendanceStats(attendance, filter), [attendance, filter])
 
 	const handle_change = (e: React.ChangeEvent<HTMLInputElement & HTMLSelectElement>) => {
 		const { name, value } = e.target
-		set_filter({ ...filter, [name]: value })
+		setFilter({ ...filter, [name]: value })
 	}
 
 	return (
@@ -75,11 +79,13 @@ const TeacherAttendanceAnalytics = () => {
 				<div className="my-2 flex flex-row justify-end">
 					<div className="flex flex-row mb-1 sm:mb-0">
 						<div className="relative">
-							<select className="h-full rounded-l border block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-								onChange={(e) => setSchool(e.target.value)}>
+							<select
+								name="school"
+								className="h-full rounded-l border block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+								onChange={handle_change}>
 								<option>School School</option>
 								{
-									schools?.sort().map(id => <option key={id} value={id} >{id}</option>)
+									Object.keys(schools)?.sort().map(id => <option key={id} value={id} >{id}</option>)
 								}
 							</select>
 							<div
@@ -148,7 +154,7 @@ const TeacherAttendanceAnalytics = () => {
 												<p className="text-gray-900 whitespace-no-wrap">{v.leave}</p>
 											</td>
 											<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-												<p className="text-gray-900 whitespace-no-wrap">{get_absentee_percentage(v)}%</p>
+												<p className="text-gray-900 whitespace-no-wrap">{getAbsenteePercentage(v)}%</p>
 											</td>
 										</tr>
 									))
@@ -162,31 +168,29 @@ const TeacherAttendanceAnalytics = () => {
 	)
 }
 
-const process_attendance_stats = (teacher_attendace: S["faculty"], filter: S["filter"]) => {
+const processAttendanceStats = (teacher_attendace: S["faculty"], filter: S["filter"]) => {
 
 	const stats: TeacherAttendance = {}
 
-	const date_format = filter.period === 'monthly' ? 'MM/YYYY' : 'DD/MM/YYYY'
+	const dateFormat = filter.period === 'monthly' ? 'MM/YYYY' : 'DD/MM/YYYY'
 
 	for (const [, { attendance }] of Object.entries(teacher_attendace || {})) {
 
 		for (const [k, v] of Object.entries(attendance)) {
 
-			const period_key = moment(k).format(date_format)
+			const periodKey = moment(k).format(dateFormat)
 
-			const a_status = stats[period_key] || { present: 0, leave: 0, absent: 0 }
+			const attendanceKey = stats[periodKey] || { present: 0, leave: 0, absent: 0 }
 
-			a_status[v] += 1;
-			stats[period_key] = a_status
+			attendanceKey[v] += 1;
+			stats[periodKey] = attendanceKey
 		}
 	}
 
 	return stats
 }
 
-const get_absentee_percentage = (attendance: Attendance) => {
+const getAbsenteePercentage = (attendance: Attendance) => {
 	const percentage = attendance.absent / (attendance.present + attendance.leave) * 100
 	return percentage.toFixed(2)
 }
-
-export { TeacherAttendanceAnalytics }

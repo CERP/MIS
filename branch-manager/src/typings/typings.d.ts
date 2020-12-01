@@ -1,61 +1,50 @@
-interface Config {
-	siteTitle: string
-	siteTitleShort: string
-	siteTitleAlt: string
-	siteLogo: string
-	siteUrl: string
-	email: string
-	siteDescription: string
-	googleAnalyticsID: string
-	menuLinks: MenuLink[]
-	themeColor: string
-	backgroundColor: string
-}
-
 interface MenuLink {
 	name: string
 	link: string
 }
 
-interface AuthReducerState extends Auth {
-	loggingIn: boolean
-	loggedIn: boolean
+interface AlertReducerState extends Alert { }
+interface UserReducerState {
+	auth: Partial<Auth>
+	profile: Partial<UserProfile>
+	schools: Partial<School>
 }
 
-interface AlertState {
+interface UserProfile {
+	id: string
+	name: string
+	phone: string
+}
+
+interface Alert {
 	type: string
 	message: string
 }
 
 interface Auth {
-	id?: string
-	token?: string
-	schools?: string[]
+	id: string
+	token: string
 }
 
-interface SyncState {
-
-}
-
-interface RootReducerState {
-	sync_state: SyncState
-	auth: {
-		id?: string
-		token?: string
-		client_type: "tech_demo"
-	}
-	client_id: string
-	queued: {
-		[path: string]: {
-			action: {
-				path: string[]
-				value?: any
-				type: "MERGE" | "DELETE"
-			}
-			date: number
+interface School {
+	[sid: string]: {
+		classes: {
+			[id: string]: MISClass
 		}
 	}
-	last_snapshot: number
-	accept_snapshot: boolean
-	connected: boolean
+}
+
+interface MISClass {
+	id: string
+	name: string
+	classYear: number
+	sections: {
+		[id: string]: {
+			name: string
+			faculty_id?: string
+		}
+	}
+	subjects: {
+		[subject: string]: true
+	}
 }

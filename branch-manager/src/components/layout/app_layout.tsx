@@ -1,33 +1,29 @@
 import React from 'react'
-import { connect } from 'react-redux'
-import { AppState } from 'reducers'
 
-import { SiteConfig as config } from 'constants/index'
+import { AppState } from 'reducers'
 import { AuthNavigation, Navigation } from 'components/navigation'
-import { useDocumentTitle } from 'utils'
+import { useDocumentTitle } from 'hooks'
+import { SiteConfig } from 'constants/index'
+import { useSelector } from 'react-redux'
 
 type P = {
 	children: React.ReactNode
 	title?: string
-	auth: Auth
 }
 
-const Layout: React.FC<P> = ({ children, title, auth }) => {
+export const AppLayout: React.FC<P> = ({ children, title }) => {
 
-	const doc_title = title ? title + " | " + config.siteTitleAlt : config.siteTitleAlt
+	const doc_title = title ? title + " | " + SiteConfig.SITE_TITLE : SiteConfig.SITE_TITLE
 
+	// set the document title
 	useDocumentTitle(doc_title)
 
-	const auth_user = auth ? auth.id && auth.token : false
+	const { auth } = useSelector((state: AppState) => state.user)
 
-	return <>
-		{auth_user ? <AuthNavigation /> : <Navigation />}
-		{children}
-	</>
+	return (
+		<>
+			{auth && auth.token ? <AuthNavigation /> : <Navigation />}
+			{children}
+		</>
+	)
 }
-
-const AppLayout = connect((state: AppState) => ({
-	auth: state.auth
-}))(Layout)
-
-export { AppLayout }

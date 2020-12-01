@@ -1,5 +1,5 @@
 
-const debounce = (f: any, wait: number): any => {
+export const debounce = (f: any, wait: number): any => {
 
 	let timeout: NodeJS.Timeout;
 
@@ -12,5 +12,3 @@ const debounce = (f: any, wait: number): any => {
 	}
 
 }
-
-export default debounce;

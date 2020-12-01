@@ -1,12 +1,12 @@
 import { combineReducers } from 'redux'
 
-import { alert } from './alert_reducer'
-import { auth } from './authentication_reducer'
+import { alert } from './alert'
+import { user } from './user'
 
-const root_reducer = combineReducers({
+const rootReducer = combineReducers({
 	alert,
-	auth
+	user
 })
 
-export type AppState = ReturnType<typeof root_reducer>
-export { root_reducer }
+export type AppState = ReturnType<typeof rootReducer>
+export { rootReducer }

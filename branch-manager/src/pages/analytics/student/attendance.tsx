@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { AppState } from 'reducers'
-import { user_service } from 'services'
+
+import { getStudentsAttendance } from 'services'
 
 type S = {
 	[id: string]: MonthlyAttendance
@@ -17,31 +18,31 @@ type Attendance = {
 	leave: number
 }
 
-const StudentAttendanceAnalytics = () => {
+export const StudentAttendanceAnalytics = () => {
 
-	const schools = useSelector((state: AppState) => state.auth.schools)
+	const schools = useSelector((state: AppState) => state.user.schools)
 	const [attendance, setAttendance] = useState<S>()
 
-	const attendance_stats = useMemo(() => process_attendance_stats(attendance), [attendance])
+	const attendanceStats = useMemo(() => processAttendanceStats(attendance), [attendance])
 
 	const [school, setSchool] = useState('')
-	const [year, setYear] = useState('')
 
 	useEffect(() => {
 		if (school) {
-			user_service.fetch_students_attendance(school)
+			getStudentsAttendance(school)
 				.then(
 					data => {
 						setAttendance(data)
-						const d = process_attendance_stats(data)
+						const d = processAttendanceStats(data)
 						console.log(d)
 					},
 					error => {
+						console.log(error)
 						alert("Unable to load attendance stats")
 					}
 				)
 		}
-	}, [school, year])
+	}, [school])
 
 	return (
 		<div className="container mx-auto px-4 sm:px-8">
@@ -56,7 +57,7 @@ const StudentAttendanceAnalytics = () => {
 								onChange={(e) => setSchool(e.target.value)}>
 								<option>School School</option>
 								{
-									schools?.sort().map(id => <option key={id} value={id} >{id}</option>)
+									Object.keys(schools || {}).sort().map(id => <option key={id} value={id} >{id}</option>)
 								}
 							</select>
 							<div
@@ -96,7 +97,7 @@ const StudentAttendanceAnalytics = () => {
 							</thead>
 							<tbody>
 								{
-									Object.entries(attendance_stats || {}).map(([k, v]) => (
+									Object.entries(attendanceStats || {}).map(([k, v]) => (
 										<tr className="text-center" key={k}>
 											<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
 												<p className="text-gray-900 whitespace-no-wrap">{k}</p>
@@ -111,7 +112,7 @@ const StudentAttendanceAnalytics = () => {
 												<p className="text-gray-900 whitespace-no-wrap">{v.leave}</p>
 											</td>
 											<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-												<p className="text-gray-900 whitespace-no-wrap">{get_absentee_percentage(v)}%</p>
+												<p className="text-gray-900 whitespace-no-wrap">{getAbsenteePercentage(v)}%</p>
 											</td>
 										</tr>
 									))
@@ -125,12 +126,12 @@ const StudentAttendanceAnalytics = () => {
 	)
 }
 
-const process_attendance_stats = (student_attendace?: S) => {
+const processAttendanceStats = (studentAttendace?: S) => {
 
 	let stats: MonthlyAttendance = {}
 
-	for (const monthly_attendance of Object.values(student_attendace || {})) {
-		for (const [k, v] of Object.entries(monthly_attendance)) {
+	for (const monthlyAttendance of Object.values(studentAttendace || {})) {
+		for (const [k, v] of Object.entries(monthlyAttendance)) {
 
 			if (stats[k]) {
 
@@ -154,9 +155,7 @@ const process_attendance_stats = (student_attendace?: S) => {
 	return stats
 }
 
-const get_absentee_percentage = (attendance: Attendance) => {
+const getAbsenteePercentage = (attendance: Attendance) => {
 	const percentage = attendance.absent / (attendance.present + attendance.leave) * 100
 	return percentage.toFixed(2)
 }
-
-export { StudentAttendanceAnalytics }

@@ -1,15 +1,22 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import * as serviceWorker from './serviceWorker'
-import App from 'containers/app'
 
-import { store } from 'helpers'
+import { store } from 'components/store'
+import { Provider } from 'react-redux'
+import { AppRoutes } from 'routes'
 
 import './styles/helper.css'
 import './styles/main.css'
 
 
-ReactDOM.render(<App store={store} />, document.getElementById('root'))
+
+ReactDOM.render(
+	<Provider store={store}>
+		<AppRoutes />
+	</Provider>,
+	document.getElementById('root')
+)
 
 serviceWorker.register({
 	onUpdate: (registration: ServiceWorkerRegistration) => {
