@@ -20,17 +20,36 @@ type P2 = {
 const AttendanceCard: React.FC<P1> = ({ title, attendance }) => (
 	<CardWrapperInner>
 		<CardTitle title={title} />
-		<p className="text-green-500 leading-tight">Present: {attendance?.present}</p>
-		<p className="text-red-500 leading-tight">Absent: {attendance?.absent}</p>
-		<p className="text-blue-500 leading-tight">Leave: {attendance?.leave}</p>
+		<div className="flex justify-between p-2 text-white text-sm">
+			<div className="bg-green-500 leading-tight p-3 mr-2 rounded-lg w-24">
+				<p>Present</p>
+				<p>{attendance?.present || '0'}</p>
+			</div>
+			<div className="bg-red-500 leading-tight p-3 mr-2 rounded-lg w-24">
+				<p>Absent</p>
+				<p>{attendance?.absent || '0'}</p>
+			</div>
+			<div className="bg-blue-500 leading-tight p-3 rounded-lg w-24">
+				<p>Leave</p>
+				<p>{attendance?.leave || '0'}</p>
+			</div>
+		</div>
 	</CardWrapperInner>
 )
 
 const PaymentReceivedCard: React.FC<P2> = ({ title, payment }) => (
 	<CardWrapperInner>
 		<CardTitle title={title} />
-		<p className="text-green-500 leading-tight">Students: {payment?.count}</p>
-		<p className="text-red-500 leading-tight">Amount: {payment?.amount}</p>
+		<div className="flex justify-center p-2 text-white text-sm">
+			<div className="bg-green-500 leading-tight p-3 mr-2 rounded-lg w-24">
+				<p>Students</p>
+				<p>{payment?.count || '0'}</p>
+			</div>
+			<div className="bg-red-500 leading-tight p-3 mr-2 rounded-lg w-24">
+				<p>Amount</p>
+				<p>{payment?.amount || '0'}</p>
+			</div>
+		</div>
 	</CardWrapperInner>
 )
 
@@ -45,11 +64,11 @@ const CardWrapperInner: React.FC = ({ children }) => (
 )
 
 const CardTitle: React.FC<{ title: string }> = ({ title }) => (
-	<h4 className="text-lg uppercase font-semibold text-gray-700 leading-tight">{title}</h4>
+	<h4 className="font-semibold leading-tight mb-4 text-gray-700 text-lg uppercase">{title}</h4>
 )
 
 const CardWrapper: React.FC = ({ children }) => (
-	<div className="flex items-center justify-center px-5 py-5">
+	<div className="flex flex-row items-center justify-between">
 		<div className="w-full max-w-4xl">
 			<div className="-mx-2 md:flex">
 				{

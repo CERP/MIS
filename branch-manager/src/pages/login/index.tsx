@@ -8,6 +8,7 @@ import { AppLayout } from 'components/layout'
 import { Spinner } from 'components/animation'
 import { ShowPassword, HidePassword } from 'components/password'
 import { Link } from 'react-router-dom'
+import { UserActionTypes } from 'constants/index'
 
 type S = {
 	username: string
@@ -90,11 +91,11 @@ export const Login = () => {
 									</div>
 								</div>
 							</div>
-							<button className={"bg-red-600 border font-medium hover:bg-red-500 inline-flex py-3 rounded-xl text-base text-white w-full"}>
-								{false && <Spinner />}
+							<button className={"bg-red-600 border font-medium hover:bg-red-500 inline-flex py-3 px-2 rounded-xl text-base text-white w-full"}>
+								{alert.type === UserActionTypes.LOGIN_REQUEST && <Spinner />}
 								<span className="mx-auto">Login</span>
 							</button>
-							<p className="text-sm pt-2 h-2 text-red-700">{ }</p>
+							<p className="text-sm pt-2 h-2 text-red-700">{alert.message}</p>
 						</form >
 					</div>
 				</div>

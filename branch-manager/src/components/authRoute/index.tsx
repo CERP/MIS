@@ -9,7 +9,7 @@ type P = RouteProps & {
 	auth: Auth
 }
 
-const AppRoute: React.FC<P> = ({ auth, component: Component, ...rest }) => {
+const Private: React.FC<P> = ({ auth, component: Component, ...rest }) => {
 
 	return (
 		<Route {...rest}
@@ -25,6 +25,26 @@ const AppRoute: React.FC<P> = ({ auth, component: Component, ...rest }) => {
 	)
 }
 
+const Public: React.FC<P> = ({ auth, component: Component, ...rest }) => {
+
+	return (
+		<Route {...rest}
+			render={props =>
+				auth && auth.token ?
+					(
+						<Redirect to={{ pathname: "/home", state: { from: props.location } }} />
+					) :
+					(
+						<Component {...props} />
+					)
+			} />
+	)
+}
+
 export const AuthRoute = connect((state: AppState) => ({
 	auth: state.user.auth as Auth
-}))(AppRoute)
+}))(Private)
+
+export const PublicRoute = connect((state: AppState) => ({
+	auth: state.user.auth as Auth
+}))(Public)

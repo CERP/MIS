@@ -7,8 +7,10 @@ import { TeacherAttendanceAnalytics } from './teacher'
 const Analytics = () => {
 	return (
 		<AppLayout>
-			<StudentAttendanceAnalytics />
-			<TeacherAttendanceAnalytics />
+			<div className="md:w-9/12 md:block">
+				<TeacherAttendanceAnalytics />
+				<StudentAttendanceAnalytics />
+			</div>
 		</AppLayout>
 	)
 }

@@ -13,6 +13,7 @@ import {
 	Analytics
 } from 'pages'
 import { ScrollToTop } from 'components/scrollToTop'
+import { AuthRoute, PublicRoute } from 'components/authRoute'
 
 interface S {
 	error?: {
@@ -47,11 +48,12 @@ export class AppRoutes extends React.Component<S> {
 				<ScrollToTop>
 					<Switch>
 						<Route exact path="/" component={Landing} />
-						<Route exact path="/login" component={Login} />
-						<Route exact path="/home" component={Home} />
-						<Route exact path="/student-analytics" component={Analytics} />
-						<Route exact path="/teacher-analytics" component={Analytics} />
-						<Route exact path="/fee-analytics" component={Analytics} />
+						<PublicRoute exact path="/login" component={Login} />
+						<AuthRoute exact path="/home" component={Home} />
+						<AuthRoute exact path="/attendance-analytics" component={Analytics} />
+						<AuthRoute exact path="/fee-analytics" component={Analytics} />
+						<AuthRoute exact path="/expense-analytics" component={Analytics} />
+						<AuthRoute exact path="/exam-analytics" component={Analytics} />
 						<Route path="/about" component={About} />
 						<Route path="*" component={PageNotFound} />
 					</Switch>

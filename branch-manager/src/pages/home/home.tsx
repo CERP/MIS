@@ -11,21 +11,23 @@ export const Home = () => {
 
 	return (
 		<AppLayout title={'Home'}>
-			<div className="flex flex-col w-full md:w-9/12 md:ml-64">
-				<div className="md:ml-4 pt-0 p-6 ">
-					<div className="flex items-center my-5">
-						<h1 className="text-2xl font-serif font-bold leading-6 mx-auto">Daily Schools Statistics</h1>
-					</div>
-					{
-						Object.keys(schools).sort().map(id => (
-							<div key={id} className="font-serif">
-								<div className="text-lg font-bold leading-6 text-center mb-2">{id}</div>
-								<DailyStats school_id={id} />
-							</div>
-						))
-					}
-					<div className="flex items-center my-5">
-						<h1 className="text-2xl font-serif font-bold leading-6 mx-auto">Schools Enrollment Statistcs</h1>
+			<div className="container mx-auto md:ml-64 px-4 sm:px-8">
+				<div className="py-8">
+
+					<div className="flex flex-col">
+						<div className="text-center md:text-left">
+							<h2 className="text-2xl font-semibold leading-tight">Daily School Statistics</h2>
+						</div>
+						{
+							Object.keys(schools).sort().map(id => (
+								<div key={id} className="w-11/12 mx-auto text-center">
+									<div className="font-bold pt-1 pb-5 md:pt-5 md:pb-8 uppercase">
+										<p style={{ color: 'var(--primary)' }}>{id}</p>
+									</div>
+									<DailyStats school_id={id} />
+								</div>
+							))
+						}
 					</div>
 				</div>
 			</div>

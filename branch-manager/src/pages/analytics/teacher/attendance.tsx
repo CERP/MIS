@@ -39,6 +39,8 @@ export const TeacherAttendanceAnalytics = () => {
 	const schools = useSelector((state: AppState) => state.user.schools)
 
 	const [attendance, setAttendance] = useState<S["faculty"]>({})
+	const [loading, setLoading] = useState(false)
+
 	const [filter, setFilter] = useState<S["filter"]>({
 		year: '',
 		period: 'monthly',
@@ -49,13 +51,19 @@ export const TeacherAttendanceAnalytics = () => {
 
 	useEffect(() => {
 		if (school) {
+
+			setLoading(true)
+
 			getTeachersAttendance(school)
 				.then(
 					data => {
 						console.log(data)
 						setAttendance(data)
+						setLoading(false)
 					},
 					error => {
+						setLoading(false)
+
 						console.log(error)
 						alert("Unable to load attendance stats")
 					}
@@ -71,10 +79,10 @@ export const TeacherAttendanceAnalytics = () => {
 	}
 
 	return (
-		<div className="container mx-auto px-4 sm:px-8">
+		<div className="container mx-auto md:ml-64 px-4 sm:px-8">
 			<div className="py-8">
-				<div className="text-center">
-					<h2 className="text-2xl font-semibold leading-tight">Teacher Attendance Analytics</h2>
+				<div className="md:text-left text-center">
+					<h2 className="text-2xl font-semibold leading-tight">Teacher Attendance</h2>
 				</div>
 				<div className="my-2 flex flex-row justify-end">
 					<div className="flex flex-row mb-1 sm:mb-0">
@@ -125,7 +133,8 @@ export const TeacherAttendanceAnalytics = () => {
 						</div>
 					</div>
 				</div>
-				<div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
+				<div className="text-red-500 mb-2 h-2">{loading ? 'Loading...' : ''}</div>
+				<div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-2 overflow-x-auto">
 					<div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
 						<table className="w-full table-auto leading-normal">
 							<thead className="bg-gray-200 border-b-2 border-gray-200 uppercase text-xs text-center font-semibold tracking-wider spac">
@@ -176,7 +185,7 @@ const processAttendanceStats = (teacher_attendace: S["faculty"], filter: S["filt
 
 	for (const [, { attendance }] of Object.entries(teacher_attendace || {})) {
 
-		for (const [k, v] of Object.entries(attendance)) {
+		for (const [k, v] of Object.entries(attendance || {})) {
 
 			const periodKey = moment(k).format(dateFormat)
 

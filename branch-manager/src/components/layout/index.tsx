@@ -22,7 +22,7 @@ export const AppLayout: React.FC<P> = ({ children, title }) => {
 
 	return (
 		<div className="w-full md:flex">
-			{true && <Sidebar />}
+			{auth && auth.token && <Sidebar />}
 			{children}
 		</div>
 	)

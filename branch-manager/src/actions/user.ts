@@ -13,12 +13,21 @@ export const login = (username: string, password: string): any => {
 		services.login(username, password)
 			.then(resp => {
 
-				// const { } = resp
+				const { token, schools } = resp
 
-				console.log(resp)
+				const create_user = {
+					auth: {
+						id: username,
+						token
+					},
+					profile: {
+						id: username
+					},
+					schools
+				}
 
-				// dispatch({ type: UserActionTypes.LOGIN_SUCCESS, data: resp })
-				// dispatch(alert_actions.success({ type: UserActionTypes.LOGIN_SUCCESS, message: '' }))
+				dispatch({ type: UserActionTypes.LOGIN_SUCCESS, data: create_user })
+				dispatch(alert_actions.success({ type: UserActionTypes.LOGIN_SUCCESS, message: '' }))
 			},
 				(error: string) => {
 					dispatch(alert_actions.error({ type: UserActionTypes.LOGIN_FAILURE, message: error.toString() }))

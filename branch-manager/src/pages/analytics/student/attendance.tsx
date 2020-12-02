@@ -21,22 +21,28 @@ type Attendance = {
 export const StudentAttendanceAnalytics = () => {
 
 	const schools = useSelector((state: AppState) => state.user.schools)
+
 	const [attendance, setAttendance] = useState<S>()
+	const [school, setSchool] = useState('')
+	const [year, setYear] = useState('2020')
+	const [loading, setLoading] = useState(false)
 
 	const attendanceStats = useMemo(() => processAttendanceStats(attendance), [attendance])
 
-	const [school, setSchool] = useState('')
-
 	useEffect(() => {
 		if (school) {
+
+			setLoading(true)
+
 			getStudentsAttendance(school)
 				.then(
 					data => {
+						setLoading(false)
 						setAttendance(data)
-						const d = processAttendanceStats(data)
-						console.log(d)
+						console.log(data)
 					},
 					error => {
+						setLoading(false)
 						console.log(error)
 						alert("Unable to load attendance stats")
 					}
@@ -45,17 +51,17 @@ export const StudentAttendanceAnalytics = () => {
 	}, [school])
 
 	return (
-		<div className="container mx-auto px-4 sm:px-8">
+		<div className="container mx-auto md:ml-64 px-4 sm:px-8">
 			<div className="py-8">
-				<div className="text-center">
-					<h2 className="text-2xl font-semibold leading-tight">Student Attendance Analytics</h2>
+				<div className="text-center md:text-left">
+					<h2 className="text-2xl font-semibold leading-tight">Student Attendance</h2>
 				</div>
 				<div className="my-2 flex flex-row justify-end">
 					<div className="flex flex-row mb-1 sm:mb-0">
 						<div className="relative">
 							<select className="h-full rounded-l border block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
 								onChange={(e) => setSchool(e.target.value)}>
-								<option>School School</option>
+								<option>Select School</option>
 								{
 									Object.keys(schools || {}).sort().map(id => <option key={id} value={id} >{id}</option>)
 								}
@@ -69,6 +75,7 @@ export const StudentAttendanceAnalytics = () => {
 						</div>
 						<div className="relative">
 							<select
+								onChange={(e) => setYear(e.target.value)}
 								className="h-full rounded-r border block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500">
 								<option>Select Year</option>
 								<option>2020</option>
@@ -83,7 +90,8 @@ export const StudentAttendanceAnalytics = () => {
 						</div>
 					</div>
 				</div>
-				<div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
+				<div className="text-red-500 mb-2 h-2">{loading ? 'Loading...' : ''}</div>
+				<div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-2 overflow-x-auto">
 					<div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
 						<table className="w-full table-auto leading-normal">
 							<thead className="bg-gray-200 border-b-2 border-gray-200 uppercase text-xs text-center font-semibold tracking-wider spac">
@@ -97,25 +105,27 @@ export const StudentAttendanceAnalytics = () => {
 							</thead>
 							<tbody>
 								{
-									Object.entries(attendanceStats || {}).map(([k, v]) => (
-										<tr className="text-center" key={k}>
-											<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-												<p className="text-gray-900 whitespace-no-wrap">{k}</p>
-											</td>
-											<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-												<p className="text-gray-900 whitespace-no-wrap">{v.present}</p>
-											</td>
-											<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-												<p className="text-gray-900 whitespace-no-wrap">{v.absent}</p>
-											</td>
-											<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-												<p className="text-gray-900 whitespace-no-wrap">{v.leave}</p>
-											</td>
-											<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-												<p className="text-gray-900 whitespace-no-wrap">{getAbsenteePercentage(v)}%</p>
-											</td>
-										</tr>
-									))
+									Object.entries(attendanceStats || {})
+										.filter(([k, v]) => k.includes(year))
+										.map(([k, v]) => (
+											<tr className="text-center" key={k}>
+												<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+													<p className="text-gray-900 whitespace-no-wrap">{k}</p>
+												</td>
+												<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+													<p className="text-gray-900 whitespace-no-wrap">{v.present}</p>
+												</td>
+												<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+													<p className="text-gray-900 whitespace-no-wrap">{v.absent}</p>
+												</td>
+												<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+													<p className="text-gray-900 whitespace-no-wrap">{v.leave}</p>
+												</td>
+												<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+													<p className="text-gray-900 whitespace-no-wrap">{getAbsenteePercentage(v)}%</p>
+												</td>
+											</tr>
+										))
 								}
 							</tbody>
 						</table>

@@ -9,21 +9,30 @@ type P = {
 }
 
 type S = {
-	attendance: {
-		present: number
-		leave: number
-		absent: number
-	}
+	attendance: Attendance
+	teacher_attendance: Attendance
 	payment: {
 		count: number
 		amount: number
 	}
 }
 
+
+interface Attendance {
+	present: number
+	leave: number
+	absent: number
+}
+
 const DailyStats: React.FC<P> = ({ school_id }) => {
 
 	const [stats, setStats] = useState<S>({
 		attendance: {
+			present: 0,
+			leave: 0,
+			absent: 0
+		},
+		teacher_attendance: {
 			present: 0,
 			leave: 0,
 			absent: 0
@@ -52,7 +61,8 @@ const DailyStats: React.FC<P> = ({ school_id }) => {
 	return (
 		<CardWrapper>
 			<AttendanceCard title={"Student Attendance"} attendance={stats.attendance} />
-			<PaymentReceivedCard title={"Student Payments"} payment={stats.payment} />
+			<AttendanceCard title={"Teacher Attendance"} attendance={stats.teacher_attendance} />
+			<PaymentReceivedCard title={"Fee Collection"} payment={stats.payment} />
 		</CardWrapper>
 	)
 }
