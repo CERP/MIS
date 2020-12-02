@@ -4,8 +4,7 @@ import { ContentCopyIcon } from 'assets/icons'
 import './style.css'
 
 interface PropsType {
-    events: RootDBState["ilmx"]["events"]
-    lessons: RootDBState["ilmx"]["lessons"]
+    lessons: IlmxLessonVideos
     isLoading: boolean
     onClose: () => void
 }
@@ -14,15 +13,15 @@ interface S {
     lessonId: string
 }
 
-const SubjectModal: React.FC<PropsType> = ({ events, lessons, onClose }) => {
+const SubjectModal: React.FC<PropsType> = ({ lessons, onClose }) => {
 
-    const [classFilter, setClassFilter] = useState('')
+    const [classFilter, setClassFilter] = useState('1')
     const [subjectFilter, setSubjectFilter] = useState('')
 
-    const { classTitles, subjects } = useMemo(() => getClassSubjectsInfo(events), [events])
+    const { classTitles, subjects } = useMemo(() => getClassSubjectsInfo(lessons), [lessons])
 
     const lessons_data = useMemo(
-        () => computeLessonsData(lessons, classFilter, subjectFilter),
+        () => getFilteredData(lessons, classFilter, subjectFilter),
         [lessons, classFilter, subjectFilter]
     )
 
@@ -69,7 +68,7 @@ const SubjectModal: React.FC<PropsType> = ({ events, lessons, onClose }) => {
                 </div>
                 <div className="container">
                     {
-                        Object.entries(lessons_data || {})
+                        Object.entries(lessons_data || {} as IlmxLessonVideos)
                             .map(([lesson_id, lesson_meta]) => (
                                 <div className="card" key={lesson_id}>
                                     <div className="card-row">
@@ -100,51 +99,38 @@ const SubjectModal: React.FC<PropsType> = ({ events, lessons, onClose }) => {
 
 export default SubjectModal
 
-const computeLessonsData = (lessons: IlmxLessonVideos, class_title: string, subject: string) => {
-
-    let agg: IlmxLessonVideos = {}
-
-    const lessons_meta = lessons || {}
-
-    if (!lessons_meta) {
-        return agg
-    }
+const getFilteredData = (lessons: IlmxLessonVideos, class_title: string, subject: string) => {
 
     let lessonVideos
 
-    for (let [id, lessonObj] of Object.entries(lessons_meta || {})) {
+    for (let [id, lessonObj] of Object.entries(lessons || {})) {
 
         const s_title = getSubjectTitleFromLessonId(id)
         const c_title = getClassTitleFromLessonId(id)
-        if (lessonObj.type === "Video" && true) {
-            if ((subject ? s_title === subject : true) && (class_title ? c_title === class_title : true)) {
-                lessonVideos = {
-                    ...lessonVideos as IlmxLesson,
-                    [id]: lessonObj
-                }
+
+        if ((subject ? s_title === subject : true) && (class_title ? c_title === class_title : true)) {
+            lessonVideos = {
+                ...lessonVideos as IlmxLesson,
+                [id]: lessonObj
             }
         }
     }
     return lessonVideos
 }
 
-const getClassSubjectsInfo = (events: PropsType["events"]) => {
-
+const getClassSubjectsInfo = (lessons: IlmxLessonVideos) => {
     let class_titles = new Set<string>()
-    let subjects = new Set<string>()
-    Object.entries(events || {})
-        .forEach(([, lessons_history]) => {
-            for (const [, item] of Object.entries(lessons_history)) {
-                if (item.type === "VIDEO") {
-                    const { lesson_id } = item
-                    const class_title = getClassTitleFromLessonId(lesson_id)
-                    const subject = getSubjectTitleFromLessonId(lesson_id)
-                    class_titles.add(class_title)
-                    subjects.add(subject)
-                }
+    let subjects: string[] = []
+    for (let [id, lessonObj] of Object.entries(lessons || {})) {
+        if (lessonObj.type === "Video") {
+            const class_title = getClassTitleFromLessonId(id)
+            const subject = getSubjectTitleFromLessonId(id)
+            class_titles.add(class_title)
+            if (!subjects.includes(subject.trim())) {
+                subjects.push(subject)
             }
-        })
-
+        }
+    }
     return { classTitles: [...class_titles], subjects: [...subjects] }
 }
 
