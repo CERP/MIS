@@ -1,6 +1,6 @@
 import { getClientId, loadState } from 'utils/localStorage'
 
-const host = 'http://e2b323a1a1bc.ngrok.io'
+const host = 'http://6197a5c688d9.ngrok.io'
 const prefix = '/branch-manager'
 
 const baseURL = host + prefix
@@ -33,6 +33,12 @@ export const getStudentsAttendance = async (schoolId: string) => {
 export const getTeachersAttendance = async (schoolId: string) => {
 	const options = getRequestOptions()
 	const response = await fetch(`${baseURL}/teachers-attendance?school_id=${schoolId}`, options)
+	return handleFetchResponse(response)
+}
+
+export const getSchoolEnrollment = async (schoolId: string) => {
+	const options = getRequestOptions()
+	const response = await fetch(`${baseURL}/school-enrollment?school_id=${schoolId}`, options)
 	return handleFetchResponse(response)
 }
 

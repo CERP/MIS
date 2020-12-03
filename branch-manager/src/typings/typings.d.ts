@@ -39,12 +39,22 @@ interface MISClass {
 	name: string
 	classYear: number
 	sections: {
-		[id: string]: {
-			name: string
-			faculty_id?: string
-		}
+		[id: string]: MISSection
 	}
 	subjects: {
 		[subject: string]: true
 	}
+}
+
+interface MISSection {
+	name: string
+	faculty_id?: string
+}
+
+interface AugmentedSection extends MISSection {
+	id: string
+	class_id: string
+	namespaced_name: string
+	className: string
+	classYear: number
 }
