@@ -77,7 +77,11 @@ export const DailyStats: React.FC<P> = ({ school_id }) => {
 				attendance={stats.teacher_attendance}
 				loading={loading}
 			/>
-			<PaymentReceivedCard title={"Fee Collection"} payment={stats.payment} />
+			<PaymentReceivedCard
+				title={"Fee Collection"}
+				payment={stats.payment}
+				loading={loading}
+			/>
 		</CardWrapper>
 	)
 }

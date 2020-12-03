@@ -17,21 +17,22 @@ type P2 = {
 		count: number
 		amount: number
 	}
+	loading: boolean
 }
 
 const AttendanceCard: React.FC<P1> = ({ title, attendance, loading }) => (
 	<CardWrapperInner>
 		<CardTitle title={title} />
-		<div className="flex justify-between p-2 text-white text-sm">
-			<div className="bg-green-500 leading-tight p-3 mr-2 rounded-lg w-24">
+		<div className="flex justify-between p-2 text-white font-semibold text-sm">
+			<div className="bg-green-primary leading-tight p-3 pb-2 mr-2 rounded-lg w-24 h-14">
 				<p>Present</p>
 				{loading ? <Spinner className="mx-auto" /> : <p>{attendance?.present || '0'}</p>}
 			</div>
-			<div className="bg-red-500 leading-tight p-3 mr-2 rounded-lg w-24">
+			<div className="bg-red-primary leading-tight p-3 pb-2 mr-2 rounded-lg w-24 h-14">
 				<p>Absent</p>
 				{loading ? <Spinner className="mx-auto" /> : <p>{attendance?.absent || '0'}</p>}
 			</div>
-			<div className="bg-blue-500 leading-tight p-3 rounded-lg w-24">
+			<div className="bg-blue-primary leading-tight p-3 pb-2 rounded-lg w-24 h-14">
 				<p>Leave</p>
 				{loading ? <Spinner className="mx-auto" /> : <p>{attendance?.leave || '0'}</p>}
 			</div>
@@ -39,17 +40,17 @@ const AttendanceCard: React.FC<P1> = ({ title, attendance, loading }) => (
 	</CardWrapperInner>
 )
 
-const PaymentReceivedCard: React.FC<P2> = ({ title, payment }) => (
+const PaymentReceivedCard: React.FC<P2> = ({ title, payment, loading }) => (
 	<CardWrapperInner>
 		<CardTitle title={title} />
 		<div className="flex justify-center p-2 text-white text-sm">
-			<div className="bg-green-500 leading-tight p-3 mr-2 rounded-lg w-24">
+			<div className="bg-green-primary leading-tight p-3 pb-2 mr-2 rounded-lg w-24 h-14">
 				<p>Students</p>
-				<p>{payment?.count || '0'}</p>
+				{loading ? <Spinner className="mx-auto" /> : <p>{payment?.count || '0'}</p>}
 			</div>
-			<div className="bg-red-500 leading-tight p-3 mr-2 rounded-lg w-24">
+			<div className="bg-red-primary leading-tight p-3 pb-2 mr-2 rounded-lg w-24 h-14">
 				<p>Amount</p>
-				<p>{payment?.amount || '0'}</p>
+				{loading ? <Spinner className="mx-auto" /> : <p>{payment?.count || '0'}</p>}
 			</div>
 		</div>
 	</CardWrapperInner>
