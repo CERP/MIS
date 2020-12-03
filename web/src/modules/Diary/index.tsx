@@ -171,7 +171,7 @@ class Diary extends Component<propTypes, S> {
 
 		if (JSON.stringify(nextProps.lessons) !== JSON.stringify(this.props.lessons || {})) {
 			this.setState({
-				videoLessons: this.computeLessonsData(this.props.lessons) as IlmxLessonVideos
+				videoLessons: this.computeLessonsData(nextProps.lessons) as IlmxLessonVideos
 			})
 		}
 	}
