@@ -32,20 +32,18 @@ export const SchoolEnrollment = () => {
 
 	const [students, setStudents] = useState<MISStudent>({})
 
-	const [school, setSchool] = useState('')
+	const [school, setSchool] = useState(Object.keys(schools)[0])
 	const [loading, setLoading] = useState(false)
 
 	const enrollmentStats = useMemo(() => processEnrollmentStatsData(students), [students])
 	const sections = useMemo(() => getSections(schools as School, school), [schools, school])
 
-
-	console.log(sections);
-
-
 	useEffect(() => {
 		if (school) {
+
 			setStudents({})
 			setLoading(true)
+
 			getSchoolEnrollment(school)
 				.then(
 					data => {
@@ -72,7 +70,9 @@ export const SchoolEnrollment = () => {
 						<div className="flex flex-row mb-1 sm:mb-0">
 							<div className="relative">
 								<select className="h-full rounded border block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-									onChange={(e) => setSchool(e.target.value)}>
+									onChange={(e) => setSchool(e.target.value)}
+									defaultValue={school}
+								>
 									<option>Select School</option>
 									{
 										Object.keys(schools || {}).sort().map(id => <option key={id} value={id} >{id}</option>)
@@ -89,11 +89,24 @@ export const SchoolEnrollment = () => {
 					</div>
 					<div className="my-2 font-bold text-gray-700 uppercase text-sm">Total Students: {Object.keys(students).length}</div>
 					<div className="mt-6 mb-4 mx-auto grid">
-						<div className="grid gap-6 mb-8 grid-cols-1 md:grid-cols-4">
-							<InfoCard loading={loading} card={{ title: 'Active Students', count: enrollmentStats.active }} />
-							<InfoCard loading={loading} card={{ title: 'Inactive Students', count: enrollmentStats.inactive }} />
-							<InfoCard loading={loading} card={{ title: 'Male Students', count: enrollmentStats.male }} />
-							<InfoCard loading={loading} card={{ title: 'Female Students', count: enrollmentStats.female }} />
+						<div className="grid gap-6 mb-8 grid-cols-1 md:grid-cols-3">
+							<InfoCard
+								loading={loading}
+								title={"Active Students"}
+								body={enrollmentStats.active}
+							/>
+
+							<InfoCard
+								loading={loading}
+								title={"Inactive Students"}
+								body={enrollmentStats.inactive}
+							/>
+
+							<InfoCard
+								loading={loading}
+								title={"Male/Female Students"}
+								body={`${enrollmentStats.male}/${enrollmentStats.female}`}
+							/>
 						</div>
 					</div>
 					<div className="my-2 flex flex-row justify-end">
@@ -152,7 +165,7 @@ export const SchoolEnrollment = () => {
 								<thead className="bg-gray-200 border-b-2 border-gray-200 text-gray-700 uppercase text-xs text-center font-semibold tracking-wider spac">
 									<tr>
 										<th className="px-5 py-3"> Name </th>
-										<th className="px-5 py-3"> Father </th>
+										<th className="px-5 py-3"> F. Name </th>
 										<th className="px-5 py-3"> Phone </th>
 										<th className="px-5 py-3"> Gender</th>
 									</tr>
@@ -189,18 +202,20 @@ export const SchoolEnrollment = () => {
 
 interface CardItem {
 	title: string
-	count: number
+	body: string | number
 }
 
-interface InfoCardProps {
-	card: CardItem
+interface InfoCardProps extends CardItem {
 	loading: boolean
 }
 
-const InfoCard = ({ card, loading }: InfoCardProps) => {
+const InfoCard = (props: InfoCardProps) => {
+
+	const { title, body, loading } = props
+
 	return (
 		<div className="flex items-center p-4 border rounded-lg shadow-xs">
-			<div className={`p-3 mr-4 rounded-full ${card.title.includes('Inactive') ? 'text-gray-500 bg-gray-100' : 'text-green-500 bg-green-100'}`}>
+			<div className={`p-3 mr-4 rounded-full ${title.includes('Inactive') ? 'text-gray-500 bg-gray-100' : 'text-green-500 bg-green-100'}`}>
 				<svg className={`w-5 h-5 ${loading ? 'animate-pulse' : ''}`} fill="currentColor" viewBox="0 0 20 20">
 					<path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path>
 				</svg>
@@ -211,8 +226,8 @@ const InfoCard = ({ card, loading }: InfoCardProps) => {
 				</div>
 				:
 				<div>
-					<p className="mb-2 text-sm font-medium text-gray-600 ">{card.title}</p>
-					<p className="text-lg font-semibold text-gray-700">{card.count}</p>
+					<p className="mb-2 text-sm font-medium text-gray-600 ">{title}</p>
+					<p className="text-lg font-semibold text-gray-700">{body}</p>
 				</div>
 			}
 		</div>

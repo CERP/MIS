@@ -8,7 +8,15 @@ import { getStudentsAttendance } from 'services'
 import { PageHeading } from 'components/app/pageHeading'
 
 type S = {
-	[id: string]: MonthlyAttendance
+	[id: string]: MISStudent
+}
+
+interface MISStudent {
+	name: string
+	fname: string
+	phone: string
+	section_id: string
+	attendance: MonthlyAttendance
 }
 
 type MonthlyAttendance = {
@@ -25,23 +33,23 @@ export const StudentAttendance = () => {
 
 	const schools = useSelector((state: AppState) => state.user.schools)
 
-	const [attendance, setAttendance] = useState<S>()
+	const [students, setStudents] = useState<S>({})
 	const [school, setSchool] = useState('')
 	const [year, setYear] = useState('2020')
 	const [loading, setLoading] = useState(false)
 
-	const attendanceStats = useMemo(() => processAttendanceStats(attendance), [attendance])
+	const attendanceStats = useMemo(() => processAttendanceStats(students), [students])
 
 	useEffect(() => {
 		if (school) {
 
 			setLoading(true)
-
+			setStudents({})
 			getStudentsAttendance(school)
 				.then(
 					data => {
 						setLoading(false)
-						setAttendance(data)
+						setStudents(data)
 						console.log(data)
 					},
 					error => {
@@ -153,12 +161,12 @@ export const StudentAttendance = () => {
 	)
 }
 
-const processAttendanceStats = (studentAttendace?: S) => {
+const processAttendanceStats = (students: S) => {
 
 	let stats: MonthlyAttendance = {}
 
-	for (const monthlyAttendance of Object.values(studentAttendace || {})) {
-		for (const [k, v] of Object.entries(monthlyAttendance)) {
+	for (const { attendance } of Object.values(students || {})) {
+		for (const [k, v] of Object.entries(attendance || {})) {
 
 			if (stats[k]) {
 
