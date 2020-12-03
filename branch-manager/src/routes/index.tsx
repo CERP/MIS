@@ -17,7 +17,8 @@ import {
 	StudentExam,
 	StudentFee,
 	TeacherAttendance,
-	SchoolExpense
+	SchoolExpense,
+	SchoolEnrollment
 } from 'pages/analytics'
 
 import { ScrollToTop } from 'components/scrollToTop'
@@ -60,6 +61,7 @@ export class AppRoutes extends React.Component<S> {
 						<AuthRoute exact path="/home" component={Home} />
 						<AuthRoute exact path="/student-attendance-analytics" component={StudentAttendance} />
 						<AuthRoute exact path="/teacher-attendance-analytics" component={TeacherAttendance} />
+						<AuthRoute exact path="/enrollment-analytics" component={SchoolEnrollment} />
 						<AuthRoute exact path="/fee-analytics" component={StudentFee} />
 						<AuthRoute exact path="/expense-analytics" component={SchoolExpense} />
 						<AuthRoute exact path="/exam-analytics" component={StudentExam} />
