@@ -3,6 +3,11 @@ import { useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { logout } from 'actions/user'
 
+interface SidebarLink {
+	title: string
+	link: string
+	Icon: any
+}
 
 export const Sidebar = () => {
 
@@ -18,7 +23,7 @@ export const Sidebar = () => {
 	}, [dispatch])
 
 	return (
-		<div className="md:flex flex-col md:flex-row md:min-h-screen md:fixed" style={{ backgroundColor: 'var(--primary)' }}>
+		<div className="sticky md:fixed flex-col md:flex md:flex-row md:min-h-screen top-0 z-50" style={{ backgroundColor: 'var(--primary)' }}>
 			<div className="flex flex-col w-full md:w-64 text-gray-700 flex-shrink-0">
 				<div className={`flex-shrink-0 md:shadow-none px-8 py-2 flex flex-row md:flex-col md:mx-auto items-center justify-between ${open ? 'shadow-xl' : ''}`}>
 					<Link to="/home" className="inline-block py-1 md:py-4 text-gray-500 hover:text-gray-100" >
@@ -33,54 +38,10 @@ export const Sidebar = () => {
 					<div className="hidden md:block text-center font-bold text-lg text-white">MIS Branch Manager</div>
 				</div>
 				<hr className="hidden md:block my-2" />
-				<nav className={` text-white flex-grow md:block px-4 pb-4 md:pb-0 md:overflow-y-auto ease-in ${open ? 'block' : 'hidden'}`}>
-					<Link to="/home"
-						className={"flex items-center cursor-pointer outline-none mt-2 py-1 px-4 hover:text-gray-800"}>
-						<svg className="h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-						</svg>
-						<span className="mx-4 font-medium">Home</span>
-					</Link>
-					<Link to="/attendance-analytics"
-						className={"flex items-center cursor-pointer outline-none mt-2 py-1 px-4 hover:text-gray-800"}>
-						<svg className="h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
-						</svg>
-						<span className="mx-4 font-medium">Attendance</span>
-					</Link>
-
-					<Link to="/fee-analytics"
-						className={"flex items-center cursor-pointer outline-none mt-2 py-1 px-4 hover:text-gray-800"}>
-						<svg className="h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-						</svg>
-						<span className="mx-4 font-medium">Fee</span>
-					</Link>
-
-					<Link to="/expense-analytics"
-						className={"flex items-center cursor-pointer outline-none mt-2 py-1 px-4 hover:text-gray-800"}>
-						<svg className="h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-						</svg>
-						<span className="mx-4 font-medium">Expense</span>
-					</Link>
-
-					<Link to="/exam-analytics"
-						className={"flex items-center cursor-pointer outline-none mt-2 py-1 px-4 hover:text-gray-800"}>
-						<svg className="h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path fillRule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm2-3a1 1 0 011 1v5a1 1 0 11-2 0v-5a1 1 0 011-1zm4-1a1 1 0 10-2 0v7a1 1 0 102 0V8z" clipRule="evenodd" />
-						</svg>
-						<span className="mx-4 font-medium">Exam</span>
-					</Link>
-
-					<Link to="/enrollment-stats"
-						className={"flex items-center cursor-pointer outline-none mt-2 py-1 px-4 hover:text-gray-800"}>
-						<svg className="h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-						</svg>
-						<span className="mx-4 font-medium">Enrollment</span>
-					</Link>
-
+				<nav className={` text-white text-sm h-full flex-grow md:block px-4 pb-4 md:pb-0 ease-in ${open ? 'block' : 'hidden'}`}>
+					{
+						SidebarLinks.map((sblink, index) => <SidebarLink key={sblink.title + index} sblink={sblink} />)
+					}
 					<div className="md:absolute md:bottom-0 md:my-10">
 						<button onClick={handleLogout} className="flex items-center cursor-pointer outline-none mt-2 py-1 px-4 hover:text-gray-800">
 							<svg className="h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -91,6 +52,70 @@ export const Sidebar = () => {
 					</div>
 				</nav>
 			</div>
-		</div>
+		</div >
+	)
+}
+
+const SidebarLinks: SidebarLink[] = [
+	{
+		title: 'Home',
+		link: '/home',
+		Icon: () => <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+	},
+	{
+		title: 'Student Attedance',
+		link: '/student-attendance-analytics',
+		Icon: () => <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+	},
+
+	{
+		title: 'Teacher Attedance',
+		link: '/teacher-attendance-analytics',
+		Icon: () => <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+	},
+	{
+		title: 'Fee',
+		link: '/fee-analytics',
+		Icon: () => <path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+	},
+	{
+		title: 'Expense',
+		link: '/expense-analytics',
+		Icon: () => <path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+	},
+
+	{
+		title: 'Exam',
+		link: '/exam-analytics',
+		Icon: () => <path fillRule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm9 4a1 1 0 10-2 0v6a1 1 0 102 0V7zm-3 2a1 1 0 10-2 0v4a1 1 0 102 0V9zm-3 3a1 1 0 10-2 0v1a1 1 0 102 0v-1z" clipRule="evenodd" />
+	},
+	{
+		title: 'Student Enrollment',
+		link: '/enrollment-analytics',
+		Icon: () => (
+			<>
+				<path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+				<path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
+			</>
+		)
+	}
+]
+
+interface SidebarLinkProps {
+	sblink: SidebarLink
+}
+
+const SidebarLink: React.FC<SidebarLinkProps> = ({ sblink }) => {
+
+	const { link, title, Icon } = sblink
+
+	return (
+		<Link to={link}
+			className={"flex items-center cursor-pointer outline-none mt-2 py-1 px-4 hover:text-gray-800"}>
+			<svg className="h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+				<Icon />
+			</svg>
+			<span className="mx-4 font-medium">{title}</span>
+		</Link>
 	)
 }

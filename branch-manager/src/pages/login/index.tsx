@@ -92,8 +92,9 @@ export const Login = () => {
 								</div>
 							</div>
 							<button className={"bg-red-600 border font-medium hover:bg-red-500 inline-flex py-3 px-2 rounded-xl text-base text-white w-full"}>
-								{alert.type === UserActionTypes.LOGIN_REQUEST && <Spinner />}
-								<span className="mx-auto">Login</span>
+								{alert.type === UserActionTypes.LOGIN_REQUEST && <Spinner className="w-6 h-6" />}
+								{alert.type === UserActionTypes.LOGIN_REQUEST && <span className="mx-auto animate-pulse">Logging In</span>}
+								{alert.type !== UserActionTypes.LOGIN_REQUEST && <span className="mx-auto">Login</span>}
 							</button>
 							<p className="text-sm pt-2 h-2 text-red-700">{alert.message}</p>
 						</form >

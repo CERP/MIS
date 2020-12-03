@@ -17,14 +17,15 @@ type S = {
 	}
 }
 
-
 interface Attendance {
 	present: number
 	leave: number
 	absent: number
 }
 
-const DailyStats: React.FC<P> = ({ school_id }) => {
+export const DailyStats: React.FC<P> = ({ school_id }) => {
+
+	const [loading, setLoading] = useState(false)
 
 	const [stats, setStats] = useState<S>({
 		attendance: {
@@ -45,26 +46,38 @@ const DailyStats: React.FC<P> = ({ school_id }) => {
 
 	useEffect(() => {
 
-		getDailyStats(school_id)
-			.then(
-				data => {
-					console.log(data)
-					setStats(data)
-				},
-				error => {
-					console.log(error)
-				}
-			)
+		setLoading(true)
+
+		setTimeout(() => {
+			getDailyStats(school_id)
+				.then(
+					data => {
+						setLoading(false)
+						console.log(data)
+						setStats(data)
+					},
+					error => {
+						setLoading(false)
+						console.log(error)
+					}
+				)
+		}, 100);
 
 	}, [school_id])
 
 	return (
 		<CardWrapper>
-			<AttendanceCard title={"Student Attendance"} attendance={stats.attendance} />
-			<AttendanceCard title={"Teacher Attendance"} attendance={stats.teacher_attendance} />
+			<AttendanceCard
+				title={"Student Attendance"}
+				attendance={stats.attendance}
+				loading={loading}
+			/>
+			<AttendanceCard
+				title={"Teacher Attendance"}
+				attendance={stats.teacher_attendance}
+				loading={loading}
+			/>
 			<PaymentReceivedCard title={"Fee Collection"} payment={stats.payment} />
 		</CardWrapper>
 	)
 }
-
-export { DailyStats }

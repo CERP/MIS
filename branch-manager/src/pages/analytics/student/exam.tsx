@@ -1,7 +1,5 @@
 import React from 'react'
 
-const StudentExamAnalytics = () => {
+export const StudentExam = () => {
     return (<> </>)
 }
-
-export { StudentExamAnalytics }

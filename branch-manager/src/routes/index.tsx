@@ -9,9 +9,17 @@ import {
 	Login,
 	Home,
 	PageNotFound,
-	About,
-	Analytics
+	About
 } from 'pages'
+
+import {
+	StudentAttendance,
+	StudentExam,
+	StudentFee,
+	TeacherAttendance,
+	SchoolExpense
+} from 'pages/analytics'
+
 import { ScrollToTop } from 'components/scrollToTop'
 import { AuthRoute, PublicRoute } from 'components/authRoute'
 
@@ -50,10 +58,11 @@ export class AppRoutes extends React.Component<S> {
 						<Route exact path="/" component={Landing} />
 						<PublicRoute exact path="/login" component={Login} />
 						<AuthRoute exact path="/home" component={Home} />
-						<AuthRoute exact path="/attendance-analytics" component={Analytics} />
-						<AuthRoute exact path="/fee-analytics" component={Analytics} />
-						<AuthRoute exact path="/expense-analytics" component={Analytics} />
-						<AuthRoute exact path="/exam-analytics" component={Analytics} />
+						<AuthRoute exact path="/student-attendance-analytics" component={StudentAttendance} />
+						<AuthRoute exact path="/teacher-attendance-analytics" component={TeacherAttendance} />
+						<AuthRoute exact path="/fee-analytics" component={StudentFee} />
+						<AuthRoute exact path="/expense-analytics" component={SchoolExpense} />
+						<AuthRoute exact path="/exam-analytics" component={StudentExam} />
 						<Route path="/about" component={About} />
 						<Route path="*" component={PageNotFound} />
 					</Switch>

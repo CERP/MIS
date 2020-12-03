@@ -1,3 +1,4 @@
+import { Spinner } from 'components/animation'
 import React from 'react'
 
 type P1 = {
@@ -7,6 +8,7 @@ type P1 = {
 		absent: number
 		leave: number
 	}
+	loading: boolean
 }
 
 type P2 = {
@@ -17,21 +19,21 @@ type P2 = {
 	}
 }
 
-const AttendanceCard: React.FC<P1> = ({ title, attendance }) => (
+const AttendanceCard: React.FC<P1> = ({ title, attendance, loading }) => (
 	<CardWrapperInner>
 		<CardTitle title={title} />
 		<div className="flex justify-between p-2 text-white text-sm">
 			<div className="bg-green-500 leading-tight p-3 mr-2 rounded-lg w-24">
 				<p>Present</p>
-				<p>{attendance?.present || '0'}</p>
+				{loading ? <Spinner className="mx-auto" /> : <p>{attendance?.present || '0'}</p>}
 			</div>
 			<div className="bg-red-500 leading-tight p-3 mr-2 rounded-lg w-24">
 				<p>Absent</p>
-				<p>{attendance?.absent || '0'}</p>
+				{loading ? <Spinner className="mx-auto" /> : <p>{attendance?.absent || '0'}</p>}
 			</div>
 			<div className="bg-blue-500 leading-tight p-3 rounded-lg w-24">
 				<p>Leave</p>
-				<p>{attendance?.leave || '0'}</p>
+				{loading ? <Spinner className="mx-auto" /> : <p>{attendance?.leave || '0'}</p>}
 			</div>
 		</div>
 	</CardWrapperInner>
