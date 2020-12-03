@@ -8,6 +8,7 @@ import { getSchoolEnrollment } from 'services'
 import { Spinner } from 'components/animation'
 import { getSectionsFromClasses } from 'utils/generic'
 import { toTitleCase } from 'utils/string'
+import { PageHeading } from 'components/app/pageHeading'
 
 interface MISStudent {
 	[id: string]: Student
@@ -66,9 +67,7 @@ export const SchoolEnrollment = () => {
 		<AppLayout title="School Enrollement">
 			<div className="container mx-auto md:ml-64 px-4 sm:px-8">
 				<div className="py-8">
-					<div className="text-center text-gray-700 md:text-left">
-						<h2 className="text-2xl font-semibold leading-tight">School Enrollment</h2>
-					</div>
+					<PageHeading title={"School Enrollment"} />
 					<div className="my-2 flex flex-row justify-end">
 						<div className="flex flex-row mb-1 sm:mb-0">
 							<div className="relative">

@@ -5,6 +5,7 @@ import { AppState } from 'reducers'
 
 import { AppLayout } from 'components/layout'
 import { getTeachersAttendance } from 'services'
+import { PageHeading } from 'components/app/pageHeading'
 
 interface S {
 	faculty: {
@@ -84,9 +85,7 @@ export const TeacherAttendance = () => {
 
 			<div className="container mx-auto md:ml-64 px-4 sm:px-8">
 				<div className="py-8">
-					<div className="md:text-left text-center">
-						<h2 className="text-2xl font-semibold leading-tight">Teacher Attendance</h2>
-					</div>
+					<PageHeading title={"Teacher Attendance"} />
 					<div className="my-2 flex flex-row justify-end">
 						<div className="flex flex-row mb-1 sm:mb-0">
 							<div className="relative">

@@ -5,6 +5,7 @@ import { AppState } from 'reducers'
 
 import { AppLayout } from 'components/layout'
 import { getStudentsAttendance } from 'services'
+import { PageHeading } from 'components/app/pageHeading'
 
 type S = {
 	[id: string]: MonthlyAttendance
@@ -56,9 +57,7 @@ export const StudentAttendance = () => {
 		<AppLayout title="Student Attendance">
 			<div className="container mx-auto md:ml-64 px-4 sm:px-8">
 				<div className="py-8">
-					<div className="text-center md:text-left">
-						<h2 className="text-2xl font-semibold leading-tight">Student Attendance</h2>
-					</div>
+					<PageHeading title="Student Attendance" />
 					<div className="my-2 flex flex-row justify-end">
 						<div className="flex flex-row mb-1 sm:mb-0">
 							<div className="relative">
@@ -68,6 +67,20 @@ export const StudentAttendance = () => {
 									{
 										Object.keys(schools || {}).sort().map(id => <option key={id} value={id} >{id}</option>)
 									}
+								</select>
+								<div
+									className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+									<svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+										<path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+									</svg>
+								</div>
+							</div>
+							<div className="relative">
+								<select name="period"
+									className="h-full border block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500">
+									<option value="">Select Period</option>
+									<option value="daily">Daily</option>
+									<option value="monthly">Monthly</option>
 								</select>
 								<div
 									className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
