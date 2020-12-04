@@ -4,8 +4,7 @@ import { ContentCopyIcon } from 'assets/icons'
 import './style.css'
 
 interface PropsType {
-    events: RootDBState["ilmx"]["events"]
-    lessons: RootDBState["ilmx"]["lessons"]
+    lessons: IlmxLessonVideos
     isLoading: boolean
     onClose: () => void
 }
@@ -14,18 +13,17 @@ interface S {
     lessonId: string
 }
 
-const SubjectModal: React.FC<PropsType> = ({ events, lessons, onClose }) => {
+const SubjectModal: React.FC<PropsType> = ({ lessons, onClose }) => {
 
-    const [classFilter, setClassFilter] = useState('')
+    const [classFilter, setClassFilter] = useState('1')
     const [subjectFilter, setSubjectFilter] = useState('')
 
-    const { classTitles, subjects } = useMemo(() => getClassSubjectsInfo(events), [events])
-    const lessons_data = useMemo(
-        () => computeLessonsData(events, lessons, classFilter, subjectFilter),
-        [events, lessons, classFilter, subjectFilter]
-    )
+    const { classTitles, subjects } = useMemo(() => getClassSubjectsInfo(lessons), [lessons])
 
-    const sorted_entries = getSortedEntries(lessons_data)
+    const lessons_data = useMemo(
+        () => getFilteredData(lessons, classFilter, subjectFilter),
+        [lessons, classFilter, subjectFilter]
+    )
 
     const copyLink = (link: string) => {
         navigator.clipboard.writeText(link)
@@ -70,7 +68,7 @@ const SubjectModal: React.FC<PropsType> = ({ events, lessons, onClose }) => {
                 </div>
                 <div className="container">
                     {
-                        sorted_entries
+                        Object.entries(lessons_data || {} as IlmxLessonVideos)
                             .map(([lesson_id, lesson_meta]) => (
                                 <div className="card" key={lesson_id}>
                                     <div className="card-row">
@@ -101,97 +99,39 @@ const SubjectModal: React.FC<PropsType> = ({ events, lessons, onClose }) => {
 
 export default SubjectModal
 
-type AugmentedIlmxLessons = {
-    [id: string]: AugmentedIlmxLesson
-}
+const getFilteredData = (lessons: IlmxLessonVideos, class_title: string, subject: string) => {
 
-type ComputeLessonsData = {
-    (events: PropsType["events"], lessons: PropsType["lessons"], class_title: string, subject: string): AugmentedIlmxLessons
-}
+    let lessonVideos
 
-const computeLessonsData: ComputeLessonsData = (events, lessons, class_title, subject) => {
+    for (let [id, lessonObj] of Object.entries(lessons || {})) {
 
-    let agg: AugmentedIlmxLessons = {}
+        const s_title = getSubjectTitleFromLessonId(id)
+        const c_title = getClassTitleFromLessonId(id)
 
-    const lessons_meta = lessons || {}
-
-    if (!lessons_meta) {
-        return agg
+        if ((subject ? s_title === subject : true) && (class_title ? c_title === class_title : true)) {
+            lessonVideos = {
+                ...lessonVideos as IlmxLesson,
+                [id]: lessonObj
+            }
+        }
     }
-
-    Object.entries(events || {})
-        .forEach(([, lessons_history]) => {
-
-            for (const [, item] of Object.entries(lessons_history)) {
-
-                if (item.type === "VIDEO" && true) {
-
-                    const { lesson_id, duration, student_id } = item
-
-                    const s_title = getSubjectTitleFromLessonId(lesson_id)
-                    const c_title = getClassTitleFromLessonId(lesson_id)
-
-                    if ((subject ? s_title === subject : true) && (class_title ? c_title === class_title : true)) {
-
-                        if (agg[lesson_id]) {
-
-                            agg[lesson_id] = {
-                                ...agg[lesson_id],
-                                watchCount: agg[lesson_id].watchCount + 1,
-                                watchTime: agg[lesson_id].watchTime + duration,
-                                viewers: {
-                                    ...agg[lesson_id].viewers,
-                                    [student_id]: {
-                                        watchCount: agg[lesson_id].viewers[student_id] ? agg[lesson_id].viewers[student_id].watchCount + 1 : 1,
-                                        watchTime: agg[lesson_id].viewers[student_id] ? agg[lesson_id].viewers[student_id].watchTime + duration : duration
-                                    }
-                                }
-                            }
-                        } else {
-                            agg[lesson_id] = {
-                                watchCount: 1,
-                                watchTime: duration,
-                                // @ts-ignore
-                                ...lessons_meta[lesson_id],
-                                viewers: {
-                                    [student_id]: {
-                                        watchCount: 1,
-                                        watchTime: duration
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        })
-
-    return agg
+    return lessonVideos
 }
 
-const getClassSubjectsInfo = (events: PropsType["events"]) => {
-
+const getClassSubjectsInfo = (lessons: IlmxLessonVideos) => {
     let class_titles = new Set<string>()
-    let subjects = new Set<string>()
-    Object.entries(events || {})
-        .forEach(([, lessons_history]) => {
-            for (const [, item] of Object.entries(lessons_history)) {
-                if (item.type === "VIDEO") {
-                    const { lesson_id } = item
-                    const class_title = getClassTitleFromLessonId(lesson_id)
-                    const subject = getSubjectTitleFromLessonId(lesson_id)
-                    class_titles.add(class_title)
-                    subjects.add(subject)
-                }
+    let subjects: string[] = []
+    for (let [id, lessonObj] of Object.entries(lessons || {})) {
+        if (lessonObj.type === "Video") {
+            const class_title = getClassTitleFromLessonId(id)
+            const subject = getSubjectTitleFromLessonId(id)
+            class_titles.add(class_title)
+            if (!subjects.includes(subject.trim())) {
+                subjects.push(subject)
             }
-        })
-
+        }
+    }
     return { classTitles: [...class_titles], subjects: [...subjects] }
-}
-
-const getSortedEntries = (lessons_data: AugmentedIlmxLessons) => {
-    return Object.entries(lessons_data)
-        .sort(([, a], [_, b]) => b.watchCount - a.watchCount)
 }
 
 const getClassTitleFromLessonId = (lessonId: string): string => {

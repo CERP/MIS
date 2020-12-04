@@ -50,6 +50,7 @@ interface S {
 	diary: MISDiary["date"]
 	showSubjects: boolean
 	scrollY: number
+	videoLessons: IlmxLessonVideos
 }
 
 type propTypes = RouteComponentProps & P
@@ -92,6 +93,7 @@ class Diary extends Component<propTypes, S> {
 			diary,
 			showSubjects: false,
 			scrollY: 0,
+			videoLessons: {}
 		}
 
 		this.former = new former(this, [])
@@ -166,6 +168,12 @@ class Diary extends Component<propTypes, S> {
 		this.setState({
 			diary: { ...this.state.diary, ...selected_date_diary }
 		})
+
+		if (JSON.stringify(nextProps.lessons) !== JSON.stringify(this.props.lessons || {})) {
+			this.setState({
+				videoLessons: this.computeLessonsData(nextProps.lessons) as IlmxLessonVideos
+			})
+		}
 	}
 
 	onSave = () => {
@@ -326,7 +334,35 @@ class Diary extends Component<propTypes, S> {
 	}
 
 	componentDidMount() {
-		this.props.fetchLessons()
+		if (Object.keys(this.props.lessons || {}).length === 0) {
+			this.props.fetchLessons()
+		}
+		this.setState({
+			videoLessons: this.computeLessonsData(this.props.lessons) as IlmxLessonVideos
+		})
+	}
+
+	computeLessonsData = (lessons: IlmxLessonVideos) => {
+
+		let agg: IlmxLessonVideos = {}
+
+		const lessons_meta = lessons || {}
+
+		if (!lessons_meta) {
+			return agg
+		}
+
+		let lessonVideos
+
+		for (let [id, lessonObj] of Object.entries(lessons_meta || {})) {
+			if (lessonObj.type === "Video" && true) {
+				lessonVideos = {
+					...lessonVideos as IlmxLesson,
+					[id]: lessonObj
+				}
+			}
+		}
+		return lessonVideos
 	}
 
 	render() {
@@ -462,8 +498,7 @@ class Diary extends Component<propTypes, S> {
 			{
 				this.state.showSubjects ? <Modal>
 					<SubjectModal onClose={this.handleToggleModal}
-						events={this.props.events}
-						lessons={this.props.lessons}
+						lessons={this.state.videoLessons as IlmxLessonVideos}
 						isLoading={this.props.isLoading} />
 				</Modal> : null
 			}
