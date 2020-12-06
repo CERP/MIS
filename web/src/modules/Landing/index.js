@@ -245,7 +245,7 @@ class Landing extends Component {
 
 
 		const { logout, user, students, faculty, lastSnapshot, unsyncd, package_info, visible, targeted_instruction } = this.props;
-		
+
 		const current_page = Math.floor(this.state.scroll / window.innerWidth)
 
 		const today_date = moment().format("YYYY-MM-DD");
