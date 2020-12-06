@@ -1067,6 +1067,13 @@ export const sendTempPassword = (faculty: MISTeacher, password: string) => (disp
 
 export const fetchTargetedInstruction = () => (dispatch: Function, getState: () => RootReducerState, syncr: Syncr) => {
 	const state = getState()
+
+	if (!syncr.ready) {
+		syncr.onNext('connect', () => {
+			dispatch(fetchTargetedInstruction())
+		})
+	}
+	
 	dispatch({
 		type: "GET_TARGETED_INSTRUCTIONS"
 	})
