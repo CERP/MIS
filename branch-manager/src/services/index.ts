@@ -1,6 +1,6 @@
 import { getClientId, loadState } from 'utils/localStorage'
 
-const host = 'http://efc7565f9a57.ngrok.io'
+const host = 'http://ac784c269974.ngrok.io'
 const prefix = '/branch-manager'
 
 const baseURL = host + prefix

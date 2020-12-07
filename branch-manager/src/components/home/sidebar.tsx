@@ -23,7 +23,7 @@ export const Sidebar = () => {
 	}, [dispatch])
 
 	return (
-		<div className="sticky md:fixed flex-col md:flex md:flex-row md:min-h-screen top-0 z-50" style={{ backgroundColor: 'var(--primary)' }}>
+		<div className="sticky md:fixed flex-col md:flex md:flex-row md:min-h-screen top-0 z-50 bg-red-primary">
 			<div className="flex flex-col w-full md:w-64 text-gray-700 flex-shrink-0">
 				<div className={`flex-shrink-0 md:shadow-none px-8 py-2 flex flex-row md:flex-col md:mx-auto items-center justify-between ${open ? 'shadow-xl' : ''}`}>
 					<Link to="/home" className="inline-block py-1 md:py-4 text-gray-500 hover:text-gray-100" >

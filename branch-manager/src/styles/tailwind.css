@@ -1,5 +1,29 @@
-@import "tailwindcss/base";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@import "tailwindcss/components";
-
-@import "tailwindcss/utilities";
+@layer components {
+	.table-container {
+		@apply inline-block min-w-full shadow rounded-lg overflow-hidden;
+	}
+	.table {
+		@apply w-full table-auto leading-normal;
+	}
+	.thead {
+		@apply bg-gray-200 border-b-2 border-gray-200 text-gray-700 uppercase text-xs text-center font-semibold tracking-wider;
+	}
+	.th {
+		@apply px-5 py-3;
+	}
+	.tr {
+		@apply text-center;
+	}
+	.td {
+		@apply p-5 border-b border-gray-200 text-gray-900 text-sm;
+	}
+	
+	.select {
+		@apply h-full rounded border block w-full bg-white border-gray-400 text-gray-700 py-2 px-4 leading-tight;
+	}
+	
+  }
