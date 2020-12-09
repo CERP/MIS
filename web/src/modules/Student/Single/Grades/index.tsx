@@ -22,8 +22,8 @@ const DiagnosticGrades: React.FC<P> = ({ students, targeted_instruction, match }
     let stdId = match.params.id
 
     const Subjects: string[] = useMemo(() => getSubjectsFromTests(targeted_instruction), [])
-    const singleStdReport: MISReport = useMemo(() => createSingleStdReport(students[stdId] && students[stdId].diagnostic_result, targeted_instruction, selectedSubject), [stdId]);
-    const singleStd = useMemo(() => getSingleStdData(singleStdReport), [stdId]);
+    const singleStdReport: MISReport = useMemo(() => createSingleStdReport(students[stdId] && students[stdId].diagnostic_result, targeted_instruction, selectedSubject), [stdId, selectedSubject]);
+    const singleStd = useMemo(() => getSingleStdData(singleStdReport), [stdId, selectedSubject]);
 
     return <div className="section form">
         <div className="table">

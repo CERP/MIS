@@ -29,8 +29,7 @@ const Report: React.FC<P> = ({ students, testType, testId, stdId, type, faculty_
     const [studentId, setStudentId] = useState(stdId);
     const [allStds, columns] = useMemo(() => getAllStdData(allStdReport), [allStdReport]);
     const data = useMemo(() => graphData(allStdReport, students), [allStdReport]);
-    const singleStd = useMemo(() => getSingleStdData(singleStdReport), [studentId, type]);
-
+    const singleStd = useMemo(() => getSingleStdData(singleStdReport), [studentId]);
     useEffect(() => {
         setStudentId(stdId)
     }, [stdId])

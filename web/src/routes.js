@@ -112,8 +112,6 @@ export default class Routes extends React.Component {
 					<TrackedRoute path="/reports-menu" component={ReportsMenu} />
 					<TrackedRoute path="/expenses" component={ExpensePage} />
 					<TrackedRoute path="/targeted-instruction" component={TargetedInstruction} />
-					<TrackedRoute path="/diagnostic" component={Diagnostic} />
-					<TrackedRoute path="/monthly" component={Monthly} />
 
 					<TrackedRoute exact path="/families/:famId/fee-print-preview" component={PrintPreview} />
 					<TrackedRoute path="/families/:famId/payments" component={StudentFees} />
