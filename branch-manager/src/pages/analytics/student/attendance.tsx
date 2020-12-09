@@ -2,13 +2,13 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { AppState } from 'reducers'
 
-
 import { AppLayout } from 'components/layout'
 import { getStudentsAttendance } from 'services'
 import { PageHeading } from 'components/app/pageHeading'
 import { getSectionsFromClasses } from 'utils/generic'
 import { toTitleCase } from 'utils/string'
 import { InfoCard } from 'components/app/infoCards'
+import IconUserSvg from 'assets/userCircle.svg'
 
 type S = {
 	[id: string]: MISStudent
@@ -18,6 +18,7 @@ interface MISStudent {
 	name: string
 	fname: string
 	phone: string
+	avatar_url?: string
 	section_id: string
 	attendance: MonthlyAttendance
 }
@@ -44,8 +45,8 @@ export const StudentAttendance = () => {
 	const [sectionId, setSectionId] = useState('')
 
 	const sections = useMemo(() => getSections(schools as School, schoolId), [schools, schoolId])
-
-	const attendanceStats = useMemo(() => processAttendanceStats(students), [students])
+	const attendanceStats = useMemo(() => getAttendanceStats(students), [students])
+	const aggAttendanceList = useMemo(() => getAggregatedAttendanceList(students), [students])
 
 	useEffect(() => {
 		if (schoolId) {
@@ -57,7 +58,6 @@ export const StudentAttendance = () => {
 					data => {
 						setLoading(false)
 						setStudents(data)
-						console.log(data)
 					},
 					error => {
 						setLoading(false)
@@ -91,27 +91,22 @@ export const StudentAttendance = () => {
 							<InfoCard
 								loading={loading}
 								title={"Total Presents"}
-								body={0}
-							/>
+								body={attendanceStats.present} />
 
 							<InfoCard
 								loading={loading}
 								title={"Total Absents"}
-								body={0}
-							/>
+								body={attendanceStats.absent} />
 
 							<InfoCard
 								loading={loading}
 								title={"Total Leaves"}
-								body={0}
-							/>
+								body={attendanceStats.leave} />
 
 							<InfoCard
 								loading={loading}
 								title={"Absentee Percentage"}
-								body={0}
-							/>
-
+								body={`${getAbsenteePercentage(attendanceStats)}%`} />
 						</div>
 					</div>
 					<div className="my-2 flex flex-row justify-end">
@@ -139,25 +134,15 @@ export const StudentAttendance = () => {
 								</thead>
 								<tbody>
 									{
-										Object.entries(attendanceStats || {})
+										Object.entries(aggAttendanceList || {})
 											.filter(([k, v]) => k.includes(year))
 											.map(([k, v]) => (
 												<tr className="tr" key={k}>
-													<td className="td">
-														<p>{k}</p>
-													</td>
-													<td className="td">
-														<p>{v.present}</p>
-													</td>
-													<td className="td">
-														<p>{v.absent}</p>
-													</td>
-													<td className="td">
-														<p>{v.leave}</p>
-													</td>
-													<td className="td">
-														<p>{getAbsenteePercentage(v)}%</p>
-													</td>
+													<td className="td">{k}</td>
+													<td className="td">{v.present}</td>
+													<td className="td">{v.absent}</td>
+													<td className="td">{v.leave}</td>
+													<td className="td">{getAbsenteePercentage(v)}%</td>
 												</tr>
 											))
 									}
@@ -173,7 +158,9 @@ export const StudentAttendance = () => {
 								{
 									sections
 										.sort((a, b) => a.namespaced_name.localeCompare(b.namespaced_name))
-										.map(section => <option key={section.id} value={section.id} >{toTitleCase(section.namespaced_name)}</option>)
+										.map(section => <option key={section.id} value={section.id} >
+											{toTitleCase(section.namespaced_name)}
+										</option>)
 								}
 							</select>
 						</div>
@@ -195,14 +182,17 @@ export const StudentAttendance = () => {
 											.map(([k, v]) => (
 												<tr className="tr" key={k}>
 													<td className="td text-left">
-														<p>{v.name}</p>
+														<div className="flex items-center">
+															<div className="flex-shrink-0">
+																<img className="w-8 h-8 mr-4 rounded-full" src={v?.avatar_url || IconUserSvg} alt={v.name} />
+															</div>
+															<div className="ml-3">
+																<p> {v.name} </p>
+															</div>
+														</div>
 													</td>
-													<td className="td">
-														<p>{v.phone}</p>
-													</td>
-													<td className="td">
-														<p>{processSigleStudentAttendance(v)?.absent || 0}</p>
-													</td>
+													<td className="td">{v.phone}</td>
+													<td className="td">{processAttendanceList(v)?.absent || 0}</td>
 												</tr>
 											))
 									}
@@ -216,7 +206,26 @@ export const StudentAttendance = () => {
 	)
 }
 
-const processAttendanceStats = (students: S) => {
+const getAttendanceStats = (students: S) => {
+
+	let stats: Attendance = { absent: 0, present: 0, leave: 0 }
+
+	for (const student of Object.values(students || {})) {
+
+		for (const v of Object.values(student.attendance || {})) {
+
+			stats = {
+				absent: stats["absent"] + v["absent"],
+				present: stats["present"] + v["present"],
+				leave: stats["leave"] + v["leave"]
+			}
+		}
+	}
+
+	return stats
+}
+
+const getAggregatedAttendanceList = (students: S) => {
 
 	let stats: MonthlyAttendance = {}
 
@@ -245,7 +254,7 @@ const processAttendanceStats = (students: S) => {
 	return stats
 }
 
-const processSigleStudentAttendance = (student: MISStudent) => {
+const processAttendanceList = (student: MISStudent) => {
 
 	const attendance: Attendance = { absent: 0, present: 0, leave: 0 }
 

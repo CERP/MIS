@@ -19,7 +19,7 @@
 		@apply text-center;
 	}
 	.td {
-		@apply p-5 border-b border-gray-200 text-gray-900 text-sm;
+		@apply px-5 py-3 border-b border-gray-200 text-gray-900 text-sm;
 	}
 	
 	.select {

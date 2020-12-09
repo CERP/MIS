@@ -7,12 +7,15 @@ import { AppLayout } from 'components/layout'
 import { getTeachersAttendance } from 'services'
 import { PageHeading } from 'components/app/pageHeading'
 import { InfoCard } from 'components/app/infoCards'
+import IconUserSvg from 'assets/userCircle.svg'
+
 
 interface S {
 	faculty: {
 		[tid: string]: {
 			name: string
 			phone: string
+			avatar_url?: string
 			attendance: SingleTeacherAttendance
 		}
 	}
@@ -25,10 +28,6 @@ interface S {
 
 interface SingleTeacherAttendance {
 	[date: string]: "present" | "absent" | "leave"
-}
-
-interface TeacherAttendance {
-	[date: string]: Attendance
 }
 
 interface Attendance {
@@ -74,9 +73,11 @@ export const TeacherAttendance = () => {
 		}
 	}, [school])
 
-	const attendance_stats = useMemo(() => processAttendanceStats(attendance, filter), [attendance, filter])
+	const attendanceStats = useMemo(() => getAttendanceStats(attendance), [attendance])
+	const aggAttendanceList = useMemo(() => getAggregatedAttendanceList(attendance, filter), [attendance, filter])
+	const attendanceList = useMemo(() => getAttendanceList(attendance), [attendance])
 
-	const handle_change = (e: React.ChangeEvent<HTMLInputElement & HTMLSelectElement>) => {
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement & HTMLSelectElement>) => {
 		const { name, value } = e.target
 		setFilter({ ...filter, [name]: value })
 	}
@@ -93,7 +94,7 @@ export const TeacherAttendance = () => {
 								<select
 									name="school"
 									className="select"
-									onChange={handle_change}
+									onChange={handleChange}
 									defaultValue={filter.school} >
 
 									<option>School School</option>
@@ -109,28 +110,28 @@ export const TeacherAttendance = () => {
 							<InfoCard
 								loading={loading}
 								title={"Total Presents"}
-								body={0} />
+								body={attendanceStats.present} />
 
 							<InfoCard
 								loading={loading}
 								title={"Total Absents"}
-								body={0} />
+								body={attendanceStats.absent} />
 
 							<InfoCard
 								loading={loading}
 								title={"Total Leaves"}
-								body={0} />
+								body={attendanceStats.leave} />
 
 							<InfoCard
 								loading={loading}
 								title={"Absentee Percentage"}
-								body={0} />
+								body={`${getAbsenteePercentage(attendanceStats)}%`} />
 						</div>
 					</div>
 					<div className="my-2 flex flex-row justify-end">
 						<div className="flex flex-row mb-1 sm:mb-0">
 							<div className="relative">
-								<select onChange={handle_change} name="period"
+								<select onChange={handleChange} name="period"
 									className="select rounded-l">
 									<option value="">Select Period</option>
 									<option value="daily">Daily</option>
@@ -138,7 +139,7 @@ export const TeacherAttendance = () => {
 								</select>
 							</div>
 							<div className="relative">
-								<select onChange={handle_change}
+								<select onChange={handleChange}
 									name="year"
 									className="select rounded-r">
 									<option>Select Year</option>
@@ -162,25 +163,15 @@ export const TeacherAttendance = () => {
 								</thead>
 								<tbody>
 									{
-										Object.entries(attendance_stats || {})
+										Object.entries(aggAttendanceList || {})
 											.filter(([k, v]) => k.includes(filter.year))
 											.map(([k, v]) => (
 												<tr className="text-center" key={k}>
-													<td className="td">
-														<p>{k}</p>
-													</td>
-													<td className="td">
-														<p>{v.present}</p>
-													</td>
-													<td className="td">
-														<p>{v.absent}</p>
-													</td>
-													<td className="td">
-														<p>{v.leave}</p>
-													</td>
-													<td className="td">
-														<p>{getAbsenteePercentage(v)}%</p>
-													</td>
+													<td className="td">{k}</td>
+													<td className="td">{v.present}</td>
+													<td className="td">{v.absent}</td>
+													<td className="td">{v.leave}</td>
+													<td className="td">{getAbsenteePercentage(v)}%</td>
 												</tr>
 											))
 									}
@@ -201,7 +192,24 @@ export const TeacherAttendance = () => {
 								</thead>
 								<tbody>
 									{
-
+										Object.entries(attendanceList)
+											.sort(([, a], [, b]) => b.attendance.absent - a.attendance.absent)
+											.map(([k, v]) => (
+												<tr className="tr" key={k}>
+													<td className="td text-left">
+														<div className="flex items-center">
+															<div className="flex-shrink-0">
+																<img className="w-8 h-8 mr-4 rounded-full" src={v?.avatar_url || IconUserSvg} alt={v.name} />
+															</div>
+															<div className="ml-3">
+																<p> {v.name} </p>
+															</div>
+														</div>
+													</td>
+													<td className="td">{v.phone}</td>
+													<td className="td">{v.attendance.absent}</td>
+												</tr>
+											))
 									}
 								</tbody>
 							</table>
@@ -214,13 +222,27 @@ export const TeacherAttendance = () => {
 	)
 }
 
-const processAttendanceStats = (teacher_attendace: S["faculty"], filter: S["filter"]) => {
+const getAttendanceStats = (teachers_attendance: S["faculty"]) => {
 
-	const stats: TeacherAttendance = {}
+	let stats: Attendance = { absent: 0, present: 0, leave: 0 }
+
+	for (const teacher of Object.values(teachers_attendance || {})) {
+
+		for (const status of Object.values(teacher.attendance || {})) {
+			stats[status] = stats[status] + 1;
+		}
+	}
+
+	return stats
+}
+
+const getAggregatedAttendanceList = (teachers_attendace: S["faculty"], filter: S["filter"]) => {
+
+	const stats = {} as { [date: string]: Attendance }
 
 	const dateFormat = filter.period === 'monthly' ? 'MM/YYYY' : 'DD/MM/YYYY'
 
-	for (const [, { attendance }] of Object.entries(teacher_attendace || {})) {
+	for (const [, { attendance }] of Object.entries(teachers_attendace || {})) {
 
 		for (const [k, v] of Object.entries(attendance || {})) {
 
@@ -235,6 +257,32 @@ const processAttendanceStats = (teacher_attendace: S["faculty"], filter: S["filt
 
 	return stats
 }
+
+const getAttendanceList = (teachers_attendance: S["faculty"]) => {
+
+	const attendance: Attendance = { absent: 0, present: 0, leave: 0 }
+
+	return Object.entries(teachers_attendance || {})
+		.reduce((agg, [id, curr]) => {
+
+			const sum = Object.entries(curr.attendance || {})
+				.reduce<Attendance>((agg2, [k, v]) => {
+					return {
+						...agg2,
+						[v]: agg2[v] + 1,
+					}
+				}, attendance)
+
+			return {
+				...agg,
+				[id]: {
+					...curr,
+					attendance: sum
+				}
+			}
+		}, {} as { [id: string]: { avatar_url?: string, name: string, phone: string, attendance: Attendance } })
+}
+
 
 const getAbsenteePercentage = (attendance: Attendance) => {
 	const percentage = attendance.absent / (attendance.present + attendance.leave) * 100

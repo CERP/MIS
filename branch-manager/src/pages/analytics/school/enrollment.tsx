@@ -9,6 +9,7 @@ import { getSectionsFromClasses } from 'utils/generic'
 import { toTitleCase } from 'utils/string'
 import { PageHeading } from 'components/app/pageHeading'
 import { InfoCard } from 'components/app/infoCards'
+import IconUserSvg from 'assets/userCircle.svg'
 
 interface MISStudent {
 	[id: string]: Student
@@ -19,6 +20,7 @@ interface Student {
 	fname: string
 	dob: string
 	start_date: string
+	avatar_url?: string
 	gender: string
 	active: boolean
 	section_id: string
@@ -140,7 +142,14 @@ export const SchoolEnrollment = () => {
 											.map(([k, v]) => (
 												<tr className="tr" key={k}>
 													<td className="td text-left">
-														<p>{v.name}</p>
+														<div className="flex items-center">
+															<div className="flex-shrink-0">
+																<img className="w-8 h-8 mr-4 rounded-full" src={v?.avatar_url || IconUserSvg} alt={v.name} />
+															</div>
+															<div className="ml-3">
+																<p> {v.name} </p>
+															</div>
+														</div>
 													</td>
 													<td className="td text-left">
 														<p>{v.fname}</p>
