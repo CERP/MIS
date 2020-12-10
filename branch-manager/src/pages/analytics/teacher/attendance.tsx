@@ -5,35 +5,18 @@ import { AppState } from 'reducers'
 
 import { AppLayout } from 'components/layout'
 import { getTeachersAttendance } from 'services'
-import { PageHeading } from 'components/app/pageHeading'
 import { InfoCard } from 'components/app/infoCards'
 import IconUserSvg from 'assets/userCircle.svg'
+import { PageHeading, PageSubHeading } from 'components/app/pageHeading'
 
 
 interface S {
-	faculty: {
-		[tid: string]: {
-			name: string
-			phone: string
-			avatar_url?: string
-			attendance: SingleTeacherAttendance
-		}
-	}
+	faculty: MISFaculty
 	filter: {
 		year: string
 		period: string
 		school: string
 	}
-}
-
-interface SingleTeacherAttendance {
-	[date: string]: "present" | "absent" | "leave"
-}
-
-interface Attendance {
-	present: number
-	absent: number
-	leave: number
 }
 
 export const TeacherAttendance = () => {
@@ -42,6 +25,7 @@ export const TeacherAttendance = () => {
 
 	const [attendance, setAttendance] = useState<S["faculty"]>({})
 	const [loading, setLoading] = useState(false)
+	const [searchable, setSearchable] = useState('')
 
 	const [filter, setFilter] = useState<S["filter"]>({
 		year: '',
@@ -130,23 +114,19 @@ export const TeacherAttendance = () => {
 					</div>
 					<div className="my-2 flex flex-row justify-end">
 						<div className="flex flex-row mb-1 sm:mb-0">
-							<div className="relative">
-								<select onChange={handleChange} name="period"
-									className="select rounded-l">
-									<option value="">Select Period</option>
-									<option value="daily">Daily</option>
-									<option value="monthly">Monthly</option>
-								</select>
-							</div>
-							<div className="relative">
-								<select onChange={handleChange}
-									name="year"
-									className="select rounded-r">
-									<option>Select Year</option>
-									<option value="2020">2020</option>
-									<option value="2019">2019</option>
-								</select>
-							</div>
+							<select onChange={handleChange} name="period"
+								className="select">
+								<option value="">Select Period</option>
+								<option value="daily">Daily</option>
+								<option value="monthly">Monthly</option>
+							</select>
+							<select onChange={handleChange}
+								name="year"
+								className="select ml-2">
+								<option>Select Year</option>
+								<option value="2020">2020</option>
+								<option value="2019">2019</option>
+							</select>
 						</div>
 					</div>
 					<div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-2 overflow-x-auto">
@@ -179,7 +159,16 @@ export const TeacherAttendance = () => {
 							</table>
 						</div>
 					</div>
-
+					<div className="mb-4 mt-2">
+						<PageSubHeading title={"Absentee List"} />
+					</div>
+					<div className="my-2 flex flex-row justify-between">
+						<input
+							name="search"
+							onChange={(e) => setSearchable(e.target.value)}
+							placeholder="Search here..."
+							className="input w-full" />
+					</div>
 					<div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-2 overflow-x-auto">
 						<div className="table-container">
 							<table className="table">
@@ -193,6 +182,14 @@ export const TeacherAttendance = () => {
 								<tbody>
 									{
 										Object.entries(attendanceList)
+											.filter(([k, v]) => {
+
+												if (searchable) {
+													return v.name.toLowerCase().includes(searchable)
+												}
+
+												return true
+											})
 											.sort(([, a], [, b]) => b.attendance.absent - a.attendance.absent)
 											.map(([k, v]) => (
 												<tr className="tr" key={k}>
@@ -258,31 +255,34 @@ const getAggregatedAttendanceList = (teachers_attendace: S["faculty"], filter: S
 	return stats
 }
 
-const getAttendanceList = (teachers_attendance: S["faculty"]) => {
+type AugmentedMISFaculty = {
+	[id: string]: ChangeTypeOfKeys<MISTeacher, 'attendance', Attendance>
+}
+
+const getAttendanceList = (teachers_attendance: MISFaculty) => {
 
 	const attendance: Attendance = { absent: 0, present: 0, leave: 0 }
 
 	return Object.entries(teachers_attendance || {})
-		.reduce((agg, [id, curr]) => {
+		.reduce<AugmentedMISFaculty>((agg, [tid, v]) => {
 
-			const sum = Object.entries(curr.attendance || {})
-				.reduce<Attendance>((agg2, [k, v]) => {
+			const sum = Object.entries(v.attendance || {})
+				.reduce<Attendance>((agg2, [k, v2]) => {
 					return {
 						...agg2,
-						[v]: agg2[v] + 1,
+						[v2]: agg2[v2] + 1,
 					}
 				}, attendance)
 
 			return {
 				...agg,
-				[id]: {
-					...curr,
+				[tid]: {
+					...v,
 					attendance: sum
 				}
 			}
-		}, {} as { [id: string]: { avatar_url?: string, name: string, phone: string, attendance: Attendance } })
+		}, {})
 }
-
 
 const getAbsenteePercentage = (attendance: Attendance) => {
 	const percentage = attendance.absent / (attendance.present + attendance.leave) * 100

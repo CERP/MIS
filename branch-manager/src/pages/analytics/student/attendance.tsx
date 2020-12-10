@@ -4,7 +4,7 @@ import { AppState } from 'reducers'
 
 import { AppLayout } from 'components/layout'
 import { getStudentsAttendance } from 'services'
-import { PageHeading } from 'components/app/pageHeading'
+import { PageHeading, PageSubHeading } from 'components/app/pageHeading'
 import { getSectionsFromClasses } from 'utils/generic'
 import { toTitleCase } from 'utils/string'
 import { InfoCard } from 'components/app/infoCards'
@@ -14,25 +14,6 @@ type S = {
 	[id: string]: MISStudent
 }
 
-interface MISStudent {
-	name: string
-	fname: string
-	phone: string
-	avatar_url?: string
-	section_id: string
-	attendance: MonthlyAttendance
-}
-
-type MonthlyAttendance = {
-	[date: string]: Attendance
-}
-
-type Attendance = {
-	present: number
-	absent: number
-	leave: number
-}
-
 export const StudentAttendance = () => {
 
 	const schools = useSelector((state: AppState) => state.user.schools)
@@ -40,6 +21,7 @@ export const StudentAttendance = () => {
 	const [students, setStudents] = useState<S>({})
 	const [year, setYear] = useState('2020')
 	const [loading, setLoading] = useState(false)
+	const [searchable, setSearchable] = useState('')
 
 	const [schoolId, setSchoolId] = useState(Object.keys(schools)[0])
 	const [sectionId, setSectionId] = useState('')
@@ -47,6 +29,7 @@ export const StudentAttendance = () => {
 	const sections = useMemo(() => getSections(schools as School, schoolId), [schools, schoolId])
 	const attendanceStats = useMemo(() => getAttendanceStats(students), [students])
 	const aggAttendanceList = useMemo(() => getAggregatedAttendanceList(students), [students])
+	const attendanceList = useMemo(() => getAttendanceList(students), [students])
 
 	useEffect(() => {
 		if (schoolId) {
@@ -74,7 +57,7 @@ export const StudentAttendance = () => {
 				<div className="py-8">
 					<PageHeading title="Student Attendance" />
 					<div className="my-2 flex flex-row justify-end">
-						<div className="flex flex-row mb-1 sm:mb-0">
+						<div className="flex flex-row">
 
 							<select className="select"
 								onChange={(e) => setSchoolId(e.target.value)}
@@ -110,14 +93,12 @@ export const StudentAttendance = () => {
 						</div>
 					</div>
 					<div className="my-2 flex flex-row justify-end">
-						<div className="flex flex-row mb-1 sm:mb-0">
-
+						<div className="flex flex-row">
 							<select onChange={(e) => setYear(e.target.value)} className="select">
 								<option>Select Year</option>
 								<option>2020</option>
 								<option>2019</option>
 							</select>
-
 						</div>
 					</div>
 					<div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-2 overflow-x-auto">
@@ -150,9 +131,19 @@ export const StudentAttendance = () => {
 							</table>
 						</div>
 					</div>
-					<div className="my-2 flex flex-row justify-end">
-						<div className="flex flex-row mb-1 sm:mb-0">
 
+					<div className="mb-5 mt-2">
+						<PageSubHeading title={"Absentee List"} />
+					</div>
+
+					<div className="my-2 flex flex-row justify-between">
+						<input
+							name="search"
+							onChange={(e) => setSearchable(e.target.value)}
+							placeholder="Search here..."
+							className="input w-full" />
+
+						<div className="flex flex-row ml-2">
 							<select className="select" onChange={(e) => setSectionId(e.target.value)} >
 								<option>Select Section</option>
 								{
@@ -171,14 +162,27 @@ export const StudentAttendance = () => {
 								<thead className="thead">
 									<tr>
 										<th className="th text-left"> Name </th>
+										<th className="th text-left"> F.Name </th>
 										<th className="th"> Phone </th>
 										<th className="th"> Days Absent</th>
 									</tr>
 								</thead>
 								<tbody>
 									{
-										Object.entries(students || {})
-											.filter(([k, v]) => sectionId ? v.section_id === sectionId : true)
+										Object.entries(attendanceList || {})
+											.filter(([k, v]) => {
+
+												if (sectionId) {
+													return sectionId === v.section_id
+												}
+
+												if (searchable) {
+													return v.name.toLowerCase().includes(searchable)
+												}
+
+												return true
+											})
+											.sort(([, a], [, b]) => b.attendance.absent - a.attendance.absent)
 											.map(([k, v]) => (
 												<tr className="tr" key={k}>
 													<td className="td text-left">
@@ -191,8 +195,9 @@ export const StudentAttendance = () => {
 															</div>
 														</div>
 													</td>
+													<td className="td text-left">{v.fname}</td>
 													<td className="td">{v.phone}</td>
-													<td className="td">{processAttendanceList(v)?.absent || 0}</td>
+													<td className="td">{v.attendance.absent || 0}</td>
 												</tr>
 											))
 									}
@@ -227,7 +232,7 @@ const getAttendanceStats = (students: S) => {
 
 const getAggregatedAttendanceList = (students: S) => {
 
-	let stats: MonthlyAttendance = {}
+	let stats: MISStudent["attendance"] = {}
 
 	for (const { attendance } of Object.values(students || {})) {
 		for (const [k, v] of Object.entries(attendance || {})) {
@@ -254,18 +259,35 @@ const getAggregatedAttendanceList = (students: S) => {
 	return stats
 }
 
-const processAttendanceList = (student: MISStudent) => {
+type AugmentedMISStudent = {
+	[id: string]: ChangeTypeOfKeys<MISStudent, 'attendance', Attendance>
+}
+
+const getAttendanceList = (students: S) => {
 
 	const attendance: Attendance = { absent: 0, present: 0, leave: 0 }
 
-	return Object.entries(student.attendance || {})
-		.reduce<Attendance>((agg, [k, v]) => {
+	return Object.entries(students || {})
+		.reduce<AugmentedMISStudent>((agg, [sid, v]) => {
+
+			const attendanceSum = Object.entries(v.attendance || {})
+				.reduce<Attendance>((agg2, [k, v2]) => {
+					return {
+						present: agg2.present + v2.present,
+						absent: agg2.absent + v2.absent,
+						leave: agg2.leave + v2.leave
+					}
+				}, attendance)
+
 			return {
-				absent: agg["absent"] + v["absent"],
-				present: agg["present"] + v["present"],
-				leave: agg["leave"] + v["leave"]
+				...agg,
+				[sid]: {
+					...v,
+					attendance: attendanceSum
+				}
 			}
-		}, attendance)
+
+		}, {})
 }
 
 const getAbsenteePercentage = (attendance: Attendance) => {

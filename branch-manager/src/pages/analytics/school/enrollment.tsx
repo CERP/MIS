@@ -7,7 +7,7 @@ import { AppState } from 'reducers'
 import { getSchoolEnrollment } from 'services'
 import { getSectionsFromClasses } from 'utils/generic'
 import { toTitleCase } from 'utils/string'
-import { PageHeading } from 'components/app/pageHeading'
+import { PageHeading, PageSubHeading } from 'components/app/pageHeading'
 import { InfoCard } from 'components/app/infoCards'
 import IconUserSvg from 'assets/userCircle.svg'
 
@@ -37,6 +37,7 @@ export const SchoolEnrollment = () => {
 	const [schoolId, setSchoolId] = useState(Object.keys(schools)[0])
 	const [sectionId, setSectionId] = useState('')
 	const [loading, setLoading] = useState(false)
+	const [searchable, setSearchable] = useState('')
 
 	const enrollmentStats = useMemo(() => processEnrollmentStatsData(students), [students])
 	const sections = useMemo(() => getSections(schools as School, schoolId), [schools, schoolId])
@@ -84,9 +85,15 @@ export const SchoolEnrollment = () => {
 							</div>
 						</div>
 					</div>
-					<div className="my-2 font-bold text-gray-700 uppercase text-sm">Total Students: {Object.keys(students).length}</div>
-					<div className="mt-6 mb-4 mx-auto grid">
-						<div className="grid gap-6 mb-8 grid-cols-1 md:grid-cols-3">
+					<div className="mt-4 mb-4 mx-auto grid">
+						<div className="grid gap-6 grid-cols-1 md:grid-cols-4">
+
+							<InfoCard
+								loading={loading}
+								title={"Total Students"}
+								body={enrollmentStats.active + enrollmentStats.inactive}
+							/>
+
 							<InfoCard
 								loading={loading}
 								title={"Active Students"}
@@ -101,26 +108,34 @@ export const SchoolEnrollment = () => {
 
 							<InfoCard
 								loading={loading}
-								title={"Male/Female Students"}
+								title={"M/F Students"}
 								body={`${enrollmentStats.male}/${enrollmentStats.female}`}
 							/>
 						</div>
 					</div>
-					<div className="my-2 flex flex-row justify-end">
-						<div className="flex flex-row mb-1 sm:mb-0">
-							<div className="relative">
-								<select
-									className="select"
-									onChange={(e) => setSectionId(e.target.value)}
-								>
-									<option>Select Section</option>
-									{
-										sections
-											.sort((a, b) => a.namespaced_name.localeCompare(b.namespaced_name))
-											.map(section => <option key={section.id} value={section.id} >{toTitleCase(section.namespaced_name)}</option>)
-									}
-								</select>
-							</div>
+
+					<div className="mt-2 mb-5">
+						<PageSubHeading title={"Student List"} />
+					</div>
+
+					<div className="my-2 flex flex-row j	ustify-between">
+						<input
+							name="search"
+							onChange={(e) => setSearchable(e.target.value)}
+							placeholder="Search here..."
+							className="input w-full mr-2" />
+
+						<div className="flex flex-row">
+							<select className="select" onChange={(e) => setSectionId(e.target.value)} >
+								<option>Select Section</option>
+								{
+									sections
+										.sort((a, b) => a.namespaced_name.localeCompare(b.namespaced_name))
+										.map(section => <option key={section.id} value={section.id} >
+											{toTitleCase(section.namespaced_name)}
+										</option>)
+								}
+							</select>
 						</div>
 					</div>
 
@@ -138,7 +153,19 @@ export const SchoolEnrollment = () => {
 								<tbody>
 									{
 										Object.entries(students || {})
-											.filter(([k, v]) => sectionId ? v.section_id === sectionId : true)
+											.filter(([k, v]) => {
+
+												if (sectionId) {
+													return sectionId === v.section_id
+												}
+
+												if (searchable) {
+													return v.name.toLowerCase().includes(searchable)
+												}
+
+												return true
+											})
+											.sort(([, a], [, b]) => a.name.localeCompare(b.name))
 											.map(([k, v]) => (
 												<tr className="tr" key={k}>
 													<td className="td text-left">

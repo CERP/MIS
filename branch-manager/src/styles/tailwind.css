@@ -22,8 +22,12 @@
 		@apply px-5 py-3 border-b border-gray-200 text-gray-900 text-sm;
 	}
 	
+	.input {
+		@apply border focus:ring-1 focus:ring-blue-primary outline-none text-gray-700 px-4 py-2 ring-blue-primary rounded-lg
+	}
+	
 	.select {
-		@apply h-full rounded border block w-full bg-white border-gray-400 text-gray-700 py-2 px-4 leading-tight;
+		@apply rounded-lg border block bg-white border-gray-300 outline-none text-gray-700 py-2 px-4 leading-tight;
 	}
 	
   }

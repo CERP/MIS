@@ -46,9 +46,36 @@ interface MISClass {
 	}
 }
 
+
+interface MISFaculty {
+	[tid: string]: MISTeacher
+}
+
+interface MISTeacher {
+	name: string
+	phone: string
+	avatar_url?: string
+	attendance: MISTeacherAttendance
+}
+
+interface MISTeacherAttendance {
+	[date: string]: "present" | "absent" | "leave"
+}
+
 interface MISSection {
 	name: string
 	faculty_id?: string
+}
+
+interface MISStudent {
+	name: string
+	fname: string
+	phone: string
+	avatar_url?: string
+	section_id: string
+	attendance: {
+		[date: string]: Attendance
+	}
 }
 
 interface AugmentedSection extends MISSection {
@@ -58,3 +85,20 @@ interface AugmentedSection extends MISSection {
 	className: string
 	classYear: number
 }
+
+interface Attendance {
+	present: number
+	absent: number
+	leave: number
+}
+
+type ChangeTypeOfKeys<
+	T extends object,
+	Keys extends keyof T,
+	NewType
+	> = {
+		// Loop to every key. We gonna check if the key
+		// is assignable to Keys. If yes, change the type.
+		// Else, retain the type.
+		[key in keyof T]: key extends Keys ? NewType : T[key]
+	}
