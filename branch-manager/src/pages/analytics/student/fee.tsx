@@ -6,6 +6,7 @@ import { PageHeading, PageSubHeading } from 'components/app/pageHeading'
 import { AppState } from 'reducers'
 import { getSectionsFromClasses } from 'utils/generic'
 import { toTitleCase } from 'utils/string'
+import { InfoCard } from 'components/app/infoCards'
 
 export const StudentFee = () => {
 
@@ -14,6 +15,7 @@ export const StudentFee = () => {
 	const [schoolId, setSchoolId] = useState(Object.keys(schools)[0])
 	const [sectionId, setSectionId] = useState('')
 	const [loading, setLoading] = useState(false)
+	const [searchable, setSearchable] = useState('')
 
 	const sections = useMemo(() => getSections(schools as School, schoolId), [schools, schoolId])
 
@@ -35,7 +37,35 @@ export const StudentFee = () => {
 							</select>
 						</div>
 					</div>
-					<div className="text-red-500 mb-2 h-2">{loading ? 'Loading...' : ''}</div>
+
+					<div className="mt-4 mb-4 mx-auto grid">
+						<div className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-4">
+							<InfoCard
+								loading={loading}
+								title={"Total Amount"}
+								body={0}
+								logoType={"cash"} />
+
+							<InfoCard
+								loading={loading}
+								title={"Paid Amount"}
+								body={0}
+								logoType={"cash"} />
+
+							<InfoCard
+								loading={loading}
+								title={"Forgiven Amount"}
+								body={0}
+								logoType={"cash"} />
+
+							<InfoCard
+								loading={loading}
+								title={"Pending"}
+								body={0}
+								logoType={"cash"} />
+						</div>
+					</div>
+
 					<div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-2 overflow-x-auto">
 						<div className="table-container">
 							<table className="table">
@@ -44,7 +74,7 @@ export const StudentFee = () => {
 										<th className="th"> Date </th>
 										<th className="th"> Total </th>
 										<th className="th"> Paid </th>
-										<th className="th"> Forgive</th>
+										<th className="th"> Forgiven</th>
 										<th className="th"> Pending</th>
 									</tr>
 								</thead>
@@ -56,11 +86,16 @@ export const StudentFee = () => {
 							</table>
 						</div>
 					</div>
-					<div className="mt-4">
+					<div className="mb-5 mt-2">
 						<PageSubHeading title={"Outstanding Payment Students"} />
 					</div>
 					<div className="my-2 flex flex-row justify-end">
-						<div className="flex flex-row mb-1 sm:mb-0">
+						<input
+							name="search"
+							onChange={(e) => setSearchable(e.target.value)}
+							placeholder="Search here..."
+							className="input w-full" />
+						<div className="flex flex-row ml-2">
 							<select
 								className="select"
 								onChange={(e) => setSectionId(e.target.value)} >
