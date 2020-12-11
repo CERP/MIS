@@ -15,7 +15,7 @@ import {
 import {
 	StudentAttendance,
 	StudentExam,
-	StudentFee,
+	StudentPayment,
 	TeacherAttendance,
 	SchoolExpense,
 	SchoolEnrollment
@@ -62,7 +62,7 @@ export class AppRoutes extends React.Component<S> {
 						<AuthRoute exact path="/student-attendance-analytics" component={StudentAttendance} />
 						<AuthRoute exact path="/teacher-attendance-analytics" component={TeacherAttendance} />
 						<AuthRoute exact path="/enrollment-analytics" component={SchoolEnrollment} />
-						<AuthRoute exact path="/fee-analytics" component={StudentFee} />
+						<AuthRoute exact path="/fee-analytics" component={StudentPayment} />
 						<AuthRoute exact path="/expense-analytics" component={SchoolExpense} />
 						<AuthRoute exact path="/exam-analytics" component={StudentExam} />
 						<Route path="/about" component={About} />

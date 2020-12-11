@@ -1,6 +1,6 @@
 import { getClientId, loadState } from 'utils/localStorage'
 
-const host = 'http://ac784c269974.ngrok.io'
+const host = 'http://localhost:8080'
 const prefix = '/branch-manager'
 
 const baseURL = host + prefix
@@ -9,7 +9,6 @@ export const login = async (username: string, password: string) => {
 	const reqOpts = postRequestOptions({ username, password }, false)
 	const response = await fetch(`${baseURL}/user/authenticate`, reqOpts)
 	return handleFetchResponse(response)
-
 }
 
 export const getSchools = async () => {
@@ -27,6 +26,12 @@ export const getDailyStats = async (schoolId: string) => {
 export const getStudentsAttendance = async (schoolId: string) => {
 	const options = getRequestOptions()
 	const response = await fetch(`${baseURL}/students-attendance?school_id=${schoolId}`, options)
+	return handleFetchResponse(response)
+}
+
+export const getStudentsPayment = async (schoolId: string) => {
+	const options = getRequestOptions()
+	const response = await fetch(`${baseURL}/students-payment?school_id=${schoolId}`, options)
 	return handleFetchResponse(response)
 }
 

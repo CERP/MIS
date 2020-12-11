@@ -76,6 +76,13 @@ interface MISStudent {
 	attendance: {
 		[date: string]: Attendance
 	}
+	payments: {
+		monthvise: {
+			[id: string]: Payment
+		},
+		aggregated: Payment
+		debt: number
+	}
 }
 
 interface AugmentedSection extends MISSection {
@@ -90,6 +97,14 @@ interface Attendance {
 	present: number
 	absent: number
 	leave: number
+}
+
+
+interface Payment {
+	OWED: number
+	SUBMITTED: number
+	FORGIVEN: number
+	SCHOLARSHIP: number
 }
 
 type ChangeTypeOfKeys<
