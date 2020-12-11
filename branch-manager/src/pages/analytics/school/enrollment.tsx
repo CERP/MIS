@@ -178,15 +178,9 @@ export const SchoolEnrollment = () => {
 															</div>
 														</div>
 													</td>
-													<td className="td text-left">
-														<p>{v.fname}</p>
-													</td>
-													<td className="td">
-														<p>{v.phone}</p>
-													</td>
-													<td className="td">
-														<p>{v.gender === 'female' ? 'F' : 'M'}</p>
-													</td>
+													<td className="td text-left">{v.fname}</td>
+													<td className="td"> {v.phone}</td>
+													<td className="td">{v.gender === 'female' ? 'F' : 'M'}</td>
 												</tr>
 											))
 									}
