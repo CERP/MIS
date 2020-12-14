@@ -1,6 +1,8 @@
 import { getClientId, loadState } from 'utils/localStorage'
 
-const host = 'http://localhost:8080'
+// @ts-ignore
+const host = window.api_url || 'http://localhost:8080'
+
 const prefix = '/branch-manager'
 
 const baseURL = host + prefix
