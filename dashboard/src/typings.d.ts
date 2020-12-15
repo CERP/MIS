@@ -248,3 +248,7 @@ type SchoolLoginInfo = {
 interface MISFaculty {
 	[id: string]: string
 }
+
+type BranchInfo = {
+	schools: string[]
+}
