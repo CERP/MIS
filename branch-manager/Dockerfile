@@ -1,4 +1,4 @@
-FROM node:8.14.0
+FROM node:lts
 
 RUN npm install --global serve
 
