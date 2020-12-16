@@ -31,7 +31,7 @@ steps:
       [
         "set",
         "image",
-        "deployment/branch-manager-$BRANCH_NAME",
+        "deployment/branch-manager",
         "branch-manager=asia.gcr.io/$PROJECT_ID/branch-manager:$SHORT_SHA",
       ]
     env:
