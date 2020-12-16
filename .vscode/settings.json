@@ -29,9 +29,31 @@
 	"editor.formatOnSave": true,
 	"eslint.workingDirectories": [
 		"./web",
-		"./dashboard"
+		"./dashboard",
+		"./branch-manager"
 	],
 	"[typescriptreact]": {
 		"editor.defaultFormatter": "vscode.typescript-language-features"
+	},
+	"workbench.colorCustomizations": {
+		"activityBar.activeBackground": "#27559b",
+		"activityBar.activeBorder": "#d96694",
+		"activityBar.background": "#27559b",
+		"activityBar.foreground": "#e7e7e7",
+		"activityBar.inactiveForeground": "#e7e7e799",
+		"activityBarBadge.background": "#d96694",
+		"activityBarBadge.foreground": "#15202b",
+		"statusBar.background": "#1d3f72",
+		"statusBar.foreground": "#e7e7e7",
+		"statusBarItem.hoverBackground": "#27559b",
+		"titleBar.activeBackground": "#1d3f72",
+		"titleBar.activeForeground": "#e7e7e7",
+		"titleBar.inactiveBackground": "#1d3f7299",
+		"titleBar.inactiveForeground": "#e7e7e799"
+	},
+	"peacock.color": "#1d3f72",
+	"git.ignoreLimitWarning": true,
+	"files.exclude": {
+		"**/node_modules": true
 	}
 }
