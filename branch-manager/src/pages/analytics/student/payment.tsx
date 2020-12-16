@@ -71,25 +71,25 @@ export const StudentPayment = () => {
 							<InfoCard
 								loading={loading}
 								title={"Total Amount"}
-								body={paymentStats.OWED}
+								body={paymentStats.OWED.toFixed(0)}
 								logoType={"cash"} />
 
 							<InfoCard
 								loading={loading}
 								title={"Paid Amount"}
-								body={paymentStats.SUBMITTED}
+								body={paymentStats.SUBMITTED.toFixed(0)}
 								logoType={"cash"} />
 
 							<InfoCard
 								loading={loading}
 								title={"Forgiven Amount"}
-								body={paymentStats.SCHOLARSHIP + paymentStats.FORGIVEN}
+								body={(paymentStats.SCHOLARSHIP + paymentStats.FORGIVEN).toFixed(0)}
 								logoType={"cash"} />
 
 							<InfoCard
 								loading={loading}
 								title={"Pending"}
-								body={paymentStats.OWED - (paymentStats.FORGIVEN + paymentStats.SCHOLARSHIP + paymentStats.SUBMITTED)}
+								body={(paymentStats.OWED - (paymentStats.FORGIVEN + paymentStats.SCHOLARSHIP + paymentStats.SUBMITTED)).toFixed(0)}
 								logoType={"cash"} />
 						</div>
 					</div>
@@ -113,10 +113,10 @@ export const StudentPayment = () => {
 											.map(([k, v]) => (
 												<tr className="tr" key={k}>
 													<td className="td">{k}</td>
-													<td className="td">{v.OWED}</td>
-													<td className="td">{v.SUBMITTED}</td>
-													<td className="td">{v.FORGIVEN + v.SCHOLARSHIP}</td>
-													<td className="td">{v.OWED - v.SCHOLARSHIP + v.FORGIVEN + v.SUBMITTED}</td>
+													<td className="td">{(v.OWED).toFixed(0)}</td>
+													<td className="td">{(v.SUBMITTED).toFixed(0)}</td>
+													<td className="td">{(v.FORGIVEN + v.SCHOLARSHIP).toFixed(0)}</td>
+													<td className="td">{(v.OWED - v.SCHOLARSHIP + v.FORGIVEN + v.SUBMITTED).toFixed(0)}</td>
 												</tr>
 											))
 									}
@@ -187,7 +187,7 @@ export const StudentPayment = () => {
 													</td>
 													<td className="td text-left">{v.fname}</td>
 													<td className="td">{v.phone}</td>
-													<td className="td">{v.payments.debt}</td>
+													<td className="td">{(v.payments.debt).toFixed(0)}</td>
 												</tr>
 											))
 									}

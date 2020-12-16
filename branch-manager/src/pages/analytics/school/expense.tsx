@@ -70,19 +70,19 @@ export const SchoolExpense = () => {
 							<InfoCard
 								loading={loading}
 								title={"Total Income"}
-								body={expenseStats.income}
+								body={expenseStats.income.toFixed(0)}
 								logoType={"cash"} />
 
 							<InfoCard
 								loading={loading}
 								title={"Total Expense"}
-								body={expenseStats.expense}
+								body={expenseStats.expense.toFixed(0)}
 								logoType={"cash"} />
 
 							<InfoCard
 								loading={loading}
 								title={"Total Profit"}
-								body={expenseStats.income - expenseStats.expense}
+								body={(expenseStats.income - expenseStats.expense).toFixed(0)}
 								logoType={"cash"} />
 
 						</div>
@@ -105,9 +105,9 @@ export const SchoolExpense = () => {
 											.map(([k, v]) => (
 												<tr className="tr" key={k}>
 													<td className="td">{k}</td>
-													<td className="td">{v.income}</td>
-													<td className="td">{v.expense}</td>
-													<td className="td">{v.income - v.expense}</td>
+													<td className="td">{(v.income).toFixed(0)}</td>
+													<td className="td">{(v.expense).toFixed(0)}</td>
+													<td className="td">{(v.income - v.expense).toFixed(0)}</td>
 												</tr>
 											))
 									}

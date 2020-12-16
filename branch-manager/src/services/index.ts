@@ -1,11 +1,11 @@
 import { getClientId, loadState } from 'utils/localStorage'
 
 // @ts-ignore
-const host = window.api_url || 'http://localhost:8080'
+const host = window.api_url || 'localhost:8080'
 
 const prefix = '/branch-manager'
 
-const baseURL = host + prefix
+const baseURL = "https://" + host + prefix
 
 export const login = async (username: string, password: string) => {
 	const reqOpts = postRequestOptions({ username, password }, false)
@@ -46,6 +46,12 @@ export const getTeachersAttendance = async (schoolId: string) => {
 export const getSchoolEnrollment = async (schoolId: string) => {
 	const options = getRequestOptions()
 	const response = await fetch(`${baseURL}/school-enrollment?school_id=${schoolId}`, options)
+	return handleFetchResponse(response)
+}
+
+export const getSchoolExpense = async (schoolId: string) => {
+	const options = getRequestOptions()
+	const response = await fetch(`${baseURL}/school-expense?school_id=${schoolId}`, options)
 	return handleFetchResponse(response)
 }
 
