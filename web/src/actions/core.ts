@@ -533,7 +533,6 @@ export const connected = () => (dispatch: (a: any) => any, getState: () => RootR
 
 				console.log("VERIFYY")
 				syncr.verify()
-
 				dispatch(Sync(state.queued))
 			})
 			.catch(err => {

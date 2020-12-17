@@ -1,7 +1,8 @@
+import { hostHTTPS } from './hostConfig'
 
 const encoder = new TextEncoder();
 
-export async function hash(str: string): Promise <string> {
+export async function hash(str: string): Promise<string> {
 	try {
 		const msgBuffer = encoder.encode(str);
 		const hashBuffer = await crypto.subtle.digest("SHA-512", msgBuffer)
@@ -17,4 +18,38 @@ export async function hash(str: string): Promise <string> {
 		return 'xxxxx'
 	}
 
+}
+
+export const checkTime = async (): Promise<boolean> => {
+	try {
+
+		const reqOpts: RequestInit = {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		}
+
+		const response: ServerResponse = await fetch(`${hostHTTPS}/mis/server-time`, reqOpts)
+			.then((res: Response) => res.json())
+
+		const { os_time } = response
+		const client_time = new Date().getTime()
+
+		const diff = Math.abs(client_time - os_time)
+
+		// timezone offset
+		const threshold = 1 * 60 * 60 * 1000
+
+		return diff < threshold
+
+	} catch (ex) {
+		console.log(ex)
+		return true
+	}
+}
+
+
+type ServerResponse = {
+	os_time: number
 }
