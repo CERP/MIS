@@ -163,7 +163,7 @@ export const getSchoolInfo = (school_id: string) => (dispatch: Dispatch, getStat
 		})
 }
 
-export const updateSchoolInfo = (school_id: string, student_limit: number, paid: boolean, trial_period: number, date: number) => (dispatch: Dispatch, getState: GetState, syncr: Syncr) => {
+export const updateSchoolInfo = (school_id: string, student_limit: number, paid: boolean, trial_period: number, date: number, TIP_access: boolean) => (dispatch: Dispatch, getState: GetState, syncr: Syncr) => {
 	const state = getState();
 
 	const merges = [
@@ -191,6 +191,16 @@ export const updateSchoolInfo = (school_id: string, student_limit: number, paid:
 				}
 			}
 
+		},
+		{
+			"targeted_instruction_access": {
+				"date": moment.now(),
+				"action": {
+					"path": ["targeted_instruction_access"],
+					"type": "MERGE",
+					"value": TIP_access
+				}
+			}
 		}
 	]
 

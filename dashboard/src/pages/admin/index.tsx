@@ -13,7 +13,7 @@ interface P {
 	student_info: RootReducerState["school_Info"]["student_info"]
 	meta: RootReducerState["school_Info"]["meta"]
 	getSchoolList: () => any
-	updateSchoolInfo: (school_id: string, student_limit: number, paid: boolean, trial_period: number, date: number) => any
+	updateSchoolInfo: (school_id: string, student_limit: number, paid: boolean, trial_period: number, date: number, TIP_access: boolean) => any
 	getSchoolInfo: (school_id: string) => any
 }
 
@@ -28,6 +28,7 @@ interface S {
 	student_limit: number
 	updateMenu: boolean
 	infoMenu: boolean
+	TIP_access: boolean
 }
 
 interface routeInfo {
@@ -52,7 +53,8 @@ class AdminActions extends Component<propTypes, S> {
 			date: 0,
 			student_limit: 0,
 			updateMenu: false,
-			infoMenu: false
+			infoMenu: false,
+			TIP_access: false
 		}
 
 		this.former = new Former(this, [])
@@ -114,14 +116,14 @@ class AdminActions extends Component<propTypes, S> {
 
 	onSave = () => {
 
-		const { selectedSchool, misPackage, paid, trial_period, date } = this.state
+		const { selectedSchool, misPackage, paid, trial_period, date, TIP_access } = this.state
 
 		if (misPackage === "" || paid === "" || !date) {
 			window.alert("Please Fill All info")
 			return
 		}
 
-		this.props.updateSchoolInfo(selectedSchool, this.getLimitFromPackage(misPackage), paid === "true" ? true : false, parseFloat(trial_period), date)
+		this.props.updateSchoolInfo(selectedSchool, this.getLimitFromPackage(misPackage), paid === "true" ? true : false, parseFloat(trial_period), date, TIP_access)
 	}
 
 	render() {
@@ -233,6 +235,16 @@ class AdminActions extends Component<propTypes, S> {
 					<label>Trial Start Date</label>
 					<input type="date" onChange={this.former.handle(["date"])} />
 				</div>
+				<div className="divider"> Targeted Instruction </div>
+				<div className="row">
+					<label>Access:</label>
+					<div>
+						<label className="switch">
+							<input type="checkbox" checked={this.state.TIP_access} onChange={() => this.setState({ TIP_access: !this.state.TIP_access })} />
+							<span className="toggleSlider round"></span>
+						</label>
+					</div>
+				</div>
 				<div className="button save" onClick={() => this.onSave()}> Save </div>
 			</div>}
 		</div>
@@ -246,5 +258,5 @@ export default connect((state: RootReducerState) => ({
 }), (dispatch: Function) => ({
 	getSchoolList: () => dispatch(getSchoolList()),
 	getSchoolInfo: (school_id: string) => dispatch(getSchoolInfo(school_id)),
-	updateSchoolInfo: (school_id: string, student_limit: number, paid: boolean, trial_period: number, date: number) => dispatch(updateSchoolInfo(school_id, student_limit, paid, trial_period, date))
+	updateSchoolInfo: (school_id: string, student_limit: number, paid: boolean, trial_period: number, date: number, TIP_access: boolean) => dispatch(updateSchoolInfo(school_id, student_limit, paid, trial_period, date, TIP_access))
 }))(AdminActions)
