@@ -436,7 +436,7 @@ class Landing extends Component {
 										className="button yellow-shadow"
 										style={{ backgroundImage: `url(${marksIcon})` }}>
 										Marks
-							</Link>
+									</Link>
 
 
 									<Link
@@ -444,7 +444,7 @@ class Landing extends Component {
 										className="button green-shadow"
 										style={{ backgroundImage: `url(${resultIcon})` }}>
 										Result Card
-							</Link>
+									</Link>
 
 								</div>
 								<div className="row">
