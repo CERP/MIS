@@ -51,8 +51,7 @@ export const initState: RootReducerState = {
 		ilmx: {
 			events: {},
 			lessons: {}
-		},
-		target_instruction_access: false
+		}
 	},
 	auth: {
 		school_id: undefined,

@@ -54,7 +54,7 @@ interface RootDBState {
 			[lesson_id: string]: IlmxLesson
 		}
 	}
-	target_instruction_access: boolean
+	target_instruction_access?: boolean
 }
 
 interface Curriculum {

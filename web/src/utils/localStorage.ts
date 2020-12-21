@@ -48,8 +48,7 @@ const initState: RootReducerState = {
 		ilmx: {
 			events: {},
 			lessons: {}
-		},
-		target_instruction_access: false
+		}
 	},
 	// this part of the tree i want to obscure.
 	// but will get to that later
