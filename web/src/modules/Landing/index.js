@@ -28,7 +28,7 @@ import cerificate from './icons/Certificate/certificate1.svg'
 import expense from './icons/Expense/expense.svg'
 // import newBadge from "./icons/New/new.svg";
 import family from "./icons/family/family.svg"
-
+import test from './icons/Test/test.svg'
 import Help from './icons/Help/help.svg'
 import diary from './icons/Diary/diary.svg'
 import { IlmxLogo } from 'assets/icons'
@@ -243,7 +243,7 @@ class Landing extends Component {
 
 	render() {
 
-		const { logout, user, students, faculty, lastSnapshot, unsyncd, package_info, alert_banner } = this.props;
+		const { logout, user, students, faculty, lastSnapshot, unsyncd, package_info, alert_banner, ti_visible, targeted_instruction } = this.props;
 
 		const current_page = Math.floor(this.state.scroll / window.innerWidth)
 
@@ -425,7 +425,7 @@ class Landing extends Component {
 											className="button green-shadow"
 											style={{ backgroundImage: `url(${IlmxLogo})` }}>
 											IlmExchange
-								</div>
+										</div>
 									}
 								</div>
 
@@ -461,10 +461,22 @@ class Landing extends Component {
 												to="/expenses/general"
 												style={{ backgroundImage: `url(${expense})` }}>
 												Expenses
-								</Link>
+											</Link>
 										</div>
 									}
 								</div>
+								{
+									(targeted_instruction && ti_visible) &&
+									<div className="row">
+										<Link
+											className="button yellow-shadow"
+											to="/targeted-instruction/test"
+											style={{ backgroundImage: `url(${test})` }}>
+											Tests
+										</Link>
+
+									</div>
+								}
 							</div>
 
 							{user.Admin || dailyStats ? <div className="page">
@@ -574,7 +586,9 @@ export default connect(state => ({
 	school_id: state.auth.school_id,
 	auth: state.auth,
 	client_id: state.client_id,
-	ilmxUser: getIlmxUser()
+	ilmxUser: getIlmxUser(),
+	ti_visible: state.db.targeted_instruction_access,
+	targeted_instruction: state.db.targeted_instruction
 }), dispatch => ({
 	resetTrial: () => dispatch(resetTrial()),
 	markPurchased: () => dispatch(markPurchased()),

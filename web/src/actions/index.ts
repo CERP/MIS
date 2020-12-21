@@ -545,6 +545,15 @@ export const addPayment = (student: MISStudent, payment_id: string, amount: numb
 
 }
 
+export const addReport = (student_id: string, diagnostic_report: MISDiagnosticReport, test_id: string) => (dispatch: Function) => {
+	dispatch(createMerges([
+		{
+			path: ["db", "students", student_id, "diagnostic_result", test_id],
+			value: diagnostic_report
+		}
+	]))
+}
+
 type PaymentAddItem = {
 	student: MISStudent
 	payment_id: string
@@ -1057,6 +1066,35 @@ export const sendTempPassword = (faculty: MISTeacher, password: string) => (disp
 		})
 }
 
+export const fetchTargetedInstruction = () => (dispatch: Function, getState: () => RootReducerState, syncr: Syncr) => {
+	const state = getState()
+
+	if (!syncr.ready) {
+		syncr.onNext('connect', () => {
+			dispatch(fetchTargetedInstruction())
+		})
+	}
+	
+	dispatch({
+		type: "GET_TARGETED_INSTRUCTIONS"
+	})
+	syncr.send({
+		type: "GET_TARGETED_INSTRUCTIONS",
+		client_type: client_type,
+		payload: {
+			school_id: state.auth.school_id,
+			token: state.auth.token,
+			client_id: state.client_id
+		}
+	})
+		.then(response => dispatch({
+			type: "GET_TARGETED_INSTRUCTION_SUCCESS",
+			payload: response
+		}))
+		.catch(err => dispatch({
+			type: "GET_TARGETED_INSTRUCTION_FAILURE"
+		}))
+}
 export const deletePayment = (student_id: string, payment_id: string) => (dispatch: Function) => {
 
 	dispatch(createDeletes([

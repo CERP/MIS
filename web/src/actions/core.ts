@@ -2,7 +2,7 @@ import { Dispatch } from 'redux'
 import Syncr from '@cerp/syncr'
 import { loadDb } from 'utils/indexedDb';
 import { v4 } from 'node-uuid';
-
+import { fetchTargetedInstruction } from 'actions/'
 const SYNC = "SYNC"
 const client_type = "mis";
 
@@ -533,6 +533,8 @@ export const connected = () => (dispatch: (a: any) => any, getState: () => RootR
 
 				console.log("VERIFYY")
 				syncr.verify()
+
+				dispatch(fetchTargetedInstruction())
 				dispatch(Sync(state.queued))
 			})
 			.catch(err => {
@@ -586,6 +588,8 @@ export const loadDB = () => (dispatch: Function, getState: () => RootReducerStat
 				})
 				.then(res => {
 
+					alert("<hello")
+
 					console.log("VERIFYYYY")
 					syncr.verify()
 
@@ -628,7 +632,7 @@ export const getLessonsFailure = () => ({
 export const fetchLessons = () => (dispatch: Function, getState: () => RootReducerState, syncr: Syncr) => {
 	const state = getState()
 
-	if(!syncr.ready) {
+	if (!syncr.ready) {
 		syncr.onNext('connect', () => {
 			dispatch(fetchLessons())
 		})

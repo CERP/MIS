@@ -250,7 +250,7 @@ const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerSta
 
 		case SNAPSHOT_DIFF:
 			{
-				//@ts-ignore
+				// @ts-ignore
 				const snapshot = action as SnapshotDiffAction
 				console.log("snapshot_diff: ", Object.keys(snapshot.new_writes).length, "changes broadcasted")
 
@@ -447,6 +447,26 @@ const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerSta
 			ilmxLessons: { isLoading: false, hasError: false }
 		}
 
+		case "GET_TARGETED_INSTRUCTIONS": return {
+			...state,
+			targeted_instruction: {
+				tests: {},
+				slo_mapping: {},
+				curriculum: {}
+			}
+		}
+		case "GET_TARGETED_INSTRUCTION_FAILURE": return {
+			...state,
+			targeted_instruction: {
+				tests: {},
+				slo_mapping: {},
+				curriculum: {}
+			}
+		}
+		case "GET_TARGETED_INSTRUCTION_SUCCESS": return {
+			...state,
+			targeted_instruction: action.payload
+		}
 		case ActionTypes.ALERT_BANNER_TEXT:
 			{
 				return {
