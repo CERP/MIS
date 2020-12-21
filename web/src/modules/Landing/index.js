@@ -580,7 +580,7 @@ export default connect(state => ({
 	auth: state.auth,
 	client_id: state.client_id,
 	ilmxUser: getIlmxUser(),
-	visible: state.targeted_instruction_access,
+	visible: state.db.targeted_instruction_access,
 	targeted_instruction: state.db.targeted_instruction
 }), dispatch => ({
 	resetTrial: () => dispatch(resetTrial()),

@@ -36,6 +36,7 @@ interface RootReducerState {
 			max_limit: number
 		}
 		meta?: TrialsDataRow["value"]
+		targeted_instruction_access: boolean
 	}
 	mis_faculty: MISFaculty
 	trials: TrialsDataRow[]
@@ -76,6 +77,7 @@ interface SchoolInfoAction {
 	trial_info: RootReducerState["school_Info"]["trial_info"]
 	student_info: RootReducerState["school_Info"]["student_info"]
 	meta: TrialsDataRow["value"]
+	targeted_instruction_access: RootReducerState["school_Info"]["targeted_instruction_access"]
 }
 
 interface StudentAttendanceAction {

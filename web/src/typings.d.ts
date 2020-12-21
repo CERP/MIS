@@ -136,7 +136,6 @@ interface ImagesQueuable {
 interface RootReducerState {
 	client_id: string
 	initialized: boolean
-	targeted_instruction_access: boolean
 	queued: {
 		mutations: {
 			[path: string]: {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { getSchoolList, updateSchoolInfo, getSchoolInfo } from 'actions'
+import { getSchoolList, updateSchoolInfo, getSchoolInfo, giveTipAccess } from 'actions'
 import { RouteComponentProps } from 'react-router'
 import Former from 'former'
 import { hash } from 'utils'
@@ -12,8 +12,11 @@ interface P {
 	trial_info: RootReducerState["school_Info"]["trial_info"]
 	student_info: RootReducerState["school_Info"]["student_info"]
 	meta: RootReducerState["school_Info"]["meta"]
+	targeted_instruction_access: RootReducerState["school_Info"]["targeted_instruction_access"]
+
+	giveTipAccess: (school_id: string, TIP_access: boolean) => any
 	getSchoolList: () => any
-	updateSchoolInfo: (school_id: string, student_limit: number, paid: boolean, trial_period: number, date: number, TIP_access: boolean) => any
+	updateSchoolInfo: (school_id: string, student_limit: number, paid: boolean, trial_period: number, date: number) => any
 	getSchoolInfo: (school_id: string) => any
 }
 
@@ -108,22 +111,33 @@ class AdminActions extends Component<propTypes, S> {
 		this.getCodes()
 
 		this.props.getSchoolInfo(this.state.selectedSchool)
+	}
 
-		this.setState({
-			infoMenu: true
-		})
+	componentWillReceiveProps = (nextProps: propTypes) => {
+		if (nextProps.meta) {
+			this.setState({
+				infoMenu: true,
+				TIP_access: nextProps.targeted_instruction_access
+			})
+		}
 	}
 
 	onSave = () => {
 
-		const { selectedSchool, misPackage, paid, trial_period, date, TIP_access } = this.state
+		const { selectedSchool, misPackage, paid, trial_period, date } = this.state
 
 		if (misPackage === "" || paid === "" || !date) {
 			window.alert("Please Fill All info")
 			return
 		}
 
-		this.props.updateSchoolInfo(selectedSchool, this.getLimitFromPackage(misPackage), paid === "true" ? true : false, parseFloat(trial_period), date, TIP_access)
+		this.props.updateSchoolInfo(selectedSchool, this.getLimitFromPackage(misPackage), paid === "true" ? true : false, parseFloat(trial_period), date)
+	}
+
+	onSaveTipInfo = () => {
+
+		const { selectedSchool, TIP_access } = this.state
+		this.props.giveTipAccess(selectedSchool, TIP_access)
 	}
 
 	render() {
@@ -235,6 +249,9 @@ class AdminActions extends Component<propTypes, S> {
 					<label>Trial Start Date</label>
 					<input type="date" onChange={this.former.handle(["date"])} />
 				</div>
+				<div className="button save" onClick={() => this.onSave()}> Save </div>
+			</div>}
+			{selectedSchool && this.state.updateMenu && <div className="section form" style={{ width: "75%" }}>
 				<div className="divider"> Targeted Instruction </div>
 				<div className="row">
 					<label>Access:</label>
@@ -245,7 +262,7 @@ class AdminActions extends Component<propTypes, S> {
 						</label>
 					</div>
 				</div>
-				<div className="button save" onClick={() => this.onSave()}> Save </div>
+				<div className="button save" onClick={() => this.onSaveTipInfo()}> Save </div>
 			</div>}
 		</div>
 	}
@@ -254,9 +271,11 @@ export default connect((state: RootReducerState) => ({
 	schoolList: state.school_Info.school_list,
 	trial_info: state.school_Info.trial_info,
 	student_info: state.school_Info.student_info,
-	meta: state.school_Info.meta
+	meta: state.school_Info.meta,
+	targeted_instruction_access: state.school_Info.targeted_instruction_access
 }), (dispatch: Function) => ({
 	getSchoolList: () => dispatch(getSchoolList()),
+	giveTipAccess: (school_id: string, TIP_access: boolean) => dispatch(giveTipAccess(school_id, TIP_access)),
 	getSchoolInfo: (school_id: string) => dispatch(getSchoolInfo(school_id)),
-	updateSchoolInfo: (school_id: string, student_limit: number, paid: boolean, trial_period: number, date: number, TIP_access: boolean) => dispatch(updateSchoolInfo(school_id, student_limit, paid, trial_period, date, TIP_access))
+	updateSchoolInfo: (school_id: string, student_limit: number, paid: boolean, trial_period: number, date: number) => dispatch(updateSchoolInfo(school_id, student_limit, paid, trial_period, date))
 }))(AdminActions)
