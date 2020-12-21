@@ -632,7 +632,7 @@ export const getLessonsFailure = () => ({
 export const fetchLessons = () => (dispatch: Function, getState: () => RootReducerState, syncr: Syncr) => {
 	const state = getState()
 
-	if(!syncr.ready) {
+	if (!syncr.ready) {
 		syncr.onNext('connect', () => {
 			dispatch(fetchLessons())
 		})

@@ -13,9 +13,9 @@ import { loadDB, saveDB } from './utils/localStorage'
 import debounce from './utils/debounce';
 import { connected, disconnected } from 'actions/core';
 
-//const debug_url = "wss://mis-socket.metal.fish"
+const debug_url = "socket.ilmexchange.com"
 
-const debug_url = "1712b0a5.ngrok.io"
+// const debug_url = "936d43b537a4.ngrok.io"
 
 //@ts-ignore
 const host = window.api_url || debug_url;

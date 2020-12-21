@@ -2,8 +2,9 @@ import { hash } from 'utils'
 import { createMerges, createDeletes, createLoginFail, analyticsEvent, uploadImages } from './core'
 import moment from 'moment'
 import { v4 } from "node-uuid"
-import Syncr from '@cerp/syncr';
-import { historicalPayment } from 'modules/Settings/HistoricalFees/historical-fee';
+import Syncr from '@cerp/syncr'
+
+import { historicalPayment } from 'modules/Settings/HistoricalFees/historical-fee'
 
 const client_type = "mis";
 
@@ -243,7 +244,7 @@ export const createSignUp = (profile: Profile) => (dispatch: Function, getState:
 		type: SIGN_UP_LOADING
 	})
 
-	const  signup_obj = {
+	const signup_obj = {
 		"signup": profile,
 		"referral": {
 			school_name: profile.referralSchoolName,
@@ -258,11 +259,11 @@ export const createSignUp = (profile: Profile) => (dispatch: Function, getState:
 			package_name: profile.packageName,
 			type_of_login: profile.typeOfLogin,
 			owner_other_job: "",
-			association_name: "",     
+			association_name: "",
 			area_manager_name: "",
 			computer_operator: "",
 			owner_easypaisa_number: profile.ownerEasypaisaNumber,
-			previous_software_name: "", 
+			previous_software_name: "",
 			previous_management_system: ""
 		}
 	}
@@ -1101,4 +1102,4 @@ export const deletePayment = (student_id: string, payment_id: string) => (dispat
 			path: ["db", "students", student_id, "payments", payment_id]
 		}
 	]))
-} 
+}

@@ -12,5 +12,6 @@ RUN npm run build
 RUN rm -rf node_modules
 ARG VERSION
 ENV SHA_VERSION=$VERSION
+ENV GA_ID=$GA_ID
 
 CMD ./set_config.sh > build/config.js && serve ./build

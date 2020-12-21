@@ -167,6 +167,7 @@ interface RootReducerState {
 		loading: boolean
 	}
 	connected: boolean
+	alert_banner: string
 	sign_up_form: {
 		loading: boolean
 		succeed: boolean

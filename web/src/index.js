@@ -11,19 +11,27 @@ import Routes from './routes'
 import { saveDb, initState } from './utils/indexedDb'
 import debounce from 'utils/debounce'
 import { loadDB, connected, disconnected, processImageQueue } from './actions/core'
+import { hostWSS } from 'utils/hostConfig'
+import { checkTime } from 'utils'
+import { ActionTypes } from 'constants/index'
 
 import './index.css';
 import './styles/main.css'
 
-//window.debug_host = '69def37f.ngrok.io';
-window.debug_host = 'mis-socket.metal.fish'
+const initialState = initState
 
-const host = window.api_url || window.debug_host;
-
-const initialState = initState // loadDB();
-
-const syncr = new Syncr(`wss://${host}/ws`)
+const syncr = new Syncr(hostWSS)
 syncr.on('connect', () => store.dispatch(connected()))
+
+syncr.on('connect', () => checkTime()
+	.then(correct => {
+		const text = correct ? '' : 'Your device time or timezone is incorrect!'
+		store.dispatch({
+			type: ActionTypes.ALERT_BANNER_TEXT, data: text
+		})
+	})
+)
+
 syncr.on('disconnect', () => store.dispatch(disconnected()))
 syncr.on('message', (msg) => store.dispatch(msg))
 syncr.on('verify', () => store.dispatch(processImageQueue()))

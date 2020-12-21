@@ -62,6 +62,7 @@ const initState: RootReducerState = {
 		loading: false
 	},
 	connected: false,
+	alert_banner: '',
 	sign_up_form: {
 		loading: false,
 		succeed: false,
