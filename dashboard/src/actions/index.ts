@@ -220,7 +220,7 @@ export const giveTipAccess = (school_id: string, TIP_access: boolean) => (dispat
 	const state = getState();
 
 	const merges = {
-		[`db", "targeted_instruction_access`]: {
+		["db, targeted_instruction_access"]: {
 			"date": moment.now(),
 			"action": {
 				"path": ["db", "targeted_instruction_access"],

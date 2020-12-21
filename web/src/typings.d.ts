@@ -54,6 +54,7 @@ interface RootDBState {
 			[lesson_id: string]: IlmxLesson
 		}
 	}
+	target_instruction_access: boolean
 }
 
 interface Curriculum {
@@ -63,9 +64,9 @@ interface Curriculum {
 interface LearningLevels {
 	[lesson_id: string]: {
 		lesson_number: number
-		name: string 
+		name: string
 		subject: string
-		description: string 
+		description: string
 		video_links: string[]
 		pdf_links: string
 	}
@@ -99,9 +100,9 @@ interface MISTest {
 }
 
 interface Columns {
-    name: string
-    selector: string
-    sortable: boolean
+	name: string
+	selector: string
+	sortable: boolean
 }
 
 interface GraphData {
@@ -315,11 +316,11 @@ interface MISStudent {
 	}
 	diagnostic_result: DiagnosticResult
 	learning_levels: {
-		[learning_level_id: string]: { 
-			test_id: string 
-			date_assigned: string 
+		[learning_level_id: string]: {
+			test_id: string
+			date_assigned: string
 		}
-	 }
+	}
 }
 
 type Report = {
@@ -339,7 +340,6 @@ type MISReport = {
 
 type DiagnosticResult = {
 	[test_id: string]: MISDiagnosticReport
-	
 }
 
 type MISDiagnosticReport = {
