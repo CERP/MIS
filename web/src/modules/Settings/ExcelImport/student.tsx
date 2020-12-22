@@ -385,7 +385,7 @@ const convertCSVToStudents = (studentImportCSV: string) => {
 	// 	.slice(1) // ignore headers
 
 	// papa parse handles CSV parsing gracefully with zero dependency
-	const { data, errors, meta } = Papa.parse<string>(studentImportCSV)
+	const { data, errors, meta } = Papa.parse(studentImportCSV)
 
 	console.log(data, errors, meta)
 
