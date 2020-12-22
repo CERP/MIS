@@ -410,6 +410,38 @@ export const deleteClass = (Class: MISClass) => (dispatch: Function, getState: (
 	]))
 }
 
+export const deleteSection = (classId: string, sectiondId: string) => (dispatch: Function, getState: () => RootReducerState) => {
+	
+	const state = getState()
+
+	const students = Object.values(state.db.students)
+		.filter(student =>  student.section_id === sectiondId)
+		.map(student => (
+			{
+				path: ["db", "students", student.id, "section_id"],
+				value: ""
+			}
+		))
+
+	// we need to remove section Id from students so they can be assigned new section
+	dispatch(createMerges(students))
+	
+	// delete the section from class
+	dispatch(createDeletes([
+		{
+			path: ["db", "classes", classId, "sections", sectiondId]
+		}
+	]))
+}
+
+export const deleteSubject = (classId: string, subject: string) => (dispatch: Function) => {	
+	dispatch(createDeletes([
+		{
+			path: ["db", "classes", classId, "subjects", subject]
+		}
+	]))
+}
+
 export const addStudentToSection = (section_id: string, student: MISStudent) => (dispatch: Function) => {
 
 	dispatch(createMerges([
