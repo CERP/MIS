@@ -6,7 +6,7 @@ interface P {
 
 type PropsType = P & RouteComponentProps
 
-const Result: React.FC<PropsType> = (props) => {
+const Result: React.FC<PropsType> = () => {
 
     return <div className="flex flex-wrap content-between">
         <div className="text-blue-900 text-bold text-lg flex justify-center w-full mt-5">Formative Test Result</div>
@@ -28,9 +28,12 @@ const Result: React.FC<PropsType> = (props) => {
                         <img className="h-6 rounded-full p-3" src="https://cdn.dribbble.com/users/2199928/screenshots/11532918/shot-cropped-1590177932366.png?compress=1&resize=400x300" alt="img" />
                         <div>Humna</div>
                     </div>
-                    <div className="bg-white rounded-full h-6 w-6 flex justify-center items-center shadow-lg">4</div>
-                    <div className="bg-white rounded-full h-6 w-6 flex justify-center items-center shadow-lg">3</div>
-                    <div className="bg-white rounded-full h-6 w-6 flex justify-center items-center shadow-lg">5</div>
+                    {
+                        [4, 3, 5].map((num) => {
+                            <div key={num} className="bg-white rounded-full h-6 w-6 flex justify-center items-center shadow-lg">{num}</div>
+
+                        })
+                    }
                 </div>
             ))
         }

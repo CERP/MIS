@@ -1,5 +1,5 @@
 import React from 'react';
-import { RouteComponentProps } from 'react-router-dom'
+import { RouteComponentProps, withRouter } from 'react-router-dom'
 import PDFViewer from 'pdf-viewer-reactjs'
 
 interface P {
@@ -29,10 +29,10 @@ const PDF: React.FC<PropsType> = (props) => {
         </div>
         <div className="flex flex-row justify-around m-3 w-full mx-5">
             <div className="w-full">
-                <button className="bg-yellow-400 text-bold text-lg border-none rounded-md text-white p-2 w-full">Insert Grades</button>
+                <button className="bg-yellow-400 text-bold text-lg border-none rounded-md text-white p-2 w-full" onClick={() => props.history.push(`${(props.location.pathname).substring(0, 37)}insert-grades`)}>Insert Grades</button>
             </div>
         </div>
     </div>
 }
 
-export default PDF
+export default withRouter(PDF)
