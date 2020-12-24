@@ -6,7 +6,7 @@ interface P {
 
 type PropsType = P & RouteComponentProps
 
-const InsertGrades: React.FC<PropsType> = (props) => {
+const InsertGrades: React.FC<PropsType> = () => {
 
     return <div className="flex flex-wrap content-between">
         <div className="container sm:px-8 bg-yellow-400 rounded m-3 h-20 mb-6">
@@ -17,22 +17,14 @@ const InsertGrades: React.FC<PropsType> = (props) => {
         </div>
         {
             [1, 2, 3].map((row) => (<div key={row} className="m-3 flex flex-wrap flex-row justify-between w-full h-20">
-                <div className="h-10 flex flex-col content-between">
-                    <img className="rounded-full h-14 p-2" src="https://www.atmeplay.com/images/users/avtar/avtar_nouser.png" alt="img" />
-                    <div className="text-xs flex content-center items-center justify-center">Humna</div>
-                </div>
-                <div className="h-10 flex flex-col content-between">
-                    <img className="rounded-full h-14 p-2" src="https://www.atmeplay.com/images/users/avtar/avtar_nouser.png" alt="img" />
-                    <div className="text-xs flex content-center items-center justify-center">Mugees</div>
-                </div>
-                <div className="h-10 flex flex-col content-between">
-                    <img className="rounded-full h-14 p-2" src="https://www.atmeplay.com/images/users/avtar/avtar_nouser.png" alt="img" />
-                    <div className="text-xs flex content-center items-center justify-center">Ali</div>
-                </div>
-                <div className="h-10 flex flex-col content-between">
-                    <img className="rounded-full h-14 p-2" src="https://www.atmeplay.com/images/users/avtar/avtar_nouser.png" alt="img" />
-                    <div className="text-xs flex content-center items-center justify-center">Taimur</div>
-                </div>
+                {
+                    ["Humna", "Taimur", "Ali", "Mudasir"].map((name) => (
+                        <div key={name} className="h-10 flex flex-col content-between">
+                            <img className="rounded-full h-14 p-2" src="https://www.atmeplay.com/images/users/avtar/avtar_nouser.png" alt="img" />
+                            <div className="text-xs flex content-center items-center justify-center">{name}</div>
+                        </div>
+                    ))
+                }
             </div>))
         }
     </div>
