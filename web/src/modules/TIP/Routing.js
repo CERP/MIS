@@ -5,24 +5,33 @@ import FormativeTest from './FormativeTest/';
 import DiagnosticTestResult from './DiagnosticResult';
 import TrainingVideos from './TrainingVideos'
 import LessonPlans from './LessonPlans';
-import InsertGrades from './InsertGrades';
+import InsertGrades from './FormativeTest/InsertGrades';
 import PDF from './PDF'
+import Grading from './FormativeTest/Grading';
+import TestResult from './FormativeTest/TestResult';
+import Result from './FormativeTest/Result';
+import RemedialGroup from './DiagnosticResult/RemedialGroup';
+import ListView from './DiagnosticResult/ListView'
 
 const Routing = props => {
- 
   const path = (props.location.pathname).substring(0,21)
 
-  const redirect = event => {
-    props.history.push(`${path}/${event.currentTarget.dataset.value}`);
-  };
-  console.log("path", path)
   return (
         <Switch>
             <Route exact path={path}>
-            <HomePage onClick={redirect}/>
+            <HomePage />
             </Route>
             <Route exact path={`${path}/formative-test/pdf`}>
             <PDF />
+            </Route>
+            <Route exact path={`${path}/formative-test/insert-grades/grading/test-result/result`}>
+            <Result />
+            </Route>
+            <Route exact path={`${path}/formative-test/insert-grades/grading/test-result`}>
+            <TestResult />
+            </Route>
+            <Route exact path={`${path}/formative-test/insert-grades/grading`}>
+            <Grading />
             </Route>
             <Route exact path={`${path}/formative-test/insert-grades`}>
             <InsertGrades />
@@ -30,8 +39,17 @@ const Routing = props => {
             <Route exact path={`${path}/formative-test`}>
             <FormativeTest />
             </Route>
+            <Route exact path={`${path}/diagnostic-result/remedial-group/list-view`}>
+            <ListView />
+            </Route>
+            <Route exact path={`${path}/diagnostic-result/remedial-group`}>
+            <RemedialGroup />
+            </Route>
             <Route exact path={`${path}/diagnostic-result`}>
             <DiagnosticTestResult />
+            </Route>
+            <Route exact path={`${path}/lesson-plans/pdf`}>
+            <PDF />
             </Route>
             <Route exact path={`${path}/lesson-plans`}>
             <LessonPlans />

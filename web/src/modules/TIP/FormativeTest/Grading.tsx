@@ -1,5 +1,5 @@
 import React from 'react';
-import { RouteComponentProps } from 'react-router-dom'
+import { RouteComponentProps, Link } from 'react-router-dom'
 
 interface P {
 }
@@ -34,9 +34,9 @@ const Grading: React.FC<PropsType> = (props) => {
                 ))
             }
         </div>
-        <div className="w-full mt-5 flex justify-center">
+        <Link className="w-full mt-5 flex justify-center" to={'/targeted-instruction/formative-test/insert-grades/grading/test-result'}>
             <button className="bg-blue-900 text-bold text-lg border-none rounded-md text-white p-2 w-9/12">Save and Continue</button>
-        </div>
+        </Link>
     </div>
 }
 

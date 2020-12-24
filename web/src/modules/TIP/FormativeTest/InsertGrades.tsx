@@ -1,5 +1,5 @@
 import React from 'react';
-import { RouteComponentProps } from 'react-router-dom'
+import { RouteComponentProps, Link } from 'react-router-dom'
 
 interface P {
 }
@@ -19,10 +19,10 @@ const InsertGrades: React.FC<PropsType> = () => {
             [1, 2, 3].map((row) => (<div key={row} className="m-3 flex flex-wrap flex-row justify-between w-full h-20">
                 {
                     ["Humna", "Taimur", "Ali", "Mudasir"].map((name) => (
-                        <div key={name} className="h-10 flex flex-col content-between">
+                        <Link key={name} className="h-10 flex flex-col content-between" to={'/targeted-instruction/formative-test/insert-grades/grading'}>
                             <img className="rounded-full h-14 p-2" src="https://www.atmeplay.com/images/users/avtar/avtar_nouser.png" alt="img" />
                             <div className="text-xs flex content-center items-center justify-center">{name}</div>
-                        </div>
+                        </Link>
                     ))
                 }
             </div>))
