@@ -470,7 +470,7 @@ class Landing extends Component {
 									<div className="row">
 										<Link
 											className="button yellow-shadow"
-											to="/targeted-instruction/test"
+											to="/targeted-instruction/"
 											style={{ backgroundImage: `url(${test})` }}>
 											Tests
 										</Link>
