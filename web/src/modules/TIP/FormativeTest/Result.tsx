@@ -30,8 +30,7 @@ const Result: React.FC<PropsType> = () => {
                     </div>
                     {
                         [4, 3, 5].map((num) => {
-                            <div key={num} className="bg-white rounded-full h-6 w-6 flex justify-center items-center shadow-lg">{num}</div>
-
+                            return <div key={num} className="bg-white rounded-full h-6 w-6 flex justify-center items-center shadow-lg">{num}</div>
                         })
                     }
                 </div>
