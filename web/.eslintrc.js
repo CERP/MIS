@@ -34,7 +34,8 @@ module.exports = {
 		"@typescript-eslint/no-empty-interface": ["warn"],
 		"react/jsx-key": ["warn"],
 		"@typescript-eslint/no-extra-semi": ["warn"],
-		"@typescript-eslint/no-empty-function": ["warn"]
+		"@typescript-eslint/no-empty-function": [0],
+		"@typescript-eslint/no-unused-vars": [0],
 	},
 	settings: {
 		react: {
