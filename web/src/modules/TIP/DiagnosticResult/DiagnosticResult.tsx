@@ -1,8 +1,8 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom'
-import Classes from './Classes'
-import Card from './Card'
-import Headings from './Headings';
+import Classes from '../Classes'
+import Card from '../Card'
+import Headings from '../Headings';
 
 interface P {
 }
