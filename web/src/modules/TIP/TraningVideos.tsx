@@ -6,7 +6,7 @@ interface P {
 
 type PropsType = P & RouteComponentProps
 
-const TrainingVideos: React.FC<PropsType> = (props) => {
+const TrainingVideos: React.FC<PropsType> = () => {
 
     return <div className="flex flex-wrap content-between">
         <div className="text-blue-900 text-bold text-lg flex justify-center w-full my-5">Training Videos</div>
