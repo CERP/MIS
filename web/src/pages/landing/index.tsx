@@ -6,43 +6,48 @@ import { getTeamMembersInfo } from 'constants/aboutTeam'
 
 
 export const HomePage = () => {
+
 	return (<>
+
 		<NavbarPublic />
 
 		<div className="w-full mt-20">
-			<div className="flex flex-row flex-wrap h-84">
+			<div className="flex flex-row flex-wrap h-full md:h-96">
 				<div className="w-full md:w-1/3 h-full">
-					<div className="px-20">
-						<div className="text-5xl font-bold text-gray-700">We Help Schools thrive.</div>
+					<div className="px-10 md:px-20">
+						<div className="text-4xl md:text-5xl font-bold text-gray-700">We Help Schools thrive.</div>
 						<div className="mt-4 text-lg">With <span className="text-red-brand font-bold">MISchool</span> which is a Single solution for all your school management issues.</div>
 					</div>
-					<div className="pl-20 mt-8">
+					<div className="px-10 my-10 md:mt-20 md:pl-20 md:pr-0">
 						<div className="flex flex-row space-x-2">
-							<button className="w-full py-3 px-6 rounded-md border-2 text-lg border-teal-400 text-teal-400">
+							<button className="w-full py-3 px-6 rounded-md border-2 text-lg border-teal-400 text-teal-400 hover:bg-teal-400 hover:text-white">
 								Sign in
 						</button>
-							<button className="w-full py-3 px-6 rounded-md text-lg bg-teal-400 text-white">
+							<button className="w-full py-3 px-6 rounded-md text-lg bg-teal-400 text-white hover:bg-teal-500">
 								Sign up
 						</button>
 						</div>
 					</div>
 				</div>
-				<div className="w-full md:w-2/3 pl-10">
-					<div className="bg-gray-200 w-full h-full rounded-tl-3xl rounded-bl-3xl">
-						<div className="text-center font-bold text-2xl text-gray-700 py-36">Youtube Video</div>
-					</div>
+				<div className="w-full md:w-2/3 px-10 md:pr-0">
+					<iframe src='https://youtube.com/embed/cm73XDWTiNQ'
+						className="bg-gray-500 w-full h-60 md:h-full rounded-3xl md:rounded-tr-none md:rounded-br-none"
+						frameBorder='0'
+						allowFullScreen
+						title='MISchool Intro'
+					/>
 				</div>
 			</div>
 
-			<div className="mt-20 py-10 bg-teal-100 min-h-screen">
+			<div className="mt-20 py-10 bg-teal-100 md:min-h-screen">
 
 				<div className="text-gray-700 text-3xl font-semibold text-center">Why Us?</div>
-				<div className="flex flex-row flex-wrap mt-20">
+				<div className="flex flex-row flex-wrap mt-10 md:mt-20">
 					<div className="w-full md:w-1/3 h-full">
-						<div className="pl-20">
-							<div className="text-2xl font-bold text-gray-700">School Problems</div>
+						<div className="px-10 md:pl-20 md:pr-0">
+							<div className="text-xl md:text-2xl font-bold text-gray-700">School Problems</div>
 							<div className="mt-5 ml-5">
-								<ul className="space-y-4 text-gray-700 list-decimal">
+								<ul className="text-sm md:text-base space-y-2 md:space-y-4 text-gray-700 list-decimal">
 									<li>
 										<div>Keep track of Students and Teachers attendance and sending messsages.</div>
 									</li>
@@ -62,7 +67,7 @@ export const HomePage = () => {
 							</div>
 						</div>
 					</div>
-					<div className="w-full md:w-2/3 px-20">
+					<div className="w-full md:w-2/3 px-10 md:px-20">
 						<div className="relative">
 							<div className="h-96 bg-red-brand rounded-xl text-center text-white">
 								<div className="pt-28">
@@ -79,7 +84,7 @@ export const HomePage = () => {
 								</div>
 							</div>
 							<div className="absolute -top-20 inset-x-52 md:inset-x-72">
-								<img src="/images/taimur.jpg" className="h-40 w-40 rounded-full border-2 border-red-brand shadow-md" alt="school-owner" />
+								<img src="/images/taimur.jpg" className="h-40 w-40 rounded-full p-1  bg-white border-4 border-red-brand shadow-xl" alt="school-owner" />
 							</div>
 						</div>
 					</div>
@@ -92,36 +97,36 @@ export const HomePage = () => {
 						<div className="h-36 w-36 rounded-full bg-orange-brand mb-4">
 							<img className="w-20 h-20 m-8 shadow-md rounded-full" src="favicon.ico" alt="city" />
 						</div>
-						<div className="text-lg font-bold">50+</div>
-						<div className="">Cities</div>
+						<div className="text-2xl font-bold">50+</div>
+						<div className="text-gray-600">Cities</div>
 					</div>
 					<div className="flex flex-col items-center space-y-2">
 						<div className="h-36 w-36 rounded-full bg-teal-500 mb-4">
 							<img className="w-20 h-20 m-8 shadow-md rounded-full" src="favicon.ico" alt="city" />
 						</div>
-						<div className="text-lg font-bold">120+</div>
-						<div className="">Schools</div>
+						<div className="text-2xl font-bold">120+</div>
+						<div className="text-gray-600">Schools</div>
 					</div>
 					<div className="flex flex-col items-center space-y-2">
 						<div className="h-36 w-36 rounded-full bg-red-brand mb-4">
 							<img className="w-20 h-20 m-8 shadow-md rounded-full" src="favicon.ico" alt="city" />
 						</div>
-						<div className="text-lg font-bold">3500+</div>
-						<div className="">Teachers</div>
+						<div className="text-2xl font-bold">3500+</div>
+						<div className="text-gray-600">Teachers</div>
 					</div>
 					<div className="flex flex-col items-center space-y-2">
 						<div className="h-36 w-36 rounded-full bg-teal-500 mb-4">
 							<img className="w-20 h-20 m-8 shadow-md rounded-full" src="favicon.ico" alt="city" />
 						</div>
-						<div className="text-lg font-bold">120,000+</div>
-						<div className="">Students</div>
+						<div className="text-2xl font-bold">120,000+</div>
+						<div className="text-gray-600">Students</div>
 					</div>
 					<div className="flex flex-col items-center space-y-2">
 						<div className="h-36 w-36 rounded-full bg-orange-brand mb-4">
 							<img className="w-20 h-20 m-8 shadow-md rounded-full" src="favicon.ico" alt="city" />
 						</div>
-						<div className="text-lg font-bold">50,000+</div>
-						<div className="">Parents</div>
+						<div className="text-2xl font-bold">50,000+</div>
+						<div className="text-gray-600">Parents</div>
 					</div>
 				</div>
 
@@ -193,8 +198,8 @@ export const HomePage = () => {
 				</div>
 			</div>
 
-			<div className="mt-20 py-10 bg-teal-100 min-h-screen">
-				<div className="text-gray-700 text-3xl font-semibold text-center">Our Packages</div>
+			<div className="mt-20 py-10 bg-teal-100 min-h-screen text-gray-700">
+				<div className="text-3xl font-semibold text-center">Our Packages</div>
 				<div className="mt-10 px-10 md:px-40 grid">
 					<div className="grid gap-12 grid-cols-1 md:grid-cols-3">
 
@@ -230,8 +235,8 @@ export const HomePage = () => {
 			</div>
 
 
-			<div className="my-20">
-				<div className="text-gray-700 text-3xl font-semibold text-center">Our Team</div>
+			<div className="my-20 text-gray-700">
+				<div className="text-3xl font-semibold text-center">Our Team</div>
 				<div className="mt-10 px-10 md:px-40 grid">
 					<div className="grid gap-12 grid-cols-1 md:grid-cols-5 mx-auto">
 						{
