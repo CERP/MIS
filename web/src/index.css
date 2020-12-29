@@ -4,6 +4,15 @@ body {
 	font-family: sans-serif;
 }
 
+.arrow-up {
+	width: 0;
+	height: 4;
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+
+	border-bottom: 10px solid rgba(45, 212, 191, var(--tw-bg-opacity));
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

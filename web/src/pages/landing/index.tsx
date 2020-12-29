@@ -39,7 +39,7 @@ export const HomePage = () => {
 				</div>
 			</div>
 
-			<div className="mt-20 py-10 bg-teal-100 md:min-h-screen">
+			<div className="mt-20 py-10 bg-teal-50 md:min-h-screen">
 
 				<div className="text-gray-700 text-3xl font-semibold text-center">Why Us?</div>
 				<div className="flex flex-row flex-wrap mt-10 md:mt-20">
@@ -198,11 +198,10 @@ export const HomePage = () => {
 				</div>
 			</div>
 
-			<div className="mt-20 py-10 bg-teal-100 min-h-screen text-gray-700">
+			<div className="mt-20 py-10 bg-teal-50 min-h-screen text-gray-700">
 				<div className="text-3xl font-semibold text-center">Our Packages</div>
 				<div className="mt-10 px-10 md:px-40 grid">
 					<div className="grid gap-12 grid-cols-1 md:grid-cols-3">
-
 						{
 							(packages || []).map((pkg, index) => (
 								<div key={pkg.title + index} className={"rounded-3xl bg-white"}>
@@ -234,7 +233,6 @@ export const HomePage = () => {
 				</div>
 			</div>
 
-
 			<div className="my-20 text-gray-700">
 				<div className="text-3xl font-semibold text-center">Our Team</div>
 				<div className="mt-10 px-10 md:px-40 grid">
@@ -251,7 +249,6 @@ export const HomePage = () => {
 									</div>
 								))
 						}
-
 					</div>
 				</div>
 			</div>

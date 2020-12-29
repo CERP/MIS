@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
+import { Menu } from '@headlessui/react'
 import { Link } from 'react-router-dom'
 
 export const NavbarPublic = () => {
 
-	const [openDropdown, setOpenDropdown] = useState(false)
 	const [openMenu, setOpenMenu] = useState(false)
 
 	return (
@@ -15,7 +15,6 @@ export const NavbarPublic = () => {
 						<Link to="/">
 							<img className="image h-10 w-10" src="favicon.ico" alt="brand-logo" />
 						</Link>
-
 						<button className="rounded-lg md:hidden focus:outline-none focus:shadow-outline" onClick={() => setOpenMenu(!openMenu)} >
 							<svg fill="currentColor" viewBox="0 0 20 20" className="w-6 h-6">
 								{
@@ -26,38 +25,44 @@ export const NavbarPublic = () => {
 								}
 							</svg>
 						</button>
+
 					</div>
 					<nav className={` ${openMenu ? 'flex' : 'hidden'} flex-col flex-grow hidden pb-4 md:pb-0 md:flex md:justify-end md:flex-row`}>
 						<div className="relative">
-							<button onClick={() => setOpenDropdown(!openDropdown)} className="flex flex-row text-gray-900 bg-gray-200 items-center w-full px-4 py-2 mt-2 text-sm font-semibold text-left bg-transparent rounded-lg  md:w-auto md:inline md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline">
-								<span>Why Us?</span>
-								<svg fill="currentColor" viewBox="0 0 20 20" className={`${openDropdown ? 'rotate-180' : 'rotate-0'} inline w-4 h-4 mt-1 ml-1 transition-transform duration-200 transform md:-mt-1`}>
-									<path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-								</svg>
-							</button>
-							<div className={`${openDropdown ? 'block' : 'hidden'} absolute right-0 md:-right-28 w-full md:w-96 mt-2 border-t`}>
-								<div className="p-2 bg-white rounded-md shadow-lg">
-									<div className="flex flex-row items-center justify-between text-sm">
-										<a className="flex row items-start rounded-lg bg-transparent px-2 py-1 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" href="#">
-											Problems
-										</a>
+							<Menu>
+								{({ open }) => (
+									<>
+										<Menu.Button
+											className="flex flex-row text-gray-900 bg-gray-100 items-center w-full px-4 py-2 mt-2 text-left bg-transparent rounded-lg  md:w-auto md:inline md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline">
+											<span>Why Us?</span>
+											<svg fill="currentColor" viewBox="0 0 20 20" className={`${open ? 'rotate-180' : 'rotate-0'} inline w-4 h-4 mt-1 ml-1 transition-transform duration-200 transform md:-mt-1`}>
+												<path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+											</svg>
+										</Menu.Button>
+										<div className={`${open ? 'block' : 'hidden'} absolute right-0 md:-right-28 w-full md:w-96 mt-3`}>
+											<div className="p-2 bg-teal-400 rounded-md shadow-lg relative">
+												<div className="flex flex-row items-center justify-center text-xs divide-x-2 divide-gray-100 space-x-2">
+													<a className="flex row items-start bg-transparent px-2 py-1 text-white focus:outline-none focus:shadow-outline" href="#problems">
+														Problems</a>
 
-										<a className="flex row items-start rounded-lg bg-transparent px-2 py-1 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" href="#">
-											Testimonials
-										</a>
+													<a className="flex row items-start bg-transparent px-2 py-1 text-white focus:outline-none focus:shadow-outline" href="#testimonials">
+														Testimonials </a>
 
-										<a className="flex row items-start rounded-lg bg-transparent px-2 py-1 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" href="#">
-											Our Customer
-										</a>
-									</div>
-								</div>
-							</div>
+													<a className="flex row items-start bg-transparent px-2 py-1 text-white focus:outline-none focus:shadow-outline" href="#customers">
+														Our Customer</a>
+												</div>
+												<div className="absolute md:-top-2.5 md:right-40 arrow-up"></div>
+											</div>
+										</div>
+									</>
+								)}
+							</Menu>
 						</div >
-						<a className="px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" href="#">Features</a>
-						<a className="px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" href="#">Pricing</a>
-						<a className="px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" href="#">About Us</a>
-						<a className="px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" href="#">Contact Us</a>
-						<Link to="/school-login" className="px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline">
+						<a className="px-4 py-2 mt-2 bg-transparent rounded-lg md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none focus:shadow-outline" href="#">Features</a>
+						<a className="px-4 py-2 mt-2 bg-transparent rounded-lg md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none focus:shadow-outline" href="#">Pricing</a>
+						<a className="px-4 py-2 mt-2 bg-transparent rounded-lg md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none focus:shadow-outline" href="#">About Us</a>
+						<a className="px-4 py-2 mt-2 bg-transparent rounded-lg md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none focus:shadow-outline" href="#">Contact Us</a>
+						<Link to="/school-login" className="px-4 py-2 mt-2 bg-transparent rounded-lg md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none focus:shadow-outline">
 							Login
 						</Link>
 					</nav >
