@@ -1,6 +1,6 @@
-import { NavbarPublic } from 'components/navbar/public'
-import { displayName } from 'qrcode.react'
 import React, { useState } from 'react'
+
+import { AppLayout } from 'components/Layout/appLayout'
 import { Link } from 'react-router-dom'
 
 export const SchoolLogin = () => {
@@ -8,9 +8,8 @@ export const SchoolLogin = () => {
 	const [togglePassword, setTogglePassword] = useState(false)
 
 	return (
-		<>
+		<AppLayout title={"School Login"}>
 			<div className="bg-teal-50 min-h-screen">
-				<NavbarPublic />
 				<div className="p-5 pb-0 md:p-10 md:pb-0 text-gray-700">
 					<div className="flex flex-col items-center space-y-2">
 						<div className="text-2xl font-bold">Log in to MISchool</div>
@@ -66,6 +65,6 @@ export const SchoolLogin = () => {
 					</div>
 				</div>
 			</div>
-		</>
+		</AppLayout>
 	)
 }

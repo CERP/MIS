@@ -614,7 +614,17 @@ interface ExamScoreSheet {
 		}
 	}
 }
+
 type AugmentedSmsHistory = {
 	faculty?: string
 	text?: string
 } & MISSMSHistory
+
+interface Package {
+	title: "Taleem-1" | "Taleem-2" | "Taleem-3" | ""
+	popular?: boolean
+	price: string
+	currency: "PKR"
+	annual_charge: string
+	limit: string
+}

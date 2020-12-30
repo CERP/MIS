@@ -1,11 +1,3 @@
-interface Package {
-	title: "Taleem-1" | "Taleem-2" | "Taleem-3" | ""
-	popular?: boolean
-	price: string
-	currency: "PKR"
-	annual_charge: string
-	limit: string
-}
 export const packages: Package[] = [
 	{
 		title: 'Taleem-1',
