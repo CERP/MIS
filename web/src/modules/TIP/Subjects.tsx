@@ -1,28 +1,30 @@
 import React, { useMemo } from 'react';
 import { connect } from 'react-redux';
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { RouteComponentProps, withRouter, Link } from 'react-router-dom'
 import { getSubjectsFromTests } from 'utils/targetedInstruction'
 
 interface P {
+    className: string
+    sectionId: string
     targeted_instruction: RootReducerState["targeted_instruction"]
 }
 
 type PropsType = P & RouteComponentProps
 
-const Subjects: React.FC<PropsType> = (props) => {
+const Subjects: React.FC<PropsType> = ({ location, targeted_instruction, className, sectionId }) => {
 
-    const Subjects: string[] = useMemo(() => getSubjectsFromTests(props.targeted_instruction), [])
+    const Subjects: string[] = useMemo(() => getSubjectsFromTests(targeted_instruction), [])
 
-    const pathname = props.location.pathname
-    const previousComponent = (props.location.pathname).substring(22)
+    const pathname = location.pathname
+    const previousComponent = pathname.substring(22)
 
     return <div className="flex flex-wrap flex-row justify-around w-full mx-4">
         {Subjects.map((sub) => (
-            <div key={sub} className="container w-full sm:px-8 bg-white rounded-lg m-3 h-28 flex items-center justify-start flex-col shadow-lg"
-                onClick={() => props.history.push(previousComponent === 'diagnostic-result' ? `${pathname}/remedial-group` : `${pathname}/pdf`)}>
+            <Link key={sub} className="container w-full sm:px-8 bg-white rounded-lg m-3 h-28 flex items-center justify-start flex-col shadow-lg"
+                to={previousComponent === 'diagnostic-result' ? `${pathname}/${sectionId}/${className}/${sub}/remedial-group` : `${pathname}/${sectionId}/${className}/${sub}/pdf`}>
                 <div className="text-blue-400 text-bold flex items-center justify-center m-5 text-3xl h-10 w-full">{sub}</div>
                 <div className="text-blue-900 tracking-wider">{sub}</div>
-            </div>
+            </Link>
         ))}
     </div>
 }
