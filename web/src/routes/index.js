@@ -11,7 +11,8 @@ import StudentList from 'modules/Student/List'
 import StudentSingle from 'modules/Student/Single'
 import Login from 'modules/Login'
 import AutoLogin from 'modules/Login/autoLogin'
-import SchoolLogin from 'modules/Login/school'
+// import SchoolLogin from 'modules/Login/school'
+import { SchoolLogin, TeacherLogin } from 'pages/auth/login'
 import ClassModule from 'modules/Class/List'
 import ClassSingle from 'modules/Class/Single'
 import Attendance from 'modules/Attendance'
@@ -28,7 +29,7 @@ import PromotionPage from 'modules/Settings/promote-students'
 import TargetedInstruction from 'modules/TargetedInstruction/Routing'
 import Help from "modules/Help"
 import Diary from 'modules/Diary'
-import Front from 'modules/Front'
+// import Front from 'modules/Front'
 import FeeMenu from 'modules/FeeMenu'
 import PlannerList from 'modules/Planner/ClassList'
 import Planner from 'modules/Planner'
@@ -47,6 +48,8 @@ import ClassSettings from 'modules/Settings/ClassSettings/Index'
 import MISActivation from 'modules/Activation'
 import BulkExam from 'modules/Marks/BulkExam'
 import { HomePage } from 'pages/landing'
+
+import { Pricing } from 'pages/pricing'
 
 export default class Routes extends React.Component {
 
@@ -133,6 +136,7 @@ export default class Routes extends React.Component {
 					<Route path="/school-login" component={SchoolLogin} />
 					<Route path="/login" component={Login} />
 					<Route path="/auto-login" component={AutoLogin} />
+					<Route exact path="/pricing" component={Pricing} />
 
 				</Switch>
 			</BrowserRouter>
