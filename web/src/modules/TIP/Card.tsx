@@ -19,7 +19,7 @@ const Card: React.FC<PropsType> = ({ className, teacher_name, school_name }) => 
                 <div className="text-white text-base font-medium">{teacher_name}</div>
                 <div className="text-white text-xs font-thin">{school_name}</div>
             </div>
-            {className && <div className="text-white text-extrabold flex items-center justify-center m-5 bg-blue-300 rounded-full h-10 w-10">{className}</div>}
+            {className && <div className="text-white text-extrabold flex items-center justify-center m-5 bg-blue-300 rounded-full h-10 w-10">{(className).substring(6)}</div>}
         </div>
     </div>
 }

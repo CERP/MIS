@@ -99,6 +99,23 @@ interface MISTest {
 	}
 }
 
+interface DiagnosticTestQuestion {
+	[question_id: string]: {
+		answer: string
+		grade: string
+		question_text: string
+		slo_category: string
+		slo: []
+	}
+}
+
+interface Params {
+    class_name: string
+    subject: string
+	section_id: string
+	std_id: string
+}
+
 interface Columns {
 	name: string
 	selector: string

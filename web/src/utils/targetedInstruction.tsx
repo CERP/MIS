@@ -169,3 +169,12 @@ export const getSubjectsFromTests = (targeted_instruction: RootReducerState["tar
         }
     }, [])
 }
+
+export const getClassnameFromSectionId = (sortedSections: AugmentedSection[], sectionId: string) => {
+    return sortedSections.reduce((agg: string, section: AugmentedSection) => {
+        if (section.id === sectionId) {
+            return section.className
+        }
+        return agg
+    }, '')
+}

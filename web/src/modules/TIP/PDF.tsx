@@ -1,21 +1,28 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { connect } from 'react-redux'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import PDFViewer from 'pdf-viewer-reactjs'
 
 interface P {
+    targeted_instruction: RootReducerState["targeted_instruction"]
 }
 
 type PropsType = P & RouteComponentProps
 
 const PDF: React.FC<PropsType> = (props) => {
 
+    const { class_name, subject, section_id } = props.match.params as Params
+    const type = (props.location.pathname).substring(36, 22)
+
+    const pdfUrl = useMemo(() => getPDF(subject, class_name, props.targeted_instruction), [subject]);
+
     return <div className="flex flex-wrap content-between">
-        <div className="text-blue-900 text-bold flex justify-center w-full my-5">Grade 2 | Math | FormativeTest</div>
+        <div className="text-blue-900 text-bold flex justify-center w-full my-5">{class_name} | {subject} | FormativeTest</div>
         <div className="rounded-lg border-black	">
             <PDFViewer
                 hideNavbar={true}
                 document={{
-                    url: decodeURIComponent("https://storage.googleapis.com/targeted-instructions/TI%20V0%20Test_English.pdf"),
+                    url: decodeURIComponent(pdfUrl),
                 }}
             />
         </div>
@@ -27,12 +34,29 @@ const PDF: React.FC<PropsType> = (props) => {
                 <button className="bg-blue-400 text-bold text-lg border-none rounded-md text-white text-left p-2 w-full">Download</button>
             </div>
         </div>
-        <div className="flex flex-row justify-around m-3 w-full mx-5">
+        {type === 'formative-test' && <div className="flex flex-row justify-around m-3 w-full mx-5">
             <div className="w-full">
-                <button className="bg-yellow-400 text-bold text-lg border-none rounded-md text-white p-2 w-full" onClick={() => props.history.push(`${(props.location.pathname).substring(0, 37)}insert-grades`)}>Insert Grades</button>
+                <button className="bg-yellow-400 text-bold text-lg border-none rounded-md text-white p-2 w-full"
+                    onClick={() => props.history.push(`${(props.location.pathname).substring(0, 36)}/${section_id}/${class_name}/${subject}/insert-grades`)}>Insert Grades</button>
             </div>
-        </div>
+        </div>}
     </div>
 }
 
-export default withRouter(PDF)
+export default connect((state: RootReducerState) => ({
+    targeted_instruction: state.targeted_instruction
+}))(withRouter(PDF))
+
+const getPDF = (selectedSubject: string, selectedSection: string, targeted_instruction: RootReducerState["targeted_instruction"]) => {
+    let url
+    let misTest: Tests = targeted_instruction['tests']
+    for (let obj of Object.values(misTest)) {
+        if (obj.grade === selectedSection && obj.subject === selectedSubject) {
+            url = obj.pdf_url
+            break
+        } else {
+            url = ''
+        }
+    }
+    return url
+}

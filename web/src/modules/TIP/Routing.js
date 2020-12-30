@@ -21,19 +21,19 @@ const Routing = props => {
             <Route exact path={path}>
             <HomePage />
             </Route>
-            <Route exact path={`${path}/formative-test/pdf`}>
+            <Route exact path={`${path}/formative-test/:class_name/:subject/pdf`}>
             <PDF />
             </Route>
-            <Route exact path={`${path}/formative-test/insert-grades/grading/test-result/result`}>
+            <Route exact path={`${path}/formative-test/:class_name/:subject/insert-grades/grading/test-result/result`}>
             <Result />
             </Route>
-            <Route exact path={`${path}/formative-test/insert-grades/grading/test-result`}>
+            <Route exact path={`${path}/formative-test/:class_name/:subject/insert-grades/grading/test-result`}>
             <TestResult />
             </Route>
-            <Route exact path={`${path}/formative-test/insert-grades/grading`}>
+            <Route exact path={`${path}/formative-test/:class_name/:subject/insert-grades/grading`}>
             <Grading />
             </Route>
-            <Route exact path={`${path}/formative-test/insert-grades`}>
+            <Route exact path={`${path}/formative-test/:class_name/:subject/insert-grades`}>
             <InsertGrades />
             </Route>
             <Route exact path={`${path}/formative-test`}>
