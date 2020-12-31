@@ -1,16 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom'
 
 interface P {
-    className: string
+    class_name: string
     teacher_name: string
     school_name: string
 }
 
-type PropsType = P & RouteComponentProps
-
-const Card: React.FC<PropsType> = ({ className, teacher_name, school_name }) => {
+const Card: React.FC<P> = ({ class_name, teacher_name, school_name }) => {
 
     return <div className="container sm:px-8 bg-blue-500 rounded m-3 h-20 mb-6">
         <div className="flex flex-row justify-start">
@@ -19,7 +16,7 @@ const Card: React.FC<PropsType> = ({ className, teacher_name, school_name }) => 
                 <div className="text-white text-base font-medium">{teacher_name}</div>
                 <div className="text-white text-xs font-thin">{school_name}</div>
             </div>
-            {className && <div className="text-white text-extrabold flex items-center justify-center m-5 bg-blue-300 rounded-full h-10 w-10">{(className).substring(6)}</div>}
+            {class_name && <div className="text-white text-extrabold flex items-center justify-center m-5 bg-blue-300 rounded-full h-10 w-10">{(class_name).substring(6)}</div>}
         </div>
     </div>
 }

@@ -1,19 +1,20 @@
 import React from 'react';
 import { Route, withRouter, Switch } from 'react-router-dom';
-import HomePage from './index' 
-import FormativeTest from './FormativeTest/';
-import DiagnosticTestResult from './DiagnosticResult';
-import TrainingVideos from './TrainingVideos'
-import LessonPlans from './LessonPlans';
-import InsertGrades from './FormativeTest/InsertGrades';
-import PDF from './PDF'
-import Grading from './FormativeTest/Grading';
-import TestResult from './FormativeTest/TestResult';
-import Result from './FormativeTest/Result';
 import RemedialGroup from './DiagnosticResult/RemedialGroup';
+import InsertGrades from './FormativeTest/InsertGrades';
+import DiagnosticTestResult from './DiagnosticResult';
+import TestResult from './FormativeTest/TestResult';
 import ListView from './DiagnosticResult/ListView'
+import Grading from './FormativeTest/Grading';
+import TrainingVideos from './TrainingVideos'
+import FormativeTest from './FormativeTest';
+import Result from './FormativeTest/Result';
+import LessonPlans from './LessonPlans';
+import HomePage from './index' 
+import PDF from './PDF'
 
 const Routing = props => {
+
   const path = (props.location.pathname).substring(0,21)
 
   return (

@@ -83,8 +83,7 @@ const Grading: React.FC<PropsType> = (props) => {
                 <div className="flex flex-col justify-center">
                     <div className="text-white text-md font-medium">Miss Humna</div>
                     <div className="flex flex-row justify-between mt-2">
-                        <div className="text-white text-xs font-thin">{`${class_name} |`}</div>
-                        <div className="text-white text-xs font-thin">{subject}</div>
+                        <div className="text-white text-xs font-thin">{`${class_name} | ${subject}`}</div>
                     </div>
                 </div>
             </div>
