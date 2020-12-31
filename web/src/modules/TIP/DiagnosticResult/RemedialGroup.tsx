@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, Link, withRouter } from 'react-router-dom'
+import { getStudentsBySectionId } from 'utils/targetedInstruction'
 
 interface P {
     students: RootDBState["students"]
@@ -41,16 +42,3 @@ const RemedialGroup: React.FC<PropsType> = (props) => {
 export default connect((state: RootReducerState) => ({
     students: state.db.students
 }))(withRouter(RemedialGroup))
-
-const getStudentsBySectionId = (sectionId: string, students: RootDBState["students"]) => {
-    return students = Object.values(students)
-        .reduce<RootDBState["students"]>((agg, student) => {
-            if (student.section_id === sectionId) {
-                return {
-                    ...agg,
-                    [student.id]: student
-                }
-            }
-            return agg
-        }, {})
-}

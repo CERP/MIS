@@ -1,7 +1,7 @@
 export const createSingleStdReport = (diagnostic_result: MISStudent["diagnostic_result"], targeted_instruction: RootReducerState["targeted_instruction"], testId: string) => {
     return Object.values(((diagnostic_result && diagnostic_result[testId]) || {} as MISStudent["diagnostic_result"]))
-        .reduce<MISReport>((report, { isCorrect, slo }) => {
-            const c = isCorrect ? 1 : 0
+        .reduce<MISReport>((report, { is_correct, slo }) => {
+            const c = is_correct ? 1 : 0
             const inner = slo.reduce((updated_report: MISReport, curr_slo: string) => {
                 const category = targeted_instruction && targeted_instruction.slo_mapping[curr_slo] && targeted_instruction.slo_mapping[curr_slo].category
                 return {
@@ -145,7 +145,7 @@ export const getQuestionList = (selectedTest: string, stdObj: MISStudent, testTy
         return Object.entries(res).reduce((agg, [key, value]) => {
             return {
                 [key]: {
-                    "answer": value.isCorrect,
+                    "answer": value.is_correct,
                     "correctAnswer": value.answer,
                     "slo": value.slo[0]
                 },
@@ -177,4 +177,17 @@ export const getClassnameFromSectionId = (sortedSections: AugmentedSection[], se
         }
         return agg
     }, '')
+}
+
+export const getStudentsBySectionId = (sectionId: string, students: RootDBState["students"]) => {
+    return students = Object.values(students)
+        .reduce<RootDBState["students"]>((agg, student) => {
+            if (student.section_id === sectionId) {
+                return {
+                    ...agg,
+                    [student.id]: student
+                }
+            }
+            return agg
+        }, {})
 }
