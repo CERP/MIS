@@ -34,7 +34,11 @@ const RemedialGroup: React.FC<PropsType> = (props) => {
             </div>
         }
         <div className="flex justify-center items-center w-full mt-8">
-            <Link className="w-5/12" to={`${(props.location.pathname).substring(0, 39)}/${section_id}/${class_name}/${subject}/remedial-group/list-view`}><button className="rounded-md bg-blue-900 border-none text-white text-bold p-2 w-full">List View</button></Link>
+            <Link
+                className="w-5/12"
+                to={`${(props.location.pathname).substring(0, 39)}/${section_id}/${class_name}/${subject}/remedial-group/list-view`}>
+                <button className="rounded-md bg-blue-900 border-none text-white text-bold p-2 w-full">List View</button>
+            </Link>
         </div>
     </div>
 }

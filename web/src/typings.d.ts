@@ -93,7 +93,10 @@ interface MISTest {
 	pdf_url: string
 	questions: {
 		[question_id: string]: {
-			answer: string
+			question_text: string
+			correct_answer: string
+			grade: string
+			slo_category: string
 			slo: string[]
 		}
 	}
