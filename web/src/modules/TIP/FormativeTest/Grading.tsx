@@ -1,5 +1,4 @@
 
-//@ts-nocheck
 import React, { useMemo, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, Link, withRouter } from 'react-router-dom'
@@ -14,11 +13,10 @@ interface P {
 
 type PropsType = P & RouteComponentProps
 
-
 interface Question {
     [questionId: string]: {
         question_text: string
-        answer: boolean
+        is_correct: boolean
         slo: string
     }
 }
@@ -41,7 +39,8 @@ const Grading: React.FC<PropsType> = (props) => {
     const { class_name, subject, std_id, section_id } = props.match.params as Params
     const test_id = `${subject.toLowerCase()}-${class_name.substring(6)}`
 
-    const selectedTest = useMemo(() => getQuestionList(props.students[std_id].diagnostic_result, test_id), []);
+    const selectedTest: Question = useMemo(() => getQuestionList(props.students[std_id].diagnostic_result, test_id), []);
+
     const getUpdatedState = () => {
         const questionList = Object.entries(selectedTest).reduce<Question>((agg, [key, value]) => {
             return {
@@ -78,7 +77,9 @@ const Grading: React.FC<PropsType> = (props) => {
     return <div className="flex flex-wrap content-between">
         <div className="container sm:px-8 bg-yellow-400 rounded m-3 h-20 mb-6">
             <div className="flex flex-row justify-start">
-                <img className="h-12 rounded-full p-4" src="https://cdn.dribbble.com/users/2199928/screenshots/11532918/shot-cropped-1590177932366.png?compress=1&resize=400x300" alt="img" />
+                <img className="h-12 rounded-full p-4"
+                    src="https://cdn.dribbble.com/users/2199928/screenshots/11532918/shot-cropped-1590177932366.png?compress=1&resize=400x300"
+                    alt="img" />
                 <div className="flex flex-col justify-center">
                     <div className="text-white text-md font-medium">Miss Humna</div>
                     <div className="flex flex-row justify-between mt-2">
@@ -102,7 +103,9 @@ const Grading: React.FC<PropsType> = (props) => {
             }
         </div>
         <div className="w-full mt-5 flex justify-center">
-            <button className="bg-blue-900 text-bold text-lg border-none rounded-md text-white p-2 w-9/12" onClick={onSave}>Save and Continue</button>
+            <button
+                className="bg-blue-900 text-bold text-lg border-none rounded-md text-white p-2 w-9/12"
+                onClick={onSave}>Save and Continue</button>
         </div>
     </div>
 }
@@ -114,7 +117,7 @@ export default connect((state: RootReducerState) => ({
     saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport, selectedSubject: string) => dispatch(addReport(stdId, diagnostic_report, selectedSubject)),
 }))(withRouter(Grading))
 
-const getQuestionList = (diagnostic_result: RootDBState["students"]["diagnostic_result"], test_id: string) => {
+const getQuestionList = (diagnostic_result: MISStudent["diagnostic_result"], test_id: string) => {
     return Object.entries(diagnostic_result)
         .reduce((agg, [id, test]) => {
             if (id === test_id) {
