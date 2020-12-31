@@ -20,7 +20,7 @@ export const Home = () => {
 							Object.keys(schools).sort().map(id => (
 								<div key={id} className="w-11/12 mx-auto text-center">
 									<div className="font-bold pt-1 pb-5 md:pt-5 md:pb-8 uppercase">
-										<p style={{ color: 'var(--primary)' }}>{id}</p>
+										<p className="text-gray-700">{id}</p>
 									</div>
 									<DailyStats school_id={id} />
 								</div>

@@ -26,14 +26,16 @@ module.exports = {
 			indigo: colors.indigo,
 			purple: colors.violet,
 			pink: colors.pink,
+			orange: colors.orange,
+			teal: colors.teal
 		},
 		extend: {
 			colors: {
-				'red-primary': '#FC6171',
-				'green-primary': '#5ECDB9',
-				'orange-primary': '#FFC107',
-				'blue-primary': '#74ACED',
-				'gray-primary': '#E0E0E0'
+				'red-brand': '#FC6171',
+				'green-brand': '#5ECDB9',
+				'orange-brand': '#FFC107',
+				'blue-brand': '#74ACED',
+				'gray-brand': '#E0E0E0'
 			}
 		},
 		spacing: {
