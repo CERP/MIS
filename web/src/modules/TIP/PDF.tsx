@@ -9,12 +9,12 @@ interface P {
 
 type PropsType = P & RouteComponentProps
 
-const PDF: React.FC<PropsType> = (props) => {
+const PDF: React.FC<PropsType> = ({ match, location, history, targeted_instruction }) => {
 
-    const { class_name, subject, section_id } = props.match.params as Params
-    const type = (props.location.pathname).substring(36, 22)
+    const { class_name, subject, section_id } = match.params as Params
+    const type = (location.pathname).substring(36, 22)
 
-    const pdfUrl = useMemo(() => getPDF(subject, class_name, props.targeted_instruction), [subject]);
+    const pdfUrl = useMemo(() => getPDF(subject, class_name, targeted_instruction), [subject]);
 
     return <div className="flex flex-wrap content-between">
         <div className="text-blue-900 text-bold flex justify-center w-full my-5">{class_name} | {subject} | FormativeTest</div>
@@ -36,8 +36,11 @@ const PDF: React.FC<PropsType> = (props) => {
         </div>
         {type === 'formative-test' && <div className="flex flex-row justify-around m-3 w-full mx-5">
             <div className="w-full">
-                <button className="bg-yellow-400 text-bold text-lg border-none rounded-md text-white p-2 w-full"
-                    onClick={() => props.history.push(`${(props.location.pathname).substring(0, 36)}/${section_id}/${class_name}/${subject}/insert-grades`)}>Insert Grades</button>
+                <button
+                    className="bg-yellow-400 text-bold text-lg border-none rounded-md text-white p-2 w-full"
+                    onClick={() => history.push(`${(location.pathname).substring(0, 36)}/${section_id}/${class_name}/${subject}/insert-grades`)}>
+                    Insert Grades
+                </button>
             </div>
         </div>}
     </div>

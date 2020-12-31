@@ -1,16 +1,13 @@
 import React from 'react';
-import { RouteComponentProps } from 'react-router-dom'
 import Card from '../Card'
 
 interface P {
 }
 
-type PropsType = P & RouteComponentProps
-
-const ListView: React.FC<PropsType> = (props) => {
+const ListView: React.FC<P> = () => {
 
     return <div className="flex flex-wrap content-between">
-        <Card {...props} className='' />
+        <Card class_name='' />
         <div className="bg-blue-900 text-white w-full flex flex-row justify-between px-2 text-xs">
             <div className="w-3/5 flex justify-center">Name</div>
             <div>Avg</div>

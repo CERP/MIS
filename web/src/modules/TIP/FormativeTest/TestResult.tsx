@@ -18,7 +18,7 @@ const TestResult: React.FC<PropsType> = (props) => {
     const { class_name, subject, std_id, section_id } = props.match.params as Params
 
     return <div className="flex flex-wrap content-between">
-        <Headings heading="Formative Test Result" subHeading={"Select the SLO you want to see"} {...props} />
+        <Headings heading="Formative Test Result" sub_heading={"Select the SLO you want to see"} />
         {
             Object.entries(sloList).map(([id, sloObj]) => {
                 return <div key={id} className="flex flex-col justify-between m-3 w-11/12">
