@@ -54,7 +54,7 @@ export const Login = () => {
 
 	return (
 		<AppLayout title="Login">
-			<div className="h-screen w-full bg-red-primary">
+			<div className="h-screen w-full bg-red-brand">
 				<div className="p-6 md:px-10 text-center md:text-left">
 					<Link to="/" className="mt-5 text-white font-bold text-xl" > MISchool.pk </Link>
 				</div>

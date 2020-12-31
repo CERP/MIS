@@ -3,31 +3,30 @@
 @tailwind utilities;
 
 @layer components {
-	.table-container {
-		@apply inline-block min-w-full shadow rounded-lg overflow-hidden;
-	}
-	.table {
-		@apply w-full table-auto leading-normal;
-	}
-	.thead {
-		@apply bg-gray-200 border-b-2 border-gray-200 text-gray-700 uppercase text-xs text-center font-semibold tracking-wider;
-	}
-	.th {
-		@apply px-5 py-3;
-	}
-	.tr {
-		@apply text-center;
-	}
-	.td {
-		@apply px-5 py-3 border-b border-gray-200 text-gray-900 text-sm;
-	}
-	
-	.input {
-		@apply border focus:ring-1 focus:ring-blue-primary outline-none text-gray-700 px-4 py-2 ring-blue-primary rounded-lg
-	}
-	
-	.select {
-		@apply rounded-lg border block bg-white border-gray-300 outline-none text-gray-700 py-2 px-4 leading-tight;
-	}
-	
+  .table-container {
+    @apply inline-block min-w-full shadow rounded-lg overflow-hidden;
   }
+  .table {
+    @apply w-full table-auto leading-normal;
+  }
+  .thead {
+    @apply bg-gray-200 border-b-2 border-gray-200 text-gray-700 uppercase text-xs text-center font-semibold tracking-wider;
+  }
+  .th {
+    @apply px-5 py-3;
+  }
+  .tr {
+    @apply text-center;
+  }
+  .td {
+    @apply px-5 py-3 border-b border-gray-200 text-gray-900 text-sm;
+  }
+
+  .input {
+    @apply border focus:ring-1 focus:ring-blue-brand outline-none text-gray-700 px-4 py-2 ring-blue-brand rounded-lg;
+  }
+
+  .select {
+    @apply rounded-lg border block bg-white border-gray-300 outline-none text-gray-700 py-2 px-4 leading-tight;
+  }
+}
