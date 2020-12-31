@@ -17,48 +17,48 @@ const Routing = props => {
   const path = (props.location.pathname).substring(0,21)
 
   return (
-        <Switch>
-            <Route exact path={path}>
-            <HomePage />
-            </Route>
-            <Route exact path={`${path}/formative-test/:class_name/:subject/pdf`}>
-            <PDF />
-            </Route>
-            <Route exact path={`${path}/formative-test/:class_name/:subject/insert-grades/grading/test-result/result`}>
-            <Result />
-            </Route>
-            <Route exact path={`${path}/formative-test/:class_name/:subject/insert-grades/grading/test-result`}>
-            <TestResult />
-            </Route>
-            <Route exact path={`${path}/formative-test/:class_name/:subject/insert-grades/grading`}>
-            <Grading />
-            </Route>
-            <Route exact path={`${path}/formative-test/:class_name/:subject/insert-grades`}>
-            <InsertGrades />
-            </Route>
-            <Route exact path={`${path}/formative-test`}>
-            <FormativeTest />
-            </Route>
-            <Route exact path={`${path}/diagnostic-result/remedial-group/list-view`}>
-            <ListView />
-            </Route>
-            <Route exact path={`${path}/diagnostic-result/remedial-group`}>
-            <RemedialGroup />
-            </Route>
-            <Route exact path={`${path}/diagnostic-result`}>
-            <DiagnosticTestResult />
-            </Route>
-            <Route exact path={`${path}/lesson-plans/pdf`}>
-            <PDF />
-            </Route>
-            <Route exact path={`${path}/lesson-plans`}>
-            <LessonPlans />
-            </Route>
-            <Route exact path={`${path}/training-videos`}>
-            <TrainingVideos />
-            </Route>
-        </Switch>
-        )
+    <Switch>
+        <Route exact path={path}>
+        <HomePage />
+        </Route>
+        <Route exact path={`${path}/formative-test/:section_id/:class_name/:subject/pdf`}>
+        <PDF />
+        </Route>
+        <Route exact path={`${path}/formative-test/:section_id/:class_name/:subject/insert-grades/:std_id/grading/test-result/result`}>
+        <Result />
+        </Route>
+        <Route exact path={`${path}/formative-test/:section_id/:class_name/:subject/insert-grades/:std_id/grading/test-result`}>
+        <TestResult />
+        </Route>
+        <Route exact path={`${path}/formative-test/:section_id/:class_name/:subject/insert-grades/:std_id/grading`}>
+        <Grading />
+        </Route>
+        <Route exact path={`${path}/formative-test/:section_id/:class_name/:subject/insert-grades`}>
+        <InsertGrades />
+        </Route>
+        <Route exact path={`${path}/formative-test`}>
+        <FormativeTest />
+        </Route>
+        <Route exact path={`${path}/diagnostic-result/:section_id/:class_name/:subject/remedial-group/list-view`}>
+        <ListView />
+        </Route>
+        <Route exact path={`${path}/diagnostic-result/:section_id/:class_name/:subject/remedial-group`}>
+        <RemedialGroup />
+        </Route>
+        <Route exact path={`${path}/diagnostic-result`}>
+        <DiagnosticTestResult />
+        </Route>
+        <Route exact path={`${path}/lesson-plans/:section_id/:class_name/:subject/pdf`}>
+        <PDF />
+        </Route>
+        <Route exact path={`${path}/lesson-plans`}>
+        <LessonPlans />
+        </Route>
+        <Route exact path={`${path}/training-videos`}>
+        <TrainingVideos />
+        </Route>
+    </Switch>
+    )
 };
 
 export default withRouter(Routing);

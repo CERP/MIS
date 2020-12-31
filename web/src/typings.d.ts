@@ -99,16 +99,6 @@ interface MISTest {
 	}
 }
 
-interface DiagnosticTestQuestion {
-	[question_id: string]: {
-		answer: string
-		grade: string
-		question_text: string
-		slo_category: string
-		slo: []
-	}
-}
-
 interface Params {
     class_name: string
     subject: string
@@ -362,8 +352,9 @@ type DiagnosticResult = {
 
 type MISDiagnosticReport = {
 	[question_id: string]: {
+		question_text: string
 		answer: string
-		isCorrect: boolean
+		is_correct: boolean
 		slo: string[]
 	}
 }
