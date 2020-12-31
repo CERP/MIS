@@ -12,7 +12,7 @@ export const Pricing = () => {
 					<div className="text-2xl font-bold">Select your Package</div>
 					<div className="text-sm mt-5">
 						<span className="text-gray-500">Have an account? </span>
-						<Link to="/school-signup" className="text-blue-500 text-base">Sign in</Link>
+						<Link to="/signup" className="text-blue-500 text-base">Sign in</Link>
 					</div>
 				</div>
 				<Package />
