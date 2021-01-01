@@ -32,7 +32,6 @@ export const HomePage = () => {
 						/>
 					</div>
 				</div>
-
 				<div className="mt-20 py-10 bg-teal-50 md:min-h-screen">
 
 					<div className=" text-3xl font-semibold text-center">Why Us?</div>
