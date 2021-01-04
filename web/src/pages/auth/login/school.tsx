@@ -1,35 +1,96 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { Link, Redirect } from 'react-router-dom'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { EyePassword } from 'components/Password'
+import { useDispatch, useSelector } from 'react-redux'
+import { DownloadIcon } from 'assets/icons'
+import { createSchoolLogin } from 'actions'
+import { Spinner } from 'components/Animation/spinner'
 
 type TState = {
-	eye_open: boolean
-	id: string
+	schoolId: string
 	password: string
+	openEye: boolean
 }
 
 const initialState: TState = {
-	eye_open: false,
-	id: '',
-	password: ''
+	schoolId: '',
+	password: '',
+	openEye: false,
 }
+
 
 export const SchoolLogin = () => {
 
+	// local state
 	const [state, setState] = useState(initialState)
+	const [isSubmitted, setIsSubmitted] = useState(false)
+	const [hasError, setHasError] = useState('')
 
-	const { eye_open } = state
+	// handle store
+	const dispatch = useDispatch()
+	const { auth, connected, initialized } = useSelector((state: RootReducerState) => state)
+
+	useEffect(() => {
+
+		if (auth.attempt_failed && isSubmitted && !auth.loading) {
+
+			setHasError('School Id or Password is incorrect!')
+
+			setTimeout(() => {
+				setHasError('')
+				setIsSubmitted(false)
+			}, 3000)
+
+		}
+	}, [auth, isSubmitted])
+
 
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
 
+		// i have to handle this later (remove local state variable if you have global state)
+		setIsSubmitted(true)
+
+		// dispatch the action
+		dispatch(createSchoolLogin(state.schoolId, state.password))
 	}
 
 	const hanldeInputChange = (event: React.ChangeEvent<HTMLInputElement & HTMLSelectElement>) => {
 		const { name, value } = event.target
 		setState({ ...state, [name]: value })
+	}
+
+	if (auth.faculty_id) {
+		<Redirect to="/home" />
+	}
+
+	if (auth.token) {
+		<Redirect to="/staff-login" />
+	}
+
+	if (!connected) {
+		return (
+			<AppLayout title={"School Login"}>
+				<div className="p-5 pb-0 md:p-10 md:pb-0 text-gray-700">
+					<div className="text-center animate-pulse">Connecting, Pleae wait...</div>
+				</div>
+			</AppLayout>
+		)
+	}
+
+	if (!initialized) {
+		return (
+			<AppLayout title={"School Login"}>
+				<div className="p-5 pb-0 md:p-10 md:pb-0 text-gray-700">
+					<div className="flex flex-col items-center mt-20">
+						<img className="animate-bounce w-8 md:w-12" src={DownloadIcon} alt="d-icon" />
+						<div className="text-sm animate-pulse">Downloading Database, Please wait...</div>
+					</div>
+				</div>
+			</AppLayout>
+		)
 	}
 
 	return (
@@ -53,6 +114,7 @@ export const SchoolLogin = () => {
 								onChange={hanldeInputChange}
 								autoCapitalize="off"
 								autoCorrect="off"
+								autoComplete="off"
 								placeholder="Enter school id"
 								className="input" />
 
@@ -62,19 +124,32 @@ export const SchoolLogin = () => {
 									name="password"
 									required
 									onChange={hanldeInputChange}
-									type={eye_open ? 'text' : 'password'}
+									type={state.openEye ? 'text' : 'password'}
+									autoCapitalize="off"
+									autoCorrect="off"
+									autoComplete="off"
 									placeholder="Enter password"
 									className="input w-full" />
 								<div
-									onClick={() => setState({ ...state, eye_open: !eye_open })}
+									onClick={() => setState({ ...state, openEye: !state.openEye })}
 									className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
 									{
-										<EyePassword open={eye_open} />
+										<EyePassword open={state.openEye} />
 									}
 								</div>
 							</div>
+							<div className="text-xs h-1 pt-1 text-red-brand">{hasError}</div>
 							<div className="mt-8 text-center">
-								<button className="w-full btn-blue px-5 md:px-8 py-3">Login into your school</button>
+								<button className="inline-flex items-center w-full btn-blue px-5 md:px-8 py-3">
+									{auth.loading ?
+										<>
+											<Spinner className={"animate-spin h-5 w-5"} />
+											<span className={"mx-auto animate-pulse"}>Logging In</span>
+										</>
+										:
+										<span className={"mx-auto"}>Login into your School</span>
+									}
+								</button>
 								<Link to="/school/reset-password" className="mt-2 text-sm text-gray-500 hover:text-blue-brand">Forgot your school passsword?</Link>
 							</div>
 						</form>
