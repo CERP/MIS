@@ -9,13 +9,13 @@ import { createSchoolLogin } from 'actions'
 import { Spinner } from 'components/Animation/spinner'
 
 type TState = {
-	schoolId: string
+	school: string
 	password: string
 	openEye: boolean
 }
 
 const initialState: TState = {
-	schoolId: '',
+	school: '',
 	password: '',
 	openEye: false,
 }
@@ -54,7 +54,7 @@ export const SchoolLogin = () => {
 		setIsSubmitted(true)
 
 		// dispatch the action
-		dispatch(createSchoolLogin(state.schoolId, state.password))
+		dispatch(createSchoolLogin(state.school, state.password))
 	}
 
 	const hanldeInputChange = (event: React.ChangeEvent<HTMLInputElement & HTMLSelectElement>) => {
@@ -109,7 +109,7 @@ export const SchoolLogin = () => {
 						<form onSubmit={handleSubmit} className="flex flex-col justify-items-start">
 							<div className="my-2">Mobile Number (School Id)</div>
 							<input
-								name="id"
+								name="school"
 								required
 								onChange={hanldeInputChange}
 								autoCapitalize="off"
