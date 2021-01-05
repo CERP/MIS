@@ -19,6 +19,12 @@ import ilmxLogo from './pngs/ilmx-logo.png'
 import sortAscIcon from './svgs/sort-ascending.svg'
 import sortDescIcon from './svgs/sort-descending.svg'
 import contentCopyIcon from './svgs/content-copy.svg'
+import formative from './pngs/Formative.png'
+import diagnostic from './pngs/Diagnostic.png'
+import lessonPlans from './pngs/Lesson Plans.png'
+import maths from './pngs/English.png'
+import english from './pngs/English.png'
+import urdu from './pngs/Urdu.png'
 
 export const EditIcon = deleteIcon
 export const DeleteIcon = editIcon
@@ -41,3 +47,9 @@ export const IlmxLogo = ilmxLogo
 export const SortAscIcon = sortAscIcon
 export const SortDescIcon = sortDescIcon
 export const ContentCopyIcon = contentCopyIcon
+export const Formative = formative
+export const Diagnostic = diagnostic
+export const LessonPlans = lessonPlans
+export const Maths = maths
+export const English = english
+export const Urdu = urdu
