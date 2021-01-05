@@ -74,28 +74,28 @@ const Grading: React.FC<PropsType> = (props) => {
         props.history.push(`${(props.location.pathname).substring(0, 36)}/${section_id}/${class_name}/${subject}/insert-grades`)
     }
 
-    return <div className="flex flex-wrap content-between">
-        <div className="container sm:px-8 bg-yellow-400 rounded m-3 h-20 mb-6">
+    return <div className="flex flex-wrap content-between bg-white">
+        <div className="container sm:px-8 bg-yellow-400 rounded m-3 h-24 mb-6">
             <div className="flex flex-row justify-start">
-                <img className="h-12 rounded-full p-4"
+                <img className="h-14 rounded-full p-4"
                     src="https://cdn.dribbble.com/users/2199928/screenshots/11532918/shot-cropped-1590177932366.png?compress=1&resize=400x300"
                     alt="img" />
                 <div className="flex flex-col justify-center">
-                    <div className="text-white text-md font-medium">Miss Humna</div>
+                    <div className="text-white text-xl font-bold">Miss Humna</div>
                     <div className="flex flex-row justify-between mt-2">
-                        <div className="text-white text-xs font-thin">{`${class_name} | ${subject}`}</div>
+                        <div className="text-white text-base font-bold">{`${class_name} | ${subject}`}</div>
                     </div>
                 </div>
             </div>
         </div>
         <div className="flex flex-col justify-between w-full mx-4">
             {
-                Object.keys(state.questionsObj).map(function (key) {
-                    return <div key={key} className="flex flex-row justify-between mt-3">
-                        <div className="text-current text-xs">{state.questionsObj[key].question_text}</div>
-                        <div className="rounded-lg w-30 bg-white">
-                            <button className={!state.questionsObj[key].is_correct ? "border-none rounded-lg text-xs outline-none text-white bg-pink-700" : "border-none rounded-lg text-xs outline-none"} onClick={() => handleChange(false, key)}>Incorrect</button>
-                            <button className={state.questionsObj[key].is_correct ? "border-none rounded-lg text-xs text-white bg-green-500 outline-none" : "border-none rounded-lg text-xs outline-none"} onClick={() => handleChange(true, key)}>Correct</button>
+                Object.keys(state.questionsObj).map(function (key, index) {
+                    return <div key={key} className={`flex flex-row justify-between items-center border border-solid border-gray-200 px-3 ${index % 2 === 0 ? "bg-gray-100" : "bg-white"} h-12`}>
+                        <div className="text-xs">{state.questionsObj[key].question_text}</div>
+                        <div className="rounded-xl w-30 h-6 bg-white">
+                            <button className={!state.questionsObj[key].is_correct ? "border-none h-full rounded-xl text-xs outline-none text-white bg-incorrect-red" : "border-2 border-solid border-gray-100 bg-white h-full rounded-xl text-xs outline-non"} onClick={() => handleChange(false, key)}>Incorrect</button>
+                            <button className={state.questionsObj[key].is_correct ? "border-none h-full rounded-xl text-xs text-white bg-correct-green outline-none" : "border-2 border-solid border-gray-100 bg-white h-full rounded-xl text-xs outline-none"} onClick={() => handleChange(true, key)}>Correct</button>
                         </div>
                     </div>
                 })
@@ -103,7 +103,7 @@ const Grading: React.FC<PropsType> = (props) => {
         </div>
         <div className="w-full mt-5 flex justify-center">
             <button
-                className="bg-blue-900 text-bold text-lg border-none rounded-md text-white p-2 w-9/12"
+                className="bg-blue-900 h-11 font-bold text-base border-none rounded-md text-white p-2 w-9/12"
                 onClick={onSave}>Save and Continue</button>
         </div>
     </div>

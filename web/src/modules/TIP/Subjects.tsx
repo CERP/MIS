@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom'
 import { getSubjectsFromTests } from 'utils/targetedInstruction'
+import { English, Urdu, Maths } from 'assets/icons'
 
 interface P {
     class_name: string
@@ -19,12 +20,12 @@ const Subjects: React.FC<PropsType> = ({ location, targeted_instruction, class_n
 
     return <div className="flex flex-wrap flex-row justify-around w-full mx-4">
         {subjects.map((sub) => (
-            <Link key={sub} className="container w-full sm:px-8 bg-white rounded-lg m-3 h-28 flex items-center justify-start flex-col shadow-lg"
+            <Link key={sub} className="container w-full sm:px-8 bg-white rounded-lg m-3 h-36 flex items-center justify-start flex-col shadow-lg no-underline"
                 to={previousComponent === 'diagnostic-result' ?
                     `${pathname}/${section_id}/${class_name}/${sub}/remedial-group` :
                     `${pathname}/${section_id}/${class_name}/${sub}/pdf`}>
-                <div className="text-blue-400 text-bold flex items-center justify-center m-5 text-3xl h-10 w-full">{sub}</div>
-                <div className="text-blue-900 tracking-wider">{sub}</div>
+                <img className="flex items-center justify-center h-20 p-2" src={sub === 'English' ? English : sub === 'Urdu' ? Urdu : Maths} />
+                <div className="text-blue-900 font-thin text-3xl">{sub}</div>
             </Link>
         ))}
     </div>

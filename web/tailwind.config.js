@@ -8,7 +8,9 @@ module.exports = {
           'green-primary': '#1BB4BB',
           'orange-primary': '#FFC107',
           'blue-primary': '#74ACED',
-          'gray-primary': '#E0E0E0'
+          'gray-primary': '#E0E0E0',
+          'incorrect-red': '#FF002A',
+          'correct-green': '#00FF43'
         }
     },
   },
