@@ -1,7 +1,7 @@
 
 import React, { useMemo, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { RouteComponentProps, Link, withRouter } from 'react-router-dom'
+import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { addReport } from 'actions'
 
 interface P {
@@ -71,7 +71,7 @@ const Grading: React.FC<PropsType> = (props) => {
 
     const onSave = () => {
         state.result && props.saveReport(std_id, state.result, test_id)
-        props.history.push(`${(props.location.pathname).substring(0, 36)}/${section_id}/${class_name}/${subject}/insert-grades/${std_id}/grading/test-result`)
+        props.history.push(`${(props.location.pathname).substring(0, 36)}/${section_id}/${class_name}/${subject}/insert-grades`)
     }
 
     return <div className="flex flex-wrap content-between">

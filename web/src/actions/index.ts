@@ -582,6 +582,10 @@ export const addReport = (student_id: string, diagnostic_report: MISDiagnosticRe
 		{
 			path: ["db", "students", student_id, "diagnostic_result", test_id],
 			value: diagnostic_report
+		},
+		{
+			path: ["db", "students", student_id, "diagnostic_result", test_id, "checked"],
+			value: true
 		}
 	]))
 }

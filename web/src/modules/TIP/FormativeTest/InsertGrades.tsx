@@ -12,7 +12,7 @@ type PropsType = P & RouteComponentProps
 const InsertGrades: React.FC<PropsType> = (props) => {
 
     const { class_name, subject, section_id } = props.match.params as Params
-
+    const test_id = `${subject.toLowerCase()}-${class_name.substring(6)}`
     const students = useMemo(() => getStudentsBySectionId(section_id, props.students), [section_id])
 
     return <div className="flex flex-wrap content-between">
@@ -28,7 +28,7 @@ const InsertGrades: React.FC<PropsType> = (props) => {
                     Object.values(students)
                         .sort((a, b) => a.Name.localeCompare(b.Name))
                         .map((std) => (<Link key={name} className="h-20 flex flex-col flex items-center justify-center" to={`${(props.location.pathname).substring(0, 36)}/${section_id}/${class_name}/${subject}/insert-grades/${std.id}/grading`}>
-                            <img className="rounded-full h-14 w-14 p-2" src="https://www.atmeplay.com/images/users/avtar/avtar_nouser.png" alt="img" />
+                            <img className={std.diagnostic_result[test_id].checked ? "rounded-full h-14 w-14 p-2 border border-solid border-blue-300" : "rounded-full h-14 w-14 p-2"} src="https://www.atmeplay.com/images/users/avtar/avtar_nouser.png" alt="img" />
                             <div className="text-xs flex items-center justify-center w-24 md:w-28 truncate">{std.Name}</div>
                         </Link>))
                 }
