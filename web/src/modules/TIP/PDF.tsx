@@ -16,8 +16,8 @@ const PDF: React.FC<PropsType> = ({ match, location, history, targeted_instructi
 
     const pdfUrl = useMemo(() => getPDF(subject, class_name, targeted_instruction), [subject]);
 
-    return <div className="flex flex-wrap content-between">
-        <div className="text-blue-900 text-bold flex justify-center w-full my-5">{class_name} | {subject} | {type === 'formative-test' ? "Formative Test" : "Lesson Plans"}</div>
+    return <div className="flex flex-wrap content-between w-full">
+        <div className="text-blue-900 font-bold flex text-lg justify-center my-5 mx-3">{class_name} | {subject} | {type === 'formative-test' ? "Formative Test" : "Lesson Plans"}</div>
         <div className="rounded-lg border-black	">
             <PDFViewer
                 hideNavbar={true}
@@ -27,22 +27,27 @@ const PDF: React.FC<PropsType> = ({ match, location, history, targeted_instructi
             />
         </div>
         <div className="flex flex-row justify-around m-3 w-full">
-            <div className="w-5/12">
-                <button className="bg-blue-800 text-bold text-lg border-none rounded-md text-white text-left p-2 w-full">Print</button>
+            <div className="w-1/2">
+                <button className="bg-blue-900 text-lg border-none rounded-md text-white text-left p-2 w-full">Print</button>
             </div>
-            <div className="w-6/12">
-                <button className="bg-blue-400 text-bold text-lg border-none rounded-md text-white text-left p-2 w-full">Download</button>
+            <div className="w-1/2">
+                <button className="bg-green-primary text-lg border-none rounded-md text-white text-left p-2 w-full">Download</button>
             </div>
         </div>
-        {type === 'formative-test' && <div className="flex flex-row justify-around m-3 w-full mx-5">
-            <div className="w-full">
-                <button
-                    className="bg-yellow-400 text-bold text-lg border-none rounded-md text-white p-2 w-full"
-                    onClick={() => history.push(`${(location.pathname).substring(0, 36)}/${section_id}/${class_name}/${subject}/insert-grades`)}>
-                    Insert Grades
+        {type === 'formative-test' &&
+            <div className="flex flex-row justify-around m-3 w-full">
+                <div className="w-1/2">
+                    <button
+                        className="bg-orange-primary font-bold text-lg border-none rounded-md text-white text-left p-2 w-full"
+                        onClick={() => history.push(`${(location.pathname).substring(0, 36)}/${section_id}/${class_name}/${subject}/insert-grades`)}>
+                        Insert Grades
                 </button>
+                </div>
+                <div className="w-1/2">
+                    <button className="bg-red-primary font-bold text-lg border-none rounded-md text-white text-left p-2 w-full">Answer Sheet</button>
+                </div>
             </div>
-        </div>}
+        }
     </div>
 }
 

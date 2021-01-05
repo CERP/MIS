@@ -22,7 +22,7 @@ import contentCopyIcon from './svgs/content-copy.svg'
 import formative from './pngs/Formative.png'
 import diagnostic from './pngs/Diagnostic.png'
 import lessonPlans from './pngs/Lesson Plans.png'
-import maths from './pngs/English.png'
+import maths from './pngs/Maths.png'
 import english from './pngs/English.png'
 import urdu from './pngs/Urdu.png'
 
