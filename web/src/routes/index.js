@@ -12,8 +12,6 @@ import StudentSingle from 'modules/Student/Single'
 import Login from 'modules/Login'
 import AutoLogin from 'modules/Login/autoLogin'
 // import SchoolLogin from 'modules/Login/school'
-import { SchoolLogin, TeacherLogin } from 'pages/auth/login'
-import { SchoolSignup } from 'pages/auth/signup'
 import ClassModule from 'modules/Class/List'
 import ClassSingle from 'modules/Class/Single'
 import Attendance from 'modules/Attendance'
@@ -53,6 +51,8 @@ import { Contact } from 'pages/contact'
 import { Feature } from 'pages/features'
 import { About } from 'pages/about'
 import { Pricing } from 'pages/pricing'
+import { SchoolLogin, StaffLogin } from 'pages/auth/login'
+import { SchoolSignup } from 'pages/auth/signup'
 
 export default class Routes extends React.Component {
 
@@ -84,7 +84,7 @@ export default class Routes extends React.Component {
 		return <Provider store={this.props.store}>
 			<BrowserRouter>
 				<Switch>
-					<TrackedRoute exact path="/landing" component={Landing} />
+					{/* <TrackedRoute exact path="/landing" component={Landing} />
 
 					<Route path="/faculty/first" component={TeacherSingle} />
 
@@ -134,11 +134,13 @@ export default class Routes extends React.Component {
 					<TrackedRoute path="/fees/add-historical-fee" component={HistoricalFee} />
 					<TrackedRoute path="/fee-menu" component={FeeMenu} />
 					<TrackedRoute path="/reset-password" component={ResetPassword} />
-					<Route path="/verify-code" component={MISActivation} />
+					<Route path="/verify-code" component={MISActivation} /> */}
 					<Route exact path="/" component={HomePage} />
+					
 					<Route path="/school-login" component={SchoolLogin} />
-					<Route path="/login" component={Login} />
+					<Route path="/staff-login" component={StaffLogin} />
 					<Route path="/auto-login" component={AutoLogin} />
+					
 					<Route exact path="/pricing" component={Pricing} />
 					<Route exact path="/signup" component={SchoolSignup} />
 					<Route exact path="/about-us" component={About} />
