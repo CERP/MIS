@@ -354,6 +354,7 @@ type DiagnosticResult = {
 }
 
 type MISDiagnosticReport = {
+	checked: boolean
 	[question_id: string]: {
 		question_text: string
 		answer: string

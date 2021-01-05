@@ -17,7 +17,7 @@ const PDF: React.FC<PropsType> = ({ match, location, history, targeted_instructi
     const pdfUrl = useMemo(() => getPDF(subject, class_name, targeted_instruction), [subject]);
 
     return <div className="flex flex-wrap content-between">
-        <div className="text-blue-900 text-bold flex justify-center w-full my-5">{class_name} | {subject} | FormativeTest</div>
+        <div className="text-blue-900 text-bold flex justify-center w-full my-5">{class_name} | {subject} | {type === 'formative-test' ? "Formative Test" : "Lesson Plans"}</div>
         <div className="rounded-lg border-black	">
             <PDFViewer
                 hideNavbar={true}
