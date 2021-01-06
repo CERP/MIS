@@ -81,7 +81,7 @@ const TeamMembers: Array<Team> = [
 	// },
 	// {
 	// 	name: "Mudassar Ali",
-	// 	avatar_url: "/images/mudassar.jpg",
+	// 	avatar_url: "/images/mudassar.jpeg",
 	// 	designation: "Developer",
 	// },
 
