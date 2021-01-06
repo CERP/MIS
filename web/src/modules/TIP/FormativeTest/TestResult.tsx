@@ -22,14 +22,14 @@ const TestResult: React.FC<PropsType> = (props) => {
         {
             Object.entries(sloList).map(([id, sloObj]) => {
                 return <div key={id} className="flex flex-col justify-between m-3 w-11/12">
-                    <div className="text-blue-900 text-extrabold text-lg capitalize">{id.split("-")[0]}</div>
+                    <div className="text-blue-900 text-extrabold text-2xl capitalize font-bold">{id.split("-")[0]}</div>
                     {
                         sloObj.map((slo) => {
                             return <Link key={slo}
-                                className="no-underline bg-blue-900 rounded flex flex-row justify-between p-2 my-2 shadow-lg"
+                                className="no-underline bg-blue-250 rounded-md flex flex-row justify-between items-center px-3 my-2 h-11 shadow-lg"
                                 to={`${(props.location.pathname).substring(0, 36)}/${section_id}/${class_name}/${subject}/insert-grades/${std_id}/grading/test-result/result`}>
-                                <div className="text-white text-extrabold text-xs ">{slo}</div>
-                                <div className="bg-white rounded-full">Arr</div>
+                                <div className="text-white text-extrabold text-base font-bold">{slo}</div>
+                                <div className="bg-white rounded-full h-7 w-7">Arr</div>
                             </Link>
                         })
                     }
@@ -37,7 +37,7 @@ const TestResult: React.FC<PropsType> = (props) => {
             })
         }
         <div className="flex justify-center items-center w-full mt-8">
-            <button className="rounded-2xl bg-pink-600 border-none text-white text-bold p-2 w-6/12">Overall Analysis</button>
+            <button className="rounded-3xl bg-red-primary h-9 border-none text-white text-base p-2 w-8/12">Overall Analysis</button>
         </div>
     </div>
 }
