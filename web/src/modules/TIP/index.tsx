@@ -18,9 +18,9 @@ const Home: React.FC<PropsType> = (props) => {
             <img className="h-24 py-4 pr-4 w-28" src={Formative} alt="img" />
             <div className="text-blue-900 text-lg font-bold">Formative Test</div>
         </Link>
-        <Link className="container sm:px-8 bg-white rounded-xl m-3 h-28 flex flex-row content-between items-center shadow-lg no-underline"
+        <Link className="container sm:px-8 bg-white rounded-xl m-3 h-28 flex flex-row justify-around w-full items-center shadow-lg no-underline"
             to={"/targeted-instruction/diagnostic-result"}>
-            <img className="h-12 py-4 px-6" src={Diagnostic} alt="img" />
+            <img className="h-12 py-4 pl-4" src={Diagnostic} alt="img" />
             <div className="text-blue-900 text-lg font-bold">Diagnostic Test Results</div>
         </Link>
         <div className="flex flex-row content-center items-center justify-center w-full">

@@ -12,7 +12,12 @@ module.exports = {
           'incorrect-red': '#FF002A',
           'correct-green': '#00FF43',
           'blue-250': '#3478B9'
-        }
+        },
+        width: (theme) => ({
+          auto: 'auto',
+          ...theme('spacing'),
+          '1/7': '45%'
+        }),
     },
   },
   variants: {
