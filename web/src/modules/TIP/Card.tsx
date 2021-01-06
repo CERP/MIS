@@ -12,11 +12,13 @@ const Card: React.FC<P> = ({ class_name, teacher_name, school_name }) => {
     return <div className="container sm:px-8 bg-green-primary rounded-md m-3 h-20 mb-6">
         <div className="flex flex-row justify-start">
             <img className="w-12 h-12 rounded-full p-4" src="https://cdn.dribbble.com/users/2199928/screenshots/11532918/shot-cropped-1590177932366.png?compress=1&resize=400x300" alt="img" />
-            <div className="flex flex-col justify-center">
-                <div className="text-white text-lg">{teacher_name}</div>
-                <div className="text-white text-base">{school_name}</div>
+            <div className="flex flex-row justify-between w-full">
+                <div className="flex flex-col justify-center">
+                    <div className="text-white text-lg">{teacher_name}</div>
+                    <div className="text-white text-base">{school_name}</div>
+                </div>
+                {class_name && <div className="text-white font-bold flex items-center justify-center m-5 bg-orange-primary rounded-full h-10 w-10">{(class_name).substring(6)}</div>}
             </div>
-            {class_name && <div className="text-white font-bold flex items-center justify-center m-5 bg-orange-primary rounded-full h-10 w-10">{(class_name).substring(6)}</div>}
         </div>
     </div>
 }

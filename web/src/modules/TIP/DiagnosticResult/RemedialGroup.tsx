@@ -15,29 +15,29 @@ const RemedialGroup: React.FC<PropsType> = (props) => {
     const students = useMemo(() => getStudentsBySectionId(section_id, props.students), [section_id])
 
     return <div className="flex flex-wrap content-between">
-        <div className="container sm:px-8 bg-yellow-400 rounded m-3 h-20 mb-6">
+        <div className="container sm:px-8 bg-yellow-400 rounded m-3 h-24 mb-4">
             <div className="flex flex-col justify-center items-center content-center h-full">
-                <div className="text-white text-lg font-medium">Remedial Group</div>
-                <div className="text-white text-xs font-thin">{class_name} | {subject}</div>
+                <div className="text-white text-3xl">Remedial Group</div>
+                <div className="text-white text-lg">{class_name} | {subject}</div>
             </div>
         </div>
         {
-            <div className="m-3 flex flex-wrap w-full h-20 justify-between">
+            <div className="m-3 flex flex-wrap w-full justify-between">
                 {
                     Object.values(students)
                         .sort((a, b) => a.Name.localeCompare(b.Name))
-                        .map((std) => (<div key={name} className="h-20 flex flex-col flex items-center justify-center">
+                        .map((std) => (<div key={name} className="no-underline h-28 flex flex-col flex items-center justify-center" >
                             <img className="rounded-full h-14 w-14 p-2" src="https://www.atmeplay.com/images/users/avtar/avtar_nouser.png" alt="img" />
-                            <div className="text-xs flex items-center justify-center w-24 md:w-28 truncate">{std.Name}</div>
+                            <div className="text-base flex items-center justify-center w-24 md:w-28 truncate">{std.Name}</div>
                         </div>))
                 }
             </div>
         }
-        <div className="flex justify-center items-center w-full mt-8">
+        <div className="w-full mt-6">
             <Link
-                className="w-5/12"
+                className="w-full no-underline flex justify-center items-center"
                 to={`${(props.location.pathname).substring(0, 39)}/${section_id}/${class_name}/${subject}/remedial-group/list-view`}>
-                <button className="rounded-md bg-blue-900 border-none text-white text-bold p-2 w-full">List View</button>
+                <button className="bg-blue-900 h-11 font-bold text-lg border-none rounded text-white p-2 w-6/12">List View</button>
             </Link>
         </div>
     </div>
