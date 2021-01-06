@@ -133,7 +133,7 @@ const AdminResetPassword: React.FC<PropsType> = ({ history, faculty, ilmxUser, i
 												<div className="row">
 													<div className="button blue" onClick={handleClickSendPassword} style={{ marginLeft: "auto" }}>Send</div>
 													<Link
-														to="/login"
+														to="/staff-login"
 														className="button grey"
 														style={{ marginLeft: "0.175rem" }}>Cancel</Link>
 												</div>
@@ -174,7 +174,7 @@ const ShowPasswordSent = () => {
 		<div className="text-center">
 			<p>A temporary password has been sent to your mobile</p>
 			<Link
-				to="/login"
+				to="/staff-login"
 				className="button blue"
 				style={{ marginLeft: "0.175rem" }}>Back to Login</Link>
 		</div>

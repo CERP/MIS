@@ -42,7 +42,7 @@ const TrackedRoute = ({ component, name, faculty_id, token, initialized, locatio
 	}
 
 	if (token && name && location.pathname === "/reset-password") {
-		return <Redirect to="/landing" />
+		return <Redirect to="/home" />
 	}
 
 	if (token && location.pathname === "/reset-password") {
@@ -58,8 +58,8 @@ const TrackedRoute = ({ component, name, faculty_id, token, initialized, locatio
 			// unset the faculty_id and the name
 			// hack: just call existing logout function
 			logout()
-			// redirect to the login npage
-			return <Redirect to="/login" />
+			// redirect to the login page
+			return <Redirect to="/staff-login" />
 		}
 
 		return <Route {...rest} render={(props) => {
@@ -69,8 +69,8 @@ const TrackedRoute = ({ component, name, faculty_id, token, initialized, locatio
 		}} />
 	}
 	else if (token) {
-		trackRoute('/login')
-		return <Redirect to="/login" />
+		trackRoute('/staff-login')
+		return <Redirect to="/staff-login" />
 	}
 	else {
 		trackRoute("/school-login")

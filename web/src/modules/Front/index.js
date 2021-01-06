@@ -61,7 +61,7 @@ class Front extends Component {
 		const helpLine = siteConfig["helpLineIlmx"]
 		if(this.props.initialized && this.props.auth.faculty_id)
 		{
-			return <Redirect to="/landing" />
+			return <Redirect to="/home" />
 		}
 
 		return <Layout history={this.props.history}>

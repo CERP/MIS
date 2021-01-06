@@ -142,7 +142,7 @@ const MISActivation: React.FC<P> = ({ initialized, schoolId, resetTrial, markAsP
 							</div>
 							<div className="activation-code" style={{ marginTop: 15 }}>
 								<div className="row">
-									<Link className="button blue" to="/landing">Continue to Use MISchool</Link>
+									<Link className="button blue" to="/home">Continue to Use MISchool</Link>
 								</div>
 							</div>
 						</div>

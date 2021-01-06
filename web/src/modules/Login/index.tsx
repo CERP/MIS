@@ -87,6 +87,7 @@ class Login extends Component<PropsType, S> {
 
 		localStorage.removeItem("ilmx")
 		localStorage.removeItem("user")
+
 		openDB('db', 1, {
 			upgrade(db) {
 				db.createObjectStore('root-state')
@@ -132,7 +133,7 @@ class Login extends Component<PropsType, S> {
 
 	UNSAFE_componentWillReceiveProps(nextProps: PropsType) {
 		if (nextProps.auth.name !== undefined && nextProps.auth.name !== this.props.auth.name) {
-			this.props.history.push('/landing')
+			this.props.history.push('/home')
 		}
 
 		if (nextProps.auth.attempt_failed && this.state.loginButtonPressed) {
@@ -161,7 +162,7 @@ class Login extends Component<PropsType, S> {
 		}
 
 		if (this.props.auth.faculty_id) {
-			return <Redirect to="/landing" />
+			return <Redirect to="/home" />
 		}
 
 		if (this.props.num_users === 0) {

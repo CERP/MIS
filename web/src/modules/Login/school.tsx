@@ -87,7 +87,7 @@ class SchoolLogin extends Component<PropsType, S> {
 	render() {
 
 		if (this.props.auth.faculty_id) {
-			return <Redirect to="/landing" />
+			return <Redirect to="/home" />
 		}
 
 		if (!this.props.connected) {

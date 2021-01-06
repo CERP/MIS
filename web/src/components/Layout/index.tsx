@@ -38,17 +38,17 @@ const Layout = ({ user, children, history, title, link, auth, client_id }: Props
 }
 
 const FrontHeader = ({ user }: PropsType) => <div className="header bg-red">
-	<div className="left"><Link to="/landing">MISchool</Link></div>
-	{user ? <Link className="profile" to={`/faculty/${user.id}/profile`}>{user.Name}</Link> : <Link className="profile" style={{ marginRight: "10px" }} to="/login">Login</Link>}
+	<div className="left"><Link to="/home">MISchool</Link></div>
+	{user ? <Link className="profile" to={`/faculty/${user.id}/profile`}>{user.Name}</Link> : <Link className="profile" style={{ marginRight: "10px" }} to="/school-login">Login</Link>}
 </div>
 
 const Header = ({ user, history, title, link, auth, client_id }: PropsType) => <div className="header" style={{ justifyContent: "space-between" }}>
 	<div className="row header-items">
 		{
-			(history.location.pathname !== "/landing" && history.location.pathname !== "/" && history.location.pathname !== "/login") &&
+			(history.location.pathname !== "/home" && history.location.pathname !== "/" && history.location.pathname !== "/school-login") &&
 			<div className="back" onClick={() => history.goBack()} style={{ backgroundImage: `url(${BackButtonIcon})` }} />
 		}
-		<div className="left"><Link to="/landing">MISchool</Link></div>
+		<div className="left"><Link to="/home">MISchool</Link></div>
 	</div>
 	<div style={{ marginRight: "10px" }}>
 		{
