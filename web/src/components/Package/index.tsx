@@ -6,7 +6,7 @@ import { packages } from 'constants/landing'
 export const Package = () => {
 	return (
 		<div className="min-h-screen">
-			<div className="mt-10 px-10 md:px-40 grid">
+			<div className="mt-10 px-10 md:px-40">
 				<div className="grid gap-12 grid-cols-1 md:grid-cols-3">
 					{
 						(packages || []).map((pkg, index) => (
@@ -27,7 +27,7 @@ export const Package = () => {
 
 type CardProps = Package
 
-const PackageCard = (props: CardProps) => {
+export const PackageCard = (props: CardProps) => {
 
 	return (
 		<div className={"rounded-3xl bg-white shadow-md"}>

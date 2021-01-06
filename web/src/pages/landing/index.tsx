@@ -1,10 +1,21 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 import { getTeamMembersInfo } from 'constants/aboutTeam'
 import { Package } from 'components/Package'
 import { AppLayout } from 'components/Layout/appLayout'
-import { Link } from 'react-router-dom'
 import { CustomerFeedback } from 'components/Feedback'
+
+import iconCall from './assets/call.svg'
+import iconCloud from './assets/cloud.svg'
+import iconCoin from './assets/coin.svg'
+import iconDesktop from './assets/desktop.svg'
+import iconGlobe from './assets/globe.svg'
+import iconGraduationCap from './assets/graduation_cap.svg'
+import iconParent from './assets/parent.svg'
+import iconPlug from './assets/plug.svg'
+import iconSchool from './assets/school.svg'
+import iconTeacher from './assets/teacher.svg'
 
 export const HomePage = () => {
 
@@ -69,36 +80,28 @@ export const HomePage = () => {
 
 					<div className="flex flex-row flex-wrap items-center  justify-center px-20 space-y-4 md:space-x-16 md:space-y-0 mt-10">
 						<div className="flex flex-col items-center space-y-2">
-							<div className="h-36 w-36 rounded-full bg-orange-brand mb-4">
-								<img className="w-20 h-20 m-8 shadow-md rounded-full" src="favicon.ico" alt="city" />
-							</div>
+							<img className="w-24 h-24 m-8 shadow-md rounded-full" src={iconGlobe} alt="city" />
 							<div className="text-2xl font-bold">50+</div>
 							<div className="text-gray-600">Cities</div>
 						</div>
 						<div className="flex flex-col items-center space-y-2">
-							<div className="h-36 w-36 rounded-full bg-teal-500 mb-4">
-								<img className="w-20 h-20 m-8 shadow-md rounded-full" src="favicon.ico" alt="city" />
-							</div>
+							<img className="w-24 h-24 m-8 shadow-md rounded-full" src={iconSchool} alt="school" />
 							<div className="text-2xl font-bold">120+</div>
 							<div className="text-gray-600">Schools</div>
 						</div>
 						<div className="flex flex-col items-center space-y-2">
-							<div className="h-36 w-36 rounded-full bg-red-brand mb-4">
-								<img className="w-20 h-20 m-8 shadow-md rounded-full" src="favicon.ico" alt="city" />
-							</div>
+							<img className="w-24 h-24 m-8 shadow-md rounded-full" src={iconTeacher} alt="teacher" />
 							<div className="text-2xl font-bold">3500+</div>
 							<div className="text-gray-600">Teachers</div>
 						</div>
 						<div className="flex flex-col items-center space-y-2">
-							<div className="h-36 w-36 rounded-full bg-teal-500 mb-4">
-								<img className="w-20 h-20 m-8 shadow-md rounded-full" src="favicon.ico" alt="city" />
-							</div>
+							<img className="w-24 h-24 m-8 shadow-md rounded-full" src={iconGraduationCap} alt="student" />
 							<div className="text-2xl font-bold">120,000+</div>
 							<div className="text-gray-600">Students</div>
 						</div>
 						<div className="flex flex-col items-center space-y-2">
-							<div className="h-36 w-36 rounded-full bg-orange-brand mb-4">
-								<img className="w-20 h-20 m-8 shadow-md rounded-full" src="favicon.ico" alt="city" />
+							<div className="h-24 w-24 rounded-full bg-orange-brand mb-4 shadow-md">
+								<img className="w-16 h-16 m-4" src={iconParent} alt="parent" />
 							</div>
 							<div className="text-2xl font-bold">50,000+</div>
 							<div className="text-gray-600">Parents</div>
@@ -132,41 +135,31 @@ export const HomePage = () => {
 				<div className="mt-20">
 					<div className=" text-3xl font-semibold text-center">Features</div>
 					<div className="grid mt-10">
-						<div className="grid gap-6 grid-cols-1 md:grid-cols-5 mx-auto">
-							<div className="p-8 pt-12 relative bg-yellow-300 rounded-3xl">
-								<div className="h-36 w-36 rounded-full bg-yellow-200 mb-4 relative">
-									<img className="absolute h-20 inset-0 m-auto rounded-full shadow-md w-20" src="favicon.ico" alt="city" />
-								</div>
-								<div className="text-white text-lg text-center">Offline + Online</div>
+						<div className="grid md:gap-12 grid-cols-1 md:grid-cols-5 mx-auto space-y-4 md:space-y-0">
+							<div className="px-6 py-14 bg-yellow-300 rounded-xl">
+								<img className="w-24 h-24 mx-auto rounded-full shadow-md" src={iconPlug} alt="on-off" />
+								<div className="text-white text-lg text-center mt-2">Offline + Online</div>
 							</div>
 
-							<div className="p-8 pt-12 relative bg-blue-300 rounded-3xl">
-								<div className="h-36 w-36 rounded-full bg-blue-200 mb-4 relative">
-									<img className="absolute h-20 inset-0 m-auto rounded-full shadow-md w-20" src="favicon.ico" alt="city" />
-								</div>
-								<div className="text-white text-lg text-center">Responsive</div>
+							<div className="px-6 py-14 bg-blue-300 rounded-xl">
+								<img className="w-24 h-24 mx-auto rounded-full shadow-md" src={iconDesktop} alt="resp" />
+								<div className="text-white text-lg text-center mt-2">Responsive</div>
 							</div>
 
-							<div className="p-8 pt-12 relative bg-gray-600 rounded-3xl">
-								<div className="h-36 w-36 rounded-full bg-gray-700 mb-4 relative">
-									<img className="absolute h-20 inset-0 m-auto rounded-full shadow-md w-20" src="favicon.ico" alt="city" />
-								</div>
-								<div className="text-white text-lg text-center">Cloud Backup</div>
+							<div className="px-6 py-14 bg-gray-500 rounded-xl">
+								<img className="w-24 h-24 mx-auto rounded-full shadow-md" src={iconCloud} alt="cloud" />
+								<div className="text-white text-lg text-center mt-2">Cloud Backup</div>
 							</div>
 
-							<div className="p-8 pt-12 relative bg-blue-300 rounded-3xl">
-								<div className="h-36 w-36 rounded-full bg-blue-200 mb-4 relative">
-									<img className="absolute h-20 inset-0 m-auto rounded-full shadow-md w-20" src="favicon.ico" alt="city" />
-								</div>
-								<div className="text-white text-lg text-center">Excellent Service</div>
+							<div className="px-6 py-14 bg-blue-300 rounded-xl">
+								<img className="w-24 h-24 mx-auto rounded-full shadow-md" src={iconCall} alt="call" />
+								<div className="text-white text-lg text-center mt-2">Excellent Service</div>
 
 							</div>
 
-							<div className="p-8 pt-12 relative bg-yellow-300 rounded-3xl">
-								<div className="h-36 w-36 rounded-full bg-gray-700 mb-4 relative">
-									<img className="absolute h-20 inset-0 m-auto rounded-full shadow-md w-20" src="favicon.ico" alt="city" />
-								</div>
-								<div className="text-white text-lg text-center">Best Price</div>
+							<div className="px-6 py-14 bg-yellow-300 rounded-xl">
+								<img className="w-24 h-24 mx-auto rounded-full shadow-md" src={iconCoin} alt="coin" />
+								<div className="text-white text-lg text-center mt-2">Best Price</div>
 							</div>
 
 						</div>
