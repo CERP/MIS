@@ -38,12 +38,13 @@ export const SchoolLogin = () => {
 
 			setHasError('School Id or Password is incorrect!')
 
+			setIsSubmitted(false)
+
 			setTimeout(() => {
 				setHasError('')
-				setIsSubmitted(false)
 			}, 3000)
-
 		}
+
 	}, [auth, isSubmitted])
 
 
@@ -63,11 +64,11 @@ export const SchoolLogin = () => {
 	}
 
 	if (auth.faculty_id) {
-		<Redirect to="/home" />
+		return <Redirect to="/home" />
 	}
 
 	if (auth.token) {
-		<Redirect to="/staff-login" />
+		return <Redirect to="/staff-login" />
 	}
 
 	if (!connected) {
@@ -138,9 +139,9 @@ export const SchoolLogin = () => {
 									}
 								</div>
 							</div>
-							<div className="text-xs h-1 pt-1 text-red-brand">{hasError}</div>
-							<div className="mt-8 text-center">
-								<button className="inline-flex items-center w-full btn-blue px-5 md:px-8 py-3">
+							<div className="text-xs h-1 pt-2 text-red-brand">{hasError}</div>
+							<div className="mt-6 text-center">
+								<button className="inline-flex items-center w-full btn-blue px-5 md:px-8 py-3 mb-2">
 									{auth.loading ?
 										<>
 											<Spinner className={"animate-spin h-5 w-5"} />
@@ -150,7 +151,7 @@ export const SchoolLogin = () => {
 										<span className={"mx-auto"}>Login into your School</span>
 									}
 								</button>
-								<Link to="/school/reset-password" className="mt-2 text-sm text-gray-500 hover:text-blue-brand">Forgot your school passsword?</Link>
+								<Link to="/school/reset-password" className="text-sm text-gray-500 hover:text-blue-brand">Forgot your school passsword?</Link>
 							</div>
 						</form>
 

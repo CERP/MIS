@@ -30,6 +30,8 @@ import {
 	SIGN_UP_LOADING
 } from 'actions'
 
+import { initState } from 'utils/indexedDb'
+
 import { AnyAction } from 'redux'
 import { ActionTypes } from 'constants/index'
 
@@ -474,6 +476,8 @@ const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerSta
 					alert_banner: action.data
 				}
 			}
+		case ActionTypes.SWITCH_SCHOOL:
+			return initState
 
 		default:
 			return state;

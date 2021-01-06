@@ -1,8 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, Redirect } from 'react-router-dom'
-import { connect, useDispatch, useSelector } from 'react-redux'
+import { connect, useDispatch } from 'react-redux'
 
 import chunkify from 'utils/chunkify'
+
+import toTitleCase from 'utils/toTitleCase'
+import { ActionTypes } from 'constants/index'
 
 import { createLogin } from 'actions'
 import { Spinner } from 'components/Animation/spinner'
@@ -10,28 +13,29 @@ import { AppLayout } from 'components/Layout/appLayout'
 import { EyePassword } from 'components/Password'
 
 import UserIconSvg from 'assets/svgs/user.svg'
-import toTitleCase from 'utils/toTitleCase'
 
 
-type P = RootReducerState & {
+
+type TProps = RootReducerState & {
 	users: RootDBState["users"]
+	school: {
+		name: string
+		logo: string
+	}
+	assets: RootDBState["assets"]
 	unsyncd_changes: number
 }
 
-type TS = {
-	currUserIndex: number
-	currUser?: MISUser
-}
+const USER_GROUP_SIZE = 10
 
-const initialState: TS = {
-	currUserIndex: 0,
-}
+const Login: React.FC<TProps> = ({ auth, initialized, users, school, connected, queued, unsyncd_changes }) => {
 
-const Login: React.FC<P> = ({ auth, initialized, users, connected, queued }) => {
+	const dispatch = useDispatch()
 
-	const [state, setState] = useState(initialState)
+	const [userGroupIndex, setUserGroupIndex] = useState(0)
+	const [user, setUser] = useState<MISUser>()
 
-	const totalUsers = Object.keys(users || {}).length
+	const totalUsers = Object.keys(users).length
 
 	if (!initialized && auth.token) {
 		return (
@@ -48,43 +52,61 @@ const Login: React.FC<P> = ({ auth, initialized, users, connected, queued }) => 
 	}
 
 	if (auth.faculty_id) {
-
-		return <Redirect to="/landing" />
+		return <Redirect to="/home" />
 	}
 
 	if (totalUsers === 0) {
 		return <Redirect to="/faculty/first" />
 	}
 
-
-	const filteredUsers = Object.entries(users || {})
+	const filteredUsers = Object.entries(users)
 		.filter(([, f]) => f.hasLogin !== false)
 		.sort(([, a], [, b]) => a.name.localeCompare(b.name))
+
+	const switchSchoolHandler = () => {
+
+		if (unsyncd_changes > 0) {
+			const res = window.confirm(`You have ${unsyncd_changes} pending changes. If you switch schools without exporting data, data will be lost. Are you sure you want to continue?`)
+			if (!res) {
+				return
+			}
+		}
+
+		localStorage.removeItem("ilmx")
+		localStorage.removeItem("user")
+
+		dispatch({
+			type: ActionTypes.SWITCH_SCHOOL
+		})
+	}
 
 	return (
 		<AppLayout title={'Staff Login'}>
 			<div className="p-5 pb-0 md:p-10 md:pb-0 text-gray-700">
-				<div className="text-xl md:text-2xl text-center font-bold">Staff Login to MISchool</div>
+				<div className="text-xl md:text-2xl text-center font-bold">Staff Login into MISchool</div>
 				<div className="w-3/4 mx-auto flex md:flex-row items-center mt-10 md:t-20">
 					<div className="w-2/5 h-60 border border-r-0 rounded-md rounded-tr-none rounded-br-none shadow-md">
 						<div className="flex flex-col items-center md:p-10 space-y-2">
-							<div className="w-24 h-24">
-								<img className="rounded-full" src="/favicon.ico" alt="school-logo" />
+							<div className="w-20 h-20 p-1 border border-gray-300 rounded-full">
+								<img className="rounded-full" src={school.logo || 'favicon.ico'} alt="school-logo" />
 							</div>
-							<div className="font-semibold text-xl">Welcome to School</div>
+							<div className="font-semibold text-lg text-center">{toTitleCase(school.name)}</div>
+							<button
+								onClick={() => switchSchoolHandler()}
+								className="w-7/12 btn-red">Switch School</button>
 						</div>
 					</div>
 					<div className="w-2/3 h-96 border border-l-0 rounded-md bg-gray-700 shadow-md">
 						<div className="md:p-10">
 							{
-								state.currUser ?
+								user ?
 									<div className="relative">
 										<div className="w-3/5 mx-auto">
-											<LoginForm user={state.currUser} />
+											<LoginForm user={user} auth={auth} />
 										</div>
 										<div className="absolute left-0 top-0">
 											<div
-												onClick={() => setState({ ...state, currUser: undefined })}
+												onClick={() => setUser(undefined)}
 												className="w-10 h-8 flex items-center justify-center rounded-md shadow-md bg-white text-blue-brand cursor-pointer">
 												<svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 													<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -98,12 +120,12 @@ const Login: React.FC<P> = ({ auth, initialized, users, connected, queued }) => 
 										<div className="md:mt-6">
 											<div className="grid md:grid-cols-5 md:gap-0 md:h-60">
 												{
-													chunkify(filteredUsers, 10)[state.currUserIndex].map(([uid, user]: [string, MISUser], index: number) => (
-														<div key={index} className="flex flex-col items-center mb-4 space-y-2">
-															<div className="w-20 h-20 cursor-pointer" onClick={() => setState({ ...state, currUser: user })}>
-																<img className="rounded-full" src={UserIconSvg} alt="school-logo" />
+													chunkify(filteredUsers, USER_GROUP_SIZE)[userGroupIndex].map(([uid, user]: [string, MISUser]) => (
+														<div key={uid} className="group flex flex-col items-center mb-4 space-y-2">
+															<div className="w-20 h-20 cursor-pointer" onClick={() => setUser(user)}>
+																<img className="rounded-full border-2 border-transparent group-hover:border-red-brand focus:border-red-brand" src={UserIconSvg} alt="school-logo" />
 															</div>
-															<div className="text-xs text-white">{user.name}</div>
+															<div className="text-xs text-white group-hover:text-blue-brand">{user.name}</div>
 														</div>
 													))
 												}
@@ -111,10 +133,10 @@ const Login: React.FC<P> = ({ auth, initialized, users, connected, queued }) => 
 										</div>
 										<div className="flex flex-row items-center justify-center mt-4 space-x-4">
 											{
-												[...new Array(Math.ceil(filteredUsers.length / 10))].map((v, index) => (
-													<div key={v + index}
-														onClick={() => setState({ ...state, currUserIndex: index })}
-														className={`h-5 w-5 rounded-full text-sm text-center cursor-pointer hover:bg-yellow-400 hover:text-white shadow-md ${index === state.currUserIndex ? 'bg-yellow-400 text-white' : 'bg-white '}`}
+												[...new Array(Math.ceil(filteredUsers.length / USER_GROUP_SIZE))].map((v, index) => (
+													<div key={index}
+														onClick={() => setUserGroupIndex(index)}
+														className={`h-5 w-5 rounded-full text-sm text-center cursor-pointer hover:bg-yellow-400 hover:text-white shadow-md ${index === userGroupIndex ? 'bg-yellow-400 text-white' : 'bg-white '}`}
 													>{index + 1}</div>
 												))
 											}
@@ -130,31 +152,58 @@ const Login: React.FC<P> = ({ auth, initialized, users, connected, queued }) => 
 }
 
 export const StaffLogin = connect((state: RootReducerState) => ({
+	school: {
+		name: state.db?.settings?.schoolName,
+		logo: state.db?.assets?.schoolLogo
+	},
 	auth: state.auth,
 	initialized: state.initialized,
-	users: state.db.users,
+	users: state.db?.users || {},
 	connected: state.connected,
 	unsyncd_changes: Object.keys(state.queued.mutations || {}).length
 }))(Login)
 
 type TLoginForm = {
 	user?: MISUser
+	auth: RootReducerState["auth"]
 }
 
-const LoginForm: React.FC<TLoginForm> = ({ user }) => {
-
-	const [password, setPassword] = useState('')
-	const [openEye, setOpenEye] = useState(false)
+const LoginForm: React.FC<TLoginForm> = ({ user, auth }) => {
 
 	const dispatch = useDispatch()
 
+	const [password, setPassword] = useState('')
+	const [hasError, setHasError] = useState('')
+	const [isSubmitted, setIsSubmitted] = useState(false)
+	const [openEye, setOpenEye] = useState(false)
+
+	useEffect(() => {
+		if (auth.attempt_failed && isSubmitted && !auth.loading) {
+
+			// just to create a fake server delay
+			setTimeout(() => {
+				setHasError('Password is incorrect!')
+				setIsSubmitted(false)
+			}, 1500)
+
+			setTimeout(() => {
+				setHasError('')
+			}, 3000)
+		}
+	}, [auth, isSubmitted])
+
 	const handleSubmit = (event: React.FormEvent) => {
+
+		event.preventDefault()
 
 		if (!password) {
 			return
 		}
 
-		dispatch(createLogin('', password))
+
+		setIsSubmitted(true)
+
+		dispatch(createLogin(user.name, password))
 	}
 
 	return (
@@ -183,8 +232,8 @@ const LoginForm: React.FC<TLoginForm> = ({ user }) => {
 						}
 					</div>
 				</div>
-				<button className="inline-flex w-full items-center btn-blue py-3">
-					{false ?
+				<button className={`inline-flex w-full items-center btn-blue py-3 ${isSubmitted ? 'pointer-events-none' : ''}`} disabled={isSubmitted}>
+					{isSubmitted ?
 						<>
 							<Spinner className={"animate-spin h-5 w-5"} />
 							<span className={"mx-auto animate-pulse"}>Logging In</span>
@@ -193,6 +242,7 @@ const LoginForm: React.FC<TLoginForm> = ({ user }) => {
 						<span className={"mx-auto"}>Login</span>
 					}
 				</button>
+				<div className="h-1 py-1 text-xs text-red-brand">{hasError}</div>
 			</form>
 			<Link to="/reset-password" className="mt-2 text-sm text-gray-400 hover:text-blue-brand">Forgot your school passsword?</Link>
 		</div>

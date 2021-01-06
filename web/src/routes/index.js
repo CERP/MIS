@@ -84,7 +84,7 @@ export default class Routes extends React.Component {
 		return <Provider store={this.props.store}>
 			<BrowserRouter>
 				<Switch>
-					{/* <TrackedRoute exact path="/landing" component={Landing} />
+					<TrackedRoute exact path="/home" component={Landing} />
 
 					<Route path="/faculty/first" component={TeacherSingle} />
 
@@ -134,7 +134,7 @@ export default class Routes extends React.Component {
 					<TrackedRoute path="/fees/add-historical-fee" component={HistoricalFee} />
 					<TrackedRoute path="/fee-menu" component={FeeMenu} />
 					<TrackedRoute path="/reset-password" component={ResetPassword} />
-					<Route path="/verify-code" component={MISActivation} /> */}
+					<Route path="/verify-code" component={MISActivation} />
 					<Route exact path="/" component={HomePage} />
 					
 					<Route path="/school-login" component={SchoolLogin} />
