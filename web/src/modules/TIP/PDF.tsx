@@ -20,30 +20,35 @@ const PDF: React.FC<PropsType> = ({ match, location, history, targeted_instructi
         <div className="text-blue-900 font-bold flex text-lg justify-center my-5 mx-3">{class_name} | {subject} | {type === 'formative-test' ? "Formative Test" : "Lesson Plans"}</div>
         <div className="rounded-lg border-black	">
             <PDFViewer
+                scale={0.5}
+                scaleStep={0.1}
+                maxScale={1}
+                minScale={0.1}
                 hideNavbar={true}
+                canvasCss='customCanvas'
                 document={{
                     url: decodeURIComponent(pdfUrl),
                 }}
             />
         </div>
-        <div className="flex flex-row justify-around m-3 w-full">
-            <div className="w-1/2">
+        <div className="flex flex-row justify-around my-4 w-full">
+            <div className="w-1/7">
                 <button className="bg-blue-900 text-lg border-none rounded-md text-white text-left p-2 w-full">Print</button>
             </div>
-            <div className="w-1/2">
+            <div className="w-1/7">
                 <button className="bg-green-primary text-lg border-none rounded-md text-white text-left p-2 w-full">Download</button>
             </div>
         </div>
         {type === 'formative-test' &&
-            <div className="flex flex-row justify-around m-3 w-full">
-                <div className="w-1/2">
+            <div className="flex flex-row justify-around mb-4 w-full">
+                <div className="w-1/7">
                     <button
                         className="bg-orange-primary font-bold text-lg border-none rounded-md text-white text-left p-2 w-full"
                         onClick={() => history.push(`${(location.pathname).substring(0, 36)}/${section_id}/${class_name}/${subject}/insert-grades`)}>
                         Insert Grades
                 </button>
                 </div>
-                <div className="w-1/2">
+                <div className="w-1/7">
                     <button className="bg-red-primary font-bold text-lg border-none rounded-md text-white text-left p-2 w-full">Answer Sheet</button>
                 </div>
             </div>

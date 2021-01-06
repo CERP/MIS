@@ -71,7 +71,7 @@ const Grading: React.FC<PropsType> = (props) => {
 
     const onSave = () => {
         state.result && props.saveReport(std_id, state.result, test_id)
-        props.history.push(`${(props.location.pathname).substring(0, 36)}/${section_id}/${class_name}/${subject}/insert-grades`)
+        props.history.push(`${(props.location.pathname).substring(0, 36)}/${section_id}/${class_name}/${subject}/insert-grades/${std_id}/grading/test-result`)
     }
 
     return <div className="flex flex-wrap content-between bg-white">
@@ -103,7 +103,7 @@ const Grading: React.FC<PropsType> = (props) => {
         </div>
         <div className="w-full mt-5 flex justify-center">
             <button
-                className="bg-blue-900 h-11 font-bold text-base border-none rounded-md text-white p-2 w-9/12"
+                className="bg-blue-900 h-11 font-bold text-base border-none rounded-md text-white p-2 w-9/12 mb-4"
                 onClick={onSave}>Save and Continue</button>
         </div>
     </div>
