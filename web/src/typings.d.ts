@@ -107,6 +107,7 @@ interface Params {
     subject: string
 	section_id: string
 	std_id: string
+	test_id: string
 }
 
 interface Columns {
