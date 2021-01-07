@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { connect } from 'react-redux'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { Download, Printer } from 'assets/icons'
 import PDFViewer from 'pdf-viewer-reactjs'
 
 interface P {
@@ -32,11 +33,13 @@ const PDF: React.FC<PropsType> = ({ match, location, history, targeted_instructi
             />
         </div>
         <div className="flex flex-row justify-around my-4 w-full">
-            <div className="w-1/7">
-                <button className="bg-blue-900 text-lg border-none rounded-md text-white text-left p-2 w-full">Print</button>
+            <div className="w-1/7 bg-blue-900 rounded-md flex flex-row justify-between items-center h-11">
+                <button className="bg-blue-900 text-lg border-none text-white text-left pl-3">Print</button>
+                <img className="pr-4" src={Printer} />
             </div>
-            <div className="w-1/7">
-                <button className="bg-green-primary text-lg border-none rounded-md text-white text-left p-2 w-full">Download</button>
+            <div className="w-1/7 bg-green-primary rounded-md flex flex-row justify-between items-center h-11">
+                <button className="bg-green-primary text-lg border-none text-white text-left pl-3">Download</button>
+                <img className="pr-3" src={Download} />
             </div>
         </div>
         {type === 'formative-test' &&
