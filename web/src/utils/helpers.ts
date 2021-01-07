@@ -44,3 +44,13 @@ export const isMobile = () => {
 export const getIlmxUser = (): string => {
 	return localStorage.getItem("user")
 }
+
+export const validatePassword = (password: string ) => {
+	// eslint-disable-next-line
+	const regex =  /(?=.*[a-z0-9])(?=.*[A-Z0-9])(?=.{4,})/g
+	return regex.test(password)
+}
+
+export const validateMobileNumber = (number: string) => {
+	return /03[0-9]{9}$/.test(number)
+}

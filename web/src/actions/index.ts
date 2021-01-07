@@ -224,20 +224,7 @@ export const SIGN_UP_LOADING = "SIGN_UP_LOADING"
 export const SIGN_UP_SUCCEED = "SIGN_UP_SUCCEED"
 export const SIGN_UP_FAILED = "SIGN_UP_FAILED"
 
-type Profile = {
-	name: string
-	phone: string
-	city: string
-	password: string
-	schoolName: string
-	packageName: "FREE_TRIAL" | "TALEEM1" | "TALEEM2" | "TALEEM3"
-
-	typeOfLogin: string
-	referralSchoolName: string
-	ownerEasypaisaNumber: string
-}
-
-export const createSignUp = (profile: Profile) => (dispatch: Function, getState: () => RootReducerState, syncr: Syncr) => {
+export const createSignUp = (profile: SchoolSignup) => (dispatch: Function, getState: () => RootReducerState, syncr: Syncr) => {
 
 	// dispatch action to say you are loading/sending the sign up
 	dispatch({
@@ -247,22 +234,22 @@ export const createSignUp = (profile: Profile) => (dispatch: Function, getState:
 	const signup_obj = {
 		"signup": profile,
 		"referral": {
-			school_name: profile.referralSchoolName,
+			school_name: '',
 			city: profile.city,
 			office: profile.city,
 			user: "",
-			notes: profile.schoolName,
+			notes: profile.school,
 			agent_name: "",
 			owner_name: profile.name,
 			owner_phone: profile.phone,
 			school_type: "",
-			package_name: profile.packageName,
-			type_of_login: profile.typeOfLogin,
+			package_name: profile.package,
+			type_of_login: "",
 			owner_other_job: "",
 			association_name: "",
 			area_manager_name: "",
 			computer_operator: "",
-			owner_easypaisa_number: profile.ownerEasypaisaNumber,
+			owner_easypaisa_number: "",
 			previous_software_name: "",
 			previous_management_system: ""
 		}

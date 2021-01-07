@@ -17,13 +17,13 @@ function emptyProfile() {
 		name: "",
 		phone: "",
 		city: "",
-		schoolName: "",
-		schoolPassword: "",
-		packageName: "FREE_TRIAL",
+		school: "",
+		password: "",
+		package: "FREE_TRIAL",
 		
-		typeOfLogin: "",
-		referralSchoolName: "",
-		ownerEasypaisaNumber: ""
+		login_type: "",
+		ref_school_name: "",
+		owner_easypaisa_num: ""
 	}
 }
 
@@ -47,9 +47,9 @@ class SignUp extends Component {
 	}
 
 	onSave = () => {
-		const compulsoryFields = this.state.profile.typeOfLogin === 'SCHOOL_REFERRAL' ?
+		const compulsoryFields = this.state.profile.login_type === 'SCHOOL_REFERRAL' ?
 			checkCompulsoryFields(this.state.profile, [
-				["name"], ["phone"], ['referralSchoolName']
+				["name"], ["phone"], ['ref_school_name']
 			]) :
 			checkCompulsoryFields(this.state.profile, [
 				["name"], ["phone"]
@@ -68,7 +68,7 @@ class SignUp extends Component {
 		}
 
 		if (this.state.otherLogin) {
-			const signup = { ...this.state.profile, typeOfLogin: this.state.otherLogin, date: moment.now() }
+			const signup = { ...this.state.profile, login_type: this.state.otherLogin, date: moment.now() }
 			this.props.createSignup(signup)
 		} else {
 			this.props.createSignUp({ ...this.state.profile, date: moment.now() })
@@ -107,6 +107,7 @@ class SignUp extends Component {
 				})
 			}, 3000)
 		}
+		
 		if (sign_up_form.loading === true) {
 			this.setState({
 				banner: {
@@ -165,15 +166,15 @@ class SignUp extends Component {
 			</div>
 			<div className="row">
 				<label> School Name<Span /></label>
-				<input type="text" {...this.former.super_handle(["profile", "schoolName"])} placeholder='Enter school-name'></input>
+				<input type="text" {...this.former.super_handle(["profile", "school"])} placeholder='Enter school-name'></input>
 			</div>
 			<div className="row">
 				<label> School Password<Span /></label>
-				<input type="password" {...this.former.super_handle(["profile", "schoolPassword"])} placeholder='Enter password'></input>
+				<input type="password" {...this.former.super_handle(["profile", "password"])} placeholder='Enter password'></input>
 			</div>
 			<div className="row">
 				<label>How did you hear about MISchool?</label>
-				<select {...this.former.super_handle(["profile", "typeOfLogin"])}>
+				<select {...this.former.super_handle(["profile", "login_type"])}>
 					<option value="">Select Strategy</option>
 					{
 						[...getStrategies()]
@@ -185,7 +186,7 @@ class SignUp extends Component {
 					}
 				</select>
 			</div>
-			{this.state.profile.typeOfLogin === 'OTHER' &&
+			{this.state.profile.login_type === 'OTHER' &&
 				<div className="row">
 					<label> Other </label>
 					<input type="text" {...this.former.super_handle(["otherLogin"])} placeholder="e.g. internet"></input>
@@ -193,20 +194,20 @@ class SignUp extends Component {
 			}
 			<div className="row">
 				<label> Select Package </label>
-				<select style={{ marginTop: 5 }} {...this.former.super_handle(["profile", "packageName"])}>
+				<select style={{ marginTop: 5 }} {...this.former.super_handle(["profile", "package"])}>
 					<option value="FREE_TRIAL">Free-Trial</option>
 				</select>
 			</div>
-			{this.state.profile.typeOfLogin === 'SCHOOL_REFERRAL' && <>
+			{this.state.profile.login_type === 'SCHOOL_REFERRAL' && <>
 				<div className="divider"> Referral School Information </div>
 				<div className="row">
 					<label>School Name<Span /></label>
-					<input list="schl-list" {...this.former.super_handle(["profile", "referralSchoolName"])} placeholder="school name" />
+					<input list="schl-list" {...this.former.super_handle(["profile", "ref_school_name"])} placeholder="school name" />
 				</div>
 
 				<div className="row">
 					<label>Owner Easy Paisa<Span /></label>
-					<input type="number" {...this.former.super_handle(["profile", "ownerEasypaisaNumber"])} placeholder="Easy Paisa" />
+					<input type="number" {...this.former.super_handle(["profile", "owner_easypaisa_num"])} placeholder="Easy Paisa" />
 				</div>
 			</>}
 			<div className="button red" onClick={() => this.onSave()}> Create Signup</div>
