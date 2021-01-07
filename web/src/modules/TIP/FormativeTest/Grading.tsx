@@ -32,6 +32,7 @@ const Grading: React.FC<PropsType> = (props) => {
     const test_id = `${subject.toLowerCase()}-${class_name.substring(6)}`
 
     const selectedTest: MISDiagnosticReport = useMemo(() => getQuestionList(props.students[std_id].diagnostic_result, test_id), []);
+
     const getUpdatedState = () => {
         const questionList: MISDiagnosticReport['questions'] = Object.entries(selectedTest.questions || {}).reduce((agg, [key, value]) => {
             return {
