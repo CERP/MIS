@@ -25,6 +25,9 @@ import lessonPlans from './pngs/Lesson Plans.png'
 import maths from './pngs/Maths.png'
 import english from './pngs/English.png'
 import urdu from './pngs/Urdu.png'
+import download from './pngs/download.png'
+import printer from './pngs/printer.png'
+import arrowBack from './pngs/arrow-back.png'
 
 export const EditIcon = deleteIcon
 export const DeleteIcon = editIcon
@@ -53,3 +56,6 @@ export const LessonPlans = lessonPlans
 export const Maths = maths
 export const English = english
 export const Urdu = urdu
+export const Download = download
+export const Printer = printer
+export const ArrowBack = arrowBack

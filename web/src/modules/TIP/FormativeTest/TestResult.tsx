@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { connect } from 'react-redux';
 import Headings from '../Headings'
+import { ArrowBack } from 'assets/icons'
 import { RouteComponentProps, Link, withRouter } from 'react-router-dom'
 
 interface P {
@@ -29,7 +30,7 @@ const TestResult: React.FC<PropsType> = (props) => {
                                 className="no-underline bg-blue-250 rounded-md flex flex-row justify-between items-center px-3 my-2 h-11 shadow-lg"
                                 to={`${(props.location.pathname).substring(0, 36)}/${section_id}/${class_name}/${subject}/insert-grades/${std_id}/grading/test-result/result`}>
                                 <div className="text-white text-extrabold text-base font-bold">{slo}</div>
-                                <div className="bg-white rounded-full h-7 w-7">Arr</div>
+                                <div className="bg-white rounded-full h-7 w-7 flex justify-center items-center"><img className="h-3" src={ArrowBack} /></div>
                             </Link>
                         })
                     }
