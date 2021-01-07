@@ -8,7 +8,7 @@ export const Landing = () => {
 	const auth = useSelector((state: AppState) => state.user.auth)
 
 	return (
-		<div className="w-full h-screen bg-red-primary">
+		<div className="w-full h-screen bg-red-brand">
 			<div className="p-5 md:px-10 flex flex-row justify-between items-center">
 				<div className="text-white font-bold text-xl">MISchool.pk</div>
 				{

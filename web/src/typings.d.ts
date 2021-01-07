@@ -54,6 +54,62 @@ interface RootDBState {
 			[lesson_id: string]: IlmxLesson
 		}
 	}
+	target_instruction_access?: boolean
+}
+
+interface Curriculum {
+	[learning_level: string]: LearningLevels
+}
+
+interface LearningLevels {
+	[lesson_id: string]: {
+		lesson_number: number
+		name: string
+		subject: string
+		description: string
+		video_links: string[]
+		pdf_links: string
+	}
+}
+
+interface Tests {
+	[id: string]: MISTest
+}
+
+interface SLOMapping {
+	[slo_id: string]: {
+		description: string
+		category: string
+		link: strng
+	}
+}
+
+interface MISTest {
+	name: string
+	subject: string
+	grade: string
+	type: string
+	label: string
+	pdf_url: string
+	questions: {
+		[question_id: string]: {
+			answer: string
+			slo: string[]
+		}
+	}
+}
+
+interface Columns {
+	name: string
+	selector: string
+	sortable: boolean
+}
+
+interface GraphData {
+	[name: string]: {
+		percentage: number
+		link: string
+	}
 }
 
 interface BaseAnalyticsEvent {
@@ -111,6 +167,7 @@ interface RootReducerState {
 		loading: boolean
 	}
 	connected: boolean
+	alert_banner: string
 	sign_up_form: {
 		loading: boolean
 		succeed: boolean
@@ -119,6 +176,11 @@ interface RootReducerState {
 	ilmxLessons: {
 		isLoading: boolean
 		hasError: boolean
+	}
+	targeted_instruction: {
+		tests: Tests
+		slo_mapping: SLOMapping
+		curriculum: Curriculum
 	}
 }
 
@@ -252,6 +314,40 @@ interface MISStudent {
 	tags: { [tag: string]: boolean }
 	certificates: {
 		[id: string]: MISCertificate
+	}
+	diagnostic_result: DiagnosticResult
+	learning_levels: {
+		[learning_level_id: string]: {
+			test_id: string
+			date_assigned: string
+		}
+	}
+}
+
+type Report = {
+	[stdId: string]: {
+		name: string
+		report: MISReport
+	}
+}
+
+type MISReport = {
+	[name: string]: {
+		correct: number
+		possible: number
+		link?: string
+	}
+}
+
+type DiagnosticResult = {
+	[test_id: string]: MISDiagnosticReport
+}
+
+type MISDiagnosticReport = {
+	[question_id: string]: {
+		answer: string
+		isCorrect: boolean
+		slo: string[]
 	}
 }
 

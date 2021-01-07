@@ -62,6 +62,7 @@ const initState: RootReducerState = {
 		loading: false
 	},
 	connected: false,
+	alert_banner: '',
 	sign_up_form: {
 		loading: false,
 		succeed: false,
@@ -71,6 +72,11 @@ const initState: RootReducerState = {
 		isLoading: false,
 		hasError: false
 	},
+	targeted_instruction: {
+		tests: {},
+		slo_mapping: {},
+		curriculum: {}
+	}
 }
 
 export const loadDB = () => {

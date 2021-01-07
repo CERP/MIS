@@ -385,13 +385,12 @@ const convertCSVToStudents = (studentImportCSV: string) => {
 	// 	.slice(1) // ignore headers
 
 	// papa parse handles CSV parsing gracefully with zero dependency
-	const { data, errors, meta } = Papa.parse(studentImportCSV)
+	const { data } = Papa.parse(studentImportCSV)
+	// console.log(data, errors, meta)
 
-	console.log(data, errors, meta)
-
-	const items: Array<string> = data
-		.filter(x => x.length === studentCSVHeaders.length)
-		.slice(1) // ignore headers
+	const items: string[] = data
+		.filter((x: any) => x.length === studentCSVHeaders.length)
+		.slice(1) as string[]// ignore headers
 
 	// note that this is linked to the headers in the template above. see
 	const students = items
@@ -423,7 +422,9 @@ const convertCSVToStudents = (studentImportCSV: string) => {
 				attendance: {},
 				exams: {},
 				tags: {},
-				certificates: {}
+				certificates: {},
+				diagnostic_result: {},
+				learning_levels: {}
 			}
 
 			return student

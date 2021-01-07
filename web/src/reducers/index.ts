@@ -1,5 +1,5 @@
 import Dynamic from '@cerp/dynamic'
-import { 
+import {
 	MERGES,
 	DELETES,
 	CONFIRM_SYNC_DIFF,
@@ -12,7 +12,7 @@ import {
 	ConfirmSyncAction,
 	SnapshotDiffAction,
 	ConfirmAnalyticsSyncAction,
-	QueueAction, 
+	QueueAction,
 	ImageUploadConfirmation,
 	IMAGE_QUEUE_LOCK,
 	IMAGE_QUEUE_UNLOCK,
@@ -31,6 +31,7 @@ import {
 } from 'actions'
 
 import { AnyAction } from 'redux'
+import { ActionTypes } from 'constants/index'
 
 const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerState => {
 
@@ -249,7 +250,7 @@ const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerSta
 
 		case SNAPSHOT_DIFF:
 			{
-				//@ts-ignore
+				// @ts-ignore
 				const snapshot = action as SnapshotDiffAction
 				console.log("snapshot_diff: ", Object.keys(snapshot.new_writes).length, "changes broadcasted")
 
@@ -431,7 +432,7 @@ const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerSta
 			ilmxLessons: { isLoading: true, hasError: false }
 		}
 		case GET_LESSONS_FAILURE: return {
-			...state, 
+			...state,
 			ilmxLessons: { isLoading: false, hasError: true }
 		}
 		case GET_LESSONS_SUCCESS: return {
@@ -445,6 +446,34 @@ const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerSta
 			},
 			ilmxLessons: { isLoading: false, hasError: false }
 		}
+
+		case "GET_TARGETED_INSTRUCTIONS": return {
+			...state,
+			targeted_instruction: {
+				tests: {},
+				slo_mapping: {},
+				curriculum: {}
+			}
+		}
+		case "GET_TARGETED_INSTRUCTION_FAILURE": return {
+			...state,
+			targeted_instruction: {
+				tests: {},
+				slo_mapping: {},
+				curriculum: {}
+			}
+		}
+		case "GET_TARGETED_INSTRUCTION_SUCCESS": return {
+			...state,
+			targeted_instruction: action.payload
+		}
+		case ActionTypes.ALERT_BANNER_TEXT:
+			{
+				return {
+					...state,
+					alert_banner: action.data
+				}
+			}
 
 		default:
 			return state;

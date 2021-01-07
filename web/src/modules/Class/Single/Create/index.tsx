@@ -8,7 +8,16 @@ import Former from 'utils/former'
 import checkCompulsoryFields from 'utils/checkCompulsoryFields'
 import Banner from 'components/Banner'
 import Dropdown from 'components/Dropdown'
-import { createEditClass, addStudentToSection, removeStudentFromSection, deleteClass, mergeSettings } from 'actions'
+import {
+	createEditClass,
+	addStudentToSection,
+	removeStudentFromSection,
+	deleteClass,
+	mergeSettings,
+	deleteSection,
+	deleteSubject
+} from 'actions'
+
 import { getIlmxUser } from 'utils/helpers'
 
 import './style.css'
@@ -24,6 +33,8 @@ interface P {
 	addStudent: (section_id: string, student: MISStudent) => void
 	removeStudent: (student: MISStudent) => void
 	removeClass: (mis_class: AugmentedMISClass) => void
+	removeSection: (classId: string, sectionId: string) => void
+	removeSubject: (classId: string, subject: string) => void
 	mergeSettings: (settings: MISSettings) => void
 }
 
@@ -172,11 +183,10 @@ class SingleClass extends Component<propsType, S> {
 
 	removeSubject = (subject: string) => () => {
 
-		const val = window.confirm("Are you sure you want to delete?")
-		if (!val)
+		if (!window.confirm("Are you sure you want to delete?"))
 			return
 
-		const { [subject]: removed, ...rest } = this.state.class.subjects;
+		const { [subject]: removed, ...rest } = this.state.class.subjects
 
 		this.setState({
 			class: {
@@ -184,21 +194,26 @@ class SingleClass extends Component<propsType, S> {
 				subjects: rest
 			}
 		})
+
+		this.props.removeSubject(this.state.class.id, subject)
+
 	}
 
 	removeSection = (id: string) => () => {
 
-		const val = window.confirm("Are you sure you want to delete?")
-		if (!val)
+		if (!window.confirm("Are you sure you want to delete?"))
 			return
 
-		const { [id]: removed, ...rest } = this.state.class.sections;
+		const { [id]: removed, ...rest } = this.state.class.sections
+
 		this.setState({
 			class: {
 				...this.state.class,
 				sections: rest
 			}
 		})
+
+		this.props.removeSection(this.state.class.id, id)
 	}
 
 	addSection = () => {
@@ -408,5 +423,7 @@ export default connect((state: RootReducerState) => ({
 	addStudent: (section_id: string, student: MISStudent) => dispatch(addStudentToSection(section_id, student)),
 	removeStudent: (student: MISStudent) => dispatch(removeStudentFromSection(student)),
 	removeClass: (mis_class: AugmentedMISClass) => dispatch(deleteClass(mis_class)),
+	removeSection: (classId: string, sectionId: string) => dispatch(deleteSection(classId, sectionId)),
+	removeSubject: (classId: string, subject: string) => dispatch(deleteSubject(classId, subject)),
 	mergeSettings: (settings: MISSettings) => dispatch(mergeSettings(settings))
 }))(SingleClass)

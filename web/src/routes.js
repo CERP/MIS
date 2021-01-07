@@ -25,6 +25,7 @@ import DailyStats from 'modules/Analytics/DailyStats'
 import Analytics from 'modules/Analytics'
 import ReportsMenu from 'modules/ReportsMenu'
 import PromotionPage from 'modules/Settings/promote-students'
+import TargetedInstruction from 'modules/TargetedInstruction/Routing'
 import Help from "modules/Help"
 import Diary from 'modules/Diary'
 import Front from 'modules/Front'
@@ -110,6 +111,7 @@ export default class Routes extends React.Component {
 
 					<TrackedRoute path="/reports-menu" component={ReportsMenu} />
 					<TrackedRoute path="/expenses" component={ExpensePage} />
+					<TrackedRoute path="/targeted-instruction" component={TargetedInstruction} />
 
 					<TrackedRoute exact path="/families/:famId/fee-print-preview" component={PrintPreview} />
 					<TrackedRoute path="/families/:famId/payments" component={StudentFees} />

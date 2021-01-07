@@ -28,7 +28,7 @@ import cerificate from './icons/Certificate/certificate1.svg'
 import expense from './icons/Expense/expense.svg'
 // import newBadge from "./icons/New/new.svg";
 import family from "./icons/family/family.svg"
-
+import test from './icons/Test/test.svg'
 import Help from './icons/Help/help.svg'
 import diary from './icons/Diary/diary.svg'
 import { IlmxLogo } from 'assets/icons'
@@ -243,7 +243,7 @@ class Landing extends Component {
 
 	render() {
 
-		const { logout, user, students, faculty, lastSnapshot, unsyncd, package_info } = this.props;
+		const { logout, user, students, faculty, lastSnapshot, unsyncd, package_info, alert_banner, ti_visible, targeted_instruction } = this.props;
 
 		const current_page = Math.floor(this.state.scroll / window.innerWidth)
 
@@ -322,228 +322,245 @@ class Landing extends Component {
 				{!package_info.paid && package_info.date !== -1 && <div onClick={() => this.onActivationCodeModal()} className="trial-bar">
 					{this.getTrialWarningMessage()}
 				</div>}
-				<div className="horizontal-scroll-container">	
-			{this.props.ilmxUser === "ILMX" ?
+				{
+					alert_banner && <div className="trial-bar">
+						{alert_banner}
+					</div>
+				}
+				<div className="horizontal-scroll-container">
+					{this.props.ilmxUser === "ILMX" ?
 						<IlmxLanding
 							faculty={this.props.user}
 							onLogout={logout}
 							onRedirectToIlmx={this.redirectToIlmx}
 						/>
 						: <><div className="page">
-						<div className="title">Setup</div>
-						{user.Admin || setupPage ? <div className="row">
-							<Link to="/teacher" className="button green-shadow" style={{ backgroundImage: `url(${teachersIcon})` }}>Teachers</Link>
-							<Link to="/student" className="button blue-shadow" style={{ backgroundImage: `url(${studentsIcon})` }}>Students</Link>
-						</div> : false}
+							<div className="title">Setup</div>
+							{user.Admin || setupPage ? <div className="row">
+								<Link to="/teacher" className="button green-shadow" style={{ backgroundImage: `url(${teachersIcon})` }}>Teachers</Link>
+								<Link to="/student" className="button blue-shadow" style={{ backgroundImage: `url(${studentsIcon})` }}>Students</Link>
+							</div> : false}
 
-						{user.Admin || setupPage ? <div className="row">
-							<Link to="/class" className="button purple-shadow" style={{ backgroundImage: `url(${classesIcon})` }}>Classes</Link>
-							<Link to="/settings" className="button red-shadow" style={{ backgroundImage: `url(${settingsIcon})` }}>Settings</Link>
-						</div> : false}
-						<div className="row">
-							{
-								user.Admin &&
-								<Link
-									to="/certificate-menu"
-									className="button purple-shadow"
-									style={{ backgroundImage: `url(${cerificate})` }}>
-									Certificates
+							{user.Admin || setupPage ? <div className="row">
+								<Link to="/class" className="button purple-shadow" style={{ backgroundImage: `url(${classesIcon})` }}>Classes</Link>
+								<Link to="/settings" className="button red-shadow" style={{ backgroundImage: `url(${settingsIcon})` }}>Settings</Link>
+							</div> : false}
+							<div className="row">
+								{
+									user.Admin &&
+									<Link
+										to="/certificate-menu"
+										className="button purple-shadow"
+										style={{ backgroundImage: `url(${cerificate})` }}>
+										Certificates
 								</Link>
-							}
-							<Link
-								to="/ClassList" className="button grey-shadow"
-								style={{ backgroundImage: `url(${planner})` }}>
-								DateSheet
+								}
+								<Link
+									to="/ClassList" className="button grey-shadow"
+									style={{ backgroundImage: `url(${planner})` }}>
+									DateSheet
 							</Link>
 
-						</div>
-						<div className="row">
-							{
-								(user.Admin || family_permission) &&
-								<Link to="/families"
-									className="button green-shadow"
-									style={{ backgroundImage: `url(${family})` }}>
-									Families
+							</div>
+							<div className="row">
+								{
+									(user.Admin || family_permission) &&
+									<Link to="/families"
+										className="button green-shadow"
+										style={{ backgroundImage: `url(${family})` }}>
+										Families
 								</Link>
-							}
-							<Link to="/help" className="button grey-shadow" style={{ backgroundImage: `url(${Help})` }}>Help</Link>
-						</div>
-						<div className="row">
-							<div className="button yellow-shadow" onClick={logout} style={{ backgroundImage: `url(${switchUserIcon})` }}>Logout</div>
-							{
-								(user.Admin || prospective_permission) &&
-								<Link to="/student?forwardTo=prospective-student" className="button yellow-shadow" style={{ backgroundImage: `url(${prospective})` }}>Prospective</Link>
-							}
-						</div>
-
-					</div>
-
-					<div className="page">
-						<div className="title">Actions</div>
-						<div className="row">
-							<Link to="/attendance" className="button green-shadow" style={{ backgroundImage: `url(${attendanceIcon})` }}>Attendance</Link>
-							{user.Admin ? <Link to="/teacher-attendance" className="button red-shadow" style={{ backgroundImage: `url(${teacherAttendanceIcon})` }}>Teacher Attendance</Link> : false}
-						</div>
-
-						<div className="row">
-
-							<div className="badge-container">
-								<Link
-									to="/diary"
-									className="button purple-shadow"
-									style={{ backgroundImage: `url(${diary})` }}>
-									Diary
-								</Link>
+								}
+								<Link to="/help" className="button grey-shadow" style={{ backgroundImage: `url(${Help})` }}>Help</Link>
+							</div>
+							<div className="row">
+								<div className="button yellow-shadow" onClick={logout} style={{ backgroundImage: `url(${switchUserIcon})` }}>Logout</div>
+								{
+									(user.Admin || prospective_permission) &&
+									<Link to="/student?forwardTo=prospective-student" className="button yellow-shadow" style={{ backgroundImage: `url(${prospective})` }}>Prospective</Link>
+								}
 							</div>
 
-							<Link
-								to="/sms" className="button red-shadow"
-								style={{ backgroundImage: `url(${smsIcon})` }}>
-								SMS
-							</Link>
 						</div>
 
-						<div className="row">
-							{
-								user.Admin || teacher_fee_permission ?
-									<Link
-										to="/fee-menu"
-										className="button blue-shadow"
-										style={{ backgroundImage: `url(${feesIcon})` }}>Fees</Link>
-
-									: false
-							}
-							{
-								(user.Admin) &&
-								<div
-									onClick={() => this.redirectToIlmx()}
-									className="button green-shadow"
-									style={{ backgroundImage: `url(${IlmxLogo})` }}>
-									IlmExchange
+							<div className="page">
+								<div className="title">Actions</div>
+								<div className="row">
+									<Link to="/attendance" className="button green-shadow" style={{ backgroundImage: `url(${attendanceIcon})` }}>Attendance</Link>
+									{user.Admin ? <Link to="/teacher-attendance" className="button red-shadow" style={{ backgroundImage: `url(${teacherAttendanceIcon})` }}>Teacher Attendance</Link> : false}
 								</div>
-							}
-						</div>
 
-						<div className="row">
+								<div className="row">
 
-							<Link
-								to="/reports"
-								className="button yellow-shadow"
-								style={{ backgroundImage: `url(${marksIcon})` }}>
-								Marks
-							</Link>
+									<div className="badge-container">
+										<Link
+											to="/diary"
+											className="button purple-shadow"
+											style={{ backgroundImage: `url(${diary})` }}>
+											Diary
+								</Link>
+									</div>
 
-
-							<Link
-								to="/reports-menu"
-								className="button green-shadow"
-								style={{ backgroundImage: `url(${resultIcon})` }}>
-								Result Card
-							</Link>
-
-						</div>
-						<div className="row">
-							{
-								user.Admin || teacher_fee_permission ?
-									<Link to="/analytics/fees" className="button purple-shadow" style={{ backgroundImage: `url(${analyticsIcon})` }}>Analytics</Link>
-									: false
-							}
-
-							{
-								(user.Admin || teacher_expense_permission) && <div className="badge-container">
 									<Link
+										to="/sms" className="button red-shadow"
+										style={{ backgroundImage: `url(${smsIcon})` }}>
+										SMS
+							</Link>
+								</div>
+
+								<div className="row">
+									{
+										user.Admin || teacher_fee_permission ?
+											<Link
+												to="/fee-menu"
+												className="button blue-shadow"
+												style={{ backgroundImage: `url(${feesIcon})` }}>Fees</Link>
+
+											: false
+									}
+									{
+										(user.Admin) &&
+										<div
+											onClick={() => this.redirectToIlmx()}
+											className="button green-shadow"
+											style={{ backgroundImage: `url(${IlmxLogo})` }}>
+											IlmExchange
+										</div>
+									}
+								</div>
+
+								<div className="row">
+
+									<Link
+										to="/reports"
 										className="button yellow-shadow"
-										to="/expenses/general"
-										style={{ backgroundImage: `url(${expense})` }}>
-										Expenses
-								</Link>
+										style={{ backgroundImage: `url(${marksIcon})` }}>
+										Marks
+									</Link>
+
+
+									<Link
+										to="/reports-menu"
+										className="button green-shadow"
+										style={{ backgroundImage: `url(${resultIcon})` }}>
+										Result Card
+									</Link>
+
 								</div>
-							}
-						</div>
-					</div>
+								<div className="row">
+									{
+										user.Admin || teacher_fee_permission ?
+											<Link to="/analytics/fees" className="button purple-shadow" style={{ backgroundImage: `url(${analyticsIcon})` }}>Analytics</Link>
+											: false
+									}
 
-					{user.Admin || dailyStats ? <div className="page">
-						<div className="title">Daily Statistics</div>
-						<div className="divider">Attendance</div>
-						<div className="row">
-							<Link
-								className="box no-underline bg-green"
-								to={this.getDailyStatsRoute('attendance')}>
-								<div>{today_attendance.PRESENT}</div>
-								<div>Present</div>
-							</Link>
+									{
+										(user.Admin || teacher_expense_permission) && <div className="badge-container">
+											<Link
+												className="button yellow-shadow"
+												to="/expenses/general"
+												style={{ backgroundImage: `url(${expense})` }}>
+												Expenses
+											</Link>
+										</div>
+									}
+								</div>
+								{
+									(targeted_instruction && ti_visible) &&
+									<div className="row">
+										<Link
+											className="button yellow-shadow"
+											to="/targeted-instruction/test"
+											style={{ backgroundImage: `url(${test})` }}>
+											Tests
+										</Link>
 
-							<Link
-								className="box no-underline bg-red"
-								to={this.getDailyStatsRoute('attendance')}>
-								<div>{today_attendance.ABSENT}</div>
-								<div>Absent</div>
-							</Link>
-
-							<Link
-								className="box no-underline bg-grey"
-								to={this.getDailyStatsRoute('attendance')}>
-								<div>{today_attendance.LEAVE + today_attendance.SHORT_LEAVE + today_attendance.SICK_LEAVE + today_attendance.CASUAL_LEAVE}</div>
-								<div>Leave</div>
-							</Link>
-						</div>
-
-						<div className="divider">Teacher Attendance</div>
-						<div className="row">
-							<Link
-								className="box no-underline bg-green"
-								to={this.getDailyStatsRoute('teacher-attendance')}>
-								<div>{today_teacher_attendance.PRESENT}</div>
-								<div>Present</div>
-							</Link>
-
-							<Link
-								className="box no-underline bg-red"
-								to={this.getDailyStatsRoute('teacher-attendance')}>
-								<div>{today_teacher_attendance.ABSENT}</div>
-								<div>Absent</div>
-							</Link>
-
-							<Link
-								className="box no-underline bg-grey"
-								to={this.getDailyStatsRoute('teacher-attendance')}>
-								<div>{today_teacher_attendance.LEAVE}</div>
-								<div>Leave</div>
-							</Link>
-						</div>
-
-						<div className="divider">Fee Collection</div>
-						<div className="row">
-							<Link
-								className="box no-underline bg-blue"
-								to={this.getDailyStatsRoute('fees')}>
-								<div>{numberWithCommas(today_payment)}</div>
-								<div>Rupees</div>
-							</Link>
-
-							<Link
-								className="box no-underline bg-green"
-								to='/analytics/daily-stats?type=paid_students'>
-								<div>{today_payment_students}</div>
-								<div>Students</div>
-							</Link>
-						</div>
-
-						<div className="divider">Last Backup</div>
-						<div className="row">
-							<div className="box bg-purple">
-								<div>{moment(lastSnapshot).format("HH:mm")}</div>
-								<div>{moment(lastSnapshot).format("D-M-YYYY")}</div>
+									</div>
+								}
 							</div>
-							<div className="box bg-grey">
-								<div>{unsyncd}</div>
-								<div>{unsyncd === 1 ? "Unsyncd Change" : "Unsynced Changes"}</div>
-							</div>
-						</div>
 
-					</div> : false}
-					</>
-				}
+							{user.Admin || dailyStats ? <div className="page">
+								<div className="title">Daily Statistics</div>
+								<div className="divider">Attendance</div>
+								<div className="row">
+									<Link
+										className="box no-underline bg-green"
+										to={this.getDailyStatsRoute('attendance')}>
+										<div>{today_attendance.PRESENT}</div>
+										<div>Present</div>
+									</Link>
+
+									<Link
+										className="box no-underline bg-red"
+										to={this.getDailyStatsRoute('attendance')}>
+										<div>{today_attendance.ABSENT}</div>
+										<div>Absent</div>
+									</Link>
+
+									<Link
+										className="box no-underline bg-grey"
+										to={this.getDailyStatsRoute('attendance')}>
+										<div>{today_attendance.LEAVE + today_attendance.SHORT_LEAVE + today_attendance.SICK_LEAVE + today_attendance.CASUAL_LEAVE}</div>
+										<div>Leave</div>
+									</Link>
+								</div>
+
+								<div className="divider">Teacher Attendance</div>
+								<div className="row">
+									<Link
+										className="box no-underline bg-green"
+										to={this.getDailyStatsRoute('teacher-attendance')}>
+										<div>{today_teacher_attendance.PRESENT}</div>
+										<div>Present</div>
+									</Link>
+
+									<Link
+										className="box no-underline bg-red"
+										to={this.getDailyStatsRoute('teacher-attendance')}>
+										<div>{today_teacher_attendance.ABSENT}</div>
+										<div>Absent</div>
+									</Link>
+
+									<Link
+										className="box no-underline bg-grey"
+										to={this.getDailyStatsRoute('teacher-attendance')}>
+										<div>{today_teacher_attendance.LEAVE}</div>
+										<div>Leave</div>
+									</Link>
+								</div>
+
+								<div className="divider">Fee Collection</div>
+								<div className="row">
+									<Link
+										className="box no-underline bg-blue"
+										to={this.getDailyStatsRoute('fees')}>
+										<div>{numberWithCommas(today_payment)}</div>
+										<div>Rupees</div>
+									</Link>
+
+									<Link
+										className="box no-underline bg-green"
+										to='/analytics/daily-stats?type=paid_students'>
+										<div>{today_payment_students}</div>
+										<div>Students</div>
+									</Link>
+								</div>
+
+								<div className="divider">Last Backup</div>
+								<div className="row">
+									<div className="box bg-purple">
+										<div>{moment(lastSnapshot).format("HH:mm")}</div>
+										<div>{moment(lastSnapshot).format("D-M-YYYY")}</div>
+									</div>
+									<div className="box bg-grey">
+										<div>{unsyncd}</div>
+										<div>{unsyncd === 1 ? "Unsyncd Change" : "Unsynced Changes"}</div>
+									</div>
+								</div>
+
+							</div> : false}
+						</>
+					}
 				</div>
 			</div>
 
@@ -562,13 +579,16 @@ export default connect(state => ({
 	user: state.db.faculty[state.auth.faculty_id],
 	students: state.db.students,
 	faculty: state.db.faculty,
+	alert_banner: state.alert_banner,
 	lastSnapshot: state.lastSnapshot,
 	unsyncd: Object.keys(state.queued.mutations || {}).length,
 	package_info: state.db.package_info || { date: -1, trial_period: 15, paid: false }, //If package info is undefined
 	school_id: state.auth.school_id,
 	auth: state.auth,
 	client_id: state.client_id,
-	ilmxUser: getIlmxUser()
+	ilmxUser: getIlmxUser(),
+	ti_visible: state.db.targeted_instruction_access,
+	targeted_instruction: state.db.targeted_instruction
 }), dispatch => ({
 	resetTrial: () => dispatch(resetTrial()),
 	markPurchased: () => dispatch(markPurchased()),
