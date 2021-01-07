@@ -169,25 +169,3 @@ export const getSubjectsFromTests = (targeted_instruction: RootReducerState["tar
         }
     }, [])
 }
-
-export const getClassnameFromSectionId = (sortedSections: AugmentedSection[], sectionId: string) => {
-    return sortedSections.reduce((agg: string, section: AugmentedSection) => {
-        if (section.id === sectionId) {
-            return section.className
-        }
-        return agg
-    }, '')
-}
-
-export const getStudentsBySectionId = (sectionId: string, students: RootDBState["students"]) => {
-    return students = Object.values(students)
-        .reduce<RootDBState["students"]>((agg, student) => {
-            if (student.section_id === sectionId) {
-                return {
-                    ...agg,
-                    [student.id]: student
-                }
-            }
-            return agg
-        }, {})
-}

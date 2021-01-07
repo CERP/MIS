@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
-import { getClassnameFromSectionId } from 'utils/targetedInstruction'
+import { getClassnameFromSectionId } from 'utils/TIP'
 import Headings from '../Headings'
 import Classes from '../Classes'
 import Card from '../Card'

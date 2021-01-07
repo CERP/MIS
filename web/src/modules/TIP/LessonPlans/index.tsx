@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
-import { getClassnameFromSectionId } from 'utils/targetedInstruction'
+import { getClassnameFromSectionId } from 'utils/TIP'
 import { connect } from 'react-redux'
 import Headings from '../Headings'
 import Classes from '../Classes'

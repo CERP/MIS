@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, Link, withRouter } from 'react-router-dom'
-import { getStudentsBySectionId } from 'utils/targetedInstruction'
+import { getStudentsBySectionId } from 'utils/TIP'
 interface P {
     students: RootDBState["students"]
 }

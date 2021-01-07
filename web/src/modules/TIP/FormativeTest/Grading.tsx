@@ -2,6 +2,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { getQuestionList } from 'utils/TIP'
 import { addReport } from 'actions'
 
 interface P {
@@ -114,13 +115,3 @@ export default connect((state: RootReducerState) => ({
 }), (dispatch: Function) => ({
     saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], selectedSubject: string) => dispatch(addReport(stdId, diagnostic_report, selectedSubject)),
 }))(withRouter(Grading))
-
-const getQuestionList = (diagnostic_result: MISStudent["diagnostic_result"], test_id: string) => {
-    return Object.entries(diagnostic_result)
-        .reduce((agg, [id, test]) => {
-            if (id === test_id) {
-                return test
-            }
-            return agg
-        }, {})
-}
