@@ -5,6 +5,7 @@ import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { addReport } from 'actions'
 
 interface P {
+    teacher_name: string
     students: RootDBState["students"]
 
     saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], selectedSubject: string) => void
@@ -71,7 +72,7 @@ const Grading: React.FC<PropsType> = (props) => {
                     src="https://cdn.dribbble.com/users/2199928/screenshots/11532918/shot-cropped-1590177932366.png?compress=1&resize=400x300"
                     alt="img" />
                 <div className="flex flex-col justify-center">
-                    <div className="text-white text-xl font-bold">Miss Humna</div>
+                    <div className="text-white text-xl font-bold">{props.teacher_name}</div>
                     <div className="flex flex-row justify-between mt-2">
                         <div className="text-white text-base font-bold">{`${class_name} | ${subject}`}</div>
                     </div>
@@ -84,8 +85,16 @@ const Grading: React.FC<PropsType> = (props) => {
                     return <div key={key} className={`flex flex-row justify-between items-center border border-solid border-gray-200 px-3 ${index % 2 === 0 ? "bg-gray-100" : "bg-white"} h-12`}>
                         <div className="text-xs">{state.questionsObj[key].question_text}</div>
                         <div className="rounded-xl w-30 h-6 bg-white border border-solid border-gray-100">
-                            <button className={!state.questionsObj[key].is_correct ? "border-none h-full rounded-xl text-xs outline-none text-white bg-incorrect-red" : "border-none bg-white h-full rounded-xl text-xs outline-non"} onClick={() => handleChange(false, key)}>Incorrect</button>
-                            <button className={state.questionsObj[key].is_correct ? "border-none h-full rounded-xl text-xs text-white bg-correct-green outline-none" : "border-none bg-white h-full rounded-xl text-xs outline-none"} onClick={() => handleChange(true, key)}>Correct</button>
+                            <button className={!state.questionsObj[key].is_correct ?
+                                "border-none h-full rounded-xl text-xs outline-none text-white bg-incorrect-red" :
+                                "border-none bg-white h-full rounded-xl text-xs outline-non"}
+                                onClick={() => handleChange(false, key)}>Incorrect
+                            </button>
+                            <button className={state.questionsObj[key].is_correct ?
+                                "border-none h-full rounded-xl text-xs text-white bg-correct-green outline-none" :
+                                "border-none bg-white h-full rounded-xl text-xs outline-none"}
+                                onClick={() => handleChange(true, key)}>Correct
+                            </button>
                         </div>
                     </div>
                 })
@@ -100,6 +109,7 @@ const Grading: React.FC<PropsType> = (props) => {
 }
 
 export default connect((state: RootReducerState) => ({
+    teacher_name: state.auth.name,
     students: state.db.students,
 }), (dispatch: Function) => ({
     saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], selectedSubject: string) => dispatch(addReport(stdId, diagnostic_report, selectedSubject)),
