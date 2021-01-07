@@ -38,7 +38,7 @@ const TestResult: React.FC<PropsType> = (props) => {
             })
         }
         <div className="flex justify-center items-center w-full mt-8">
-            <button className="rounded-3xl bg-red-primary h-9 border-none text-white text-base p-2 w-8/12 mb-4">Overall Analysis</button>
+            <button className="rounded-3xl bg-red-primary h-9 border-none text-white text-base p-2 w-8/12 mb-4 outline-none">Overall Analysis</button>
         </div>
     </div>
 }

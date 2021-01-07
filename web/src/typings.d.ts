@@ -354,12 +354,14 @@ type DiagnosticResult = {
 }
 
 type MISDiagnosticReport = {
-	checked: boolean
-	[question_id: string]: {
-		question_text: string
-		answer: string
-		is_correct: boolean
-		slo: string[]
+	checked?: boolean
+	questions?: {
+		[question_id: string]: {
+			question_text: string
+			answer: string
+			is_correct: boolean
+			slo: string[]
+		}
 	}
 }
 

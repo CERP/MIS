@@ -9,7 +9,7 @@ interface P {
     testType: string
     students: RootDBState["students"]
 
-    saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport, testId: string) => void
+    saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], testId: string) => void
 }
 
 interface Question {
@@ -23,7 +23,7 @@ interface Question {
 type S = {
     banner: MISBanner
     questionsArr: Question
-    result: MISDiagnosticReport
+    result: MISDiagnosticReport['questions']
 }
 
 const StudentGrades: React.FC<P> = ({ questions, stdId, testId, students, saveReport }) => {
@@ -47,7 +47,7 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, students, saveRe
 
     const handleChange = (e: any, questionId: string) => {
         state.questionsArr[questionId].answer = e.target.checked
-        let diagnostic_res = students[stdId].diagnostic_result[testId]
+        let diagnostic_res = students[stdId].diagnostic_result[testId].questions
         diagnostic_res[questionId].is_correct = e.target.checked
         setState({
             ...state,

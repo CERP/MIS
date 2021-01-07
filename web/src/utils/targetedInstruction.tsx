@@ -140,7 +140,7 @@ export const graphData = (stdReport: Report, students: RootDBState["students"]) 
 }
 
 export const getQuestionList = (selectedTest: string, stdObj: MISStudent, testType: string) => {
-    const res: MISDiagnosticReport = stdObj && stdObj.diagnostic_result && stdObj.diagnostic_result[selectedTest]
+    const res: MISDiagnosticReport['questions'] = stdObj && stdObj.diagnostic_result && stdObj.diagnostic_result[selectedTest].questions
     if (res && testType === 'Diagnostic') {
         return Object.entries(res).reduce((agg, [key, value]) => {
             return {
