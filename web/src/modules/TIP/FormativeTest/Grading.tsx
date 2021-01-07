@@ -62,7 +62,7 @@ const Grading: React.FC<PropsType> = (props) => {
 
     const onSave = () => {
         state.result && props.saveReport(std_id, state.result, test_id)
-        props.history.push(`${(props.location.pathname).substring(0, 36)}/${section_id}/${class_name}/${subject}/insert-grades/${std_id}/grading/test-result`)
+        props.history.push(`${(props.location.pathname).substring(0, 36)}/${section_id}/${class_name}/${subject}/insert-grades`)
     }
 
     return <div className="flex flex-wrap content-between bg-white">
