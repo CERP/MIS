@@ -15,7 +15,7 @@ const PDF: React.FC<PropsType> = ({ match, location, history, targeted_instructi
     const { class_name, subject, section_id } = match.params as Params
     const type = (location.pathname).substring(36, 22)
 
-    const pdfUrl = useMemo(() => getPDF(subject, class_name, targeted_instruction), [subject]);
+    const [test_id, pdf_url] = useMemo(() => getPDF(subject, class_name, targeted_instruction), [subject]);
 
     return <div className="flex flex-wrap content-between w-full">
         <div className="text-blue-900 font-bold flex text-lg justify-center my-5 mx-3">{class_name} | {subject} | {type === 'formative-test' ? "Formative Test" : "Lesson Plans"}</div>
@@ -28,17 +28,17 @@ const PDF: React.FC<PropsType> = ({ match, location, history, targeted_instructi
                 hideNavbar={true}
                 canvasCss='customCanvas'
                 document={{
-                    url: decodeURIComponent(pdfUrl),
+                    url: decodeURIComponent(pdf_url),
                 }}
             />
         </div>
         <div className="flex flex-row justify-around my-4 w-full">
             <div className="w-1/7 bg-blue-900 rounded-md flex flex-row justify-between items-center h-11">
-                <button className="bg-blue-900 text-lg border-none text-white text-left pl-3">Print</button>
+                <button className="bg-blue-900 text-lg border-none text-white text-left pl-3 focus:outline-none" onClick={() => window.print()}>Print</button>
                 <img className="pr-4" src={Printer} />
             </div>
             <div className="w-1/7 bg-green-primary rounded-md flex flex-row justify-between items-center h-11">
-                <button className="bg-green-primary text-lg border-none text-white text-left pl-3">Download</button>
+                <button className="bg-green-primary text-lg border-none text-white text-left pl-3 focus:outline-none">Download</button>
                 <img className="pr-3" src={Download} />
             </div>
         </div>
@@ -46,13 +46,13 @@ const PDF: React.FC<PropsType> = ({ match, location, history, targeted_instructi
             <div className="flex flex-row justify-around mb-4 w-full">
                 <div className="w-1/7">
                     <button
-                        className="bg-orange-primary font-bold text-lg border-none rounded-md text-white text-left p-2 w-full"
-                        onClick={() => history.push(`${(location.pathname).substring(0, 36)}/${section_id}/${class_name}/${subject}/insert-grades`)}>
+                        className="bg-orange-primary font-bold text-lg border-none rounded-md text-white text-left p-2 w-full focus:outline-none"
+                        onClick={() => history.push(`${(location.pathname).substring(0, 36)}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades`)}>
                         Insert Grades
                 </button>
                 </div>
                 <div className="w-1/7">
-                    <button className="bg-red-primary font-bold text-lg border-none rounded-md text-white text-left p-2 w-full">Answer Sheet</button>
+                    <button className="bg-red-primary font-bold text-lg border-none rounded-md text-white text-left p-2 w-full focus:outline-none">Answer Sheet</button>
                 </div>
             </div>
         }
@@ -64,15 +64,17 @@ export default connect((state: RootReducerState) => ({
 }))(withRouter(PDF))
 
 const getPDF = (selectedSubject: string, selectedSection: string, targeted_instruction: RootReducerState["targeted_instruction"]) => {
-    let url
+    let url, id
     let misTest: Tests = targeted_instruction['tests']
-    for (let obj of Object.values(misTest)) {
+    for (let [test_id, obj] of Object.entries(misTest)) {
         if (obj.grade === selectedSection && obj.subject === selectedSubject) {
             url = obj.pdf_url
+            id = test_id
             break
         } else {
             url = ''
+            id = ''
         }
     }
-    return url
+    return [id, url]
 }

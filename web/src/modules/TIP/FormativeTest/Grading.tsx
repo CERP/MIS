@@ -5,7 +5,6 @@ import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { addReport } from 'actions'
 
 interface P {
-    targeted_instruction: RootReducerState["targeted_instruction"]
     students: RootDBState["students"]
 
     saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], selectedSubject: string) => void
@@ -28,8 +27,7 @@ const Grading: React.FC<PropsType> = (props) => {
         getUpdatedState()
     }, [])
 
-    const { class_name, subject, std_id, section_id } = props.match.params as Params
-    const test_id = `${subject.toLowerCase()}-${class_name.substring(6)}`
+    const { class_name, subject, std_id, section_id, test_id } = props.match.params as Params
 
     const selectedTest: MISDiagnosticReport = useMemo(() => getQuestionList(props.students[std_id].diagnostic_result, test_id), []);
 
@@ -63,7 +61,7 @@ const Grading: React.FC<PropsType> = (props) => {
 
     const onSave = () => {
         state.result && props.saveReport(std_id, state.result, test_id)
-        props.history.push(`${(props.location.pathname).substring(0, 36)}/${section_id}/${class_name}/${subject}/insert-grades`)
+        props.history.push(`${(props.location.pathname).substring(0, 36)}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades`)
     }
 
     return <div className="flex flex-wrap content-between bg-white">
@@ -103,7 +101,6 @@ const Grading: React.FC<PropsType> = (props) => {
 
 export default connect((state: RootReducerState) => ({
     students: state.db.students,
-    targeted_instruction: state.targeted_instruction
 }), (dispatch: Function) => ({
     saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], selectedSubject: string) => dispatch(addReport(stdId, diagnostic_report, selectedSubject)),
 }))(withRouter(Grading))
