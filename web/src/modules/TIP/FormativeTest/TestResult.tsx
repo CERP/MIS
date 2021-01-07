@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import Headings from '../Headings'
 import { ArrowBack } from 'assets/icons'
 import { RouteComponentProps, Link, withRouter } from 'react-router-dom'
+import { getSloList } from 'utils/TIP'
 
 interface P {
     targeted_instruction: RootReducerState["targeted_instruction"]
@@ -48,21 +49,3 @@ const TestResult: React.FC<PropsType> = (props) => {
 export default connect((state: RootReducerState) => ({
     targeted_instruction: state.targeted_instruction
 }))(withRouter(TestResult))
-
-
-const getSloList = (targeted_instruction: RootReducerState["targeted_instruction"]) => {
-    return Object.entries(targeted_instruction.tests).reduce((agg, [test_id, test]) => {
-        return {
-            ...agg,
-            [test_id]: Object.values(test.questions).reduce((agg2, test) => {
-                if ((agg2.length === 0 || agg2.length > 0) && !agg2.includes(test.slo_category)) {
-                    return [
-                        ...agg2, test.slo_category
-                    ]
-                }
-                return [...agg2]
-            }, [])
-
-        }
-    }, {})
-}

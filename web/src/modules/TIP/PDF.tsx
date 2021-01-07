@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { connect } from 'react-redux'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { Download, Printer } from 'assets/icons'
+import { getPDF } from 'utils/TIP'
 import PDFViewer from 'pdf-viewer-reactjs'
 
 interface P {
@@ -34,7 +35,8 @@ const PDF: React.FC<PropsType> = ({ match, location, history, targeted_instructi
         </div>
         <div className="flex flex-row justify-around my-4 w-full">
             <div className="w-1/7 bg-blue-900 rounded-md flex flex-row justify-between items-center h-11">
-                <button className="bg-blue-900 text-lg border-none text-white text-left pl-3 focus:outline-none" onClick={() => window.print()}>Print</button>
+                <button className="bg-blue-900 text-lg border-none text-white text-left pl-3 focus:outline-none"
+                    onClick={() => window.print()}>Print</button>
                 <img className="pr-4" src={Printer} />
             </div>
             <div className="w-1/7 bg-green-primary rounded-md flex flex-row justify-between items-center h-11">
@@ -62,19 +64,3 @@ const PDF: React.FC<PropsType> = ({ match, location, history, targeted_instructi
 export default connect((state: RootReducerState) => ({
     targeted_instruction: state.targeted_instruction
 }))(withRouter(PDF))
-
-const getPDF = (selectedSubject: string, selectedSection: string, targeted_instruction: RootReducerState["targeted_instruction"]) => {
-    let url, id
-    let misTest: Tests = targeted_instruction['tests']
-    for (let [test_id, obj] of Object.entries(misTest)) {
-        if (obj.grade === selectedSection && obj.subject === selectedSubject) {
-            url = obj.pdf_url
-            id = test_id
-            break
-        } else {
-            url = ''
-            id = ''
-        }
-    }
-    return [id, url]
-}

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom'
-import { getSubjectsFromTests } from 'utils/targetedInstruction'
+import { getSubjectsFromTests } from 'utils/TIP'
 import { English, Urdu, Maths } from 'assets/icons'
 
 interface P {
