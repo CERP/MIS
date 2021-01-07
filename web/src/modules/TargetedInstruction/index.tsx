@@ -16,7 +16,7 @@ interface P {
 	targeted_instruction: RootReducerState["targeted_instruction"]
 
 	logSms: (history: MISSMSHistory) => any
-	saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport, selectedSubject: string) => void
+	saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], selectedSubject: string) => void
 }
 
 type PropsType = P & RouteComponentProps
@@ -143,7 +143,7 @@ export default connect((state: RootReducerState) => ({
 	students: state.db.students
 }), (dispatch: Function) => ({
 	logSms: (history: MISSMSHistory) => dispatch(logSms(history)),
-	saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport, selectedSubject: string) => dispatch(addReport(stdId, diagnostic_report, selectedSubject)),
+	saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], selectedSubject: string) => dispatch(addReport(stdId, diagnostic_report, selectedSubject)),
 }))(Test)
 
 const getStudentsBySectionId = (sectionId: string, students: RootDBState["students"]) => {

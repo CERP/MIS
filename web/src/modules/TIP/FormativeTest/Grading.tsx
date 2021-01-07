@@ -8,22 +8,14 @@ interface P {
     targeted_instruction: RootReducerState["targeted_instruction"]
     students: RootDBState["students"]
 
-    saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport, selectedSubject: string) => void
+    saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], selectedSubject: string) => void
 }
 
 type PropsType = P & RouteComponentProps
 
-interface Question {
-    [questionId: string]: {
-        question_text: string
-        is_correct: boolean
-        slo: string
-    }
-}
-
 type S = {
-    questionsObj: Question
-    result: MISDiagnosticReport
+    questionsObj: MISDiagnosticReport['questions']
+    result: MISDiagnosticReport['questions']
 }
 
 const Grading: React.FC<PropsType> = (props) => {
@@ -39,10 +31,9 @@ const Grading: React.FC<PropsType> = (props) => {
     const { class_name, subject, std_id, section_id } = props.match.params as Params
     const test_id = `${subject.toLowerCase()}-${class_name.substring(6)}`
 
-    const selectedTest: Question = useMemo(() => getQuestionList(props.students[std_id].diagnostic_result, test_id), []);
-
+    const selectedTest: MISDiagnosticReport = useMemo(() => getQuestionList(props.students[std_id].diagnostic_result, test_id), []);
     const getUpdatedState = () => {
-        const questionList = Object.entries(selectedTest).reduce<Question>((agg, [key, value]) => {
+        const questionList: MISDiagnosticReport['questions'] = Object.entries(selectedTest.questions || {}).reduce((agg, [key, value]) => {
             return {
                 [key]: {
                     "question_text": value.question_text,
@@ -60,7 +51,7 @@ const Grading: React.FC<PropsType> = (props) => {
 
     const handleChange = (val: any, questionId: string) => {
         state.questionsObj[questionId].is_correct = val
-        let diagnostic_res = props.students[std_id].diagnostic_result[test_id]
+        let diagnostic_res = props.students[std_id].diagnostic_result[test_id].questions
         diagnostic_res[questionId].is_correct = val
         setState({
             ...state,
@@ -93,9 +84,9 @@ const Grading: React.FC<PropsType> = (props) => {
                 Object.keys(state.questionsObj).map(function (key, index) {
                     return <div key={key} className={`flex flex-row justify-between items-center border border-solid border-gray-200 px-3 ${index % 2 === 0 ? "bg-gray-100" : "bg-white"} h-12`}>
                         <div className="text-xs">{state.questionsObj[key].question_text}</div>
-                        <div className="rounded-xl w-30 h-6 bg-white">
-                            <button className={!state.questionsObj[key].is_correct ? "border-none h-full rounded-xl text-xs outline-none text-white bg-incorrect-red" : "border-2 border-solid border-gray-100 bg-white h-full rounded-xl text-xs outline-non"} onClick={() => handleChange(false, key)}>Incorrect</button>
-                            <button className={state.questionsObj[key].is_correct ? "border-none h-full rounded-xl text-xs text-white bg-correct-green outline-none" : "border-2 border-solid border-gray-100 bg-white h-full rounded-xl text-xs outline-none"} onClick={() => handleChange(true, key)}>Correct</button>
+                        <div className="rounded-xl w-30 h-6 bg-white border border-solid border-gray-100">
+                            <button className={!state.questionsObj[key].is_correct ? "border-none h-full rounded-xl text-xs outline-none text-white bg-incorrect-red" : "border-none bg-white h-full rounded-xl text-xs outline-non"} onClick={() => handleChange(false, key)}>Incorrect</button>
+                            <button className={state.questionsObj[key].is_correct ? "border-none h-full rounded-xl text-xs text-white bg-correct-green outline-none" : "border-none bg-white h-full rounded-xl text-xs outline-none"} onClick={() => handleChange(true, key)}>Correct</button>
                         </div>
                     </div>
                 })
@@ -113,7 +104,7 @@ export default connect((state: RootReducerState) => ({
     students: state.db.students,
     targeted_instruction: state.targeted_instruction
 }), (dispatch: Function) => ({
-    saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport, selectedSubject: string) => dispatch(addReport(stdId, diagnostic_report, selectedSubject)),
+    saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], selectedSubject: string) => dispatch(addReport(stdId, diagnostic_report, selectedSubject)),
 }))(withRouter(Grading))
 
 const getQuestionList = (diagnostic_result: MISStudent["diagnostic_result"], test_id: string) => {
