@@ -17,7 +17,7 @@ import iconPlug from './assets/plug.svg'
 import iconSchool from './assets/school.svg'
 import iconTeacher from './assets/teacher.svg'
 
-export const HomePage = () => {
+export const Landing = () => {
 
 	return (
 		<AppLayout>

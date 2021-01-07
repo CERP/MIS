@@ -111,6 +111,7 @@ export const SchoolLogin = () => {
 							<div className="my-2">Mobile Number (School Id)</div>
 							<input
 								name="school"
+								autoFocus={true}
 								required
 								onChange={hanldeInputChange}
 								autoCapitalize="off"

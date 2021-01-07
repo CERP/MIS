@@ -477,7 +477,12 @@ const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerSta
 				}
 			}
 		case ActionTypes.SWITCH_SCHOOL:
-			return initState
+			
+			return {
+				...initState,
+				initialized: state.initialized,
+				connected: state.connected
+			}
 
 		default:
 			return state;

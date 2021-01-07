@@ -45,7 +45,7 @@ import IlmxLanding from './ilmxLanding'
 
 import './style.css'
 
-class Landing extends Component {
+class Home extends Component {
 
 	constructor(props) {
 		super(props);
@@ -62,7 +62,10 @@ class Landing extends Component {
 	//They will still be able to access other components if they typed their Url e.g /attendance.
 	//Need to do something about that ..
 	componentDidMount() {
-
+			
+		// set document title to home
+		document.title = 'Home | MISchool'
+		
 		// for redirect to ilmx
 		const phone = localStorage.getItem("ilmx")
 
@@ -594,4 +597,4 @@ export default connect(state => ({
 	markPurchased: () => dispatch(markPurchased()),
 	logout: () => dispatch(createLogout()),
 	addMultiplePayments: (payments) => dispatch(addMultiplePayments(payments)),
-}))(Landing)
+}))(Home)

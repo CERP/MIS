@@ -1,6 +1,6 @@
 :root {
 	--blue: #74aced;
-	--offwhite: #fafafa;
+	--offwhite: #f8f9fb;
 	--darkgrey: #333333;
 }
 
@@ -12,6 +12,7 @@ body,
 	width: 100%;
 	margin: 0;
 	position: absolute;
+	background-color: var(--offwhite);
 	overflow: visible;
 }
 

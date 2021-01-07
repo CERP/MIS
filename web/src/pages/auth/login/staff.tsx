@@ -28,7 +28,7 @@ type TProps = RootReducerState & {
 
 const USER_GROUP_SIZE = 10
 
-const Login: React.FC<TProps> = ({ auth, initialized, users, school, connected, queued, unsyncd_changes }) => {
+const Login: React.FC<TProps> = ({ auth, initialized, users, school, connected, unsyncd_changes }) => {
 
 	const dispatch = useDispatch()
 
@@ -92,6 +92,7 @@ const Login: React.FC<TProps> = ({ auth, initialized, users, school, connected, 
 							</div>
 							<div className="font-semibold text-lg text-center">{toTitleCase(school.name)}</div>
 							<button
+								disabled={!connected}
 								onClick={() => switchSchoolHandler()}
 								className="w-7/12 btn-red">Switch School</button>
 						</div>
@@ -200,7 +201,6 @@ const LoginForm: React.FC<TLoginForm> = ({ user, auth }) => {
 			return
 		}
 
-
 		setIsSubmitted(true)
 
 		dispatch(createLogin(user.name, password))
@@ -217,6 +217,7 @@ const LoginForm: React.FC<TLoginForm> = ({ user, auth }) => {
 					<input
 						name="password"
 						required
+						autoFocus={true}
 						onChange={(event) => setPassword(event.target.value)}
 						type={openEye ? 'text' : 'password'}
 						autoCapitalize="off"

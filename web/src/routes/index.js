@@ -4,7 +4,7 @@ import { Provider } from 'react-redux'
 
 import ErrorComponent from 'components/Error'
 
-import Landing from 'modules/Landing'
+import Home from 'modules/Landing'
 import TeacherList from 'modules/Teacher/List'
 import TeacherSingle from 'modules/Teacher/Single'
 import StudentList from 'modules/Student/List'
@@ -46,7 +46,7 @@ import ExcelImport from '../modules/Settings/ExcelImport';
 import ClassSettings from 'modules/Settings/ClassSettings/Index'
 import MISActivation from 'modules/Activation'
 import BulkExam from 'modules/Marks/BulkExam'
-import { HomePage } from 'pages/landing'
+import { Landing } from 'pages/landing'
 import { Contact } from 'pages/contact'
 import { Feature } from 'pages/features'
 import { About } from 'pages/about'
@@ -84,7 +84,7 @@ export default class Routes extends React.Component {
 		return <Provider store={this.props.store}>
 			<BrowserRouter>
 				<Switch>
-					<TrackedRoute exact path="/home" component={Landing} />
+					<TrackedRoute exact path="/home" component={Home} />
 
 					<Route path="/faculty/first" component={TeacherSingle} />
 
@@ -135,7 +135,7 @@ export default class Routes extends React.Component {
 					<TrackedRoute path="/fee-menu" component={FeeMenu} />
 					<TrackedRoute path="/reset-password" component={ResetPassword} />
 					<Route path="/verify-code" component={MISActivation} />
-					<Route exact path="/" component={HomePage} />
+					<Route exact path="/" component={Landing} />
 					
 					<Route path="/school-login" component={SchoolLogin} />
 					<Route path="/staff-login" component={StaffLogin} />
