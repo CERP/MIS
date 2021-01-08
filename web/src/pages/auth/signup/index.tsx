@@ -23,10 +23,10 @@ type TState = SchoolSignup & {
 const initialState: TState = {
 	name: '',
 	phone: '',
-	school: '',
+	schoolName: '',
 	city: '',
-	password: '',
-	package: 'FREE_TRIAL',
+	schoolPassword: '',
+	packageName: 'FREE_TRIAL',
 	confirm_password: '',
 }
 
@@ -77,11 +77,11 @@ export const SchoolSignup = () => {
 				() => window.alert('Please fill all required fields')
 			],
 			[
-				!validatePassword(state.password),
+				!validatePassword(state.schoolPassword),
 				() => window.alert('Password contains at least 4 characters - alphabets(lower and upercase) and number')
 			],
 			[
-				state.password !== state.confirm_password,
+				state.schoolPassword !== state.confirm_password,
 				() => window.alert('Password mismatch')
 			],
 			[
@@ -140,7 +140,7 @@ export const SchoolSignup = () => {
 										<div>
 											<div>School Name</div>
 											<input
-												name="school"
+												name="schoolName"
 												required
 												onChange={onInputChange}
 												autoCapitalize="off"
@@ -165,7 +165,7 @@ export const SchoolSignup = () => {
 											<div>Password</div>
 											<div className="relative">
 												<input
-													name="password"
+													name="schoolPassword"
 													onChange={onInputChange}
 													autoCapitalize="off"
 													autoCorrect="off"

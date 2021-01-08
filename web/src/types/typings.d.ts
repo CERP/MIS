@@ -633,12 +633,13 @@ type SchoolSignup = {
 	name: string
 	phone: string
 	city: string
-	password: string
+	schoolPassword: string
 	confirm_password?: string
-	school: string
-	package: "FREE_TRIAL" | "TALEEM1" | "TALEEM2" | "TALEEM3"
+	schoolName: string
+	
+	packageName: "FREE_TRIAL" | "TALEEM1" | "TALEEM2" | "TALEEM3"
 
-	login_type?: string
-	ref_school_name?: string
-	owner_easypaisa_num?: string
+	typeOfLogin?: string
+	referralSchoolName?: string
+	ownerEasypaisaNumber?: string
 }
