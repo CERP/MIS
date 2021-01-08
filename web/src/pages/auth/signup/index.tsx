@@ -47,13 +47,13 @@ export const SchoolSignup = () => {
 	const [hasError, setHasError] = useState('')
 
 	useEffect(() => {
-		if ((!loading && !succeed) && reason !== "") {
+		if (loading === false && succeed === false && reason !== "") {
 
-			setHasError('Account creation failed!' + reason)
+			setHasError('Account creation failed!' + (reason?.includes(state.phone) ? ` ${state.phone} already exists` : reason))
 
 			setTimeout(() => {
 				setHasError('')
-			}, 5000)
+			}, 3000)
 		}
 	}, [loading, succeed, reason])
 
