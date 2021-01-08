@@ -1,6 +1,6 @@
 import React from 'react';
 import { RouteComponentProps, Link } from 'react-router-dom'
-import { Formative, LessonPlans, Diagnostic } from 'assets/icons'
+import { Formative, LessonPlans, Diagnostic, Videos } from 'assets/icons'
 import Headings from './Headings'
 import Card from './Card'
 interface P {
@@ -26,7 +26,7 @@ const Home: React.FC<PropsType> = (props) => {
         <div className="flex flex-row content-center items-center justify-center w-full">
             <Link className="container sm:px-8 bg-white rounded-xl m-3 h-40 flex flex-col content-center items-center shadow-lg no-underline"
                 to={"/targeted-instruction/training-videos"}>
-                <img className="h-20 py-4" src="https://www.wivb.com/wp-content/uploads/sites/97/2020/04/youtubelogo_38150283_ver1.0.jpg?w=719" alt="img" />
+                <img className="h-12 py-8" src={Videos} alt="img" />
                 <div className="text-base text-blue-900 font-bold">Training Videos</div>
             </Link>
             <Link className="container sm:px-8 bg-white rounded-xl m-3 h-40 flex flex-col content-center items-center shadow-lg no-underline"

@@ -28,6 +28,8 @@ import urdu from './pngs/Urdu.png'
 import download from './pngs/download.png'
 import printer from './pngs/printer.png'
 import arrowBack from './pngs/arrow-back.png'
+import videos from './pngs/videos.png'
+import tick from './pngs/tick.png'
 
 export const EditIcon = deleteIcon
 export const DeleteIcon = editIcon
@@ -59,3 +61,5 @@ export const Urdu = urdu
 export const Download = download
 export const Printer = printer
 export const ArrowBack = arrowBack
+export const Videos = videos
+export const Tick = tick

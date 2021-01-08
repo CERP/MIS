@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, Link, withRouter } from 'react-router-dom'
+import { Tick } from 'assets/icons'
 import { getStudentsBySectionId } from 'utils/TIP'
 interface P {
     students: RootDBState["students"]
@@ -26,11 +27,10 @@ const InsertGrades: React.FC<PropsType> = (props) => {
                 {
                     Object.values(students)
                         .sort((a, b) => a.Name.localeCompare(b.Name))
-                        .map((std) => (<Link key={name} className="no-underline h-28 flex flex-col flex items-center justify-center"
+                        .map((std) => (<Link key={name} className="relative no-underline h-28 flex flex-col flex items-center justify-center"
                             to={`${(props.location.pathname).substring(0, 36)}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades/${std.id}/grading`}>
-                            <img className={std.diagnostic_result[test_id].checked ?
-                                "rounded-full h-16 p-1 border-2 border-solid border-green-primary" :
-                                "rounded-full h-14 w-14 p-2"} src="https://www.atmeplay.com/images/users/avtar/avtar_nouser.png" alt="img" />
+                            <img className="border border-solid border-green-primary rounded-full h-14 w-14" src="https://www.atmeplay.com/images/users/avtar/avtar_nouser.png" alt="img" />
+                            {std.diagnostic_result[test_id].checked && <img src={Tick} className="absolute h-5 right-3" />}
                             <div className="text-base flex items-center justify-center w-24 md:w-28 truncate">{std.Name}</div>
                         </Link>))
                 }
