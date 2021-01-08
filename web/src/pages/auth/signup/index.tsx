@@ -263,7 +263,7 @@ const SignupSuccess = (signup: TState) => {
 			</div>
 			<div className="font-bold">
 				<div className="">School Id: {signup.phone}</div>
-				<div className="">Password: {signup.password}</div>
+				<div className="">Password: {signup.schoolPassword}</div>
 			</div>
 			<Link className="btn-blue px-12" to='/school-login'>Sign in Now</Link>
 		</div>
