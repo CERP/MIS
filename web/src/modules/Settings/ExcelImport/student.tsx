@@ -424,7 +424,10 @@ const convertCSVToStudents = (studentImportCSV: string) => {
 				exams: {},
 				tags: {},
 				certificates: {},
-				diagnostic_result: {},
+				targeted_instruction: {
+					diagnostic_result: {},
+					learning_level: {}
+				},
 				learning_levels: {}
 			}
 

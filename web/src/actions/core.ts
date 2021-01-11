@@ -587,9 +587,7 @@ export const loadDB = () => (dispatch: Function, getState: () => RootReducerStat
 					}
 				})
 				.then(res => {
-
-					alert("<hello")
-
+					
 					console.log("VERIFYYYY")
 					syncr.verify()
 

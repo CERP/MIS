@@ -47,7 +47,7 @@ export const getPDF = (selectedSubject: string, selectedSection: string, targete
     return [id, url]
 }
 
-export const getQuestionList = (diagnostic_result: MISStudent["diagnostic_result"], test_id: string) => {
+export const getQuestionList = (diagnostic_result: MISStudent["targeted_instruction"]["diagnostic_result"], test_id: string) => {
     return Object.entries(diagnostic_result)
         .reduce((agg, [id, test]) => {
             if (id === test_id) {

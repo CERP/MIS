@@ -47,7 +47,7 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, students, saveRe
 
     const handleChange = (e: any, questionId: string) => {
         state.questionsArr[questionId].answer = e.target.checked
-        let diagnostic_res = students[stdId].diagnostic_result[testId].questions
+        let diagnostic_res = students[stdId].targeted_instruction.diagnostic_result[testId].questions
         diagnostic_res[questionId].is_correct = e.target.checked
         setState({
             ...state,
