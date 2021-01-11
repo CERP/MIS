@@ -31,7 +31,7 @@ const Grading: React.FC<PropsType> = (props) => {
 
     const { class_name, subject, std_id, section_id, test_id } = props.match.params as Params
 
-    const selectedTest: MISDiagnosticReport = useMemo(() => getQuestionList(props.students[std_id].diagnostic_result, test_id), []);
+    const selectedTest: MISDiagnosticReport = useMemo(() => getQuestionList(props.students[std_id].targeted_instruction.diagnostic_result, test_id), []);
 
     const getUpdatedState = () => {
         const questionList: MISDiagnosticReport['questions'] = Object.entries(selectedTest.questions || {}).reduce((agg, [key, value]) => {
@@ -52,7 +52,7 @@ const Grading: React.FC<PropsType> = (props) => {
 
     const handleChange = (val: any, questionId: string) => {
         state.questionsObj[questionId].is_correct = val
-        let diagnostic_res = props.students[std_id].diagnostic_result[test_id].questions
+        let diagnostic_res = props.students[std_id].targeted_instruction.diagnostic_result[test_id].questions
         diagnostic_res[questionId].is_correct = val
         setState({
             ...state,

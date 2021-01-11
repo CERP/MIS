@@ -61,7 +61,10 @@ const blankStudent = (): MISStudent => ({
 	exams: {},
 	certificates: {},
 	prospective_section_id: "",
-	diagnostic_result: {},
+	targeted_instruction: {
+		diagnostic_result: {},
+		learning_level: {}
+	},
 	learning_levels: {}
 })
 // should be a dropdown of choices. not just teacher or admin.

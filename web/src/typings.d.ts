@@ -326,7 +326,14 @@ interface MISStudent {
 	certificates: {
 		[id: string]: MISCertificate
 	}
-	diagnostic_result: DiagnosticResult
+	targeted_instruction: {
+		diagnostic_result: DiagnosticResult
+		learning_level: { 
+			[subject: string]: { 
+				level: "blue" | "green" | "yellow" | "red"  | "orange"
+			}
+		}
+	}
 	learning_levels: {
 		[learning_level_id: string]: {
 			test_id: string
