@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import cond from 'cond-construct'
 import clsx from 'clsx'
 
 import { AppLayout } from 'components/Layout/appLayout'
@@ -71,26 +70,23 @@ export const SchoolSignup = () => {
 		])
 
 
-		cond([
-			[
-				!!compulsoryFields,
-				() => window.alert('Please fill all required fields')
-			],
-			[
-				!validatePassword(state.schoolPassword),
-				() => window.alert('Password contains at least 4 characters - alphabets(lower and upercase) and number')
-			],
-			[
-				state.schoolPassword !== state.confirm_password,
-				() => window.alert('Password mismatch')
-			],
-			[
-				!validateMobileNumber(state.phone), () => window.alert('Please enter correct mobile number')
-			]
-		])
+		if (compulsoryFields) {
+			return window.alert('Please fill all required fields')
+		}
+
+		if (!validatePassword(state.schoolPassword)) {
+			return window.alert('Password contains at least 4 characters - alphabets(lower and upercase) and number')
+		}
+
+		if (state.schoolPassword !== state.confirm_password) {
+			return window.alert('Password mismatch')
+		}
+
+		if (!validateMobileNumber(state.phone)) {
+			return window.alert('Please enter correct mobile number')
+		}
 
 		// get rid of consfirm_password
-
 		const { confirm_password: _, ...signup } = state
 
 		// dispatch the create Signup action using dispatch hook
