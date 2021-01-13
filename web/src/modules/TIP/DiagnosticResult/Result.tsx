@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { getStudentsBySectionId } from 'utils/TIP'
 import Footer from '../Footer'
-import Groups from '../Groups'
+import Groups from './Groups'
 import Card from '../Card'
 
 interface P {
