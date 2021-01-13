@@ -84,7 +84,7 @@ const Grading: React.FC<PropsType> = (props) => {
             {
                 Object.keys(state.questionsObj).map(function (key, index) {
                     return <div key={key} className={`flex flex-row justify-between items-center border border-solid border-gray-200 px-3 ${index % 2 === 0 ? "bg-gray-100" : "bg-white"} h-12`}>
-                        <div className="text-xs">{state.questionsObj[key].question_text}</div>
+                        <div className="text-xs w-36 truncate">{state.questionsObj[key].question_text}</div>
                         <div className="rounded-xl w-30 h-6 bg-white border border-solid border-gray-100">
                             <button className={!state.questionsObj[key].is_correct ?
                                 "border-none h-full rounded-xl text-xs outline-none text-white bg-incorrect-red" :
