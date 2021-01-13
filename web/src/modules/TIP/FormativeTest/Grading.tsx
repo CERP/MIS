@@ -9,7 +9,7 @@ interface P {
     teacher_name: string
     students: RootDBState["students"]
 
-    saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], selectedSubject: string) => void
+    saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], selectedSubject: string, subject: string, learning_level: string) => void
 }
 
 type PropsType = P & RouteComponentProps
@@ -61,8 +61,41 @@ const Grading: React.FC<PropsType> = (props) => {
         })
     }
 
+    type Levels = {
+        [level: string]: number
+    }
+    const calculateLearniingLevels = (result: MISDiagnosticReport['questions']) => {
+        const total: Levels = {}
+        //@ts-ignore
+        const levels = Object.values(result || {}).reduce((agg, question) => {
+            const val = question.is_correct ? 1 : 0
+            if (agg[question.level]) {
+                total[question.level] = agg[question.level] + 1
+                return {
+                    ...agg,
+                    [question.level]: agg[question.level] + val
+                }
+            }
+            total[question.level] = 1
+            return {
+                ...agg,
+                [question.level]: val,
+
+            }
+        }, {} as Levels)
+        const percentages = Object.entries(levels).reduce((agg, [level, value]) => {
+            return {
+                ...agg,
+                [level]: value / total[level] * 100
+            }
+        }, {} as Levels)
+        const min = Object.keys(percentages).reduce(function (a, b) { return percentages[a] < percentages[b] ? a : b })
+        return min === '1' ? "Blue" : min === "2" ? "Yellow" : min === "3" ? "Green" : "Pink"
+    }
+
     const onSave = () => {
-        state.result && props.saveReport(std_id, state.result, test_id)
+        const group = state.result && calculateLearniingLevels(state.result)
+        state.result && props.saveReport(std_id, state.result, test_id, subject, group)
         props.history.push(`${(props.location.pathname).substring(0, 36)}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades`)
     }
 
@@ -113,5 +146,5 @@ export default connect((state: RootReducerState) => ({
     teacher_name: state.auth.name,
     students: state.db.students,
 }), (dispatch: Function) => ({
-    saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], selectedSubject: string) => dispatch(addReport(stdId, diagnostic_report, selectedSubject)),
+    saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], selectedSubject: string, subject: string, learning_level: string) => dispatch(addReport(stdId, diagnostic_report, selectedSubject, subject, learning_level)),
 }))(withRouter(Grading))
