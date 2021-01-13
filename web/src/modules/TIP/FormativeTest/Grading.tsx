@@ -93,7 +93,7 @@ const Grading: React.FC<PropsType> = (props) => {
             }
             return { ...agg }
         }, {} as Levels)
-        const level = Object.keys(percentages).reduce(function (a, b) {
+        const level = Object.keys(percentages || {}).reduce(function (a, b) {
             if (percentages[a] === 0 && percentages[b] === 0) {
                 return a < b ? a : b
             }
