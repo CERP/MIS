@@ -368,7 +368,8 @@ type MISDiagnosticReport = {
 			question_text: string
 			answer: string
 			is_correct: boolean
-			slo: string[]
+			slo: string[] 
+			level: string
 		}
 	}
 }

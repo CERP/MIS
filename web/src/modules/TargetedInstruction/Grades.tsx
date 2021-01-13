@@ -9,7 +9,7 @@ interface P {
     testType: string
     students: RootDBState["students"]
 
-    saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], testId: string) => void
+    saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], testId: string, subject: string, learning_level: string) => void
 }
 
 interface Question {
@@ -58,7 +58,7 @@ const StudentGrades: React.FC<P> = ({ questions, stdId, testId, students, saveRe
 
     const onSave = () => {
 
-        state.result && saveReport(stdId, state.result, testId)
+        state.result && saveReport(stdId, state.result, testId, "subject", "blue")
         setState({
             ...state,
             banner: {
