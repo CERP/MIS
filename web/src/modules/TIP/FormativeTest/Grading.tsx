@@ -70,7 +70,7 @@ const Grading: React.FC<PropsType> = (props) => {
         const levels = Object.values(result || {}).reduce((agg, question) => {
             const val = question.is_correct ? 1 : 0
             if (agg[question.level]) {
-                total[question.level] = agg[question.level] + 1
+                total[question.level] = total[question.level] + 1
                 return {
                     ...agg,
                     [question.level]: agg[question.level] + val
@@ -91,11 +91,14 @@ const Grading: React.FC<PropsType> = (props) => {
                     [level]: percentage
                 }
             }
-            return {
-                ...agg
-            }
+            return { ...agg }
         }, {} as Levels)
-        const level = Object.keys(percentages).reduce(function (a, b) { return percentages[a] > percentages[b] ? a : b })
+        const level = Object.keys(percentages).reduce(function (a, b) {
+            if (percentages[a] === 0 && percentages[b] === 0) {
+                return a < b ? a : b
+            }
+            return percentages[a] > percentages[b] ? a : b
+        })
         return level === "1" ? "Blue" : level === "2" ? "Yellow" : level === "3" ? "Green" : "Pink"
     }
 
