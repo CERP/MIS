@@ -1,5 +1,5 @@
 export const getSubjectsFromTests = (targeted_instruction: RootReducerState["targeted_instruction"]): string[] => {
-    return Object.values(targeted_instruction.tests).reduce((agg, test) => {
+    const subjects = Object.values(targeted_instruction.tests).reduce((agg, test) => {
         if (test.subject !== '') {
             return [
                 ...agg,
@@ -7,6 +7,7 @@ export const getSubjectsFromTests = (targeted_instruction: RootReducerState["tar
             ]
         }
     }, [])
+    return [...new Set(subjects)]
 }
 
 export const getClassnameFromSectionId = (sortedSections: AugmentedSection[], sectionId: string) => {
