@@ -36,6 +36,13 @@ const InsertGrades: React.FC<PropsType> = (props) => {
                 }
             </div>
         }
+        <div className="w-full my-6 fixed bottom-0">
+            <Link
+                className="w-full no-underline flex justify-center items-center"
+                to={`${(props.location.pathname).substring(0, 36)}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades/test-result`}>
+                <button className="bg-blue-900 h-11 font-bold text-lg border-none rounded text-white p-2 w-6/12">Finish</button>
+            </Link>
+        </div>
     </div>
 }
 
