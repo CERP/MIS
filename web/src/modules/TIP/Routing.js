@@ -8,7 +8,7 @@ import ListView from './DiagnosticResult/ListView'
 import Grading from './FormativeTest/Grading';
 import TrainingVideos from './TrainingVideos'
 import FormativeTest from './FormativeTest';
-import Result from './FormativeTest/Result';
+import Result from './FormativeTest/ResultCards/Result';
 import LessonPlans from './LessonPlans';
 import HomePage from './index' 
 import PDF from './PDF'
