@@ -5,7 +5,8 @@ import { createStore, applyMiddleware } from 'redux'
 import thunkMiddleware from 'redux-thunk'
 import 'core-js/features/object'
 
-import registerServiceWorker from './registerServiceWorker';
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
+
 import reducer from './reducers'
 import Routes from './routes'
 import { saveDb, initState } from './utils/indexedDb'
@@ -48,4 +49,5 @@ store.subscribe(debounce(() => {
 }, 1000))
 
 ReactDOM.render(<Routes store={store} />, document.getElementById('root'));
-registerServiceWorker();
+
+serviceWorkerRegistration.register();
