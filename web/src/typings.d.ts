@@ -331,6 +331,7 @@ interface MISStudent {
 		learning_level: { 
 			[subject: string]: { 
 				level: "blue" | "green" | "yellow" | "red"  | "orange"
+				group: string
 			}
 		}
 	}
@@ -372,6 +373,11 @@ type MISDiagnosticReport = {
 			level: string
 		}
 	}
+}
+
+interface LearningLevel {
+	level: string
+	group: string
 }
 
 interface MISFamilyInfo {

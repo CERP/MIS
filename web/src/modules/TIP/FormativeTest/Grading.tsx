@@ -9,7 +9,7 @@ interface P {
     teacher_name: string
     students: RootDBState["students"]
 
-    saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], selectedSubject: string, subject: string, learning_level: string) => void
+    saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], selectedSubject: string, subject: string, learning_level: LearningLevel) => void
 }
 
 type PropsType = P & RouteComponentProps
@@ -79,8 +79,7 @@ const Grading: React.FC<PropsType> = (props) => {
             total[question.level] = 1
             return {
                 ...agg,
-                [question.level]: val,
-
+                [question.level]: val
             }
         }, {} as Levels)
         const percentages = Object.entries(levels).reduce((agg, [level, value]) => {
@@ -93,13 +92,14 @@ const Grading: React.FC<PropsType> = (props) => {
             }
             return { ...agg }
         }, {} as Levels)
-        const level = Object.keys(percentages || {}).reduce(function (a, b) {
+        const level = Object.keys(percentages).reduce((a, b) => {
             if (percentages[a] === 0 && percentages[b] === 0) {
                 return a < b ? a : b
             }
             return percentages[a] > percentages[b] ? a : b
-        })
-        return level === "1" ? "Blue" : level === "2" ? "Yellow" : level === "3" ? "Green" : "Pink"
+        }, '')
+        const color = level === "1" ? "Blue" : level === "2" ? "Yellow" : level === "3" ? "Green" : "Orange"
+        return { "level": level, "group": color }
     }
 
     const onSave = () => {
@@ -157,5 +157,5 @@ export default connect((state: RootReducerState) => ({
     teacher_name: state.auth.name,
     students: state.db.students,
 }), (dispatch: Function) => ({
-    saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], selectedSubject: string, subject: string, learning_level: string) => dispatch(addReport(stdId, diagnostic_report, selectedSubject, subject, learning_level)),
+    saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], selectedSubject: string, subject: string, learning_level: LearningLevel) => dispatch(addReport(stdId, diagnostic_report, selectedSubject, subject, learning_level)),
 }))(withRouter(Grading))
