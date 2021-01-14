@@ -11,9 +11,10 @@ interface P {
 }
 
 interface DiagnosticRes {
-    group: string
-    level: string
-    student: MISStudent
+    [level: string]: {
+        group: string
+        students: RootDBState["students"]
+    }
 }
 
 type PropsType = P & RouteComponentProps
@@ -23,16 +24,14 @@ const Result: React.FC<PropsType> = (props) => {
     const { section_id, subject } = props.match.params as Params
     const [sub, setSub] = useState(subject)
     const students = useMemo(() => getStudentsBySectionId(section_id, props.students), [section_id])
-    //@ts-ignore
-    const result: DiagnosticRes[] = useMemo(() => calculateResult(students, sub), [sub])
+    const result: DiagnosticRes = useMemo(() => calculateResult(students, sub), [sub])
 
     return <div className="flex flex-wrap content-between">
         <Card class_name="" />
         <div className="pb-16 w-full">
-            {result
-                .sort((a, b) => a.level.localeCompare(b.level))
-                .map((res, index) => {
-                    return <Groups key={index} color={`bg-${(res.group).toLowerCase()}-primary`} level={res.level} students={students} />
+            {Object.entries(result)
+                .map(([key, value]) => {
+                    return <Groups key={key} color={`bg-${(value.group).toLowerCase()}-primary`} level={key} students={value.students} />
                 })
             }
         </div>
@@ -49,15 +48,28 @@ const calculateResult = (students: RootDBState["students"], sub: string) => {
     return Object.entries(students).reduce((agg, [std_id, std_obj]) => {
         const learning_level = std_obj.targeted_instruction.learning_level[sub]
         if (learning_level) {
-            return [
-                ...agg,
-                {
-                    group: learning_level.group,
-                    level: learning_level.level,
-                    students: std_obj
+            if (agg[learning_level.level]) {
+                return {
+                    ...agg,
+                    [learning_level.level]: {
+                        group: learning_level.group,
+                        students: {
+                            ...agg[learning_level.level].students,
+                            [std_id]: std_obj
+                        }
+                    }
                 }
-            ]
+            }
+            return {
+                ...agg,
+                [learning_level.level]: {
+                    group: learning_level.group,
+                    students: {
+                        [std_id]: std_obj
+                    }
+                }
+            }
         }
-        return [...agg]
-    }, [])
+        return { ...agg }
+    }, {} as DiagnosticRes)
 }

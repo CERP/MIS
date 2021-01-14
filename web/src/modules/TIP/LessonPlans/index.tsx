@@ -43,7 +43,7 @@ export default connect((state: RootReducerState) => ({
 
 const getLessonPlans = (curriculum: RootReducerState["targeted_instruction"]["curriculum"]) => {
     const curr = Object.values(curriculum).reduce((agg, currObj) => {
-        debugger
+
         return {
             ...agg
         }
