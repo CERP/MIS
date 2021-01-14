@@ -19,11 +19,13 @@ const Result: React.FC<PropsType> = (props) => {
 
     return <div className="flex flex-wrap content-between">
         <Card class_name="" />
-        <Groups color="bg-orange-primary" level="1" students={students} />
-        <Groups color="bg-blue-primary" level="2" students={students} />
-        <Groups color="bg-red-primary" level="3" students={students} />
-        <Groups color="bg-green-primary" level="4" students={students} />
-        <Groups color="bg-blue-900" level="5" students={students} />
+        <div className="pb-16 w-full">
+            <Groups color="bg-orange-primary" level="1" students={students} />
+            <Groups color="bg-blue-primary" level="2" students={students} />
+            <Groups color="bg-red-primary" level="3" students={students} />
+            <Groups color="bg-green-primary" level="4" students={students} />
+            <Groups color="bg-blue-900" level="5" students={students} />
+        </div>
         <Footer />
     </div>
 }

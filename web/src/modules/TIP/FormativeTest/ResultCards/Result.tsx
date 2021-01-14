@@ -17,7 +17,7 @@ const Result: React.FC<PropsType> = () => {
 
     return <div className="flex flex-wrap content-between">
         <Headings heading="Formative Test Result" sub_heading="" />
-        {type === 'single_std_view' ? <div className="flex flex-row justify-center w-full">
+        {type === 'single_std_view' ? <div className="flex flex-row justify-center w-full" onClick={() => setType('child_view')}>
             <div className="bg-blue-900 h-5 my-3 w-3/4 rounded-3xl py-1 px-3">
                 <img className="h-7 w-8 rounded-full pl-0 absolute left-7 top-11" src="https://cdn.dribbble.com/users/2199928/screenshots/11532918/shot-cropped-1590177932366.png?compress=1&resize=400x300" alt="img" />
                 <div className="text-white flex justify-center">Child View - Humna</div>
@@ -53,19 +53,19 @@ const Result: React.FC<PropsType> = () => {
             </>}
         </div>
         {type === 'skill_view' && <>
-            <SkillView slo="2 digits Multiplication" percentage="70%" />
-            <SkillView slo="2 digits Addition" percentage="30%" />
-            <SkillView slo="2 digits Division" percentage="50%" />
+            <SkillView slo="2 digits Multiplication" percentage={70} />
+            <SkillView slo="2 digits Addition" percentage={50} />
+            <SkillView slo="2 digits Division" percentage={30} />
         </>}
         {type === 'child_view' && <>
-            <ChildView name="Humna" score={4} percentage="70%" setType={setType} />
-            <ChildView name="Rehan" score={4} percentage="50%" setType={setType} />
-            <ChildView name="Ali" score={4} percentage="60%" setType={setType} />
+            <ChildView name="Humna" score={4} percentage={70} setType={setType} />
+            <ChildView name="Rehan" score={4} percentage={50} setType={setType} />
+            <ChildView name="Ali" score={4} percentage={30} setType={setType} />
         </>}
         {type === 'single_std_view' && <>
-            <SingleStdView slo="2 digits Multiplication" score={4} percentage="70%" />
-            <SingleStdView slo="2 digits Addition" score={4} percentage="50%" />
-            <SingleStdView slo="2 digits Division" score={4} percentage="60%" />
+            <SingleStdView slo="2 digits Multiplication" score={4} percentage={70} />
+            <SingleStdView slo="2 digits Addition" score={4} percentage={50} />
+            <SingleStdView slo="2 digits Division" score={4} percentage={30} />
         </>}
         <Footer />
     </div>
