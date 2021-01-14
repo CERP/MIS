@@ -23,7 +23,7 @@ const InsertGrades: React.FC<PropsType> = (props) => {
             </div>
         </div>
         {
-            <div className="m-3 flex flex-wrap w-full h-20 justify-between">
+            <div className="m-3 flex flex-wrap w-full justify-between">
                 {
                     Object.values(students)
                         .sort((a, b) => a.Name.localeCompare(b.Name))
@@ -36,7 +36,7 @@ const InsertGrades: React.FC<PropsType> = (props) => {
                 }
             </div>
         }
-        <div className="w-full my-6 fixed bottom-0">
+        <div className="w-full my-2">
             <Link
                 className="w-full no-underline flex justify-center items-center"
                 to={`${(props.location.pathname).substring(0, 36)}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades/test-result`}>

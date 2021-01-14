@@ -11,8 +11,9 @@ interface P {
 
 type PropsType = P & RouteComponentProps
 
-const Result: React.FC<PropsType> = () => {
-
+const Result: React.FC<PropsType> = (props) => {
+    const { subject } = props.match.params as Params
+    const [sub, setSub] = useState(subject)
     const [type, setType] = useState('skill_view')
 
     return <div className="flex flex-wrap content-between">
@@ -67,7 +68,7 @@ const Result: React.FC<PropsType> = () => {
             <SingleStdView slo="2 digits Addition" score={4} percentage={50} />
             <SingleStdView slo="2 digits Division" score={4} percentage={30} />
         </>}
-        <Footer />
+        <Footer setSub={setSub} />
     </div>
 }
 
