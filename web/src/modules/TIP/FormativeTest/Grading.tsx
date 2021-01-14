@@ -98,7 +98,7 @@ const Grading: React.FC<PropsType> = (props) => {
             }
             return percentages[a] > percentages[b] ? a : b
         }, '')
-        const color = level === "1" ? "Blue" : level === "2" ? "Yellow" : level === "3" ? "Green" : "Orange"
+        const color = level === "1" ? "Blue" : level === "2" ? "red" : level === "3" ? "Green" : "Orange"
         return { "level": level, "group": color }
     }
 
