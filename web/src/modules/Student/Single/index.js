@@ -35,7 +35,7 @@ class StudentPage extends Component {
 								<Link className={`button ${loc === "attendance" ? "purple" : false}`} to="attendance" replace={true}>Attendance</Link>
 								<Link className={`button ${loc === "marks" ? "blue" : false}`} to="marks" replace={true}>Marks</Link>
 								<Link className={`button ${loc === "certificates" ? "yellow" : false}`} to="certificates" replace={true}>Certificates</Link>
-								<Link className={`button ${loc === "grades" ? "grey" : false}`} to="grades" replace={true}>Diagnostic Grades</Link>
+								{ this.props.tp_access && <Link className={`button ${loc === "grades" ? "grey" : false}`} to="grades" replace={true}>Diagnostic Grades</Link>}
 							</>
 						}
 					</div>
@@ -61,5 +61,6 @@ class StudentPage extends Component {
 }
 export default connect(state => ({
 	user: state.db.faculty[state.auth.faculty_id],
+	tp_access: state.db.target_instruction_access,
 	ilmxUser: getIlmxUser()
 }))(StudentPage)
