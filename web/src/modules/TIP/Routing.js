@@ -3,12 +3,10 @@ import { Route, withRouter, Switch } from 'react-router-dom';
 import RemedialGroup from './DiagnosticResult/RemedialGroup';
 import InsertGrades from './FormativeTest/InsertGrades';
 import DiagnosticTestResult from './DiagnosticResult';
-import TestResult from './FormativeTest/TestResult';
-import ListView from './DiagnosticResult/ListView'
 import Grading from './FormativeTest/Grading';
 import TrainingVideos from './TrainingVideos'
 import FormativeTest from './FormativeTest';
-import Result from './FormativeTest/ResultCards/Result';
+import Result from './DiagnosticResult/Result';
 import LessonPlans from './LessonPlans';
 import HomePage from './index' 
 import PDF from './PDF'
@@ -39,9 +37,6 @@ const Routing = props => {
         </Route>
         <Route exact path={`${path}/formative-test`}>
         <FormativeTest />
-        </Route>
-        <Route exact path={`${path}/diagnostic-result/:section_id/:class_name/:subject/remedial-group/list-view`}>
-        <ListView />
         </Route>
         <Route exact path={`${path}/diagnostic-result/:section_id/:class_name/:subject/remedial-group`}>
         <RemedialGroup />
