@@ -58,7 +58,9 @@ interface RootDBState {
 }
 
 interface Curriculum {
-	[learning_level: string]: LearningLevels
+	[learning_level: string]: {
+		[subject: string]: LearningLevels
+	}
 }
 
 interface LearningLevels {
@@ -362,6 +364,13 @@ type DiagnosticResult = {
 	[test_id: string]: MISDiagnosticReport
 }
 
+interface DiagnosticRes {
+    [level: string]: {
+        group: string
+        students: RootDBState["students"]
+    }
+}
+
 type MISDiagnosticReport = {
 	checked?: boolean
 	questions?: {
@@ -500,6 +509,9 @@ interface MISTeacher {
 		expense: boolean
 		family: boolean
 		prospective: boolean
+	}
+	targeted_instruction: {
+		curriculum: Curriculum
 	}
 }
 

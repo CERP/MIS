@@ -23,7 +23,7 @@ const InsertGrades: React.FC<PropsType> = (props) => {
             </div>
         </div>
         {
-            <div className="m-3 flex flex-wrap w-full justify-between">
+            <div className="m-3 flex flex-wrap w-full justify-start">
                 {
                     Object.values(students)
                         .sort((a, b) => a.Name.localeCompare(b.Name))

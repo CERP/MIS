@@ -68,7 +68,7 @@ const Result: React.FC<PropsType> = (props) => {
             <SingleStdView slo="2 digits Addition" score={4} percentage={50} />
             <SingleStdView slo="2 digits Division" score={4} percentage={30} />
         </>}
-        <Footer setSub={setSub} />
+        <Footer type={sub} setSub={setSub} />
     </div>
 }
 
