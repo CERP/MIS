@@ -79,8 +79,8 @@ const FeesTable = (props: TableProps) => {
 	const total = props.total_debts;
 	const payments = props.payments;
 
-	return <div className="section no-print table" style={{ margin: "20px 0", backgroundColor: "#c2bbbb21", overflowX: "scroll" }}>
-		<div className="table row heading">
+	return <div className="section no-print mis-table" style={{ margin: "20px 0", backgroundColor: "#c2bbbb21", overflowX: "scroll" }}>
+		<div className="mis-table row heading">
 			<label style={{ backgroundColor: "#efecec", textAlign: "center" }}> <b> Date     </b></label>
 			<label style={{ backgroundColor: "#bedcff", textAlign: "center" }}> <b> Total    </b> </label>
 			<label style={{ backgroundColor: "#93d0c5", textAlign: "center" }}> <b> Paid     </b> </label>
@@ -93,7 +93,7 @@ const FeesTable = (props: TableProps) => {
 				.map(([month, { OWED, SUBMITTED, FORGIVEN, SCHOLARSHIP }]) => {
 
 					const red = "#fc6171"
-					return <div className="table row" key={month}>
+					return <div className="mis-table row" key={month}>
 						<div style={{ backgroundColor: "#efecec", textAlign: "center" }}>{month}</div>
 						<div style={{ backgroundColor: "#bedcff", textAlign: "center" }}>{numberWithCommas(OWED)}</div>
 						<div style={{ backgroundColor: "#93d0c5", textAlign: "center" }}>{numberWithCommas(SUBMITTED)}</div>
@@ -101,7 +101,7 @@ const FeesTable = (props: TableProps) => {
 						<div style={{ backgroundColor: red, textAlign: "center" }}>{numberWithCommas(OWED - (SUBMITTED + FORGIVEN + SCHOLARSHIP))}</div>
 					</div>
 				}),
-			<div className="table row footing" style={{ borderTop: '1.5px solid #333' }} key={Math.random()}>
+			<div className="mis-table row footing" style={{ borderTop: '1.5px solid #333' }} key={Math.random()}>
 				<br />
 				<label style={{ backgroundColor: "#efecec", textAlign: "center" }}><b>Total</b></label>
 				<label style={{ backgroundColor: "#bedcff", textAlign: "center" }}><b>{numberWithCommas(total.OWED)}</b></label>
@@ -534,13 +534,13 @@ class FeeAnalytics extends Component<propTypes, S> {
 						}
 					</select>
 				</div>
-				<div className="table row">
+				<div className="mis-table row">
 					<label><b>Name</b></label>
 					<label><b>Phone</b></label>
 					<label><b>Amount</b></label>
 				</div>
 				{
-					items.map(({ student, debt, familyId }) => <div className="table row" key={student.id}>
+					items.map(({ student, debt, familyId }) => <div className="mis-table row" key={student.id}>
 						{
 							familyId ? <Link to={`/student/${student.id}/payment`}>{familyId}(F)</Link> :
 								<Link to={`/student/${student.id}/payment`}>{student.Name}</Link>

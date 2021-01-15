@@ -14,7 +14,7 @@ const TeacherItem = (T) =>
 	</Link>
 
 const tableTitle = () =>{
-	return	<div className="table row heading">
+	return	<div className="mis-table row heading">
 					<label><b>Name</b></label>
 		 		</div>
 }

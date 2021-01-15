@@ -78,7 +78,7 @@ const AttendanceChart = ({ attendance, filter, date_format }: ChartData) => {
 
 const AttendanceTable = ({ attendance, totals, date_format }: TableData) => {
 	return <div className="section table line" style={{ margin: "20px 0", backgroundColor: "#c2bbbb21" }}>
-		<div className="table row heading">
+		<div className="mis-table row heading">
 			<label style={{ backgroundColor: "#efecec" }}><b>Date</b></label>
 			<label style={{ backgroundColor: "#93d0c5" }}><b>Present</b></label>
 			<label style={{ backgroundColor: "#fc6171" }}><b>Absent</b></label>
@@ -90,7 +90,7 @@ const AttendanceTable = ({ attendance, totals, date_format }: TableData) => {
 				.sort(([d1], [d2,]) => moment(d1, date_format).diff(moment(d2, date_format)))
 				.map(([month, { PRESENT, LEAVE, ABSENT, CASUAL_LEAVE, SHORT_LEAVE, SICK_LEAVE }]) =>
 
-					<div className="table row" key={month}>
+					<div className="mis-table row" key={month}>
 						<div style={{ backgroundColor: "#efecec" }}>{month}</div>
 						<div style={{ backgroundColor: "#93d0c5" }}>{PRESENT}</div>
 						<div style={{ backgroundColor: "#fc6171" }}>{ABSENT}</div>
@@ -98,7 +98,7 @@ const AttendanceTable = ({ attendance, totals, date_format }: TableData) => {
 						<div style={{ backgroundColor: "#bedcff" }}>{(ABSENT / (ABSENT + PRESENT + LEAVE + CASUAL_LEAVE + SHORT_LEAVE + SICK_LEAVE) * 100).toFixed(2)}%</div>
 					</div>
 				),
-			<div className="table row footing" style={{ borderTop: '1.5px solid #333' }} key={Math.random()}>
+			<div className="mis-table row footing" style={{ borderTop: '1.5px solid #333' }} key={Math.random()}>
 				<label style={{ backgroundColor: "#efecec" }}><b>Total</b></label>
 				<label style={{ backgroundColor: "#93d0c5" }}><b>{totals.PRESENT}</b></label>
 				<label style={{ backgroundColor: "#fc6171" }}><b>{totals.ABSENT}</b></label>
@@ -260,7 +260,7 @@ class AttendanceAnalytics extends Component<propTypes, S> {
 
 		const reducify = () => {
 
-			const interval = Math.floor(students_list.length/10)
+			const interval = Math.floor(students_list.length / 10)
 			if (i % interval === 0) {
 				this.setState({
 					percentage: (i / students_list.length) * 100
@@ -298,7 +298,7 @@ class AttendanceAnalytics extends Component<propTypes, S> {
 
 			for (const [date, record] of Object.entries(student.attendance)) {
 
-				if (!(moment(date).isSameOrAfter(temp_sd,"day") && moment(date).isSameOrBefore(temp_ed,"day"))) {
+				if (!(moment(date).isSameOrAfter(temp_sd, "day") && moment(date).isSameOrBefore(temp_ed, "day"))) {
 					continue
 				}
 
@@ -338,26 +338,26 @@ class AttendanceAnalytics extends Component<propTypes, S> {
 			.sort(([, { ABSENT: a1 }], [, { ABSENT: a2 }]) => a2 - a1)
 
 
-		return this.state.loading ? <ProgressBar percentage={this.state.percentage}/> :<div className = "attendance-analytics">
-				
+		return this.state.loading ? <ProgressBar percentage={this.state.percentage} /> : <div className="attendance-analytics">
+
 			<PrintHeader
 				settings={settings}
 				logo={schoolLogo}
 			/>
 
-		<div className="table row">
-			<label>Total Present</label>
-			<div>{totals.PRESENT}</div>
-		</div>
-			<div className="table row">
+			<div className="mis-table row">
+				<label>Total Present</label>
+				<div>{totals.PRESENT}</div>
+			</div>
+			<div className="mis-table row">
 				<label>Total Absent</label>
 				<div>{totals.ABSENT}</div>
 			</div>
-			<div className="table row">
+			<div className="mis-table row">
 				<label>Total Leave</label>
 				<div>{totals.LEAVE + totals.CASUAL_LEAVE + totals.SHORT_LEAVE + totals.SICK_LEAVE}</div>
 			</div>
-			<div className="table row">
+			<div className="mis-table row">
 				<label>Absentee (%)</label>
 				<div>{(totals.ABSENT / (totals.ABSENT + totals.PRESENT + totals.LEAVE + totals.CASUAL_LEAVE + totals.SHORT_LEAVE + totals.SICK_LEAVE) * 100).toFixed(2)}%</div>
 			</div>
@@ -367,43 +367,43 @@ class AttendanceAnalytics extends Component<propTypes, S> {
 			</div>
 			</div>
 			{
-			this.state.isStudentAttendanceFilter && <div className="no-print section form">
-				<div className="row">
-					<label> Start Date </label>
-					<input type="date"
-						onChange={this.former.handle(["start_date"], () => true, this.onStateChange)}
-						value={moment(this.state.start_date).format("YYYY-MM-DD")}
-						max={moment().format("YYYY-MM-DD")} />
-				</div>
-				<div className="row">
-					<label> End Date </label>
-					<input type="date"
-						onChange={this.former.handle(["end_date"], () => true, this.onStateChange)}
-						value={moment(this.state.end_date).format("YYYY-MM-DD")}
-						max={moment().format("YYYY-MM-DD")} />
-				</div>
+				this.state.isStudentAttendanceFilter && <div className="no-print section form">
+					<div className="row">
+						<label> Start Date </label>
+						<input type="date"
+							onChange={this.former.handle(["start_date"], () => true, this.onStateChange)}
+							value={moment(this.state.start_date).format("YYYY-MM-DD")}
+							max={moment().format("YYYY-MM-DD")} />
+					</div>
+					<div className="row">
+						<label> End Date </label>
+						<input type="date"
+							onChange={this.former.handle(["end_date"], () => true, this.onStateChange)}
+							value={moment(this.state.end_date).format("YYYY-MM-DD")}
+							max={moment().format("YYYY-MM-DD")} />
+					</div>
 
-				<div className="row">
-					<label> Class </label>
-					<select {...this.former.super_handle(["selected_section_id"], () => true, this.onStateChange)}>
-						<option value="">All Classes </option>
-						{
-							sortedSections.map(s => <option key={s.id} value={s.id}>{s.namespaced_name}</option>)
-						}
-					</select>
-				</div>
+					<div className="row">
+						<label> Class </label>
+						<select {...this.former.super_handle(["selected_section_id"], () => true, this.onStateChange)}>
+							<option value="">All Classes </option>
+							{
+								sortedSections.map(s => <option key={s.id} value={s.id}>{s.namespaced_name}</option>)
+							}
+						</select>
+					</div>
 
-				<div className="row">
-					<label> Attendance Period </label>
-					<select {...this.former.super_handle(["selected_period"], () => true, this.onStateChange)}>
-						<option value="Daily">Daily</option>
-						<option value="Monthly" selected>Monthly</option>
-					</select>
-				</div>
-			</div>}
+					<div className="row">
+						<label> Attendance Period </label>
+						<select {...this.former.super_handle(["selected_period"], () => true, this.onStateChange)}>
+							<option value="Daily">Daily</option>
+							<option value="Monthly" selected>Monthly</option>
+						</select>
+					</div>
+				</div>}
 
 
-		<div className="divider">{this.state.selected_period} Attendance</div>
+			<div className="divider">{this.state.selected_period} Attendance</div>
 
 			<div className="no-print">
 				<AttendanceChart
@@ -470,14 +470,14 @@ class AttendanceAnalytics extends Component<propTypes, S> {
 					</select>
 				</div>
 
-				<div className="table row">
+				<div className="mis-table row">
 					<label><b>Name</b></label>
 					<label><b>Phone</b></label>
 					<label><b>Days Absent</b></label>
 				</div>
 				{
 					items
-						.map(([sid, { student, PRESENT, ABSENT, LEAVE }]) => <div className="table row" key={sid}>
+						.map(([sid, { student, PRESENT, ABSENT, LEAVE }]) => <div className="mis-table row" key={sid}>
 							<Link to={`/student/${sid}/attendance`}>{student.Name}</Link>
 							<div>{student.Phone}</div>
 							<div style={ABSENT === 0 ? { color: "#5ecdb9" } : { color: "#fc6171" }}>{ABSENT}</div>

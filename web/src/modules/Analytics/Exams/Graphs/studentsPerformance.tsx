@@ -196,7 +196,7 @@ class StudentsPerformance extends Component<PropsType, S> {
 							placeholder="search"
 						/>
 					</div>
-					<div className="table row">
+					<div className="mis-table row">
 						<label><b>Name</b></label>
 						<label><b>Marks</b></label>
 						<label><b>Percentage</b></label>
@@ -210,7 +210,7 @@ class StudentsPerformance extends Component<PropsType, S> {
 
 								const student = table_data[table_data.length - 1 - i]
 
-								return <div className="table row" key={student.id}>
+								return <div className="mis-table row" key={student.id}>
 									<Link to={`/student/${student.id}/marks`}>{student.name}</Link>
 									<div>{student.marks_obtained}/{student.total_marks}</div>
 									<div>{student.percentage}%</div>

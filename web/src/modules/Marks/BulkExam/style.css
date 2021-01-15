@@ -1,4 +1,3 @@
-
 .bulk-exams .filter-container {
 	width: 100%;
 	margin: 0;
@@ -33,7 +32,8 @@
 	border-collapse: collapse;
 }
 
-.bulk-exams .table-wrapper td, th {
+.bulk-exams .table-wrapper td,
+th {
 	white-space: nowrap;
 	border: 1px solid #ddd;
 	padding: 10px;
@@ -55,8 +55,8 @@
 	z-index: 3;
 }
 
- /* The first column that we want to stick to the left */
- .bulk-exams .score-sheet.table-wrapper tbody tr td:first-of-type {
+/* The first column that we want to stick to the left */
+.bulk-exams .score-sheet.table-wrapper tbody tr td:first-of-type {
 	background-color: #eee;
 	position: sticky;
 	left: -1px;
@@ -74,11 +74,11 @@
 	border: 1px solid #949191;
 	box-shadow: none;
 	display: inline-block;
-	height: 1.0em;
+	height: 1em;
 	justify-content: flex-start;
-	line-height: 1.0;
+	line-height: 1;
 	text-align: center;
-	padding: calc(.5em - 1px);
+	padding: calc(0.5em - 1px);
 }
 
 .bulk-exams .recent-exams {
@@ -108,7 +108,7 @@
 
 @media (max-width: 475px) {
 	.bulk-exams .section-container {
-	   width: 85%; 
+		width: 85%;
 	}
 }
 
@@ -122,12 +122,12 @@
 		width: 50% !important;
 	}
 	.bulk-exams .score-sheet.table-wrapper th:first-of-type {
-			left: unset;
+		left: unset;
 	}
 	.bulk-exams .score-sheet.table-wrapper tbody tr td:first-of-type {
-			position: relative;
-			left: unset;
-			z-index: 0;
+		position: relative;
+		left: unset;
+		z-index: 0;
 	}
 }
 

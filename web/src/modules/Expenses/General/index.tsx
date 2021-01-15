@@ -396,7 +396,7 @@ class Expenses extends Component<propTypes, S> {
 
 			<div className="divider no-print">Expense Information</div>
 
-			<div className="table row no-print">
+			<div className="mis-table row no-print">
 				<label>Total Expense:</label>
 				<div>Rs. {numberWithCommas(total_expense)}</div>
 			</div>
@@ -434,7 +434,7 @@ class Expenses extends Component<propTypes, S> {
 			</div>
 
 			<div className="payment-history no-print section">
-				<div className="table row heading">
+				<div className="mis-table row heading">
 					<label><b> Date   </b></label>
 					<label><b> Label  </b></label>
 					<label><b> Category </b></label>
@@ -446,7 +446,7 @@ class Expenses extends Component<propTypes, S> {
 					filtered_expenses
 						.map(([id, expense]) => {
 							if (expense.expense === "SALARY_EXPENSE") {
-								return <div key={id} className={expense.type === "PAYMENT_DUE" ? "table row no-print" : "table row"}>
+								return <div key={id} className={expense.type === "PAYMENT_DUE" ? "mis-table row no-print" : "mis-table row"}>
 									<label> {moment(expense.date).format("DD-MM-YY")} </label>
 									<label> {expense.label}</label>
 									<label> {toTitleCase(expense.category)}</label>
@@ -459,7 +459,7 @@ class Expenses extends Component<propTypes, S> {
 								</div>
 							}
 							if (expense.expense === "MIS_EXPENSE") {
-								return <div key={id} className="table row">
+								return <div key={id} className="mis-table row">
 									<label> {moment(expense.date).format("DD-MM-YY")} </label>
 									<label> {expense.label}</label>
 									<label> {toTitleCase(expense.category)}</label>
@@ -476,7 +476,7 @@ class Expenses extends Component<propTypes, S> {
 							return null
 						})
 				}
-				<div className="table row last">
+				<div className="mis-table row last">
 					<label><b> Total Paid:</b></label>
 					<div><b>Rs. {numberWithCommas(total_filtered_expense)}</b></div>
 				</div>

@@ -280,7 +280,7 @@ class CreateTeacher extends Component<propTypes, S> {
 	changeTeacherPermissions = () => {
 
 		return <>
-			{<div className="table">
+			{<div className="mis-table">
 				<div className="row">
 					<label> Allow teacher to view Setup Page ? </label>
 					<select {...this.former.super_handle(["permissions", "setupPage"])}>

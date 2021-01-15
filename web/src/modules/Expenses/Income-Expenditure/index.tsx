@@ -127,7 +127,7 @@ class IncomeExpenditure extends Component<propTypes, S> {
 		const collectiveExpense: CollectiveExpense = {}
 
 		let total_income = 0;
-		let total_expense = 0;;
+		let total_expense = 0;
 
 		const { expenses } = this.props
 		const { monthFilter, yearFilter } = this.state
@@ -277,7 +277,7 @@ class IncomeExpenditure extends Component<propTypes, S> {
 			</div>
 
 			<div className="payment-history no-print section">
-				<div className="table row heading">
+				<div className="mis-table row heading">
 					<label><b> Date </b></label>
 					<label><b> Label </b></label>
 					<label><b> Category </b></label>
@@ -288,7 +288,7 @@ class IncomeExpenditure extends Component<propTypes, S> {
 					Object.entries(this.state.collectiveExpense)
 						.sort(([, a], [, b]) => a.date - b.date)
 						.map(([id, expense]) => {
-							return <div key={id} className="table row">
+							return <div key={id} className="mis-table row">
 								<label> {moment(expense.date).format(viewBy === "DAILY" ? "DD-MM-YY" : "MM-YYYY")} </label>
 								<label> {expense.label} </label>
 								<label> {toTitleCase(expense.category)}</label>
@@ -297,15 +297,15 @@ class IncomeExpenditure extends Component<propTypes, S> {
 							</div>
 						})
 				}
-				<div className="table row last">
+				<div className="mis-table row last">
 					<label><b>Income</b></label>
 					<div><b>Rs. {numberWithCommas(total_income)}</b></div>
 				</div>
-				<div className="table row last">
+				<div className="mis-table row last">
 					<label><b>Expense</b></label>
 					<div><b>Rs. {numberWithCommas(total_expense)}</b></div>
 				</div>
-				<div className="table row last">
+				<div className="mis-table row last">
 					<label><b>Profit</b></label>
 					<div><b>Rs. {numberWithCommas(total_income - total_expense)}</b></div>
 				</div>

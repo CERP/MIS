@@ -52,8 +52,8 @@ interface TableProps {
 }
 
 const ExpenseTable: React.SFC<TableProps> = ({ collective_obj, total_income, total_expense, date_format }) => {
-	return <div className="section table">
-		<div className="table row heading">
+	return <div className="section mistable">
+		<div className="mis-table row heading">
 			<label style={{ backgroundColor: "#efecec" }}> <b> Date </b></label>
 			<label style={{ backgroundColor: "#bedcff" }}> <b> Income </b> </label>
 			<label style={{ backgroundColor: "#e0e0e0" }}> <b> Expense </b> </label>
@@ -64,7 +64,7 @@ const ExpenseTable: React.SFC<TableProps> = ({ collective_obj, total_income, tot
 				.sort(([d1,], [d2,]) => moment(d1, date_format).diff(moment(d2, date_format)))
 				.map(([month, { income, expense }]) => {
 
-					return <div className="table row" key={month}>
+					return <div className="mis-table row" key={month}>
 						<div style={{ backgroundColor: "#efecec" }}>{month}</div>
 						<div style={{ backgroundColor: "#bedcff" }}>{numberWithCommas(income)}</div>
 						<div style={{ backgroundColor: "#e0e0e0" }}>{numberWithCommas(expense)}</div>
@@ -73,7 +73,7 @@ const ExpenseTable: React.SFC<TableProps> = ({ collective_obj, total_income, tot
 				})
 			]
 		}
-		<div className="table row footing">
+		<div className="mis-table row footing">
 			<br />
 			<label style={{ backgroundColor: "#efecec" }}><b>Total</b></label>
 			<label style={{ backgroundColor: "#bedcff" }}><b>{numberWithCommas(total_income)}</b></label>

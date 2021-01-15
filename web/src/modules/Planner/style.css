@@ -1,4 +1,3 @@
-
 .planner {
 	width: 100%;
 	display: flex;
@@ -17,10 +16,10 @@
 }
 
 .planner .input {
-	border: none
+	border: none;
 }
 
-.planner .table {
+.planner .mis-table {
 	display: flex;
 	flex-direction: column;
 	width: 90%;
@@ -29,45 +28,45 @@
 	font-size: 1.5rem;
 	margin: 5px auto;
 }
-	.planner .table .row {
-		width: 100%
-	}
+.planner .mis-table .row {
+	width: 100%;
+}
 
-	.planner .row.input input {
-		padding: 0px 10px;
-	}
+.planner .row.input input {
+	padding: 0px 10px;
+}
 
-	.planner .table .row input.item {
-		text-align: center
-	}
+.planner .mis-table .row input.item {
+	text-align: center;
+}
 
-	.planner .table .row .item {
-		text-align: center
-	}
-	
-	.planner .table .row .item {
-		display: flex;
-		justify-content: center;
-		padding: 5px;
-		width: calc(90%/2);
-		border: none
-	}
-	.planner .table .row {
-		border-bottom: 1px solid #bbb;
-	}
-	.planner .table :first-child.row {
-		font-size: 1.2rem
-	}
-	.planner .table :last-child.row {
-		border-bottom: none
-	}
+.planner .mis-table .row .item {
+	text-align: center;
+}
+
+.planner .mis-table .row .item {
+	display: flex;
+	justify-content: center;
+	padding: 5px;
+	width: calc(90% / 2);
+	border: none;
+}
+.planner .mis-table .row {
+	border-bottom: 1px solid #bbb;
+}
+.planner .mis-table :first-child.row {
+	font-size: 1.2rem;
+}
+.planner .mis-table :last-child.row {
+	border-bottom: none;
+}
 
 .planner .button {
-	margin: 5px 0px auto; 
-	width:"90%";
+	margin: 5px 0px auto;
+	width: '90%';
 }
 .planner .section .button.red {
-	margin-right: 5px
+	margin-right: 5px;
 }
 
 .planner .notes {
@@ -75,30 +74,30 @@
 	border-radius: 5px;
 }
 
-	@media print {
-		.planner input.item {
-			display: none
-		}
-		.planner input{
-			border: none
-		}
+@media print {
+	.planner input.item {
+		display: none;
 	}
-
-	::webkit-calendar-picker-indicator {
-		display: none
+	.planner input {
+		border: none;
 	}
+}
 
-@media only screen and  (max-width : 768px) {
-	.planner{
+::webkit-calendar-picker-indicator {
+	display: none;
+}
+
+@media only screen and (max-width: 768px) {
+	.planner {
 		width: 95%;
-		padding: 15px 10px
+		padding: 15px 10px;
 	}
-	.planner .row.input input{
-		width: 80%
+	.planner .row.input input {
+		width: 80%;
 	}
 
 	.planner .row.input.info .row {
 		flex-direction: column;
-		align-items: baseline
+		align-items: baseline;
 	}
 }

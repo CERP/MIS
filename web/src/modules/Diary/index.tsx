@@ -447,7 +447,7 @@ class Diary extends Component<propTypes, S> {
 							{
 								Array.from(subjects)
 									.sort((a, b) => a.localeCompare(b))
-									.map((subject) => <div className="table row" key={subject}>
+									.map((subject) => <div className="mis-table row" key={subject}>
 										<div>{subject}:</div>
 										<input
 											type="text"

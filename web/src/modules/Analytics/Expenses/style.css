@@ -1,17 +1,18 @@
-.expense-analytics .section.table {
+.expense-analytics .section.mis-table {
 	margin: 20px 0;
 	background-color: #c2bbbb21;
-	overflow-x: scroll
+	overflow-x: scroll;
 }
 
-.expense-analytics .section.table .table.row label, .expense-analytics .section.table .table.row div {
+.expense-analytics .section.mis-table .mis-table.row label,
+.expense-analytics .section.mis-table .mis-table.row div {
 	text-align: center;
 }
 
-.expense-analytics .section.table .table.row :first-child {
-	text-align: center
+.expense-analytics .section.mis-table .mis-table.row :first-child {
+	text-align: center;
 }
 
-.expense-analytics .section.table .table.row.footing {
-	border-top: 1.5px solid #333
+.expense-analytics .section.mis-table .mis-table.row.footing {
+	border-top: 1.5px solid #333;
 }

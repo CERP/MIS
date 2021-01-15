@@ -26,7 +26,7 @@ const DiagnosticGrades: React.FC<P> = ({ students, targeted_instruction, match }
     const singleStd = useMemo(() => getSingleStdData(singleStdReport), [stdId, selectedSubject]);
 
     return <div className="section form">
-        <div className="table">
+        <div className="mis-table">
             <div className="row">
                 <label className="no-print">Subject</label>
                 <select className="no-print" onChange={(e) => setSelectedSubject(e.target.value)}>

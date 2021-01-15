@@ -506,12 +506,12 @@ class StudentFees extends Component<propTypes, S> {
 			{this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
 			<PrintHeader settings={this.props.settings} logo={this.props.schoolLogo} />
 			<div className="divider">Payments Information</div>
-			<div className="table row">
+			<div className="mis-table row">
 				<label>Total Monthly Fees:</label>
 				<div>Rs. {Object.values(this.getFees()).reduce((agg, curr) => curr.type === "FEE" && curr.period === "MONTHLY" ? agg + parseFloat(curr.amount) : agg, 0)}</div>
 			</div>
 
-			<div className="table row">
+			<div className="mis-table row">
 				<label>Total One-Time Fees:</label>
 				<div>Rs. {
 					Object.values(this.getFees())
@@ -543,7 +543,7 @@ class StudentFees extends Component<propTypes, S> {
 			</div>
 
 			<div className="payment-history section">
-				<div className="table row heading">
+				<div className="mis-table row heading">
 					<label><b>Date</b></label>
 					<label><b>Label</b></label>
 					<label><b>Amount</b></label>
@@ -551,7 +551,7 @@ class StudentFees extends Component<propTypes, S> {
 				{filteredPayments
 					.map(([id, payment]) => {
 						return <div className="payment" key={id}>
-							<div className="table row">
+							<div className="mis-table row">
 								<div>{moment(payment.date).format("DD/MM")}</div>
 								<div>{getFeeLabel(payment)}</div>
 
@@ -575,12 +575,12 @@ class StudentFees extends Component<propTypes, S> {
 					})
 				}
 				{
-					this.state.month !== "" && <div className={`table row last ${this.getOwedAmountStyle(filtered_owed)}`}>
+					this.state.month !== "" && <div className={`mis-table row last ${this.getOwedAmountStyle(filtered_owed)}`}>
 						<label>{filtered_owed <= 0 ? "Current Month Advance:" : "Current Month Pending:"}</label>
 						<div>Rs. {numberWithCommas(Math.abs(filtered_owed))}</div>
 					</div>
 				}
-				<div className={`table row last ${this.getOwedAmountStyle(total_owed)}`}>
+				<div className={`mis-table row last ${this.getOwedAmountStyle(total_owed)}`}>
 					<label>{total_owed <= 0 ? "Total Advance:" : "Total Pending:"}</label>
 					<div>Rs. {numberWithCommas(Math.abs(total_owed))}</div>
 				</div>
@@ -621,7 +621,7 @@ class StudentFees extends Component<propTypes, S> {
 							</div>
 						</>
 					}
-					<div className="table row">
+					<div className="mis-table row">
 						<label>Send SMS</label>
 						<select {...this.Former.super_handle(["payment", "sendSMS"])}>
 							<option value={"false"}>No SMS Notification</option>
