@@ -12,7 +12,7 @@ const Home: React.FC<PropsType> = (props) => {
 
     return <div className="flex flex-wrap content-between bg-white">
         <Card {...props} class_name='' />
-        <Headings heading="Welcome to TIP" sub_heading="What would you like to do today ?" {...props} />
+        <Headings heading="Welcome to TIP" sub_heading="What would you like to do today ?" />
         {/* <Link className="container sm:px-8 bg-white rounded-2xl m-3 h-44 flex flex-col content-center items-center shadow-lg no-underline"
             to={'/targeted-instruction/formative-test'}>
             <img className="h-24 py-4 pr-4 w-28" src={Formative} alt="img" />

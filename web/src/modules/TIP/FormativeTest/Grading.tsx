@@ -37,7 +37,7 @@ const Grading: React.FC<PropsType> = (props) => {
         const questionList: MISDiagnosticReport['questions'] = Object.entries(selectedTest.questions || {}).reduce((agg, [key, value]) => {
             return {
                 [key]: {
-                    "question_text": value.question_text,
+                    "question_text": value.question_text.replace(/\$/g, ','),
                     "is_correct": value.is_correct,
                     "slo": value.slo
                 },
