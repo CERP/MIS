@@ -80,28 +80,28 @@ export const Landing = () => {
 
 					<div className="flex flex-row flex-wrap items-center  justify-center px-20 space-y-4 md:space-x-16 md:space-y-0 mt-10">
 						<div className="flex flex-col items-center space-y-2">
-							<img className="w-24 h-24 m-8 shadow-md rounded-full" src={iconGlobe} alt="city" />
+							<img className="w-24 h-24 md:w-28 md:h-28 m-8 shadow-md rounded-full" src={iconGlobe} alt="city" />
 							<div className="text-2xl font-bold">50+</div>
 							<div className="text-gray-600">Cities</div>
 						</div>
 						<div className="flex flex-col items-center space-y-2">
-							<img className="w-24 h-24 m-8 shadow-md rounded-full" src={iconSchool} alt="school" />
+							<img className="w-24 h-24 md:w-28 md:h-28 m-8 shadow-md rounded-full" src={iconSchool} alt="school" />
 							<div className="text-2xl font-bold">120+</div>
 							<div className="text-gray-600">Schools</div>
 						</div>
 						<div className="flex flex-col items-center space-y-2">
-							<img className="w-24 h-24 m-8 shadow-md rounded-full" src={iconTeacher} alt="teacher" />
+							<img className="w-24 h-24 md:w-28 md:h-28 m-8 shadow-md rounded-full" src={iconTeacher} alt="teacher" />
 							<div className="text-2xl font-bold">3500+</div>
 							<div className="text-gray-600">Teachers</div>
 						</div>
 						<div className="flex flex-col items-center space-y-2">
-							<img className="w-24 h-24 m-8 shadow-md rounded-full" src={iconGraduationCap} alt="student" />
+							<img className="w-24 h-24 md:w-28 md:h-28 m-8 shadow-md rounded-full" src={iconGraduationCap} alt="student" />
 							<div className="text-2xl font-bold">120,000+</div>
 							<div className="text-gray-600">Students</div>
 						</div>
 						<div className="flex flex-col items-center space-y-2">
-							<div className="h-24 w-24 rounded-full m-8 bg-orange-brand shadow-md">
-								<img className="w-16 h-16 m-4" src={iconParent} alt="parent" />
+							<div className="w-24 h-24 md:w-28 md:h-28 rounded-full m-8 bg-orange-brand shadow-md">
+								<img className="w-16 h-16 m-4 md:m-6" src={iconParent} alt="parent" />
 							</div>
 							<div className="text-2xl font-bold">50,000+</div>
 							<div className="text-gray-600">Parents</div>
