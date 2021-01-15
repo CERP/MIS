@@ -74,3 +74,33 @@ export const getSloList = (targeted_instruction: RootReducerState["targeted_inst
         }
     }, {})
 }
+
+export const calculateResult = (students: RootDBState["students"], sub: string) => {
+    return Object.entries(students).reduce((agg, [std_id, std_obj]) => {
+        const learning_level = std_obj.targeted_instruction.learning_level[sub]
+        if (learning_level) {
+            if (agg[learning_level.level]) {
+                return {
+                    ...agg,
+                    [learning_level.level]: {
+                        group: learning_level.group,
+                        students: {
+                            ...agg[learning_level.level].students,
+                            [std_id]: std_obj
+                        }
+                    }
+                }
+            }
+            return {
+                ...agg,
+                [learning_level.level]: {
+                    group: learning_level.group,
+                    students: {
+                        [std_id]: std_obj
+                    }
+                }
+            }
+        }
+        return { ...agg }
+    }, {} as DiagnosticRes)
+}

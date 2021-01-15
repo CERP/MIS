@@ -14,7 +14,7 @@ const Groups: React.FC<P> = ({ students, color, level }) => {
             <div>{level}</div>
         </div>
         {
-            <div className="flex flex-wrap w-full justify-between mb-3">
+            <div className="flex flex-wrap w-full justify-start mb-3">
                 {
                     Object.values(students)
                         .sort((a, b) => a.Name.localeCompare(b.Name))
