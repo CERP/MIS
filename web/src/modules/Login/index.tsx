@@ -166,7 +166,7 @@ class Login extends Component<PropsType, S> {
 		}
 
 		if (this.props.num_users === 0) {
-			return <Redirect to="/faculty/first" />
+			return <Redirect to="/school/setup" />
 		}
 
 		return <Layout history={this.props.history}>

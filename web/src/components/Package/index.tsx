@@ -18,7 +18,7 @@ export const Package = () => {
 			<div className="mt-10">
 				<div className="flex flex-col items-center justify-center space-y-2">
 					<div className="text-lg">Or want to try before you buy?</div>
-					<Link to="/signup?package=FREE_TRIAL" className="btn-blue px-8 py-3">Signup up for 15 days Free Trial</Link>
+					<Link to="/signup?package=FREE_TRIAL" className="tw-btn-blue px-8 py-3">Signup up for 15 days Free Trial</Link>
 				</div>
 			</div>
 		</div>

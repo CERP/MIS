@@ -118,7 +118,7 @@ export const SchoolLogin = () => {
 								autoCorrect="off"
 								autoComplete="off"
 								placeholder="Enter school id"
-								className="input" />
+								className="tw-input" />
 
 							<div className="my-2">Password</div>
 							<div className="relative">
@@ -131,7 +131,7 @@ export const SchoolLogin = () => {
 									autoCorrect="off"
 									autoComplete="off"
 									placeholder="Enter password"
-									className="input w-full" />
+									className="tw-input w-full" />
 								<div
 									onClick={() => setState({ ...state, openEye: !state.openEye })}
 									className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
@@ -142,7 +142,7 @@ export const SchoolLogin = () => {
 							</div>
 							<div className="text-xs h-1 pt-2 text-red-brand">{hasError}</div>
 							<div className="mt-6 text-center">
-								<button className="inline-flex items-center w-full btn-blue px-5 md:px-8 py-3 mb-2">
+								<button className="inline-flex items-center w-full tw-btn-blue px-5 md:px-8 py-3 mb-2">
 									{auth.loading ?
 										<>
 											<Spinner className={"animate-spin h-5 w-5"} />

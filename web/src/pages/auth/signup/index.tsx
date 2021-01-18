@@ -131,7 +131,7 @@ export const SchoolSignup = () => {
 												autoCapitalize="off"
 												autoComplete="off"
 												placeholder="e.g. Karim"
-												className="w-full md:w-11/12 input" />
+												className="w-full md:w-11/12 tw-input" />
 										</div>
 										<div>
 											<div>School Name</div>
@@ -142,7 +142,7 @@ export const SchoolSignup = () => {
 												autoCapitalize="off"
 												autoComplete="off"
 												placeholder="e.g. National School"
-												className="w-full md:w-11/12 input" />
+												className="w-full md:w-11/12 tw-input" />
 										</div>
 										<div>
 											<div>Mobile Number (School Id)</div>
@@ -155,7 +155,7 @@ export const SchoolSignup = () => {
 												autoComplete="off"
 												pattern=""
 												placeholder="e.g. 0300xxxxxxx"
-												className="w-full md:w-11/12 input" />
+												className="w-full md:w-11/12 tw-input" />
 										</div>
 										<div>
 											<div>Password</div>
@@ -169,7 +169,7 @@ export const SchoolSignup = () => {
 													required
 													type={togglePassword ? 'text' : 'password'}
 													placeholder="Enter password"
-													className="w-full md:w-11/12 input" />
+													className="w-full md:w-11/12 tw-input" />
 												<div
 													onClick={() => setTogglePassword(!togglePassword)}
 													className="absolute inset-y-0 right-0 md:right-8 pr-3 flex items-center cursor-pointer">
@@ -186,7 +186,7 @@ export const SchoolSignup = () => {
 												required
 												onChange={onInputChange}
 												placeholder="Enter school id"
-												className="w-full md:w-11/12 select">
+												className="w-full md:w-11/12 tw-select">
 												<option value="">Choose from list</option>
 												{
 													getDistricts().sort().map(d => (<option key={d} value={d}>{toTitleCase(d)}</option>))
@@ -205,7 +205,7 @@ export const SchoolSignup = () => {
 													required
 													type={toggleConfirmPassword ? 'text' : 'password'}
 													placeholder="Enter confirm password"
-													className="w-full md:w-11/12 input" />
+													className="w-full md:w-11/12 tw-input" />
 												<div
 													onClick={() => setToggleConfirmedPassword(!toggleConfirmPassword)}
 													className="absolute inset-y-0 right-0 md:right-8 pr-3 flex items-center cursor-pointer">
@@ -221,7 +221,7 @@ export const SchoolSignup = () => {
 											form="signup"
 											type="submit"
 											disabled={loading || !connected}
-											className={clsx("inline-flex items-center w-full btn-blue px-3 py-3", { 'pointer-events-none': loading || !connected })}>
+											className={clsx("inline-flex items-center w-full tw-btn-blue px-3 py-3", { 'pointer-events-none': loading || !connected })}>
 											{
 												loading ?
 													<>
@@ -261,7 +261,7 @@ const SignupSuccess = (signup: TState) => {
 				<div className="">School Id: {signup.phone}</div>
 				<div className="">Password: {signup.schoolPassword}</div>
 			</div>
-			<Link className="btn-blue px-12" to='/school-login'>Sign in Now</Link>
+			<Link className="tw-btn-blue px-12" to='/school-login'>Sign in Now</Link>
 		</div>
 	)
 }

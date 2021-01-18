@@ -56,7 +56,7 @@ const Login: React.FC<TProps> = ({ auth, initialized, users, school, connected, 
 	}
 
 	if (totalUsers === 0) {
-		return <Redirect to="/faculty/first" />
+		return <Redirect to="/school/setup" />
 	}
 
 	const filteredUsers = Object.entries(users)
@@ -94,7 +94,7 @@ const Login: React.FC<TProps> = ({ auth, initialized, users, school, connected, 
 							<button
 								disabled={!connected}
 								onClick={() => switchSchoolHandler()}
-								className="w-7/12 btn-red">Switch School</button>
+								className="w-7/12 tw-btn-red">Switch School</button>
 						</div>
 					</div>
 					<div className="w-2/3 h-96 border border-l-0 rounded-md bg-gray-700 shadow-md">
@@ -224,7 +224,7 @@ const LoginForm: React.FC<TLoginForm> = ({ user, auth }) => {
 						autoCorrect="off"
 						autoComplete="off"
 						placeholder="Enter password"
-						className="input w-full" />
+						className="tw-input w-full" />
 					<div
 						onClick={() => setOpenEye(!openEye)}
 						className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
@@ -233,7 +233,7 @@ const LoginForm: React.FC<TLoginForm> = ({ user, auth }) => {
 						}
 					</div>
 				</div>
-				<button className={`inline-flex w-full items-center btn-blue py-3 ${isSubmitted ? 'pointer-events-none' : ''}`} disabled={isSubmitted}>
+				<button className={`inline-flex w-full items-center tw-btn-blue py-3 ${isSubmitted ? 'pointer-events-none' : ''}`} disabled={isSubmitted}>
 					{isSubmitted ?
 						<>
 							<Spinner className={"animate-spin h-5 w-5"} />

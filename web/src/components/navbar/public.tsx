@@ -13,7 +13,7 @@ export const NavbarPublic = () => {
 							<div className="flex flex-row items-center justify-between p-4">
 
 								<Link to="/">
-									<img className="image h-10 w-10" src="favicon.ico" alt="brand-logo" />
+									<img className="image h-10 w-10" src="/favicon.ico" alt="brand-logo" />
 								</Link>
 								<Menu.Button className="rounded-lg md:hidden focus:outline-none focus:shadow-outline">
 									<svg fill="currentColor" viewBox="0 0 20 20" className="w-6 h-6">
