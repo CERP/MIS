@@ -2,7 +2,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom'
-import { getQuestionList } from 'utils/TIP'
+import { getQuestionList, calculateLearningLevel } from 'utils/TIP'
 import { addReport } from 'actions'
 
 interface P {
@@ -59,47 +59,6 @@ const Grading: React.FC<PropsType> = (props) => {
             questionsObj: state.questionsObj,
             result: diagnostic_res
         })
-    }
-
-    type Levels = {
-        [level: string]: number
-    }
-
-    const calculateLearningLevel = (result: MISDiagnosticReport['questions']) => {
-        const total: Levels = {}
-        const levels = Object.values(result || {}).reduce((agg, question) => {
-            const val = question.is_correct ? 1 : 0
-            if (agg[question.level]) {
-                total[question.level] = total[question.level] + 1
-                return {
-                    ...agg,
-                    [question.level]: agg[question.level] + val
-                }
-            }
-            total[question.level] = 1
-            return {
-                ...agg,
-                [question.level]: val
-            }
-        }, {} as Levels)
-        const percentages = Object.entries(levels).reduce((agg, [level, value]) => {
-            const percentage = value / total[level] * 100
-            if (percentage < 80) {
-                return {
-                    ...agg,
-                    [level]: percentage
-                }
-            }
-            return { ...agg }
-        }, {} as Levels)
-        const level = Object.keys(percentages).reduce((a, b) => {
-            if (percentages[a] === 0 && percentages[b] === 0) {
-                return a < b ? a : b
-            }
-            return percentages[a] > percentages[b] ? a : b
-        }, '')
-        const color = level === "1" ? "Blue" : level === "2" ? "red" : level === "3" ? "Green" : "Orange"
-        return { "level": level, "group": color }
     }
 
     const onSave = () => {

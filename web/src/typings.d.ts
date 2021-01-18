@@ -384,6 +384,9 @@ type MISDiagnosticReport = {
 	}
 }
 
+type Levels = {
+	[level: string]: number
+}
 interface LearningLevel {
 	level: string
 	group: string

@@ -21,7 +21,7 @@ const Classes: React.FC<P> = ({ setSectionId, sortedSections }) => {
                                 index === 3 ? "bg-blue-900" :
                                     "bg-red-primary"}`}>{(classObj.namespaced_name).substring(6)}
                 </div>
-                <div className="text-blue-900 text-lg font-thin">Level</div>
+                <div className="text-blue-900 text-lg font-thin">Class</div>
             </div>
             ))
         }
