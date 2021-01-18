@@ -104,3 +104,43 @@ export const calculateResult = (students: RootDBState["students"], sub: string) 
         return { ...agg }
     }, {} as DiagnosticRes)
 }
+
+export const calculateLearningLevel = (result: MISDiagnosticReport['questions']) => {
+    const total: Levels = {}
+    const levels = Object.values(result || {}).reduce((agg, question) => {
+        debugger
+        const val = question.is_correct ? 1 : 0
+        if (agg[question.level]) {
+            total[question.level] = total[question.level] + 1
+            return {
+                ...agg,
+                [question.level]: agg[question.level] + val
+            }
+        }
+        total[question.level] = 1
+        return {
+            ...agg,
+            [question.level]: val
+        }
+    }, {} as Levels)
+    const percentages = Object.entries(levels).reduce((agg, [level, value]) => {
+        const percentage = value / total[level] * 100
+        if (percentage < 80) {
+            return {
+                ...agg,
+                [level]: percentage
+            }
+        }
+        return { ...agg }
+    }, {} as Levels)
+    debugger
+    const level = Object.keys(percentages).reduce((a, b) => {
+        if (percentages[a] === 0 && percentages[b] === 0) {
+            return a < b ? a : b
+        }
+        return percentages[a] > percentages[b] ? a : b
+    }, '')
+    debugger
+    const color = level === "1" ? "blue" : level === "2" ? "red" : level === "3" ? "green" : "orange"
+    return { "level": level, "group": color }
+}
