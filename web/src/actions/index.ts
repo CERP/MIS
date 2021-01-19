@@ -562,6 +562,19 @@ export const addReport = (student_id: string, diagnostic_report: MISDiagnosticRe
 	]))
 }
 
+export const lessonPlanTaken = (learning_level_id: string, subject: string, lesson_number: string) => (dispatch: Function) => {
+	dispatch(createMerges([
+		{
+			path: ["targeted_instruction", "curriculum", learning_level_id, subject, lesson_number, "taken"],
+			value: true
+		},
+		// {
+		// 	path: ["db", "targeted_instruction", "curriculum", learning_level_id, subject, lesson_number, "taken"],
+		// 	value: true
+		// },
+	]))
+}
+
 type PaymentAddItem = {
 	student: MISStudent
 	payment_id: string

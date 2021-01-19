@@ -10,6 +10,7 @@ import Result from './DiagnosticResult/Result';
 import LessonPlans from './LessonPlans';
 import HomePage from './index' 
 import PDF from './PDF'
+import List from './LessonPlans/List'
 
 const Routing = props => {
 
@@ -44,8 +45,11 @@ const Routing = props => {
         <Route exact path={`${path}/diagnostic-result`}>
         <DiagnosticTestResult />
         </Route>
-        <Route exact path={`${path}/lesson-plans/:section_id/:class_name/:subject/pdf`}>
+        <Route exact path={`${path}/lesson-plans/:class_name/:subject/:lesson_number/list/pdf`}>
         <PDF />
+        </Route>
+        <Route exact path={`${path}/lesson-plans/:class_name/:subject/list`}>
+        <List />
         </Route>
         <Route exact path={`${path}/lesson-plans`}>
         <LessonPlans />

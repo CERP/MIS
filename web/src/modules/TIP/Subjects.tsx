@@ -23,7 +23,9 @@ const Subjects: React.FC<PropsType> = ({ location, targeted_instruction, class_n
             <Link key={sub} className="container w-full sm:px-8 bg-white rounded-lg m-3 h-36 flex items-center justify-start flex-col shadow-lg no-underline"
                 to={previousComponent === 'diagnostic-result' ?
                     `${pathname}/${section_id}/${class_name}/${sub}/remedial-group` :
-                    `${pathname}/${section_id}/${class_name}/${sub}/pdf`}>
+                    previousComponent === "lesson-plans" ?
+                        `${pathname}/${class_name}/${sub}/list` :
+                        `${pathname}/${section_id}/${class_name}/${sub}/pdf`}>
                 <img className="flex items-center justify-center h-20 p-2" src={sub === 'English' ? English : sub === 'Urdu' ? Urdu : Maths} />
                 <div className="text-blue-900 font-thin text-3xl">{sub}</div>
             </Link>
