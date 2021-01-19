@@ -64,13 +64,15 @@ interface Curriculum {
 }
 
 interface LearningLevels {
-	[lesson_id: string]: {
+	[lesson_id: number]: {
 		lesson_number: number
-		name: string
+		lesson_title: string
 		subject: string
-		description: string
-		video_links: string[]
-		pdf_links: string
+		lesson_duration: string
+		material_links: string[]
+		activity_links: string[]
+		teaching_manual_link: string
+		taken: boolean
 	}
 }
 
@@ -110,6 +112,7 @@ interface Params {
 	section_id: string
 	std_id: string
 	test_id: string
+	lesson_number: string
 }
 
 interface Columns {
