@@ -17,7 +17,12 @@ const Card: React.FC<P> = ({ class_name, teacher_name, school_name }) => {
                     <div className="text-white text-lg">{teacher_name}</div>
                     <div className="text-white text-base">{school_name}</div>
                 </div>
-                {class_name && <div className="text-white font-bold flex items-center justify-center m-5 bg-orange-primary rounded-full h-10 w-10">{(class_name).substring(6)}</div>}
+                {class_name && <div className={`text-white font-bold flex items-center justify-center m-5 rounded-full h-10 w-10 shadow-lg 
+                ${class_name === '1' ? "bg-blue-primary" :
+                        class_name === '2' ? "bg-orange-primary" :
+                            class_name === '3' ? "bg-green-primary" :
+                                "bg-yellow-600"}`}>{class_name}
+                </div>}
             </div>
         </div>
     </div>

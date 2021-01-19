@@ -10,6 +10,22 @@ export const getSubjectsFromTests = (targeted_instruction: RootReducerState["tar
     return [...new Set(subjects)]
 }
 
+export const getGradesFromTests = (targeted_instruction: RootReducerState["targeted_instruction"]): string[] => {
+    const grades = Object.values(targeted_instruction.tests || {}).reduce((agg, test) => {
+        if (test.questions !== null) {
+            return [
+                ...agg,
+                Object.values(test.questions || {}).reduce((agg2, question) => {
+                    return [...agg2, question.grade]
+                }, [])
+            ]
+        }
+        return [...agg]
+    }, [])
+    //@ts-ignore
+    return [...new Set(grades[0])]
+}
+
 export const getClassnameFromSectionId = (sortedSections: AugmentedSection[], sectionId: string) => {
     return sortedSections.reduce((agg: string, section: AugmentedSection) => {
         if (section.id === sectionId) {
@@ -108,7 +124,6 @@ export const calculateResult = (students: RootDBState["students"], sub: string) 
 export const calculateLearningLevel = (result: MISDiagnosticReport['questions']) => {
     const total: Levels = {}
     const levels = Object.values(result || {}).reduce((agg, question) => {
-        debugger
         const val = question.is_correct ? 1 : 0
         if (agg[question.level]) {
             total[question.level] = total[question.level] + 1
@@ -133,14 +148,12 @@ export const calculateLearningLevel = (result: MISDiagnosticReport['questions'])
         }
         return { ...agg }
     }, {} as Levels)
-    debugger
     const level = Object.keys(percentages).reduce((a, b) => {
         if (percentages[a] === 0 && percentages[b] === 0) {
             return a < b ? a : b
         }
         return percentages[a] > percentages[b] ? a : b
     }, '')
-    debugger
     const color = level === "1" ? "blue" : level === "2" ? "red" : level === "3" ? "green" : "orange"
     return { "level": level, "group": color }
 }
