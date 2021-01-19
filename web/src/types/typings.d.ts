@@ -55,6 +55,10 @@ interface RootDBState {
 		}
 	}
 	target_instruction_access?: boolean
+	onboarding: MISOnboarding
+}
+interface MISOnboarding {
+	stage: "CREATE_ADMIN" | "CREATE_TEACHER" | "CREATE_CLASS" | "ADD_STUDENTS" | "COMPLETED"
 }
 
 interface Curriculum {
@@ -636,7 +640,7 @@ type SchoolSignup = {
 	schoolPassword: string
 	confirm_password?: string
 	schoolName: string
-	
+
 	packageName: "FREE_TRIAL" | "TALEEM1" | "TALEEM2" | "TALEEM3"
 
 	typeOfLogin?: string

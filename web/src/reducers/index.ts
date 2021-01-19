@@ -477,11 +477,23 @@ const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerSta
 				}
 			}
 		case ActionTypes.SWITCH_SCHOOL:
-			
+
 			return {
 				...initState,
 				initialized: state.initialized,
 				connected: state.connected
+			}
+
+		case ActionTypes.UPDATE_ONBOARDING_STAGE:
+			return {
+				...state,
+				db: {
+					...state.db,
+					onboarding: {
+						...state.db.onboarding,
+						stage: action.data as MISOnboarding["stage"]
+					}
+				}
 			}
 
 		default:
