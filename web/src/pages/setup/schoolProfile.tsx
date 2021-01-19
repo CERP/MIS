@@ -18,20 +18,21 @@ export const SchoolProfile = () => {
 	return (
 		<AppLayout title={'Setup School'}>
 			<div className="p-5 pb-0 md:p-10 md:pb-0 text-gray-700">
+				<div className="text-2xl text-center font-bold mt-4 mb-8">{false ? "Create Admin Account" : "Build School Profile"}</div>
+
 				{
-					true ?
+					false ?
 						<>
-							<div className="text-2xl text-center font-bold">Create Admin Account</div>
 							<AdminCreateForm />
 						</>
 						:
 						<>
-							<div className="text-xl md:text-2xl text-center font-bold">Build School Profile</div>
+							<div className="text-xl md:text-2xl text-center font-bold"></div>
 							<div className="md:w-3/4 mx-auto flex flex-col md:flex-row items-center mt-10 md:t-20">
-								<div className="w-3/5 md:w-2/5 md:h-60 border border-r-0 rounded-xl sm:rounded-bl-none sm:rounded-br-none md:rounded-tr-none md:rounded-br-none shadow-md">
+								<div className="bg-white border h-48 md:h-72 md:w-2/5 rounded-2xl  shadow-md w-11/12  rounded-b-none border-b-0 md:rounded-bl-2xl md:rounded-r-none md:border-r-0">
 									<div className="flex flex-col items-center p-4 md:p-10 space-y-2">
-										<div className="text-center">
-											<div className={clsx("w-16 h-16 border border-gray-300 flex md:h-20 items-center justify-center p-1 rounded-full md:w-20", { "bg-blue-brand": !assets?.schoolLogo })}>
+										<div className="text-center my-2">
+											<div className={clsx("flex h-20 items-center justify-center p-1 rounded-full w-20", { "bg-blue-brand": !assets?.schoolLogo })}>
 												{
 													assets?.schoolLogo ?
 														<img className="rounded-full" src={assets?.schoolLogo || '/favicon.ico'} alt="school-logo" />
@@ -44,11 +45,11 @@ export const SchoolProfile = () => {
 										<div className="font-semibold text-lg text-center">Welcome to {toTitleCase(settings?.schoolName)}</div>
 									</div>
 								</div>
-								<div className="w-4/5 md:w-2/3 h-60 md:h-96 border md:border-l-0 rounded-xl md:rounded-md bg-gray-700 shadow-md">
+								<div className="bg-gray-700 border h-72 md:border-l-0 md:h-96 md:w-2/3 rounded-2xl shadow-md w-full">
 									<div className="p-4 md:p-10">
 										<div className="text-white text-center text-sm md:text-base">Please Create your Admin profile</div>
-										<div className="flex flex-col items-center justify-center p-6 md:p-16">
-											<div className={"border border-gray-300 flex h-20 items-center justify-center p-1 rounded-full w-20 bg-blue-brand"}>
+										<div className="flex flex-col items-center justify-center p-6 md:p-16 mt-10">
+											<div className={"flex h-20 items-center justify-center p-1 rounded-full w-20 bg-blue-brand"}>
 												<div className="text-white text-2xl">+</div>
 											</div>
 											<div className="text-sm text-white mt-4">Add Profile</div>
