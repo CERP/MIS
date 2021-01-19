@@ -1,6 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
-import { getClassnameFromSectionId } from 'utils/TIP'
+import React, { useState } from 'react';
+import { getGradesFromTests } from 'utils/TIP'
 import { connect } from 'react-redux'
 import Headings from '../Headings'
 import Classes from '../Classes'
@@ -9,43 +8,29 @@ import Subjects from '../Subjects'
 
 interface P {
     classes: RootDBState["classes"]
-    curriculum: RootReducerState["targeted_instruction"]["curriculum"]
+    targeted_instruction: RootReducerState["targeted_instruction"]
 }
 
 const LessonPlans: React.FC<P> = (props) => {
-    const [sectionId, setSectionId] = useState('');
-
-    const sortedSections = useMemo(() => getSectionsFromClasses(props.classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0)), [])
-    const class_name = useMemo(() => getClassnameFromSectionId(sortedSections, sectionId), [sectionId])
-    const lesson_plans = useMemo(() => getLessonPlans(props.curriculum), [])
+    const [class_name, setClassName] = useState('');
+    const grades = getGradesFromTests(props.targeted_instruction)
 
     return <div className="flex flex-wrap content-between">
         <Card class_name={class_name} />
-        <Headings heading="Lesson Plans" sub_heading={class_name ? "Select the subject you want to evaluate" : "Select the class you want to evaluate"} {...props} />
+        <Headings heading="Lesson Plans" sub_heading={class_name ? "Select the subject you want to evaluate" : "Select the Group"} />
         {
-
-        }
-        {/* {
             class_name ?
-                <Subjects class_name={class_name} section_id={sectionId} /> :
+                <Subjects class_name={class_name} section_id='' /> :
                 <Classes
-                    setSectionId={setSectionId}
-                    sortedSections={sortedSections}
+                    setSectionId={setClassName}
+                    sortedSections={null}
+                    grades={grades}
                 />
-        } */}
+        }
     </div>
 }
 
 export default connect((state: RootReducerState) => ({
     classes: state.db.classes,
-    curriculum: state.targeted_instruction.curriculum
+    targeted_instruction: state.targeted_instruction
 }))(LessonPlans)
-
-const getLessonPlans = (curriculum: RootReducerState["targeted_instruction"]["curriculum"]) => {
-    const curr = Object.values(curriculum).reduce((agg, currObj) => {
-
-        return {
-            ...agg
-        }
-    }, {})
-}

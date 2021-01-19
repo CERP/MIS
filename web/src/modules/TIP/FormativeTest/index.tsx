@@ -17,7 +17,7 @@ const FormativeTest: React.FC<P> = (props) => {
     const class_name = useMemo(() => getClassnameFromSectionId(sortedSections, sectionId), [sectionId])
 
     return <div className="flex flex-wrap content-between">
-        <Card class_name={class_name} />
+        <Card class_name={class_name.substring(6)} />
         <Headings heading="Formative Test" sub_heading={class_name ? "Select the subject you want to evaluate" : "Select the class you want to evaluate"} {...props} />
         {
             class_name ?
@@ -25,6 +25,7 @@ const FormativeTest: React.FC<P> = (props) => {
                 <Classes
                     setSectionId={setSectionId}
                     sortedSections={sortedSections}
+                    grades={null}
                 />
         }
     </div>
