@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Link, Redirect } from 'react-router-dom'
-import { connect, useDispatch, useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 
 
 import toTitleCase from 'utils/toTitleCase'
@@ -11,6 +11,7 @@ import { AppLayout } from 'components/Layout/appLayout'
 import { EyePassword } from 'components/Password'
 
 import UserIconSvg from 'assets/svgs/user.svg'
+import clsx from 'clsx'
 
 
 export const SchoolProfile = () => {
@@ -21,16 +22,16 @@ export const SchoolProfile = () => {
 		<AppLayout title={'Setup School'}>
 			<div className="p-5 pb-0 md:p-10 md:pb-0 text-gray-700">
 				<div className="text-xl md:text-2xl text-center font-bold">Build School Profile</div>
-				<div className="w-3/4 mx-auto flex md:flex-row items-center mt-10 md:t-20">
-					<div className="w-2/5 h-60 border border-r-0 rounded-md rounded-tr-none rounded-br-none shadow-md">
-						<div className="flex flex-col items-center md:p-10 space-y-2">
+				<div className="md:w-3/4 mx-auto flex flex-col md:flex-row items-center mt-10 md:t-20">
+					<div className="w-3/5 md:w-2/5 md:h-60 border border-r-0 rounded-xl sm:rounded-bl-none sm:rounded-br-none md:rounded-tr-none md:rounded-br-none shadow-md">
+						<div className="flex flex-col items-center p-4 md:p-10 space-y-2">
 							<div className="text-center">
-								<div className="w-20 h-20 p-1 border border-gray-300 rounded-full bg-blue-brand">
+								<div className={clsx("w-16 h-16 border border-gray-300 flex md:h-20 items-center justify-center p-1 rounded-full md:w-20", { "bg-blue-brand": !assets?.schoolLogo })}>
 									{
 										assets?.schoolLogo ?
 											<img className="rounded-full" src={assets?.schoolLogo || '/favicon.ico'} alt="school-logo" />
 											:
-											<div className="text-white">+</div>
+											<div className="text-white text-2xl">+</div>
 									}
 								</div>
 								<div className="text-sm">Add Logo</div>
@@ -38,9 +39,15 @@ export const SchoolProfile = () => {
 							<div className="font-semibold text-lg text-center">Welcome to {toTitleCase(settings?.schoolName)}</div>
 						</div>
 					</div>
-					<div className="w-2/3 h-96 border border-l-0 rounded-md bg-gray-700 shadow-md">
-						<div className="md:p-10">
-							<div className="text-white text-center">Please Create your Admin profile</div>
+					<div className="w-4/5 md:w-2/3 h-60 md:h-96 border md:border-l-0 rounded-xl md:rounded-md bg-gray-700 shadow-md">
+						<div className="p-4 md:p-10">
+							<div className="text-white text-center text-sm md:text-base">Please Create your Admin profile</div>
+							<div className="flex flex-col items-center justify-center p-6 md:p-16">
+								<div className={"border border-gray-300 flex h-20 items-center justify-center p-1 rounded-full w-20 bg-blue-brand"}>
+									<div className="text-white text-2xl">+</div>
+								</div>
+								<div className="text-sm text-white mt-4">Add Profile</div>
+							</div>
 						</div>
 					</div>
 				</div>
