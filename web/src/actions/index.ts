@@ -398,11 +398,11 @@ export const deleteClass = (Class: MISClass) => (dispatch: Function, getState: (
 }
 
 export const deleteSection = (classId: string, sectiondId: string) => (dispatch: Function, getState: () => RootReducerState) => {
-	
+
 	const state = getState()
 
 	const students = Object.values(state.db.students)
-		.filter(student =>  student.section_id === sectiondId)
+		.filter(student => student.section_id === sectiondId)
 		.map(student => (
 			{
 				path: ["db", "students", student.id, "section_id"],
@@ -412,7 +412,7 @@ export const deleteSection = (classId: string, sectiondId: string) => (dispatch:
 
 	// we need to remove section Id from students so they can be assigned new section
 	dispatch(createMerges(students))
-	
+
 	// delete the section from class
 	dispatch(createDeletes([
 		{
@@ -421,7 +421,7 @@ export const deleteSection = (classId: string, sectiondId: string) => (dispatch:
 	]))
 }
 
-export const deleteSubject = (classId: string, subject: string) => (dispatch: Function) => {	
+export const deleteSubject = (classId: string, subject: string) => (dispatch: Function) => {
 	dispatch(createDeletes([
 		{
 			path: ["db", "classes", classId, "subjects", subject]
@@ -1086,33 +1086,33 @@ export const sendTempPassword = (faculty: MISTeacher, password: string) => (disp
 }
 
 export const fetchTargetedInstruction = () => (dispatch: Function, getState: () => RootReducerState, syncr: Syncr) => {
-	const state = getState()
+	// const state = getState()
 
-	if (!syncr.ready) {
-		syncr.onNext('connect', () => {
-			dispatch(fetchTargetedInstruction())
-		})
-	}
-	
-	dispatch({
-		type: "GET_TARGETED_INSTRUCTIONS"
-	})
-	syncr.send({
-		type: "GET_TARGETED_INSTRUCTIONS",
-		client_type: client_type,
-		payload: {
-			school_id: state.auth.school_id,
-			token: state.auth.token,
-			client_id: state.client_id
-		}
-	})
-		.then(response => dispatch({
-			type: "GET_TARGETED_INSTRUCTION_SUCCESS",
-			payload: response
-		}))
-		.catch(err => dispatch({
-			type: "GET_TARGETED_INSTRUCTION_FAILURE"
-		}))
+	// if (!syncr.ready) {
+	// 	syncr.onNext('connect', () => {
+	// 		dispatch(fetchTargetedInstruction())
+	// 	})
+	// }
+
+	// dispatch({
+	// 	type: "GET_TARGETED_INSTRUCTIONS"
+	// })
+	// syncr.send({
+	// 	type: "GET_TARGETED_INSTRUCTIONS",
+	// 	client_type: client_type,
+	// 	payload: {
+	// 		school_id: state.auth.school_id,
+	// 		token: state.auth.token,
+	// 		client_id: state.client_id
+	// 	}
+	// })
+	// 	.then(response => dispatch({
+	// 		type: "GET_TARGETED_INSTRUCTION_SUCCESS",
+	// 		payload: response
+	// 	}))
+	// 	.catch(err => dispatch({
+	// 		type: "GET_TARGETED_INSTRUCTION_FAILURE"
+	// 	}))
 }
 export const deletePayment = (student_id: string, payment_id: string) => (dispatch: Function) => {
 

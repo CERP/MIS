@@ -54,6 +54,7 @@ import { Pricing } from 'pages/pricing'
 import { SchoolLogin, StaffLogin } from 'pages/auth/login'
 import { SchoolSignup } from 'pages/auth/signup'
 import { SchoolProfile } from 'pages/setup/schoolProfile'
+import { SchoolOnboarding } from 'pages/onboarding'
 
 export default class Routes extends React.Component {
 
@@ -147,6 +148,7 @@ export default class Routes extends React.Component {
 					<Route exact path="/about-us" component={About} />
 					<Route exact path="/features" component={Feature} />
 					<Route exact path="/contact-us" component={Contact} />
+					<Route exact path="/school/onboarding" component={SchoolOnboarding} />
 					
 				</Switch>
 			</BrowserRouter>

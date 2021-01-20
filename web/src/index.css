@@ -41,6 +41,10 @@ body {
 		@apply border focus:ring-2 focus:ring-blue-brand outline-none text-gray-600 px-4 py-2 ring-blue-brand rounded-md;
 	}
 
+	.tw-btn {
+		@apply px-4 py-3 rounded-md cursor-pointer focus:ring-2 outline-none font-semibold;
+	}
+
 	.tw-btn-blue {
 		@apply px-4 py-2 bg-blue-brand rounded-md text-white cursor-pointer hover:bg-blue-400 focus:ring-2 focus:ring-blue-brand outline-none;
 	}
