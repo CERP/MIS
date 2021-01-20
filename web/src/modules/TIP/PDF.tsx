@@ -19,7 +19,12 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
     const [test_id, pdf_url] = useMemo(() => getPDF(subject, class_name, targeted_instruction), [subject]);
 
     return <div className="flex flex-wrap content-between w-full">
-        <div className="text-blue-900 font-bold flex text-lg justify-center my-5 mx-3">{class_name} | {subject} |
+        <div className="text-blue-900 font-bold flex text-lg justify-center my-5 mx-3">
+            {url[2] === 'formative-test' ?
+                class_name === "1" ? "Blue Group" :
+                    class_name === "2" ? "Yellow Group" :
+                        class_name === "3" ? "Green Group" :
+                            "Orange Group" : class_name} | {subject} |
         {url[2] === 'formative-test' ? "Formative Test" :
                 url[2] === 'diagnostic_test' ? "Diagnostic Test" :
                     "Lesson Plans"}</div>
@@ -76,7 +81,8 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
             </div> :
             <div className="flex flex-row justify-around mb-4 w-full">
                 <div className="w-1/7">
-                    <Link className="no-underline" to={`/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades`}>
+                    <Link className="no-underline" to={url[2] === "formative-test" ? `/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades` :
+                        `/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades`}>
                         <button className="bg-orange-primary font-bold text-lg border-none rounded-md text-white text-left p-2 w-full focus:outline-none">
                             Insert Grades
                         </button>
