@@ -1,6 +1,6 @@
 //@ts-nocheck
 import React, { useState, useEffect } from 'react';
-import { RouteComponentProps, withRouter, Link } from 'react-router-dom'
+import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { connect } from 'react-redux';
 import Card from '../Card'
 import { Tick } from 'assets/icons'

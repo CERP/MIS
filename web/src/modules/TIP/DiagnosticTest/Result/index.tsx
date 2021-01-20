@@ -2,16 +2,16 @@ import React, { useState, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
 import { getClassnameFromSectionId } from 'utils/TIP'
-import Classes from '../Classes'
-import Card from '../Card'
-import Headings from '../Headings';
-import Subjects from '../Subjects'
+import Classes from '../../Classes'
+import Card from '../../Card'
+import Headings from '../../Headings';
+import Subjects from '../../Subjects'
 
 interface P {
     classes: RootDBState["classes"]
 }
 
-const DiagnosticTest: React.FC<P> = (props) => {
+const DiagnosticTestResult: React.FC<P> = (props) => {
     const [sectionId, setSectionId] = useState('');
 
     const sorted_sections = useMemo(() => getSectionsFromClasses(props.classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0)), [])
@@ -38,4 +38,4 @@ const DiagnosticTest: React.FC<P> = (props) => {
 
 export default connect((state: RootReducerState) => ({
     classes: state.db.classes
-}))(DiagnosticTest)
+}))(DiagnosticTestResult)

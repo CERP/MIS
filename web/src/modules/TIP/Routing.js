@@ -3,6 +3,7 @@ import { Route, withRouter, Switch } from 'react-router-dom';
 import RemedialGroup from './DiagnosticTest/RemedialGroup';
 import InsertGrades from './FormativeTest/InsertGrades';
 import DiagnosticTest from './DiagnosticTest';
+import DiagnosticTestResult from './DiagnosticTest/Result';
 import Grading from './FormativeTest/Grading';
 import TrainingVideos from './TrainingVideos'
 import FormativeTest from './FormativeTest';
@@ -32,7 +33,7 @@ const Routing = props => {
         <Route exact path={`${path}/formative-test/:section_id/:class_name/:subject/pdf`}><PDF /></Route>
         <Route exact path={`${path}/formative-test`}><FormativeTest /></Route>
         <Route exact path={`${path}/diagnostic-result/:section_id/:class_name/:subject/remedial-group`}><RemedialGroup /></Route>
-        {/* <Route exact path={`${path}/diagnostic-result`}><DiagnosticTestResult /></Route> */}
+        <Route exact path={`${path}/diagnostic-result`}><DiagnosticTestResult /></Route>
         <Route exact path={`${path}/lesson-plans/:class_name/:subject/:lesson_number/list/pdf`}><PDF /></Route>
         <Route exact path={`${path}/lesson-plans/:class_name/:subject/list`}><List /></Route>
         <Route exact path={`${path}/lesson-plans`}><LessonPlans /></Route>
