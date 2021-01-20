@@ -1,3 +1,4 @@
+//@ts-nocheck
 export const getSubjectsFromTests = (targeted_instruction: RootReducerState["targeted_instruction"]): string[] => {
     const subjects = Object.values(targeted_instruction.tests).reduce((agg, test) => {
         if (test.subject !== '') {
@@ -48,11 +49,31 @@ export const getStudentsBySectionId = (sectionId: string, students: RootDBState[
         }, {})
 }
 
+export const getStudentsByGroup = (students: RootDBState["students"], group: string, subject: string) => {
+    const stds = Object.values(students)
+        .reduce<RootDBState["students"]>((agg, student) => {
+            // debugger
+            return {
+                ...agg,
+                [student.id]: Object.entries(student.targeted_instruction.learning_level || {})
+                    .reduce((agg, [sub, obj]) => {
+                        debugger
+                        if (sub === subject) {
+                            if (obj.group === group) {
+                                return student
+                            }
+                        }
+                    }, {})
+            }
+        }, {})
+    debugger
+}
+
 export const getPDF = (selectedSubject: string, selectedSection: string, targeted_instruction: RootReducerState["targeted_instruction"]) => {
     let url, id
     let misTest: Tests = targeted_instruction['tests']
     for (let [test_id, obj] of Object.entries(misTest)) {
-        if (obj.grade === selectedSection && obj.subject === selectedSubject) {
+        if (obj.grade.substring(obj.grade.length - 1) === selectedSection.substring(selectedSection.length - 1) && obj.subject === selectedSubject) {
             url = obj.pdf_url
             id = test_id
             break
@@ -93,9 +114,12 @@ export const getSloList = (targeted_instruction: RootReducerState["targeted_inst
 
 export const calculateResult = (students: RootDBState["students"], sub: string) => {
     return Object.entries(students).reduce((agg, [std_id, std_obj]) => {
-        const learning_level = std_obj.targeted_instruction.learning_level[sub]
+        const learning_level = std_obj.targeted_instruction.learning_level && std_obj.targeted_instruction.learning_level[sub]
+        debugger
         if (learning_level) {
+            debugger
             if (agg[learning_level.level]) {
+                debugger
                 return {
                     ...agg,
                     [learning_level.level]: {
@@ -107,6 +131,7 @@ export const calculateResult = (students: RootDBState["students"], sub: string) 
                     }
                 }
             }
+            debugger
             return {
                 ...agg,
                 [learning_level.level]: {
