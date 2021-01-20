@@ -22,7 +22,7 @@ const Subjects: React.FC<PropsType> = ({ location, targeted_instruction, class_n
         {subjects.map((sub) => (
             <Link key={sub} className="container w-full sm:px-8 bg-white rounded-lg m-3 h-36 flex items-center justify-start flex-col shadow-lg no-underline"
                 to={previousComponent === 'diagnostic-result' ?
-                    `${pathname}/${section_id}/${class_name}/${sub}/remedial-group` :
+                    `${pathname}/${section_id}/${class_name}/${sub}/result` :
                     previousComponent === "lesson-plans" ?
                         `${pathname}/${class_name}/${sub}/list` :
                         `${pathname}/${section_id}/${class_name}/${sub}/pdf`}>
