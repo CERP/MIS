@@ -30,7 +30,7 @@ const Grading: React.FC<PropsType> = (props) => {
     }, [])
 
     const { class_name, subject, std_id, section_id, test_id } = props.match.params as Params
-
+    const url = props.match.url.split('/')
     const selectedTest: MISDiagnosticReport = useMemo(() => getQuestionList(props.students[std_id].targeted_instruction.diagnostic_result, test_id), []);
 
     const getUpdatedState = () => {
@@ -64,7 +64,7 @@ const Grading: React.FC<PropsType> = (props) => {
     const onSave = () => {
         const group = state.result && calculateLearningLevel(state.result)
         state.result && props.saveReport(std_id, state.result, test_id, subject, group)
-        props.history.push(`${(props.location.pathname).substring(0, 36)}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades`)
+        props.history.push(`/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades`)
     }
 
     return <div className="flex flex-wrap content-between bg-white">

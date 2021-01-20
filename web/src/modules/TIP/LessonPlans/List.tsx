@@ -18,6 +18,7 @@ const List: React.FC<PropsType> = ({ match, faculty, faculty_id, location, histo
 
     const [lesson_plans, setLessonPlans] = useState<Curriculum>({})
     const { class_name, subject } = match.params as Params
+    const url = match.url.split('/')
 
     useEffect(() => {
         getLessonPlan(faculty, faculty_id, class_name, subject)
@@ -32,11 +33,11 @@ const List: React.FC<PropsType> = ({ match, faculty, faculty_id, location, histo
         setLessonPlans(faculty[faculty_id].targeted_instruction.curriculum[parseInt(class_name)][subject])
         lessonPlanTaken(faculty_id, level, subject, lesson_number, value)
     }
-    //@ts-ignore
-    const redirect = (e, lesson_number: string) => {
-        e.preventDefault()
-        // debugger
-        // history.push(`${(location.pathname).substring(0, 34)}/${class_name}/${subject}/${lesson_number}/list/pdf`)
+
+    const redirect = (e: any, lesson_number: string) => {
+        e.stopPropagation();
+        e.preventDefault();
+        // history.push(`/${url[1]}/${url[2]}/${class_name}/${subject}/${lesson_number}/list/pdf`)
     }
 
     return <div className="flex flex-wrap content-between">
