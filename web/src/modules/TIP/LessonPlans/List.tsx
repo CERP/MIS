@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+//@ts-nocheck
+import React, { useState, useEffect } from 'react';
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import Card from '../Card'
@@ -6,17 +7,30 @@ import { Tick } from 'assets/icons'
 import { lessonPlanTaken } from 'actions'
 
 interface P {
-    curriculum: RootReducerState["targeted_instruction"]["curriculum"]
-    lessonPlanTaken: (learning_level_id: string, subject: string, lesson_number: string) => void
+    faculty: RootDBState["faculty"]
+    faculty_id: RootReducerState["auth"]["faculty_id"]
+    lessonPlanTaken: (faculty_id: string, learning_level_id: string, subject: string, lesson_number: string, value: boolean) => void
 }
 
 type PropsType = P & RouteComponentProps
 
-const List: React.FC<PropsType> = ({ match, curriculum, location, history, lessonPlanTaken }) => {
+const List: React.FC<PropsType> = ({ match, faculty, faculty_id, location, history, lessonPlanTaken }) => {
 
+    const [lesson_plans, setLessonPlans] = useState<Curriculum>({})
     const { class_name, subject } = match.params as Params
-    const done = (level: string, subject: string, lesson_number: string) => {
-        lessonPlanTaken(level, subject, lesson_number)
+
+    useEffect(() => {
+        getLessonPlan(faculty, faculty_id, class_name, subject)
+    }, [])
+
+    const getLessonPlan = (faculty: RootDBState["faculty"], faculty_id: string, class_name: string, subject: string) => {
+        setLessonPlans(faculty[faculty_id].targeted_instruction.curriculum[parseInt(class_name)][subject])
+    }
+
+    const done = (level: string, subject: string, lesson_number: string, value: boolean) => {
+        faculty[faculty_id].targeted_instruction.curriculum[parseInt(class_name)][subject][lesson_number].taken = value
+        setLessonPlans(faculty[faculty_id].targeted_instruction.curriculum[parseInt(class_name)][subject])
+        lessonPlanTaken(faculty_id, level, subject, lesson_number, value)
     }
     //@ts-ignore
     const redirect = (e, lesson_number: string) => {
@@ -25,12 +39,10 @@ const List: React.FC<PropsType> = ({ match, curriculum, location, history, lesso
         // history.push(`${(location.pathname).substring(0, 34)}/${class_name}/${subject}/${lesson_number}/list/pdf`)
     }
 
-    const lessonPlans = useMemo(() => getLessonPlan(curriculum, class_name, subject), [])
-
     return <div className="flex flex-wrap content-between">
         <Card class_name='' />
         {
-            Object.values(lessonPlans).map((curr) => {
+            Object.values(lesson_plans).map((curr) => {
                 return <div key={curr.lesson_number}
                     className="no-underline bg-blue-300 h-15 w-full mx-3 rounded-md mb-3 flex flex-row justify-between items-center p-3"
                     onClick={(e) => redirect(e, curr.lesson_number)}>
@@ -38,9 +50,9 @@ const List: React.FC<PropsType> = ({ match, curriculum, location, history, lesso
                         <div className="text-white font-bold">{curr.lesson_title}</div>
                         <div className="text-xs text-black">{`Lesson number ${curr.lesson_number}`}</div>
                     </div>
-                    {curr.taken ? <img src={Tick} className="h-6 w-6 bg-white rounded-full flex items-center justify-center" /> :
+                    {curr.taken ? <img src={Tick} className="h-6 w-6 bg-white rounded-full flex items-center justify-center" onClick={() => done(class_name, curr.subject, curr.lesson_number, false)} /> :
                         <div className="h-6 w-6 bg-white rounded-full flex items-center justify-center"
-                            onClick={() => done(class_name, curr.subject, curr.lesson_number)}>A
+                            onClick={() => done(class_name, curr.subject, curr.lesson_number, true)}>A
                     </div>}
                 </div>
             })
@@ -49,11 +61,8 @@ const List: React.FC<PropsType> = ({ match, curriculum, location, history, lesso
 }
 
 export default connect((state: RootReducerState) => ({
-    curriculum: state.targeted_instruction.curriculum
+    faculty: state.db.faculty,
+    faculty_id: state.auth.faculty_id
 }), (dispatch: Function) => ({
-    lessonPlanTaken: (learning_level_id: string, subject: string, lesson_number: string) => dispatch(lessonPlanTaken(learning_level_id, subject, lesson_number)),
+    lessonPlanTaken: (faculty_id: string, learning_level_id: string, subject: string, lesson_number: string, value: boolean) => dispatch(lessonPlanTaken(faculty_id, learning_level_id, subject, lesson_number, value)),
 }))(withRouter(List))
-
-const getLessonPlan = (curriculum: RootReducerState["targeted_instruction"]["curriculum"], class_name: string, subject: string) => {
-    return curriculum[parseInt(class_name)][subject]
-}

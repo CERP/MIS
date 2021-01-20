@@ -562,16 +562,12 @@ export const addReport = (student_id: string, diagnostic_report: MISDiagnosticRe
 	]))
 }
 
-export const lessonPlanTaken = (learning_level_id: string, subject: string, lesson_number: string) => (dispatch: Function) => {
+export const lessonPlanTaken = (faculty_id: string, learning_level_id: string, subject: string, lesson_number: string, value: boolean) => (dispatch: Function) => {
 	dispatch(createMerges([
 		{
-			path: ["targeted_instruction", "curriculum", learning_level_id, subject, lesson_number, "taken"],
-			value: true
-		},
-		// {
-		// 	path: ["db", "targeted_instruction", "curriculum", learning_level_id, subject, lesson_number, "taken"],
-		// 	value: true
-		// },
+			path: ["db", "faculty", faculty_id, "targeted_instruction", "curriculum", learning_level_id, subject, lesson_number, "taken"],
+			value: value
+		}
 	]))
 }
 

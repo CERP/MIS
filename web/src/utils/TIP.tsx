@@ -157,3 +157,17 @@ export const calculateLearningLevel = (result: MISDiagnosticReport['questions'])
     const color = level === "1" ? "blue" : level === "2" ? "red" : level === "3" ? "green" : "orange"
     return { "level": level, "group": color }
 }
+
+export const getCount = (faculty: RootDBState["faculty"], faculty_id: string) => {
+    let count = 0;
+    for (let subjects of Object.values(faculty[faculty_id].targeted_instruction.curriculum)) {
+        for (let lessons of Object.values(subjects)) {
+            for (let lesson of Object.values(lessons)) {
+                if (lesson.taken) {
+                    count++
+                }
+            }
+        }
+    }
+    return count
+}
