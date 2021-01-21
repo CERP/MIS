@@ -192,3 +192,60 @@ export const getCount = (faculty: RootDBState["faculty"], faculty_id: string) =>
     }
     return count
 }
+
+export const getResult = (students: RootDBState["students"], test_id: string) => {
+    return Object.entries(students).reduce((agg, [std_id, std_obj]) => {
+        if (std_obj.targeted_instruction.formative_result[test_id].checked) {
+            return {
+                ...agg,
+                [std_id]: Object.values(std_obj.targeted_instruction.formative_result[test_id].questions).reduce((agg2, question) => {
+                    const val = question.is_correct ? 1 : 0
+                    const slo_category = question.slo_category
+                    if (agg2 && agg2.slo_obj && agg2.slo_obj[slo_category]) {
+                        return {
+                            ...agg2,
+                            std_name: std_obj.Name,
+                            obtain: agg2.obtain + val,
+                            total: agg2.total + 1,
+                            slo_obj: {
+                                ...agg2.slo_obj,
+                                [slo_category]: {
+                                    obtain: agg2.slo_obj[slo_category].obtain + val,
+                                    total: agg2.slo_obj[slo_category].total + 1
+                                }
+                            }
+                        }
+                    } else if (agg2.total > 0) {
+                        return {
+                            ...agg2,
+                            std_name: std_obj.Name,
+                            obtain: agg2.obtain + val,
+                            total: agg2.total + 1,
+                            slo_obj: {
+                                ...agg2.slo_obj,
+                                [slo_category]: {
+                                    obtain: val,
+                                    total: 1
+                                }
+                            }
+                        }
+                    }
+                    return {
+                        ...agg2,
+                        std_name: std_obj.Name,
+                        obtain: val,
+                        total: 1,
+                        slo_obj: {
+                            ...agg2.slo_obj,
+                            [slo_category]: {
+                                obtain: val,
+                                total: 1
+                            }
+                        }
+                    }
+                }, {})
+            }
+        }
+        return { ...agg }
+    }, {})
+}

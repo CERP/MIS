@@ -1,21 +1,30 @@
-import React, { useState } from 'react';
-import { RouteComponentProps } from 'react-router-dom'
+//@ts-nocheck
+import React, { useState, useMemo } from 'react';
+import { connect } from 'react-redux';
+import { RouteComponentProps, withRouter } from 'react-router-dom'
 import Footer from '../../Footer'
 import Headings from '../../Headings'
 import ChildView from './ChildView'
 import SkillView from './SkillView'
-import SingleStdView from './SingleStdView'
+import { getStudentsByGroup, getResult } from 'utils/TIP'
 
 interface P {
+    students: RootDBState["students"]
 }
 
 type PropsType = P & RouteComponentProps
 
 const Result: React.FC<PropsType> = (props) => {
-    const { subject } = props.match.params as Params
+
+    const { class_name, subject, test_id } = props.match.params as Params
     const [sub, setSub] = useState(subject)
     const [type, setType] = useState('skill_view')
 
+    const group = class_name === "1" ? "blue" : class_name === "2" ? "yellow" : class_name === "3" ? "green" : "orange"
+    const group_students = useMemo(() => getStudentsByGroup(props.students, group, subject), [subject])
+    const result = useMemo(() => getResult(group_students, test_id), [subject])
+
+    console.log("typeeeeeeeee", type)
     return <div className="flex flex-wrap content-between">
         <Headings heading="Formative Test Result" sub_heading="" />
         {type === 'single_std_view' ? <div className="flex flex-row justify-center w-full" onClick={() => setType('child_view')}>
@@ -58,18 +67,21 @@ const Result: React.FC<PropsType> = (props) => {
             <SkillView slo="2 digits Addition" percentage={50} />
             <SkillView slo="2 digits Division" percentage={30} />
         </>}
-        {type === 'child_view' && <>
-            <ChildView name="Humna" score={4} percentage={70} setType={setType} />
-            <ChildView name="Rehan" score={4} percentage={50} setType={setType} />
-            <ChildView name="Ali" score={4} percentage={30} setType={setType} />
-        </>}
-        {type === 'single_std_view' && <>
-            <SingleStdView slo="2 digits Multiplication" score={4} percentage={70} />
-            <SingleStdView slo="2 digits Addition" score={4} percentage={50} />
-            <SingleStdView slo="2 digits Division" score={4} percentage={30} />
-        </>}
+        {type === 'child_view' &&
+            Object.entries(result || {}).map(([std_id, res]) => {
+                return <ChildView
+                    key={std_id}
+                    name={res.std_name}
+                    obtain={res.obtain}
+                    total={res.total}
+                    slo_obj={res.slo_obj} />
+
+            })
+        }
         <Footer type={sub} setSub={setSub} />
-    </div>
+    </div >
 }
 
-export default Result
+export default connect((state: RootReducerState) => ({
+    students: state.db.students
+}))(withRouter(Result))
