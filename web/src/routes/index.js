@@ -53,7 +53,7 @@ import { About } from 'pages/about'
 import { Pricing } from 'pages/pricing'
 import { SchoolLogin, StaffLogin } from 'pages/auth/login'
 import { SchoolSignup } from 'pages/auth/signup'
-import { SchoolProfile } from 'pages/setup/schoolProfile'
+import { SchoolSetup } from 'pages/setup'
 import { SchoolOnboarding } from 'pages/onboarding'
 
 export default class Routes extends React.Component {
@@ -87,8 +87,6 @@ export default class Routes extends React.Component {
 			<BrowserRouter>
 				<Switch>
 					<TrackedRoute exact path="/home" component={Home} />
-
-					<Route path="/school/setup" component={SchoolProfile} />
 
 					<TrackedRoute path="/faculty/:id" component={TeacherSingle} />
 					<TrackedRoute path="/teacher" component={TeacherList} />
@@ -148,6 +146,7 @@ export default class Routes extends React.Component {
 					<Route exact path="/about-us" component={About} />
 					<Route exact path="/features" component={Feature} />
 					<Route exact path="/contact-us" component={Contact} />
+					<Route exact path="/school/setup" component={SchoolSetup} />
 					<Route exact path="/school/onboarding" component={SchoolOnboarding} />
 					
 				</Switch>

@@ -5,6 +5,7 @@ import { v4 } from "node-uuid"
 import Syncr from '@cerp/syncr'
 
 import { historicalPayment } from 'modules/Settings/HistoricalFees/historical-fee'
+import { ActionTypes, OnboardingState } from 'constants/index'
 
 const client_type = "mis";
 
@@ -40,6 +41,14 @@ export const createFacultyMerge = (faculty: MISTeacher, is_first?: boolean) => (
 	]))
 
 	if (is_first) {
+		// start the school onboarding jounery
+		dispatch(createMerges([
+			{
+				path: ["db", "onboarding", "stage"],
+				value: OnboardingState.ADD_STAFF
+			}
+		]))
+
 		dispatch({
 			type: LOCAL_LOGIN,
 			name: faculty.Name,

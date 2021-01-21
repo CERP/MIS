@@ -38,7 +38,7 @@ body {
 	}
 
 	.tw-input {
-		@apply border focus:ring-2 focus:ring-blue-brand outline-none text-gray-600 px-4 py-2 ring-blue-brand rounded-md;
+		@apply border focus:ring-2 focus:ring-blue-brand outline-none px-4 py-2 ring-blue-brand rounded-md;
 	}
 
 	.tw-btn {

@@ -11,7 +11,7 @@ type TProps = {
 
 }
 
-export const AddStaffForm: React.FC<TProps> = ({ }) => {
+export const AddStaff: React.FC<TProps> = ({ }) => {
 
 	const [openEye, setOpenEye] = useState(false)
 

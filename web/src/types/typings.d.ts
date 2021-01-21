@@ -58,7 +58,8 @@ interface RootDBState {
 	onboarding: MISOnboarding
 }
 interface MISOnboarding {
-	stage: "CREATE_ADMIN" | "CREATE_TEACHER" | "CREATE_CLASS" | "ADD_STUDENTS" | "COMPLETED"
+	// stage: "CREATE_ADMIN" | "ADD_STAFF" | "ADD_CLASS" | "ADD_STUDENTS" | "COMPLETED"
+	stage: number
 }
 
 interface Curriculum {
