@@ -2,11 +2,11 @@
 import React, { useState, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { getStudentsByGroup, getResult, getClassResult } from 'utils/TIP'
 import Footer from '../../Footer'
 import Headings from '../../Headings'
 import ChildView from './ChildView'
 import SkillView from './SkillView'
-import { getStudentsByGroup, getResult } from 'utils/TIP'
 
 interface P {
     students: RootDBState["students"]
@@ -23,6 +23,7 @@ const Result: React.FC<PropsType> = (props) => {
     const group = class_name === "1" ? "blue" : class_name === "2" ? "yellow" : class_name === "3" ? "green" : "orange"
     const group_students = useMemo(() => getStudentsByGroup(props.students, group, subject), [subject])
     const result = useMemo(() => getResult(group_students, test_id), [subject])
+    const class_result = useMemo(() => getClassResult(result), [])
 
     console.log("typeeeeeeeee", type)
     return <div className="flex flex-wrap content-between">
