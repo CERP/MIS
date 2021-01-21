@@ -9,7 +9,7 @@ interface P {
     teacher_name: string
     students: RootDBState["students"]
 
-    saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], selectedSubject: string, subject: string, learning_level: LearningLevel) => void
+    saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], selectedSubject: string, subject: string, learning_level: LearningLevel, type: string) => void
 }
 
 type PropsType = P & RouteComponentProps
@@ -31,7 +31,10 @@ const Grading: React.FC<PropsType> = (props) => {
 
     const { class_name, subject, std_id, section_id, test_id } = props.match.params as Params
     const url = props.match.url.split('/')
-    const selectedTest: MISDiagnosticReport = useMemo(() => getQuestionList(props.students[std_id].targeted_instruction.diagnostic_result, test_id), []);
+    const selectedTest: MISDiagnosticReport = useMemo(() => getQuestionList(url[2] === "diagnostic-test" ?
+        props.students[std_id].targeted_instruction.diagnostic_result : url[2] === "formative-test" ?
+            props.students[std_id].targeted_instruction.formative_result :
+            props.students[std_id].targeted_instruction.summative_result, test_id), []);
 
     const getUpdatedState = () => {
         const questionList: MISDiagnosticReport['questions'] = Object.entries(selectedTest.questions || {}).reduce((agg, [key, value]) => {
@@ -52,19 +55,30 @@ const Grading: React.FC<PropsType> = (props) => {
 
     const handleChange = (val: any, questionId: string) => {
         state.questionsObj[questionId].is_correct = val
-        let diagnostic_res = props.students[std_id].targeted_instruction.diagnostic_result[test_id].questions
-        diagnostic_res[questionId].is_correct = val
+        let res
+        if (url[2] === "diagnostic-test") {
+            res = props.students[std_id].targeted_instruction.diagnostic_result[test_id].questions
+            res[questionId].is_correct = val
+        } else if (url[2] === "formative-test") {
+            res = props.students[std_id].targeted_instruction.formative_result[test_id].questions
+            res[questionId].is_correct = val
+        } else {
+            res = props.students[std_id].targeted_instruction.summative_result[test_id].questions
+            res[questionId].is_correct = val
+        }
         setState({
             ...state,
             questionsObj: state.questionsObj,
-            result: diagnostic_res
+            result: res
         })
     }
 
     const onSave = () => {
-        const group = state.result && calculateLearningLevel(state.result)
-        state.result && props.saveReport(std_id, state.result, test_id, subject, group)
-        props.history.push(`/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades`)
+        const group = url[2] === "diagnostic-test" && state.result && calculateLearningLevel(state.result)
+        state.result && props.saveReport(std_id, state.result, test_id, subject, group, url[2].replace("-test", "_result"),)
+        props.history.push(url[2] === "diagnostic-test" ?
+            `/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades` :
+            `/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades`)
     }
 
     return <div className="flex flex-wrap content-between bg-white">
@@ -116,5 +130,5 @@ export default connect((state: RootReducerState) => ({
     teacher_name: state.auth.name,
     students: state.db.students,
 }), (dispatch: Function) => ({
-    saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], selectedSubject: string, subject: string, learning_level: LearningLevel) => dispatch(addReport(stdId, diagnostic_report, selectedSubject, subject, learning_level)),
+    saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], selectedSubject: string, subject: string, learning_level: LearningLevel, type: string) => dispatch(addReport(stdId, diagnostic_report, selectedSubject, subject, learning_level, type)),
 }))(withRouter(Grading))

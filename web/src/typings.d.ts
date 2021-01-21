@@ -333,6 +333,8 @@ interface MISStudent {
 	}
 	targeted_instruction: {
 		diagnostic_result: DiagnosticResult
+		formative_result: DiagnosticResult
+		summative_result: DiagnosticResult
 		learning_level: { 
 			[subject: string]: { 
 				level: "blue" | "green" | "yellow" | "red"  | "orange"

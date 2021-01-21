@@ -20,15 +20,13 @@ const Routing = props => {
   return (
     <Switch>
         <Route exact path={path}><HomePage /></Route>
-        <Route exact path={`${path}/diagnostic-test/:section_id/:class_name/:subject/insert-grades/:std_id/grading/test-result/result`}><Result /></Route>
         <Route exact path={`${path}/diagnostic-test/:section_id/:class_name/:subject/:test_id/insert-grades/:std_id/grading`}><Grading /></Route>
         <Route exact path={`${path}/diagnostic-test/:section_id/:class_name/:subject/:test_id/insert-grades/test-result`}><Result /></Route>
         <Route exact path={`${path}/diagnostic-test/:section_id/:class_name/:subject/:test_id/insert-grades`}><InsertGrades /></Route>
         <Route exact path={`${path}/diagnostic-test/:section_id/:class_name/:subject/pdf`}><PDF /></Route>
         <Route exact path={`${path}/diagnostic-test`}><DiagnosticTest /></Route>
-        <Route exact path={`${path}/formative-test/:section_id/:class_name/:subject/insert-grades/:std_id/grading/test-result/result`}><Result /></Route>
-        <Route exact path={`${path}/formative-test/:section_id/:class_name/:subject/:test_id/insert-grades/:std_id/grading`}><Grading /></Route>
-        <Route exact path={`${path}/formative-test/:section_id/:class_name/:subject/:test_id/insert-grades/test-result`}><Result /></Route>
+        <Route exact path={`${path}/formative-test/:class_name/:subject/:test_id/insert-grades/:std_id/grading`}><Grading /></Route>
+        <Route exact path={`${path}/formative-test/:class_name/:subject/:test_id/insert-grades/test-result`}><Result /></Route>
         <Route exact path={`${path}/formative-test/:class_name/:subject/:test_id/insert-grades`}><InsertGrades /></Route>
         <Route exact path={`${path}/formative-test/:class_name/:subject/pdf`}><PDF /></Route>
         <Route exact path={`${path}/formative-test`}><FormativeTest /></Route>
