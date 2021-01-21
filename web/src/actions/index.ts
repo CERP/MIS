@@ -577,21 +577,34 @@ export const addPayment = (student: MISStudent, payment_id: string, amount: numb
 
 }
 
-export const addReport = (student_id: string, diagnostic_report: MISDiagnosticReport['questions'], test_id: string, subject: string, learning_level: LearningLevel) => (dispatch: Function) => {
-	dispatch(createMerges([
-		{
-			path: ["db", "students", student_id, "targeted_instruction", "diagnostic_result", test_id, "questions"],
-			value: diagnostic_report
-		},
-		{
-			path: ["db", "students", student_id, "targeted_instruction", "diagnostic_result", test_id, "checked"],
-			value: true
-		},
-		{
-			path: ["db", "students", student_id, "targeted_instruction", "learning_level", subject],
-			value: learning_level
-		}
-	]))
+export const addReport = (student_id: string, diagnostic_report: MISDiagnosticReport['questions'], test_id: string, subject: string, learning_level: LearningLevel, type: string) => (dispatch: Function) => {
+	if(learning_level) {
+		dispatch(createMerges([
+			{
+				path: ["db", "students", student_id, "targeted_instruction", type, test_id, "questions"],
+				value: diagnostic_report
+			},
+			{
+				path: ["db", "students", student_id, "targeted_instruction", type, test_id, "checked"],
+				value: true
+			},
+			{
+				path: ["db", "students", student_id, "targeted_instruction", "learning_level", subject],
+				value: learning_level
+			}
+		]))
+	} else {
+		dispatch(createMerges([
+			{
+				path: ["db", "students", student_id, "targeted_instruction", type, test_id, "questions"],
+				value: diagnostic_report
+			},
+			{
+				path: ["db", "students", student_id, "targeted_instruction", type, test_id, "checked"],
+				value: true
+			}
+		]))
+	}
 }
 
 export const lessonPlanTaken = (faculty_id: string, learning_level_id: string, subject: string, lesson_number: string, value: boolean) => (dispatch: Function) => {
