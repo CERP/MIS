@@ -249,3 +249,24 @@ export const getResult = (students: RootDBState["students"], test_id: string) =>
         return { ...agg }
     }, {})
 }
+
+export const getClassResult = (result: RootDBState["students"]) => {
+    let class_res;
+    for (let std_obj of Object.values(result)) {
+        class_res = Object.entries(std_obj.slo_obj || {}).reduce((agg2, [slo, slo_obj]) => {
+            if (class_res && class_res[slo]) {
+                return {
+                    obtain: class_res[slo].obtain + slo_obj.obtain,
+                    total: class_res[slo].total + slo_obj.total
+                }
+            }
+            return {
+                ...agg2,
+                [slo]: {
+                    obtain: slo_obj.obtain,
+                    total: slo_obj.total
+                }
+            }
+        }, {})
+    }
+}
