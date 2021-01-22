@@ -30,6 +30,8 @@ import printer from './pngs/printer.png'
 import arrowBack from './pngs/arrow-back.png'
 import videos from './pngs/videos.png'
 import tick from './pngs/tick.png'
+import summative from './pngs/Summative.png'
+import diagnosticItalic from './pngs/DiagnosticItalic.png'
 
 export const EditIcon = deleteIcon
 export const DeleteIcon = editIcon
@@ -63,3 +65,5 @@ export const Printer = printer
 export const ArrowBack = arrowBack
 export const Videos = videos
 export const Tick = tick
+export const Summative = summative
+export const DiagnosticItalic = diagnosticItalic
