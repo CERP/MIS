@@ -20,12 +20,12 @@ const Result: React.FC<PropsType> = (props) => {
     const [sub, setSub] = useState(subject)
     const [type, setType] = useState('skill_view')
 
+    const url = props.match.url.split('/')
     const group = class_name === "1" ? "blue" : class_name === "2" ? "yellow" : class_name === "3" ? "green" : "orange"
     const group_students = useMemo(() => getStudentsByGroup(props.students, group, subject), [subject])
-    const result = useMemo(() => getResult(group_students, test_id), [subject])
+    const result = useMemo(() => getResult(group_students, test_id, url[2].replace("-test", "_result")), [subject])
     const class_result = useMemo(() => getClassResult(result), [])
 
-    console.log("typeeeeeeeee", type)
     return <div className="flex flex-wrap content-between">
         <Headings heading="Formative Test Result" sub_heading="" />
         {type === 'single_std_view' ? <div className="flex flex-row justify-center w-full" onClick={() => setType('child_view')}>
