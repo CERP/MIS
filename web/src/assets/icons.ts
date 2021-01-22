@@ -32,6 +32,8 @@ import videos from './pngs/videos.png'
 import tick from './pngs/tick.png'
 import summative from './pngs/Summative.png'
 import diagnosticItalic from './pngs/DiagnosticItalic.png'
+import trainingManuals from './pngs/TrainingManuals.png'
+import trainingMaterials from './pngs/TrainingMaterials.png'
 
 export const EditIcon = deleteIcon
 export const DeleteIcon = editIcon
@@ -67,3 +69,5 @@ export const Videos = videos
 export const Tick = tick
 export const Summative = summative
 export const DiagnosticItalic = diagnosticItalic
+export const TrainingManual = trainingManuals
+export const TrainingMaterials = trainingMaterials
