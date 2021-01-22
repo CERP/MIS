@@ -13,7 +13,9 @@ const ChildView: React.FC<P> = ({ name, obtain, total, slo_obj }) => {
     const [type, setType] = useState(false)
     //@ts-ignore
     const percentage = parseInt((obtain / total) * 100)
-    return <>{!type && <div className={`${percentage < 33 ? "bg-red-primary text-white" : "bg-blue-200 text-blue-900"} flex flex-row justify-between items-center px-3 my-2 h-11 shadow-lg w-full`} onClick={() => setType(true)}>
+    return <>{!type && <div className={`${percentage >= 60 ? "bg-green-primary text-white" :
+        percentage >= 50 ? "bg-orange-primary text-white" : "bg-red-primary text-white"} 
+    flex flex-row justify-between items-center px-3 my-2 h-11 shadow-lg w-full`} onClick={() => setType(true)}>
         <div className="flex flex-row justify-between items-center w-full">
             <div className="w-3/5 flex flex-row justify-start content-center items-center">
                 <img className="h-6 rounded-full p-3" src="https://cdn.dribbble.com/users/2199928/screenshots/11532918/shot-cropped-1590177932366.png?compress=1&resize=400x300" alt="img" />

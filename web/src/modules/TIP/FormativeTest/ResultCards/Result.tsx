@@ -3,7 +3,6 @@ import React, { useState, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { getStudentsByGroup, getResult, getClassResult } from 'utils/TIP'
-import Footer from '../../Footer'
 import Headings from '../../Headings'
 import ChildView from './ChildView'
 import SkillView from './SkillView'
@@ -17,7 +16,6 @@ type PropsType = P & RouteComponentProps
 const Result: React.FC<PropsType> = (props) => {
 
     const { class_name, subject, test_id } = props.match.params as Params
-    const [sub, setSub] = useState(subject)
     const [type, setType] = useState('skill_view')
 
     const url = props.match.url.split('/')
@@ -63,11 +61,10 @@ const Result: React.FC<PropsType> = (props) => {
                 </div>
             </>}
         </div>
-        {type === 'skill_view' && <>
-            <SkillView slo="2 digits Multiplication" percentage={70} />
-            <SkillView slo="2 digits Addition" percentage={50} />
-            <SkillView slo="2 digits Division" percentage={30} />
-        </>}
+        {type === 'skill_view' &&
+            Object.entries(class_result).map(([slo, obj]) => {
+                return <SkillView key={slo} slo={slo.replace('$', ',')} percentage={parseInt((obj.obtain / obj.total) * 100)} />
+            })}
         {type === 'child_view' &&
             Object.entries(result || {}).map(([std_id, res]) => {
                 return <ChildView
@@ -79,7 +76,6 @@ const Result: React.FC<PropsType> = (props) => {
 
             })
         }
-        <Footer type={sub} setSub={setSub} />
     </div >
 }
 
