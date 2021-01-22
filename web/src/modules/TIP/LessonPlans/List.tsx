@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { connect } from 'react-redux';
 import Card from '../Card'
-import { Tick } from 'assets/icons'
+import { Tick, WhiteTick } from 'assets/icons'
 import { lessonPlanTaken } from 'actions'
 
 interface P {
@@ -53,11 +53,15 @@ const List: React.FC<PropsType> = ({ match, faculty, faculty_id, location, histo
                     </div>
                     {curr.taken ? <img src={Tick} className="h-6 w-6 bg-white rounded-full flex items-center justify-center" onClick={() => done(class_name, curr.subject, curr.lesson_number, false)} /> :
                         <div className="h-6 w-6 bg-white rounded-full flex items-center justify-center"
-                            onClick={() => done(class_name, curr.subject, curr.lesson_number, true)}>A
-                    </div>}
+                            onClick={() => done(class_name, curr.subject, curr.lesson_number, true)}>
+                            <img src={WhiteTick} />
+                        </div>}
                 </div>
             })
         }
+        <div className="w-full flex justify-center items-center">
+            <button className="border-none bg-green-primary rounded-md text-white font-bold p-3 w-3/6 fixed bottom-0 my-3">Print All</button>
+        </div>
     </div>
 }
 
