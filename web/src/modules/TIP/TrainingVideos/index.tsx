@@ -6,24 +6,17 @@ interface P {
 
 const TrainingVideos: React.FC<P> = () => {
 
-    const [type, setType] = useState(false)
-
     return <div className="flex flex-wrap content-between">
-        <div className="w-full flex flex-row justify-around my-5">
+        <div className="w-full flex flex-col justify-around my-5">
             <button
-                className={`border-none text-blue-300 bg-transparent outline-none font-bold text-lg
-                   ${!type && "text-blue-900 underline"}`}
-                onClick={() => setType(false)}>Training Manuals
+                className="border-none text-blue-900 bg-transparent outline-none font-bold text-lg">Training Manuals
             </button>
+            <TrainingManuals />
             <button
-                className={`border-none text-blue-300 bg-transparent outline-none font-bold text-lg 
-                   ${type && "text-blue-900 underline"}`}
-                onClick={() => setType(true)}>Activity Videos
+                className="border-none text-blue-900 bg-transparent outline-none font-bold text-lg">Activity Videos
             </button>
+            <ActivityVideos />
         </div>
-        {
-            type ? <ActivityVideos /> : <TrainingManuals />
-        }
     </div>
 }
 

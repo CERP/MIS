@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, Link } from 'react-router-dom'
-import { Formative, LessonPlans, Diagnostic, Videos, DiagnosticItalic, Summative } from 'assets/icons'
+import { Formative, LessonPlans, TrainingMaterials, DiagnosticItalic, Summative } from 'assets/icons'
 import { getCount } from 'utils/TIP'
 import Headings from './Headings'
 import Card from './Card'
@@ -38,7 +38,7 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id }) => {
         <div className="flex flex-row content-center items-center justify-center w-full">
             <Link className="container sm:px-8 bg-white rounded-xl m-3 h-40 flex flex-col content-center items-center shadow-lg no-underline"
                 to={"/targeted-instruction/training-videos"}>
-                <img className="h-12 py-8" src={Videos} alt="img" />
+                <img className="h-20 py-4" src={TrainingMaterials} alt="img" />
                 <div className="text-base text-blue-900 font-bold">Training Videos</div>
             </Link>
             <Link className="container sm:px-8 bg-white rounded-xl m-3 h-40 flex flex-col content-center items-center shadow-lg no-underline"
