@@ -252,23 +252,42 @@ export const getResult = (students: RootDBState["students"], test_id: string, ty
     }, {})
 }
 
-export const getClassResult = (result: RootDBState["students"]) => {
-    let class_res;
-    for (let std_obj of Object.values(result)) {
-        class_res = Object.entries(std_obj.slo_obj || {}).reduce((agg2, [slo, slo_obj]) => {
-            if (class_res && class_res[slo]) {
-                return {
-                    obtain: class_res[slo].obtain + slo_obj.obtain,
-                    total: class_res[slo].total + slo_obj.total
-                }
+interface Result {
+    [std_id: string]: {
+        std_name: string
+        obtain: number
+        total: number
+        slo_obj: {
+            [slo_name]: {
+                obtain: number
+                total: number
             }
-            return {
-                ...agg2,
-                [slo]: {
-                    obtain: slo_obj.obtain,
-                    total: slo_obj.total
-                }
-            }
-        }, {})
+        }
     }
+}
+
+export const getClassResult = (result: Result) => {
+
+    return Object.values(result || {}).reduce((agg, std_obj) => {
+        for (let [slo, slo_obj] of Object.entries(std_obj.slo_obj)) {
+            if (agg[slo]) {
+                agg = {
+                    ...agg,
+                    [slo]: {
+                        obtain: agg[slo].obtain + slo_obj.obtain,
+                        total: agg[slo].total + slo_obj.total
+                    }
+                }
+            } else {
+                agg = {
+                    ...agg,
+                    [slo]: {
+                        obtain: slo_obj.obtain,
+                        total: slo_obj.total
+                    }
+                }
+            }
+        }
+        return agg
+    }, {})
 }
