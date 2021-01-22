@@ -25,9 +25,9 @@ const Subjects: React.FC<PropsType> = ({ location, targeted_instruction, class_n
                     `${pathname}/${section_id}/${class_name}/${sub}/result` :
                     previousComponent === "lesson-plans" ?
                         `${pathname}/${class_name}/${sub}/list` :
-                        previousComponent === "formative-test" ?
-                            `${pathname}/${class_name}/${sub}/pdf` :
-                            `${pathname}/${section_id}/${class_name}/${sub}/pdf`}>
+                        previousComponent === "diagnostic-test" ?
+                            `${pathname}/${section_id}/${class_name}/${sub}/pdf` :
+                            `${pathname}/${class_name}/${sub}/pdf`}>
                 <img className="flex items-center justify-center h-20 p-2" src={sub === 'English' ? English : sub === 'Urdu' ? Urdu : Maths} />
                 <div className="text-blue-900 font-thin text-3xl">{sub}</div>
             </Link>

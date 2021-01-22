@@ -7,6 +7,7 @@ import Grading from './FormativeTest/Grading';
 import FormativeResult from './FormativeTest/ResultCards/Result'
 import TrainingVideos from './TrainingVideos'
 import FormativeTest from './FormativeTest';
+import SummativeTest from './SummativeTest';
 import Result from './DiagnosticTest/Result';
 import LessonPlans from './LessonPlans';
 import HomePage from './index' 
@@ -30,8 +31,15 @@ const Routing = props => {
         <Route exact path={`${path}/formative-test/:class_name/:subject/:test_id/insert-grades`}><InsertGrades /></Route>
         <Route exact path={`${path}/formative-test/:class_name/:subject/pdf`}><PDF /></Route>
         <Route exact path={`${path}/formative-test`}><FormativeTest /></Route>
+        <Route exact path={`${path}/summative-test/:class_name/:subject/:test_id/insert-grades/:std_id/grading`}><Grading /></Route>
+        <Route exact path={`${path}/summative-test/:class_name/:subject/:test_id/insert-grades/test-result`}><FormativeResult /></Route>
+        <Route exact path={`${path}/summative-test/:class_name/:subject/:test_id/insert-grades`}><InsertGrades /></Route>
+        <Route exact path={`${path}/summative-test/:class_name/:subject/pdf`}><PDF /></Route>
+        <Route exact path={`${path}/summative-test`}><SummativeTest /></Route>
         <Route exact path={`${path}/diagnostic-result/:section_id/:class_name/:subject/result`}><Result /></Route>
         <Route exact path={`${path}/diagnostic-result`}><DiagnosticTestResult /></Route>
+        {/* <Route exact path={`${path}/diagnostic-result/:section_id/:class_name/:subject/result`}><Result /></Route>
+        <Route exact path={`${path}/diagnostic-result`}><DiagnosticTestResult /></Route> */}
         <Route exact path={`${path}/lesson-plans/:class_name/:subject/:lesson_number/list/pdf`}><PDF /></Route>
         <Route exact path={`${path}/lesson-plans/:class_name/:subject/list`}><List /></Route>
         <Route exact path={`${path}/lesson-plans`}><LessonPlans /></Route>
