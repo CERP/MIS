@@ -69,11 +69,12 @@ export const getStudentsByGroup = (students: RootDBState["students"], group: str
     return stds
 }
 
-export const getPDF = (selectedSubject: string, selectedSection: string, targeted_instruction: RootReducerState["targeted_instruction"]) => {
+export const getPDF = (selectedSubject: string, selectedSection: string, targeted_instruction: RootReducerState["targeted_instruction"], type: string) => {
     let url, id
     let misTest: Tests = targeted_instruction['tests']
     for (let [test_id, obj] of Object.entries(misTest)) {
-        if (obj.grade.substring(obj.grade.length - 1) === selectedSection.substring(selectedSection.length - 1) && obj.subject === selectedSubject) {
+        if (obj.grade.substring(obj.grade.length - 1) === selectedSection.substring(selectedSection.length - 1) &&
+            obj.subject === selectedSubject && obj.type === type) {
             url = obj.pdf_url
             id = test_id
             break
@@ -180,17 +181,18 @@ export const calculateLearningLevel = (result: MISDiagnosticReport['questions'])
 }
 
 export const getCount = (faculty: RootDBState["faculty"], faculty_id: string) => {
-    let count = 0;
+    let count = 0, complete = 0;
     for (let subjects of Object.values(faculty[faculty_id].targeted_instruction.curriculum)) {
         for (let lessons of Object.values(subjects)) {
             for (let lesson of Object.values(lessons)) {
+                complete++
                 if (lesson.taken) {
                     count++
                 }
             }
         }
     }
-    return count
+    return [count, complete]
 }
 
 export const getResult = (students: RootDBState["students"], test_id: string) => {
