@@ -4,6 +4,11 @@ export enum ActionTypes {
 	UPDATE_ONBOARDING_STAGE = 'UPDATE_ONBOARDING_STAGE'
 }
 
+export enum StaffType {
+	TEACHING = 'TEACHING',
+	NON_TEACHING = 'NON_TEACHING'
+}
+
 export enum OnboardingState {
 	ADD_STAFF,
 	ADD_CLASS,

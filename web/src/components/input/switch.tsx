@@ -4,10 +4,14 @@ import { Switch } from "@headlessui/react"
 interface SwitchButtonProps {
 	title: string
 	state: boolean
-	onChange: (state: boolean) => void
+	callback: () => void
 }
 
-export const SwitchButton: React.FC<SwitchButtonProps> = ({ title, state, onChange }) => {
+export const SwitchButton: React.FC<SwitchButtonProps> = ({ title, state, callback }) => {
+
+	const handleToggle = (flag: boolean) => {
+		callback()
+	}
 
 	return (
 		<div className="flex items-center justify-center">
@@ -17,8 +21,8 @@ export const SwitchButton: React.FC<SwitchButtonProps> = ({ title, state, onChan
 					<Switch
 						as="button"
 						checked={state}
-						onChange={onChange}
-						className={`${state ? "bg-red-brand" : "bg-gray-200"
+						onChange={handleToggle}
+						className={`${state ? "bg-green-brand" : "bg-gray-200"
 							} relative inline-flex flex-shrink-0 h-6 transition-colors duration-200 ease-in-out border-2 border-transparent rounded-full cursor-pointer w-11 focus:outline-none focus:shadow-outline`}
 					>
 						{({ checked }) => (

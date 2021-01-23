@@ -476,7 +476,8 @@ interface MISTeacher {
 		expense: boolean
 		family: boolean
 		prospective: boolean
-	}
+	},
+	type?: "TEACHING" | "NON-TEACHING"
 }
 
 type MISTeacherAttendanceStatus = "check_in" | "check_out" | "absent" | "leave" | ""

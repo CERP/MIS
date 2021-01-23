@@ -1,11 +1,44 @@
-import React from 'react'
-import clsx from 'clsx'
-
-import { Spinner } from 'components/Animation/spinner'
+import React, { useState } from 'react'
+import { v4 } from 'node-uuid'
 
 type TCreateClassProps = {}
 
+const initialState: MISClass = {
+	id: v4(),
+	name: "",
+	classYear: 0,
+	sections: {
+		[v4()]: {
+			name: "DEFAULT"
+		}
+	},
+	subjects: {
+		"Maths": true,
+		"English": true,
+		"Urdu": true,
+		"Islamiat": true
+	},
+}
+
+const defaultClasses = {
+	"Nursery": 0,
+	"Class 1": 1,
+	"Class 2": 2,
+	"Class 3": 3,
+	"Class 4": 4,
+	"Class 5": 5,
+	"Class 6": 6,
+	"Class 7": 7,
+	"Class 8": 8,
+	"Class 9": 9,
+	"Class 10": 10,
+	"O Level": 11,
+	"A Level": 12
+}
+
 export const CreateClass: React.FC<TCreateClassProps> = () => {
+
+	const [state, setState] = useState(initialState)
 
 	const handleSubmit = (event: React.FormEvent) => {
 		event.preventDefault()
@@ -22,30 +55,37 @@ export const CreateClass: React.FC<TCreateClassProps> = () => {
 				<select
 					name="class"
 					required
-					className="tw-select w-full bg-transparent border-blue-brand ring-1" />
+					className="tw-select w-full border-blue-brand ring-1">
+					<option>Select Class</option>
+					{
+
+						Object.keys(defaultClasses)
+							.map(c => <option key={c}>{c}</option>)
+					}
+				</select>
 				<div className="">Sections*</div>
 				<input
 					name="section"
 					required
 					className="tw-input w-full bg-transparent border-blue-brand ring-1" />
 				<div className="">Subjects*</div>
+
+				<div className="flex flex-row items-center space-x-4 flex-wrap space-y-1 md:space-y-0">
+					{
+						Object.keys(state.subjects)
+							.map((s, index) => (<div key={s + index} className="px-2 p-1 border rounded-xl text-white text-sm">{s}</div>))
+					}
+					<div className="w-8 h-8 flex items-center justify-center rounded-full border cursor-pointer ml-auto bg-blue-brand hover:bg-blue-400">+</div>
+				</div>
+
+
 				<div className="">Assign Class Teacher*</div>
 				<div className="flex">
 
 				</div>
 				<div className="flex flex-col justify-center">
-					<button className={clsx("inline-flex w-full items-center tw-btn-blue py-3 font-semibold my-4", { "pointer-events-none": true })}>
-						{
-							false ?
-								<>
-									<Spinner />
-									<span className={"mx-auto animate-pulse"}>Creating Class...</span>
-								</>
-								:
-								<span className={"mx-auto"}>Create Class</span>
-						}
-					</button>
-					<button className="w-3/5 mx-auto tw-btn bg-orange-brand text-white">Skip</button>
+					<button className="w-full items-center tw-btn-blue py-3 font-semibold my-4">Create Class</button>
+					<button className="tw-btn bg-orange-brand text-white">Skip</button>
 				</div>
 				<div className="h-1 py-1 text-xs text-red-brand">{ }</div>
 			</form>
