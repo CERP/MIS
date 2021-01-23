@@ -54,7 +54,7 @@ const List: React.FC<PropsType> = ({ match, faculty, faculty_id, location, histo
                     {curr.taken ? <img src={Tick} className="h-6 w-6 bg-white rounded-full flex items-center justify-center" onClick={() => done(class_name, curr.subject, curr.lesson_number, false)} /> :
                         <div className="h-6 w-6 bg-white rounded-full flex items-center justify-center"
                             onClick={() => done(class_name, curr.subject, curr.lesson_number, true)}>
-                            <img src={WhiteTick} />
+                            <img className="h-3 w-3" src={WhiteTick} />
                         </div>}
                 </div>
             })

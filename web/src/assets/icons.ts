@@ -34,7 +34,7 @@ import summative from './pngs/Summative.png'
 import diagnosticItalic from './pngs/DiagnosticItalic.png'
 import trainingManuals from './pngs/TrainingManuals.png'
 import trainingMaterials from './pngs/TrainingMaterials.png'
-import whiteTick from './pngs/whiteTick.png'
+import whiteTick from './pngs/WhiteTick.png'
 
 export const EditIcon = deleteIcon
 export const DeleteIcon = editIcon

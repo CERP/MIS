@@ -32,16 +32,17 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
                     url: decodeURIComponent(pdf_url),
                 }}
             />
-        </div>
-        <div className="flex flex-row justify-around my-4 w-full">
-            <div className="w-1/7 bg-blue-900 rounded-md flex flex-row justify-between items-center h-11">
-                <button className="bg-blue-900 text-lg border-none text-white text-left pl-3 focus:outline-none"
-                    onClick={() => window.print()}>Print</button>
-                <img className="pr-4" src={Printer} />
-            </div>
-            <div className="w-1/7 bg-green-primary rounded-md flex flex-row justify-between items-center h-11">
-                <button className="bg-green-primary text-lg border-none text-white text-left pl-3 focus:outline-none">Download</button>
-                <img className="pr-3" src={Download} />
+
+            <div className="flex flex-row justify-between my-4 w-full">
+                <div className=" bg-blue-900 rounded-full flex flex-row justify-between items-center h-12 ml-3">
+                    <button className="bg-blue-900 text-lg border-none text-white text-left pl-3 focus:outline-none"
+                        onClick={() => window.print()}></button>
+                    <img className="pr-4" src={Printer} />
+                </div>
+                <div className="bg-green-primary rounded-full flex flex-row justify-end items-center h-12 mr-3">
+                    <button className="bg-green-primary text-lg border-none text-white text-left pl-2 focus:outline-none"></button>
+                    <img className="pr-3" src={Download} />
+                </div>
             </div>
         </div>
         {url[2] === 'lesson-plans' ?
@@ -71,7 +72,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
                     </div>
                 </div>
             </div> :
-            <div className="flex flex-row justify-around mb-4 w-full">
+            <div className="flex flex-row justify-around my-4 w-full">
                 <div className="w-1/7">
                     <Link className="no-underline" to={url[2] === "diagnostic-test" ?
                         `/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades` :
