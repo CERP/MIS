@@ -32,7 +32,7 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id }) => {
             </Link> :
                 <Link className="container sm:px-8 bg-white rounded-2xl m-3 h-44 flex flex-col content-center items-center shadow-lg no-underline"
                     to={'/targeted-instruction/diagnostic-test'}>
-                    <img className="h-24 py-4 w-14" src={DiagnosticItalic} alt="img" />
+                    <img className="h-24 py-4 w-24" src={DiagnosticItalic} alt="img" />
                     <div className="text-blue-900 text-lg font-bold">Diagnostic Test</div>
                 </Link>}
         <div className="flex flex-row content-center items-center justify-center w-full">
