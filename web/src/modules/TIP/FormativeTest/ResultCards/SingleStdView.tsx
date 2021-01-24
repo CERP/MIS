@@ -15,7 +15,7 @@ const SingleStdView: React.FC<P> = ({ slo, obtain, total }) => {
         <div className="flex flex-row justify-between w-full">
             <div className="w-full flex flex-row justify-between px-3 items-center text-left">
                 <div className="">{slo.replace("$", ",")}</div>
-                <div className="flex flex-row justify-between w-4/12 text-xs">
+                <div className="flex flex-row justify-between w-3/12 text-xs">
                     <div>{`${obtain}/${total}`}</div>
                     <div>{`${percentage}%`}</div>
                 </div>
