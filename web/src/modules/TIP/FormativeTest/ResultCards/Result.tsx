@@ -19,6 +19,8 @@ const Result: React.FC<PropsType> = (props) => {
     const url = props.match.url.split('/')
     const { class_name, subject, test_id } = props.match.params as Params
     const [type, setType] = useState(url[2] === "formative-test" ? 'skill_view' : 'child_view')
+    const [id, setId] = useState('')
+    const [name, setName] = useState('')
 
     const [testId,] = useMemo(() => getPDF(subject, class_name, props.targeted_instruction, (url[2].split("-")[0]).charAt(0).toUpperCase() + url[2].split("-")[0].slice(1)), [subject]);
     const group = class_name === "1" ? "blue" : class_name === "2" ? "yellow" : class_name === "3" ? "green" : "orange"
@@ -31,7 +33,7 @@ const Result: React.FC<PropsType> = (props) => {
         {type === 'single_std_view' ? <div className="flex flex-row justify-center w-full" onClick={() => setType('child_view')}>
             <div className="bg-blue-900 h-5 my-3 w-3/4 rounded-3xl py-1 px-3">
                 <img className="h-7 w-8 rounded-full pl-0 absolute left-7 top-11" src="https://cdn.dribbble.com/users/2199928/screenshots/11532918/shot-cropped-1590177932366.png?compress=1&resize=400x300" alt="img" />
-                <div className="text-white flex justify-center">Child View - Rehan</div>
+                <div className="text-white flex justify-center">Child View - {name}</div>
             </div>
         </div> :
             url[2] === "summative-test" ?
@@ -80,13 +82,15 @@ const Result: React.FC<PropsType> = (props) => {
                     obtain={res.obtain}
                     total={res.total}
                     slo_obj={res.slo_obj}
-                    id={std_id}
+                    std_id={std_id}
+                    setId={setId}
+                    setName={setName}
                     setType={setType} />
 
             })
         }
         {(type === 'single_std_view') &&
-            Object.entries(result["ee1e2bc2-12dc-4cb3-826f-f6c8e3c91bc4"].slo_obj || {}).map(([slo, obj]) => {
+            Object.entries(result[id].slo_obj || {}).map(([slo, obj]) => {
                 return <SingleStdView key={slo} slo={slo} obtain={obj.obtain} total={obj.total} />
             })
         }

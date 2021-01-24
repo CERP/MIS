@@ -5,17 +5,19 @@ interface P {
     name: string
     obtain: number
     total: number
-    id: string
+    std_id: string
 
+    setName: (name: string) => void
+    setId: (id: string) => void
     setType: (type: string) => void
 }
 
-const ChildView: React.FC<P> = ({ name, obtain, total, setType, id }) => {
-    const [idd, setId] = useState('')
+const ChildView: React.FC<P> = ({ name, obtain, total, setType, std_id, setId, setName }) => {
 
     const redirect = () => {
         setType('single_std_view')
-        setId(id)
+        setId(std_id)
+        setName(name)
     }
     //@ts-ignore
     const percentage = parseInt((obtain / total) * 100)
