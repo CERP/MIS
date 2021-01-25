@@ -108,7 +108,7 @@ const Grading: React.FC<PropsType> = (props) => {
         </div>
         <div className="w-full mt-5 flex justify-center">
             <button
-                className="bg-blue-900 h-11 font-bold text-base border-none rounded-md text-white p-2 w-9/12 mb-4"
+                className="bg-blue-primary h-11 font-bold text-base border-none rounded-md text-white p-2 w-9/12 mb-4"
                 onClick={onSave}>Save and Continue</button>
         </div>
     </div>

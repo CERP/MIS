@@ -20,7 +20,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 
     return <div className="flex flex-wrap content-between w-full">
         <Card class_name={class_name} subject={subject} />
-        <div className="rounded-lg border-black	">
+        <div className="rounded-lg border-black">
             <PDFViewer
                 scale={0.5}
                 scaleStep={0.1}
@@ -45,29 +45,31 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
             </div>
         </div>
         {url[2] === 'lesson-plans' ?
-            <div className="w-full mx-2">
-                <div className="w-full flex flex-row justify-around">
-                    <button
-                        className={`border-none text-blue-300 text-xs bg-transparent outline-none
+            <div className="w-full bg-gray-100 mt-3 rounded-2xl h-full">
+                <div className="m-2">
+                    <div className="w-full flex flex-row justify-around">
+                        <button
+                            className={`border-none text-blue-300 text-xs bg-transparent outline-none
                    ${btn_type === 'teaching_material' && "text-blue-900 underline"}`}
-                        onClick={() => setBtnType('teaching_material')}>Teaching Material
+                            onClick={() => setBtnType('teaching_material')}>Teaching Material
                </button>
-                    <button
-                        className={`border-none text-blue-300 text-xs bg-transparent outline-none 
+                        <button
+                            className={`border-none text-blue-300 text-xs bg-transparent outline-none 
                    ${btn_type === 'activities' && "text-blue-900 underline"}`}
-                        onClick={() => setBtnType('activities')}>Activities
+                            onClick={() => setBtnType('activities')}>Activities
                </button>
-                    <button
-                        className={`border-none text-blue-300 text-xs bg-transparent outline-none 
+                        <button
+                            className={`border-none text-blue-300 text-xs bg-transparent outline-none 
                    ${btn_type === 'teaching_manual' && "text-blue-900 underline"}`}
-                        onClick={() => setBtnType('teaching_manual')}>Teaching Manual
+                            onClick={() => setBtnType('teaching_manual')}>Teaching Manual
                </button>
-                </div>
-                <div className="bg-blue-400 p-2 my-3 rounded-md">
-                    <div className="text-white text-xs">
-                        {btn_type === 'teaching_material' ? targeted_instruction.curriculum[parseInt(class_name)][subject][parseInt(lesson_number)].material_links :
-                            btn_type === 'activities' ? targeted_instruction.curriculum[parseInt(class_name)][subject][parseInt(lesson_number)].activity_links :
-                                targeted_instruction.curriculum[parseInt(class_name)][subject][parseInt(lesson_number)].teaching_manual_link}
+                    </div>
+                    <div className="bg-white p-2 my-3 rounded-md mb-2">
+                        <div className="text-blue-900 text-xs break-words">
+                            {btn_type === 'teaching_material' ? targeted_instruction.curriculum[parseInt(class_name)][subject][parseInt(lesson_number)].material_links :
+                                btn_type === 'activities' ? targeted_instruction.curriculum[parseInt(class_name)][subject][parseInt(lesson_number)].activity_links :
+                                    targeted_instruction.curriculum[parseInt(class_name)][subject][parseInt(lesson_number)].teaching_manual_link}
+                        </div>
                     </div>
                 </div>
             </div> :
