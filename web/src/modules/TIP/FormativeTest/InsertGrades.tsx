@@ -41,7 +41,7 @@ const InsertGrades: React.FC<PropsType> = (props) => {
                 className="w-full no-underline flex justify-center items-center"
                 to={url[2] === "diagnostic-test" ? `/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades/test-result` :
                     `/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades/test-result`}>
-                <button className="bg-blue-900 h-11 font-bold text-lg border-none rounded text-white p-2 w-6/12">Finish</button>
+                <button className="bg-blue-primary h-11 font-bold text-lg border-none rounded text-white p-2 w-6/12">Finish</button>
             </Link>
         </div>
     </div>

@@ -17,10 +17,11 @@ module.exports = {
 		  'blue-200': '#F9F9F9',
 		  'blue-150': '#3478B9',
 		  'blue-100': '#7BACAE',
-		  'blue-50': '#C6EFCE',
 		  'blue-25': '#74ACED',
 		  'red-250': '#FF9191',
-		  'yellow-350': '#FFEB9C',
+		  'green-250': '#C6EFCE',
+		  'yellow-250': '#FFEB9C',
+		  'gray-100': '#EFF3F7'
         },
         width: (theme) => ({
           auto: 'auto',

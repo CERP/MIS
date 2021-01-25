@@ -10,8 +10,8 @@ const SingleStdView: React.FC<P> = ({ slo, obtain, total }) => {
 
     const percentage = Math.trunc((obtain / total) * 100)
 
-    return <div className={`${percentage >= 60 ? "bg-green-primary text-white" :
-        percentage >= 50 ? "bg-yellow-primary text-white" : "bg-red-primary text-white"}
+    return <div className={`${percentage >= 60 ? "bg-green-250" :
+        percentage >= 50 ? "bg-yellow-250" : "bg-red-250"}
      flex flex-row justify-between items-center px-3 my-2 h-11 shadow-lg w-full`}>
         <div className="flex flex-row justify-between w-full">
             <div className="w-full flex flex-row justify-between px-3 items-center text-left">
