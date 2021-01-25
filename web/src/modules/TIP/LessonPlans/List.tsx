@@ -41,7 +41,7 @@ const List: React.FC<PropsType> = ({ match, faculty, faculty_id, history, lesson
     }
 
     return <div className="flex flex-wrap content-between">
-        <Card class_name='' />
+        <Card class_name='' subject='' />
         {Object.values(lesson_plans).map((curr) => {
             return <div key={curr.lesson_number}
                 className="no-underline bg-blue-300 h-15 w-full mx-3 rounded-md mb-3 flex flex-row justify-between items-center p-3"

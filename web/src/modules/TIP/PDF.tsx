@@ -19,7 +19,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
     const [test_id, pdf_url] = useMemo(() => getPDF(subject, class_name, targeted_instruction, (url[2].split("-")[0]).charAt(0).toUpperCase() + url[2].split("-")[0].slice(1)), [subject]);
 
     return <div className="flex flex-wrap content-between w-full">
-        <Card class_name="" />
+        <Card class_name={class_name} subject={subject} />
         <div className="rounded-lg border-black	">
             <PDFViewer
                 scale={0.5}
@@ -33,13 +33,13 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
                 }}
             />
             <div className="flex flex-row justify-between my-4 w-full">
-                <div className=" bg-blue-900 rounded-full flex flex-row justify-between items-center h-12 ml-3">
-                    <button className="bg-blue-900 text-lg border-none text-white text-left pl-3 focus:outline-none"
+                <div className="bg-blue-150 rounded-full flex flex-row justify-between items-center h-12 ml-3">
+                    <button className="bg-blue-150 text-lg border-none text-white text-left pl-3 focus:outline-none"
                         onClick={() => window.print()}></button>
                     <img className="pr-4" src={Printer} />
                 </div>
-                <div className="bg-green-primary rounded-full flex flex-row justify-end items-center h-12 mr-3">
-                    <button className="bg-green-primary text-lg border-none text-white text-left pl-2 focus:outline-none"></button>
+                <div className="bg-blue-150 rounded-full flex flex-row justify-end items-center h-12 mr-3">
+                    <button className="bg-blue-150 text-lg border-none text-white text-left pl-2 focus:outline-none"></button>
                     <img className="pr-3" src={Download} />
                 </div>
             </div>
@@ -73,16 +73,16 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
             </div> :
             <div className="flex flex-row justify-around my-4 w-full">
                 <div className="w-1/7">
+                    <button className="bg-green-primary font-bold text-lg border-none rounded-md text-white text-left p-2 w-full focus:outline-none">Answer Sheet</button>
+                </div>
+                <div className="w-1/7">
                     <Link className="no-underline" to={url[2] === "diagnostic-test" ?
                         `/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades` :
                         `/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades`}>
-                        <button className="bg-orange-primary font-bold text-lg border-none rounded-md text-white text-left p-2 w-full focus:outline-none">
+                        <button className="bg-blue-150 font-bold text-lg border-none rounded-md text-white text-left p-2 w-full focus:outline-none">
                             Insert Grades
                         </button>
                     </Link>
-                </div>
-                <div className="w-1/7">
-                    <button className="bg-red-primary font-bold text-lg border-none rounded-md text-white text-left p-2 w-full focus:outline-none">Answer Sheet</button>
                 </div>
             </div>
         }

@@ -24,7 +24,7 @@ const ChildView: React.FC<P> = ({ name, obtain, total, std_id, test_type, setId,
     const percentage = Math.trunc(obtain / total * 100)
 
     return <div className={`${percentage >= 60 ? "bg-green-primary text-white" :
-        percentage >= 50 ? "bg-orange-primary text-white" : "bg-red-primary text-white"} 
+        percentage >= 50 ? "bg-yellow-primary text-white" : "bg-red-primary text-white"} 
     flex flex-row justify-between items-center px-3 my-2 h-11 shadow-lg w-full`} onClick={redirect}>
         <div className="flex flex-row justify-between items-center w-full">
             <div className="w-3/5 flex flex-row justify-start content-center items-center">
