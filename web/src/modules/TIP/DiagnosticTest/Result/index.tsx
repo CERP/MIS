@@ -18,7 +18,7 @@ const DiagnosticTestResult: React.FC<P> = (props) => {
     const class_name = useMemo(() => getClassnameFromSectionId(sorted_sections, sectionId), [sectionId])
 
     return <div className="flex flex-wrap content-between">
-        <Card class_name={class_name.substring(6)} />
+        <Card class_name={class_name} subject='' />
         <Headings
             heading="Diagnostic Test Result"
             sub_heading={class_name ? "Select the subject you want to evaluate" :

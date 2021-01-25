@@ -159,7 +159,7 @@ export const calculateLearningLevel = (result: MISDiagnosticReport['questions'])
         }
         return percentages[a] > percentages[b] ? a : b
     }, '')
-    const color = level === "1" ? "blue" : level === "2" ? "red" : level === "3" ? "green" : "orange"
+    const color = level === "1" ? "blue" : level === "2" ? "yellow" : level === "3" ? "green" : "orange"
     return { "level": level, "group": color }
 }
 

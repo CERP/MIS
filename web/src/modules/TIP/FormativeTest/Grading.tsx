@@ -3,6 +3,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { getQuestionList, calculateLearningLevel } from 'utils/TIP'
+import Card from '../Card'
 import { addReport } from 'actions'
 
 interface P {
@@ -83,19 +84,7 @@ const Grading: React.FC<PropsType> = (props) => {
     }
 
     return <div className="flex flex-wrap content-between bg-white">
-        <div className="container sm:px-8 bg-yellow-400 rounded m-3 h-24 mb-6">
-            <div className="flex flex-row justify-start">
-                <img className="h-14 rounded-full p-4"
-                    src="https://cdn.dribbble.com/users/2199928/screenshots/11532918/shot-cropped-1590177932366.png?compress=1&resize=400x300"
-                    alt="img" />
-                <div className="flex flex-col justify-center">
-                    <div className="text-white text-xl font-bold">{props.teacher_name}</div>
-                    <div className="flex flex-row justify-between mt-2">
-                        <div className="text-white text-base font-bold">{`${class_name} | ${subject}`}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <Card class_name={class_name} subject={subject} />
         <div className="flex flex-col justify-between w-full mx-4">
             {Object.keys(state.questionsObj)
                 .sort((a, b) => a.localeCompare(b))

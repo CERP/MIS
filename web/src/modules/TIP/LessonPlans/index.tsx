@@ -15,7 +15,7 @@ const LessonPlans: React.FC<P> = (props) => {
     const grades = getGradesFromTests(props.targeted_instruction)
 
     return <div className="flex flex-wrap content-between">
-        <Card class_name={class_name} />
+        <Card class_name={class_name} subject='' />
         <Headings heading="Lesson Plans" sub_heading={class_name ? "Select the subject you want to evaluate" : "Select the Group"} />
         {class_name ?
             <Subjects class_name={class_name} section_id='' /> :

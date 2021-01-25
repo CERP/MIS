@@ -9,11 +9,11 @@ interface P {
 const Groups: React.FC<P> = ({ students, color, level }) => {
 
     return <div className="flex flex-wrap flex-col justify-between w-full">
-        <div className={`flex flex-row justify-between h-7 items-center text-white px-3 ${color}`}>
-            <div>Remedial Level</div>
-            <div>{level}</div>
+        <div className={`flex flex-row justify-between h-7 items-center text-white px-3 bg-${color}-primary`}>
+            <div className="capitalize">{color} Group</div>
+            <div>Remedial Level {level}</div>
         </div>
-        {<div className="flex flex-wrap w-full justify-start mb-3">
+        {<div className="flex flex-wrap w-full justify-start">
             {Object.values(students)
                 .sort((a, b) => a.Name.localeCompare(b.Name))
                 .map((std) => (<div key={name} className="relative no-underline h-24 flex flex-col flex items-center justify-center">
