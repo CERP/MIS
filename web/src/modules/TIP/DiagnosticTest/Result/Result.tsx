@@ -2,9 +2,9 @@ import React, { useMemo, useState } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { getStudentsBySectionId, calculateResult } from 'utils/TIP'
-import Footer from '../Footer'
+import Footer from '../../Footer'
 import Groups from './Groups'
-import Card from '../Card'
+import Card from '../../Card'
 
 interface P {
     students: RootDBState["students"]

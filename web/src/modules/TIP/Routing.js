@@ -5,11 +5,11 @@ import DiagnosticTest from './DiagnosticTest';
 import DiagnosticTestResult from './DiagnosticTest/Result/index';
 import FormativeTestResult from './FormativeTest/Result/index';
 import Grading from './FormativeTest/Grading';
-import FormativeResult from './FormativeTest/ResultCards/Result'
+import FormativeResult from './FormativeTest/Result/ResultCards/Result'
 import TrainingVideos from './TrainingVideos'
 import FormativeTest from './FormativeTest';
 import SummativeTest from './SummativeTest';
-import Result from './DiagnosticTest/Result';
+import Result from './DiagnosticTest/Result/Result';
 import LessonPlans from './LessonPlans';
 import HomePage from './index' 
 import PDF from './PDF'

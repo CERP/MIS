@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ArrowBack } from 'assets/icons'
 
 interface P {
@@ -6,21 +6,23 @@ interface P {
     obtain: number
     total: number
     std_id: string
+    test_type: string
 
     setName: (name: string) => void
     setId: (id: string) => void
     setType: (type: string) => void
 }
 
-const ChildView: React.FC<P> = ({ name, obtain, total, setType, std_id, setId, setName }) => {
+const ChildView: React.FC<P> = ({ name, obtain, total, std_id, test_type, setId, setName, setType }) => {
 
     const redirect = () => {
         setType('single_std_view')
         setId(std_id)
         setName(name)
     }
-    //@ts-ignore
-    const percentage = parseInt((obtain / total) * 100)
+
+    const percentage = Math.trunc(obtain / total * 100)
+
     return <div className={`${percentage >= 60 ? "bg-green-primary text-white" :
         percentage >= 50 ? "bg-orange-primary text-white" : "bg-red-primary text-white"} 
     flex flex-row justify-between items-center px-3 my-2 h-11 shadow-lg w-full`} onClick={redirect}>
@@ -30,7 +32,7 @@ const ChildView: React.FC<P> = ({ name, obtain, total, setType, std_id, setId, s
                 <div>{name}</div>
             </div>
             <div className="flex flex-row justify-between w-3/12 text-xs">
-                <div>{`${obtain}/${total}`}</div>
+                <div>{(test_type === "summative-test") ? percentage < 50 ? "F" : "P" : `${obtain}/${total}`}</div>
                 <div>{`${percentage}%`}</div>
             </div>
             <div className="bg-white rounded-full h-7 w-7 flex justify-center items-center">

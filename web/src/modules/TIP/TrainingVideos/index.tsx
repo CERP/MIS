@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import ActivityVideos from './ActivityVideos'
 import TrainingManuals from './TrainingManuals'
 interface P {
