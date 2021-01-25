@@ -8,7 +8,7 @@ import toTitleCase from 'utils/toTitleCase'
 import { addLogo } from 'actions'
 import { AppLayout } from 'components/Layout/appLayout'
 import { AdminCreateForm } from './createAdmin'
-import { OnboardingState } from 'constants/index'
+import { OnboardingStage } from 'constants/index'
 
 export const SchoolSetup = () => {
 
@@ -33,7 +33,7 @@ export const SchoolSetup = () => {
 		reader.readAsDataURL(file)
 	}
 
-	if (auth.name && setupStage !== OnboardingState.COMPLETED) {
+	if (auth.name && setupStage !== OnboardingStage.COMPLETED) {
 		return <Redirect to='/school/onboarding' />
 	}
 

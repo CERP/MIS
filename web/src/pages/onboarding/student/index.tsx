@@ -11,7 +11,8 @@ import { formatCNIC, formatPhone } from 'utils'
 import UserIconSvg from 'assets/svgs/user.svg'
 
 type TAddStudentProps = {
-
+	onBack?: (close: boolean) => void
+	skipStage?: () => void
 }
 
 const studentCSVHeaders = [
@@ -122,7 +123,7 @@ export const AddStudent: React.FC<TAddStudentProps> = ({ }) => {
 
 			<div className="text-white text-center text-base my-5">Adding Students to Class 5</div>
 
-			<div className="w-4/5 flex items-center flex-row my-4">
+			<div className="w-4/5 md:w-2/5 flex items-center flex-row my-4">
 				<img className="w-20 h-20 rounded-full" src={UserIconSvg} alt="user-logo" />
 				<div className="flex flex-col space-y-1 text-sm text-white ml-10">
 					<div className="text-semibold">Rohullah</div>
@@ -141,13 +142,13 @@ export const AddStudent: React.FC<TAddStudentProps> = ({ }) => {
 						<span className="mx-auto">Download Template</span>
 					</button>
 					<button type="button" className="inline-flex w-full tw-btn text-white bg-teal-500">
-						<label>
-							<input type="file" aria-label="file-browser" onChange={handleUploadCSV} accept=".csv" />
-						</label>
 						<svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
 						</svg>
-						<span className="mx-auto">Upload Excel File</span>
+						<label className="w-full mx-auto">
+							<input type="file" className="hidden" onChange={handleUploadCSV} accept=".csv" />
+							<span>Upload Excel File</span>
+						</label>
 					</button>
 				</div>
 

@@ -22,7 +22,7 @@ export const SwitchButton: React.FC<SwitchButtonProps> = ({ title, state, callba
 						as="button"
 						checked={state}
 						onChange={handleToggle}
-						className={`${state ? "bg-green-brand" : "bg-gray-200"
+						className={`${state ? "bg-green-brand" : "bg-red-brand"
 							} relative inline-flex flex-shrink-0 h-6 transition-colors duration-200 ease-in-out border-2 border-transparent rounded-full cursor-pointer w-11 focus:outline-none focus:shadow-outline`}
 					>
 						{({ checked }) => (

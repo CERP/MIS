@@ -58,8 +58,7 @@ interface RootDBState {
 	onboarding: MISOnboarding
 }
 interface MISOnboarding {
-	// stage: "CREATE_ADMIN" | "ADD_STAFF" | "ADD_CLASS" | "ADD_STUDENTS" | "COMPLETED"
-	stage: number
+	stage: "ADD_STAFF" | "ADD_CLASS" | "ADD_STUDENTS" | "COMPLETED"
 }
 
 interface Curriculum {
@@ -260,7 +259,7 @@ interface MISClass {
 		}
 	}
 	subjects: {
-		[subject: string]: true
+		[subject: string]: boolean
 	}
 }
 
@@ -477,7 +476,7 @@ interface MISTeacher {
 		family: boolean
 		prospective: boolean
 	},
-	type?: "TEACHING" | "NON-TEACHING"
+	type?: "TEACHING" | "NON_TEACHING" | ""
 }
 
 type MISTeacherAttendanceStatus = "check_in" | "check_out" | "absent" | "leave" | ""
