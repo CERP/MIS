@@ -357,6 +357,22 @@ type Report = {
 	}
 }
 
+interface Result {
+    [std_id: string]: {
+        std_name: string
+        obtain: number
+        total: number
+        slo_obj: SloObj
+    }
+}
+
+interface SloObj {
+	[slo_name]: {
+		obtain: number
+		total: number
+	}
+}
+
 type MISReport = {
 	[name: string]: {
 		correct: number

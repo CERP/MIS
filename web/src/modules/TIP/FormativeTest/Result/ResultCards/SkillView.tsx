@@ -3,10 +3,13 @@ import { ArrowBack } from 'assets/icons'
 
 interface P {
     slo: string
-    percentage: number
+    obtain: number
+    total: number
 }
 
-const SkillView: React.FC<P> = ({ slo, percentage }) => {
+const SkillView: React.FC<P> = ({ slo, obtain, total }) => {
+
+    const percentage = Math.trunc((obtain / total) * 100)
 
     return <div className={`${percentage >= 60 ? "bg-green-primary text-white" :
         percentage >= 50 ? "bg-orange-primary text-white" : "bg-red-primary text-white"} flex flex-row justify-between items-center px-3 my-2 h-11 shadow-lg w-full`}>

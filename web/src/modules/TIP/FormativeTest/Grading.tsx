@@ -31,6 +31,7 @@ const Grading: React.FC<PropsType> = (props) => {
 
     const { class_name, subject, std_id, section_id, test_id } = props.match.params as Params
     const url = props.match.url.split('/')
+
     const selectedTest: MISDiagnosticReport = useMemo(() => getQuestionList(url[2] === "diagnostic-test" ?
         props.students[std_id].targeted_instruction.diagnostic_result : url[2] === "formative-test" ?
             props.students[std_id].targeted_instruction.formative_result :
@@ -96,27 +97,25 @@ const Grading: React.FC<PropsType> = (props) => {
             </div>
         </div>
         <div className="flex flex-col justify-between w-full mx-4">
-            {
-                Object.keys(state.questionsObj)
-                    .sort((a, b) => a.localeCompare(b))
-                    .map(function (key, index) {
-                        return <div key={key} className={`flex flex-row justify-between items-center border border-solid border-gray-200 px-3 ${index % 2 === 0 ? "bg-gray-100" : "bg-white"} h-12`}>
-                            <span className="text-xs font-bold">{`${key}: `}</span><div className="text-xs w-32 truncate">{state.questionsObj[key].question_text}</div>
-                            <div className="rounded-xl w-30 h-6 bg-white border border-solid border-gray-100">
-                                <button className={!state.questionsObj[key].is_correct ?
-                                    "border-none h-full rounded-xl text-xs outline-none text-white bg-incorrect-red" :
-                                    "border-none bg-white h-full rounded-xl text-xs outline-non"}
-                                    onClick={() => handleChange(false, key)}>Incorrect
+            {Object.keys(state.questionsObj)
+                .sort((a, b) => a.localeCompare(b))
+                .map(function (key, index) {
+                    return <div key={key} className={`flex flex-row justify-between items-center border border-solid border-gray-200 px-3 ${index % 2 === 0 ? "bg-gray-100" : "bg-white"} h-12`}>
+                        <span className="text-xs font-bold">{`${key}: `}</span><div className="text-xs w-32 truncate">{state.questionsObj[key].question_text}</div>
+                        <div className="rounded-xl w-30 h-6 bg-white border border-solid border-gray-100">
+                            <button className={!state.questionsObj[key].is_correct ?
+                                "border-none h-full rounded-xl text-xs outline-none text-white bg-incorrect-red" :
+                                "border-none bg-white h-full rounded-xl text-xs outline-non"}
+                                onClick={() => handleChange(false, key)}>Incorrect
                             </button>
-                                <button className={state.questionsObj[key].is_correct ?
-                                    "border-none h-full rounded-xl text-xs text-white bg-correct-green outline-none" :
-                                    "border-none bg-white h-full rounded-xl text-xs outline-none"}
-                                    onClick={() => handleChange(true, key)}>Correct
+                            <button className={state.questionsObj[key].is_correct ?
+                                "border-none h-full rounded-xl text-xs text-white bg-correct-green outline-none" :
+                                "border-none bg-white h-full rounded-xl text-xs outline-none"}
+                                onClick={() => handleChange(true, key)}>Correct
                             </button>
-                            </div>
                         </div>
-                    })
-            }
+                    </div>
+                })}
         </div>
         <div className="w-full mt-5 flex justify-center">
             <button

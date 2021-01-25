@@ -24,15 +24,13 @@ const DiagnosticTest: React.FC<P> = (props) => {
             sub_heading={class_name ? "Select the subject you want to evaluate" :
                 "Select the class you want to evaluate"}
         />
-        {
-            class_name ?
-                <Subjects class_name={class_name} section_id={sectionId} /> :
-                <Classes
-                    setSectionId={setSectionId}
-                    sortedSections={sorted_sections}
-                    grades={null}
-                />
-        }
+        {class_name ?
+            <Subjects class_name={class_name} section_id={sectionId} /> :
+            <Classes
+                setSectionId={setSectionId}
+                sortedSections={sorted_sections}
+                grades={null}
+            />}
     </div>
 }
 

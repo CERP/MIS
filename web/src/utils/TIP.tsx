@@ -96,23 +96,6 @@ export const getQuestionList = (diagnostic_result: MISStudent["targeted_instruct
         }, {})
 }
 
-export const getSloList = (targeted_instruction: RootReducerState["targeted_instruction"]) => {
-    return Object.entries(targeted_instruction.tests).reduce((agg, [test_id, test]) => {
-        return {
-            ...agg,
-            [test_id]: Object.values(test.questions).reduce((agg2, test) => {
-                if ((agg2.length === 0 || agg2.length > 0) && !agg2.includes(test.slo_category)) {
-                    return [
-                        ...agg2, test.slo_category
-                    ]
-                }
-                return [...agg2]
-            }, [])
-
-        }
-    }, {})
-}
-
 export const calculateResult = (students: RootDBState["students"], sub: string) => {
     return Object.entries(students).reduce((agg, [std_id, std_obj]) => {
         const learning_level = std_obj.targeted_instruction.learning_level && std_obj.targeted_instruction.learning_level[sub]
@@ -195,7 +178,7 @@ export const getCount = (faculty: RootDBState["faculty"], faculty_id: string) =>
     return [count, complete]
 }
 
-export const getResult = (students: RootDBState["students"], test_id: string, type: string) => {
+export const getResult = (students: MISStudent, test_id: string, type: string) => {
     return Object.entries(students).reduce((agg, [std_id, std_obj]) => {
         if (std_obj.targeted_instruction[type][test_id].checked) {
             return {
@@ -250,20 +233,6 @@ export const getResult = (students: RootDBState["students"], test_id: string, ty
         }
         return { ...agg }
     }, {})
-}
-
-interface Result {
-    [std_id: string]: {
-        std_name: string
-        obtain: number
-        total: number
-        slo_obj: {
-            [slo_name]: {
-                obtain: number
-                total: number
-            }
-        }
-    }
 }
 
 export const getClassResult = (result: Result) => {

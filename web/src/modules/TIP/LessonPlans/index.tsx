@@ -7,7 +7,6 @@ import Card from '../Card'
 import Subjects from '../Subjects'
 
 interface P {
-    classes: RootDBState["classes"]
     targeted_instruction: RootReducerState["targeted_instruction"]
 }
 
@@ -18,19 +17,16 @@ const LessonPlans: React.FC<P> = (props) => {
     return <div className="flex flex-wrap content-between">
         <Card class_name={class_name} />
         <Headings heading="Lesson Plans" sub_heading={class_name ? "Select the subject you want to evaluate" : "Select the Group"} />
-        {
-            class_name ?
-                <Subjects class_name={class_name} section_id='' /> :
-                <Classes
-                    setSectionId={setClassName}
-                    sortedSections={null}
-                    grades={grades}
-                />
-        }
+        {class_name ?
+            <Subjects class_name={class_name} section_id='' /> :
+            <Classes
+                setSectionId={setClassName}
+                sortedSections={null}
+                grades={grades}
+            />}
     </div>
 }
 
 export default connect((state: RootReducerState) => ({
-    classes: state.db.classes,
     targeted_instruction: state.targeted_instruction
 }))(LessonPlans)

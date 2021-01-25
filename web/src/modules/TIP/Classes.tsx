@@ -7,7 +7,6 @@ interface P {
 }
 
 const Classes: React.FC<P> = ({ setSectionId, sortedSections, grades }) => {
-
     return <div className="flex flex-wrap flex-row justify-around w-full mx-4">
         {
             grades && grades

@@ -2,8 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { connect } from 'react-redux'
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom'
 import { Download, Printer } from 'assets/icons'
-import { getPDF } from 'utils/TIP'
 import PDFViewer from 'pdf-viewer-reactjs'
+import { getPDF } from 'utils/TIP'
 import Card from './Card'
 interface P {
     targeted_instruction: RootReducerState["targeted_instruction"]
@@ -32,7 +32,6 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
                     url: decodeURIComponent(pdf_url),
                 }}
             />
-
             <div className="flex flex-row justify-between my-4 w-full">
                 <div className=" bg-blue-900 rounded-full flex flex-row justify-between items-center h-12 ml-3">
                     <button className="bg-blue-900 text-lg border-none text-white text-left pl-3 focus:outline-none"
