@@ -50,6 +50,18 @@ export const SchoolOnboarding = () => {
 		])
 	}
 
+	useEffect(() => {
+
+		// this is to make sure, for the first time
+		// when admin (first user) land on onboarding page,
+		// "stage" will be updated manually.
+		if (persistentStage === OnboardingStage.ADD_STAFF)
+			return
+
+		setStage(persistentStage)
+
+	}, [persistentStage])
+
 	// useEffect(() => {
 
 	// 	setTimeout(() => {

@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
 import { v4 } from 'node-uuid'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Dynamic from '@cerp/dynamic'
+import clsx from 'clsx'
 
 import UserIconSvg from 'assets/svgs/user.svg'
-import clsx from 'clsx'
+import { createEditClass } from 'actions'
+import { createMerges } from 'actions/core'
+import { OnboardingStage } from 'constants/index'
 
 type TCreateClassProps = {
 	onBack?: (close: boolean) => void
@@ -15,7 +18,11 @@ const initialState: MISClass = {
 	id: v4(),
 	name: "",
 	classYear: 0,
-	sections: {},
+	sections: {
+		[v4()]: {
+			name: "DEFAULT"
+		}
+	},
 	subjects: {
 		"Maths": false,
 		"English": false,
@@ -42,25 +49,48 @@ const defaultClasses = {
 
 export const CreateClass: React.FC<TCreateClassProps> = ({ skipStage }) => {
 
-	const [state, setState] = useState(initialState)
-
-	const [newSubject, setNewSubject] = useState('')
-	const [newSection, setNewSection] = useState('')
-	const [classTeacher, setClassTeacher] = useState('') // teacher id should be assigned to each of the created section
-
+	const dispatch = useDispatch()
 	const { faculty } = useSelector((state: RootReducerState) => state.db)
+
+	const [state, setState] = useState(initialState)
+	const [newSubject, setNewSubject] = useState('')
+
+	const defaultSectionId = Object.keys(state.sections)[0]
+
 
 	const handleSubmit = (event: React.FormEvent) => {
 		event.preventDefault()
 
+		// validate the fields
+		// show alerts based on each
+
+		// dispatch createClass merge
+		dispatch(createEditClass(state))
+
+		// dispatch update onboarding stage
+		dispatch(createMerges([
+			{
+				path: ["db", "onboarding", "stage"],
+				value: OnboardingStage.ADD_STUDENTS
+			}
+		]))
+
 	}
 
 	const handleInput = (event: React.ChangeEvent<HTMLInputElement & HTMLSelectElement & HTMLTextAreaElement>) => {
-		const { name, value, checked, type } = event.target
+		const { name, value } = event.target
+
+		// need to improve this logic
+		if (name === "section") {
+			const v = value ? value : "DEFAULT"
+			handleInputByPath(["sections", defaultSectionId, "name"], v)
+			return
+		}
+
 		setState({ ...state, [name]: value })
 	}
 
-	const handleInputByPath = (path: string[], value: boolean) => {
+	const handleInputByPath = (path: string[], value: string | boolean) => {
 		const updatedState = Dynamic.put(state, path, value) as MISClass
 		setState(updatedState)
 	}
@@ -71,18 +101,18 @@ export const CreateClass: React.FC<TCreateClassProps> = ({ skipStage }) => {
 		setNewSubject('')
 	}
 
-	const addNewSection = () => {
-		if (newSection) {
-			const updatedState = Dynamic.put(state, ["sections", v4(), "name"], newSection) as MISClass
-			setState(updatedState)
-			setNewSection('')
-		}
-	}
+	// const addNewSection = () => {
+	// 	if (newSection) {
+	// 		const updatedState = Dynamic.put(state, ["sections", v4(), "name"], newSection) as MISClass
+	// 		setState(updatedState)
+	// 		setNewSection('')
+	// 	}
+	// }
 
-	const deleteSection = (id: string) => {
-		const updatedState = Dynamic.delete(state, ["sections", id]) as MISClass
-		setState(updatedState)
-	}
+	// const deleteSection = (id: string) => {
+	// 	const updatedState = Dynamic.delete(state, ["sections", id]) as MISClass
+	// 	setState(updatedState)
+	// }
 
 	return (
 		<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 my-4 md:mt-8">
@@ -96,7 +126,7 @@ export const CreateClass: React.FC<TCreateClassProps> = ({ skipStage }) => {
 					onChange={handleInput}
 					required
 					className="tw-select w-full border-blue-brand ring-1 text-base">
-					<option>Select Class</option>
+					<option value="">Select Class</option>
 					{
 
 						Object.keys(defaultClasses)
@@ -104,8 +134,8 @@ export const CreateClass: React.FC<TCreateClassProps> = ({ skipStage }) => {
 					}
 				</select>
 
-				<div>Sections*</div>
-				<div className="grid grid-cols-5 gap-3">
+				<div>Section*</div>
+				{/* <div className="grid grid-cols-5 gap-3">
 					{
 						Object.entries(state.sections)
 							.map(([id, section]) => (
@@ -116,17 +146,17 @@ export const CreateClass: React.FC<TCreateClassProps> = ({ skipStage }) => {
 									<span>{section.name}</span>
 								</div>))
 					}
-				</div>
+				</div> */}
 				<div className="flex flex-row items-center justify-between">
 					<input
 						name="section"
-						onChange={(e) => setNewSection(e.target.value)}
-						value={newSection}
+						required
+						onChange={handleInput}
 						placeholder="Type section name"
-						className="tw-input bg-transparent border-blue-brand ring-1" />
-					<div
+						className="w-full tw-input bg-transparent border-blue-brand ring-1" />
+					{/* <div
 						onClick={addNewSection}
-						className="ml-4 w-8 h-8 flex items-center justify-center rounded-full border cursor-pointer bg-blue-brand hover:bg-blue-400">+</div>
+						className="ml-4 w-8 h-8 flex items-center justify-center rounded-full border cursor-pointer bg-blue-brand hover:bg-blue-400">+</div> */}
 				</div>
 
 				<div>Subjects*</div>
@@ -157,7 +187,7 @@ export const CreateClass: React.FC<TCreateClassProps> = ({ skipStage }) => {
 				</div>
 
 				<div>Assign Class Teacher*</div>
-				<div className="grid gird-cols-6 gap-4">
+				<div className="grid grid-cols-3 gap-5">
 					{
 						Object.values(faculty)
 							.filter(f => f && f.Active && f.Name)
@@ -165,16 +195,16 @@ export const CreateClass: React.FC<TCreateClassProps> = ({ skipStage }) => {
 							.map(faculty => (
 								<div
 									key={faculty.id}
-									onClick={() => setClassTeacher(faculty.id)}
+									onClick={() => handleInputByPath(["sections", defaultSectionId, "faculty_id"], faculty.id)}
 									className="flex flex-col items-center space-y-2">
 									<img
 										className={clsx("w-16 h-16 rounded-full cursor-pointer border-2 border-transparent hover:border-green-brand", {
-											"border-2 border-green-brand": classTeacher === faculty.id
+											"border-2 border-green-brand": state.sections[defaultSectionId].faculty_id === faculty.id
 										})}
 										src={UserIconSvg} alt="user-logo" />
 
 									<div className={clsx("text-xs", {
-										"text-green-brand": classTeacher === faculty.id
+										"text-green-brand": state.sections[defaultSectionId].faculty_id === faculty.id
 									})}>
 										{faculty.Name}</div>
 								</div>

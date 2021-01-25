@@ -7,11 +7,12 @@ import moment from 'moment'
 import Dynamic from '@cerp/dynamic'
 
 import { SwitchButton } from 'components/input/switch'
-import { StaffType } from 'constants/index'
+import { OnboardingStage, StaffType } from 'constants/index'
 import { validateMobileNumber } from 'utils/helpers'
 import { createFacultyMerge } from 'actions'
 
 import UserIconSvg from 'assets/svgs/user.svg'
+import { createMerges } from 'actions/core'
 
 type TAddStaffProps = {
 	onBack?: (close: boolean) => void
@@ -53,7 +54,7 @@ const initialState: MISTeacher = {
 	type: ""
 }
 
-export const AddStaff: React.FC<TAddStaffProps> = ({ onBack, skipStage }) => {
+export const AddStaff: React.FC<TAddStaffProps> = ({ skipStage }) => {
 
 	const dispatch = useDispatch()
 
@@ -70,7 +71,13 @@ export const AddStaff: React.FC<TAddStaffProps> = ({ onBack, skipStage }) => {
 
 		hash(state.Password)
 			.then(hashed => {
-				dispatch(createFacultyMerge({ ...state, Password: hashed }, true))
+				dispatch(createFacultyMerge({ ...state, Password: hashed }, false))
+				dispatch(createMerges([
+					{
+						path: ["db", "onboarding", "stage"],
+						value: OnboardingStage.ADD_CLASS
+					}
+				]))
 			})
 
 	}
@@ -196,11 +203,10 @@ export const AddStaff: React.FC<TAddStaffProps> = ({ onBack, skipStage }) => {
 							</div>
 						</div>
 
-						<div className="">CNIC*</div>
+						<div className="">CNIC</div>
 						<input
 							name="CNIC"
 							onChange={handleInput}
-							required
 							placeholder="xxxxx-xxxxxxx-x"
 							className="tw-input w-full bg-transparent border-blue-brand ring-1" />
 
@@ -258,6 +264,10 @@ export const AddStaff: React.FC<TAddStaffProps> = ({ onBack, skipStage }) => {
 							state={state.permissions.setupPage}
 							callback={() => handleInputByPath(["permissions", "setupPage"], !state.permissions.setupPage)} />
 
+						<SwitchButton title={"Allow Daily Stats View"}
+							state={state.permissions.dailyStats}
+							callback={() => handleInputByPath(["permissions", "dailyStats"], !state.permissions.dailyStats)} />
+
 						<SwitchButton title={"Allow Fee Info View"}
 							state={state.permissions.fee}
 							callback={() => handleInputByPath(["permissions", "fee"], !state.permissions.fee)} />
@@ -276,9 +286,10 @@ export const AddStaff: React.FC<TAddStaffProps> = ({ onBack, skipStage }) => {
 					</>
 				}
 
-				<button className={"w-full items-center tw-btn-blue py-3 font-semibold my-4"}>Add Staff</button>
+				<button type="submit" className={"w-full items-center tw-btn-blue py-3 font-semibold my-4"}>Save</button>
+
 				<button
-					type={"button"}
+					type="button"
 					onClick={skipStage}
 					className={"w-full items-center tw-btn bg-orange-brand"}>Skip</button>
 
