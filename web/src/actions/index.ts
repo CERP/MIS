@@ -5,7 +5,7 @@ import { v4 } from "node-uuid"
 import Syncr from '@cerp/syncr'
 
 import { historicalPayment } from 'modules/Settings/HistoricalFees/historical-fee'
-import { ActionTypes, OnboardingState } from 'constants/index'
+import { OnboardingStage } from 'constants/index'
 
 const client_type = "mis";
 
@@ -45,7 +45,7 @@ export const createFacultyMerge = (faculty: MISTeacher, is_first?: boolean) => (
 		dispatch(createMerges([
 			{
 				path: ["db", "onboarding", "stage"],
-				value: OnboardingState.ADD_STAFF
+				value: OnboardingStage.ADD_STAFF
 			}
 		]))
 

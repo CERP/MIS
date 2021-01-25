@@ -9,9 +9,9 @@ export enum StaffType {
 	NON_TEACHING = 'NON_TEACHING'
 }
 
-export enum OnboardingState {
-	ADD_STAFF,
-	ADD_CLASS,
-	ADD_STUDENTS,
-	COMPLETED
+export enum OnboardingStage {
+	ADD_STAFF = "ADD_STAFF",
+	ADD_CLASS = "ADD_CLASS",
+	ADD_STUDENTS = "ADD_STUDENTS",
+	COMPLETED = "COMPLETED"
 }
