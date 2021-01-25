@@ -1,4 +1,5 @@
 import { hostHTTPS } from './hostConfig'
+import Hyphenator from './Hyphenator';
 
 const encoder = new TextEncoder();
 
@@ -52,4 +53,23 @@ export const checkTime = async (): Promise<boolean> => {
 
 type ServerResponse = {
 	os_time: number
+}
+
+export const formatCNIC = (cnic: string): string => {
+
+	if (cnic === "" || cnic.length < 13) {
+		return cnic
+	}
+
+	return Hyphenator(cnic)
+}
+
+export const formatPhone = (phone: string): string => {
+
+	if (phone === "" || phone.length >= 11) {
+		return phone
+	}
+
+	// append '0' at start if not present due to auto excel conversion text to number
+	return "0".concat(phone)
 }

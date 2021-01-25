@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
 import { v4 } from 'node-uuid'
+import { useSelector } from 'react-redux'
+
+import UserIconSvg from 'assets/svgs/user.svg'
 
 type TCreateClassProps = {}
 
@@ -39,6 +42,7 @@ const defaultClasses = {
 export const CreateClass: React.FC<TCreateClassProps> = () => {
 
 	const [state, setState] = useState(initialState)
+	const { faculty } = useSelector((state: RootReducerState) => state.db)
 
 	const handleSubmit = (event: React.FormEvent) => {
 		event.preventDefault()
@@ -63,26 +67,48 @@ export const CreateClass: React.FC<TCreateClassProps> = () => {
 							.map(c => <option key={c}>{c}</option>)
 					}
 				</select>
-				<div className="">Sections*</div>
-				<input
-					name="section"
-					required
-					className="tw-input w-full bg-transparent border-blue-brand ring-1" />
-				<div className="">Subjects*</div>
 
-				<div className="flex flex-row items-center space-x-4 flex-wrap space-y-1 md:space-y-0">
+				<div className="">Sections*</div>
+				<div className="flex flex-row items-center justify-between">
+					<input
+						name="section"
+						placeholder="Type section name"
+						className="tw-input bg-transparent border-blue-brand ring-1" />
+					<div className="ml-4 w-8 h-8 flex items-center justify-center rounded-full border cursor-pointer bg-blue-brand hover:bg-blue-400">+</div>
+				</div>
+
+				<div className="">Subjects*</div>
+				<div className="grid grid-cols-3 gap-3">
 					{
 						Object.keys(state.subjects)
-							.map((s, index) => (<div key={s + index} className="px-2 p-1 border rounded-xl text-white text-sm">{s}</div>))
+							.map((s, index) => (<div key={s + index} className="text-center p-1 border rounded-xl text-white text-sm">{s}</div>))
 					}
-					<div className="w-8 h-8 flex items-center justify-center rounded-full border cursor-pointer ml-auto bg-blue-brand hover:bg-blue-400">+</div>
 				</div>
-
+				<div className="flex flex-row items-center justify-between">
+					<input
+						name="subject"
+						placeholder="Type new subject name"
+						autoComplete="off"
+						required
+						className="tw-input bg-transparent border-blue-brand ring-1" />
+					<div className="ml-4 w-8 h-8 flex items-center justify-center rounded-full border cursor-pointer bg-blue-brand hover:bg-blue-400">+</div>
+				</div>
 
 				<div className="">Assign Class Teacher*</div>
-				<div className="flex">
-
+				<div className="grid gird-cols-3 gap-4">
+					{
+						Object.values(faculty)
+							.filter(f => f && f.Active && f.Name)
+							.sort((a, b) => a.Name.localeCompare(b.Name))
+							.map(faculty => (
+								<div key={faculty.id} className="flex flex-col items-center space-y-2">
+									<img className="w-16 h-16 rounded-full" src={UserIconSvg} alt="user-logo" />
+									<div className="text-xs">{faculty.Name}</div>
+								</div>
+							))
+					}
 				</div>
+
 				<div className="flex flex-col justify-center">
 					<button className="w-full items-center tw-btn-blue py-3 font-semibold my-4">Create Class</button>
 					<button className="tw-btn bg-orange-brand text-white">Skip</button>
