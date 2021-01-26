@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { connect } from 'react-redux'
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom'
-import { Download, Printer } from 'assets/icons'
+import { Download, Printer, BlueDownload } from 'assets/icons'
 import PDFViewer from 'pdf-viewer-reactjs'
 import { getPDF } from 'utils/TIP'
 import Card from './Card'
@@ -33,14 +33,12 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
                 }}
             />
             <div className="flex flex-row justify-between my-4 w-full">
-                <div className="bg-blue-150 rounded-full flex flex-row justify-between items-center h-12 ml-3">
-                    <button className="bg-blue-150 text-lg border-none text-white text-left pl-3 focus:outline-none"
-                        onClick={() => window.print()}></button>
-                    <img className="pr-4" src={Printer} />
+                <div className="bg-blue-150 rounded-full flex justify-center items-center h-12 w-12 ml-3"
+                    onClick={() => window.print()}>
+                    <img className="h-5 w-5" src={Printer} />
                 </div>
-                <div className="bg-blue-150 rounded-full flex flex-row justify-end items-center h-12 mr-3">
-                    <button className="bg-blue-150 text-lg border-none text-white text-left pl-2 focus:outline-none"></button>
-                    <img className="pr-3" src={Download} />
+                <div className="bg-blue-150 rounded-full flex justify-center items-center h-12 w-12 mr-3">
+                    <img className="h-5 w-5" src={Download} />
                 </div>
             </div>
         </div>
@@ -64,11 +62,14 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
                             onClick={() => setBtnType('teaching_manual')}>Teaching Manual
                </button>
                     </div>
-                    <div className="bg-white p-2 my-3 rounded-md mb-2">
-                        <div className="text-blue-900 text-xs break-words">
-                            {btn_type === 'teaching_material' ? targeted_instruction.curriculum[parseInt(class_name)][subject][parseInt(lesson_number)].material_links :
-                                btn_type === 'activities' ? targeted_instruction.curriculum[parseInt(class_name)][subject][parseInt(lesson_number)].activity_links :
-                                    targeted_instruction.curriculum[parseInt(class_name)][subject][parseInt(lesson_number)].teaching_manual_link}
+                    <div className="bg-white p-2 my-3 rounded-md mb-2 flex flex-row justify-between">
+                        <div className="text-blue-900 text-xs break-all	mr-3">
+                            {btn_type === 'teaching_material' ? targeted_instruction.curriculum[parseInt(class_name)] && targeted_instruction.curriculum[parseInt(class_name)][subject][parseInt(lesson_number)].material_links :
+                                btn_type === 'activities' ? targeted_instruction.curriculum[parseInt(class_name)] && targeted_instruction.curriculum[parseInt(class_name)][subject][parseInt(lesson_number)].activity_links :
+                                    targeted_instruction.curriculum[parseInt(class_name)] && targeted_instruction.curriculum[parseInt(class_name)][subject][parseInt(lesson_number)].teaching_manual_link}
+                        </div>
+                        <div className="flex justify-center items-center">
+                            <img className="h-4 w-4" src={BlueDownload} />
                         </div>
                     </div>
                 </div>
