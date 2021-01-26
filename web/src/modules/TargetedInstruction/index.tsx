@@ -16,7 +16,7 @@ interface P {
 	targeted_instruction: RootReducerState["targeted_instruction"]
 
 	logSms: (history: MISSMSHistory) => any
-	saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport, selectedSubject: string) => void
+	saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], selectedSubject: string, subject: string, learning_level: LearningLevel, type: string) => void
 }
 
 type PropsType = P & RouteComponentProps
@@ -49,7 +49,7 @@ const Test: React.FC<PropsType> = (props) => {
 	const sortedSections = useMemo(() => getSectionsFromClasses(props.classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0)), [])
 	const selectedClassName = useMemo(() => getClassnameFromSectionId(sortedSections, sectionId), [sectionId])
 	const Subjects: string[] = useMemo(() => getSubjectsFromTests(props.targeted_instruction), [])
-	const singleStdReport = useMemo(() => createSingleStdReport(students[stdId] && students[stdId].diagnostic_result, props.targeted_instruction, selectedSubject), [stdId, type]);
+	const singleStdReport = useMemo(() => createSingleStdReport(students[stdId] && students[stdId].targeted_instruction.diagnostic_result, props.targeted_instruction, selectedSubject), [stdId, type]);
 	const allStdReport = useMemo(() => createAllStdReport(students, props.targeted_instruction, selectedSubject, type), [type])
 	const questions = useMemo(() => getQuestionList(selectedSubject, props.students[stdId], testType), [selectedSubject, stdId]);
 	const [pdfUrl, pdfLabel] = useMemo(() => getPDF(selectedSubject, selectedClassName, testType, props.targeted_instruction), [selectedSubject, testType]);
@@ -143,7 +143,7 @@ export default connect((state: RootReducerState) => ({
 	students: state.db.students
 }), (dispatch: Function) => ({
 	logSms: (history: MISSMSHistory) => dispatch(logSms(history)),
-	saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport, selectedSubject: string) => dispatch(addReport(stdId, diagnostic_report, selectedSubject)),
+	saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], selectedSubject: string, subject: string, learning_level: LearningLevel, type: string) => dispatch(addReport(stdId, diagnostic_report, selectedSubject, subject, learning_level, type)),
 }))(Test)
 
 const getStudentsBySectionId = (sectionId: string, students: RootDBState["students"]) => {
