@@ -60,7 +60,7 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id }) => {
             </Link>
             <Link className="container sm:px-8 bg-white rounded-xl m-3 h-40 flex flex-col content-center items-center shadow-lg no-underline"
                 to={"/targeted-instruction/formative-result"}>
-                <img className="h-20 p-2" src={Formative} alt="img" />
+                <img className="h-16 p-4" src={Formative} alt="img" />
                 <div className="text-base text-blue-900 font-bold text-center">Formative Test Results</div>
             </Link>
         </div>}

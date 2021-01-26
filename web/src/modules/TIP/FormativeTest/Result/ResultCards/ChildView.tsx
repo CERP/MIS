@@ -25,11 +25,11 @@ const ChildView: React.FC<P> = ({ name, obtain, total, std_id, test_type, setId,
 
     return <div className={`${percentage >= 60 ? "bg-green-250" :
         percentage >= 50 ? "bg-yellow-250" : "bg-red-250"} 
-    flex flex-row justify-between items-center px-3 my-2 h-11 shadow-lg w-full`} onClick={redirect}>
+    flex flex-row justify-between items-center px-3 my-1 h-14 shadow-lg w-full`} onClick={redirect}>
         <div className="flex flex-row justify-between items-center w-full">
             <div className="w-3/5 flex flex-row justify-start content-center items-center">
                 <img className="h-6 rounded-full p-3" src="https://cdn.dribbble.com/users/2199928/screenshots/11532918/shot-cropped-1590177932366.png?compress=1&resize=400x300" alt="img" />
-                <div>{name}</div>
+                <div className="font-bold">{name}</div>
             </div>
             <div className="flex flex-row justify-between w-3/12 text-xs">
                 <div>{(test_type === "summative-test") ? percentage < 50 ? "F" : "P" : `${obtain}/${total}`}</div>
