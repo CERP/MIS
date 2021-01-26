@@ -30,7 +30,8 @@ const List: React.FC<PropsType> = ({ match, faculty, faculty_id, history, lesson
             faculty[faculty_id].targeted_instruction.curriculum[parseInt(class_name)][subject])
     }
 
-    const done = (level: string, subject: string, lesson_number: string, value: boolean) => {
+    const done = (e: any, level: string, subject: string, lesson_number: string, value: boolean) => {
+        e.stopPropagation()
         faculty[faculty_id].targeted_instruction.curriculum[parseInt(class_name)][subject][parseInt(lesson_number)].taken = value
         setLessonPlans(faculty[faculty_id].targeted_instruction.curriculum[parseInt(class_name)][subject])
         lessonPlanTaken(faculty_id, level, subject, lesson_number, value)
@@ -38,7 +39,6 @@ const List: React.FC<PropsType> = ({ match, faculty, faculty_id, history, lesson
 
     const redirect = (e: any, lesson_number: string) => {
         e.stopPropagation();
-        e.preventDefault();
         history.push(`/${url[1]}/${url[2]}/${class_name}/${subject}/${lesson_number}/list/pdf`)
     }
 
@@ -53,9 +53,9 @@ const List: React.FC<PropsType> = ({ match, faculty, faculty_id, history, lesson
                     <div className="text-xs text-white">{`Lesson number ${curr.lesson_number}`}</div>
                 </div>
                 {curr.taken ? <img src={Tick} className="h-6 w-6 bg-white rounded-full flex items-center justify-center"
-                    onClick={() => done(class_name, curr.subject, curr.lesson_number, false)} /> :
+                    onClick={(e) => done(e, class_name, curr.subject, curr.lesson_number, false)} /> :
                     <div className="h-6 w-6 bg-white rounded-full flex items-center justify-center"
-                        onClick={() => done(class_name, curr.subject, curr.lesson_number, true)}>
+                        onClick={(e) => done(e, class_name, curr.subject, curr.lesson_number, true)}>
                         <img className="h-3 w-3" src={WhiteTick} />
                     </div>}
             </div>
