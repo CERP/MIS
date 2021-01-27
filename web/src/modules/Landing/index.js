@@ -243,7 +243,7 @@ class Landing extends Component {
 
 	render() {
 
-		const { logout, user, students, faculty, lastSnapshot, unsyncd, package_info, alert_banner, ti_visible, targeted_instruction } = this.props;
+		const { logout, user, students, faculty, lastSnapshot, unsyncd, package_info, alert_banner, tip_visible, targeted_instruction } = this.props;
 
 		const current_page = Math.floor(this.state.scroll / window.innerWidth)
 
@@ -466,7 +466,7 @@ class Landing extends Component {
 									}
 								</div>
 								{
-									(targeted_instruction && ti_visible) &&
+									(targeted_instruction && tip_visible) &&
 									<div className="row">
 										<Link
 											className="button yellow-shadow"
@@ -587,8 +587,8 @@ export default connect(state => ({
 	auth: state.auth,
 	client_id: state.client_id,
 	ilmxUser: getIlmxUser(),
-	ti_visible: state.db.targeted_instruction_access,
-	targeted_instruction: state.db.targeted_instruction
+	tip_visible: state.db.targeted_instruction_access,
+	targeted_instruction: state.targeted_instruction
 }), dispatch => ({
 	resetTrial: () => dispatch(resetTrial()),
 	markPurchased: () => dispatch(markPurchased()),
