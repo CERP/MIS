@@ -1,7 +1,7 @@
-export const createSingleStdReport = (diagnostic_result: MISStudent["diagnostic_result"], targeted_instruction: RootReducerState["targeted_instruction"], testId: string) => {
-    return Object.values(((diagnostic_result && diagnostic_result[testId]) || {} as MISStudent["diagnostic_result"]))
-        .reduce<MISReport>((report, { isCorrect, slo }) => {
-            const c = isCorrect ? 1 : 0
+export const createSingleStdReport = (diagnostic_result: MISStudent["targeted_instruction"]["diagnostic_result"], targeted_instruction: RootReducerState["targeted_instruction"], testId: string) => {
+    return Object.values(((diagnostic_result && diagnostic_result[testId]) || {} as MISStudent["targeted_instruction"]["diagnostic_result"]))
+        .reduce<MISReport>((report, { is_correct, slo }) => {
+            const c = is_correct ? 1 : 0
             const inner = slo.reduce((updated_report: MISReport, curr_slo: string) => {
                 const category = targeted_instruction && targeted_instruction.slo_mapping[curr_slo] && targeted_instruction.slo_mapping[curr_slo].category
                 return {
@@ -37,7 +37,7 @@ export const createAllStdReport = (students: RootDBState["students"], targeted_i
     if (type === 'All Students') {
         return Object.values((students))
             .reduce((agg, std) => {
-                const report = createSingleStdReport(students[std.id].diagnostic_result, targeted_instruction, testId)
+                const report = createSingleStdReport(students[std.id].targeted_instruction.diagnostic_result, targeted_instruction, testId)
                 return {
                     ...agg,
                     [std.id]: {
@@ -140,12 +140,12 @@ export const graphData = (stdReport: Report, students: RootDBState["students"]) 
 }
 
 export const getQuestionList = (selectedTest: string, stdObj: MISStudent, testType: string) => {
-    const res: MISDiagnosticReport = stdObj && stdObj.diagnostic_result && stdObj.diagnostic_result[selectedTest]
+    const res: MISDiagnosticReport['questions'] = stdObj && stdObj.targeted_instruction.diagnostic_result && stdObj.targeted_instruction.diagnostic_result[selectedTest].questions
     if (res && testType === 'Diagnostic') {
         return Object.entries(res).reduce((agg, [key, value]) => {
             return {
                 [key]: {
-                    "answer": value.isCorrect,
+                    "answer": value.is_correct,
                     "correctAnswer": value.answer,
                     "slo": value.slo[0]
                 },

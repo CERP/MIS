@@ -48,6 +48,9 @@ const blankTeacher = (isFirst = false): MISTeacher => ({
 		expense: false,
 		prospective: false,
 		family: false
+	},
+	targeted_instruction: {
+		curriculum: {}
 	}
 })
 

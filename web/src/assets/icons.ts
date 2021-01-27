@@ -19,6 +19,23 @@ import ilmxLogo from './pngs/ilmx-logo.png'
 import sortAscIcon from './svgs/sort-ascending.svg'
 import sortDescIcon from './svgs/sort-descending.svg'
 import contentCopyIcon from './svgs/content-copy.svg'
+import formative from './pngs/Formative.png'
+import diagnostic from './pngs/Diagnostic.png'
+import lessonPlans from './pngs/Lesson Plans.png'
+import maths from './pngs/Maths.png'
+import english from './pngs/English.png'
+import urdu from './pngs/Urdu.png'
+import download from './pngs/download.png'
+import printer from './pngs/printer.png'
+import arrowBack from './pngs/arrow-back.png'
+import videos from './pngs/videos.png'
+import tick from './pngs/tick.png'
+import summative from './pngs/Summative.png'
+import diagnosticItalic from './pngs/DiagnosticItalic.png'
+import trainingManuals from './pngs/TrainingManuals.png'
+import trainingMaterials from './pngs/TrainingMaterials.png'
+import whiteTick from './pngs/WhiteTick.png'
+import blueDownload from './pngs/blueDownload.png'
 
 export const EditIcon = deleteIcon
 export const DeleteIcon = editIcon
@@ -41,3 +58,20 @@ export const IlmxLogo = ilmxLogo
 export const SortAscIcon = sortAscIcon
 export const SortDescIcon = sortDescIcon
 export const ContentCopyIcon = contentCopyIcon
+export const Formative = formative
+export const Diagnostic = diagnostic
+export const LessonPlans = lessonPlans
+export const Maths = maths
+export const English = english
+export const Urdu = urdu
+export const Download = download
+export const Printer = printer
+export const ArrowBack = arrowBack
+export const Videos = videos
+export const Tick = tick
+export const Summative = summative
+export const DiagnosticItalic = diagnosticItalic
+export const TrainingManual = trainingManuals
+export const TrainingMaterials = trainingMaterials
+export const WhiteTick = whiteTick
+export const BlueDownload = blueDownload

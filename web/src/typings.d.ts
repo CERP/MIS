@@ -58,17 +58,21 @@ interface RootDBState {
 }
 
 interface Curriculum {
-	[learning_level: string]: LearningLevels
+	[learning_level: string]: {
+		[subject: string]: LearningLevels
+	}
 }
 
 interface LearningLevels {
-	[lesson_id: string]: {
+	[lesson_id: number]: {
 		lesson_number: number
-		name: string
+		lesson_title: string
 		subject: string
-		description: string
-		video_links: string[]
-		pdf_links: string
+		lesson_duration: string
+		material_links: string[]
+		activity_links: string[]
+		teaching_manual_link: string
+		taken: boolean
 	}
 }
 
@@ -93,10 +97,22 @@ interface MISTest {
 	pdf_url: string
 	questions: {
 		[question_id: string]: {
-			answer: string
+			question_text: string
+			correct_answer: string
+			grade: string
+			slo_category: string
 			slo: string[]
 		}
 	}
+}
+
+interface Params {
+    class_name: string
+    subject: string
+	section_id: string
+	std_id: string
+	test_id: string
+	lesson_number: string
 }
 
 interface Columns {
@@ -315,7 +331,17 @@ interface MISStudent {
 	certificates: {
 		[id: string]: MISCertificate
 	}
-	diagnostic_result: DiagnosticResult
+	targeted_instruction: {
+		diagnostic_result: DiagnosticResult
+		formative_result: DiagnosticResult
+		summative_result: DiagnosticResult
+		learning_level: { 
+			[subject: string]: { 
+				level: "blue" | "green" | "yellow" | "red"  | "orange"
+				group: string
+			}
+		}
+	}
 	learning_levels: {
 		[learning_level_id: string]: {
 			test_id: string
@@ -331,6 +357,22 @@ type Report = {
 	}
 }
 
+interface Result {
+    [std_id: string]: {
+        std_name: string
+        obtain: number
+        total: number
+        slo_obj: SloObj
+    }
+}
+
+interface SloObj {
+	[slo_name]: {
+		obtain: number
+		total: number
+	}
+}
+
 type MISReport = {
 	[name: string]: {
 		correct: number
@@ -343,12 +385,32 @@ type DiagnosticResult = {
 	[test_id: string]: MISDiagnosticReport
 }
 
+interface DiagnosticRes {
+    [level: string]: {
+        group: string
+        students: RootDBState["students"]
+    }
+}
+
 type MISDiagnosticReport = {
-	[question_id: string]: {
-		answer: string
-		isCorrect: boolean
-		slo: string[]
+	checked?: boolean
+	questions?: {
+		[question_id: string]: {
+			question_text: string
+			answer: string
+			is_correct: boolean
+			slo: string[] 
+			level: string
+		}
 	}
+}
+
+type Levels = {
+	[level: string]: number
+}
+interface LearningLevel {
+	level: string
+	group: string
 }
 
 interface MISFamilyInfo {
@@ -471,6 +533,9 @@ interface MISTeacher {
 		expense: boolean
 		family: boolean
 		prospective: boolean
+	}
+	targeted_instruction: {
+		curriculum: Curriculum
 	}
 }
 
