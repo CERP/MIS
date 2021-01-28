@@ -28,8 +28,11 @@ export const OnboardingCompletion = () => {
 					<div className="text-lg font-semibold">Class Teacher: {sectionTeacher?.Name}</div>
 					<div className="text-lg font-semibold">Total Students: {Object.keys(students).length}</div>
 				</div>
-				<div className="text-center">
-					<Link to="/home" className="tw-btn-blue py-3 font-semibold px-10">Go to Home</Link>
+				<div>
+					<button className="w-full tw-btn bg-orange-brand text-white font-semibold mb-4">Add More Classes</button>
+					<Link to="/home">
+						<button className="w-full tw-btn-blue py-3 font-semibold">Go to Home</button>
+					</Link>
 				</div>
 			</div>
 
