@@ -111,7 +111,10 @@ export const SchoolOnboarding = () => {
 								? 'Add School Class'
 								: stage === OnboardingStage.ADD_STUDENTS
 									? 'Add Students to Class'
-									: 'Onboarding'
+									:
+									stage === OnboardingStage.COMPLETED
+										? ''
+										: 'Onboarding'
 					}
 				</div>
 				{

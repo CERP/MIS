@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import Papa from 'papaparse'
 import { v4 } from 'node-uuid'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import moment from 'moment'
 
 import downloadCSV from 'utils/downloadCSV'
@@ -12,6 +12,8 @@ import UserIconSvg from 'assets/svgs/user.svg'
 import { TextDivider } from 'components/divider'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { AddStudentForm } from './add'
+import { createStudentMerges, deleteStudent, deleteStudentById } from 'actions'
+import clsx from 'clsx'
 
 interface AddStudentProps {
 	onBack?: (close: boolean) => void
@@ -46,7 +48,11 @@ const studentCSVHeaders = [
 	"AdmissionNumber"
 ]
 
-export const AddStudent: React.FC<AddStudentProps> = ({ }) => {
+const MAX_STUDENTS = 40
+
+export const AddStudent: React.FC<AddStudentProps> = ({ skipStage }) => {
+
+	const dispatch = useDispatch()
 
 	const { classes, students, faculty } = useSelector((state: RootReducerState) => state.db)
 
@@ -149,6 +155,16 @@ export const AddStudent: React.FC<AddStudentProps> = ({ }) => {
 		reader.readAsText(file)
 	}, [])
 
+	const deleteStudent = (id: string) => {
+		dispatch(deleteStudentById(id))
+	}
+
+	const saveImportedStudents = () => {
+		dispatch(createStudentMerges(state.importedStudents))
+		setState({ ...state, importedStudents: [] })
+	}
+
+	const isMoreThanMaxStudents = Object.keys(students).length > MAX_STUDENTS
 
 	return (
 		<div className="md:w-4/5 md:mx-auto flex flex-col items-center rounded-2xl bg-gray-700 my-4 md:mt-8">
@@ -185,32 +201,77 @@ export const AddStudent: React.FC<AddStudentProps> = ({ }) => {
 								</button>
 							</div>
 
-							<TextDivider textColor="text-white" />
+							{
+								state.importedStudents.length > 0 ?
+									<div className="my-4">
+										<div className={"w-full h-48 overflow-y-scroll text-xs md:text-base rounded-md"}>
+											<div className="table w-full">
+												<div className="table-row-group bg-white">
+													{
+														state.importedStudents
+															.filter(s => s.Name)
+															.sort((a, b) => a.Name.localeCompare(b.Name))
+															.map(s => (
+																<div key={s.id + s.section_id} className="table-row">
+																	<div className="table-cell px-2">{s.Name}</div>
+																	<div className="table-cell px-2">{s.ManName}</div>
+																	<div className="table-cell px-2">{s.Phone}</div>
+																	<div className="table-cell p-2">
+																		<svg className="w-4 text-gray-400 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+																			<path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+																		</svg>
+																	</div>
+																</div>
+															))
+													}
+												</div>
+											</div>
+										</div>
+									</div>
+									:
+									<TextDivider textColor="text-white" />
+							}
 						</>
 						:
-						<div className="w-full max-h-40 overflow-y-scroll">
-							<div className="space-y-2">
-								{
-									Object.values(students)
-										.filter(s => s.Name)
-										.sort((a, b) => a.Name.localeCompare(b.Name))
-										.map(s => (
-											<div key={s.id + s.section_id} className="bg-white flex justify-between p-2 px-4 rounded w-full">
-												<div className="text-sm">{s.Name}</div>
-												<div className="text-sm">{s.ManName}</div>
-												<div className="text-sm">{s.Phone}</div>
-											</div>
-										))
-								}
+						<div className={clsx("w-full h-20 overflow-y-scroll text-xs md:text-base rounded-md", { "h-72": isMoreThanMaxStudents })}>
+							<div className="table w-full">
+								<div className="table-row-group bg-white">
+									{
+										Object.values(students)
+											.filter(s => s.Name)
+											.sort((a, b) => a.Name.localeCompare(b.Name))
+											.map(s => (
+												<div key={s.id + s.section_id} className="table-row">
+													<div className="table-cell px-2">{s.Name}</div>
+													<div className="table-cell px-2">{s.ManName}</div>
+													<div className="table-cell px-2">{s.Phone}</div>
+													<div className="table-cell p-2" onClick={() => deleteStudent(s.id)}>
+														<svg className="w-4 text-red-brand mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+															<path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+														</svg>
+													</div>
+												</div>
+											))
+									}
+								</div>
 							</div>
 						</div>
 				}
 
-				<AddStudentForm section={defaultSection} />
+				{
+					!isMoreThanMaxStudents && (
+						state.importedStudents.length === 0 ?
+							<AddStudentForm section={defaultSection} />
+							:
+							<button
+								onClick={saveImportedStudents}
+								className="w-full tw-btn-blue py-3 font-semibold">Save Students</button>
+					)
+				}
 
 				<div className="w-full flex flex-row items-center space-x-2 mt-4">
-					<button type="button" className="w-full tw-btn bg-orange-brand text-white">Skip</button>
-					<button type="button" className="w-full tw-btn bg-teal-500 text-white">Finish</button>
+					<button type="button" onClick={skipStage} className="w-full tw-btn bg-orange-brand text-white">Skip</button>
+					<button type="button" onClick={skipStage} className="w-full tw-btn bg-teal-500 text-white">Finish</button>
 				</div>
 			</div>
 		</div>
