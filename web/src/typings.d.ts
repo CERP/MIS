@@ -57,23 +57,23 @@ interface RootDBState {
 	target_instruction_access?: boolean
 }
 
-interface Curriculum {
+interface TIPCurriculum {
 	[learning_level: string]: {
-		[subject: string]: LearningLevels
+		[subject: string]: {
+			[lesson_id: number]: TIPLesson
+		}
 	}
 }
 
-interface LearningLevels {
-	[lesson_id: number]: {
-		lesson_number: number
-		lesson_title: string
-		subject: string
-		lesson_duration: string
-		material_links: string[]
-		activity_links: string[]
-		teaching_manual_link: string
-		taken: boolean
-	}
+interface TIPLesson {
+	lesson_number: number
+	lesson_title: string
+	subject: string
+	lesson_duration: string
+	material_links: string[]
+	activity_links: string[]
+	teaching_manual_link: string
+	taken: boolean
 }
 
 interface Tests {
@@ -535,7 +535,7 @@ interface MISTeacher {
 		prospective: boolean
 	}
 	targeted_instruction: {
-		curriculum: Curriculum
+		curriculum: TIPCurriculum
 	}
 }
 
