@@ -185,11 +185,14 @@ export const getLessonProgress = (teacher: MISTeacher) => {
 
 	// create map of {learning_level: {subject: { completed, total } }}
 	// ultimately we want to take the number with the max completion.
-	Object.values(curriculum)
-		.reduce((agg, curr) => {
+	Object.entries(curriculum)
+		.reduce((agg, [learning_level, subjects]) => {
+			console.log(learning_level, subjects)
 
-		})
+			return agg[learning_level] = ""
+		}, {})
 
+	return 0;
 
 	if (faculty[faculty_id].targeted_instruction && faculty[faculty_id].targeted_instruction.curriculum) {
 

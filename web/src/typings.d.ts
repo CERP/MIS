@@ -59,10 +59,12 @@ interface RootDBState {
 
 interface TIPCurriculum {
 	[learning_level: string]: {
-		[subject: string]: {
-			[lesson_id: number]: TIPLesson
-		}
+		[subject: string]: TIPLessonPlans
 	}
+}
+
+interface TIPLessonPlans {
+	[lesson_id: number]: TIPLesson
 }
 
 interface TIPLesson {
