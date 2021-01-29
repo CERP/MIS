@@ -11,8 +11,8 @@ export const SettingTab = () => {
 			<div className="text-center text-lg mb-6">Tap to configure the module</div>
 
 			<div className="space-y-4">
-				<Card title={"Classes"} total={Object.keys(classes).length} icon={"/favicon.ico"} />
 				<Card title={"Staff"} total={Object.keys(faculty).length} icon={"/favicon.ico"} />
+				<Card title={"Classes"} total={Object.keys(classes).length} icon={"/favicon.ico"} />
 				<Card title={"Students"} total={Object.keys(students).length} icon={"/favicon.ico"} />
 			</div>
 
