@@ -78,23 +78,16 @@ interface TIPLesson {
 	taken: boolean
 }
 
-interface Tests {
-	[id: string]: MISTest
+interface TIPTests {
+	[id: string]: TIPTest 
 }
 
-interface SLOMapping {
-	[slo_id: string]: {
-		description: string
-		category: string
-		link: strng
-	}
-}
-
-interface MISTest {
+type TIPTestType = "Summative" | "Diagnostic" | "Formative"
+interface TIPTest {
 	name: string
 	subject: string
 	grade: string
-	type: string
+	type: TIPTestType
 	label: string
 	pdf_url: string
 	questions: {
@@ -105,6 +98,14 @@ interface MISTest {
 			slo_category: string
 			slo: string[]
 		}
+	}
+}
+
+interface SLOMapping {
+	[slo_id: string]: {
+		description: string
+		category: string
+		link: strng
 	}
 }
 
@@ -196,9 +197,9 @@ interface RootReducerState {
 		hasError: boolean
 	}
 	targeted_instruction: {
-		tests: Tests
+		tests: TIPTests
 		slo_mapping: SLOMapping
-		curriculum: Curriculum
+		curriculum: TIPCurriculum
 	}
 }
 
