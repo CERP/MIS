@@ -47,10 +47,8 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 				<div className="m-2">
 					<div className="w-full flex flex-row justify-around">
 						<button
-							className={`border-none text-blue-300 text-xs bg-transparent outline-none
-                   ${btn_type === 'teaching_material' && "text-blue-900 underline"}`}
-							onClick={() => setBtnType('teaching_material')}>Teaching Material
-               </button>
+							className={`border-none text-blue-300 text-xs bg-transparent outline-none ${btn_type === 'teaching_material' && "text-blue-900 underline"}`}
+							onClick={() => setBtnType('teaching_material')}>Teaching Material </button>
 						<button
 							className={`border-none text-blue-300 text-xs bg-transparent outline-none 
                    ${btn_type === 'activities' && "text-blue-900 underline"}`}
@@ -84,7 +82,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 						`/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades`}>
 						<button className="bg-blue-150 font-bold text-lg border-none rounded-md text-white text-left p-2 w-full focus:outline-none">
 							Insert Grades
-                        </button>
+						</button>
 					</Link>
 				</div>
 			</div>
