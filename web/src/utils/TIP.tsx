@@ -164,17 +164,13 @@ export const calculateLearningLevel = (result: MISDiagnosticReport['questions'])
 }
 
 /**
- * This function gets the count of how many lessons have been completed and how many have been assigned. 
- * @param faculty 
- * @param faculty_id 
+ * Returns the maximum amount of lessons which have been completed by a teacher.
  * 
- * TODO: This function should really only take in a single faculty member, not all facluty members and an id.
- * Also, "getCount" is not a descriptive function name. 
- * Finally the variable names "count" and "complete" don't make much sense here. it is counted as a "count" if lesson.taken
- * And it is counted as complete if there is a lesson? That seems backward.
+ * Looks through the teachers curriculum object, and out of all possible learning levels and subjects
+ * Returns the max completed.
+ * @param teacher 
  */
 export const getLessonProgress = (teacher: MISTeacher) => {
-	let count = 0, complete = 0;
 
 	// When a teacher has no progress
 	if (!teacher.targeted_instruction || !teacher.targeted_instruction.curriculum) {
@@ -185,6 +181,7 @@ export const getLessonProgress = (teacher: MISTeacher) => {
 
 	// create map of {learning_level: {subject: { completed, total } }}
 	// ultimately we want to take the number with the max completion.
+	// TODO: this algorithm needs to work 
 	Object.entries(curriculum)
 		.reduce((agg, [learning_level, subjects]) => {
 			console.log(learning_level, subjects)
@@ -193,24 +190,6 @@ export const getLessonProgress = (teacher: MISTeacher) => {
 		}, {})
 
 	return 0;
-
-	if (faculty[faculty_id].targeted_instruction && faculty[faculty_id].targeted_instruction.curriculum) {
-
-
-		for (let subjects of Object.values(faculty[faculty_id].targeted_instruction.curriculum)) {
-			for (let lessons of Object.values(subjects)) {
-				lessons[0].taken
-				for (let lesson of Object.values(lessons)) {
-					complete++
-					if (lesson.taken) {
-						count++
-					}
-				}
-			}
-		}
-	}
-
-	return [count, complete]
 }
 
 export const getResult = (students: MISStudent, test_id: string, type: string) => {
