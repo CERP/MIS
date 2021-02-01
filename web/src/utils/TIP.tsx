@@ -23,7 +23,6 @@ export const getGradesFromTests = (targeted_instruction: RootReducerState["targe
 		}
 		return [...agg]
 	}, [])
-	//@ts-ignore
 	return [...new Set(grades[0])]
 }
 
@@ -126,8 +125,9 @@ export const calculateResult = (students: RootDBState["students"], sub: string) 
 	}, {} as DiagnosticRes)
 }
 
-export const calculateLearningLevel = (result: MISDiagnosticReport['questions']) => {
+export const calculateLearningLevel = (result: TIPDiagnosticReport['questions']) => {
 	const total: Levels = {}
+
 	const levels = Object.values(result || {}).reduce((agg, question) => {
 		const val = question.is_correct ? 1 : 0
 		if (agg[question.level]) {
@@ -143,6 +143,7 @@ export const calculateLearningLevel = (result: MISDiagnosticReport['questions'])
 			[question.level]: val
 		}
 	}, {} as Levels)
+
 	const percentages = Object.entries(levels).reduce((agg, [level, value]) => {
 		const percentage = value / total[level] * 100
 		if (percentage < 80) {
@@ -153,13 +154,16 @@ export const calculateLearningLevel = (result: MISDiagnosticReport['questions'])
 		}
 		return { ...agg }
 	}, {} as Levels)
+
 	const level = Object.keys(percentages).reduce((a, b) => {
 		if (percentages[a] === 0 && percentages[b] === 0) {
 			return a < b ? a : b
 		}
 		return percentages[a] > percentages[b] ? a : b
 	}, '')
+
 	const color = level === "1" ? "blue" : level === "2" ? "yellow" : level === "3" ? "green" : "orange"
+
 	return { "level": level, "group": color }
 }
 

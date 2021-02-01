@@ -1,11 +1,11 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react'
+import ReactDOM from 'react-dom'
 import Syncr from '@cerp/syncr'
 import { createStore, applyMiddleware } from 'redux'
 import thunkMiddleware from 'redux-thunk'
 import 'core-js/features/object'
 
-import * as serviceWorkerRegistration from './serviceWorkerRegistration';
+import * as serviceWorkerRegistration from './serviceWorkerRegistration'
 
 import reducer from './reducers'
 import Routes from './routes'
@@ -16,7 +16,7 @@ import { hostWSS } from 'utils/hostConfig'
 import { checkTime } from 'utils'
 import { ActionTypes } from 'constants/index'
 
-import './index.css';
+import './index.css'
 import './styles/main.css'
 
 const initialState = initState
@@ -24,11 +24,12 @@ const initialState = initState
 const syncr = new Syncr(hostWSS)
 syncr.on('connect', () => store.dispatch(connected()))
 
-syncr.on('connect', () => checkTime()
-	.then(correct => {
+syncr.on('connect', () =>
+	checkTime().then((correct) => {
 		const text = correct ? '' : 'Your device time or timezone is incorrect!'
 		store.dispatch({
-			type: ActionTypes.ALERT_BANNER_TEXT, data: text
+			type: ActionTypes.ALERT_BANNER_TEXT,
+			data: text,
 		})
 	})
 )
@@ -37,17 +38,23 @@ syncr.on('disconnect', () => store.dispatch(disconnected()))
 syncr.on('message', (msg) => store.dispatch(msg))
 syncr.on('verify', () => store.dispatch(processImageQueue()))
 
-syncr.message_timeout = 90000;
+syncr.message_timeout = 90000
 
-const store = createStore(reducer, initialState, applyMiddleware(thunkMiddleware.withExtraArgument(syncr)));
+const store = createStore(
+	reducer,
+	initialState,
+	applyMiddleware(thunkMiddleware.withExtraArgument(syncr))
+)
 
 store.dispatch(loadDB())
 
-store.subscribe(debounce(() => {
-	const state = store.getState();
-	saveDb(state);
-}, 1000))
+store.subscribe(
+	debounce(() => {
+		const state = store.getState()
+		saveDb(state)
+	}, 1000)
+)
 
-ReactDOM.render(<Routes store={store} />, document.getElementById('root'));
+ReactDOM.render(<Routes store={store} />, document.getElementById('root'))
 
-serviceWorkerRegistration.register();
+serviceWorkerRegistration.register()

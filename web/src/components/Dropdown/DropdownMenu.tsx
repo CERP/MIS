@@ -7,12 +7,11 @@ interface PropsType {
 }
 
 const DropdownMenu: React.FC<PropsType> = ({ children }) => {
-
-	return <div className="dropdown-inner-container">
-		<div className="dropdown-menu">
-			{children}
+	return (
+		<div className="dropdown-inner-container">
+			<div className="dropdown-menu">{children}</div>
 		</div>
-	</div>
+	)
 }
 
 export default DropdownMenu

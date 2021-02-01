@@ -1,84 +1,124 @@
-
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom'
-import { getQuestionList, calculateLearningLevel } from 'utils/TIP'
+import { calculateLearningLevel } from 'utils/TIP'
 import Card from '../Card'
-import { addReport } from 'actions'
+import { mergeTIPResult } from 'actions'
 
 interface P {
 	teacher_name: string
 	students: RootDBState["students"]
 	targeted_instruction: RootReducerState['targeted_instruction']
 
-	saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], selectedSubject: string, subject: string, learning_level: LearningLevel, type: string) => void
+	saveReport: (student_id: string, diagnostic_report: TIPDiagnosticReport, test_id: string) => void
 }
 
-type PropsType = P & RouteComponentProps
+interface RouteParams {
+	class_name: string
+	subject: string
+	section_id: string
+	std_id: string
+	test_id: string
+	lesson_number: string
+}
 
-const Grading: React.FC<PropsType> = (props) => {
-	//TODO: we need to pull from the student object and see if they have a result already
-	const [result, setResult] = useState<MISDiagnosticReport['questions']>(null)
+type PropsType = P & RouteComponentProps<RouteParams>
 
-	const { class_name, subject, std_id, section_id, test_id } = props.match.params as Params
-	const url = props.match.url.split('/')
+const GenerateEmptyTest = (type: TIPTestType): TIPDiagnosticReport => {
 
-	const test = props.targeted_instruction.tests[test_id]
+	return {
+		type,
+		questions: {},
+		checked: true
+	}
+}
 
+const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, saveReport, history }) => {
+
+	const { class_name, subject, std_id, section_id, test_id } = match.params
+
+	let test_type: TIPTestType = "Diagnostic"
+
+	const url = match.url.split('/')
+	switch (url[2]) {
+		case "formative-test":
+			test_type = "Formative"
+			break;
+		case "summative-test":
+			test_type = "Summative"
+			break;
+		default:
+			test_type = "Diagnostic"
+	}
+
+	const test = targeted_instruction.tests[test_id]
+	const student = students[std_id]
+
+	// Note here that we set the "result" variable as either coming from the existing student object or as a new, empty test
+	// This is because if a student has already taken the test, we want to load what we've already entered for them.
+	// But if this is their first time taking the test, we want to load a fresh object which we will save at the end.
+	// Here, we are deriving state from props so that we can make changes to the object and render them, before saving.
+	const existing_results = student?.targeted_instruction?.results
+	const existing_test = existing_results && existing_results[test_id]
+
+	const [result, setResult] = useState<TIPDiagnosticReport>(existing_test || GenerateEmptyTest(test_type))
+
+	// Here we remove all the $ signs from question text and replace with commas
+	// TODO: This is preprocessing which should have been done in ingestion
 	const questionsObj = Object.entries(test.questions).reduce<TIPTest['questions']>((agg, [key, value]) => ({
 		...agg,
 		[key]: {
 			...value,
-			"question_text": value.question_text.replace(/\$/g, ',')
+			question_text: value.question_text.replace(/\$/g, ',')
 		}
 	}), {})
 
-	const handleChange = (val: any, questionId: string) => {
-		questionsObj[questionId].is_correct = val
-		let res
-		if (url[2] === "diagnostic-test") {
-			res = props.students[std_id].targeted_instruction.diagnostic_result[test_id].questions
-			res[questionId].is_correct = val
-		} else if (url[2] === "formative-test") {
-			res = props.students[std_id].targeted_instruction.formative_result[test_id].questions
-			res[questionId].is_correct = val
-		} else {
-			res = props.students[std_id].targeted_instruction.summative_result[test_id].questions
-			res[questionId].is_correct = val
-		}
-		setResult(res)
+	console.log(result)
+	const markQuestion = (q_id: string, question: TIPQuestion, is_correct: boolean) => {
+		setResult({
+			...result,
+			questions: {
+				...result.questions,
+				[q_id]: {
+					...question,
+					is_correct
+				}
+			}
+		})
 	}
 
 	const onSave = () => {
-		const group = url[2] === "diagnostic-test" && state.result && calculateLearningLevel(state.result)
-		state.result && props.saveReport(std_id, state.result, test_id, subject, group, url[2].replace("-test", "_result"),)
-		props.history.push(url[2] === "diagnostic-test" ?
-			`/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades` :
-			`/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades`)
+		console.log('saving report')
+		saveReport(std_id, result, test_id)
+		history.push(test_type === "Diagnostic" ? `/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades` : `/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades`)
 	}
 
 	return <div className="flex flex-wrap content-between bg-white">
 		<Card class_name={class_name} subject={subject} />
 		<div className="flex flex-col justify-between w-full mx-4">
-			{Object.keys(questionsObj)
-				.sort((a, b) => a.localeCompare(b))
-				.map(function (key, index) {
-					return <div key={key} className={`flex flex-row justify-between items-center border border-solid border-gray-200 px-3 ${index % 2 === 0 ? "bg-gray-100" : "bg-white"} h-12`}>
-						<span className="text-xs font-bold">{`${key}: `}</span><div className="text-xs w-32 truncate">{questionsObj[key].question_text}</div>
-						<div className="rounded-xl w-30 h-6 bg-white border border-solid border-gray-100">
-							<button className={!state.questionsObj[key].is_correct ?
-								"border-none h-full rounded-xl text-xs outline-none text-white bg-incorrect-red" :
-								"border-none bg-white h-full rounded-xl text-xs outline-non"}
-								onClick={() => handleChange(false, key)}>Incorrect
-                            </button>
-							<button className={state.questionsObj[key].is_correct ?
-								"border-none h-full rounded-xl text-xs text-white bg-correct-green outline-none" :
-								"border-none bg-white h-full rounded-xl text-xs outline-none"}
-								onClick={() => handleChange(true, key)}>Correct
-                            </button>
+			{
+				Object.keys(questionsObj)
+					.sort((a, b) => a.localeCompare(b))
+					.map(function (q_id, index) {
+						const question = questionsObj[q_id]
+						const is_correct = result.questions[q_id]?.is_correct
+
+						return <div key={q_id} className={`flex flex-row justify-between items-center border border-solid border-gray-200 px-3 ${index % 2 === 0 ? "bg-gray-100" : "bg-white"} h-12`}>
+							<span className="text-xs font-bold">{`${q_id}: `}</span> <div className="text-xs w-32 truncate">{question.question_text}</div>
+							<div className="rounded-xl w-30 h-6 bg-white border border-solid border-gray-100">
+								<button className={is_correct !== undefined && !is_correct ?
+									"border-none h-full rounded-xl text-xs outline-none text-white bg-incorrect-red" :
+									"border-none bg-white h-full rounded-xl text-xs outline-non"}
+									onClick={() => markQuestion(q_id, question, false)}>Incorrect
+								</button>
+								<button className={is_correct ?
+									"border-none h-full rounded-xl text-xs text-white bg-correct-green outline-none" :
+									"border-none bg-white h-full rounded-xl text-xs outline-none"}
+									onClick={() => markQuestion(q_id, question, true)}>Correct
+								</button>
+							</div>
 						</div>
-					</div>
-				})}
+					})}
 		</div>
 		<div className="w-full mt-5 flex justify-center">
 			<button
@@ -93,5 +133,5 @@ export default connect((state: RootReducerState) => ({
 	students: state.db.students,
 	targeted_instruction: state.targeted_instruction
 }), (dispatch: Function) => ({
-	saveReport: (stdId: string, diagnostic_report: MISDiagnosticReport['questions'], selectedSubject: string, subject: string, learning_level: LearningLevel, type: string) => dispatch(addReport(stdId, diagnostic_report, selectedSubject, subject, learning_level, type)),
+	saveReport: (student_id: string, diagnostic_report: TIPDiagnosticReport, test_id: string) => dispatch(mergeTIPResult(student_id, diagnostic_report, test_id)),
 }))(withRouter(Grading))

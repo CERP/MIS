@@ -143,8 +143,9 @@ export const graphData = (stdReport: Report, students: RootDBState["students"]) 
 	return arr
 }
 
+/*
 export const getQuestionList = (selectedTest: string, stdObj: MISStudent, testType: string) => {
-	const res: MISDiagnosticReport['questions'] = stdObj && stdObj.targeted_instruction.diagnostic_result && stdObj.targeted_instruction.diagnostic_result[selectedTest].questions
+	const res: TIPDiagnosticReport['questions'] = stdObj && stdObj.targeted_instruction.diagnostic_result && stdObj.targeted_instruction.diagnostic_result[selectedTest].questions
 	if (res && testType === 'Diagnostic') {
 		return Object.entries(res).reduce((agg, [key, value]) => {
 			return {
@@ -158,6 +159,7 @@ export const getQuestionList = (selectedTest: string, stdObj: MISStudent, testTy
 		}, {})
 	}
 }
+*/
 
 export const redirectToIlmx = (id: string) => {
 	window.location.href = id

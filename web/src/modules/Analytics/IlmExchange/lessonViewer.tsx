@@ -4,8 +4,8 @@ import { getTimeString } from 'utils/helpers'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 
 interface PropsType {
-	students: RootDBState["students"]
-	classes: RootDBState["classes"]
+	students: RootDBState['students']
+	classes: RootDBState['classes']
 	lessonId: string
 	lessons: {
 		[id: string]: AugmentedIlmxLesson
@@ -18,39 +18,55 @@ type LessonViewer = {
 	watchTime: number
 } & MISStudent & { section_info: AugmentedSection }
 
-const LessonViewerModal: React.FC<PropsType> = ({ students, lessonId, lessons, classes, onClose }) => {
-
+const LessonViewerModal: React.FC<PropsType> = ({
+	students,
+	lessonId,
+	lessons,
+	classes,
+	onClose,
+}) => {
 	const students_who_watched = getStudents(students, lessonId, lessons, classes)
 
 	return (
 		<div className="ilmx-analytics modal-container inner">
-			<div className="close button red" onClick={onClose}>✕</div>
+			<div className="close button red" onClick={onClose}>
+				✕
+			</div>
 			<div className="title">Lesson Viewers</div>
 			<div className="form scrollbar">
-				{
-					students_who_watched
-						.sort((a, b) => (b.watchTime + b.watchCount) - (a.watchTime + b.watchCount))
-						.map((student: LessonViewer) => (<div className="card" key={student.id}>
+				{students_who_watched
+					.sort((a, b) => b.watchTime + b.watchCount - (a.watchTime + b.watchCount))
+					.map((student: LessonViewer) => (
+						<div className="card" key={student.id}>
 							<div className="card-row">
 								<div className="card-row inner">
 									<ProfilePicture student={student} />
 									<p className="card-title">{student.Name}</p>
 								</div>
-								<div style={{ marginLeft: "auto" }}>
+								<div style={{ marginLeft: 'auto' }}>
 									<p className="views viewer">{student.watchCount} views</p>
 								</div>
 							</div>
 							<div className="card-row">
-								<p className="student-class-title">Class: {student.section_info ? student.section_info.namespaced_name : 'nil'}</p>
+								<p className="student-class-title">
+									Class:{' '}
+									{student.section_info
+										? student.section_info.namespaced_name
+										: 'nil'}
+								</p>
 							</div>
 							<div className="card-row">
 								<div className="more-detail">
 									<p>watch time: {getTimeString(student.watchTime)}</p>
-									<p className="hidden-views viewer" style={{ marginLeft: "auto" }}>{student.watchCount} views</p>
+									<p
+										className="hidden-views viewer"
+										style={{ marginLeft: 'auto' }}>
+										{student.watchCount} views
+									</p>
 								</div>
 							</div>
-						</div>))
-				}
+						</div>
+					))}
 			</div>
 		</div>
 	)
@@ -63,23 +79,24 @@ type PictureProps = {
 }
 
 const ProfilePicture: React.FC<PictureProps> = ({ student }) => {
-	const avatar = student.ProfilePicture ? student.ProfilePicture.url || student.ProfilePicture.image_string : ""
+	const avatar = student.ProfilePicture
+		? student.ProfilePicture.url || student.ProfilePicture.image_string
+		: ''
 	const imgSrc = avatar || StudentIcon
 	return <img src={imgSrc} alt="play-icon" height="24" width="24" style={{ borderRadius: 12 }} />
 }
 
 interface GetStudent {
-	(students: PropsType["students"],
+	(
+		students: PropsType['students'],
 		lessonId: string,
-		lessons: PropsType["lessons"],
-		classes: PropsType["classes"]
+		lessons: PropsType['lessons'],
+		classes: PropsType['classes']
 	): LessonViewer[]
 }
 
 const getStudents: GetStudent = (students, lessonId, lessons, classes) => {
-
 	if (lessonId && lessons && lessons[lessonId]) {
-
 		const sections = getSectionsFromClasses(classes)
 
 		const { viewers } = lessons[lessonId]
@@ -87,12 +104,11 @@ const getStudents: GetStudent = (students, lessonId, lessons, classes) => {
 		const students_who_watched: LessonViewer[] = []
 
 		for (const [sid, vmeta] of Object.entries(viewers)) {
-
 			if (students && students[sid]) {
 				students_who_watched.push({
 					...students[sid],
 					...vmeta,
-					section_info: getStudentSectionInfo(students[sid].section_id, sections)
+					section_info: getStudentSectionInfo(students[sid].section_id, sections),
 				})
 			}
 		}
@@ -103,6 +119,9 @@ const getStudents: GetStudent = (students, lessonId, lessons, classes) => {
 	return [] as LessonViewer[]
 }
 
-const getStudentSectionInfo = (section_id: string, sections: AugmentedSection[]): AugmentedSection => {
-	return sections.find(section => section.id === section_id)
+const getStudentSectionInfo = (
+	section_id: string,
+	sections: AugmentedSection[]
+): AugmentedSection => {
+	return sections.find((section) => section.id === section_id)
 }

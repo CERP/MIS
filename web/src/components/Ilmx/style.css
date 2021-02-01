@@ -11,9 +11,9 @@
 	font-weight: bold;
 }
 
-@media(max-width:525px) {
+@media (max-width: 525px) {
 	.ilmx-redirect.modal-container.inner {
 		width: 75%;
-		padding: 15px
+		padding: 15px;
 	}
 }

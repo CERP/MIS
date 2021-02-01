@@ -25,6 +25,7 @@ const InsertGrades: React.FC<PropsType> = (props) => {
 	const group = class_map[class_name]
 	const students = section_id && useMemo(() => getStudentsBySectionId(section_id, props.students), [section_id])
 	const group_students = useMemo(() => getStudentsByGroup(props.students, group, subject), [subject])
+	console.log()
 
 	return <div className="flex flex-wrap content-between">
 		<Card class_name={class_name} subject={subject} />
@@ -32,12 +33,13 @@ const InsertGrades: React.FC<PropsType> = (props) => {
 			{Object.values(url[2] === "diagnostic-test" ? students : group_students || {})
 				.sort((a, b) => a.Name.localeCompare(b.Name))
 				.map((std) => {
+
+					const checked = std.targeted_instruction && std.targeted_instruction.results && std.targeted_instruction.results[test_id]
 					return <Link key={std.id} className="relative no-underline h-24 flex flex-col items-center justify-center"
 						to={url[2] === "diagnostic-test" ? `/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades/${std.id}/grading` :
 							`/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades/${std.id}/grading`}>
 						<img className="border border-solid border-green-primary rounded-full h-14 w-14" src="https://www.atmeplay.com/images/users/avtar/avtar_nouser.png" alt="img" />
-						{std.targeted_instruction[url[2].replace("-test", "_result")][test_id] &&
-							std.targeted_instruction[url[2].replace("-test", "_result")][test_id].checked
+						{checked
 							&& <img src={Tick} className="absolute h-5 right-4 bottom-7" />}
 						<div className="text-xs flex items-center justify-center w-24 md:w-28 truncate">{std.Name}</div>
 					</Link>
