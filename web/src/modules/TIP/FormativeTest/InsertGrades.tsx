@@ -25,7 +25,6 @@ const InsertGrades: React.FC<PropsType> = (props) => {
 	const group = class_map[class_name]
 	const students = section_id && useMemo(() => getStudentsBySectionId(section_id, props.students), [section_id])
 	const group_students = useMemo(() => getStudentsByGroup(props.students, group, subject), [subject])
-	console.log()
 
 	return <div className="flex flex-wrap content-between">
 		<Card class_name={class_name} subject={subject} />
@@ -42,6 +41,7 @@ const InsertGrades: React.FC<PropsType> = (props) => {
 						{checked
 							&& <img src={Tick} className="absolute h-5 right-4 bottom-7" />}
 						<div className="text-xs flex items-center justify-center w-24 md:w-28 truncate">{std.Name}</div>
+						<div className="text-xs flex items-center justify-center">{std.RollNumber}</div>
 					</Link>
 				})}
 		</div>}

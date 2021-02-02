@@ -5,7 +5,6 @@ import { Formative, LessonPlans, TrainingMaterials, DiagnosticItalic, Summative 
 import { getLessonProgress } from 'utils/TIP'
 import Headings from './Headings'
 import Card from './Card'
-import Layout from 'components/Layout';
 interface P {
 	faculty: RootDBState["faculty"]
 	faculty_id: string
@@ -35,6 +34,9 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id }) => {
 	return <div className="flex flex-wrap content-between bg-white">
 		<Card class_name='' subject='' />
 		<Headings heading="Welcome to TIP" sub_heading="What would you like to do today ?" />
+		<div className="flex justify-center content-center w-full mt-2">
+			<button className="border-none bg-white text-blue-900 shadow-md p-2 px-5 rounded-md outline-none">View Detailed Analysis</button>
+		</div>
 		{
 			layout === Layouts.DIAGNOSTIC && <Link className="container sm:px-8 bg-white rounded-2xl m-3 h-44 flex flex-col content-center items-center shadow-lg no-underline"
 				to={'/targeted-instruction/diagnostic-test'}>
@@ -58,20 +60,29 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id }) => {
 		}
 
 		<div className="flex flex-row content-center items-center justify-center w-full">
-			<Link className="container sm:px-8 bg-white rounded-xl m-3 h-40 flex flex-col content-center items-center shadow-lg no-underline"
+			<Link className="container sm:px-8 bg-white rounded-xl m-3 h-36 flex flex-col content-center items-center shadow-lg no-underline"
 				to={"/targeted-instruction/training-videos"}>
 				<img className="h-20 py-4" src={TrainingMaterials} alt="img" />
-				<div className="text-base text-blue-900 font-bold">Training Videos</div>
+				<div className="text-xs text-blue-900 font-bold">Training Materials</div>
 			</Link>
-			<Link className="container sm:px-8 bg-white rounded-xl m-3 h-40 flex flex-col content-center items-center shadow-lg no-underline"
+			<Link className="container sm:px-8 bg-white rounded-xl m-3 h-36 flex flex-col content-center items-center shadow-lg no-underline"
 				to={"/targeted-instruction/lesson-plans"}>
 				<img className="h-20 p-4" src={LessonPlans} alt="img" />
-				<div className="text-base text-blue-900 font-bold">Lesson Plans</div>
+				<div className="text-xs text-blue-900 font-bold">Lesson Plans</div>
 			</Link>
 		</div>
 
 		{
-			/* TODO: when layout === Layouts.Diagnostic we need to have greyed out buttons showing the formative and summative tests */
+			<div className="flex flex-row content-center items-center justify-center w-full opacity-50">
+				<div className="container sm:px-8 bg-white rounded-xl m-3 h-28 flex flex-col content-center items-center shadow-lg no-underline">
+					<img className="h-12 p-4" src={Formative} alt="img" />
+					<div className="text-xs text-blue-900 font-bold text-center">Formative Test</div>
+				</div>
+				<div className="container sm:px-8 bg-white rounded-xl m-3 h-28 flex flex-col content-center items-center shadow-lg no-underline">
+					<img className="h-12 p-4 pr-5" src={Summative} alt="img" />
+					<div className="text-xs text-blue-900 font-bold text-center">Summative Test</div>
+				</div>
+			</div>
 		}
 		{
 			layout === Layouts.FORMATIVE && <Link className="container sm:px-8 bg-white rounded-xl m-3 h-28 flex flex-row justify-around w-full items-center shadow-lg no-underline"
