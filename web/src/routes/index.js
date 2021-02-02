@@ -47,6 +47,7 @@ import ClassSettings from 'modules/Settings/ClassSettings/Index'
 import MISActivation from 'modules/Activation'
 import BulkExam from 'modules/Marks/BulkExam'
 import { Home } from 'pages/home'
+import { StaffList } from 'pages/staff/list'
 import { Landing } from 'pages/landing'
 import { Contact } from 'pages/contact'
 import { Feature } from 'pages/features'
@@ -90,7 +91,7 @@ export default class Routes extends React.Component {
 					<TrackedRoute exact path="/home" component={Home} />
 
 					<TrackedRoute path="/faculty/:id" component={TeacherSingle} />
-					<TrackedRoute path="/teacher" component={TeacherList} />
+					<TrackedRoute path="/staff" component={StaffList} />
 
 					<TrackedRoute path="/student/:id" component={StudentSingle} />
 					<TrackedRoute path="/student" component={StudentList} />

@@ -1,5 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 
 export const SettingTab = () => {
@@ -11,7 +12,9 @@ export const SettingTab = () => {
 			<div className="text-center text-lg mb-6">Tap to configure the module</div>
 
 			<div className="space-y-4">
-				<Card title={"Staff"} total={Object.keys(faculty).length} icon={"/favicon.ico"} />
+				<Link to="/staff">
+					<Card title={"Staff"} total={Object.keys(faculty).length} icon={"/favicon.ico"} />
+				</Link>
 				<Card title={"Classes"} total={Object.keys(classes).length} icon={"/favicon.ico"} />
 				<Card title={"Students"} total={Object.keys(students).length} icon={"/favicon.ico"} />
 			</div>
