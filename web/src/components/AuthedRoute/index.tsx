@@ -3,15 +3,14 @@ import { Route, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
 
 type propsType = {
-	component: any	
+	component: any
 	school_id: string
 	name: string
 	token: string
 	initialized: boolean
 }
- 
-const AuthedRoute = ({ component, school_id, name, token, initialized, ...rest }: propsType) => {
 
+const AuthedRoute = ({ component, school_id, name, token, initialized, ...rest }: propsType) => {
 	// react's hook
 	useEffect(() => {
 		window.scroll(0, 0)
@@ -21,15 +20,16 @@ const AuthedRoute = ({ component, school_id, name, token, initialized, ...rest }
 		return <div>Loading Database....</div>
 	}
 
-	if(token && name) {
+	if (token && name) {
 		return <Route component={component} {...rest} />
-	}
-	else if(token) {
+	} else if (token) {
 		return <Redirect to="/login" />
-	}
-	else {
+	} else {
 		return <Redirect to="/school-login" />
 	}
 }
 
-export default connect((state: RootReducerState) => ({ ...state.auth, initialized: state.initialized }))(AuthedRoute);
+export default connect((state: RootReducerState) => ({
+	...state.auth,
+	initialized: state.initialized,
+}))(AuthedRoute)

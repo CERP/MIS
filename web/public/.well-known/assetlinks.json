@@ -4,35 +4,39 @@
 		"target": {
 			"namespace": "android_app",
 			"package_name": "pk.org.cerp.mischool.mischoolcompanion",
-			"sha256_cert_fingerprints":
-				["24:A0:C6:ED:13:22:22:38:19:52:80:C6:C5:B1:C2:DE:BF:94:D4:C7:7D:01:1D:0C:9B:36:78:FA:6A:69:A1:B7"]
+			"sha256_cert_fingerprints": [
+				"24:A0:C6:ED:13:22:22:38:19:52:80:C6:C5:B1:C2:DE:BF:94:D4:C7:7D:01:1D:0C:9B:36:78:FA:6A:69:A1:B7"
+			]
 		}
 	},
 	{
 		"relation": ["delegate_permission/common.handle_all_urls"],
 		"target": {
-			"namespace": "android_app", 
+			"namespace": "android_app",
 			"package_name": "pk.org.cerp.mischool.mischoolcompanion",
-			"sha256_cert_fingerprints": 
-				["20:7E:E1:E5:A8:14:2C:6C:86:F9:55:FA:47:03:26:65:85:A4:B5:52:99:7A:3E:C1:69:93:E6:29:2D:47:D8:1A"]
+			"sha256_cert_fingerprints": [
+				"20:7E:E1:E5:A8:14:2C:6C:86:F9:55:FA:47:03:26:65:85:A4:B5:52:99:7A:3E:C1:69:93:E6:29:2D:47:D8:1A"
+			]
 		}
 	},
 	{
-        "relation": ["delegate_permission/common.handle_all_urls"],
-        "target": {
-            "namespace": "android_app",
-            "package_name": "pk.org.cerp.mischool.mischoolcompanion",
-            "sha256_cert_fingerprints":
-            ["5F:34:4C:FB:E4:47:21:5E:FE:8E:12:7F:7E:5C:15:D2:7D:2A:5E:E3:8E:80:A8:A2:B1:5F:0B:23:94:45:53:57"]
-        }
+		"relation": ["delegate_permission/common.handle_all_urls"],
+		"target": {
+			"namespace": "android_app",
+			"package_name": "pk.org.cerp.mischool.mischoolcompanion",
+			"sha256_cert_fingerprints": [
+				"5F:34:4C:FB:E4:47:21:5E:FE:8E:12:7F:7E:5C:15:D2:7D:2A:5E:E3:8E:80:A8:A2:B1:5F:0B:23:94:45:53:57"
+			]
+		}
 	},
-    {
-        "relation": ["delegate_permission/common.handle_all_urls"],
-        "target": {
-            "namespace": "android_app",
-            "package_name": "pk.org.cerp.mischool.mischoolcompanion",
-            "sha256_cert_fingerprints":
-                ["97:A3:BF:24:DB:07:62:2F:37:CA:CD:77:6E:17:AC:98:8F:5C:1E:46:87:98:89:C6:78:00:73:F5:98:F5:32:9E"]
-        }
-    }
+	{
+		"relation": ["delegate_permission/common.handle_all_urls"],
+		"target": {
+			"namespace": "android_app",
+			"package_name": "pk.org.cerp.mischool.mischoolcompanion",
+			"sha256_cert_fingerprints": [
+				"97:A3:BF:24:DB:07:62:2F:37:CA:CD:77:6E:17:AC:98:8F:5C:1E:46:87:98:89:C6:78:00:73:F5:98:F5:32:9E"
+			]
+		}
+	}
 ]

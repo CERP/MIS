@@ -1,4 +1,4 @@
-.analytics>*:nth-child(2) {
+.analytics > *:nth-child(2) {
 	width: 90%;
 }
 
@@ -9,15 +9,15 @@
 	height: 40px;
 }
 
-.analytics .checkbox-container{
-	display:flex; 
+.analytics .checkbox-container {
+	display: flex;
 	flex-direction: row;
 	justify-content: center;
 }
-.chart-checkbox input{
-	height: 20px
+.chart-checkbox input {
+	height: 20px;
 }
-.analytics .search-bar{
+.analytics .search-bar {
 	width: 100%;
 	height: 37px;
 	padding-left: 10px;

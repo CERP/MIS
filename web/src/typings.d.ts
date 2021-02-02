@@ -57,27 +57,124 @@ interface RootDBState {
 	target_instruction_access?: boolean
 }
 
-interface Curriculum {
-	[learning_level: string]: {
-		[subject: string]: LearningLevels
+/**
+ * TIP Types
+ */
+
+
+type TIPGrades = "1" | "2" | "3" | "KG" 
+type TIPLearningGroups = "Blue" | "Yellow" | "Green" | "Orange"
+type TIPLevels = "Level 0" | "Level 1" | "Level 2" | "Level 3"
+type TIPSubjects = "Maths" | "Urdu" | "English"
+
+type TIPCurriculum = {
+	[learning_level in TIPLevels]: {
+		[subject: string]: TIPLessonPlans
 	}
 }
 
-interface LearningLevels {
-	[lesson_id: number]: {
-		lesson_number: number
-		lesson_title: string
-		subject: string
-		lesson_duration: string
-		material_links: string[]
-		activity_links: string[]
-		teaching_manual_link: string
-		taken: boolean
+// This is the TIP curriculum which lives inside the 
+// MISTeacher object.
+type TIPTeacherCurriculum = {
+	[learning_level in TIPLevels]: {
+		[subject: string]: TIPTeacherLessonPlans
 	}
 }
 
-interface Tests {
-	[id: string]: MISTest
+interface TIPTeacherLessonPlans {
+	[lesson_id: string]: TIPTeacherLesson
+}
+
+interface TIPLessonPlans {
+	[lesson_id: string]: TIPLesson
+}
+
+interface TIPLesson {
+	lesson_number: string
+	lesson_title: string
+	lesson_link: string
+	material_names: string[]
+	subject: string
+	lesson_duration: string
+	material_links: string[]
+	activity_links: string[]
+	teaching_manual_link: string
+}
+
+type TIPTeacherLesson = { taken: boolean }
+
+interface TIPTests {
+	[id: string]: TIPTest 
+}
+
+type TIPTestType = "Diagnostic" | "Formative" | "Summative"
+
+interface TIPTest {
+	name: string
+	subject: string
+	grade: string
+	type: TIPTestType
+	label: string
+	pdf_url: string
+	questions: {
+		[question_id: string]: TIPQuestion
+	}
+}
+
+interface TIPQuestion {
+	question_text: string
+	correct_answer: string
+	grade: TIPGrades
+	slo_category: string
+	slo: string[]
+}
+
+type TIPGradedQuestion = TIPQuestion & {
+	is_correct: boolean
+}
+
+// Too generic, bad name
+// are we still using this?
+interface SLOResult {
+	[std_id: string]: {
+		std_name: string
+		obtain: number
+		total: number
+		slo_obj: SloObj
+	}
+}
+
+interface SloObj {
+	[slo_name]: {
+		obtain: number
+		total: number
+	}
+}
+
+// Am not sure what this is supposed to be for...
+type DiagnosticRes = {
+	[level in TIPGrades]: {
+		students: {
+			[student_id: string]: MISStudent
+		}
+	}
+}
+
+type TIPDiagnosticReport = {
+	checked?: boolean
+	type: TIPTestType
+	questions?: {
+		[question_id: string]: TIPGradedQuestion
+	}
+}
+
+type Levels = {
+	[level: string]: number
+}
+
+interface LearningLevel {
+	level: string
+	group: string
 }
 
 interface SLOMapping {
@@ -88,38 +185,26 @@ interface SLOMapping {
 	}
 }
 
-interface MISTest {
-	name: string
-	subject: string
-	grade: string
-	type: string
-	label: string
-	pdf_url: string
-	questions: {
-		[question_id: string]: {
-			question_text: string
-			correct_answer: string
-			grade: string
-			slo_category: string
-			slo: string[]
-		}
-	}
-}
-
+// TODO: way too generic of a name to keep in the typings file
 interface Params {
-    class_name: string
-    subject: string
+	class_name: string
+	subject: string
 	section_id: string
 	std_id: string
 	test_id: string
 	lesson_number: string
 }
 
+// TODO: What are these
 interface Columns {
 	name: string
 	selector: string
 	sortable: boolean
 }
+
+/**
+ * END TIP Section
+ */
 
 interface GraphData {
 	[name: string]: {
@@ -194,9 +279,9 @@ interface RootReducerState {
 		hasError: boolean
 	}
 	targeted_instruction: {
-		tests: Tests
+		tests: TIPTests
 		slo_mapping: SLOMapping
-		curriculum: Curriculum
+		curriculum: TIPCurriculum
 	}
 }
 
@@ -332,20 +417,13 @@ interface MISStudent {
 		[id: string]: MISCertificate
 	}
 	targeted_instruction: {
-		diagnostic_result: DiagnosticResult
-		formative_result: DiagnosticResult
-		summative_result: DiagnosticResult
+		results: {
+			[test_id: string]: TIPDiagnosticReport
+		}
 		learning_level: { 
 			[subject: string]: { 
-				level: "blue" | "green" | "yellow" | "red"  | "orange"
-				group: string
+				grade: TIPGrades
 			}
-		}
-	}
-	learning_levels: {
-		[learning_level_id: string]: {
-			test_id: string
-			date_assigned: string
 		}
 	}
 }
@@ -357,21 +435,6 @@ type Report = {
 	}
 }
 
-interface Result {
-    [std_id: string]: {
-        std_name: string
-        obtain: number
-        total: number
-        slo_obj: SloObj
-    }
-}
-
-interface SloObj {
-	[slo_name]: {
-		obtain: number
-		total: number
-	}
-}
 
 type MISReport = {
 	[name: string]: {
@@ -381,37 +444,6 @@ type MISReport = {
 	}
 }
 
-type DiagnosticResult = {
-	[test_id: string]: MISDiagnosticReport
-}
-
-interface DiagnosticRes {
-    [level: string]: {
-        group: string
-        students: RootDBState["students"]
-    }
-}
-
-type MISDiagnosticReport = {
-	checked?: boolean
-	questions?: {
-		[question_id: string]: {
-			question_text: string
-			answer: string
-			is_correct: boolean
-			slo: string[] 
-			level: string
-		}
-	}
-}
-
-type Levels = {
-	[level: string]: number
-}
-interface LearningLevel {
-	level: string
-	group: string
-}
 
 interface MISFamilyInfo {
 	ManName: string
@@ -535,7 +567,7 @@ interface MISTeacher {
 		prospective: boolean
 	}
 	targeted_instruction: {
-		curriculum: Curriculum
+		curriculum: TIPTeacherCurriculum 
 	}
 }
 

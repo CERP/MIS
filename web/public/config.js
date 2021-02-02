@@ -1,1 +1,1 @@
-window.api_url = undefined;
+window.api_url = undefined
