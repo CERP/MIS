@@ -67,6 +67,18 @@ interface TIPCurriculum {
 	}
 }
 
+// This is the TIP curriculum which lives inside the 
+// MISTeacher object.
+interface TIPTeacherCurriculum {
+	[learning_level: string]: {
+		[subject: string]: TIPTeacherLessonPlans
+	}
+}
+
+interface TIPTeacherLessonPlans {
+	[lesson_id: number]: TIPTeacherLesson
+}
+
 interface TIPLessonPlans {
 	[lesson_id: number]: TIPLesson
 }
@@ -79,8 +91,9 @@ interface TIPLesson {
 	material_links: string[]
 	activity_links: string[]
 	teaching_manual_link: string
-	taken: boolean
 }
+
+type TIPTeacherLesson = { taken: boolean }
 
 interface TIPTests {
 	[id: string]: TIPTest 
@@ -553,7 +566,7 @@ interface MISTeacher {
 		prospective: boolean
 	}
 	targeted_instruction: {
-		curriculum: TIPCurriculum
+		curriculum: TIPTeacherCurriculum 
 	}
 }
 

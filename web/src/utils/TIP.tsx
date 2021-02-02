@@ -167,6 +167,17 @@ export const calculateLearningLevel = (result: TIPDiagnosticReport['questions'])
 	return { "level": level, "group": color }
 }
 
+type LessonProgress = {
+	[learning_level: string]: SubjectLessonProgress
+}
+
+type SubjectLessonProgress = {
+	[subject: string]: {
+		completed: number
+		total: number
+	}
+}
+
 /**
  * Returns the maximum amount of lessons which have been completed by a teacher.
  * 
@@ -174,26 +185,52 @@ export const calculateLearningLevel = (result: TIPDiagnosticReport['questions'])
  * Returns the max completed.
  * @param teacher 
  */
-export const getLessonProgress = (teacher: MISTeacher) => {
+export const getLessonProgress = (teacher: MISTeacher, curriculum: TIPCurriculum) => {
 
 	// When a teacher has no progress
 	if (!teacher.targeted_instruction || !teacher.targeted_instruction.curriculum) {
 		return 0;
 	}
 
-	const curriculum = teacher.targeted_instruction.curriculum;
+	const teacher_curriculum = teacher.targeted_instruction.curriculum;
 
 	// create map of {learning_level: {subject: { completed, total } }}
 	// ultimately we want to take the number with the max completion.
-	// TODO: this algorithm needs to work 
-	Object.entries(curriculum)
-		.reduce((agg, [learning_level, subjects]) => {
-			console.log(learning_level, subjects)
+	const lesson_progress = Object.entries(teacher_curriculum).reduce<LessonProgress>((agg, [learning_level, subjects]) => {
 
-			return agg[learning_level] = ""
-		}, {})
+		const lesson_progress = Object.entries(subjects)
+			.reduce<SubjectLessonProgress>((subject_agg, [subject, lesson_plans]) => {
 
-	return 0;
+				const num_checked = Object.values<TIPLesson>(lesson_plans)
+					.filter(lp => lp.taken)
+					.length
+
+				const total = Object.values(curriculum[learning_level][subject]).length
+
+				return {
+					...subject_agg,
+					[subject]: {
+						complete: num_checked,
+						total
+					}
+				}
+			}, {})
+
+		return {
+			...agg,
+			[learning_level]: lesson_progress
+		}
+	}, {})
+
+	const overall_max = Object.values(lesson_progress)
+		.reduce((max, subjects) => {
+			return Object.values(subjects)
+				.reduce((sm, curr) => {
+					return Math.max(sm, curr.complete)
+				}, max)
+		}, 0)
+
+	return overall_max;
 }
 
 export const getResult = (students: MISStudent, test_id: string, type: string) => {
