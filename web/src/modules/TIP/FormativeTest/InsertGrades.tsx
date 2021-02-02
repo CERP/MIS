@@ -10,11 +10,12 @@ interface P {
 
 type PropsType = P & RouteComponentProps
 
-const class_map: Record<string, string> = {
-	"1": "blue",
-	"2": "yellow",
-	"3": "green",
-	"4": "orange"
+//TODO: This is definitely not right.
+const class_map: Record<TIPLevels, TIPGrades> = {
+	"Level 0": "KG",
+	"Level 1": "1",
+	"Level 2": "2",
+	"Level 3": "3",
 }
 
 const InsertGrades: React.FC<PropsType> = (props) => {
@@ -22,14 +23,18 @@ const InsertGrades: React.FC<PropsType> = (props) => {
 	const url = props.match.url.split('/')
 	const { class_name, subject, section_id, test_id } = props.match.params as Params
 
-	const group = class_map[class_name]
-	const students = section_id && useMemo(() => getStudentsBySectionId(section_id, props.students), [section_id])
-	const group_students = useMemo(() => getStudentsByGroup(props.students, group, subject), [subject])
+	const group = class_map[class_name as TIPLevels]
+
+	const mode = url[2] === "diagnostic-test" ? "DIAGNOSTIC" : "OTHER"
+
+	const students = mode === "DIAGNOSTIC" ? useMemo(() => getStudentsBySectionId(section_id, props.students), [section_id]) : useMemo(() => getStudentsByGroup(props.students, group, subject), [subject])
+
+	console.log(students)
 
 	return <div className="flex flex-wrap content-between">
 		<Card class_name={class_name} subject={subject} />
 		{<div className="m-3 flex flex-wrap w-full justify-start">
-			{Object.values(url[2] === "diagnostic-test" ? students : group_students || {})
+			{Object.values(students)
 				.sort((a, b) => a.Name.localeCompare(b.Name))
 				.map((std) => {
 

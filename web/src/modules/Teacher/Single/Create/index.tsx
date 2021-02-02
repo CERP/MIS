@@ -50,7 +50,7 @@ const blankTeacher = (isFirst = false): MISTeacher => ({
 		family: false
 	},
 	targeted_instruction: {
-		curriculum: {}
+		curriculum: {} as TIPTeacherCurriculum
 	}
 })
 

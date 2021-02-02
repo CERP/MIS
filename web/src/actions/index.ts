@@ -1257,14 +1257,12 @@ export const fetchTargetedInstruction = () => (
 	const state = getState()
 
 	if (!syncr.ready) {
-		syncr.onNext('connect', () => {
+		console.log('not ready!')
+		syncr.onNext('verify', () => {
 			dispatch(fetchTargetedInstruction())
 		})
 	}
 
-	dispatch({
-		type: 'GET_TARGETED_INSTRUCTIONS',
-	})
 	syncr
 		.send({
 			type: 'GET_TARGETED_INSTRUCTIONS',
@@ -1281,11 +1279,13 @@ export const fetchTargetedInstruction = () => (
 				payload: response,
 			})
 		)
-		.catch((err) =>
+		.catch((err) => {
+			console.error("targeted instruction failure")
+			console.log(err)
 			dispatch({
 				type: 'GET_TARGETED_INSTRUCTION_FAILURE',
 			})
-		)
+		})
 }
 export const deletePayment = (student_id: string, payment_id: string) => (dispatch: Function) => {
 	dispatch(

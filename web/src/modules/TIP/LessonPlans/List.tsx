@@ -41,15 +41,14 @@ const List: React.FC<PropsType> = ({ match, faculty, faculty_id, history, curric
 	const { class_name, subject } = match.params as Params
 	const url = match.url.split('/')
 
-	const parsed_class = parseInt(class_name)
+	//const parsed_class = parseInt(class_name)
 
 	const teacher = faculty[faculty_id]
 
-	const lesson_plans = curriculum[parsed_class][subject]
+	const lesson_plans = curriculum[class_name as TIPLevels][subject]
 
-	const tricky_class = parsed_class as unknown as string
 
-	const existing_teacher_record = Dynamic.get<TIPTeacherLessonPlans>(teacher, ["targeted_instruction", "curriculum", tricky_class, subject])
+	const existing_teacher_record = Dynamic.get<TIPTeacherLessonPlans>(teacher, ["targeted_instruction", "curriculum", class_name, subject])
 	const teacher_lesson_record = existing_teacher_record || blankLessonPlan(lesson_plans)
 
 	const done = (e: any, level: string, subject: string, lesson_number: string, value: boolean) => {
@@ -64,30 +63,33 @@ const List: React.FC<PropsType> = ({ match, faculty, faculty_id, history, curric
 
 	return <div className="flex flex-wrap content-between">
 		<Card class_name={class_name} subject={subject} />
-		{Object.values(lesson_plans).map((curr) => {
+		{
+			Object.values(lesson_plans)
+				.sort((a, b) => parseInt(a.lesson_number) - parseInt(b.lesson_number))
+				.map((curr) => {
 
-			const teacher_record = teacher_lesson_record[curr.lesson_number] || { taken: false }
+					const teacher_record = teacher_lesson_record[curr.lesson_number] || { taken: false }
 
-			return <div key={curr.lesson_number}
-				className="no-underline bg-blue-100 h-20 w-full mx-3 rounded-md mb-3 flex flex-row justify-between items-center px-2"
-				onClick={(e) => redirect(e, curr.lesson_number)}>
+					return <div key={curr.lesson_number}
+						className="no-underline bg-blue-100 h-20 w-full mx-3 rounded-md mb-3 flex flex-row justify-between items-center px-2"
+						onClick={(e) => redirect(e, curr.lesson_number)}>
 
-				<div className="flex flex-col justify-between items-center w-5/6 h-15 pl-4">
-					<div className="text-white text-lg font-bold mb-1">{curr.lesson_title}</div>
-					<div className="text-xs text-white">{`Lesson number ${curr.lesson_number}`}</div>
-				</div>
-
-				{
-					teacher_record.taken ?
-						<img src={Tick} className="h-6 w-6 bg-white rounded-full flex items-center justify-center"
-							onClick={(e) => done(e, class_name, curr.subject, curr.lesson_number, false)} /> :
-						<div className="h-6 w-6 bg-white rounded-full flex items-center justify-center"
-							onClick={(e) => done(e, class_name, curr.subject, curr.lesson_number, true)}>
-							<img className="h-3 w-3" src={WhiteTick} />
+						<div className="flex flex-col justify-between items-center w-5/6 h-15 pl-4">
+							<div className="text-white text-lg font-bold mb-1">{curr.lesson_title}</div>
+							<div className="text-xs text-white">{`Lesson number ${curr.lesson_number}`}</div>
 						</div>
-				}
-			</div>
-		})}
+
+						{
+							teacher_record.taken ?
+								<img src={Tick} className="h-6 w-6 bg-white rounded-full flex items-center justify-center"
+									onClick={(e) => done(e, class_name, curr.subject, curr.lesson_number, false)} /> :
+								<div className="h-6 w-6 bg-white rounded-full flex items-center justify-center"
+									onClick={(e) => done(e, class_name, curr.subject, curr.lesson_number, true)}>
+									<img className="h-3 w-3" src={WhiteTick} />
+								</div>
+						}
+					</div>
+				})}
 		<div className="w-full flex justify-center items-center">
 			<button className="border-none bg-green-primary rounded-md text-white text-lg p-2 w-3/6 my-3">Print All</button>
 		</div>

@@ -65,32 +65,35 @@ interface RootDBState {
 type TIPGrades = "1" | "2" | "3" | "KG" 
 type TIPLearningGroups = "Blue" | "Yellow" | "Green" | "Orange"
 type TIPLevels = "Level 0" | "Level 1" | "Level 2" | "Level 3"
+type TIPSubjects = "Maths" | "Urdu" | "English"
 
-interface TIPCurriculum {
-	[learning_level: string]: {
+type TIPCurriculum = {
+	[learning_level in TIPLevels]: {
 		[subject: string]: TIPLessonPlans
 	}
 }
 
 // This is the TIP curriculum which lives inside the 
 // MISTeacher object.
-interface TIPTeacherCurriculum {
-	[learning_level: string]: {
+type TIPTeacherCurriculum = {
+	[learning_level in TIPLevels]: {
 		[subject: string]: TIPTeacherLessonPlans
 	}
 }
 
 interface TIPTeacherLessonPlans {
-	[lesson_id: number]: TIPTeacherLesson
+	[lesson_id: string]: TIPTeacherLesson
 }
 
 interface TIPLessonPlans {
-	[lesson_id: number]: TIPLesson
+	[lesson_id: string]: TIPLesson
 }
 
 interface TIPLesson {
-	lesson_number: number
+	lesson_number: string
 	lesson_title: string
+	lesson_link: string
+	material_names: string[]
 	subject: string
 	lesson_duration: string
 	material_links: string[]
@@ -132,7 +135,7 @@ type TIPGradedQuestion = TIPQuestion & {
 
 // Too generic, bad name
 // are we still using this?
-interface Result {
+interface SLOResult {
 	[std_id: string]: {
 		std_name: string
 		obtain: number
@@ -149,9 +152,8 @@ interface SloObj {
 }
 
 // Am not sure what this is supposed to be for...
-interface DiagnosticRes {
-	[level: string]: {
-		group: string
+type DiagnosticRes = {
+	[level in TIPGrades]: {
 		students: {
 			[student_id: string]: MISStudent
 		}

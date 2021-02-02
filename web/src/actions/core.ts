@@ -2,7 +2,6 @@ import { Dispatch } from 'redux'
 import Syncr from '@cerp/syncr'
 import { loadDb } from 'utils/indexedDb'
 import { v4 } from 'node-uuid'
-import { fetchTargetedInstruction } from 'actions/'
 const SYNC = 'SYNC'
 const client_type = 'mis'
 
@@ -586,7 +585,6 @@ export const connected = () => (
 				console.log('VERIFYY')
 				syncr.verify()
 
-				dispatch(fetchTargetedInstruction())
 				dispatch(Sync(state.queued))
 			})
 			.catch((err) => {

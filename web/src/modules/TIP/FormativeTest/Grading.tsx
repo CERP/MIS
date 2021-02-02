@@ -62,6 +62,9 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 	const existing_results = student?.targeted_instruction?.results
 	const existing_test = existing_results && existing_results[test_id]
 
+	console.log(test_id, targeted_instruction)
+	console.log(test, student, existing_results, existing_test)
+
 	const [result, setResult] = useState<TIPDiagnosticReport>(existing_test || GenerateEmptyTest(test_type))
 
 	// Here we remove all the $ signs from question text and replace with commas

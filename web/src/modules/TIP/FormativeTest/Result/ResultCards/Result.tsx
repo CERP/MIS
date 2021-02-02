@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom'
-import { getStudentsByGroup, getResult, getClassResult, getPDF } from 'utils/TIP'
+//import { getStudentsByGroup, getResult, getClassResult, getPDF } from 'utils/TIP'
 import Headings from '../../../Headings'
 import ChildView from './ChildView'
 import SkillView from './SkillView'
@@ -23,10 +23,15 @@ const Result: React.FC<PropsType> = (props) => {
 	const [slo, setSlo] = useState('')
 	const [type, setType] = useState(url[2] === "formative-test" ? 'skill_view' : 'child_view')
 
-	const group = class_name === "1" ? "blue" : class_name === "2" ? "yellow" : class_name === "3" ? "green" : "orange"
+	return <div>Hello</div>
+
+
+	/*
+	//const group = class_name === "1" ? "blue" : class_name === "2" ? "yellow" : class_name === "3" ? "green" : "orange"
 	const [testId,] = useMemo(() => getPDF(subject, class_name, props.targeted_instruction, (url[2].split("-")[0]).charAt(0).toUpperCase() + url[2].split("-")[0].slice(1)), [subject]);
-	const group_students = useMemo(() => getStudentsByGroup(props.students, group, subject), [subject])
-	const result: Result = useMemo(() => getResult(group_students, test_id ? test_id : testId, url[2] === "formative-result" ? url[2].replace("-result", "_result") : url[2].replace("-test", "_result")), [subject])
+	const group_students = useMemo(() => getStudentsByGroup(props.students, class_name as TIPGrades, subject), [subject])
+
+	//const result: Result = useMemo(() => getResult(group_students, test_id ? test_id : testId, url[2] === "formative-result" ? url[2].replace("-result", "_result") : url[2].replace("-test", "_result")), [subject])
 	const class_result: SloObj = useMemo(() => getClassResult(result), [])
 
 	return <div className="flex flex-wrap content-between mt-3">
@@ -127,6 +132,7 @@ const Result: React.FC<PropsType> = (props) => {
 			})
 		}
 	</div >
+	*/
 }
 
 export default connect((state: RootReducerState) => ({
