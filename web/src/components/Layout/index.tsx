@@ -6,8 +6,6 @@ import HelpButton from 'components/Button/help'
 import { History } from 'history'
 import IlmxButton from 'components/Button/Ilmx'
 
-import './style.css'
-
 type PropsType = {
 	user?: MISTeacher
 	children?: React.ReactNode
