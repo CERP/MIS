@@ -64,8 +64,7 @@ const blankStudent = (): MISStudent => ({
 	targeted_instruction: {
 		results: {},
 		learning_level: {}
-	},
-	learning_levels: {}
+	}
 })
 // should be a dropdown of choices. not just teacher or admin.
 

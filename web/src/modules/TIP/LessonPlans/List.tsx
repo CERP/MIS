@@ -52,7 +52,6 @@ const List: React.FC<PropsType> = ({ match, faculty, faculty_id, history, curric
 	const existing_teacher_record = Dynamic.get<TIPTeacherLessonPlans>(teacher, ["targeted_instruction", "curriculum", tricky_class, subject])
 	const teacher_lesson_record = existing_teacher_record || blankLessonPlan(lesson_plans)
 
-	console.log(teacher_lesson_record)
 	const done = (e: any, level: string, subject: string, lesson_number: string, value: boolean) => {
 		e.stopPropagation()
 		lessonPlanTaken(faculty_id, level, subject, lesson_number, value)

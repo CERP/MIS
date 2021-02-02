@@ -61,6 +61,11 @@ interface RootDBState {
  * TIP Types
  */
 
+
+type TIPGrades = "1" | "2" | "3" | "KG" 
+type TIPLearningGroups = "Blue" | "Yellow" | "Green" | "Orange"
+type TIPLevels = "Level 0" | "Level 1" | "Level 2" | "Level 3"
+
 interface TIPCurriculum {
 	[learning_level: string]: {
 		[subject: string]: TIPLessonPlans
@@ -116,7 +121,7 @@ interface TIPTest {
 interface TIPQuestion {
 	question_text: string
 	correct_answer: string
-	grade: string
+	grade: TIPGrades
 	slo_category: string
 	slo: string[]
 }
@@ -164,6 +169,7 @@ type TIPDiagnosticReport = {
 type Levels = {
 	[level: string]: number
 }
+
 interface LearningLevel {
 	level: string
 	group: string
@@ -414,15 +420,8 @@ interface MISStudent {
 		}
 		learning_level: { 
 			[subject: string]: { 
-				level: "blue" | "green" | "yellow" | "red"  | "orange"
-				group: string
+				grade: TIPGrades
 			}
-		}
-	}
-	learning_levels: {
-		[learning_level_id: string]: {
-			test_id: string
-			date_assigned: string
 		}
 	}
 }

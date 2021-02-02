@@ -3,13 +3,14 @@ import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { calculateLearningLevel } from 'utils/TIP'
 import Card from '../Card'
-import { mergeTIPResult } from 'actions'
+import { mergeTIPResult, assignLearningLevel } from 'actions'
 
 interface P {
 	teacher_name: string
 	students: RootDBState["students"]
 	targeted_instruction: RootReducerState['targeted_instruction']
 
+	setLearningLevel: (student_id: string, subject: string, level: TIPGrades) => void
 	saveReport: (student_id: string, diagnostic_report: TIPDiagnosticReport, test_id: string) => void
 }
 
@@ -33,7 +34,7 @@ const GenerateEmptyTest = (type: TIPTestType): TIPDiagnosticReport => {
 	}
 }
 
-const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, saveReport, history }) => {
+const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, saveReport, setLearningLevel, history }) => {
 
 	const { class_name, subject, std_id, section_id, test_id } = match.params
 
@@ -73,7 +74,6 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 		}
 	}), {})
 
-	console.log(result)
 	const markQuestion = (q_id: string, question: TIPQuestion, is_correct: boolean) => {
 		setResult({
 			...result,
@@ -88,7 +88,10 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 	}
 
 	const onSave = () => {
-		console.log('saving report')
+		// calculate learning level
+		const level = calculateLearningLevel(result)
+		// assign level to student
+		setLearningLevel(std_id, subject, level)
 		saveReport(std_id, result, test_id)
 		history.push(test_type === "Diagnostic" ? `/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades` : `/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades`)
 	}
@@ -134,4 +137,5 @@ export default connect((state: RootReducerState) => ({
 	targeted_instruction: state.targeted_instruction
 }), (dispatch: Function) => ({
 	saveReport: (student_id: string, diagnostic_report: TIPDiagnosticReport, test_id: string) => dispatch(mergeTIPResult(student_id, diagnostic_report, test_id)),
+	setLearningLevel: (student_id: string, subject: string, level: TIPGrades) => dispatch(assignLearningLevel(student_id, subject, level))
 }))(withRouter(Grading))
