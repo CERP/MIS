@@ -37,6 +37,8 @@ import IlmxRedirectModal from 'components/Ilmx/redirectModal'
 import { checkStudentDuesReturning } from 'utils/checkStudentDues'
 import IlmxLanding from './ilmxLanding'
 
+import { TIP } from 'assets/icons'
+
 /**
  * line for adding new badge just copy / paste it
  * 
@@ -471,10 +473,9 @@ class Landing extends Component {
 										<Link
 											className="button yellow-shadow"
 											to="/targeted-instruction/"
-											style={{ backgroundImage: `url(${test})` }}>
-											Tests
+											style={{ backgroundImage: `url(${TIP})` }}>
+												TIP
 										</Link>
-
 									</div>
 								}
 							</div>

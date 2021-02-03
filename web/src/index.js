@@ -27,13 +27,11 @@ syncr.on('connect', () => store.dispatch(connected()))
 syncr.on('connect', () =>
 	checkTime()
 		.then((correct) => {
-			if(!correct) {
-				const text = 'Your device time or timezone is incorrect!'
-				store.dispatch({
-					type: ActionTypes.ALERT_BANNER_TEXT,
-					data: text,
-				})
-			}
+			const text = correct ? '' : 'Your device time or timezone is incorrect!'
+			store.dispatch({
+				type: ActionTypes.ALERT_BANNER_TEXT,
+				data: text,
+			})
 		})
 )
 
