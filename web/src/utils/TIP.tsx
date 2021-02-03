@@ -188,6 +188,8 @@ export const calculateLearningLevel = (report: TIPDiagnosticReport): TIPGrades =
 	if (grade_percentages["3"] < threshold) {
 		return "3"
 	}
+
+	return "KG"
 }
 
 // CONVERSIONS

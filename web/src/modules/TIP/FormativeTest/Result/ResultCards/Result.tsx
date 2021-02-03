@@ -23,7 +23,7 @@ const Result: React.FC<PropsType> = (props) => {
 	const [slo, setSlo] = useState('')
 	const [type, setType] = useState(url[2] === "formative-test" ? 'skill_view' : 'child_view')
 
-	return <div>Hello</div>
+	return <div>Page Not Available</div>
 
 
 	/*

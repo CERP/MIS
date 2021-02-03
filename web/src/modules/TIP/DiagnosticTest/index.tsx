@@ -20,12 +20,15 @@ const DiagnosticTest: React.FC<P> = (props) => {
 		.filter(t => t.type === "Diagnostic")
 		.map(x => x.grade)
 		.reduce<Record<string, boolean>>((agg, curr) => ({
+			...agg,
 			[curr.toLowerCase()]: true
 		}), {})
 
 	// TODO: this needs to be a fuzzier map
-	const sorted_sections = useMemo(() => getSectionsFromClasses(props.classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0)), [])
+	const sorted_sections = useMemo(() => getSectionsFromClasses(props.classes), [])
+		.sort((a, b) => (a.classYear || 0) - (b.classYear || 0))
 		.filter(s => valid_classes[s.className.toLowerCase()])
+
 	const class_name = useMemo(() => getClassnameFromSectionId(sorted_sections, sectionId), [sectionId])
 
 	return <div className="flex flex-wrap content-between">
@@ -40,7 +43,6 @@ const DiagnosticTest: React.FC<P> = (props) => {
 			<Classes
 				setSectionId={setSectionId}
 				sortedSections={sorted_sections}
-				grades={null}
 			/>}
 	</div>
 }

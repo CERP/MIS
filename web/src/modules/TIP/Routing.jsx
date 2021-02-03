@@ -13,12 +13,15 @@ import Result from './DiagnosticTest/Result/Result'
 import LessonPlans from './LessonPlans'
 import HomePage from './index'
 import PDF from './PDF'
+import LessonPlanPDF from './LessonPlans/PDF'
 import List from './LessonPlans/List'
+import Header from './Header'
 
 const Routing = (props) => {
 	const path = props.location.pathname.substring(0, 21)
 
-	return (
+	return <>
+	<Header />
 		<Switch>
 			<Route exact path={path} component={HomePage}></Route>
 
@@ -64,60 +67,53 @@ const Routing = (props) => {
 
 			<Route
 				exact
-				path={`${path}/formative-test/:class_name/:subject/:test_id/insert-grades`}>
-				<InsertGrades />
-			</Route>
-			<Route exact path={`${path}/formative-test/:class_name/:subject/pdf`}>
-				<PDF />
-			</Route>
-			<Route exact path={`${path}/formative-test`}>
-				<FormativeTest />
-			</Route>
+				path={`${path}/formative-test/:class_name/:subject/:test_id/insert-grades`}
+				component={InsertGrades}
+			/>
+			<Route exact path={`${path}/formative-test/:class_name/:subject/pdf`} component={PDF} />
 
-			<Route exact path={`${path}/formative-result/:class_name/:subject/result`}>
-				<FormativeResult />
-			</Route>
-			<Route exact path={`${path}/formative-result`}>
-				<FormativeTestResult />
-			</Route>
+			<Route exact path={`${path}/formative-test`} component={FormativeTest} />
+
+			<Route 
+				exact 
+				path={`${path}/formative-result/:class_name/:subject/result`} 
+				component={FormativeResult}
+			/>
+
+			<Route exact path={`${path}/formative-result`} component={FormativeTestResult} /> 
 
 			<Route
 				exact
-				path={`${path}/summative-test/:class_name/:subject/:test_id/insert-grades/:std_id/grading`}>
-				<Grading />
-			</Route>
+				path={`${path}/summative-test/:class_name/:subject/:test_id/insert-grades/:std_id/grading`} 
+				component={Grading} 
+			/>
 			<Route
 				exact
-				path={`${path}/summative-test/:class_name/:subject/:test_id/insert-grades/test-result`}>
-				<FormativeResult />
-			</Route>
+				path={`${path}/summative-test/:class_name/:subject/:test_id/insert-grades/test-result`} 
+				component={FormativeResult} 
+			/>
 			<Route
 				exact
-				path={`${path}/summative-test/:class_name/:subject/:test_id/insert-grades`}>
-				<InsertGrades />
-			</Route>
-			<Route exact path={`${path}/summative-test/:class_name/:subject/pdf`}>
-				<PDF />
-			</Route>
-			<Route exact path={`${path}/summative-test`}>
-				<SummativeTest />
-			</Route>
+				path={`${path}/summative-test/:class_name/:subject/:test_id/insert-grades`} 
+				component={InsertGrades} 
+			/>
+			<Route exact path={`${path}/summative-test/:class_name/:subject/pdf`} component={PDF} />
 
-			<Route exact path={`${path}/lesson-plans/:class_name/:subject/:lesson_number/list/pdf`}>
-				<PDF />
-			</Route>
-			<Route exact path={`${path}/lesson-plans/:class_name/:subject/list`}>
-				<List />
-			</Route>
-			<Route exact path={`${path}/lesson-plans`}>
-				<LessonPlans />
-			</Route>
+			<Route exact path={`${path}/summative-test`} component={SummativeTest} />
 
-			<Route exact path={`${path}/training-videos`}>
-				<TrainingVideos />
-			</Route>
+			<Route 
+				exact
+				path={`${path}/lesson-plans/:class_name/:subject/:lesson_number/list/pdf`}
+				component={LessonPlanPDF}
+			  />
+			<Route exact path={`${path}/lesson-plans/:class_name/:subject/list`} component={List} />
+
+			<Route exact path={`${path}/lesson-plans`} component={LessonPlans} />
+
+			<Route exact path={`${path}/training-videos`} component={TrainingVideos} />
+
 		</Switch>
-	)
+	</>
 }
 
 export default withRouter(Routing)

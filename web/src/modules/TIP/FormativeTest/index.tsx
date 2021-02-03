@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { getGradesFromTests } from 'utils/TIP'
 import { connect } from 'react-redux'
 import Headings from '../Headings'
-import Classes from '../Classes'
+import Levels from '../Levels'
 import Card from '../Card'
 import Subjects from '../Subjects'
 
@@ -21,9 +21,8 @@ const FormativeTest: React.FC<P> = (props) => {
 			"Select the Group you want to evaluate"} />
 		{class_name ?
 			<Subjects class_name={class_name} section_id='' /> :
-			<Classes
+			<Levels
 				setSectionId={setClassName}
-				sortedSections={null}
 				grades={grades}
 			/>}
 	</div>
