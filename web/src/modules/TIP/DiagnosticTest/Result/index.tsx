@@ -29,7 +29,6 @@ const DiagnosticTestResult: React.FC<P> = (props) => {
 			<Classes
 				setSectionId={setSectionId}
 				sortedSections={sorted_sections}
-				grades={null}
 			/>}
 	</div>
 }
