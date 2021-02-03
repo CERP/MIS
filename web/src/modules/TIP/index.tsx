@@ -45,21 +45,21 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id, curriculum, history })
 			layout === Layouts.DIAGNOSTIC && <Link className="container sm:px-8 bg-white rounded-2xl m-3 h-44 flex flex-col content-center items-center shadow-lg no-underline"
 				to={'/targeted-instruction/diagnostic-test'}>
 				<img className="h-24 py-4 w-24" src={DiagnosticItalic} alt="img" />
-				<div className="text-blue-900 text-lg font-bold">Diagnostic Test</div>
+				<div className="text-blue-900 text-lg font-bold">Starting Test</div>
 			</Link>
 		}
 		{
 			layout === Layouts.FORMATIVE && <Link className="container sm:px-8 bg-white rounded-2xl m-3 h-44 flex flex-col content-center items-center shadow-lg no-underline"
 				to={'/targeted-instruction/formative-test'}>
 				<img className="h-24 py-4 pr-4 w-28" src={Formative} alt="img" />
-				<div className="text-blue-900 text-lg font-bold">Formative Test</div>
+				<div className="text-blue-900 text-lg font-bold">Midpoint Test</div>
 			</Link>
 		}
 		{
 			layout === Layouts.SUMMATIVE && <Link className="container sm:px-8 bg-white rounded-2xl m-3 h-44 flex flex-col content-center items-center shadow-lg no-underline"
 				to={'/targeted-instruction/summative-test'}>
 				<img className="h-24 py-4 pr-4 w-28" src={Summative} alt="img" />
-				<div className="text-blue-900 text-lg font-bold">Summative Test</div>
+				<div className="text-blue-900 text-lg font-bold">Final Test</div>
 			</Link>
 		}
 
@@ -81,12 +81,12 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id, curriculum, history })
 				<Link className="container sm:px-8 bg-white rounded-xl m-3 h-28 flex flex-col content-center items-center shadow-lg no-underline"
 					to={"/targeted-instruction/formative-test"}>
 					<img className="h-12 p-4" src={Formative} alt="img" />
-					<div className="text-xs text-blue-900 font-bold text-center">Formative Test</div>
+					<div className="text-xs text-blue-900 font-bold text-center">Midpoint Test</div>
 				</Link>
 				<Link className="container sm:px-8 bg-white rounded-xl m-3 h-28 flex flex-col content-center items-center shadow-lg no-underline"
 					to={"/targeted-instruction/summative-test"}>
 					<img className="h-12 p-4 pr-5" src={Summative} alt="img" />
-					<div className="text-xs text-blue-900 font-bold text-center">Summative Test</div>
+					<div className="text-xs text-blue-900 font-bold text-center">Final Test</div>
 				</Link>
 			</div>
 		}
@@ -94,7 +94,7 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id, curriculum, history })
 			layout === Layouts.FORMATIVE && <Link className="container sm:px-8 bg-white rounded-xl m-3 h-28 flex flex-row justify-center w-full items-center shadow-lg no-underline"
 				to={"/targeted-instruction/diagnostic-result"}>
 				<img className="h-12 py-4 pl-4" src={DiagnosticItalic} alt="img" />
-				<div className="text-blue-900 text-lg font-bold">Diagnostic Test Results</div>
+				<div className="text-blue-900 text-lg font-bold">Starting Test Results</div>
 			</Link>
 		}
 		{
@@ -102,12 +102,12 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id, curriculum, history })
 				<Link className="container sm:px-8 bg-white rounded-xl m-3 h-40 flex flex-col content-center items-center shadow-lg no-underline"
 					to={"/targeted-instruction/diagnostic-result"}>
 					<img className="h-12 py-6" src={DiagnosticItalic} alt="img" />
-					<div className="text-base text-blue-900 font-bold text-center">Diagnostic Test Results</div>
+					<div className="text-base text-blue-900 font-bold text-center">Starting Test Results</div>
 				</Link>
 				<Link className="container sm:px-8 bg-white rounded-xl m-3 h-40 flex flex-col content-center items-center shadow-lg no-underline"
 					to={"/targeted-instruction/formative-result"}>
 					<img className="h-16 p-4" src={Formative} alt="img" />
-					<div className="text-base text-blue-900 font-bold text-center">Formative Test Results</div>
+					<div className="text-base text-blue-900 font-bold text-center">Midpoint Test Results</div>
 				</Link>
 			</div>
 		}

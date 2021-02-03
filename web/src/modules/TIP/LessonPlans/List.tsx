@@ -5,6 +5,7 @@ import Card from '../Card'
 import { Check, WhiteTick } from 'assets/icons'
 import { lessonPlanTaken } from 'actions'
 import Dynamic from '@cerp/dynamic';
+import Headings from '../Headings';
 
 interface P {
 	faculty: RootDBState["faculty"]
@@ -63,6 +64,9 @@ const List: React.FC<PropsType> = ({ match, faculty, faculty_id, history, curric
 
 	return <div className="flex flex-wrap content-between">
 		<Card class_name={class_name} subject={subject} />
+
+		<Headings heading={'Lesson Plan Library'} sub_heading={'Click on a plan to view'} />
+
 		{
 			Object.values(lesson_plans)
 				.sort((a, b) => parseInt(a.lesson_number) - parseInt(b.lesson_number))

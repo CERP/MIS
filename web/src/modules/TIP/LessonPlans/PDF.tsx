@@ -25,17 +25,19 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
     const [btn_type, setBtnType] = useState('teaching_manual')
     const { class_name, subject, lesson_number } = match.params
 
-    let links = targeted_instruction.curriculum[class_name][subject][lesson_number].teaching_manual_link.split(/[\r\n]+/)
+    const lesson = targeted_instruction.curriculum[class_name][subject][lesson_number]
+
+    let links = lesson.teaching_manual_link.split(/[\r\n]+/)
     if (btn_type === 'activities') {
-        links = targeted_instruction.curriculum[class_name][subject][lesson_number].activity_links.split(/[\r\n]+/)
+        links = lesson.activity_links.split(/[\r\n]+/)
     }
     if (btn_type === 'teaching_material') {
-        links = targeted_instruction.curriculum[class_name][subject][lesson_number].material_links.split(/[\r\n]+/)
+        links = lesson.material_links.split(/[\r\n]+/)
     }
 
     // by default, we have pdf_url coming for curriculum
     let pdf_url = Dynamic.get<string>(targeted_instruction, ["curriculum", class_name, subject, lesson_number, "lesson_link"])
-    console.log(targeted_instruction.curriculum[class_name][subject][lesson_number].material_links.split('\n'))
+
     return <div className="flex flex-wrap flex-col content-between w-full items-center justify-items-center">
         <Card class_name={class_name} subject={subject} />
         <div className="rounded-lg border-black">
@@ -48,6 +50,15 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
                 canvasCss='customCanvas'
                 document={{
                     url: decodeURIComponent(pdf_url),
+                }}
+                onDocumentClick={() => {
+                    const e = document.createElement('a')
+                    e.setAttribute('href', decodeURIComponent(pdf_url))
+                    e.setAttribute('download', lesson.lesson_title + '.pdf')
+                    e.style.display = 'none'
+                    document.body.appendChild(e)
+                    e.click()
+                    document.body.removeChild(e)
                 }}
             />
             <div className="flex flex-row justify-between my-4 w-full">
@@ -76,7 +87,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
                     <button
                         className={`border-none text-blue-300 text-xs bg-transparent outline-none 
                         ${btn_type === 'activities' && "text-blue-900 underline"}`}
-                        onClick={() => setBtnType('activities')}>Activity Videos
+                        onClick={() => setBtnType('activities')}>Activities
                     </button>
                 </div>
                 {
