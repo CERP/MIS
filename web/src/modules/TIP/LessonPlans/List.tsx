@@ -2,7 +2,7 @@ import React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { connect } from 'react-redux';
 import Card from '../Card'
-import { Tick, WhiteTick } from 'assets/icons'
+import { Check, WhiteTick } from 'assets/icons'
 import { lessonPlanTaken } from 'actions'
 import Dynamic from '@cerp/dynamic';
 
@@ -81,7 +81,7 @@ const List: React.FC<PropsType> = ({ match, faculty, faculty_id, history, curric
 
 						{
 							teacher_record.taken ?
-								<img src={Tick} className="h-6 w-6 bg-white rounded-full flex items-center justify-center"
+								<img src={Check} className="h-6 w-6 bg-white rounded-full flex items-center justify-center"
 									onClick={(e) => done(e, class_name, curr.subject, curr.lesson_number, false)} /> :
 								<div className="h-6 w-6 bg-white rounded-full flex items-center justify-center"
 									onClick={(e) => done(e, class_name, curr.subject, curr.lesson_number, true)}>
