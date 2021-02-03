@@ -13,6 +13,7 @@ import Result from './DiagnosticTest/Result/Result'
 import LessonPlans from './LessonPlans'
 import HomePage from './index'
 import PDF from './PDF'
+import LessonPlanPDF from './LessonPlans/PDF'
 import List from './LessonPlans/List'
 
 const Routing = (props) => {
@@ -101,7 +102,7 @@ const Routing = (props) => {
 			<Route 
 				exact
 				path={`${path}/lesson-plans/:class_name/:subject/:lesson_number/list/pdf`}
-				component={PDF}
+				component={LessonPlanPDF}
 			  />
 			<Route exact path={`${path}/lesson-plans/:class_name/:subject/list`} component={List} />
 

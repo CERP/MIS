@@ -96,8 +96,8 @@ interface TIPLesson {
 	material_names: string[]
 	subject: string
 	lesson_duration: string
-	material_links: string[]
-	activity_links: string[]
+	material_links: string
+	activity_links: string
 	teaching_manual_link: string
 }
 
@@ -172,11 +172,6 @@ type Levels = {
 	[level: string]: number
 }
 
-interface LearningLevel {
-	level: string
-	group: string
-}
-
 interface SLOMapping {
 	[slo_id: string]: {
 		description: string
@@ -194,24 +189,9 @@ interface Params {
 	test_id: string
 	lesson_number: string
 }
-
-// TODO: What are these
-interface Columns {
-	name: string
-	selector: string
-	sortable: boolean
-}
-
 /**
  * END TIP Section
  */
-
-interface GraphData {
-	[name: string]: {
-		percentage: number
-		link: string
-	}
-}
 
 interface BaseAnalyticsEvent {
 	type: string

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { getGradesFromTests } from 'utils/TIP'
 import { connect } from 'react-redux'
 import Headings from '../Headings'
-import Classes from '../Classes'
+import Levels from '../Levels'
 import Card from '../Card'
 import Subjects from '../Subjects'
 
@@ -19,9 +19,8 @@ const SummativeTest: React.FC<P> = (props) => {
         <Headings heading="Summative Test" sub_heading={class_name ? "Select the subject you want to evaluate" : "Select the Group tou want ot evaluate"} />
         {class_name ?
             <Subjects class_name={class_name} section_id='' /> :
-            <Classes
+            <Levels
                 setSectionId={setClassName}
-                sortedSections={null}
                 grades={grades}
             />}
     </div>
