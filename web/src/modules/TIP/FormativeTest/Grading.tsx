@@ -91,6 +91,11 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 	}
 
 	const onSave = () => {
+
+		if (!result.questions || Object.values(result.questions).length == 0) {
+			alert('Please mark questions')
+			return;
+		}
 		// calculate learning level
 		const level = calculateLearningLevel(result)
 		// assign level to student

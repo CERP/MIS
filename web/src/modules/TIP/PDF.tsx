@@ -38,7 +38,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 
 	const test_id = test_ids.length > 0 ? test_ids[0] : "dummy"
 
-	let pdf_url
+	let pdf_url = ""
 	// if we have a test, we need to chagne pdf_url to load from the test_id
 	if (url[2].indexOf('test') >= 0) {
 		pdf_url = targeted_instruction.tests[test_id].pdf_url
@@ -56,6 +56,15 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 				canvasCss='customCanvas'
 				document={{
 					url: decodeURIComponent(pdf_url),
+				}}
+				onDocumentClick={() => {
+					const e = document.createElement('a')
+					e.setAttribute('href', decodeURIComponent(pdf_url))
+					e.setAttribute('download', test_id + '.pdf')
+					e.style.display = 'none'
+					document.body.appendChild(e)
+					e.click()
+					document.body.removeChild(e)
 				}}
 			/>
 			<div className="flex flex-row justify-between my-4 w-full">
