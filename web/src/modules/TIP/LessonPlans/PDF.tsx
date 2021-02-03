@@ -64,18 +64,20 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
             <div className="m-2">
                 <div className="w-full flex flex-row justify-around">
                     <button
-                        className={`border-none text-blue-300 text-xs bg-transparent outline-none ${btn_type === 'teaching_material' && "text-blue-900 underline"}`}
-                        onClick={() => setBtnType('teaching_material')}>Teaching Material </button>
-                    <button
                         className={`border-none text-blue-300 text-xs bg-transparent outline-none 
-                   ${btn_type === 'activities' && "text-blue-900 underline"}`}
-                        onClick={() => setBtnType('activities')}>Activities
-               </button>
-                    <button
-                        className={`border-none text-blue-300 text-xs bg-transparent outline-none 
-                   ${btn_type === 'teaching_manual' && "text-blue-900 underline"}`}
+                        ${btn_type === 'teaching_manual' && "text-blue-900 underline"}`}
                         onClick={() => setBtnType('teaching_manual')}>Teaching Manual
-               </button>
+                    </button>
+                    <button
+                        className={`border-none text-blue-300 text-xs bg-transparent outline-none 
+                        ${btn_type === 'teaching_material' && "text-blue-900 underline"}`}
+                        onClick={() => setBtnType('teaching_material')}>Teaching Material
+                    </button>
+                    <button
+                        className={`border-none text-blue-300 text-xs bg-transparent outline-none 
+                        ${btn_type === 'activities' && "text-blue-900 underline"}`}
+                        onClick={() => setBtnType('activities')}>Activity Videos
+                    </button>
                 </div>
                 {
                     links.map((link, index) => {
