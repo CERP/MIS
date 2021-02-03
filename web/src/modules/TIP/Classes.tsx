@@ -11,7 +11,7 @@ interface P {
 const Classes: React.FC<P> = ({ setSectionId, sortedSections }) => {
 
 	const index_map = [
-		'bg-blue-25',
+		'bg-light-blue-primary',
 		'bg-yellow-primary',
 		'bg-green-primary',
 		'bg-orange-primary',
