@@ -36,6 +36,9 @@ import trainingManuals from './pngs/TrainingManuals.png'
 import trainingMaterials from './pngs/TrainingMaterials.png'
 import whiteTick from './pngs/WhiteTick.png'
 import blueDownload from './pngs/blueDownload.png'
+import backArrow from './pngs/backArrow.png'
+import burger from './pngs/burger.png'
+import tip from './pngs/tip.svg'
 
 export const EditIcon = deleteIcon
 export const DeleteIcon = editIcon
@@ -75,3 +78,6 @@ export const TrainingManual = trainingManuals
 export const TrainingMaterials = trainingMaterials
 export const WhiteTick = whiteTick
 export const BlueDownload = blueDownload
+export const BackArrow = backArrow
+export const Burger = burger
+export const TIP = tip

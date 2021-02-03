@@ -15,11 +15,13 @@ import HomePage from './index'
 import PDF from './PDF'
 import LessonPlanPDF from './LessonPlans/PDF'
 import List from './LessonPlans/List'
+import Header from './Header'
 
 const Routing = (props) => {
 	const path = props.location.pathname.substring(0, 21)
 
-	return (
+	return <>
+	<Header />
 		<Switch>
 			<Route exact path={path} component={HomePage}></Route>
 
@@ -111,7 +113,7 @@ const Routing = (props) => {
 			<Route exact path={`${path}/training-videos`} component={TrainingVideos} />
 
 		</Switch>
-	)
+	</>
 }
 
 export default withRouter(Routing)
