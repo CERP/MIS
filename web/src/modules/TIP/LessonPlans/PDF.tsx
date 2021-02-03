@@ -22,15 +22,15 @@ interface Params {
 
 const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 
-    const [btn_type, setBtnType] = useState('teaching_material')
+    const [btn_type, setBtnType] = useState('teaching_manual')
     const { class_name, subject, lesson_number } = match.params
 
-    let links = targeted_instruction.curriculum[class_name][subject][lesson_number].material_links.split(/[\r\n]+/)
+    let links = targeted_instruction.curriculum[class_name][subject][lesson_number].teaching_manual_link.split(/[\r\n]+/)
     if (btn_type === 'activities') {
         links = targeted_instruction.curriculum[class_name][subject][lesson_number].activity_links.split(/[\r\n]+/)
     }
-    if (btn_type === 'teaching_manual') {
-        links = targeted_instruction.curriculum[class_name][subject][lesson_number].teaching_manual_link.split(/[\r\n]+/)
+    if (btn_type === 'teaching_material') {
+        links = targeted_instruction.curriculum[class_name][subject][lesson_number].material_links.split(/[\r\n]+/)
     }
 
     // by default, we have pdf_url coming for curriculum
