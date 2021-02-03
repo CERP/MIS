@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { RouteComponentProps, Link, withRouter } from 'react-router-dom'
 import { getStudentsBySectionId, getStudentsByGroup } from 'utils/TIP'
 import Card from '../Card'
-import { Tick } from 'assets/icons'
+import { Check } from 'assets/icons'
 interface P {
 	students: RootDBState["students"]
 }
@@ -44,7 +44,7 @@ const InsertGrades: React.FC<PropsType> = (props) => {
 							`/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades/${std.id}/grading`}>
 						<img className="border border-solid border-green-primary rounded-full h-14 w-14" src="https://www.atmeplay.com/images/users/avtar/avtar_nouser.png" alt="img" />
 						{checked
-							&& <img src={Tick} className="absolute h-5 right-4 bottom-7" />}
+							&& <img src={Check} className="absolute h-5 right-4 bottom-7" />}
 						<div className="text-xs flex items-center justify-center w-24 md:w-28 truncate">{std.Name}</div>
 						<div className="text-xs flex items-center justify-center">{std.RollNumber}</div>
 					</Link>
