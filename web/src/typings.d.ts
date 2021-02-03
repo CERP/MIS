@@ -96,8 +96,8 @@ interface TIPLesson {
 	material_names: string[]
 	subject: string
 	lesson_duration: string
-	material_links: string[]
-	activity_links: string[]
+	material_links: string
+	activity_links: string
 	teaching_manual_link: string
 }
 

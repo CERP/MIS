@@ -1,11 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import React from 'react';
 import { connect } from 'react-redux'
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom'
-import { Download, Printer, BlueDownload } from 'assets/icons'
+import { Download, Printer } from 'assets/icons'
 import PDFViewer from 'pdf-viewer-reactjs'
-import { getPDF } from 'utils/TIP'
 import Card from './Card'
-import Dynamic from '@cerp/dynamic';
 interface P {
 	targeted_instruction: RootReducerState["targeted_instruction"]
 }
@@ -21,17 +19,10 @@ interface Params {
 	lesson_number: string
 }
 
-//TODO: split up the test PDF view and the lesson plan pdf view
 const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 
 	const url = (match.url).split('/')
-	const [btn_type, setBtnType] = useState('teaching_material')
-	const { class_name, subject, section_id, lesson_number } = match.params
-	// const [test_id, pdf_url] = useMemo(() => getPDF(subject, class_name, targeted_instruction, (url[2].split("-")[0]).charAt(0).toUpperCase() + url[2].split("-")[0].slice(1)), [subject]);
-
-	// by default, we have pdf_url coming for curriculum
-	let pdf_url = Dynamic.get<string>(targeted_instruction, ["curriculum", class_name, subject, lesson_number, "lesson_link"])
-
+	const { class_name, subject, section_id } = match.params
 
 	// if test, this will find the test_id
 	let test_type: TIPTestType = "Diagnostic"
@@ -47,6 +38,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 
 	const test_id = test_ids.length > 0 ? test_ids[0] : "dummy"
 
+	let pdf_url
 	// if we have a test, we need to chagne pdf_url to load from the test_id
 	if (url[2].indexOf('test') >= 0) {
 		pdf_url = targeted_instruction.tests[test_id].pdf_url
@@ -76,53 +68,20 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 				</div>
 			</div>
 		</div>
-		{
-			url[2] === 'lesson-plans' ?
-				<div className="w-full bg-gray-100 mt-3 rounded-2xl h-full">
-					<div className="m-2">
-						<div className="w-full flex flex-row justify-around">
-							<button
-								className={`border-none text-blue-300 text-xs bg-transparent outline-none ${btn_type === 'teaching_material' && "text-blue-900 underline"}`}
-								onClick={() => setBtnType('teaching_material')}>Teaching Material </button>
-							<button
-								className={`border-none text-blue-300 text-xs bg-transparent outline-none 
-                   ${btn_type === 'activities' && "text-blue-900 underline"}`}
-								onClick={() => setBtnType('activities')}>Activities
-               </button>
-							<button
-								className={`border-none text-blue-300 text-xs bg-transparent outline-none 
-                   ${btn_type === 'teaching_manual' && "text-blue-900 underline"}`}
-								onClick={() => setBtnType('teaching_manual')}>Teaching Manual
-               </button>
-						</div>
-						<div className="bg-white p-2 my-3 rounded-md mb-2 flex flex-row justify-between">
-							<div className="text-blue-900 text-xs break-all	mr-3">
-								{btn_type === 'teaching_material' ? targeted_instruction.curriculum[class_name] && targeted_instruction.curriculum[class_name][subject][lesson_number].material_links :
-									btn_type === 'activities' ? targeted_instruction.curriculum[class_name] && targeted_instruction.curriculum[class_name][subject][lesson_number].activity_links :
-										targeted_instruction.curriculum[class_name] && targeted_instruction.curriculum[class_name][subject][lesson_number].teaching_manual_link}
-							</div>
-							<div className="flex justify-center items-center">
-								<img className="h-4 w-4" src={BlueDownload} />
-							</div>
-						</div>
-					</div>
-				</div> :
-
-				<div className="flex flex-row justify-around my-4 w-full">
-					<div className="w-1/7">
-						<button className="bg-green-primary font-bold text-lg border-none rounded-md text-white text-left p-2 w-full focus:outline-none">Answer Sheet</button>
-					</div>
-					<div className="w-1/7">
-						<Link className="no-underline" to={url[2] === "diagnostic-test" ?
-							`/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades` :
-							`/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades`}>
-							<button className="bg-blue-150 font-bold text-lg border-none rounded-md text-white text-left p-2 w-full focus:outline-none">
-								Insert Grades
+		<div className="flex flex-row justify-around my-4 w-full">
+			<div className="w-1/7">
+				<button className="bg-green-primary font-bold text-lg border-none rounded-md text-white text-left p-2 w-full focus:outline-none">Answer Sheet</button>
+			</div>
+			<div className="w-1/7">
+				<Link className="no-underline" to={url[2] === "diagnostic-test" ?
+					`/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades` :
+					`/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades`}>
+					<button className="bg-blue-150 font-bold text-lg border-none rounded-md text-white text-left p-2 w-full focus:outline-none">
+						Insert Grades
 						</button>
-						</Link>
-					</div>
-				</div>
-		}
+				</Link>
+			</div>
+		</div>
 	</div>
 }
 
