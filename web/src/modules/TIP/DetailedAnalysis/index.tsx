@@ -1,14 +1,16 @@
 import React, { useMemo, useState } from 'react';
 import { connect } from 'react-redux';
-import { getStudentsByGroup } from 'utils/TIP'
+import { getStudentsByGroup, getClassnameFromSectionId } from 'utils/TIP'
+import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
 import DetailedCard from './DetailedCard'
 import Card from '../Card'
 
 interface P {
     students: RootDBState["students"]
+    classes: RootDBState["classes"]
 }
 
-const DetailedAnalysis: React.FC<P> = ({ students }) => {
+const DetailedAnalysis: React.FC<P> = ({ students, classes }) => {
 
     const [group, setGroup] = useState<TIPGrades>('1')
     const [subject, setSubject] = useState<TIPSubjects>('English')
@@ -17,6 +19,8 @@ const DetailedAnalysis: React.FC<P> = ({ students }) => {
     const subjects: TIPSubjects[] = ["English", "Urdu", "Maths"]
 
     const filtered_students = useMemo(() => getStudentsByGroup(students, group, subject), [subject, group])
+
+    const sorted_sections = useMemo(() => getSectionsFromClasses(classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0)), [])
 
     return <><Card class_name='' subject='' />
         <div className='flex flex-row justify-around w-full'>
@@ -48,7 +52,8 @@ const DetailedAnalysis: React.FC<P> = ({ students }) => {
         </div>
         <div className="flex flex-col">
             {Object.values(filtered_students || {}).map((std) => {
-                return <DetailedCard key={std.id} name={std.Name} roll_no={std.RollNumber} class_name={std.section_id} />
+                const class_name = getClassnameFromSectionId(sorted_sections, std.section_id)
+                return <DetailedCard key={std.id} name={std.Name} roll_no={std.RollNumber} class_name={class_name} />
             })}
         </div>
     </>
@@ -56,4 +61,5 @@ const DetailedAnalysis: React.FC<P> = ({ students }) => {
 
 export default connect((state: RootReducerState) => ({
     students: state.db.students,
+    classes: state.db.classes
 }))(DetailedAnalysis)
