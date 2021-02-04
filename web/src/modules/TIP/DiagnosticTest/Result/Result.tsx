@@ -23,7 +23,7 @@ const Result: React.FC<PropsType> = (props) => {
 			{Object.entries(result)
 				.map(([key, value]) => {
 					const group = convertLearningGradeToGroupName(key as TIPGrades)
-					return <Groups key={key} color={(group).toLowerCase()} level={key} students={value.students} />
+					return <Groups key={key} color={group} level={key} students={value.students} />
 				})
 			}
 		</div>

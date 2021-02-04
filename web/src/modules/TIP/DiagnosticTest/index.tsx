@@ -34,7 +34,7 @@ const DiagnosticTest: React.FC<P> = (props) => {
 	return <div className="flex flex-wrap content-between">
 		<Card class_name={class_name} subject='' />
 		<Headings
-			heading="Diagnostic Test"
+			heading="Starting Test"
 			sub_heading={class_name ? "Select the subject you want to evaluate" :
 				"Select the class you want to evaluate"}
 		/>
