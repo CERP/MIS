@@ -37,9 +37,10 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id, curriculum, history })
 		<Card class_name='' subject='' />
 		<Headings heading="Welcome to TIP" sub_heading="What would you like to do today ?" />
 		{
-			<div className={`flex justify-center content-center w-full mt-2 ${layout === Layouts.DIAGNOSTIC && "opacity-50"}`}>
+			<Link className={`flex justify-center content-center w-full mt-2 no-underline ${layout === Layouts.DIAGNOSTIC && "opacity-50"}`}
+				to={'/targeted-instruction/detailed-analysis'}>
 				<button className="border-none bg-white text-blue-900 shadow-md p-2 px-5 rounded-md outline-none">View Class</button>
-			</div>
+			</Link>
 		}
 		{
 			layout === Layouts.DIAGNOSTIC && <Link className="container sm:px-8 bg-white rounded-2xl m-3 h-44 flex flex-col content-center items-center shadow-lg no-underline"

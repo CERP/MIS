@@ -16,6 +16,7 @@ import PDF from './PDF'
 import LessonPlanPDF from './LessonPlans/PDF'
 import List from './LessonPlans/List'
 import Header from './Header'
+import DetailedAnalysis from './DetailedAnalysis'
 
 const Routing = (props) => {
 	const path = props.location.pathname.substring(0, 21)
@@ -24,6 +25,8 @@ const Routing = (props) => {
 	<Header />
 		<Switch>
 			<Route exact path={path} component={HomePage}></Route>
+
+			<Route exact path={`${path}/detailed-analysis`} component={DetailedAnalysis}></Route>
 
 			<Route
 				exact
