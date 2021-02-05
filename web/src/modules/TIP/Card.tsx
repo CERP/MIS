@@ -23,8 +23,7 @@ const Card: React.FC<P> = ({ class_name, teacher_name, school_name, subject }) =
                 <div className="flex flex-row justify-between w-full">
                     <div className="flex flex-col justify-center">
                         <div className="text-white text-lg">{teacher_name}</div>
-                        <div className="text-white text-base capitalize">{class_name.length === 1 ? `${color} Group` : (class_name ? group_name + ' Group' : school_name)}{subject && ` | ${subject}`}</div>
-                    </div>
+                        <div className="text-white text-base capitalize">{class_name.substring(0, 5) === "Level" ? `${group_name} Group` : class_name ? class_name : school_name}{subject && ` | ${subject}`}</div>                    </div>
                 </div>
             </div>
         </div>
