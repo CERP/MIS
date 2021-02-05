@@ -475,8 +475,13 @@ interface MISTeacher {
 		expense: boolean
 		family: boolean
 		prospective: boolean
-	},
+	}
 	type?: "TEACHING" | "NON_TEACHING" | ""
+	ProfilePicture?: {
+		id: string
+		url: string
+		image_string: string
+	}
 }
 
 type MISTeacherAttendanceStatus = "check_in" | "check_out" | "absent" | "leave" | ""

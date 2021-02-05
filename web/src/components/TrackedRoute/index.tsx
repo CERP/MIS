@@ -26,7 +26,7 @@ const TrackedRoute = ({ component, name, faculty_id, token, initialized, locatio
 
 	useEffect(() => {
 		window.scroll(0, 0);
-	})
+	}, [])
 
 	if (!initialized) {
 		return <div>Loading Database....</div>

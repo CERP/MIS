@@ -57,6 +57,24 @@ export const createFacultyMerge = (faculty: MISTeacher, is_first?: boolean) => (
 	}
 }
 
+/**
+ * @description an action to dispatch the upload image merge
+ * 
+ * @param facultyId
+ * @param image_string 
+ */
+
+export const uploadFacultyProfilePicture = (facultyId: string, imageString: string) => (dispatch: Function) => {
+	
+	const merge_item: ImageMergeItem = {
+		path: ["db", "faculty", facultyId, "ProfilePicture"],
+		image_string: imageString,
+		id: v4()
+	}
+
+	dispatch(uploadImages([merge_item]))
+}
+
 export const MERGE_STUDENT = "MERGE_STUDENT"
 export const createStudentMerge = (student: MISStudent) => (dispatch: Function) => {
 

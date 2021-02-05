@@ -16,7 +16,7 @@ export const StaffList = () => {
 
 	return (
 		<AppLayout title="Staff">
-			<div className="p-5 md:p-10 relative">
+			<div className="p-5 md:p-10 relative mb-20">
 
 				<Link to="staff/new">
 					<div className="flex items-center justify-between fixed z-50 bottom-4 right-4 rounded-full bg-teal-500 text-white lg:hidden py-3 px-6 w-11/12 text-lg mr-0.5">
@@ -53,7 +53,9 @@ export const StaffList = () => {
 							.filter(f => f.Name && f.Active)
 							.sort((a, b) => a.Name.localeCompare(b.Name))
 							.map(f => (
-								<Card key={f.id} teacher={f} sections={sections} />
+								<Link key={f.id} to={`staff/${f.id}/profile`}>
+									<Card teacher={f} sections={sections} />
+								</Link>
 							))
 					}
 				</div>

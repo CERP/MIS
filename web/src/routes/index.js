@@ -5,8 +5,8 @@ import { Provider } from 'react-redux'
 import ErrorComponent from 'components/Error'
 
 // import Home from 'modules/Landing'
-import TeacherList from 'modules/Teacher/List'
-import TeacherSingle from 'modules/Teacher/Single'
+// import TeacherList from 'modules/Teacher/List'
+// import TeacherSingle from 'modules/Teacher/Single'
 import StudentList from 'modules/Student/List'
 import StudentSingle from 'modules/Student/Single'
 // import Login from 'modules/Login'
@@ -48,6 +48,7 @@ import MISActivation from 'modules/Activation'
 import BulkExam from 'modules/Marks/BulkExam'
 import { Home } from 'pages/home'
 import { StaffList } from 'pages/staff/list'
+import { CreateOrUpdateStaff } from 'pages/staff/create'
 import { Landing } from 'pages/landing'
 import { Contact } from 'pages/contact'
 import { Feature } from 'pages/features'
@@ -90,8 +91,9 @@ export default class Routes extends React.Component {
 				<Switch>
 					<TrackedRoute exact path="/home" component={Home} />
 
-					<TrackedRoute path="/faculty/:id" component={TeacherSingle} />
-					<TrackedRoute path="/staff" component={StaffList} />
+					<TrackedRoute path="/staff/new" exact component={CreateOrUpdateStaff} />
+					<TrackedRoute path="/staff/:id/profile" exact component={CreateOrUpdateStaff} />
+					<TrackedRoute path="/staff" exact component={StaffList} />
 
 					<TrackedRoute path="/student/:id" component={StudentSingle} />
 					<TrackedRoute path="/student" component={StudentList} />
