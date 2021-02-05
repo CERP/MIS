@@ -11,11 +11,11 @@ interface P {
 const Classes: React.FC<P> = ({ setSectionId, sortedSections }) => {
 
 	const index_map = [
+		'bg-purple-primary',
 		'bg-light-blue-primary',
 		'bg-yellow-primary',
 		'bg-green-primary',
-		'bg-orange-primary',
-		'bg-red-primary'
+		'bg-orange-primary'
 	]
 
 	// "grade" is misleading as we only deal with TIPLevels here. we map the level to a 
