@@ -6,7 +6,7 @@
 		"@cerp/dynamic": "^1.0.12",
 		"@cerp/syncr": "^1.1.2",
 		"@craco/craco": "^6.0.0",
-		"@headlessui/react": "^0.2.0",
+		"@headlessui/react": "^0.3.0",
 		"clsx": "^1.1.1",
 		"cond-construct": "^1.0.1",
 		"core-js": "^3.8.1",
