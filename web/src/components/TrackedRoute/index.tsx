@@ -39,7 +39,7 @@ const TrackedRoute = ({
 
 	useEffect(() => {
 		window.scroll(0, 0)
-	}, [])
+	}, [location.pathname])
 
 	if (!initialized) {
 		return <div>Loading Database....</div>
@@ -53,6 +53,9 @@ const TrackedRoute = ({
 
 		return <Redirect to="/verify-code" />
 	}
+
+	// TODO: remove this logic
+	// add more robust way of redirection
 
 	if (token) {
 

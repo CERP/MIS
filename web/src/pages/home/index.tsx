@@ -6,6 +6,8 @@ import { AppLayout } from 'components/Layout/appLayout'
 import { SettingTab } from './settings'
 import { ActionTab } from './actions'
 import { StatsTab } from './statistics'
+import { useSelector } from 'react-redux'
+import { Redirect } from 'react-router-dom'
 
 enum Tabs {
 	SETTINGS,
@@ -14,6 +16,8 @@ enum Tabs {
 }
 
 export const Home = () => {
+
+	const { auth } = useSelector((state: RootReducerState) => state)
 
 	const [activeTab, setActiveTab] = useState(Tabs.SETTINGS)
 
@@ -25,10 +29,16 @@ export const Home = () => {
 		])
 	)
 
+	// TODO: remove this logic
+	// add more robust way of redirection
+
+	if (auth?.token && !auth?.faculty_id) {
+		return <Redirect to="/staff-login" />
+	}
+
 	return (
 		<AppLayout title="Home">
 			<Tabbar tab={activeTab} setTab={setActiveTab} />
-
 			{renderComponent()}
 		</AppLayout>
 	)
@@ -41,7 +51,7 @@ type TabbarProps = {
 
 const Tabbar = ({ tab, setTab }: TabbarProps) => {
 	return (
-		<div className="sticky inset-0 top-16 z-50">
+		<div className="sticky inset-0 top-16 z-30">
 
 			<div className="text-center w-full inline-grid grid-cols-3 ga-x-4 bg-teal-500 px-4 pt-6 pb-0 shadow-xl text-teal-200 text-lg">
 				<div

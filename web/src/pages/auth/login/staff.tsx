@@ -45,6 +45,9 @@ const Login: React.FC<TProps> = ({ auth, initialized, users, school, connected, 
 		)
 	}
 
+	// TODO: remove this logic
+	// add more robust way of redirection
+
 	if (!auth.token) {
 		return <Redirect to="/school-login" />
 	}
@@ -67,10 +70,6 @@ const Login: React.FC<TProps> = ({ auth, initialized, users, school, connected, 
 	// by creating a new user
 	if (auth?.token && Object.keys(users || {}).length === 0) {
 		return <Redirect to="/school/setup" />
-	}
-
-	if (auth?.token) {
-		return <Redirect to="/staff-login" />
 	}
 
 	const filteredUsers = Object.entries(users)

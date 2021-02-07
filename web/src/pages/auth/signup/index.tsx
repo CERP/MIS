@@ -100,6 +100,9 @@ export const SchoolSignup = () => {
 		setState({ ...state, [name]: value })
 	}
 
+	// TODO: remove this logic
+	// add more robust way of redirection
+
 	// here handling two cases:
 	// - user logged in and onboarding state is completed (new schools), redirect to home page
 	// - user logged in and there's no onboarding state (old schools), redirect to home page
