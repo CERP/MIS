@@ -15,7 +15,7 @@ enum Tabs {
 
 export const Home = () => {
 
-	const [activeTab, setActiveTab] = useState(Tabs.STATS)
+	const [activeTab, setActiveTab] = useState(Tabs.SETTINGS)
 
 	const renderComponent = () => (
 		cond([

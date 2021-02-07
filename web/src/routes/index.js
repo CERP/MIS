@@ -12,7 +12,7 @@ import StudentSingle from 'modules/Student/Single'
 // import Login from 'modules/Login'
 import AutoLogin from 'modules/Login/autoLogin'
 // import SchoolLogin from 'modules/Login/school'
-import ClassModule from 'modules/Class/List'
+// import ClassModule from 'modules/Class/List'
 import ClassSingle from 'modules/Class/Single'
 import Attendance from 'modules/Attendance'
 import TeacherAttendance from 'modules/Teacher-Attendance'
@@ -58,6 +58,8 @@ import { SchoolLogin, StaffLogin } from 'pages/auth/login'
 import { SchoolSignup } from 'pages/auth/signup'
 import { SchoolSetup } from 'pages/setup'
 import { SchoolOnboarding } from 'pages/onboarding'
+import { ClassList } from 'pages/class/list'
+import { CreateOrUpdateClass } from 'pages/class/create'
 
 export default class Routes extends React.Component {
 
@@ -98,8 +100,9 @@ export default class Routes extends React.Component {
 					<TrackedRoute path="/student/:id" component={StudentSingle} />
 					<TrackedRoute path="/student" component={StudentList} />
 
-					<TrackedRoute path="/class/:id" component={ClassSingle} />
-					<TrackedRoute path="/class" component={ClassModule} />
+					<TrackedRoute path="/classes/:id/view" exact component={CreateOrUpdateClass} />
+					<TrackedRoute path="/classes/new" exact component={CreateOrUpdateClass} />
+					<TrackedRoute path="/classes" exact component={ClassList} />
 
 					<TrackedRoute path="/attendance" component={Attendance} />
 					<TrackedRoute path="/teacher-attendance" component={TeacherAttendance} />

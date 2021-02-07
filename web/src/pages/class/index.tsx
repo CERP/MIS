@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const SchoolStaff = () => {
+export const SchoolClass = () => {
 	return (
 		<></>
 	)
