@@ -15,7 +15,7 @@ export const ClassList = () => {
 		<AppLayout title="Classes">
 			<div className="p-5 md:p-10 relative mb-20">
 
-				<Link to="class/new">
+				<Link to="classes/new">
 					<div className="flex items-center justify-between fixed z-50 bottom-4 right-4 rounded-full bg-teal-500 text-white lg:hidden py-3 px-6 w-11/12 text-lg mr-0.5">
 						<div>Add new Class</div>
 						<div className="text-xl">+</div>

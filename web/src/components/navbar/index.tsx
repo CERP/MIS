@@ -2,7 +2,7 @@ import React from 'react'
 import { Menu } from '@headlessui/react'
 import { Link } from 'react-router-dom'
 
-export const NavbarPublic = () => {
+export const AppHeader = () => {
 
 	return (
 		<div className="antialiased bg-gray-100 shadow-md sticky top-0 z-50">
@@ -11,7 +11,6 @@ export const NavbarPublic = () => {
 					{({ open: openMenu }) => (
 						<div className="flex flex-col max-w-screen-xl px-4 mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-8">
 							<div className="flex flex-row items-center justify-between p-4">
-
 								<Link to="/">
 									<img className="image h-10 w-10" src="/favicon.ico" alt="brand-logo" />
 								</Link>

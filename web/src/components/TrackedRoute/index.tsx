@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react'
 import { Route, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { trackRoute, createLogout } from '../../actions'
 import moment from 'moment'
+
+import { trackRoute, createLogout } from '../../actions'
 
 type propsType = {
 	component: any
@@ -19,13 +20,25 @@ type propsType = {
 	package_info: MISPackage
 }
 
-const TrackedRoute = ({ component, name, faculty_id, token, initialized, location, trackRoute, faculty, logout, package_info, ...rest }: propsType) => {
+const TrackedRoute = ({
+	component,
+	name,
+	faculty_id,
+	token,
+	initialized,
+	location,
+	trackRoute,
+	faculty,
+	logout,
+	package_info,
+	...rest
+}: propsType) => {
 
 
 	const Component = component
 
 	useEffect(() => {
-		window.scroll(0, 0);
+		window.scroll(0, 0)
 	}, [])
 
 	if (!initialized) {
@@ -41,41 +54,42 @@ const TrackedRoute = ({ component, name, faculty_id, token, initialized, locatio
 		return <Redirect to="/verify-code" />
 	}
 
-	if (token && name && location.pathname === "/reset-password") {
-		return <Redirect to="/home" />
-	}
+	if (token) {
 
-	if (token && location.pathname === "/reset-password") {
-		return <Route {...rest} render={(props) => {
-			trackRoute(location.pathname)
-			return <Component {...props} />
-		}} />
-	}
-
-	if (token && name) {
-		if (faculty[faculty_id] === undefined) {
-
-			// unset the faculty_id and the name
-			// hack: just call existing logout function
-			logout()
-			// redirect to the login page
-			return <Redirect to="/staff-login" />
+		if (name && location.pathname === "/reset-password") {
+			return <Redirect to="/home" />
 		}
 
-		return <Route {...rest} render={(props) => {
-			trackRoute(window.location.pathname)
-			//@ts-ignore
-			return <Component {...props} />
-		}} />
+		if (location.pathname === "/reset-password") {
+			return <Route {...rest} render={(props) => {
+				trackRoute(location.pathname)
+				return <Component {...props} />
+			}} />
+		}
+
+		if (name) {
+			if (faculty[faculty_id] === undefined) {
+
+				// unset the faculty_id and the name
+				// hack: just call existing logout function
+				logout()
+				// redirect to the login page
+				return <Redirect to="/staff-login" />
+			}
+
+			return <Route {...rest} render={(props) => {
+				trackRoute(window.location.pathname)
+				return (<Component {...props} />)
+			}} />
+		}
+
 	}
-	else if (token) {
-		trackRoute('/staff-login')
-		return <Redirect to="/staff-login" />
-	}
-	else {
-		trackRoute("/school-login")
-		return <Redirect to="/school-login" />
-	}
+
+	return <Route {...rest} render={(props) => {
+		trackRoute(window.location.pathname)
+		return (<Component {...props} />)
+	}} />
+
 }
 
 export default connect((state: RootReducerState) => ({

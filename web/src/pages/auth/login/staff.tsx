@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { Link, Redirect } from 'react-router-dom'
 import { connect, useDispatch } from 'react-redux'
+import clsx from 'clsx'
 
 import chunkify from 'utils/chunkify'
-
 import toTitleCase from 'utils/toTitleCase'
-import { ActionTypes } from 'constants/index'
-
+import { ActionTypes, OnboardingStage } from 'constants/index'
 import { createLogin } from 'actions'
 import { Spinner } from 'components/Animation/spinner'
 import { AppLayout } from 'components/Layout/appLayout'
@@ -18,6 +17,7 @@ import UserIconSvg from 'assets/svgs/user.svg'
 
 type TProps = RootReducerState & {
 	users: RootDBState["users"]
+	onboarding: RootDBState["onboarding"]
 	school: {
 		name: string
 		logo: string
@@ -28,14 +28,12 @@ type TProps = RootReducerState & {
 
 const USER_GROUP_SIZE = 10
 
-const Login: React.FC<TProps> = ({ auth, initialized, users, school, connected, unsyncd_changes }) => {
+const Login: React.FC<TProps> = ({ auth, initialized, users, school, connected, unsyncd_changes, onboarding }) => {
 
 	const dispatch = useDispatch()
 
 	const [userGroupIndex, setUserGroupIndex] = useState(0)
 	const [user, setUser] = useState<MISUser>()
-
-	const totalUsers = Object.keys(users).length
 
 	if (!initialized && auth.token) {
 		return (
@@ -51,12 +49,28 @@ const Login: React.FC<TProps> = ({ auth, initialized, users, school, connected, 
 		return <Redirect to="/school-login" />
 	}
 
-	if (auth.faculty_id) {
+	// here handling two cases:
+	// - user logged in and onboarding state is completed (new schools), redirect to home page
+	// - user logged in and there's no onboarding state (old schools), redirect to home page
+	if (auth?.faculty_id && auth?.token && (onboarding?.stage ? onboarding?.stage === OnboardingStage.COMPLETED : true)) {
 		return <Redirect to="/home" />
 	}
 
-	if (totalUsers === 0) {
+	// user logged in and there's onboarding state
+	// onboarding component will handle further
+	// desired state component renders
+	if (auth?.faculty_id && auth?.token && onboarding?.stage) {
+		return <Redirect to="/school/onboarding" />
+	}
+
+	// school logged in and there's no user, start the onboarding process
+	// by creating a new user
+	if (auth?.token && Object.keys(users || {}).length === 0) {
 		return <Redirect to="/school/setup" />
+	}
+
+	if (auth?.token) {
+		return <Redirect to="/staff-login" />
 	}
 
 	const filteredUsers = Object.entries(users)
@@ -94,7 +108,9 @@ const Login: React.FC<TProps> = ({ auth, initialized, users, school, connected, 
 							<button
 								disabled={!connected}
 								onClick={() => switchSchoolHandler()}
-								className="w-7/12 tw-btn-red">Switch School</button>
+								className={clsx("w-7/12 tw-btn-red", {
+									"bg-gray-500 pointer-events-none": !connected,
+								})}>Switch School</button>
 						</div>
 					</div>
 					<div className="w-2/3 h-96 border border-l-0 rounded-md bg-gray-700 shadow-md">
@@ -160,6 +176,7 @@ export const StaffLogin = connect((state: RootReducerState) => ({
 	auth: state.auth,
 	initialized: state.initialized,
 	users: state.db?.users || {},
+	onboarding: state.db?.onboarding,
 	connected: state.connected,
 	unsyncd_changes: Object.keys(state.queued.mutations || {}).length
 }))(Login)

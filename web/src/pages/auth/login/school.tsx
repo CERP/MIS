@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { DownloadIcon } from 'assets/icons'
 import { createSchoolLogin } from 'actions'
 import { Spinner } from 'components/Animation/spinner'
+import { OnboardingStage } from 'constants/index'
 
 type TState = {
 	school: string
@@ -30,7 +31,9 @@ export const SchoolLogin = () => {
 
 	// handle store
 	const dispatch = useDispatch()
-	const { auth, connected, initialized } = useSelector((state: RootReducerState) => state)
+	const { auth, connected, initialized, db } = useSelector((state: RootReducerState) => state)
+
+	const { onboarding, users } = db
 
 	useEffect(() => {
 
@@ -63,11 +66,27 @@ export const SchoolLogin = () => {
 		setState({ ...state, [name]: value })
 	}
 
-	if (auth.faculty_id) {
+	// here handling two cases:
+	// - user logged in and onboarding state is completed (new schools), redirect to home page
+	// - user logged in and there's no onboarding state (old schools), redirect to home page
+	if (auth?.faculty_id && auth?.token && (onboarding?.stage ? onboarding?.stage === OnboardingStage.COMPLETED : true)) {
 		return <Redirect to="/home" />
 	}
 
-	if (auth.token) {
+	// user logged in and there's onboarding state
+	// onboarding component will handle further
+	// desired state component renders
+	if (auth?.faculty_id && auth?.token && onboarding?.stage) {
+		return <Redirect to="/school/onboarding" />
+	}
+
+	// school logged in and there's no user, start the onboarding process
+	// by creating a new user
+	if (auth?.token && Object.keys(users || {}).length === 0) {
+		return <Redirect to="/school/setup" />
+	}
+
+	if (auth?.token) {
 		return <Redirect to="/staff-login" />
 	}
 

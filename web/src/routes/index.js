@@ -144,17 +144,18 @@ export default class Routes extends React.Component {
 					<Route path="/verify-code" component={MISActivation} />
 					<Route exact path="/" component={Landing} />
 					
-					<Route path="/school-login" component={SchoolLogin} />
-					<Route path="/staff-login" component={StaffLogin} />
+					<TrackedRoute path="/school-login" component={SchoolLogin} />
+					<TrackedRoute path="/staff-login" component={StaffLogin} />
+					<TrackedRoute exact path="/signup" component={SchoolSignup} />
+					<TrackedRoute exact path="/school/setup" component={SchoolSetup} />
+					<TrackedRoute exact path="/school/onboarding" component={SchoolOnboarding} />
+					
 					<Route path="/auto-login" component={AutoLogin} />
 					
 					<Route exact path="/pricing" component={Pricing} />
-					<Route exact path="/signup" component={SchoolSignup} />
 					<Route exact path="/about-us" component={About} />
 					<Route exact path="/features" component={Feature} />
 					<Route exact path="/contact-us" component={Contact} />
-					<Route exact path="/school/setup" component={SchoolSetup} />
-					<Route exact path="/school/onboarding" component={SchoolOnboarding} />
 					
 				</Switch>
 			</BrowserRouter>
