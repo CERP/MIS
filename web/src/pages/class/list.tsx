@@ -46,7 +46,7 @@ export const ClassList = () => {
 							.filter(c => c && c.id && c.name && (search ? c.name.toLowerCase().includes(search.toLowerCase()) : true))
 							.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
 							.map(c => (
-								<Link key={c.id} to={`class/${c.id}/view`}>
+								<Link key={c.id} to={`classes/${c.id}/view`}>
 									<Card
 										misClass={c}
 										students={students} />

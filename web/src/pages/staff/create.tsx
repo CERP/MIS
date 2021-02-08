@@ -318,10 +318,14 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 							</div>
 						</div>
 
+						{/* 
+							TODO: Change salary from string to number in typings
+						*/}
 						<div className="">Salary</div>
 						<input
 							name="Salary"
 							type="number"
+							value={profile.Salary}
 							onChange={handleInput}
 							placeholder="e.g. 10,000 PKR"
 							className="tw-input w-full bg-transparent border-blue-brand ring-1" />
