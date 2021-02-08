@@ -202,7 +202,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 							</svg>
 						</div>
 						<div className="w-24 h-24">
-							<img className="rounded-full" src={UserIconSvg} alt="school-logo" />
+							<img className="rounded-full" src={UserIconSvg} alt="faculty" />
 						</div>
 						<label className="bg-white p-1 rounded-full text-teal-500">
 							<input type="file" className="hidden" accept="image/*" onChange={handleProfileImage} />

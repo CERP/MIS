@@ -3,6 +3,7 @@ import { Menu, Transition } from '@headlessui/react'
 import { Link, useHistory, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { createLogout } from 'actions'
+import clsx from 'clsx'
 
 export const AppHeader = () => {
 
@@ -25,29 +26,35 @@ export const AppHeader = () => {
 	}
 
 	return (
-		<div className="antialiased bg-gray-100 shadow-md sticky top-0 z-50">
-			<div className="w-full text-gray-700 bg-white">
+		<div className={clsx("antialiased sticky top-0 z-50", {
+			"bg-gray-100 shadow-md": !isUserLogged,
+			"bg-teal-500": isUserLogged
+		})}>
+			<div className={clsx("w-full text-gray-700", {
+				"bg-white": !isUserLogged,
+				"bg-teal-500": isUserLogged
+			})}>
 				<Menu>
 					{({ open: openMenu }: { open: boolean }) => (
 						<div className="flex flex-col max-w-screen-xl px-4 mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-8">
 							<div className="flex flex-row items-center justify-between p-4">
 
 								{
-									isUserLogged && location.pathname !== "/home" ?
+									// isUserLogged && location.pathname !== "/home" ?
 
-										<div className="focus:shadow-outline text-red-brand rounded-full shadow-sm p-2 border border-gray-200" onClick={() => history.goBack()}>
-											<svg className="w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-												<path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
-											</svg>
-										</div>
-										:
-										<Link to={isUserLogged ? '/home' : '/'}>
-											<img className="image h-10 w-10" src="/favicon.ico" alt="brand-logo" />
-										</Link>
+									// 	<div className="focus:shadow-outline text-red-brand rounded-full shadow-sm p-2 border border-gray-200" onClick={() => history.goBack()}>
+									// 		<svg className="w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+									// 			<path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+									// 		</svg>
+									// 	</div>
+									// 	:
+									<Link to={isUserLogged ? '/home' : '/'}>
+										<img className="image h-10 w-10" src="/favicon.ico" alt="brand-logo" />
+									</Link>
 								}
 
 
-								<Menu.Button className="md:hidden focus:outline-none focus:shadow-outline text-red-brand rounded-full shadow-sm p-2 border border-gray-200">
+								<Menu.Button className="md:hidden focus:outline-none focus:shadow-outline text-red-brand rounded-full shadow-md p-2 border border-gray-200 bg-white">
 									<svg fill="currentColor" viewBox="0 0 20 20" className="w-6 h-6">
 										{
 											openMenu ?

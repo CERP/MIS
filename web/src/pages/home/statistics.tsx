@@ -194,7 +194,7 @@ export const StatsTab = () => {
 	)
 }
 
-const colorMap = {
+const colorMap: Record<string, string> = {
 	'present': '#5ECDB9',
 	'absent': '#FC6171',
 	'leave': '#FFC107'
@@ -222,7 +222,6 @@ const renderActiveShape = (props: any) => {
 	return (
 		<g>
 			<text x={cx} y={cy} dy={8} textAnchor="middle"
-				// @ts-ignore
 				fill={colorMap[payload.name]} className="capitalize">{payload.name}</text>
 			<Sector
 				cx={cx}
@@ -231,7 +230,6 @@ const renderActiveShape = (props: any) => {
 				outerRadius={outerRadius}
 				startAngle={startAngle}
 				endAngle={endAngle}
-				// @ts-ignore
 				fill={colorMap[payload.name]}
 			/>
 			<Sector
@@ -241,7 +239,6 @@ const renderActiveShape = (props: any) => {
 				endAngle={endAngle}
 				innerRadius={outerRadius + 6}
 				outerRadius={outerRadius + 10}
-				// @ts-ignore
 				fill={colorMap[payload.name]}
 			/>
 			<path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
@@ -280,8 +277,8 @@ const AttendanceChart: React.FC<TAttendanceChartProps> = ({ graphData }) => {
 						activeIndex={activeIndex}
 						activeShape={renderActiveShape}
 						data={graphData}
-						cx={200}
-						cy={200}
+						cx={150}
+						cy={150}
 						innerRadius={60}
 						outerRadius={80}
 						fill="#74ACED"
