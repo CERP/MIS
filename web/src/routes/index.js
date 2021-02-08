@@ -7,13 +7,13 @@ import ErrorComponent from 'components/Error'
 // import Home from 'modules/Landing'
 // import TeacherList from 'modules/Teacher/List'
 // import TeacherSingle from 'modules/Teacher/Single'
-import StudentList from 'modules/Student/List'
-import StudentSingle from 'modules/Student/Single'
+// import StudentList from 'modules/Student/List'
+// import StudentSingle from 'modules/Student/Single'
 // import Login from 'modules/Login'
 import AutoLogin from 'modules/Login/autoLogin'
 // import SchoolLogin from 'modules/Login/school'
 // import ClassModule from 'modules/Class/List'
-import ClassSingle from 'modules/Class/Single'
+// import ClassSingle from 'modules/Class/Single'
 import Attendance from 'modules/Attendance'
 import TeacherAttendance from 'modules/Teacher-Attendance'
 import SMS from 'modules/SMS'
@@ -61,6 +61,8 @@ import { SchoolOnboarding } from 'pages/onboarding'
 import { ClassList } from 'pages/class/list'
 import { CreateOrUpdateClass } from 'pages/class/create'
 
+import { StudentList } from 'pages/students/list'
+import { CreateOrUpdateStudent } from 'pages/students/create'
 export default class Routes extends React.Component {
 
 	constructor(props) {
@@ -97,8 +99,9 @@ export default class Routes extends React.Component {
 					<TrackedRoute path="/staff/:id/profile" exact component={CreateOrUpdateStaff} />
 					<TrackedRoute path="/staff" exact component={StaffList} />
 
-					<TrackedRoute path="/student/:id" component={StudentSingle} />
-					<TrackedRoute path="/student" component={StudentList} />
+					<TrackedRoute path="/students/:id/profile" exact component={CreateOrUpdateStudent} />
+					<TrackedRoute path="/students/new" exact component={CreateOrUpdateStudent} />
+					<TrackedRoute path="/students" exact component={StudentList} />
 
 					<TrackedRoute path="/classes/:id/view" exact component={CreateOrUpdateClass} />
 					<TrackedRoute path="/classes/new" exact component={CreateOrUpdateClass} />
