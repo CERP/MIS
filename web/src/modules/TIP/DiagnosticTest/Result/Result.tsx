@@ -18,7 +18,7 @@ const Result: React.FC<PropsType> = (props) => {
 	const result: DiagnosticRes = useMemo(() => calculateResult(students, subject), [subject])
 
 	return <div className="flex flex-wrap content-between">
-		<Card class_name={class_name} subject={subject} />
+		<Card class_name={class_name} subject={subject} lesson_name='' lesson_no='' />
 		<div className="w-full">
 			{Object.entries(result)
 				.map(([key, value]) => {

@@ -39,7 +39,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
     let pdf_url = Dynamic.get<string>(targeted_instruction, ["curriculum", class_name, subject, lesson_number, "lesson_link"])
 
     return <div className="flex flex-wrap flex-col content-between w-full items-center justify-items-center">
-        <Card class_name={class_name} subject={subject} />
+        <Card class_name={class_name} subject={subject} lesson_name={lesson.lesson_title} lesson_no={lesson_number} />
         <div className="rounded-lg border-black">
             <PDFViewer
                 scale={0.5}

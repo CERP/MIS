@@ -22,7 +22,7 @@ const DetailedAnalysis: React.FC<P> = ({ students, classes }) => {
 
     const sorted_sections = useMemo(() => getSectionsFromClasses(classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0)), [])
 
-    return <><Card class_name='' subject='' />
+    return <><Card class_name='' subject='' lesson_name='' lesson_no='' />
         <div className='flex flex-row justify-around w-full'>
             <select className='tw-select' onChange={(e) => setGroup(e.target.value as TIPGrades)}>
                 <option value="">Group</option>

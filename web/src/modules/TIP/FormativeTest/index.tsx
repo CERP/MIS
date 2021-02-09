@@ -15,7 +15,7 @@ const FormativeTest: React.FC<P> = (props) => {
 	const grades = getGradesFromTests(props.targeted_instruction)
 
 	return <div className="flex flex-wrap content-between">
-		<Card class_name={class_name} subject='' />
+		<Card class_name={class_name} subject='' lesson_name='' lesson_no='' />
 		<Headings heading="Midpoint Test" sub_heading={class_name ?
 			"Select the subject you want to evaluate" :
 			"Select the Group you want to evaluate"} />

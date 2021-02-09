@@ -34,7 +34,7 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id, curriculum, history })
 	}
 
 	return <div className="flex flex-wrap content-between bg-white">
-		<Card class_name='' subject='' />
+		<Card class_name='' subject='' lesson_name='' lesson_no='' />
 		<Headings heading="Welcome to TIP" sub_heading="What would you like to do today ?" />
 		{
 			<Link className={`flex justify-center content-center w-full mt-2 no-underline ${layout === Layouts.DIAGNOSTIC && "opacity-50"}`}

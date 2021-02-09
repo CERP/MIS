@@ -11,7 +11,7 @@ interface P {
 const OralTest: React.FC<P> = () => {
 
     return <div className="flex flex-wrap content-between">
-        <Card class_name='' subject='' />
+        <Card class_name='' subject='' lesson_name='' lesson_no='' />
         <Headings heading="Oral Test" sub_heading={"Select the subject you want to evaluate"} />
         <Subjects class_name='' section_id='' />
     </div>

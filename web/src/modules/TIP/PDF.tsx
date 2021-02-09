@@ -49,7 +49,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 	}
 
 	return <div className="flex flex-wrap flex-col content-between w-full items-center justify-items-center">
-		<Card class_name={class_name ? class_name : 'Oral Test'} subject={subject} />
+		<Card class_name={class_name ? class_name : 'Oral Test'} subject={subject} lesson_name='' lesson_no='' />
 		<div className="rounded-lg border-black">
 			<PDFViewer
 				scale={0.5}

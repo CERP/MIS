@@ -123,7 +123,7 @@ interface TIPTest {
 
 interface TIPQuestion {
 	question_text: string
-	correct_answer: string
+	answer: string
 	grade: TIPGrades
 	slo_category: string
 	slo: string[]

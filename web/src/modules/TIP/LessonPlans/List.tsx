@@ -63,7 +63,7 @@ const List: React.FC<PropsType> = ({ match, faculty, faculty_id, history, curric
 	}
 
 	return <div className="flex flex-wrap content-between">
-		<Card class_name={class_name} subject={subject} />
+		<Card class_name={class_name} subject={subject} lesson_name='' lesson_no='' />
 
 		<Headings heading={'Lesson Plan Library'} sub_heading={'Click on a plan to view'} />
 

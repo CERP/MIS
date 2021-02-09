@@ -79,7 +79,7 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 			question_text: value.question_text.replace(/\$/g, ',')
 		}
 	}), {})
-
+	console.log(questionsObj)
 	const markQuestion = (q_id: string, question: TIPQuestion, is_correct: boolean) => {
 		setResult({
 			...result,
@@ -114,7 +114,7 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 	}
 
 	return <div className="flex flex-wrap content-between bg-white">
-		<Card class_name={class_name ? class_name : 'Oral Test'} subject={subject} />
+		<Card class_name={class_name ? class_name : 'Oral Test'} subject={subject} lesson_name='' lesson_no='' />
 		<div className="flex flex-col justify-between w-full mx-4">
 			{
 				Object.keys(questionsObj)
@@ -123,9 +123,13 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 						const question = questionsObj[q_id]
 						const is_correct = result.questions[q_id]?.is_correct
 
-						return <div key={q_id} className={`flex flex-row justify-between items-center border border-solid border-gray-200 px-3 ${index % 2 === 0 ? "bg-gray-100" : "bg-white"} h-12`}>
-							<span className="text-xs font-bold">{`${q_id}: `}</span> <div className="text-xs w-32 truncate">{question.question_text}</div>
-							<div className="rounded-xl w-30 h-6 bg-white border border-solid border-gray-100">
+						return <div key={q_id} className={`flex flex-row justify-between items-center border border-solid border-gray-200 px-3 ${index % 2 === 0 ? "bg-gray-100" : "bg-white"} h-20`}>
+							<span className="text-xs font-bold">{`${q_id}: `}</span>
+							<div className="flex flex-col w-full">
+								<div className="text-xs px-2">{question.question_text}</div>
+								<div className="text-xs px-2 font-bold text-left">Answer: {question.answer}</div>
+							</div>
+							<div className="rounded-xl w-32 h-6 bg-white border border-solid border-gray-100 flex justify-center items-center">
 								<button className={is_correct !== undefined && !is_correct ?
 									"border-none h-full rounded-xl text-xs outline-none text-white bg-incorrect-red" :
 									"border-none bg-white h-full rounded-xl text-xs outline-non"}
