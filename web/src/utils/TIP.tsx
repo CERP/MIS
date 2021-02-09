@@ -232,11 +232,8 @@ export const calculateLearningLevelFromDiagnosticTest = (report: TIPDiagnosticRe
 
 	// now we check each grade level in order and see if they are below the threshold.
 	const threshold = 70
-	if (grade_percentages["Oral"] < threshold) {
-		return "Oral"
-	}
 	if (grade_percentages["1"] < threshold) {
-		return "1"
+		return "Oral Test"
 	}
 	if (grade_percentages["2"] < threshold) {
 		return "2"
@@ -244,8 +241,7 @@ export const calculateLearningLevelFromDiagnosticTest = (report: TIPDiagnosticRe
 	if (grade_percentages["3"] < threshold) {
 		return "3"
 	}
-
-	return "Oral"
+	return "Oral Test"
 }
 
 // CONVERSIONS
@@ -256,7 +252,7 @@ export const convertLearningGradeToGroupName = (grade: TIPGrades) => {
 		"1": "Yellow",
 		"2": "Green",
 		"3": "Orange",
-		"Oral": "red"
+		"Oral Test": "red"
 	}
 
 	return conversion_map[grade]
@@ -269,7 +265,7 @@ export const convertLearningLevelToGrade = (level: TIPLevels): TIPGrades => {
 		"Level 1": "1",
 		"Level 2": "2",
 		"Level 3": "3",
-		"Oral": "Oral"
+		"Oral": "Oral Test"
 	}
 
 	return conversion_map[level]

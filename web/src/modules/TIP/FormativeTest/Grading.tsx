@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom'
-import { calculateLearningLevelFromOralTest } from 'utils/TIP'
+import { calculateLearningLevelFromDiagnosticTest, calculateLearningLevelFromOralTest } from 'utils/TIP'
 import Card from '../Card'
 import { mergeTIPResult, assignLearningLevel } from 'actions'
 
@@ -42,6 +42,9 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 
 	const url = match.url.split('/')
 	switch (url[2]) {
+		case "oral-test":
+			test_type = "Oral"
+			break;
 		case "formative-test":
 			test_type = "Formative"
 			break;
@@ -97,15 +100,21 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 			return;
 		}
 		// calculate learning level
-		const level = calculateLearningLevelFromOralTest(result)
+		const level = url[2] === 'oral-test' ? calculateLearningLevelFromOralTest(result)
+			: calculateLearningLevelFromDiagnosticTest(result)
+
 		// assign level to student
 		setLearningLevel(std_id, subject, level)
 		saveReport(std_id, result, test_id)
-		history.push(test_type === "Diagnostic" ? `/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades` : `/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades`)
+		history.push(test_type === "Diagnostic" ?
+			`/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades` :
+			test_type === "Oral" ?
+				`/${url[1]}/${url[2]}/${subject}/${test_id}/insert-grades` :
+				`/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades`)
 	}
 
 	return <div className="flex flex-wrap content-between bg-white">
-		<Card class_name={class_name} subject={subject} />
+		<Card class_name={class_name ? class_name : 'Oral Test'} subject={subject} />
 		<div className="flex flex-col justify-between w-full mx-4">
 			{
 				Object.keys(questionsObj)

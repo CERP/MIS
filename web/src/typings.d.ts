@@ -62,7 +62,7 @@ interface RootDBState {
  */
 
 
-type TIPGrades = "1" | "2" | "3" | "KG" | "Oral"
+type TIPGrades = "1" | "2" | "3" | "KG" | "Oral Test"
 type TIPLearningGroups = "Blue" | "Yellow" | "Green" | "Orange" | "red"
 type TIPLevels = "Level 0" | "Level 1" | "Level 2" | "Level 3" | "Oral"
 type TIPSubjects = "Maths" | "Urdu" | "English"

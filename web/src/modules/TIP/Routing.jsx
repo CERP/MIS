@@ -27,6 +27,12 @@ const Routing = (props) => {
 		<Switch>
 			<Route exact path={path} component={HomePage}></Route>
 
+			<Route exact path={`${path}/oral-test/:subject/:test_id/insert-grades/:std_id/grading`} component={Grading}></Route>
+
+			<Route exact path={`${path}/oral-test/:subject/:test_id/insert-grades`} component={InsertGrades}></Route>
+
+			<Route exact path={`${path}/oral-test/:subject/pdf`} component={PDF}></Route>
+
 			<Route exact path={`${path}/oral-test`} component={OralTest}></Route>
 
 			<Route exact path={`${path}/detailed-analysis`} component={DetailedAnalysis}></Route>
