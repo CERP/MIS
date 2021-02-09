@@ -28,7 +28,9 @@ const Subjects: React.FC<PropsType> = ({ match, targeted_instruction, class_name
 							`/${url[1]}/${url[2]}/${class_name}/${sub}/list` :
 							url[2] === "diagnostic-test" ?
 								`/${url[1]}/${url[2]}/${section_id}/${class_name}/${sub}/pdf` :
-								`/${url[1]}/${url[2]}/${class_name}/${sub}/pdf`}>
+								url[2] === "oral-test" ?
+									`/${url[1]}/${url[2]}/${sub}/pdf` :
+									`/${url[1]}/${url[2]}/${class_name}/${sub}/pdf`}>
 				<img className="flex items-center justify-center h-20 p-2" src={sub === 'English' ? English : sub === 'Urdu' ? Urdu : Maths} />
 				<div className="text-blue-900 font-thin text-3xl">{sub}</div>
 			</Link>

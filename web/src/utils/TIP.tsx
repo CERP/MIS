@@ -136,7 +136,7 @@ type DiagnosticResultByGradeLevel = {
  * correct and incorrect answers on the test. 
  * @param result 
  */
-export const calculateLearningLevel = (report: TIPDiagnosticReport): TIPGrades => {
+export const calculateLearningLevelFromOralTest = (report: TIPDiagnosticReport): TIPGrades => {
 
 	const result = report.questions
 
@@ -192,6 +192,62 @@ export const calculateLearningLevel = (report: TIPDiagnosticReport): TIPGrades =
 	return "KG"
 }
 
+export const calculateLearningLevelFromDiagnosticTest = (report: TIPDiagnosticReport): TIPGrades => {
+
+	const result = report.questions
+
+	// We build an object that tells us, for each "grade" level of a question, how many the 
+	// student got correct out of the total amount.
+	const grade_results = Object.values(result).reduce<DiagnosticResultByGradeLevel>((agg, question) => {
+		const c = question.is_correct ? 1 : 0
+
+		if (agg[question.grade]) {
+			return {
+				...agg,
+				[question.grade]: {
+					correct: agg[question.grade].correct + c,
+					total: agg[question.grade].total + 1
+				}
+			}
+		}
+
+		return {
+			...agg,
+			[question.grade]: {
+				correct: c,
+				total: 1
+			}
+		}
+
+	}, {} as DiagnosticResultByGradeLevel)
+
+	// next we need to compute the percentage for each grade level.
+	const grade_percentages = Object.entries(grade_results)
+		.reduce<Record<TIPGrades, number>>((agg, [level, { correct, total }]) => {
+			return {
+				...agg,
+				[level]: correct / total * 100
+			}
+		}, {} as Record<TIPGrades, number>)
+
+	// now we check each grade level in order and see if they are below the threshold.
+	const threshold = 70
+	if (grade_percentages["Oral"] < threshold) {
+		return "Oral"
+	}
+	if (grade_percentages["1"] < threshold) {
+		return "1"
+	}
+	if (grade_percentages["2"] < threshold) {
+		return "2"
+	}
+	if (grade_percentages["3"] < threshold) {
+		return "3"
+	}
+
+	return "Oral"
+}
+
 // CONVERSIONS
 export const convertLearningGradeToGroupName = (grade: TIPGrades) => {
 
@@ -199,7 +255,8 @@ export const convertLearningGradeToGroupName = (grade: TIPGrades) => {
 		"KG": "Blue",
 		"1": "Yellow",
 		"2": "Green",
-		"3": "Orange"
+		"3": "Orange",
+		"Oral": "red"
 	}
 
 	return conversion_map[grade]
@@ -211,7 +268,8 @@ export const convertLearningLevelToGrade = (level: TIPLevels): TIPGrades => {
 		"Level 0": "KG",
 		"Level 1": "1",
 		"Level 2": "2",
-		"Level 3": "3"
+		"Level 3": "3",
+		"Oral": "Oral"
 	}
 
 	return conversion_map[level]

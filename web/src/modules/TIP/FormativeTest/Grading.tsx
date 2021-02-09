@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom'
-import { calculateLearningLevel } from 'utils/TIP'
+import { calculateLearningLevelFromOralTest } from 'utils/TIP'
 import Card from '../Card'
 import { mergeTIPResult, assignLearningLevel } from 'actions'
 
@@ -97,7 +97,7 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 			return;
 		}
 		// calculate learning level
-		const level = calculateLearningLevel(result)
+		const level = calculateLearningLevelFromOralTest(result)
 		// assign level to student
 		setLearningLevel(std_id, subject, level)
 		saveReport(std_id, result, test_id)

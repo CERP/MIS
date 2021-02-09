@@ -44,6 +44,13 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id, curriculum, history })
 		}
 		{
 			layout === Layouts.DIAGNOSTIC && <Link className="container sm:px-8 bg-white rounded-2xl m-3 h-44 flex flex-col content-center items-center shadow-lg no-underline"
+				to={'/targeted-instruction/oral-test'}>
+				<img className="h-24 py-4 w-24" src={LessonPlans} alt="img" />
+				<div className="text-blue-900 text-lg font-bold">Oral Test</div>
+			</Link>
+		}
+		{
+			layout === Layouts.DIAGNOSTIC && <Link className="container sm:px-8 bg-white rounded-2xl m-3 h-44 flex flex-col content-center items-center shadow-lg no-underline"
 				to={'/targeted-instruction/diagnostic-test'}>
 				<img className="h-24 py-4 w-24" src={DiagnosticItalic} alt="img" />
 				<div className="text-blue-900 text-lg font-bold">Starting Test</div>
