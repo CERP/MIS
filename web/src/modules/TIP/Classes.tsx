@@ -1,14 +1,18 @@
 import React from 'react';
+import { Link, withRouter, RouteComponentProps } from 'react-router-dom'
+import { LessonPlans } from 'assets/icons'
 
 interface P {
 	setSectionId: (sectionId: string) => any
 	sortedSections: AugmentedSection[]
 }
 
+type PropsType = P & RouteComponentProps
+
 // grades could have TIPLevels, TIPGrades
 // for formative, grades will be tiplevels
 // for diagnostic, grades will be tipgrades
-const Classes: React.FC<P> = ({ setSectionId, sortedSections }) => {
+const Classes: React.FC<PropsType> = ({ setSectionId, sortedSections, match }) => {
 
 	const index_map = [
 		'bg-purple-primary',
@@ -18,9 +22,18 @@ const Classes: React.FC<P> = ({ setSectionId, sortedSections }) => {
 		'bg-orange-primary'
 	]
 
+	const url = match.url.split('/')
+
 	// "grade" is misleading as we only deal with TIPLevels here. we map the level to a 
 	// TIPGrade inside the map function below (mapped_grade)
 	return <div className="flex flex-wrap flex-row justify-around w-full mx-4">
+		{
+			url[2] === 'diagnostic-test' && <Link className="container sm:px-8 bg-white rounded-2xl m-3 h-44 flex flex-col content-center items-center shadow-lg no-underline"
+				to={'/targeted-instruction/oral-test'}>
+				<img className="h-24 py-4 w-24" src={LessonPlans} alt="img" />
+				<div className="text-blue-900 text-lg font-bold">Oral Test</div>
+			</Link>
+		}
 		{
 			sortedSections && sortedSections.map((classObj, index) => {
 				const matches = classObj.namespaced_name.match(/[0-9]+/g)
@@ -42,4 +55,4 @@ const Classes: React.FC<P> = ({ setSectionId, sortedSections }) => {
 	</div >
 }
 
-export default Classes
+export default withRouter(Classes)

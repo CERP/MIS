@@ -22,7 +22,8 @@ module.exports = {
 		  'green-250': '#C6EFCE',
 		  'yellow-250': '#FFEB9C',
 		  'gray-100': '#EFF3F7',
-		  'light-blue-primary': '#3478B9'
+		  'light-blue-primary': '#3478B9',
+		  'black-primary': '#000000'
         },
         width: (theme) => ({
           auto: 'auto',
