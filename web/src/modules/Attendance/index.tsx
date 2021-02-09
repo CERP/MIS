@@ -58,7 +58,7 @@ const deriveSelectedStudents = (selected_section: string, students: RootDBState[
 	)
 
 const getStudentsForSection = (section_id: string, students: RootDBState['students']) =>
-	Object.values(students).filter((s) => s.Name && s.section_id === section_id)
+	Object.values(students).filter((s) => s && s.id && s.Name && s.section_id === section_id)
 
 class Attendance extends Component<propTypes, S> {
 	Former: Former
@@ -440,7 +440,7 @@ class Attendance extends Component<propTypes, S> {
 									students[id_a].RollNumber !== undefined &&
 									students[id_b].RollNumber !== undefined &&
 									parseFloat(students[id_a].RollNumber) -
-										parseFloat(students[id_b].RollNumber)
+									parseFloat(students[id_b].RollNumber)
 							)
 							.map((sid) => {
 								const x = students[sid]
@@ -465,12 +465,11 @@ class Attendance extends Component<propTypes, S> {
 											<div className="row">
 												<div style={{ marginRight: '5px' }}>
 													{' '}
-													{`${
-														x.RollNumber === '' ||
+													{`${x.RollNumber === '' ||
 														x.RollNumber === undefined
-															? '-'
-															: x.RollNumber
-													}`}{' '}
+														? '-'
+														: x.RollNumber
+														}`}{' '}
 												</div>
 												{isAdmin || setupPage ? (
 													<Link
@@ -479,30 +478,27 @@ class Attendance extends Component<propTypes, S> {
 														{toTitleCase(x.Name)}
 													</Link>
 												) : (
-													<div> {x.Name} </div>
-												)}
+														<div> {x.Name} </div>
+													)}
 											</div>
 										</div>
 										<div className="status">
 											<div
-												className={`button ${
-													status === 'PRESENT' ? 'green' : false
-												}`}
+												className={`button ${status === 'PRESENT' ? 'green' : false
+													}`}
 												onClick={this.mark(x, 'PRESENT')}>
 												P
 											</div>
 											<div
-												className={`button ${
-													status === 'ABSENT' ? 'red' : false
-												}`}
+												className={`button ${status === 'ABSENT' ? 'red' : false
+													}`}
 												onClick={this.mark(x, 'ABSENT')}>
 												A
 											</div>
 											<select
 												value={status}
-												className={`select button ${
-													this.getLeaveStatus(status) ? 'grey' : false
-												}`}
+												className={`select button ${this.getLeaveStatus(status) ? 'grey' : false
+													}`}
 												onChange={(e) => this.markLeave(e, x)}>
 												<option value="">▼</option>
 												<option value="LEAVE">Leave</option>
@@ -523,8 +519,8 @@ class Attendance extends Component<propTypes, S> {
 							Send SMS
 						</a>
 					) : (
-						false
-					)}
+							false
+						)}
 				</div>
 			</Layout>
 		)
