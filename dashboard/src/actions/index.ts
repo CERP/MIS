@@ -157,7 +157,7 @@ export const getSchoolInfo = (school_id: string) => (dispatch: Dispatch, getStat
 				student_info: res.student_info,
 				meta: res.meta,
 				targeted_instruction_access: res.targeted_instruction.targeted_instruction_access,
-				tip_pilot: res.tip_pilot
+				tip_pilot: res.tip_pilot.tip_pilot
 			})
 		})
 		.catch(err => {
