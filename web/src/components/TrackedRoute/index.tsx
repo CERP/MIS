@@ -34,9 +34,9 @@ const TrackedRoute = ({
 }: propsType) => {
 	const Component = component
 
-	// useEffect(() => {
-	// 	window.scroll(0, 0)
-	// })
+	useEffect(() => {
+		window.scrollTo(0, 0)
+	}, [location.pathname])
 
 	if (!initialized) {
 		return <div>Loading Database....</div>

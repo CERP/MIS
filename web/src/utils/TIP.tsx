@@ -252,7 +252,7 @@ export const convertLearningGradeToGroupName = (grade: TIPGrades) => {
 		"1": "Yellow",
 		"2": "Green",
 		"3": "Orange",
-		"Oral Test": "Black"
+		"Oral Test": "Oral"
 	}
 
 	return conversion_map[grade]
