@@ -106,6 +106,7 @@ export const loadDB = (): RootReducerState => {
 		sync_state: loadSyncState(),
 		school_Info: {
 			targeted_instruction_access: false,
+			tip_pilot: false,
 			school_list: [],
 		},
 		trials: [],
