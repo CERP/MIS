@@ -35,7 +35,7 @@ const Result: React.FC<PropsType> = (props) => {
 	const class_result: SloObj = useMemo(() => getClassResult(result), [])
 
 	return <div className="flex flex-wrap content-between mt-3">
-		<Headings heading={url[2] === "formative-test" ? "Formative Test Result" : "Summative Test Result"} sub_heading="" />
+		<Headings heading={url[2] === "formative-test" ? "Midpoint Test Result" : "Final Test Result"} sub_heading="" />
 		{type === 'single_std_view' ?
 			url[2] === "summative-test" ? <div className="flex flex-row justify-center w-full" onClick={() => setType('child_view')}>
 				<div className={`bg-${group}-primary h-6 my-3 w-3/4 rounded-3xl py-1 px-3 flex justify-center items-center`}>

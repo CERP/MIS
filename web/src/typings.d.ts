@@ -62,9 +62,9 @@ interface RootDBState {
  */
 
 
-type TIPGrades = "1" | "2" | "3" | "KG" 
-type TIPLearningGroups = "Blue" | "Yellow" | "Green" | "Orange"
-type TIPLevels = "Level 0" | "Level 1" | "Level 2" | "Level 3"
+type TIPGrades = "1" | "2" | "3" | "KG" | "Oral Test"
+type TIPLearningGroups = "Blue" | "Yellow" | "Green" | "Orange" | "Oral"
+type TIPLevels = "Level 0" | "Level 1" | "Level 2" | "Level 3" | "Oral"
 type TIPSubjects = "Maths" | "Urdu" | "English"
 
 type TIPCurriculum = {
@@ -107,7 +107,7 @@ interface TIPTests {
 	[id: string]: TIPTest 
 }
 
-type TIPTestType = "Diagnostic" | "Formative" | "Summative"
+type TIPTestType = "Diagnostic" | "Formative" | "Summative" | "Oral"
 
 interface TIPTest {
 	name: string
@@ -123,7 +123,7 @@ interface TIPTest {
 
 interface TIPQuestion {
 	question_text: string
-	correct_answer: string
+	answer: string
 	grade: TIPGrades
 	slo_category: string
 	slo: string[]

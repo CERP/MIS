@@ -4,15 +4,13 @@
 	 viewBox="0 0 203.3 86.3" style="enable-background:new 0 0 203.3 86.3;" xml:space="preserve">
 <style type="text/css">
 	.st0{fill:#1BB4BB;}
-	.st1{font-family:'SegoeUI';}
-	.st2{font-size:60px;}
 </style>
-<g id="maths" transform="translate(-92 -295.733)">
-	<text transform="matrix(1 0 0 1 102.1797 364.0003)" class="st0 st1 st2">+</text>
-	<text transform="matrix(0.7071 0.7071 -0.7071 0.7071 204.0476 345.9996)" class="st0 st1 st2">+</text>
-	<path id="Path_3604" class="st0" d="M161.8,342h12.1v4h-28.2v-4H161.8z"/>
-	<path id="Path_3605" class="st0" d="M199.7,342h12.1v4h-28.2v-4H199.7z"/>
-	<circle id="Ellipse_159" class="st0" cx="197.7" cy="333" r="4"/>
-	<circle id="Ellipse_160" class="st0" cx="197.7" cy="355" r="4"/>
-</g>
+<rect x="58.1" y="31.2" class="st0" width="3.1" height="18.7"/>
+<rect x="49.8" y="39.1" class="st0" width="19.2" height="3.1"/>
+<rect x="75.7" y="39.1" class="st0" width="19.2" height="3.1"/>
+<rect x="101.6" y="39" class="st0" width="19.2" height="3.1"/>
+<rect x="124.4" y="39.1" transform="matrix(0.7195 -0.6945 0.6945 0.7195 9.3949 104.4841)" class="st0" width="19.2" height="3.1"/>
+<rect x="132.5" y="31" transform="matrix(0.7195 -0.6945 0.6945 0.7195 9.3907 104.4639)" class="st0" width="3.1" height="19.2"/>
+<circle class="st0" cx="110.7" cy="34.2" r="2"/>
+<circle class="st0" cx="111.3" cy="47" r="2"/>
 </svg>

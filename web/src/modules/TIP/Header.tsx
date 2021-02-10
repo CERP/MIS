@@ -16,7 +16,7 @@ const Header: React.FC<PropsType> = ({ history }) => {
 				<img className="h-4" src={BackArrow} />
 			</div>
 			<div>
-				<Link to={'/'}> <img src={TIP} /> </Link>
+				<Link to={'/targeted-instruction'}> <img className="h-8" src={TIP} /> </Link>
 			</div>
 			<div className="rounded-full shadow-lg bg-white w-10 h-10 flex justify-center items-center">
 				<img className="h-3" src={Burger} />

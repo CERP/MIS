@@ -26,7 +26,7 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id, curriculum, history })
 
 	// here we decide which layout to show based on our max_progress on the lessons
 	let layout = Layouts.DIAGNOSTIC
-	if (max_progress > 17) {
+	if (max_progress > 18) {
 		layout = Layouts.FORMATIVE
 	}
 	if (max_progress >= 35) {
@@ -34,12 +34,13 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id, curriculum, history })
 	}
 
 	return <div className="flex flex-wrap content-between bg-white">
-		<Card class_name='' subject='' />
+		<Card class_name='' subject='' lesson_name='' lesson_no='' />
 		<Headings heading="Welcome to TIP" sub_heading="What would you like to do today ?" />
 		{
-			<div className={`flex justify-center content-center w-full mt-2 ${layout === Layouts.DIAGNOSTIC && "opacity-50"}`}>
-				<button className="border-none bg-white text-blue-900 shadow-md p-2 px-5 rounded-md outline-none">View Class</button>
-			</div>
+			<Link className={`flex justify-center content-center w-full mt-2 no-underline ${layout === Layouts.DIAGNOSTIC && "opacity-50"}`}
+				to={'/targeted-instruction/detailed-analysis'}>
+				<button className="border-none bg-white text-blue-900 shadow-md p-2 px-5 rounded-md outline-none">View Remedial Groups</button>
+			</Link>
 		}
 		{
 			layout === Layouts.DIAGNOSTIC && <Link className="container sm:px-8 bg-white rounded-2xl m-3 h-44 flex flex-col content-center items-center shadow-lg no-underline"
@@ -77,7 +78,7 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id, curriculum, history })
 		</div>
 
 		{
-			layout === Layouts.DIAGNOSTIC && <div className="flex flex-row content-center items-center justify-center w-full opacity-50">
+			false && layout === Layouts.DIAGNOSTIC && <div className="flex flex-row content-center items-center justify-center w-full opacity-50">
 				<Link className="container sm:px-8 bg-white rounded-xl m-3 h-28 flex flex-col content-center items-center shadow-lg no-underline"
 					to={"/targeted-instruction/formative-test"}>
 					<img className="h-12 p-4" src={Formative} alt="img" />
@@ -91,10 +92,10 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id, curriculum, history })
 			</div>
 		}
 		{
-			layout === Layouts.FORMATIVE && <Link className="container sm:px-8 bg-white rounded-xl m-3 h-28 flex flex-row justify-center w-full items-center shadow-lg no-underline"
+			<Link className="container sm:px-8 bg-white rounded-xl m-3 h-28 flex flex-row justify-center w-full items-center shadow-lg no-underline"
 				to={"/targeted-instruction/diagnostic-result"}>
 				<img className="h-12 py-4 pl-4" src={DiagnosticItalic} alt="img" />
-				<div className="text-blue-900 text-lg font-bold">Starting Test Results</div>
+				<div className="text-blue-900 text-lg font-bold">Class Results</div>
 			</Link>
 		}
 		{

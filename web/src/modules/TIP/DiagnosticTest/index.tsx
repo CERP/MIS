@@ -24,17 +24,30 @@ const DiagnosticTest: React.FC<P> = (props) => {
 			[curr.toLowerCase()]: true
 		}), {})
 
-	// TODO: this needs to be a fuzzier map
+	// for all the sections in the school, we will only show ones which have 
+	// a diagnostic test for it. the name has to be close enough to one of the valid_classes
+	// which we extract from the diagnostic tests
 	const sorted_sections = useMemo(() => getSectionsFromClasses(props.classes), [])
 		.sort((a, b) => (a.classYear || 0) - (b.classYear || 0))
-		.filter(s => valid_classes[s.className.toLowerCase()])
+		.filter(s => {
+			return valid_classes[s.className.toLowerCase()]
+			/*
+			const matching = Object.keys(valid_classes)
+				.filter(c => {
+					return s.className.toLowerCase().indexOf(c) > -1
+				})
+				.length
+
+			return matching == 1
+			*/
+		})
 
 	const class_name = useMemo(() => getClassnameFromSectionId(sorted_sections, sectionId), [sectionId])
 
 	return <div className="flex flex-wrap content-between">
-		<Card class_name={class_name} subject='' />
+		<Card class_name={class_name} subject='' lesson_name='' lesson_no='' />
 		<Headings
-			heading="Diagnostic Test"
+			heading="Starting Test"
 			sub_heading={class_name ? "Select the subject you want to evaluate" :
 				"Select the class you want to evaluate"}
 		/>

@@ -36,7 +36,11 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 		.filter(([, t]) => t.type === test_type && t.subject === subject && t.grade === class_name)
 		.map(([t_id,]) => t_id)
 
-	const test_id = test_ids.length > 0 ? test_ids[0] : "dummy"
+	const oral_test_ids = Object.entries(targeted_instruction.tests)
+		.filter(([, t]) => t.type === test_type && t.subject === subject && t.grade === 'Oral Test')
+		.map(([t_id,]) => t_id)
+
+	const test_id = test_ids.length > 0 ? test_ids[0] : oral_test_ids[0]
 
 	let pdf_url = ""
 	// if we have a test, we need to chagne pdf_url to load from the test_id
@@ -45,7 +49,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 	}
 
 	return <div className="flex flex-wrap flex-col content-between w-full items-center justify-items-center">
-		<Card class_name={class_name} subject={subject} />
+		<Card class_name={class_name ? class_name : 'Oral Test'} subject={subject} lesson_name='' lesson_no='' />
 		<div className="rounded-lg border-black">
 			<PDFViewer
 				scale={0.5}
@@ -84,7 +88,9 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 			<div className="w-1/7">
 				<Link className="no-underline" to={url[2] === "diagnostic-test" ?
 					`/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades` :
-					`/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades`}>
+					url[2] === "oral-test" ?
+						`/${url[1]}/${url[2]}/${subject}/${test_id}/insert-grades` :
+						`/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades`}>
 					<button className="bg-blue-150 font-bold text-lg border-none rounded-md text-white text-left p-2 w-full focus:outline-none">
 						Insert Grades
 						</button>
