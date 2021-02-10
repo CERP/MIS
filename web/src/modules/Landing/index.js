@@ -471,7 +471,7 @@ class Landing extends Component {
 									</div>
 								</div>}
 								{
-									(targeted_instruction && tip_visible && tip_pilot) && 
+									(targeted_instruction && (tip_visible || tip_pilot)) && 
 									<div className="row">
 										<Link
 											className="button yellow-shadow"

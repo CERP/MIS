@@ -30,7 +30,7 @@ syncr.on('connect', () =>
 			const text = correct ? '' : 'Your device time or timezone is incorrect!'
 			store.dispatch({
 				type: ActionTypes.ALERT_BANNER_TEXT,
-				data: text,
+				data: text
 			})
 		})
 )
