@@ -476,7 +476,8 @@ interface MISTeacher {
 		family: boolean
 		prospective: boolean
 	}
-	type?: "TEACHING" | "NON_TEACHING" | ""
+	Type?: "TEACHING" | "NON_TEACHING" | ""
+	SubAdmin?: boolean
 	ProfilePicture?: {
 		id: string
 		url: string

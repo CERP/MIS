@@ -51,7 +51,7 @@ const initialState: MISTeacher = {
 		prospective: false,
 		family: false
 	},
-	type: ""
+	Type: StaffType.TEACHING
 }
 
 export const AddStaff: React.FC<TAddStaffProps> = ({ skipStage }) => {
@@ -136,28 +136,28 @@ export const AddStaff: React.FC<TAddStaffProps> = ({ skipStage }) => {
 				</div>
 
 				<div className="">Staff Type</div>
-				<div className="flex items-center flex-wrap justify-between">
-					<div className="flex items-center">
-						<input
-							name="type"
-							onChange={handleInput}
-							type="radio"
-							value={StaffType.TEACHING}
-							checked={state.type === StaffType.TEACHING}
-							className="mr-2 w-4 h-4" />
-						<div className="text-sm">Teaching Staff</div>
-					</div>
-					<div className="flex items-center">
+				{/* <div className="flex items-center flex-wrap justify-between"> */}
+				<div className="flex items-center">
+					<input
+						name="type"
+						onChange={handleInput}
+						type="radio"
+						value={StaffType.TEACHING}
+						checked={state.Type === StaffType.TEACHING}
+						className="mr-2 w-4 h-4" />
+					<div className="text-sm">Teaching Staff</div>
+				</div>
+				{/* <div className="flex items-center">
 						<input
 							name="type"
 							onChange={handleInput}
 							type="radio"
 							value={StaffType.NON_TEACHING}
-							checked={state.type === StaffType.NON_TEACHING}
+							checked={state.Type === StaffType.NON_TEACHING}
 							className="mr-2 w-4 h-4" />
 						<div className="text-sm">Non-Teaching Staff</div>
-					</div>
-				</div>
+					</div> */}
+				{/* </div> */}
 
 				{!showAdditionalFields &&
 					<div className="flex flex-row items-center justify-between">

@@ -35,7 +35,7 @@ const blankTeacher = (): MISTeacher => ({
 	StructuredQualification: "",
 	Qualification: "",
 	Experience: "",
-	HireDate: moment().format("MM-DD-YYYY"),
+	HireDate: moment().format("YYYY-MM-DD"),
 	Admin: false,
 	HasLogin: true,
 	tags: {},
@@ -48,7 +48,7 @@ const blankTeacher = (): MISTeacher => ({
 		prospective: false,
 		family: false
 	},
-	type: ""
+	Type: ""
 })
 
 const Qualification: Record<string, string> = {
@@ -85,7 +85,7 @@ type StateProps = {
 export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match, location }) => {
 
 	const { id } = match.params
-	const isNew = () => location.pathname.indexOf("new") >= 0
+	const isNewStaff = () => location.pathname.indexOf("new") >= 0
 
 	const dispatch = useDispatch()
 	const { faculty } = useSelector((state: RootReducerState) => state.db)
@@ -95,8 +95,8 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 	const [state, setState] = useState<StateProps>({
 		profile: {
 			...editableFaculty || blankTeacher(),
-			HasLogin: isNew() ? true : editableFaculty && editableFaculty.HasLogin,
-			permissions: isNew() ? blankTeacher().permissions : editableFaculty && editableFaculty.permissions,
+			HasLogin: isNewStaff ? true : editableFaculty && editableFaculty.HasLogin,
+			permissions: isNewStaff ? blankTeacher().permissions : editableFaculty && editableFaculty.permissions,
 		},
 		showPassword: false,
 		redirect: false
@@ -189,9 +189,9 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 	}
 
 	return (
-		<AppLayout title={`${isNew() ? "New Staff" : "Update Staff"}`}>
+		<AppLayout title={`${isNewStaff ? "New Staff" : "Update Staff"}`}>
 			<div className="p-5 md:p-10 md:pb-0 text-gray-700 relative">
-				<div className="text-2xl font-bold mt-4 mb-8 text-center">{isNew() ? "Add Staff" : 'Update Staff'}</div>
+				<div className="text-2xl font-bold mt-4 mb-8 text-center">{isNewStaff ? "Add Staff" : 'Update Staff'}</div>
 				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 pb-6 my-4 md:mt-8">
 					<div className="text-white text-center text-base my-5">Personal Information</div>
 					<div className="flex flex-row items-baseline justify-between w-3/5">
@@ -212,7 +212,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 						</label>
 					</div>
 					<form id='admin-account' className="text-white space-y-4 px-4" onSubmit={handleSubmit}>
-						<div className="">Full Name*</div>
+						<div>Full Name*</div>
 						<input
 							name="Name"
 							onChange={handleInput}
@@ -222,7 +222,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 							className="tw-input w-full bg-transparent border-blue-brand ring-1" />
 
 
-						<div className="">Gender</div>
+						<div>Gender</div>
 						<div className="flex items-center flex-wrap justify-between">
 							<div className="flex items-center">
 								<input
@@ -256,38 +256,38 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 							</div>
 						</div>
 
-						<div className="">Staff Type</div>
+						<div>Staff Type</div>
 						<div className="flex items-center flex-wrap justify-between">
 							<div className="flex items-center mr-2">
 								<input
-									name="type"
+									name="Type"
 									onChange={handleInput}
 									type="radio"
 									value={StaffType.TEACHING}
-									checked={profile.type === StaffType.TEACHING}
+									checked={profile.Type === StaffType.TEACHING}
 									className="mr-2 w-4 h-4" />
 								<div className="text-sm">Teaching Staff</div>
 							</div>
 							<div className="flex items-center">
 								<input
-									name="type"
+									name="Type"
 									onChange={handleInput}
 									type="radio"
 									value={StaffType.NON_TEACHING}
-									checked={profile.type === StaffType.NON_TEACHING}
+									checked={profile.Type === StaffType.NON_TEACHING}
 									className="mr-2 w-4 h-4" />
 								<div className="text-sm">Non-Teaching Staff</div>
 							</div>
 						</div>
 
-						<div className="">CNIC</div>
+						<div>CNIC</div>
 						<input
 							name="CNIC"
 							onChange={handleInput}
 							placeholder="xxxxx-xxxxxxx-x"
 							className="tw-input w-full bg-transparent border-blue-brand ring-1" />
 
-						<div className="">Personal Contact*</div>
+						<div>Personal Contact*</div>
 						<input
 							name="Phone"
 							onChange={handleInput}
@@ -296,7 +296,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 							placeholder="e.g. 03xxxxxxxx"
 							className="tw-input w-full bg-transparent border-blue-brand ring-1" />
 
-						<div className="">Password*</div>
+						<div>Password*</div>
 						<div className="w-full relative">
 							<input
 								name="Password"
@@ -321,7 +321,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 						{/* 
 							TODO: Change salary from string to number in typings
 						*/}
-						<div className="">Salary</div>
+						<div>Salary</div>
 						<input
 							name="Salary"
 							type="number"
@@ -332,7 +332,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 
 						<div className="text-lg font-semibold text-center">Additional Information</div>
 
-						<div className="">Marital Status</div>
+						<div>Marital Status</div>
 						<div className="flex items-center flex-wrap justify-between">
 							<div className="flex items-center">
 								<input
@@ -425,7 +425,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 									type="date"
 									value={profile.HireDate}
 									onChange={handleInput}
-									className="tw-select w-36"
+									className="tw-select w-36 text-sm px-1.5"
 								/>
 							</div>
 							<div className="flex flex-col space-y-1">
@@ -436,9 +436,17 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 							</div>
 						</div>
 
-						<SwitchButton title={"Admin Status"}
-							state={profile.Admin}
-							callback={() => handleInputByPath(["Admin"], !profile.Admin)} />
+						{!profile.SubAdmin &&
+							<SwitchButton title={"Admin Status"}
+								state={profile.Admin}
+								callback={() => handleInputByPath(["Admin"], !profile.Admin)} />
+						}
+
+						{!profile.Admin &&
+							<SwitchButton title={"Sub Admin Status"}
+								state={profile.SubAdmin}
+								callback={() => handleInputByPath(["SubAdmin"], !profile.SubAdmin)} />
+						}
 
 						{
 							!profile.Admin && <>
@@ -469,10 +477,10 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 						}
 
 						<button type="submit" className={"w-full items-center tw-btn-blue py-3 font-semibold my-4"}>
-							{isNew() ? 'Save' : 'Update'}
+							{isNewStaff ? 'Save' : 'Update'}
 						</button>
 						{
-							!isNew() &&
+							!isNewStaff &&
 							<button
 								type="button"
 								onClick={deleteStaff}
