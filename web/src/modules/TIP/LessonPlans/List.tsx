@@ -85,16 +85,16 @@ const List: React.FC<PropsType> = ({ match, faculty, faculty_id, history, curric
 
 						{
 							teacher_record.taken ?
-								<img src={Check} className="h-6 w-6 bg-white rounded-full flex items-center justify-center"
+								<img src={Check} className="h-6 w-6 bg-white rounded-full flex items-center justify-center cursor-pointer"
 									onClick={(e) => done(e, class_name, curr.subject, curr.lesson_number, false)} /> :
-								<div className="h-6 w-6 bg-white rounded-full flex items-center justify-center"
+								<div className="h-6 w-6 bg-white rounded-full flex items-center justify-center cursor-pointer"
 									onClick={(e) => done(e, class_name, curr.subject, curr.lesson_number, true)}>
 									<img className="h-3 w-3" src={WhiteTick} />
 								</div>
 						}
 					</div>
 				})}
-		<div className="w-full flex justify-center items-center">
+		<div className="w-full flex justify-center items-center print:block">
 			<button className="border-none bg-green-primary rounded-md text-white text-lg p-2 w-3/6 my-3">Print All</button>
 		</div>
 	</div>

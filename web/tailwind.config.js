@@ -3,6 +3,9 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
+		screens: {
+			'print': {'raw': 'print'},
+		},
         colors: {
           'red-primary': '#FC6171',
           'green-primary': '#1BB4BB',
@@ -23,7 +26,8 @@ module.exports = {
 		  'yellow-250': '#FFEB9C',
 		  'gray-100': '#EFF3F7',
 		  'light-blue-primary': '#3478B9',
-		  'black-primary': '#000000'
+		  'black-primary': '#000000',
+		  'gray-primary': '#808080'
         },
         width: (theme) => ({
           auto: 'auto',

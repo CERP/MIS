@@ -45,7 +45,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 	let pdf_url = ""
 	// if we have a test, we need to chagne pdf_url to load from the test_id
 	if (url[2].indexOf('test') >= 0) {
-		pdf_url = targeted_instruction.tests[test_id].pdf_url
+		pdf_url = targeted_instruction?.tests[test_id]?.pdf_url
 	}
 
 	return <div className="flex flex-wrap flex-col content-between w-full items-center justify-items-center">
