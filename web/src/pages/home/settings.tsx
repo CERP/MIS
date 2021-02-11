@@ -2,6 +2,9 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
+import iconClasses from './assets/classes.svg'
+import iconTeachers from './assets/teachers.svg'
+import iconStudents from './assets/students.svg'
 
 export const SettingTab = () => {
 
@@ -11,9 +14,9 @@ export const SettingTab = () => {
 		<div className="p-10 md:w-2/5 mx-auto">
 			<div className="text-center text-lg mb-6">Tap to configure the module</div>
 
-			<Card title={"Staff"} link="/staff" total={Object.keys(faculty).length} icon={"/favicon.ico"} />
-			<Card title={"Classes"} link="/classes" total={Object.keys(classes).length} icon={"/favicon.ico"} />
-			<Card title={"Students"} link="/students" total={Object.keys(students).length} icon={"/favicon.ico"} />
+			<Card title={"Staff"} link="/staff" total={Object.keys(faculty).length} icon={iconTeachers} />
+			<Card title={"Classes"} link="/classes" total={Object.keys(classes).length} icon={iconClasses} />
+			<Card title={"Students"} link="/students" total={Object.keys(students).length} icon={iconStudents} />
 		</div>
 	)
 }

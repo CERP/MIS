@@ -1,8 +1,8 @@
-import clsx from 'clsx'
-import moment from 'moment'
 import React, { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { PieChart, Pie, Sector, ResponsiveContainer } from 'recharts'
+import clsx from 'clsx'
+import moment from 'moment'
 
 enum Tab {
 	TEACHER,
@@ -86,7 +86,7 @@ export const StatsTab = () => {
 	const attendanceStats = activeTab === Tab.STUDENT ? studentsAttendance : teacherAttendance
 
 	const graphData = Object.entries(attendanceStats)
-		.reduce<TGraphData[]>((agg, [k, v]) => {
+		.reduce<GraphData[]>((agg, [k, v]) => {
 			return [
 				...agg,
 				{
@@ -251,14 +251,14 @@ const renderActiveShape = (props: any) => {
 	)
 }
 
-type TGraphData = {
+type GraphData = {
 	name: string
 	value: number
 }
 
 
 type TAttendanceChartProps = {
-	graphData: TGraphData[]
+	graphData: GraphData[]
 }
 
 const AttendanceChart: React.FC<TAttendanceChartProps> = ({ graphData }) => {

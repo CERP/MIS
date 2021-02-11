@@ -1,16 +1,31 @@
-import classes from '*.module.css'
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-const links: TCardProps[] = [
+import iconAttendance from './assets/attendance.svg'
+import iconFee from './assets/fee.svg'
+import iconMarks from './assets/marks.svg'
+import iconSms from './assets/sms.svg'
+import iconExams from './assets/exams.svg'
+
+const links: CardProps[] = [
 	{
 		link: "",
 		title: "attendance",
-		icon: "/favicon.ico"
+		icon: iconAttendance
 	},
 	{
 		link: "",
 		title: "fee",
+		icon: iconFee
+	},
+	{
+		link: "",
+		title: "exams",
+		icon: iconExams
+	},
+	{
+		link: "",
+		title: "expense",
 		icon: "/favicon.ico"
 	},
 	{
@@ -21,17 +36,17 @@ const links: TCardProps[] = [
 	{
 		link: "",
 		title: "SMS",
-		icon: "/favicon.ico"
-	},
-	{
-		link: "",
-		title: "Marks",
-		icon: "/favicon.ico"
+		icon: iconSms
 	},
 	{
 		link: "",
 		title: "Results",
 		icon: "/favicon.ico"
+	},
+	{
+		link: "",
+		title: "Analytics",
+		icon: iconMarks
 	},
 	{
 		link: "",
@@ -58,13 +73,13 @@ export const ActionTab = () => {
 	)
 }
 
-type TCardProps = {
+type CardProps = {
 	link: string
 	title: string
 	icon: string
 }
 
-const Card = ({ title, icon, link }: TCardProps) => {
+const Card = ({ title, icon, link }: CardProps) => {
 	return (
 		<Link to={link}>
 			<div className="p-5 border rounded-2xl shadow-md hover:shadow-lg">
