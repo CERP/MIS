@@ -62,7 +62,6 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 				document={{
 					url: decodeURIComponent(pdf_url),
 				}}
-			// onDocumentClick={() => downloadPdf(test_id, pdf_url)}
 			/>
 			<div className="flex flex-row justify-between my-4 w-full">
 				<div className="bg-blue-150 rounded-full flex justify-center items-center h-12 w-12 ml-3"
@@ -76,8 +75,17 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 			</div>
 		</div>
 		<div className="flex flex-row justify-around my-4 w-full">
-			<div className="w-1/7">
-				<button className="bg-green-primary font-bold text-lg border-none rounded-md text-white text-left p-2 w-full focus:outline-none">Answer Sheet</button>
+			<div className="w-1/7" >
+				<Link className="no-underline"
+					to={url[2] === "diagnostic-test" ?
+						`/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/answer-pdf` :
+						url[2] === "oral-test" ?
+							`/${url[1]}/${url[2]}/${subject}/answer-pdf` :
+							`/${url[1]}/${url[2]}/${class_name}/${subject}/answer-pdf`}>
+					<button className="bg-green-primary font-bold text-lg border-none rounded-md text-white text-left p-2 w-full focus:outline-none">
+						Answer Sheet
+					</button>
+				</Link>
 			</div>
 			<div className="w-1/7">
 				<Link className="no-underline" to={url[2] === "diagnostic-test" ?

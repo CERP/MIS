@@ -116,6 +116,7 @@ interface TIPTest {
 	type: TIPTestType
 	label: string
 	pdf_url: string
+	answer_pdf_url: string
 	questions: {
 		[question_id: string]: TIPQuestion
 	}

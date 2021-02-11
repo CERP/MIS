@@ -18,6 +18,7 @@ import List from './LessonPlans/List'
 import Header from './Header'
 import DetailedAnalysis from './DetailedAnalysis'
 import OralTest from './OralTest'
+import AnswerSheet from './AnswerSheet'
 
 const Routing = (props) => {
 	const path = props.location.pathname.substring(0, 21)
@@ -25,30 +26,37 @@ const Routing = (props) => {
 	return <>
 	<Header />
 		<Switch>
-			<Route exact path={path} component={HomePage}></Route>
+			<Route exact path={path} component={HomePage} />
 
-			<Route exact path={`${path}/oral-test/:subject/:test_id/insert-grades/:std_id/grading`} component={Grading}></Route>
+			<Route exact path={`${path}/oral-test/:subject/:test_id/insert-grades/:std_id/grading`} component={Grading} />
 
-			<Route exact path={`${path}/oral-test/:subject/:test_id/insert-grades`} component={InsertGrades}></Route>
+			<Route exact path={`${path}/oral-test/:subject/:test_id/insert-grades`} component={InsertGrades} />
 
-			<Route exact path={`${path}/oral-test/:subject/pdf`} component={PDF}></Route>
+			<Route exact path={`${path}/oral-test/:subject/answer-pdf`} component={AnswerSheet} />
 
-			<Route exact path={`${path}/oral-test`} component={OralTest}></Route>
+			<Route exact path={`${path}/oral-test/:subject/pdf`} component={PDF} />
 
-			<Route exact path={`${path}/detailed-analysis`} component={DetailedAnalysis}></Route>
+			<Route exact path={`${path}/oral-test`} component={OralTest} />
+
+			<Route exact path={`${path}/detailed-analysis`} component={DetailedAnalysis} />
 
 			<Route
 				exact
 				path={`${path}/diagnostic-test/:section_id/:class_name/:subject/:test_id/insert-grades/:std_id/grading`}
-				component={Grading}></Route>
+				component={Grading} />
 			<Route
 				exact
 				path={`${path}/diagnostic-test/:section_id/:class_name/:subject/:test_id/insert-grades/test-result`}
-				component={Result}></Route>
+				component={Result} />
 			<Route
 				exact
 				path={`${path}/diagnostic-test/:section_id/:class_name/:subject/:test_id/insert-grades`}
 				component={InsertGrades}
+			/>
+			<Route
+				exact
+				path={`${path}/diagnostic-test/:section_id/:class_name/:subject/answer-pdf`}
+				component={AnswerSheet}
 			/>
 			<Route
 				exact
@@ -82,6 +90,9 @@ const Routing = (props) => {
 				path={`${path}/formative-test/:class_name/:subject/:test_id/insert-grades`}
 				component={InsertGrades}
 			/>
+
+			<Route exact path={`${path}/formative-test/:class_name/:subject/answer_pdf`} component={AnswerSheet} />
+
 			<Route exact path={`${path}/formative-test/:class_name/:subject/pdf`} component={PDF} />
 
 			<Route exact path={`${path}/formative-test`} component={FormativeTest} />
@@ -109,6 +120,9 @@ const Routing = (props) => {
 				path={`${path}/summative-test/:class_name/:subject/:test_id/insert-grades`} 
 				component={InsertGrades} 
 			/>
+
+			<Route exact path={`${path}/summative-test/:class_name/:subject/answer_pdf`} component={AnswerSheet} />
+
 			<Route exact path={`${path}/summative-test/:class_name/:subject/pdf`} component={PDF} />
 
 			<Route exact path={`${path}/summative-test`} component={SummativeTest} />
