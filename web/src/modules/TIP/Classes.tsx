@@ -28,13 +28,6 @@ const Classes: React.FC<PropsType> = ({ setSectionId, sortedSections, match }) =
 	// TIPGrade inside the map function below (mapped_grade)
 	return <div className="flex flex-wrap flex-row justify-around w-full mx-4">
 		{
-			url[2] === 'diagnostic-test' && <Link className="container sm:px-8 bg-white rounded-2xl m-3 h-44 flex flex-col content-center items-center shadow-lg no-underline"
-				to={'/targeted-instruction/oral-test'}>
-				<img className="h-24 py-4 w-24" src={LessonPlans} alt="img" />
-				<div className="text-blue-900 text-lg font-bold">Oral Test</div>
-			</Link>
-		}
-		{
 			sortedSections && sortedSections.map((classObj, index) => {
 				const matches = classObj.namespaced_name.match(/[0-9]+/g)
 				const class_number = matches.length > 0 ? matches[0] : ''
@@ -45,12 +38,18 @@ const Classes: React.FC<PropsType> = ({ setSectionId, sortedSections, match }) =
 					key={classObj.id}
 					className="flex-wrap container w-2/5 sm:px-8 bg-white rounded-lg m-3 h-36 flex items-center justify-start flex-col shadow-lg cursor-pointer"
 					onClick={() => setSectionId(classObj.id)}>
-					<div className={`text-white font-bold shadow-2xl flex items-center justify-center mt-8 mb-5 rounded-full text-xl h-12 w-12 
-                ${color}`}>{class_number}
+					<div className={`text-white font-bold shadow-2xl flex items-center justify-center mt-8 mb-5 rounded-full text-xl h-12 w-12 bg-gray-primary`}>{class_number}
 					</div>
 					<div className="text-blue-900 text-lg font-thin">{classObj.namespaced_name}</div>
 				</div>
 			})
+		}
+		{
+			url[2] === 'diagnostic-test' && <Link className="container sm:px-8 bg-white rounded-2xl m-3 h-44 flex flex-col content-center items-center shadow-lg no-underline"
+				to={'/targeted-instruction/oral-test'}>
+				<img className="h-24 py-4 w-24" src={LessonPlans} alt="img" />
+				<div className="text-blue-900 text-lg font-bold">Oral Test</div>
+			</Link>
 		}
 	</div >
 }

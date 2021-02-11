@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux'
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom'
 import { Download, Printer } from 'assets/icons'
+import { downloadPdf } from 'utils/TIP'
 import PDFViewer from 'pdf-viewer-reactjs'
 import Card from './Card'
 interface P {
@@ -45,7 +46,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 	let pdf_url = ""
 	// if we have a test, we need to chagne pdf_url to load from the test_id
 	if (url[2].indexOf('test') >= 0) {
-		pdf_url = targeted_instruction.tests[test_id].pdf_url
+		pdf_url = targeted_instruction?.tests[test_id]?.pdf_url
 	}
 
 	return <div className="flex flex-wrap flex-col content-between w-full items-center justify-items-center">
@@ -61,29 +62,30 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 				document={{
 					url: decodeURIComponent(pdf_url),
 				}}
-				onDocumentClick={() => {
-					const e = document.createElement('a')
-					e.setAttribute('href', decodeURIComponent(pdf_url))
-					e.setAttribute('download', test_id + '.pdf')
-					e.style.display = 'none'
-					document.body.appendChild(e)
-					e.click()
-					document.body.removeChild(e)
-				}}
 			/>
 			<div className="flex flex-row justify-between my-4 w-full">
 				<div className="bg-blue-150 rounded-full flex justify-center items-center h-12 w-12 ml-3"
 					onClick={() => window.print()}>
 					<img className="h-5 w-5" src={Printer} />
 				</div>
-				<div className="bg-blue-150 rounded-full flex justify-center items-center h-12 w-12 mr-3">
+				<div className="bg-blue-150 rounded-full flex justify-center items-center h-12 w-12 mr-3"
+					onClick={() => downloadPdf(test_id, pdf_url)}>
 					<img className="h-5 w-5" src={Download} />
 				</div>
 			</div>
 		</div>
-		<div className="flex flex-row justify-around my-4 w-full">
-			<div className="w-1/7">
-				<button className="bg-green-primary font-bold text-lg border-none rounded-md text-white text-left p-2 w-full focus:outline-none">Answer Sheet</button>
+		<div className="flex flex-row justify-around my-4 w-full print:hidden">
+			<div className="w-1/7" >
+				<Link className="no-underline"
+					to={url[2] === "diagnostic-test" ?
+						`/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/answer-pdf` :
+						url[2] === "oral-test" ?
+							`/${url[1]}/${url[2]}/${subject}/answer-pdf` :
+							`/${url[1]}/${url[2]}/${class_name}/${subject}/answer-pdf`}>
+					<button className="bg-green-primary font-bold text-lg border-none rounded-md text-white text-left p-2 w-full focus:outline-none">
+						Answer Sheet
+					</button>
+				</Link>
 			</div>
 			<div className="w-1/7">
 				<Link className="no-underline" to={url[2] === "diagnostic-test" ?

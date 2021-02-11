@@ -26,7 +26,7 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id, curriculum, history })
 
 	// here we decide which layout to show based on our max_progress on the lessons
 	let layout = Layouts.DIAGNOSTIC
-	if (max_progress > 18) {
+	if (max_progress >= 17) {
 		layout = Layouts.FORMATIVE
 	}
 	if (max_progress >= 35) {
