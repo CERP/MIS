@@ -439,3 +439,13 @@ export const getClassResult = (result: Result) => {
 	}, {})
 }
 */
+
+export const downloadPdf = (name: string, pdf_url: string) => {
+	const e = document.createElement('a')
+	e.setAttribute('href', decodeURIComponent(pdf_url))
+	e.setAttribute('download', name + '.pdf')
+	e.style.display = 'none'
+	document.body.appendChild(e)
+	e.click()
+	document.body.removeChild(e)
+}

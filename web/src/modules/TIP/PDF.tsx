@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux'
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom'
 import { Download, Printer } from 'assets/icons'
+import { downloadPdf } from 'utils/TIP'
 import PDFViewer from 'pdf-viewer-reactjs'
 import Card from './Card'
 interface P {
@@ -61,22 +62,15 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 				document={{
 					url: decodeURIComponent(pdf_url),
 				}}
-				onDocumentClick={() => {
-					const e = document.createElement('a')
-					e.setAttribute('href', decodeURIComponent(pdf_url))
-					e.setAttribute('download', test_id + '.pdf')
-					e.style.display = 'none'
-					document.body.appendChild(e)
-					e.click()
-					document.body.removeChild(e)
-				}}
+			// onDocumentClick={() => downloadPdf(test_id, pdf_url)}
 			/>
 			<div className="flex flex-row justify-between my-4 w-full">
 				<div className="bg-blue-150 rounded-full flex justify-center items-center h-12 w-12 ml-3"
 					onClick={() => window.print()}>
 					<img className="h-5 w-5" src={Printer} />
 				</div>
-				<div className="bg-blue-150 rounded-full flex justify-center items-center h-12 w-12 mr-3">
+				<div className="bg-blue-150 rounded-full flex justify-center items-center h-12 w-12 mr-3"
+					onClick={() => downloadPdf(test_id, pdf_url)}>
 					<img className="h-5 w-5" src={Download} />
 				</div>
 			</div>
