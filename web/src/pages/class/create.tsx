@@ -8,9 +8,6 @@ import clsx from 'clsx'
 import { createEditClass, deleteSection, deleteSubject } from 'actions'
 import { AppLayout } from 'components/Layout/appLayout'
 
-import UserIconSvg from 'assets/svgs/user.svg'
-
-
 const blankClass: MISClass = {
 	id: v4(),
 	name: "",
@@ -21,27 +18,30 @@ const blankClass: MISClass = {
 		}
 	},
 	subjects: {
-		"Maths": false,
-		"English": false,
-		"Urdu": false,
-		"Islamiat": false
+		"Maths": true,
+		"English": true,
+		"Urdu": true,
+		"Islamiat": true
 	},
 }
 
 const defaultClasses: Record<string, number> = {
-	"Nursery": 0,
-	"Class 1": 1,
-	"Class 2": 2,
-	"Class 3": 3,
-	"Class 4": 4,
-	"Class 5": 5,
-	"Class 6": 6,
-	"Class 7": 7,
-	"Class 8": 8,
-	"Class 9": 9,
-	"Class 10": 10,
-	"O Level": 11,
-	"A Level": 12
+	"Preschool": 0,
+	"Play Group": 1,
+	"Nursery": 2,
+	"Prep": 3,
+	"Class 1": 4,
+	"Class 2": 5,
+	"Class 3": 6,
+	"Class 4": 7,
+	"Class 5": 8,
+	"Class 6": 9,
+	"Class 7": 10,
+	"Class 8": 11,
+	"Class 9": 12,
+	"Class 10": 13,
+	"O Level": 14,
+	"A Level": 15
 }
 
 type State = {
@@ -53,7 +53,7 @@ type State = {
 export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> = ({ match }) => {
 
 	const classId = match.params.id
-	const isNew = () => location.pathname.indexOf("new") >= 0
+	const isNewSchool = location.pathname.indexOf("new") >= 0
 
 	const dispatch = useDispatch()
 	const { faculty, classes } = useSelector((state: RootReducerState) => state.db)
@@ -123,23 +123,6 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 		}
 	}
 
-	const addNewSection = () => {
-		if (state.newSection.trim()) {
-
-			// TODO: change this logic to if it's only one
-			// default section
-			const defaultSectionId = Object.keys(state.class.sections).length === 1
-				&& Object.values(state.class.sections)[0].name === "DEFAULT"
-				&& Object.keys(state.class.sections)[0]
-
-			handleInputByPath(
-				["class", "sections", defaultSectionId || v4(), "name"],
-				state.newSection.trim(),
-				["newSection"]
-			)
-		}
-	}
-
 	const deleteByPath = (path: string[]) => {
 		const updatedState = Dynamic.delete(state, path) as State
 		setState(updatedState)
@@ -147,21 +130,45 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 
 	const removeSubject = (subject: string) => {
 		deleteByPath(["class", "subjects", subject])
-		dispatch(deleteSubject(state.class.id, subject))
+		if (!isNewSchool) {
+			dispatch(deleteSubject(state.class.id, subject))
+		}
 	}
 
 	const removeSection = (sectionId: string) => {
+
+		if (!window.confirm("Are you sure you want to delete?")) {
+			return
+		}
+
 		// delete from local page state
 		deleteByPath(["class", "sections", sectionId])
 
-		// delete from root and server
-		dispatch(deleteSection(state.class.id, sectionId))
+		if (!isNewSchool) {
+			// delete from root and server
+			dispatch(deleteSection(state.class.id, sectionId))
+		}
+	}
+
+	const addNewSection = () => {
+		setState({
+			...state,
+			class: {
+				...state.class,
+				sections: {
+					...state.class.sections,
+					[v4()]: {
+						name: ""
+					}
+				}
+			}
+		})
 	}
 
 	return (
-		<AppLayout title={`${isNew() ? "Add New Class" : "Update Class"}`}>
+		<AppLayout title={`${isNewSchool ? "Add New Class" : "Update Class"}`}>
 			<div className="p-5 md:p-10 md:pb-0 text-gray-700 relative">
-				<div className="text-2xl font-bold mt-4 mb-8 text-center">{isNew() ? "Add New Class" : 'Update Class'}</div>
+				<div className="text-2xl font-bold mt-4 mb-8 text-center">{isNewSchool ? "Add New Class" : 'Update Class'}</div>
 				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 my-4 md:mt-8">
 
 					<div className="text-white text-center text-base my-5">Fill Class Information</div>
@@ -195,45 +202,18 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 							className="tw-input w-full  bg-transparent border-blue-brand ring-1"
 							value={state.class.classYear} onChange={handleInput} />
 
-						<div>Section*</div>
-						<div className="grid grid-cols-5 gap-3">
-							{
-								Object.keys(state.class.sections).length !== 1
-								&&
-								Object.entries(state.class.sections)
-									.map(([id, section]) => (
-										<div
-											key={id}
-											onClick={() => removeSection(id)}
-											className={clsx("text-center p-1 border cursor-pointer rounded-xl text-white text-sm bg-green-brand hover:bg-red-brand", {})}>
-											<span>{section.name}</span>
-										</div>))
-							}
-						</div>
-
-						<div className="flex flex-row items-center justify-between">
-							<input
-								onChange={(e) => handleInputByPath(["newSection"], e.target.value)}
-								placeholder="Type section name"
-								value={state.newSection}
-								className="tw-input bg-transparent border-blue-brand ring-1" />
-							<div
-								onClick={addNewSection}
-								className="ml-4 w-8 h-8 flex items-center justify-center rounded-full border cursor-pointer bg-blue-brand hover:bg-blue-400">+</div>
-						</div>
-
 						<div>Subjects*</div>
 						<div className="grid grid-cols-3 gap-3">
 							{
-								Object.keys(state.class.subjects)
-									.map((s, index) => (
+								Object.entries(state.class.subjects)
+									.map(([subject, value], index) => (
 										<div
-											onClick={() => removeSubject(s)}
-											key={s + index}
+											onClick={() => removeSubject(subject)}
+											key={subject + index}
 											className={clsx("text-center p-1 border rounded-xl text-white text-sm", {
-												"bg-teal-500": state.class.subjects[s]
+												"bg-teal-500": value
 											})}>
-											<span>{s}</span>
+											<span>{subject}</span>
 										</div>))
 							}
 						</div>
@@ -249,37 +229,60 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 								className="ml-4 w-8 h-8 flex items-center justify-center rounded-full border cursor-pointer bg-blue-brand hover:bg-blue-400">+</div>
 						</div>
 
-						<div>Assign Section Teacher*</div>
-						<div className="grid grid-cols-3 gap-5">
-							{
-								Object.values(faculty)
-									.filter(f => f && f.Active && f.Name)
-									.sort((a, b) => a.Name.localeCompare(b.Name))
-									.map(faculty => (
-										<div
-											key={faculty.id}
-											onClick={() => addNewSection()}
-											className="flex flex-col items-center space-y-2">
-											<img
-												className={clsx("w-16 h-16 rounded-full cursor-pointer border-2 border-transparent hover:border-green-brand", {
-													"border-2 border-green-brand": false
-												})}
-												src={UserIconSvg} alt="user-logo" />
+						<div>Sections</div>
+						{
+							Object.entries(state.class.sections)
+								.map(([id, section], index, originArray) => {
+									return <div key={id} className="space-y-4">
+										{
+											<div className="flex flex-row items-center justify-between">
+												<input
+													onChange={(e) => handleInputByPath(["class", "sections", id, "name"], e.target.value)}
+													placeholder={'Type section name'}
+													value={section.name}
+													className="tw-input w-full bg-transparent border-blue-brand ring-1" />
+											</div>
+										}
 
-											<div className={clsx("text-xs", {
-												"text-green-brand": false
-											})}>
-												{faculty.Name}</div>
-										</div>
-									))
-							}
+										{
+											<div className="flex flex-row justify-between items-center">
+												<div>Assign Teacher</div>
+												<select className="tw-select"
+													value={state.class.sections[id].faculty_id}
+													onChange={(e) => handleInputByPath(["class", "sections", id, "faculty_id"], e.target.value)}>
+													<option value={""}>Choose</option>
+													{
+														Object.values(faculty)
+															.filter(f => f && f.Active && f.Name)
+															.sort((a, b) => a.Name.localeCompare(b.Name))
+															.map(faculty => <option value={faculty.id} key={faculty.id}>{faculty.Name}</option>)
+													}
+												</select>
+											</div>
+										}
+
+										{
+											!(originArray.length === 1) &&
+											<div className="tw-btn-red text-center" onClick={() => removeSection(id)}>Delete Section</div>
+										}
+
+									</div>
+								})
+						}
+
+						<div className="flex flex-row items-center">
+							<div
+								onClick={addNewSection}
+								className="mr-4 w-8 h-8 flex items-center justify-center rounded-full border cursor-pointer bg-blue-brand hover:bg-blue-400">+</div>
+							<div>Add Another Class Section</div>
 						</div>
 
 						<div className="flex flex-col justify-center">
+
 							<button
 								type={"submit"}
 								className="w-full items-center tw-btn-blue py-3 font-semibold my-4">
-								{isNew() ? 'Create Class' : 'Update Class'}
+								{isNewSchool ? 'Create Class' : 'Update Class'}
 							</button>
 						</div>
 					</form>
