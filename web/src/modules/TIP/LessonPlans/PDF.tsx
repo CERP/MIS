@@ -52,7 +52,6 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
                 document={{
                     url: decodeURIComponent(pdf_url),
                 }}
-            // onDocumentClick={() => downloadPdf(lesson.lesson_title, pdf_url)}
             />
             <div className="flex flex-row justify-between my-4 w-full">
                 <div className="bg-blue-150 rounded-full flex justify-center items-center h-12 w-12 ml-3"

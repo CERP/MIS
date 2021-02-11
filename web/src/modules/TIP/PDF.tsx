@@ -74,7 +74,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 				</div>
 			</div>
 		</div>
-		<div className="flex flex-row justify-around my-4 w-full">
+		<div className="flex flex-row justify-around my-4 w-full print:hidden">
 			<div className="w-1/7" >
 				<Link className="no-underline"
 					to={url[2] === "diagnostic-test" ?
