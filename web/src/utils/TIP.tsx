@@ -179,17 +179,8 @@ export const calculateLearningLevelFromOralTest = (report: TIPDiagnosticReport):
 	if (grade_percentages["KG"] < threshold) {
 		return "KG"
 	}
-	if (grade_percentages["1"] < threshold) {
-		return "1"
-	}
-	if (grade_percentages["2"] < threshold) {
-		return "2"
-	}
-	if (grade_percentages["3"] < threshold) {
-		return "3"
-	}
 
-	return "KG"
+	return "1"
 }
 
 export const calculateLearningLevelFromDiagnosticTest = (report: TIPDiagnosticReport): TIPGrades => {
@@ -241,8 +232,9 @@ export const calculateLearningLevelFromDiagnosticTest = (report: TIPDiagnosticRe
 	if (grade_percentages["3"] < threshold) {
 		return "3"
 	}
-	return "Oral Test"
+	return "Not Needed"
 }
+
 
 // CONVERSIONS
 export const convertLearningGradeToGroupName = (grade: TIPGrades) => {
@@ -252,7 +244,8 @@ export const convertLearningGradeToGroupName = (grade: TIPGrades) => {
 		"1": "Yellow",
 		"2": "Green",
 		"3": "Orange",
-		"Oral Test": "Oral"
+		"Oral Test": "Oral",
+		"Not Needed": "Remediation Not Needed"
 	}
 
 	return conversion_map[grade]
