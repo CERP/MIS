@@ -35,6 +35,7 @@ module.exports = {
 		'react/jsx-key': ['warn'],
 		'@typescript-eslint/no-extra-semi': ['warn'],
 		'@typescript-eslint/no-empty-function': ['warn'],
+		'@typescript-eslint/no-var-requires': 0,
 	},
 	settings: {
 		react: {

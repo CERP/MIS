@@ -92,7 +92,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
                                 rel="noopener noreferrer">
                                 {decodeURIComponent(link).split('/').slice(-1)}
                             </a>
-                            <div className="flex justify-center items-center">
+                            <div className="flex justify-center items-center" onClick={() => downloadPdf(lesson.lesson_title, link)}>
                                 <img className="h-4 w-4" src={BlueDownload} />
                             </div>
                         </div>
