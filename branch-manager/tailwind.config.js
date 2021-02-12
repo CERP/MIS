@@ -36,6 +36,9 @@ module.exports = {
 				'orange-brand': '#FFC107',
 				'blue-brand': '#74ACED',
 				'gray-brand': '#E0E0E0'
+			},
+			screens: {
+				'print': { 'raw': 'print' }
 			}
 		},
 		spacing: {

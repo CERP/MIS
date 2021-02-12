@@ -26,7 +26,7 @@ export const AppHeader = () => {
 	}
 
 	return (
-		<div className={clsx("antialiased sticky top-0 z-50", {
+		<div className={clsx("antialiased sticky top-0 z-50 print:hidden", {
 			"bg-gray-100 shadow-md": !isUserLogged,
 			"bg-teal-500": isUserLogged
 		})}>

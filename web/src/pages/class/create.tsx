@@ -173,7 +173,7 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 
 					<div className="text-white text-center text-base my-5">Fill Class Information</div>
 
-					<form id='mis-class' className="text-white space-y-4 px-4" onSubmit={handleSubmit}>
+					<form id='class-form' className="text-white space-y-4 px-4 w-full md:w-3/5" onSubmit={handleSubmit}>
 
 						<div>Name*</div>
 						<div>
@@ -203,7 +203,7 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 							value={state.class.classYear} onChange={handleInput} />
 
 						<div>Subjects*</div>
-						<div className="grid grid-cols-3 gap-3">
+						<div className="grid grid-cols-3 md:grid-cols-5 gap-3">
 							{
 								Object.entries(state.class.subjects)
 									.map(([subject, value], index) => (
@@ -223,7 +223,7 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 								value={state.newSubject}
 								placeholder="Type new subject name"
 								autoComplete="off"
-								className="tw-input bg-transparent border-blue-brand ring-1" />
+								className="tw-input w-full bg-transparent border-blue-brand ring-1" />
 							<div
 								onClick={addNewSubject}
 								className="ml-4 w-8 h-8 flex items-center justify-center rounded-full border cursor-pointer bg-blue-brand hover:bg-blue-400">+</div>
@@ -278,7 +278,6 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 						</div>
 
 						<div className="flex flex-col justify-center">
-
 							<button
 								type={"submit"}
 								className="w-full items-center tw-btn-blue py-3 font-semibold my-4">

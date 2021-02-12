@@ -3,7 +3,9 @@ import React, { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
+import toTitleCase from 'utils/toTitleCase'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
+
 import UserIconSvg from 'assets/svgs/user.svg'
 
 type Filter = {
@@ -17,6 +19,9 @@ export const StudentList = () => {
 	const [filter, setFilter] = useState<Filter>({
 		active: true
 	})
+
+	// TODO: add a check here for ax_limit: state.db.max_limit
+	// to restrict adding students
 
 	const sections = useMemo(() => {
 		return getSectionsFromClasses(classes)
@@ -55,12 +60,12 @@ export const StudentList = () => {
 							<option>Tag</option>
 						</select>
 						<select className="tw-select rounded shadow text-teal-500 w-full">
-							<option>Class</option>
+							<option>Choose Class</option>
 							{
 								sections
-									.sort((a, b) => (a.classYear ?? 0 - b.classYear ?? 0))
+									.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
 									.map(s => (
-										<option key={s.id + s.class_id} value={s.id}>{s.namespaced_name}</option>
+										<option key={s.id + s.class_id} value={s.id}>{toTitleCase(s.namespaced_name, '-')}</option>
 									))
 							}
 						</select>

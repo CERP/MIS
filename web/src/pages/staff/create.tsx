@@ -194,7 +194,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 				<div className="text-2xl font-bold mt-4 mb-8 text-center">{isNewStaff ? "Add Staff" : 'Update Staff'}</div>
 				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 pb-6 my-4 md:mt-8">
 					<div className="text-white text-center text-base my-5">Personal Information</div>
-					<div className="flex flex-row items-baseline justify-between w-3/5">
+					<div className="flex flex-row items-baseline justify-between w-3/5 md:w-1/4">
 						<div className="bg-white p-1 rounded-full text-teal-500">
 							<svg className="w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
@@ -211,14 +211,14 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 							</svg>
 						</label>
 					</div>
-					<form id='admin-account' className="text-white space-y-4 px-4" onSubmit={handleSubmit}>
+					<form id='staff-form' className="text-white space-y-4 px-4 w-full md:w-3/5" onSubmit={handleSubmit}>
 						<div>Full Name*</div>
 						<input
 							name="Name"
 							onChange={handleInput}
 							required
 							value={profile.Name}
-							placeholder="e.g. John Doe"
+							placeholder="Type name"
 							className="tw-input w-full bg-transparent border-blue-brand ring-1" />
 
 
@@ -359,7 +359,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 							name="ManName"
 							onChange={handleInput}
 							value={profile.ManName}
-							placeholder="e.g. John Doe"
+							placeholder="Type name"
 							className="tw-input w-full bg-transparent border-blue-brand ring-1" />
 
 						<div>{profile.Married ? "Spouse CNIC" : "Father CNIC"}</div>

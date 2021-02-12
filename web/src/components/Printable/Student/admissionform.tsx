@@ -22,7 +22,7 @@ const AdmissionForm = (props: PropsType) => {
     const avatar = student.ProfilePicture ? (student.ProfilePicture.url || student.ProfilePicture.image_string) : undefined
     const section = getSectionFromId(student.section_id, classes)
 
-    return (<div className="print-only admission-form">
+    return (<div className="admission-form hidden print:block">
         <div className="header-section">
             <div className="header-body">
                 <div className="logo-container">
