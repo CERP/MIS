@@ -9,7 +9,8 @@ interface P {
 const Groups: React.FC<P> = ({ students, color, level }) => {
 
     return <div className="flex flex-wrap flex-col justify-between w-full">
-        <div className={`flex flex-row justify-between h-7 items-center text-white px-3 ${color === 'Oral' || color === 'Remediation Not Needed' ? 'bg-black' : `bg-${color.toLowerCase()}-primary`}`}>
+        <div className={`flex flex-row justify-between h-7 items-center text-white px-3 ${color === 'Oral' ? 'bg-gray-400' :
+            color === 'Remediation Not Needed' ? 'bg-gray-600' : `bg-${color.toLowerCase()}-primary`}`}>
             <div className="capitalize">{color} Group</div>
             <div>Remedial Level {level}</div>
         </div>

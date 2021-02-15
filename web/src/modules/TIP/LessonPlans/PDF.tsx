@@ -27,13 +27,13 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
     const { class_name, subject, lesson_number } = match.params
 
     const lesson = targeted_instruction.curriculum[class_name][subject][lesson_number]
-
-    let links = lesson.teaching_manual_link.split(/[\r\n]+/)
+    //filter function removing empty strings from array
+    let links = lesson.teaching_manual_link.split(/[\r\n]+/).filter(Boolean)
     if (btn_type === 'activities') {
-        links = lesson.activity_links.split(/[\r\n]+/)
+        links = lesson.activity_links.split(/[\r\n]+/).filter(Boolean)
     }
     if (btn_type === 'teaching_material') {
-        links = lesson.material_links.split(/[\r\n]+/)
+        links = lesson.material_links.split(/[\r\n]+/).filter(Boolean)
     }
 
     // by default, we have pdf_url coming for curriculum
@@ -84,7 +84,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
                     </button>
                 </div>
                 {
-                    links.map((link, index) => {
+                    links.length > 0 ? links.map((link, index) => {
                         return <div key={index} className="bg-white p-2 my-3 rounded-md mb-2 flex flex-row justify-between">
                             <a className="text-blue-900 text-xs break-all mr-3"
                                 href={link}
@@ -92,11 +92,17 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
                                 rel="noopener noreferrer">
                                 {decodeURIComponent(link).split('/').slice(-1)}
                             </a>
-                            <div className="flex justify-center items-center" onClick={() => downloadPdf(lesson.lesson_title, link)}>
-                                <img className="h-4 w-4" src={BlueDownload} />
-                            </div>
+                            {
+                                btn_type !== 'activities' && <div className="flex justify-center items-center"
+                                    onClick={() => downloadPdf(lesson.lesson_title, link)}>
+                                    <img className="h-4 w-4" src={BlueDownload} />
+                                </div>
+                            }
                         </div>
-                    })
+                    }) :
+                        <div className="bg-white p-2 my-3 rounded-md mb-2 flex flex-row justify-between text-blue-900">
+                            {`There are no ${btn_type.replace('_', ' ')} for this lesson plan`}
+                        </div>
                 }
 
             </div>

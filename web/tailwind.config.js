@@ -48,6 +48,9 @@ module.exports = {
 				'red-250': '#FF9191',
 				'green-250': '#C6EFCE',
 				'yellow-250': '#FFEB9C',
+			},
+			screens: {
+				'print': {'raw': 'print'},
 			}
 		},
 		spacing: {

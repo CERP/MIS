@@ -14,25 +14,15 @@ type PropsType = P & RouteComponentProps
 // for diagnostic, grades will be tipgrades
 const Classes: React.FC<PropsType> = ({ setSectionId, sortedSections, match }) => {
 
-	const index_map = [
-		'bg-purple-primary',
-		'bg-light-blue-primary',
-		'bg-yellow-primary',
-		'bg-green-primary',
-		'bg-orange-primary'
-	]
-
 	const url = match.url.split('/')
 
 	// "grade" is misleading as we only deal with TIPLevels here. we map the level to a 
 	// TIPGrade inside the map function below (mapped_grade)
 	return <div className="flex flex-wrap flex-row justify-around w-full mx-4">
 		{
-			sortedSections && sortedSections.map((classObj, index) => {
+			sortedSections && sortedSections.map((classObj) => {
 				const matches = classObj.namespaced_name.match(/[0-9]+/g)
 				const class_number = matches.length > 0 ? matches[0] : ''
-
-				const color = class_number ? index_map[parseInt(class_number) % index_map.length] : index_map[index % index_map.length]
 
 				return <div
 					key={classObj.id}
