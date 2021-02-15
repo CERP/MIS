@@ -110,7 +110,7 @@ export const AddStudent: React.FC<AddStudentProps> = ({ skipStage }) => {
 						AdmissionNumber,
 						Fee: 0,
 
-						section_id: "",
+						section_id: defaultSection.id,
 						BloodType: "",
 						prospective_section_id: "",
 
@@ -153,7 +153,7 @@ export const AddStudent: React.FC<AddStudentProps> = ({ skipStage }) => {
 		}
 
 		reader.readAsText(file)
-	}, [])
+	}, [state])
 
 	const deleteStudent = (id: string) => {
 		dispatch(deleteStudentById(id))

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { RouteComponentProps } from 'react-router-dom'
+import { Redirect, RouteComponentProps } from 'react-router-dom'
 import Dynamic from '@cerp/dynamic'
 import { v4 } from 'node-uuid'
 import clsx from 'clsx'
@@ -48,6 +48,7 @@ type State = {
 	class: MISClass
 	newSection: string
 	newSubject: string
+	redirectTo: string
 }
 
 export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> = ({ match }) => {
@@ -61,7 +62,8 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 	const [state, setState] = useState<State>({
 		class: classId ? classes[classId] : blankClass,
 		newSection: '',
-		newSubject: ''
+		newSubject: '',
+		redirectTo: '',
 	})
 
 	const handleSubmit = (event: React.FormEvent) => {
@@ -72,6 +74,13 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 
 		// dispatch createClass merge
 		dispatch(createEditClass(state.class))
+
+		// TODO: ADD RHT
+		if (isNewSchool) {
+			setTimeout(() => {
+				setState({ ...state, redirectTo: '/classes' })
+			}, 1500)
+		}
 	}
 
 	const handleInput = (event: React.ChangeEvent<HTMLInputElement & HTMLSelectElement & HTMLTextAreaElement>) => {
@@ -163,6 +172,12 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 				}
 			}
 		})
+	}
+
+	if (state.redirectTo) {
+		return (
+			<Redirect to={state.redirectTo} />
+		)
 	}
 
 	return (
