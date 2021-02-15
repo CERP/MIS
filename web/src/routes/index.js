@@ -62,7 +62,11 @@ import { ClassList } from 'pages/class/list'
 import { CreateOrUpdateClass } from 'pages/class/create'
 
 import { StudentList } from 'pages/students/list'
-import { CreateOrUpdateStudent } from 'pages/students/create'
+import { CreateOrUpdateStudent } from 'pages/students/add/create'
+import { AddStudentSelect } from 'pages/students/add'
+import { ImportStudentsCSV } from 'pages/students/add/importExcel'
+
+
 export default class Routes extends React.Component {
 
 	constructor(props) {
@@ -99,6 +103,8 @@ export default class Routes extends React.Component {
 					<TrackedRoute path="/staff/:id/profile" exact component={CreateOrUpdateStaff} />
 					<TrackedRoute path="/staff" exact component={StaffList} />
 
+					<TrackedRoute path="/students/add-selection" exact component={AddStudentSelect} />
+					<TrackedRoute path="/students/excel-import" exact component={ImportStudentsCSV} />
 					<TrackedRoute path="/students/:id/profile" exact component={CreateOrUpdateStudent} />
 					<TrackedRoute path="/students/new" exact component={CreateOrUpdateStudent} />
 					<TrackedRoute path="/students" exact component={StudentList} />
@@ -146,20 +152,20 @@ export default class Routes extends React.Component {
 					<TrackedRoute path="/reset-password" component={ResetPassword} />
 					<Route path="/verify-code" component={MISActivation} />
 					<Route exact path="/" component={Landing} />
-					
+
 					<TrackedRoute path="/school-login" component={SchoolLogin} />
 					<TrackedRoute path="/staff-login" component={StaffLogin} />
 					<TrackedRoute exact path="/signup" component={SchoolSignup} />
 					<TrackedRoute exact path="/school/setup" component={SchoolSetup} />
 					<TrackedRoute exact path="/school/onboarding" component={SchoolOnboarding} />
-					
+
 					<Route path="/auto-login" component={AutoLogin} />
-					
+
 					<Route exact path="/pricing" component={Pricing} />
 					<Route exact path="/about-us" component={About} />
 					<Route exact path="/features" component={Feature} />
 					<Route exact path="/contact-us" component={Contact} />
-					
+
 				</Switch>
 			</BrowserRouter>
 		</Provider>
