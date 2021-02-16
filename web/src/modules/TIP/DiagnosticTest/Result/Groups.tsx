@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import React from 'react';
 
 interface P {
@@ -6,17 +7,14 @@ interface P {
     students: RootDBState["students"]
 }
 
-const getColor = (group: TIPLearningGroups) => {
-    if (group === 'Oral')
-        return 'bg-gray-400'
-    if (group === 'Remediation Not Needed')
-        return 'bg-gray-600'
-}
 
 const Groups: React.FC<P> = ({ students, color, level }) => {
 
     return <div className="flex flex-wrap flex-col justify-between w-full">
-        <div className={`flex flex-row justify-between h-7 items-center text-white px-3 ${color === 'Oral' || color === 'Remediation Not Needed' ? getColor(color) : `bg-${color.toLowerCase()}-primary`}`}>
+        <div className={clsx("flex flex-row justify-between h-7 items-center text-white px-3", {
+            "bg-gray-400": color === 'Oral',
+            "bg-gray-600": color === 'Remediation Not Needed'
+        }, `bg-${color.toLowerCase()}-primary`)}>
             <div className="capitalize">{color} Group</div>
             <div>Remedial Level {level}</div>
         </div>
