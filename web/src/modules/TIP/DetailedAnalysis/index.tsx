@@ -15,7 +15,7 @@ const DetailedAnalysis: React.FC<P> = ({ students, classes }) => {
     const [group, setGroup] = useState<TIPGrades>('1')
     const [subject, setSubject] = useState<TIPSubjects>('English')
 
-    const groups = { "0": "Blue", "1": "Yellow", "2": "Green", "3": "Orange", "Oral Test": "Oral", "Not Needed": "Not Needed" }
+    const groups: Record<TIPGrades, TIPLearningGroups> = { "KG": "Blue", "1": "Yellow", "2": "Green", "3": "Orange", "Oral Test": "Oral", "Not Needed": "Remediation Not Needed" }
     const subjects: TIPSubjects[] = ["English", "Urdu", "Maths"]
 
     const filtered_students = useMemo(() => getStudentsByGroup(students, group, subject), [subject, group])
@@ -28,7 +28,7 @@ const DetailedAnalysis: React.FC<P> = ({ students, classes }) => {
                 <option value="">Group</option>
                 {
                     Object.entries(groups).map(([grade, group]) => (
-                        <option key={grade} value={grade === "0" ? "KG" : grade}>{group}</option>
+                        <option key={grade} value={grade}>{group}</option>
                     ))
                 }
             </select>
