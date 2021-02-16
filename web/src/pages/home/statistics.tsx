@@ -99,7 +99,7 @@ export const StatsTab = () => {
 	return (
 		<div className="p-10 md:w-2/5 mx-auto">
 
-			<div className="text-center text-2xl mb-6">School Daily Statistics</div>
+			<div className="text-center text-2xl mb-6 md:hidden">School Daily Statistics</div>
 
 			<div className="p-6 bg-white rounded-2xl border shadow-md">
 				<div className="text-center text-lg font-bold">Attendance</div>

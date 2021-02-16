@@ -12,8 +12,7 @@ export const SettingTab = () => {
 
 	return (
 		<div className="p-10 md:w-2/5 mx-auto">
-			<div className="text-center text-lg mb-6">Tap to configure the module</div>
-
+			<div className="text-center text-lg mb-6 md:hidden">Tap to configure the module</div>
 			<Card
 				title={"Staff"}
 				link="/staff"

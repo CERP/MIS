@@ -60,7 +60,7 @@ export const ActionTab = () => {
 	return (
 		<div className="p-10 md:w-4/5 mx-auto">
 
-			<div className="text-center text-lg mb-6">What would you like to do?</div>
+			<div className="text-center text-lg mb-6 md:hidden">What would you like to do?</div>
 
 			<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
 				{
