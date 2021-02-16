@@ -78,7 +78,7 @@ const List: React.FC<PropsType> = ({ match, faculty, faculty_id, history, curric
 						className="no-underline bg-blue-100 h-20 w-full mx-3 rounded-md mb-3 flex flex-row justify-between items-center px-2"
 						onClick={(e) => redirect(e, curr.lesson_number)}>
 
-						<div className="flex flex-col justify-between items-center w-5/6 h-15 pl-4">
+						<div className="flex flex-col justify-between items-center w-full h-15 pl-4">
 							<div className="text-white text-lg font-bold mb-1">{curr.lesson_title}</div>
 							<div className="text-xs text-white">{`Lesson number ${curr.lesson_number}`}</div>
 						</div>

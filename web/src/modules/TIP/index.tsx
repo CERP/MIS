@@ -20,7 +20,7 @@ enum Layouts {
 
 type PropsType = P & RouteComponentProps
 
-const Home: React.FC<PropsType> = ({ faculty, faculty_id, curriculum, history }) => {
+const Home: React.FC<PropsType> = ({ faculty, faculty_id, curriculum }) => {
 
 	const max_progress = useMemo(() => getLessonProgress(faculty[faculty_id], curriculum), [faculty_id])
 
@@ -43,73 +43,86 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id, curriculum, history })
 			</Link>
 		}
 		{
-			layout === Layouts.DIAGNOSTIC && <Link className="container sm:px-8 bg-white rounded-2xl m-3 h-44 flex flex-col content-center items-center shadow-lg no-underline"
-				to={'/targeted-instruction/diagnostic-test'}>
-				<img className="h-24 py-4 w-24" src={DiagnosticItalic} alt="img" />
-				<div className="text-blue-900 text-lg font-bold">Starting Test</div>
-			</Link>
+			layout === Layouts.DIAGNOSTIC && <div className="w-full flex justify-center">
+				<Link className="container sm:px-8 bg-white rounded-2xl m-3 h-44 flex flex-col content-center items-center shadow-lg no-underline"
+					to={'/targeted-instruction/diagnostic-test'}>
+					<img className="h-24 py-4 w-24" src={DiagnosticItalic} alt="img" />
+					<div className="text-blue-900 text-lg font-bold">Starting Test</div>
+				</Link></div>
 		}
 		{
-			layout === Layouts.FORMATIVE && <Link className="container sm:px-8 bg-white rounded-2xl m-3 h-44 flex flex-col content-center items-center shadow-lg no-underline"
-				to={'/targeted-instruction/formative-test'}>
-				<img className="h-24 py-4 pr-4 w-28" src={Formative} alt="img" />
-				<div className="text-blue-900 text-lg font-bold">Midpoint Test</div>
-			</Link>
-		}
-		{
-			layout === Layouts.SUMMATIVE && <Link className="container sm:px-8 bg-white rounded-2xl m-3 h-44 flex flex-col content-center items-center shadow-lg no-underline"
-				to={'/targeted-instruction/summative-test'}>
-				<img className="h-24 py-4 pr-4 w-28" src={Summative} alt="img" />
-				<div className="text-blue-900 text-lg font-bold">Final Test</div>
-			</Link>
-		}
-
-		<div className="flex flex-row content-center items-center justify-center w-full">
-			<Link className="container sm:px-8 bg-white rounded-xl m-3 h-36 flex flex-col content-center items-center shadow-lg no-underline"
-				to={"/targeted-instruction/training-videos"}>
-				<img className="h-20 py-4" src={TrainingMaterials} alt="img" />
-				<div className="text-xs text-blue-900 font-bold">Training Materials</div>
-			</Link>
-			<Link className="container sm:px-8 bg-white rounded-xl m-3 h-36 flex flex-col content-center items-center shadow-lg no-underline"
-				to={"/targeted-instruction/lesson-plans"}>
-				<img className="h-20 p-4" src={LessonPlans} alt="img" />
-				<div className="text-xs text-blue-900 font-bold">Lesson Plans</div>
-			</Link>
-		</div>
-
-		{
-			false && layout === Layouts.DIAGNOSTIC && <div className="flex flex-row content-center items-center justify-center w-full opacity-50">
-				<Link className="container sm:px-8 bg-white rounded-xl m-3 h-28 flex flex-col content-center items-center shadow-lg no-underline"
-					to={"/targeted-instruction/formative-test"}>
-					<img className="h-12 p-4" src={Formative} alt="img" />
-					<div className="text-xs text-blue-900 font-bold text-center">Midpoint Test</div>
-				</Link>
-				<Link className="container sm:px-8 bg-white rounded-xl m-3 h-28 flex flex-col content-center items-center shadow-lg no-underline"
-					to={"/targeted-instruction/summative-test"}>
-					<img className="h-12 p-4 pr-5" src={Summative} alt="img" />
-					<div className="text-xs text-blue-900 font-bold text-center">Final Test</div>
+			layout === Layouts.FORMATIVE && <div className="w-full flex justify-center">
+				<Link className="container sm:px-8 bg-white rounded-2xl m-3 h-44 flex flex-col content-center items-center shadow-lg no-underline"
+					to={'/targeted-instruction/formative-test'}>
+					<img className="h-24 py-4 pr-4 w-28" src={Formative} alt="img" />
+					<div className="text-blue-900 text-lg font-bold">Midpoint Test</div>
 				</Link>
 			</div>
 		}
 		{
-			<Link className="container sm:px-8 bg-white rounded-xl m-3 h-28 flex flex-row justify-center w-full items-center shadow-lg no-underline"
-				to={"/targeted-instruction/diagnostic-result"}>
-				<img className="h-12 py-4 pl-4" src={DiagnosticItalic} alt="img" />
-				<div className="text-blue-900 text-lg font-bold">Class Results</div>
-			</Link>
+			layout === Layouts.SUMMATIVE && <div className="w-full flex justify-center">
+				<Link className="container sm:px-8 bg-white rounded-2xl m-3 h-44 flex flex-col content-center items-center shadow-lg no-underline"
+					to={'/targeted-instruction/summative-test'}>
+					<img className="h-24 py-4 pr-4 w-28" src={Summative} alt="img" />
+					<div className="text-blue-900 text-lg font-bold">Final Test</div>
+				</Link>
+			</div>
+		}
+
+		<div className="flex flex-row content-center items-center justify-center w-full">
+			<div className="flex flex-row content-center items-center xl:w-14/12 w-full">
+				<Link className="container sm:px-8 bg-white rounded-xl m-3 h-36 flex flex-col content-center items-center shadow-lg no-underline"
+					to={"/targeted-instruction/training-videos"}>
+					<img className="h-20 py-4" src={TrainingMaterials} alt="img" />
+					<div className="text-xs text-blue-900 font-bold">Training Materials</div>
+				</Link>
+				<Link className="container sm:px-8 bg-white rounded-xl m-3 h-36 flex flex-col content-center items-center shadow-lg no-underline"
+					to={"/targeted-instruction/lesson-plans"}>
+					<img className="h-20 p-4" src={LessonPlans} alt="img" />
+					<div className="text-xs text-blue-900 font-bold">Lesson Plans</div>
+				</Link>
+			</div>
+		</div>
+
+		{
+			false && layout === Layouts.DIAGNOSTIC && <div className="flex flex-row content-center items-center justify-center w-full opacity-50">
+				<div className="flex flex-row content-center items-center w-full md:w-full lg:w-14/12 2xl:w-8/12">
+					<Link className="container sm:px-8 bg-white rounded-xl m-3 h-28 flex flex-col content-center items-center shadow-lg no-underline"
+						to={"/targeted-instruction/formative-test"}>
+						<img className="h-12 p-4" src={Formative} alt="img" />
+						<div className="text-xs text-blue-900 font-bold text-center">Midpoint Test</div>
+					</Link>
+					<Link className="container sm:px-8 bg-white rounded-xl m-3 h-28 flex flex-col content-center items-center shadow-lg no-underline"
+						to={"/targeted-instruction/summative-test"}>
+						<img className="h-12 p-4 pr-5" src={Summative} alt="img" />
+						<div className="text-xs text-blue-900 font-bold text-center">Final Test</div>
+					</Link>
+				</div>
+			</div>
+		}
+		{
+			<div className="w-full flex justify-center">
+				<Link className="container sm:px-8 bg-white rounded-xl m-3 h-28 flex flex-row justify-center w-full items-center shadow-lg no-underline"
+					to={"/targeted-instruction/diagnostic-result"}>
+					<img className="h-12 py-4 pl-4" src={DiagnosticItalic} alt="img" />
+					<div className="text-blue-900 text-lg font-bold">Class Results</div>
+				</Link>
+			</div>
 		}
 		{
 			layout === Layouts.SUMMATIVE && <div className="flex flex-row content-center items-center justify-center w-full">
-				<Link className="container sm:px-8 bg-white rounded-xl m-3 h-40 flex flex-col content-center items-center shadow-lg no-underline"
-					to={"/targeted-instruction/diagnostic-result"}>
-					<img className="h-12 py-6" src={DiagnosticItalic} alt="img" />
-					<div className="text-base text-blue-900 font-bold text-center">Starting Test Results</div>
-				</Link>
-				<Link className="container sm:px-8 bg-white rounded-xl m-3 h-40 flex flex-col content-center items-center shadow-lg no-underline"
-					to={"/targeted-instruction/formative-result"}>
-					<img className="h-16 p-4" src={Formative} alt="img" />
-					<div className="text-base text-blue-900 font-bold text-center">Midpoint Test Results</div>
-				</Link>
+				<div className="flex flex-row content-center items-center xl:w-14/12 w-full">
+					<Link className="container sm:px-8 bg-white rounded-xl m-3 h-40 flex flex-col content-center items-center shadow-lg no-underline"
+						to={"/targeted-instruction/diagnostic-result"}>
+						<img className="h-12 py-6" src={DiagnosticItalic} alt="img" />
+						<div className="text-base text-blue-900 font-bold text-center">Starting Test Results</div>
+					</Link>
+					<Link className="container sm:px-8 bg-white rounded-xl m-3 h-40 flex flex-col content-center items-center shadow-lg no-underline"
+						to={"/targeted-instruction/formative-result"}>
+						<img className="h-16 p-4" src={Formative} alt="img" />
+						<div className="text-base text-blue-900 font-bold text-center">Midpoint Test Results</div>
+					</Link>
+				</div>
 			</div>
 		}
 
