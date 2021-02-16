@@ -34,7 +34,7 @@ const InsertGrades: React.FC<PropsType> = (props) => {
 
 	return <div className="flex flex-wrap content-between">
 		<Card class_name={class_name ? class_name : 'Oral Test'} subject={subject} lesson_name='' lesson_no='' />
-		{<div className="m-3 flex flex-wrap w-full justify-between">
+		{<div className="m-3 w-full grid grid-cols-3 md:grid-cols-6 lg:grid-cols-12">
 			{Object.values(students)
 				.sort((a, b) => a.Name.localeCompare(b.Name))
 				.map((std) => {
@@ -48,8 +48,8 @@ const InsertGrades: React.FC<PropsType> = (props) => {
 								`/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades/${std.id}/grading`}>
 						<img className="border border-solid border-green-primary rounded-full h-14 w-14" src="https://www.atmeplay.com/images/users/avtar/avtar_nouser.png" alt="img" />
 						{checked
-							&& <img src={Check} className="absolute h-5 right-4 bottom-7" />}
-						<div className="text-xs flex items-center justify-center w-24 md:w-28 truncate">{std.Name}</div>
+							&& <img src={Check} className="relative h-5 -right-6 bottom-7" />}
+						<div className="text-xs flex items-center justify-center w-24 md:w-28 overflow-ellipsis">{std.Name}</div>
 						<div className="text-xs flex items-center justify-center">{std.RollNumber}</div>
 					</Link>
 				})}
