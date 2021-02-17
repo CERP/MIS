@@ -115,12 +115,12 @@ class SingleStudent extends Component<propTypes, S> {
 		super(props)
 
 		const id = props.match.params.id
-		const student = props.students[id] ? props.students[id].tags ?
+		const student = this.isNew() ? blankStudent() : (props.students[id] && props.students[id].tags ?
 			props.students[id]
 			: {
 				...props.students[id],
 				tags: {}
-			} : blankStudent()
+			})
 
 		this.state = {
 			profile: student,

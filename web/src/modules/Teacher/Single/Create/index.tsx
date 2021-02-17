@@ -95,7 +95,7 @@ class CreateTeacher extends Component<propTypes, S> {
 			profile: {
 				...faculty || blankTeacher(this.isFirst()),
 				HasLogin: this.isFirst() || this.isNew() ? true : faculty && faculty.HasLogin,
-				permissions: this.isFirst() || this.isNew() ? blankTeacher().permissions : faculty && faculty.permissions
+				permissions: (this.isFirst() || this.isNew() || !faculty.permissions) ? blankTeacher().permissions : faculty && faculty.permissions
 			},
 			redirect: false,
 			banner: {
