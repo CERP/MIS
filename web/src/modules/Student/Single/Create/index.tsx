@@ -122,6 +122,8 @@ class SingleStudent extends Component<propTypes, S> {
 				tags: {}
 			})
 
+		console.log("See the students", student)
+
 		this.state = {
 			profile: student,
 			redirect: false,
@@ -136,6 +138,7 @@ class SingleStudent extends Component<propTypes, S> {
 			show_hide_fee: true,
 			toggleMoreInfo: false
 		}
+
 
 		this.former = new Former(this, ["profile"])
 		this.siblings = []
@@ -454,6 +457,10 @@ class SingleStudent extends Component<propTypes, S> {
 		// this means every time students upgrades, we will change the fields to whatever was just sent.
 		// this means it will be very annoying for someone to edit the user at the same time as someone else
 		// which is probably a good thing. 
+
+		if (this.isNew()) {
+			return
+		}
 
 		const nextStudent = newProps.students[newProps.match.params.id]
 
@@ -1033,7 +1040,7 @@ class SingleStudent extends Component<propTypes, S> {
 							{this.state.show_hide_fee ? "Hide" : "Show"} Payments Section
 						</div>
 					</div>}
-
+					{console.log("INSIDE RENDER", this.state)}
 					{this.state.show_hide_fee && (admin || (this.props.user && this.props.user.permissions.fee)) && !prospective ? <div className="divider">Payment</div> : false}
 					{this.state.show_hide_fee && (admin || (this.props.user && this.props.user.permissions.fee)) && !prospective ?
 						Object.entries(this.state.profile.fees).map(([id, fee]) => {
