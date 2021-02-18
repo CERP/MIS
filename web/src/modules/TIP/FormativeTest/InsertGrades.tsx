@@ -46,7 +46,7 @@ const InsertGrades: React.FC<PropsType> = (props) => {
 							url[2] === "oral-test" ?
 								`/${url[1]}/${url[2]}/${subject}/${test_id}/insert-grades/${std.id}/grading` :
 								`/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades/${std.id}/grading`}>
-						<img className="border border-solid border-green-primary rounded-full h-14 w-14" src="https://www.atmeplay.com/images/users/avtar/avtar_nouser.png" alt="img" />
+						<img className="border border-solid border-green-tip-brand rounded-full h-14 w-14" src="https://www.atmeplay.com/images/users/avtar/avtar_nouser.png" alt="img" />
 						{checked
 							&& <img src={Check} className="relative h-5 -right-6 bottom-7" />}
 						<div className="text-xs flex items-center justify-center w-24 md:w-28 overflow-ellipsis">{std.Name}</div>
@@ -59,7 +59,7 @@ const InsertGrades: React.FC<PropsType> = (props) => {
 				className="w-full no-underline flex justify-center items-center"
 				to={url[2] === "diagnostic-test" ? `/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades/test-result` :
 					`/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades/test-result`}>
-				<button className="bg-blue-primary h-11 font-bold text-lg border-none rounded text-white p-2 w-6/12">Finish</button>
+				<button className="bg-blue-tip-brand h-11 font-bold text-lg border-none rounded text-white p-2 w-6/12">Finish</button>
 			</Link>
 		</div>
 	</div>

@@ -19,7 +19,7 @@ const Card: React.FC<P> = ({ class_name, teacher_name, school_name, subject, les
     const group_name = convertLearningGradeToGroupName(convertLearningLevelToGrade(class_name as TIPLevels))
 
     return <div className="w-full flex justify-center print:hidden">
-        <div className={`${`bg-${color}-primary`} container sm:px-8 rounded-md h-20 mb-6 mt-0 w-11/12 md:w-13/12`}>
+        <div className={`${`bg-${color}-tip-brand`} container sm:px-8 rounded-md h-20 mb-6 mt-0 w-11/12 md:w-13/12`}>
             <div className="flex flex-row justify-start">
                 <img className="w-12 h-12 rounded-full p-4" src="https://cdn.dribbble.com/users/2199928/screenshots/11532918/shot-cropped-1590177932366.png?compress=1&resize=400x300" alt="img" />
                 <div className="flex flex-row justify-between w-full">

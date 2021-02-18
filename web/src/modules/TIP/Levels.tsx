@@ -11,11 +11,11 @@ interface P {
 const Levels: React.FC<P> = ({ setSectionId, grades }) => {
 
     const index_map = [
-        'bg-light-blue-primary',
-        'bg-yellow-primary',
-        'bg-green-primary',
-        'bg-orange-primary',
-        'bg-red-primary'
+        'bg-light-blue-tip-brand',
+        'bg-yellow-tip-brand',
+        'bg-green-tip-brand',
+        'bg-orange-tip-brand',
+        'bg-red-tip-brand'
     ]
 
     const grade_map = {

@@ -28,7 +28,7 @@ const Classes: React.FC<PropsType> = ({ setSectionId, sortedSections, match }) =
 					key={classObj.id}
 					className="flex-wrap container w-2/5 sm:px-8 bg-white rounded-lg m-3 h-36 flex items-center justify-start flex-col shadow-lg cursor-pointer"
 					onClick={() => setSectionId(classObj.id)}>
-					<div className={`text-white font-bold shadow-2xl flex items-center justify-center mt-8 mb-5 rounded-full text-xl h-12 w-12 bg-gray-primary`}>{class_number}
+					<div className={`text-white font-bold shadow-2xl flex items-center justify-center mt-8 mb-5 rounded-full text-xl h-12 w-12 bg-gray-tip-brand`}>{class_number}
 					</div>
 					<div className="text-blue-900 text-lg font-thin">{classObj.namespaced_name}</div>
 				</div>

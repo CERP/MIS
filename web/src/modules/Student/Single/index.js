@@ -11,7 +11,7 @@ import Marks from './Marks'
 import StudentCertificates from './Certificates'
 import PrintPreview from './Fees/printPreview'
 import { getIlmxUser } from 'utils/helpers'
-import DiagnosticGrades from './TIP/DiagnosticGrades'
+
 import './style.css'
 
 class StudentPage extends Component {
@@ -34,7 +34,7 @@ class StudentPage extends Component {
 								<Link className={`button ${loc === "attendance" ? "purple" : false}`} to="attendance" replace={true}>Attendance</Link>
 								<Link className={`button ${loc === "marks" ? "blue" : false}`} to="marks" replace={true}>Marks</Link>
 								<Link className={`button ${loc === "certificates" ? "yellow" : false}`} to="certificates" replace={true}>Certificates</Link>
-								{this.props.tip_access && <Link className={`button ${loc === "grades" ? "grey" : false}`} to="grades" replace={true}>Diagnostic Grades</Link>}
+								{/* this.props.tp_access && <Link className={`button ${loc === "grades" ? "grey" : false}`} to="grades" replace={true}>Diagnostic Grades</Link> */}
 							</>
 						}
 					</div>
@@ -51,7 +51,7 @@ class StudentPage extends Component {
 						<Route path="/student/:id/prospective-student" component={Create} />
 						<Route path="/student/prospective-student/new" component={Create} />
 						<Route path="/student/:id/certificates" component={StudentCertificates} />
-						<Route path="/student/:id/grades" component={DiagnosticGrades} /> 
+						{ /*<Route path="/student/:id/grades" component={DiagnosticGrades} /> */ }
 					</>
 				}
 			</div>
@@ -60,6 +60,6 @@ class StudentPage extends Component {
 }
 export default connect(state => ({
 	user: state.db.faculty[state.auth.faculty_id],
-	tip_access: state.db.targeted_instruction_access,
+	tp_access: state.db.target_instruction_access,
 	ilmxUser: getIlmxUser()
 }))(StudentPage)

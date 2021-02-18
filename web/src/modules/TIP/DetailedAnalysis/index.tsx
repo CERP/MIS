@@ -54,7 +54,7 @@ const DetailedAnalysis: React.FC<P> = ({ students, classes }) => {
                 }
             </select>
         </div >
-        <div className="h-10 items-center text-white text-xs bg-blue-primary w-full mt-4 flex flex-row justify-around">
+        <div className="h-10 items-center text-white text-xs bg-blue-tip-brand w-full mt-4 flex flex-row justify-around">
             <div className="w-6/12 flex flex-row justify-between px-3 items-center m-2">
                 <div className="font-bold text-center">Name</div>
             </div>

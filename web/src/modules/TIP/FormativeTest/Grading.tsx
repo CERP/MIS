@@ -128,12 +128,12 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 							</div>
 							<div className="rounded-xl w-32 h-6 bg-white border border-solid border-gray-100 flex justify-center items-center">
 								<button className={is_correct !== undefined && !is_correct ?
-									"border-none h-full rounded-xl text-xs outline-none text-white bg-incorrect-red" :
+									"border-none h-full rounded-xl text-xs outline-none text-white bg-danger-tip-brand" :
 									"border-none bg-white h-full rounded-xl text-xs outline-non"}
 									onClick={() => markQuestion(q_id, question, false)}>Incorrect
 								</button>
 								<button className={is_correct ?
-									"border-none h-full rounded-xl text-xs text-white bg-correct-green outline-none" :
+									"border-none h-full rounded-xl text-xs text-white bg-success-tip-brand outline-none" :
 									"border-none bg-white h-full rounded-xl text-xs outline-none"}
 									onClick={() => markQuestion(q_id, question, true)}>Correct
 								</button>
@@ -143,7 +143,7 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 		</div>
 		<div className="w-full mt-5 flex justify-center">
 			<button
-				className="bg-blue-primary h-11 font-bold text-base border-none rounded-md text-white p-2 w-9/12 mb-4"
+				className="bg-blue-tip-brand h-11 font-bold text-base border-none rounded-md text-white p-2 w-9/12 mb-4"
 				onClick={onSave}>Save and Continue</button>
 		</div>
 	</div>

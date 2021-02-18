@@ -75,7 +75,7 @@ const List: React.FC<PropsType> = ({ match, faculty, faculty_id, history, curric
 					const teacher_record = teacher_lesson_record[curr.lesson_number] || { taken: false }
 
 					return <div key={curr.lesson_number}
-						className="no-underline bg-blue-100 h-20 w-full mx-3 rounded-md mb-3 flex flex-row justify-between items-center px-2"
+						className="no-underline bg-blue-50 h-20 w-full mx-3 rounded-md mb-3 flex flex-row justify-between items-center px-2"
 						onClick={(e) => redirect(e, curr.lesson_number)}>
 
 						<div className="flex flex-col justify-between items-center w-full h-15 pl-4">
@@ -95,7 +95,7 @@ const List: React.FC<PropsType> = ({ match, faculty, faculty_id, history, curric
 					</div>
 				})}
 		<div className="w-full flex justify-center items-center print:hidden" onClick={() => window.print()}>
-			<button className="border-none bg-green-primary rounded-md text-white text-lg p-2 w-3/6 my-3">Print All</button>
+			<button className="border-none bg-green-tip-brand rounded-md text-white text-lg p-2 w-3/6 my-3">Print All</button>
 		</div>
 	</div>
 }
