@@ -11,12 +11,12 @@ interface P {
 const Groups: React.FC<P> = ({ students, color, level }) => {
 
     return <div className="flex flex-wrap flex-col justify-between w-full">
-        <div className={clsx("flex flex-row justify-between h-7 items-center text-white px-3", {
+        <div className={clsx("flex flex-row justify-between py-1 items-center text-white px-3", {
             "bg-gray-400": color === 'Oral',
             "bg-gray-600": color === 'Remediation Not Needed'
         }, `bg-${color.toLowerCase()}-primary`)}>
-            <div className="capitalize">{color} Group</div>
-            <div>Remedial Level {level}</div>
+            <div className="capitalize text-sm mr-1">{color === 'Remediation Not Needed' ? color : `${color} Group`}</div>
+            <div className="capitalize text-sm">{color === 'Oral' || color === 'Remediation Not Needed' ? level : `Remedial Level ${level}`}</div>
         </div>
         {<div className="flex flex-wrap w-full justify-start">
             {Object.values(students)
