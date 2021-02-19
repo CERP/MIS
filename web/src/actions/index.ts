@@ -65,7 +65,7 @@ export const createFacultyMerge = (faculty: MISTeacher, is_first?: boolean) => (
  */
 
 export const uploadFacultyProfilePicture = (facultyId: string, imageString: string) => (dispatch: Function) => {
-	
+
 	const merge_item: ImageMergeItem = {
 		path: ["db", "faculty", facultyId, "ProfilePicture"],
 		image_string: imageString,
@@ -557,8 +557,10 @@ export const markFaculty = (faculty: MISTeacher, date: string, status: MISTeache
 
 	dispatch(createMerges([
 		{
-			path: ["db", "faculty", faculty.id, "attendance", date, status],
-			value: time
+			path: ["db", "faculty", faculty.id, "attendance", date],
+			value: {
+				[status]: time
+			}
 		}
 	]))
 }

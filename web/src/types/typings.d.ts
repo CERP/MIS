@@ -485,7 +485,7 @@ interface MISTeacher {
 	}
 }
 
-type MISTeacherAttendanceStatus = "check_in" | "check_out" | "absent" | "leave" | ""
+type MISTeacherAttendanceStatus = "check_in" | "check_out" | "absent" | "leave" | "CASUAL_LEAVE" | "SICK_LEAVE" | "SHORT_LEAVE" | "PRIVILEGED"
 
 interface MISTeacherAttendance {
 	[date: string]: {
