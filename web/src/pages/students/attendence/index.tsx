@@ -78,30 +78,30 @@ export const StudentAttendance = () => {
 
 	const studentsAttendance = useMemo(() => {
 
-		let studentsAttendance = { PRESENT: 0, LEAVE: 0, ABSENT: 0, UNMARK: 0 }
-		let totalAttendance = 0
+		let attendance = { PRESENT: 0, LEAVE: 0, ABSENT: 0, UNMARK: 0 }
 
 		if (Object.keys(selectedStudents)) {
 
 			for (const studentId of Object.keys(state.selectedStudents)) {
+
 				const student = students[studentId]
-				if (student && student.Name) {
+
+				if (student?.Name) {
 					const record = (student.attendance || {})[attendanceDate]
 					if (record) {
 						if (record.status === AttendanceStatus.PRESENT || record.status === AttendanceStatus.ABSENT) {
-							studentsAttendance[record.status] += 1
+							attendance[record.status] += 1
 						} else {
-							studentsAttendance[AttendanceStatus.LEAVE] += 1
+							attendance[AttendanceStatus.LEAVE] += 1
 						}
-						totalAttendance++
 					}
 				}
 			}
 		}
 
 		return {
-			...studentsAttendance,
-			UNMARK: Object.keys(selectedStudents).length - totalAttendance
+			...attendance,
+			UNMARK: Object.keys(selectedStudents).length - (attendance.PRESENT + attendance.ABSENT + attendance.LEAVE)
 		}
 
 	}, [selectedStudents, students, attendanceDate])
@@ -111,9 +111,12 @@ export const StudentAttendance = () => {
 		dispatch(markAllStudents(sectionStudents, attendanceDate, AttendanceStatus.PRESENT))
 	}
 
-	const toggleAttendanceHandler = (student: MISStudent, status: AttendanceStatus) => {
+	const markAttendanceHandler = (student: MISStudent, status: AttendanceStatus) => {
 		dispatch(markStudent(student, attendanceDate, status))
 	}
+
+	// TODO: add logic to handle modal for sms sending
+	// TODO: add logic to handle log sms history
 
 	return (
 		<AppLayout title="Students Attedance">
@@ -159,10 +162,10 @@ export const StudentAttendance = () => {
 						{
 							Object.keys(selectedStudents)
 								.map((studentId) => (
-									<StudentItem key={studentId}
+									<Card key={studentId}
 										student={students[studentId]}
 										attendanceDate={attendanceDate}
-										toggleAttendance={toggleAttendanceHandler}
+										markAttendance={markAttendanceHandler}
 									/>
 								))
 						}
@@ -174,13 +177,13 @@ export const StudentAttendance = () => {
 	)
 }
 
-type StudentItemProps = {
-	toggleAttendance?: (student: MISStudent, type: AttendanceStatus) => void
+type CardProps = {
+	markAttendance?: (student: MISStudent, type: AttendanceStatus) => void
 	attendanceDate: string
 	student: MISStudent
 }
 
-const StudentItem: React.FC<StudentItemProps> = ({ student, attendanceDate, toggleAttendance }) => {
+const Card: React.FC<CardProps> = ({ student, attendanceDate, markAttendance }) => {
 
 	// to hide and show leave types
 	const [toggleLeave, setToggleLeave] = useState(false)
@@ -200,7 +203,7 @@ const StudentItem: React.FC<StudentItemProps> = ({ student, attendanceDate, togg
 				<div className="flex flex-row items-center space-x-2">
 
 					<button
-						onClick={() => toggleAttendance(student, AttendanceStatus.PRESENT)}
+						onClick={() => markAttendance(student, AttendanceStatus.PRESENT)}
 						name="present"
 						className={clsx("flex items-center justify-center w-8 h-8 rounded-full shadow-md",
 							{
@@ -211,7 +214,7 @@ const StudentItem: React.FC<StudentItemProps> = ({ student, attendanceDate, togg
 					</button>
 
 					<button
-						onClick={() => toggleAttendance(student, AttendanceStatus.ABSENT)}
+						onClick={() => markAttendance(student, AttendanceStatus.ABSENT)}
 						name="absent"
 						className={clsx("flex items-center justify-center w-8 h-8 rounded-full shadow-md",
 							{
@@ -237,7 +240,7 @@ const StudentItem: React.FC<StudentItemProps> = ({ student, attendanceDate, togg
 				toggleLeave && (
 					<div className="flex flex-row justify-end text-xs space-x-2">
 						<button
-							onClick={() => toggleAttendance(student, AttendanceStatus.LEAVE)}
+							onClick={() => markAttendance(student, AttendanceStatus.LEAVE)}
 							className={clsx("border border-orange-brand py-1 px-2 rounded-3xl w-16",
 								{
 									"bg-orange-brand text-white": AttendanceStatus.LEAVE === status
@@ -247,7 +250,7 @@ const StudentItem: React.FC<StudentItemProps> = ({ student, attendanceDate, togg
 						</button>
 
 						<button
-							onClick={() => toggleAttendance(student, AttendanceStatus.SHORT_LEAVE)}
+							onClick={() => markAttendance(student, AttendanceStatus.SHORT_LEAVE)}
 							className={clsx("border border-orange-brand py-1 px-2 rounded-3xl w-16",
 								{
 									"bg-orange-brand text-white": AttendanceStatus.SHORT_LEAVE === status
@@ -257,7 +260,7 @@ const StudentItem: React.FC<StudentItemProps> = ({ student, attendanceDate, togg
 						</button>
 
 						<button
-							onClick={() => toggleAttendance(student, AttendanceStatus.CASUAL_LEAVE)}
+							onClick={() => markAttendance(student, AttendanceStatus.CASUAL_LEAVE)}
 							className={clsx("border border-orange-brand py-1 px-2 rounded-3xl w-16",
 								{
 									"bg-orange-brand text-white": AttendanceStatus.CASUAL_LEAVE === status
@@ -266,7 +269,7 @@ const StudentItem: React.FC<StudentItemProps> = ({ student, attendanceDate, togg
 							<span>Casual</span>
 						</button>
 						<button
-							onClick={() => toggleAttendance(student, AttendanceStatus.SICK_LEAVE)}
+							onClick={() => markAttendance(student, AttendanceStatus.SICK_LEAVE)}
 							className={clsx("border border-orange-brand py-1 px-2 rounded-3xl w-16",
 								{
 									"bg-orange-brand text-white": AttendanceStatus.SICK_LEAVE === status

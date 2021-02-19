@@ -27,7 +27,7 @@ export const AttendanceStatsCard = ({ attendance }: AttendanceStatsCard) => (
 			</div>
 			<div className="flex flex-col items-center justify-center text-gray-500">
 				<div className="text-lg font-semibold">{attendance.UNMARK}</div>
-				<div>Unmark</div>
+				<div>Unmarked</div>
 			</div>
 		</div>
 	</div>
