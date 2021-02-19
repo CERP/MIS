@@ -9,7 +9,7 @@ import iconExams from './assets/exams.svg'
 
 const links: CardProps[] = [
 	{
-		link: "",
+		link: "/students/attendance",
 		title: "attendance",
 		icon: iconAttendance
 	},

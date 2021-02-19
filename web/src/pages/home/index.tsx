@@ -19,7 +19,7 @@ export const Home = () => {
 
 	const { auth } = useSelector((state: RootReducerState) => state)
 
-	const [activeTab, setActiveTab] = useState(Tabs.SETTINGS)
+	const [activeTab, setActiveTab] = useState(Tabs.ACTIONS)
 
 	const renderComponent = () => (
 		cond([

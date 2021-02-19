@@ -14,7 +14,7 @@ import AutoLogin from 'modules/Login/autoLogin'
 // import SchoolLogin from 'modules/Login/school'
 // import ClassModule from 'modules/Class/List'
 // import ClassSingle from 'modules/Class/Single'
-import Attendance from 'modules/Attendance'
+// import Attendance from 'modules/Attendance'
 import TeacherAttendance from 'modules/Teacher-Attendance'
 import SMS from 'modules/SMS'
 import Marks from 'modules/Marks'
@@ -65,6 +65,7 @@ import { StudentList } from 'pages/students/list'
 import { CreateOrUpdateStudent } from 'pages/students/add/create'
 import { AddStudentSelect } from 'pages/students/add'
 import { ImportStudentsCSV } from 'pages/students/add/importExcel'
+import { StudentAttendance } from 'pages/students/attendence'
 
 
 export default class Routes extends React.Component {
@@ -103,6 +104,7 @@ export default class Routes extends React.Component {
 					<TrackedRoute path="/staff/:id/profile" exact component={CreateOrUpdateStaff} />
 					<TrackedRoute path="/staff" exact component={StaffList} />
 
+					<TrackedRoute path="/students/attendance" exact component={StudentAttendance} />
 					<TrackedRoute path="/students/add-selection" exact component={AddStudentSelect} />
 					<TrackedRoute path="/students/excel-import" exact component={ImportStudentsCSV} />
 					<TrackedRoute path="/students/:id/profile" exact component={CreateOrUpdateStudent} />
@@ -113,7 +115,6 @@ export default class Routes extends React.Component {
 					<TrackedRoute path="/classes/new" exact component={CreateOrUpdateClass} />
 					<TrackedRoute path="/classes" exact component={ClassList} />
 
-					<TrackedRoute path="/attendance" component={Attendance} />
 					<TrackedRoute path="/teacher-attendance" component={TeacherAttendance} />
 
 					<TrackedRoute path="/sms" component={SMS} />
