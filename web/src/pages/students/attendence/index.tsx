@@ -12,7 +12,7 @@ import { markAllStudents, markStudent } from 'actions'
 
 type State = {
 	selectedSection?: string
-	attendaceDate?: number
+	date: number
 	selectedStudents: {
 		[id: string]: boolean
 	}
@@ -27,11 +27,15 @@ enum AttendanceStatus {
 	SICK_LEAVE = "SICK_LEAVE"
 }
 
-const getStudentsForSection = (sectionId: string, students: RootDBState["students"]) => Object.values(students)
-	.filter(s => s.Name && s.section_id === sectionId)
+const getStudentsForSection = (sectionId: string, students: RootDBState["students"]) => (
+	Object.values(students)
+		.filter(s => s.Name && s.section_id === sectionId)
+)
 
-const deriveSelectedStudents = (sectionId: string, students: RootDBState["students"]) => getStudentsForSection(sectionId, students)
-	.reduce((agg, curr) => ({ ...agg, [curr.id]: true }), {})
+const deriveSelectedStudents = (sectionId: string, students: RootDBState["students"]) => (
+	getStudentsForSection(sectionId, students)
+		.reduce((agg, curr) => ({ ...agg, [curr.id]: true }), {})
+)
 
 
 export const StudentAttendance = () => {
@@ -39,13 +43,13 @@ export const StudentAttendance = () => {
 	const { classes, students } = useSelector((state: RootReducerState) => state.db)
 
 	const [state, setState] = useState<State>({
-		attendaceDate: Date.now(),
+		date: Date.now(),
 		selectedStudents: {}
 	})
 
-	const { attendaceDate, selectedStudents, selectedSection } = state
+	const { date, selectedStudents, selectedSection } = state
 
-	const attendanceDateString = moment(attendaceDate).format("YYYY-MM-DD")
+	const attendanceDate = moment(date).format("YYYY-MM-DD")
 
 	const sections = useMemo(() => (
 		getSectionsFromClasses(classes)
@@ -53,8 +57,8 @@ export const StudentAttendance = () => {
 	), [classes])
 
 	useEffect(() => {
-		if (sections.length != 0) {
-			const leastOrderSection = sections?.[0]?.id
+		if (sections.length !== 0) {
+			const leastOrderSection = sections[0].id
 			setState({
 				...state,
 				selectedStudents: deriveSelectedStudents(leastOrderSection, students),
@@ -82,7 +86,7 @@ export const StudentAttendance = () => {
 			for (const studentId of Object.keys(state.selectedStudents)) {
 				const student = students[studentId]
 				if (student && student.Name) {
-					const record = (student.attendance || {})[attendanceDateString]
+					const record = (student.attendance || {})[attendanceDate]
 					if (record) {
 						if (record.status === AttendanceStatus.PRESENT || record.status === AttendanceStatus.ABSENT) {
 							studentsAttendance[record.status] += 1
@@ -100,27 +104,27 @@ export const StudentAttendance = () => {
 			UNMARK: Object.keys(selectedStudents).length - totalAttendance
 		}
 
-	}, [selectedStudents, students, attendanceDateString])
+	}, [selectedStudents, students, attendanceDate])
 
 	const markAllPresentHandler = () => {
 		const sectionStudents = getStudentsForSection(selectedSection, students)
-		dispatch(markAllStudents(sectionStudents, attendanceDateString, AttendanceStatus.PRESENT))
+		dispatch(markAllStudents(sectionStudents, attendanceDate, AttendanceStatus.PRESENT))
 	}
 
 	const toggleAttendanceHandler = (student: MISStudent, status: AttendanceStatus) => {
-		dispatch(markStudent(student, attendanceDateString, status))
+		dispatch(markStudent(student, attendanceDate, status))
 	}
 
 	return (
-		<AppLayout title="Student Attedance">
-			<div className="p-5 md:p-10 md:pb-0 print:hidden">
+		<AppLayout title="Students Attedance">
+			<div className="p-5 md:p-10 print:hidden">
 				<div className="space-y-6">
 					<div className="flex flex-row items-center space-x-2">
 						<input
 							name="attendance-date"
 							type="date"
-							onChange={(e) => setState({ ...state, attendaceDate: e.target.valueAsNumber })}
-							value={attendanceDateString}
+							onChange={(e) => setState({ ...state, date: e.target.valueAsNumber })}
+							value={attendanceDate}
 							className="tw-input w-full bg-transparent border-blue-brand ring-1 text-sm" />
 
 						<select
@@ -137,15 +141,15 @@ export const StudentAttendance = () => {
 							}
 						</select>
 					</div>
-					<div className="relative text-xs md:text-base">
+					<div className="relative text-sm md:text-base">
 						<AttendanceStatsCard attendance={studentsAttendance} />
-						<div className="absolute -bottom-2.5 flex flex-row items-center justify-center w-full space-x-4 px-4">
-							<button className="p-1 shadow-md bg-blue-brand text-white rounded-3xl w-2/5">
+						<div className="absolute -bottom-3 md:-bottom-4 flex flex-row items-center justify-center w-full space-x-4 px-4">
+							<button className="p-1 md:p-2 shadow-md bg-blue-brand text-white rounded-3xl w-2/5">
 								Send SMS
 							</button>
 							<button
 								onClick={markAllPresentHandler}
-								className="p-1 shadow-md bg-green-brand text-white rounded-3xl w-2/5">
+								className="p-1 md:p-2 shadow-md bg-green-brand text-white rounded-3xl w-2/5">
 								Mark All Present
 							</button>
 						</div>
@@ -157,7 +161,7 @@ export const StudentAttendance = () => {
 								.map((studentId) => (
 									<StudentItem key={studentId}
 										student={students[studentId]}
-										attendanceDate={attendanceDateString}
+										attendanceDate={attendanceDate}
 										toggleAttendance={toggleAttendanceHandler}
 									/>
 								))
@@ -178,16 +182,19 @@ type StudentItemProps = {
 
 const StudentItem: React.FC<StudentItemProps> = ({ student, attendanceDate, toggleAttendance }) => {
 
+	// to hide and show leave types
 	const [toggleLeave, setToggleLeave] = useState(false)
 
-	const currAttendance = (student.attendance || {})[attendanceDate];
-	const status = (currAttendance ? currAttendance.status : '') as AttendanceStatus
+	const status = student?.attendance?.[attendanceDate]?.status as AttendanceStatus
 
 	return (
-		<div className="p-2 text-sm border rounded-md space-y-1">
+		<div className="p-2 md:p-3 text-sm md:text-base border border-gray-50 rounded-md space-y-1 shadow-md">
 			<div className="flex flex-row items-center justify-between">
 				<div className="flex flex-col w-1/2 items-start">
-					<Link className="overflow-ellipsis truncate hover:underline w-11/12" to={`/student/${student.id}/attendance`}>{toTitleCase(student.Name)}</Link>
+					<Link className="overflow-ellipsis truncate hover:underline hover:text-blue-brand w-11/12 md:w-auto"
+						to={`/student/${student.id}/attendance`}>
+						{toTitleCase(student.Name)}
+					</Link>
 					<div className="text-xs text-gray-600">R# {student.RollNumber}</div>
 				</div>
 				<div className="flex flex-row items-center space-x-2">
@@ -195,28 +202,33 @@ const StudentItem: React.FC<StudentItemProps> = ({ student, attendanceDate, togg
 					<button
 						onClick={() => toggleAttendance(student, AttendanceStatus.PRESENT)}
 						name="present"
-						className={clsx("flex items-center justify-center w-8 h-8 rounded-full shadow-md", {
-							"bg-green-brand text-white": AttendanceStatus.PRESENT === status
-						})}>
-						P
+						className={clsx("flex items-center justify-center w-8 h-8 rounded-full shadow-md",
+							{
+								"bg-green-brand text-white": AttendanceStatus.PRESENT === status
+							}
+						)}>
+						<span>P</span>
 					</button>
 
 					<button
 						onClick={() => toggleAttendance(student, AttendanceStatus.ABSENT)}
 						name="absent"
-						className={clsx("flex items-center justify-center w-8 h-8 rounded-full shadow-md", {
-							"bg-red-brand text-white": AttendanceStatus.ABSENT === status
-						})}>
-						A
+						className={clsx("flex items-center justify-center w-8 h-8 rounded-full shadow-md",
+							{
+								"bg-red-brand text-white": AttendanceStatus.ABSENT === status
+							})
+						}>
+						<span>A</span>
 					</button>
 					{/* TODO: handle click outside */}
 					<button name="leave" className={
-						clsx("rounded-lg shadow-md px-2 py-1", {
-							"bg-orange-brand text-white": status && !(AttendanceStatus.PRESENT === status || AttendanceStatus.ABSENT === status)
-						})}
-						onClick={() => setToggleLeave(!toggleLeave)}
-					>
-						Leave
+						clsx("rounded-lg shadow-md px-2 py-1",
+							{
+								"bg-orange-brand text-white": status && !(AttendanceStatus.PRESENT === status || AttendanceStatus.ABSENT === status)
+							}
+						)}
+						onClick={() => setToggleLeave(!toggleLeave)}>
+						<span>Leave</span>
 					</button>
 				</div>
 			</div>
@@ -226,24 +238,42 @@ const StudentItem: React.FC<StudentItemProps> = ({ student, attendanceDate, togg
 					<div className="flex flex-row justify-end text-xs space-x-2">
 						<button
 							onClick={() => toggleAttendance(student, AttendanceStatus.LEAVE)}
-							className={clsx("border border-orange-brand py-1 px-2 rounded-3xl w-16", {
-								"bg-orange-brand text-white": AttendanceStatus.LEAVE === status
-							})}>Leave</button>
+							className={clsx("border border-orange-brand py-1 px-2 rounded-3xl w-16",
+								{
+									"bg-orange-brand text-white": AttendanceStatus.LEAVE === status
+								}
+							)}>
+							<span>Leave</span>
+						</button>
+
 						<button
 							onClick={() => toggleAttendance(student, AttendanceStatus.SHORT_LEAVE)}
-							className={clsx("border border-orange-brand py-1 px-2 rounded-3xl w-16", {
-								"bg-orange-brand text-white": AttendanceStatus.SHORT_LEAVE === status
-							})}>Short</button>
+							className={clsx("border border-orange-brand py-1 px-2 rounded-3xl w-16",
+								{
+									"bg-orange-brand text-white": AttendanceStatus.SHORT_LEAVE === status
+								}
+							)}>
+							<span>Short</span>
+						</button>
+
 						<button
 							onClick={() => toggleAttendance(student, AttendanceStatus.CASUAL_LEAVE)}
-							className={clsx("border border-orange-brand py-1 px-2 rounded-3xl w-16", {
-								"bg-orange-brand text-white": AttendanceStatus.CASUAL_LEAVE === status
-							})}>Casual</button>
+							className={clsx("border border-orange-brand py-1 px-2 rounded-3xl w-16",
+								{
+									"bg-orange-brand text-white": AttendanceStatus.CASUAL_LEAVE === status
+								}
+							)}>
+							<span>Casual</span>
+						</button>
 						<button
 							onClick={() => toggleAttendance(student, AttendanceStatus.SICK_LEAVE)}
-							className={clsx("border border-orange-brand py-1 px-2 rounded-3xl w-16", {
-								"bg-orange-brand text-white": AttendanceStatus.SICK_LEAVE === status
-							})}>Sick</button>
+							className={clsx("border border-orange-brand py-1 px-2 rounded-3xl w-16",
+								{
+									"bg-orange-brand text-white": AttendanceStatus.SICK_LEAVE === status
+								}
+							)}>
+							<span>Sick</span>
+						</button>
 					</div>
 				)
 			}
