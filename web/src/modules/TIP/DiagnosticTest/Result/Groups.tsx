@@ -7,7 +7,7 @@ interface P {
     students: RootDBState["students"]
 }
 
-const getGroup = (group: TIPLearningGroups) => {
+const getTIPGroup = (group: TIPLearningGroups) => {
     if (group === 'Oral')
         return `${group} Test Needed`
     if (group === 'Remediation Not Needed')
@@ -22,7 +22,7 @@ const Groups: React.FC<P> = ({ students, color, level }) => {
             "bg-gray-400": color === 'Oral',
             "bg-gray-600": color === 'Remediation Not Needed'
         }, `bg-${color.toLowerCase()}-tip-brand`)}>
-            <div className="capitalize text-sm mr-1">{color === 'Remediation Not Needed' || color === 'Oral' ? getGroup(color) : `${color} Group`}</div>
+            <div className="capitalize text-sm mr-1">{color === 'Remediation Not Needed' || color === 'Oral' ? getTIPGroup(color) : `${color} Group`}</div>
             <div className="capitalize text-sm">{color !== 'Oral' && color !== 'Remediation Not Needed' && `Remedial Level ${level}`}</div>
         </div>
         {<div className="flex flex-wrap w-full justify-start">
