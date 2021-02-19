@@ -338,7 +338,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 									name="AdmissionNumber"
 									onChange={handleInput}
 									value={state.profile.AdmissionNumber}
-									placeholder="Type admimission # "
+									placeholder="Type admimission #"
 									className="tw-input w-full bg-transparent border-blue-brand ring-1" />
 							</div>
 						</div>

@@ -11,7 +11,7 @@ export const SettingTab = () => {
 	const { faculty, students, classes } = useSelector((state: RootReducerState) => state.db)
 
 	return (
-		<div className="p-10 md:w-2/5 mx-auto">
+		<div className="p-6 md:w-2/5 mx-auto">
 			<div className="text-center text-lg mb-6 md:hidden">Tap to configure the module</div>
 			<Card
 				title={"Staff"}
@@ -41,20 +41,20 @@ export const SettingTab = () => {
 	)
 }
 
-type TCardProps = {
+type CardProps = {
 	title: string
 	caption: string
 	icon: string
 	link: string
 }
 
-const Card = ({ title, caption, icon, link }: TCardProps) => {
+const Card = ({ title, caption, icon, link }: CardProps) => {
 	return (
 		<Link to={link} className="flex flex-col space-between">
 			<div className="p-3 rounded-full flex flex-row justify-between border shadow-md items-center">
 				<div className="flex flex-row">
 					<img className="mr-4 w-12 h-12 rounded-full" src={icon} alt="icon" />
-					<div className="flex flex-col">
+					<div className="flex flex-col overflow-ellipsis truncate w-10/12">
 						<div className="text-gray-900 font-semibold">{title}</div>
 						<div className="text-gray-500">{caption}</div>
 					</div>
