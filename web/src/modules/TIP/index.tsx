@@ -39,7 +39,7 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id, curriculum }) => {
 		{
 			<Link className={`flex justify-center content-center w-full mt-2 no-underline ${layout === Layouts.DIAGNOSTIC && "opacity-50"}`}
 				to={'/targeted-instruction/detailed-analysis'}>
-				<button className="border-none bg-white text-blue-900 shadow-md p-2 px-5 rounded-md outline-none cursor-pointer">View Remedial Groups</button>
+				<button className="border border-solid border-blue-900 bg-white text-blue-900 shadow-lg p-2 px-5 rounded-2xl outline-none cursor-pointer">View Class / Groups</button>
 			</Link>
 		}
 		{
