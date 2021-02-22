@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-
+import React, { useState } from 'react';
+import ClassViewCard from './ClassViewCard'
 interface P {
     students: RootDBState["students"]
     sorted_sections: AugmentedSection[]
@@ -32,10 +32,17 @@ const ClassView: React.FC<P> = ({ students, sorted_sections }) => {
             </div>
         </div>
         <div className="flex flex-col">
-            {/* {Object.values(filtered_students || {}).map((std) => {
-                const class_name = getClassnameFromSectionId(sorted_sections, std.section_id)
-                return <DetailedCard key={std.id} name={std.Name} roll_no={std.RollNumber} class_name={class_name} />
-            })} */}
+            {
+                Object.values(students || {})
+                    .filter(t => t.section_id === section_id)
+                    .map((std) => (
+                        <ClassViewCard
+                            key={std.id}
+                            name={std.Name}
+                            //@ts-ignore
+                            learning_levels={std.targeted_instruction.learning_level} />
+                    ))
+            }
         </div>
     </>
 }

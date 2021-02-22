@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { getStudentsByGroup, getClassnameFromSectionId } from 'utils/TIP'
-import DetailedCard from './DetailedCard'
+import GroupViewCard from './GroupViewCard'
 
 interface P {
     students: RootDBState["students"]
@@ -60,7 +60,7 @@ const GroupView: React.FC<P> = ({ students, sorted_sections }) => {
         <div className="flex flex-col">
             {Object.values(filtered_students || {}).map((std) => {
                 const class_name = getClassnameFromSectionId(sorted_sections, std.section_id)
-                return <DetailedCard key={std.id} name={std.Name} roll_no={std.RollNumber} class_name={class_name} />
+                return <GroupViewCard key={std.id} name={std.Name} roll_no={std.RollNumber} class_name={class_name} />
             })}
         </div>
     </>
