@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import moment from 'moment'
@@ -6,8 +6,11 @@ import clsx from 'clsx'
 
 import { AttendanceStatsCard } from 'components/attendance'
 import { AppLayout } from 'components/Layout/appLayout'
-import toTitleCase from 'utils/toTitleCase'
 import { markFaculty } from 'actions'
+import { TModal } from 'components/Modal'
+import { useComponentVisible } from 'utils/customHooks'
+import toTitleCase from 'utils/toTitleCase'
+
 
 type State = {
 	date: number
@@ -28,6 +31,7 @@ export const StaffAttendance = () => {
 	const dispatch = useDispatch()
 
 	const { faculty } = useSelector((state: RootReducerState) => state.db)
+	const { ref: modalRef, isComponentVisible, setIsComponentVisible } = useComponentVisible(false)
 
 	const [state, setState] = useState<State>({
 		date: Date.now()
@@ -70,6 +74,9 @@ export const StaffAttendance = () => {
 		dispatch(markFaculty(member, attendanceDate, status))
 	}
 
+	// TODO: add logic to handle modal for sms sending
+	// TODO: add logic to handle log sms history
+
 	return (
 		<AppLayout title="Staff Attendance">
 			<div className="p-5 md:p-10 print:hidden">
@@ -82,10 +89,47 @@ export const StaffAttendance = () => {
 							value={attendanceDate}
 							className="tw-input w-full bg-transparent border-blue-brand ring-1 text-sm" />
 					</div>
+					{
+						isComponentVisible &&
+						<TModal>
+							<div className="bg-white p-6 sm:p-8 space-y-2" ref={modalRef}>
+								<h1 className="text-center">Select option to send SMS</h1>
+								<div>Send to:</div>
+								<div className="flex items-center">
+									<input
+										className="form-checkbox mr-2"
+										name="sms_to_absent"
+										type="checkbox"
+									/>
+									<label className="text-xs text-gray-700">Absent Teachers</label>
+								</div>
+								<div className="flex items-center">
+									<input
+										className="form-checkbox mr-2"
+										name="sms_to_present"
+										type="checkbox"
+									/>
+									<label className="text-xs text-gray-700">Present Teachers</label>
+								</div>
+								<div className="flex items-center">
+									<input
+										className="form-checkbox mr-2"
+										name="sms_to_leave"
+										type="checkbox"
+									/>
+									<label className="text-xs text-gray-700">Leave Teachers</label>
+								</div>
+								<div className="flex flex-row justify-center">
+									<button className="tw-btn-blue mt-2">Send using Local SIM</button>
+								</div>
+							</div>
+						</TModal>
+					}
 					<div className="relative text-sm md:text-base">
 						<AttendanceStatsCard attendance={studentsAttendance} />
 						<div className="absolute -bottom-3 md:-bottom-4 flex flex-row items-center justify-center w-full space-x-4 px-4">
 							<button
+								onClick={() => setIsComponentVisible(!isComponentVisible)}
 								className="p-1 md:p-2 shadow-md bg-blue-brand text-white rounded-3xl w-2/5">
 								Send SMS
 							</button>
@@ -131,15 +175,21 @@ type CardState = {
 
 const Card: React.FC<CardProps> = ({ member, attendanceDate, markAttendance }) => {
 
+	// const { ref: modalRef, isComponentVisible, setIsComponentVisible } = useComponentVisible(false)
+
 	const [state, setState] = useState<CardState>({
 		togglePresent: false,
 		toggleLeave: false
 	})
 
-	const record = member?.attendance?.[attendanceDate] || {}
+	const record = member?.attendance?.[attendanceDate] || {} as { [id in MISTeacherAttendanceStatus]: number }
 	const status = Object.keys(record)?.[0]
 
-	// TODO: handle check_in and check_out
+	// TODO: handle check_in and check_out time
+	// TODO: discuss with team about this problem
+	// - handle multiple values of attendance - required logic to handle multiple status against single entry of the attendance
+	//  (revert the changes of action)
+	// - handle single status of the 
 
 	return (
 		<div className="p-2 md:p-3 text-sm md:text-base border border-gray-50 rounded-md space-y-1 shadow-md">
@@ -176,9 +226,12 @@ const Card: React.FC<CardProps> = ({ member, attendanceDate, markAttendance }) =
 					{/* TODO: handle click outside */}
 					<button name="leave"
 						onClick={() => setState({ toggleLeave: !state.toggleLeave, togglePresent: false })}
+						// check if the status of the attendance isn't in check_in, checkout or absent
+						// set bg color to orange
 						className={clsx("rounded-lg shadow-md px-2 py-1",
 							{
-								"bg-orange-brand text-white": status && !(AttendanceStatus.CHECK_IN === status
+								"bg-orange-brand text-white": status && !(
+									AttendanceStatus.CHECK_IN === status
 									|| AttendanceStatus.CHECK_OUT === status
 									|| AttendanceStatus.ABSENT === status
 								)
@@ -196,10 +249,15 @@ const Card: React.FC<CardProps> = ({ member, attendanceDate, markAttendance }) =
 							onClick={() => markAttendance(member, AttendanceStatus.CHECK_IN)}
 							className={clsx("tw-btn-blue",
 								{
-									"tw-btn bg-green-brand text-white": AttendanceStatus.CHECK_IN === status
+									"bg-green-brand text-white": AttendanceStatus.CHECK_IN === status
 								}
 							)}>
 							<span>Check In</span>
+							{
+								record.check_in && (
+									<span className="ml-4">{moment(record.check_in).format("HH:mm")}</span>
+								)
+							}
 						</button>
 
 						<button
@@ -211,6 +269,11 @@ const Card: React.FC<CardProps> = ({ member, attendanceDate, markAttendance }) =
 								}
 							)}>
 							<span>Check Out</span>
+							{
+								record.check_out && (
+									<span className="ml-4">{moment(record.check_out).format("HH:mm")}</span>
+								)
+							}
 						</button>
 					</div>
 				)

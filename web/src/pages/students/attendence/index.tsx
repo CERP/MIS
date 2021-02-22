@@ -1,14 +1,16 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import clsx from 'clsx'
-import { Link } from 'react-router-dom'
 import moment from 'moment'
+import { Link } from 'react-router-dom'
+import clsx from 'clsx'
 
 import { AttendanceStatsCard } from 'components/attendance'
 import { AppLayout } from 'components/Layout/appLayout'
+import { markAllStudents, markStudent } from 'actions'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import toTitleCase from 'utils/toTitleCase'
-import { markAllStudents, markStudent } from 'actions'
+import { TModal } from 'components/Modal'
+import { useComponentVisible } from 'utils/customHooks'
 
 type State = {
 	selectedSection?: string
@@ -41,6 +43,7 @@ const deriveSelectedStudents = (sectionId: string, students: RootDBState["studen
 export const StudentAttendance = () => {
 	const dispatch = useDispatch()
 	const { classes, students } = useSelector((state: RootReducerState) => state.db)
+	const { ref: modalRef, isComponentVisible, setIsComponentVisible } = useComponentVisible(false)
 
 	const [state, setState] = useState<State>({
 		date: Date.now(),
@@ -144,10 +147,48 @@ export const StudentAttendance = () => {
 							}
 						</select>
 					</div>
+					{
+						isComponentVisible &&
+						<TModal>
+							<div className="bg-white p-6 sm:p-8 space-y-2" ref={modalRef}>
+								<h1 className="text-center">Select options to send SMS</h1>
+								<div>Send to:</div>
+								<div className="flex items-center">
+									<input
+										className="form-checkbox mr-2"
+										name="sms_to_absent"
+										type="checkbox"
+									/>
+									<label className="text-xs text-gray-700">Absent Students</label>
+								</div>
+								<div className="flex items-center">
+									<input
+										className="form-checkbox mr-2"
+										name="sms_to_present"
+										type="checkbox"
+									/>
+									<label className="text-xs text-gray-700">Present Students</label>
+								</div>
+								<div className="flex items-center">
+									<input
+										className="form-checkbox mr-2"
+										name="sms_to_leave"
+										type="checkbox"
+									/>
+									<label className="text-xs text-gray-700">Leave Students</label>
+								</div>
+								<div className="flex flex-row justify-center">
+									<button className="tw-btn-blue mt-2">Send using Local SIM</button>
+								</div>
+							</div>
+						</TModal>
+					}
 					<div className="relative text-sm md:text-base">
 						<AttendanceStatsCard attendance={studentsAttendance} />
 						<div className="absolute -bottom-3 md:-bottom-4 flex flex-row items-center justify-center w-full space-x-4 px-4">
-							<button className="p-1 md:p-2 shadow-md bg-blue-brand text-white rounded-3xl w-2/5">
+							<button
+								onClick={() => setIsComponentVisible(!isComponentVisible)}
+								className="p-1 md:p-2 shadow-md bg-blue-brand text-white rounded-3xl w-2/5">
 								Send SMS
 							</button>
 							<button
