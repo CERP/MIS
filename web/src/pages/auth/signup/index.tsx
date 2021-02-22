@@ -4,23 +4,22 @@ import { useDispatch, useSelector } from 'react-redux'
 import clsx from 'clsx'
 
 import { AppLayout } from 'components/Layout/appLayout'
-import { EyePassword } from 'components/Password'
+import { ShowHidePassword } from 'components/password'
 import { Spinner } from 'components/Animation/spinner'
 import { getDistricts } from 'constants/locations'
-import toTitleCase from 'utils/toTitleCase'
-import checkCompulsoryFields from 'utils/checkCompulsoryFields'
 import { validateMobileNumber, validatePassword } from 'utils/helpers'
 import { createSignUp } from 'actions'
 import { OnboardingStage } from 'constants/index'
+import toTitleCase from 'utils/toTitleCase'
+import checkCompulsoryFields from 'utils/checkCompulsoryFields'
 
-import iconMarkDone from 'assets/svgs/mark_done.svg'
+import iconMarkDone from 'assets/svgs/mark-done.svg'
 
-
-type TState = SchoolSignup & {
+type State = SchoolSignup & {
 	confirm_password: string
 }
 
-const initialState: TState = {
+const initialState: State = {
 	name: '',
 	phone: '',
 	schoolName: '',
@@ -34,23 +33,34 @@ export const SchoolSignup = () => {
 
 	const dispatch = useDispatch()
 
-	const { connected, sign_up_form, db, auth } = useSelector((state: RootReducerState) => state)
-	const { onboarding, users } = db
-
-	const { loading, succeed, reason } = sign_up_form
+	const {
+		auth,
+		connected,
+		sign_up_form: {
+			loading,
+			succeed,
+			reason
+		},
+		db: {
+			onboarding,
+			users
+		},
+	} = useSelector((state: RootReducerState) => state)
 
 	// form state
 	const [state, setState] = useState(initialState)
 
+	// move this into one state variable
 	const [togglePassword, setTogglePassword] = useState(false)
 	const [toggleConfirmPassword, setToggleConfirmedPassword] = useState(false)
-
 	const [hasError, setHasError] = useState('')
 
 	useEffect(() => {
+		// make sure here to check reason not equal to empty string instead of "&& reason" just
 		if (loading === false && succeed === false && reason !== "") {
 
-			setHasError('Account creation failed!' + (reason?.includes(state.phone) ? ` ${state.phone} already exists` : reason))
+			const errorMsg = 'Account creation failed!' + (reason?.includes(state.phone) ? `${state.phone} already exists` : reason)
+			setHasError(errorMsg)
 
 			setTimeout(() => {
 				setHasError('')
@@ -71,6 +81,8 @@ export const SchoolSignup = () => {
 			["confirm_password"]
 		])
 
+		// TODO: Change all these window.alerts to RHT
+		// TODO: try using cond() from cond-construct instead fo IFs
 
 		if (compulsoryFields) {
 			return window.alert('Please fill all required fields')
@@ -130,12 +142,12 @@ export const SchoolSignup = () => {
 	return (
 		<AppLayout title={"School Signup"}>
 			<div className="p-5 pb-0 md:p-10 md:pb-0 text-gray-700">
-
 				{
-					!loading && succeed && reason === '' ?
-
-						<SignupSuccess {...state} />
-
+					// explictly check reason is empty string instead of undefined
+					(!loading && succeed && reason === '') ?
+						(
+							<SignupSuccess {...state} />
+						)
 						:
 						<>
 							<div className="flex flex-col items-center space-y-2">
@@ -159,7 +171,7 @@ export const SchoolSignup = () => {
 												onChange={onInputChange}
 												autoCapitalize="off"
 												autoComplete="off"
-												placeholder="e.g. Karim"
+												placeholder="Type your name"
 												className="w-full md:w-11/12 tw-input" />
 										</div>
 										<div>
@@ -170,7 +182,7 @@ export const SchoolSignup = () => {
 												onChange={onInputChange}
 												autoCapitalize="off"
 												autoComplete="off"
-												placeholder="e.g. National School"
+												placeholder="Type your school name"
 												className="w-full md:w-11/12 tw-input" />
 										</div>
 										<div>
@@ -182,7 +194,6 @@ export const SchoolSignup = () => {
 												autoCapitalize="off"
 												autoCorrect="off"
 												autoComplete="off"
-												pattern=""
 												placeholder="e.g. 0300xxxxxxx"
 												className="w-full md:w-11/12 tw-input" />
 										</div>
@@ -203,7 +214,7 @@ export const SchoolSignup = () => {
 													onClick={() => setTogglePassword(!togglePassword)}
 													className="absolute inset-y-0 right-0 md:right-8 pr-3 flex items-center cursor-pointer">
 													{
-														<EyePassword open={togglePassword} />
+														<ShowHidePassword open={togglePassword} />
 													}
 												</div>
 											</div>
@@ -214,7 +225,6 @@ export const SchoolSignup = () => {
 												name="city"
 												required
 												onChange={onInputChange}
-												placeholder="Enter school id"
 												className="w-full md:w-11/12 tw-select">
 												<option value="">Choose from list</option>
 												{
@@ -239,7 +249,7 @@ export const SchoolSignup = () => {
 													onClick={() => setToggleConfirmedPassword(!toggleConfirmPassword)}
 													className="absolute inset-y-0 right-0 md:right-8 pr-3 flex items-center cursor-pointer">
 													{
-														<EyePassword open={toggleConfirmPassword} />
+														<ShowHidePassword open={toggleConfirmPassword} />
 													}
 												</div>
 											</div>
@@ -250,7 +260,11 @@ export const SchoolSignup = () => {
 											form="signup"
 											type="submit"
 											disabled={loading || !connected}
-											className={clsx("inline-flex items-center w-full tw-btn-blue px-3 py-3", { 'pointer-events-none': loading || !connected })}>
+											className={clsx("inline-flex items-center w-full tw-btn-blue px-3 py-3",
+												{
+													'pointer-events-none': (loading || !connected)
+												}
+											)}>
 											{
 												loading ?
 													<>
@@ -274,7 +288,7 @@ export const SchoolSignup = () => {
 
 
 
-const SignupSuccess = (signup: TState) => {
+const SignupSuccess = (signup: State) => {
 	return (
 		<div className="flex flex-col items-center space-y-6">
 			<div className="text-2xl leading-5 font-bold text-teal-500">Congratulations</div>
@@ -284,13 +298,13 @@ const SignupSuccess = (signup: TState) => {
 			</div>
 			<div className="mx-auto md:w-1/2 text-center text-gray-500">
 				<div>Please remember these credentials.</div>
-				<div>You will use these to login</div>
+				<div>You will use these to login into MISchool</div>
 			</div>
 			<div className="font-bold">
 				<div className="">School Id: {signup.phone}</div>
 				<div className="">Password: {signup.schoolPassword}</div>
 			</div>
-			<Link className="tw-btn-blue px-12" to='/school-login'>Sign in Now</Link>
+			<Link className="tw-btn-blue px-12" to='/school-login'>Sign In Now</Link>
 		</div>
 	)
 }

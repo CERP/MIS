@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 import { packages } from 'constants/landing'
 
-export const Package = () => {
+export const PackageList = () => {
 	return (
 		<div className="min-h-screen">
 			<div className="mt-10 px-10 md:px-40">

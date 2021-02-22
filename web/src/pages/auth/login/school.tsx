@@ -1,44 +1,48 @@
 import React, { useEffect, useState } from 'react'
 import { Link, Redirect } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { AppLayout } from 'components/Layout/appLayout'
-import { EyePassword } from 'components/Password'
-import { useDispatch, useSelector } from 'react-redux'
-import { DownloadIcon } from 'assets/icons'
+import { ShowHidePassword } from 'components/password'
 import { createSchoolLogin } from 'actions'
 import { Spinner } from 'components/Animation/spinner'
 import { OnboardingStage } from 'constants/index'
+import { DownloadIcon } from 'assets/icons'
 
-type TState = {
+type State = {
 	school: string
 	password: string
-	openEye: boolean
+	showHidePassword: boolean
 }
 
-const initialState: TState = {
+const initialState: State = {
 	school: '',
 	password: '',
-	openEye: false,
+	showHidePassword: false,
 }
-
 
 export const SchoolLogin = () => {
 
-	// local state
+	const dispatch = useDispatch()
+
 	const [state, setState] = useState(initialState)
 	const [isSubmitted, setIsSubmitted] = useState(false)
 	const [hasError, setHasError] = useState('')
 
-	// handle store
-	const dispatch = useDispatch()
-	const { auth, connected, initialized, db } = useSelector((state: RootReducerState) => state)
-
-	const { onboarding, users } = db
+	const {
+		auth,
+		connected,
+		initialized,
+		db: {
+			onboarding,
+			users
+		}
+	} = useSelector((state: RootReducerState) => state)
 
 	useEffect(() => {
 
 		if (auth.attempt_failed && isSubmitted && !auth.loading) {
-
+			// TODO: use RHT
 			setHasError('School Id or Password is incorrect!')
 
 			setIsSubmitted(false)
@@ -54,20 +58,21 @@ export const SchoolLogin = () => {
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
 
-		// i have to handle this later (remove local state variable if you have global state)
+		// TODO: Have to handle this later (remove local state variable if you have global state)
 		setIsSubmitted(true)
 
 		// dispatch the action
 		dispatch(createSchoolLogin(state.school, state.password))
 	}
 
+	// TODO: make a generic input handler
 	const hanldeInputChange = (event: React.ChangeEvent<HTMLInputElement & HTMLSelectElement>) => {
 		const { name, value } = event.target
 		setState({ ...state, [name]: value })
 	}
 
 	// TODO: remove this logic
-	// add more robust way of redirection
+	// add more robust way of auth redirection
 
 	// here handling two cases:
 	// - user logged in and onboarding state is completed (new schools), redirect to home page
@@ -97,7 +102,7 @@ export const SchoolLogin = () => {
 		return (
 			<AppLayout title={"School Login"}>
 				<div className="p-5 pb-0 md:p-10 md:pb-0 text-gray-700">
-					<div className="text-center animate-pulse">Connecting, Pleae wait...</div>
+					<div className="text-center animate-pulse">Connecting, Please wait...</div>
 				</div>
 			</AppLayout>
 		)
@@ -148,17 +153,17 @@ export const SchoolLogin = () => {
 									name="password"
 									required
 									onChange={hanldeInputChange}
-									type={state.openEye ? 'text' : 'password'}
+									type={state.showHidePassword ? 'text' : 'password'}
 									autoCapitalize="off"
 									autoCorrect="off"
 									autoComplete="off"
 									placeholder="Enter password"
 									className="tw-input w-full" />
 								<div
-									onClick={() => setState({ ...state, openEye: !state.openEye })}
+									onClick={() => setState({ ...state, showHidePassword: !state.showHidePassword })}
 									className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
 									{
-										<EyePassword open={state.openEye} />
+										<ShowHidePassword open={state.showHidePassword} />
 									}
 								</div>
 							</div>
@@ -174,7 +179,7 @@ export const SchoolLogin = () => {
 										<span className={"mx-auto"}>Login into your School</span>
 									}
 								</button>
-								<Link to="/school/reset-password" className="text-sm text-gray-500 hover:text-blue-brand">Forgot your school passsword?</Link>
+								<Link to="/school/reset-password" className="text-sm text-gray-500 hover:text-blue-brand">Forgot your school password?</Link>
 							</div>
 						</form>
 

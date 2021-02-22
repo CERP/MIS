@@ -1,8 +1,8 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 import { AppLayout } from 'components/Layout/appLayout'
-import { Package } from 'components/Package'
-import { Link } from 'react-router-dom'
+import { PackageList } from 'components/Package'
 
 export const Pricing = () => {
 	return (
@@ -15,7 +15,7 @@ export const Pricing = () => {
 						<Link to="/school-login" className="text-blue-500 text-base">Sign in</Link>
 					</div>
 				</div>
-				<Package />
+				<PackageList />
 			</div>
 		</AppLayout>
 	)

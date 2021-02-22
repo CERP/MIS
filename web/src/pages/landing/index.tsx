@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 import { getTeamMembersInfo } from 'constants/aboutTeam'
-import { Package } from 'components/Package'
+import { PackageList } from 'components/Package'
 import { AppLayout } from 'components/Layout/appLayout'
 import { CustomerFeedback } from 'components/Feedback'
 
@@ -11,7 +11,7 @@ import iconCloud from './assets/cloud.svg'
 import iconCoin from './assets/coin.svg'
 import iconDesktop from './assets/desktop.svg'
 import iconGlobe from './assets/globe.svg'
-import iconGraduationCap from './assets/graduation_cap.svg'
+import iconGraduationCap from './assets/graduation-cap.svg'
 import iconParent from './assets/parent.svg'
 import iconPlug from './assets/plug.svg'
 import iconSchool from './assets/school.svg'
@@ -78,6 +78,8 @@ export const Landing = () => {
 
 					<div className=" text-3xl font-semibold text-center mt-20">MISchool Reach</div>
 
+					{/*TODO: make an array of objects and render using map()  */}
+
 					<div className="flex flex-row flex-wrap items-center  justify-center px-20 space-y-4 md:space-x-16 md:space-y-0 mt-10">
 						<div className="flex flex-col items-center space-y-2">
 							<img className="w-24 h-24 md:w-28 md:h-28 m-8 shadow-md rounded-full" src={iconGlobe} alt="city" />
@@ -110,6 +112,8 @@ export const Landing = () => {
 
 				</div>
 
+				{/*TODO: make an array of objects and render using map()  */}
+
 				<div className="mt-20 px-20">
 					<div className="text-3xl font-semibold text-center">Our Clients</div>
 					<div className="grid grid-cols-1 md:grid-cols-5 gap-6 mt-10">
@@ -131,6 +135,8 @@ export const Landing = () => {
 						</div>
 					</div>
 				</div>
+
+				{/*TODO: make an array of objects and render using map()  */}
 
 				<div className="mt-20 px-20">
 					<div className=" text-3xl font-semibold text-center">Features</div>
@@ -167,7 +173,7 @@ export const Landing = () => {
 
 				<div className="mt-20 py-10 bg-teal-50 ">
 					<div className="text-3xl font-semibold text-center">Our Packages</div>
-					<Package />
+					<PackageList />
 				</div>
 
 				<div className="my-20 ">

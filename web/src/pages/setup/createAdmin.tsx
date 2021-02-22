@@ -3,7 +3,7 @@ import moment from 'moment'
 import { v4 } from 'node-uuid'
 
 import { validateMobileNumber } from 'utils/helpers'
-import { EyePassword } from 'components/Password'
+import { ShowHidePassword } from 'components/password'
 
 import UserIconSvg from 'assets/svgs/user.svg'
 import { useDispatch } from 'react-redux'
@@ -110,7 +110,7 @@ export const AdminCreateForm: React.FC<TAdminCreateForm> = ({ onBack }) => {
 						onClick={() => setOpenEye(!openEye)}
 						className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
 						{
-							<EyePassword open={openEye} />
+							<ShowHidePassword open={openEye} />
 						}
 					</div>
 				</div>

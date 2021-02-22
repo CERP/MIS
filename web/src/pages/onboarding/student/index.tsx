@@ -3,6 +3,7 @@ import Papa from 'papaparse'
 import { v4 } from 'node-uuid'
 import { useSelector, useDispatch } from 'react-redux'
 import moment from 'moment'
+import clsx from 'clsx'
 
 import downloadCSV from 'utils/downloadCSV'
 import toTitleCase from 'utils/toTitleCase'
@@ -12,8 +13,7 @@ import UserIconSvg from 'assets/svgs/user.svg'
 import { TextDivider } from 'components/divider'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { AddStudentForm } from './add'
-import { createStudentMerges, deleteStudent, deleteStudentById } from 'actions'
-import clsx from 'clsx'
+import { createStudentMerges, deleteStudentById } from 'actions'
 
 interface AddStudentProps {
 	onBack?: (close: boolean) => void
@@ -32,6 +32,7 @@ const initialState: TState = {
 	uploadedFileName: ''
 }
 
+// TODO: move to single source of defaults
 const studentCSVHeaders = [
 	"Name",
 	"RollNumber",
@@ -185,6 +186,7 @@ export const AddStudent: React.FC<AddStudentProps> = ({ skipStage }) => {
 						<>
 							<div className="space-y-4 pb-2">
 								<button type="button" className="inline-flex w-full tw-btn bg-orange-brand text-white" onClick={downloadCSVTemplate}>
+									{/* TODO: move these svg to separate component in separate file */}
 									<svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
 									</svg>
@@ -217,6 +219,7 @@ export const AddStudent: React.FC<AddStudentProps> = ({ skipStage }) => {
 																	<div className="table-cell px-2">{s.ManName}</div>
 																	<div className="table-cell px-2">{s.Phone}</div>
 																	<div className="table-cell p-2">
+																		{/* TODO: add logic to render TModal here and display the students */}
 																		<svg className="w-4 text-gray-400 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
 																			<path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
 																		</svg>

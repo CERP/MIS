@@ -1,10 +1,10 @@
 import React from 'react'
 
-type P = {
+interface ShowHidePasswordProps {
 	open: boolean
 }
 
-export const EyePassword = ({ open }: P) => {
+export const ShowHidePassword = ({ open }: ShowHidePasswordProps) => {
 	return (
 		open ?
 			<svg className="h-6" fill="none" xmlns="http://www.w3.org/2000/svg"

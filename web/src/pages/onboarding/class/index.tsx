@@ -4,16 +4,18 @@ import { useDispatch, useSelector } from 'react-redux'
 import Dynamic from '@cerp/dynamic'
 import clsx from 'clsx'
 
-import UserIconSvg from 'assets/svgs/user.svg'
 import { createEditClass } from 'actions'
 import { createMerges } from 'actions/core'
 import { OnboardingStage } from 'constants/index'
 
-type TCreateClassProps = {
+import UserIconSvg from 'assets/svgs/user.svg'
+
+interface CreateClassProps {
 	onBack?: (close: boolean) => void
 	skipStage?: () => void
 }
 
+// TODO: move these defaults to single source of truth
 const initialState: MISClass = {
 	id: v4(),
 	name: "",
@@ -47,7 +49,7 @@ const defaultClasses = {
 	"A Level": 12
 }
 
-export const CreateClass: React.FC<TCreateClassProps> = ({ skipStage }) => {
+export const CreateClass: React.FC<CreateClassProps> = ({ skipStage }) => {
 
 	const dispatch = useDispatch()
 	const { faculty } = useSelector((state: RootReducerState) => state.db)
@@ -55,6 +57,7 @@ export const CreateClass: React.FC<TCreateClassProps> = ({ skipStage }) => {
 	const [state, setState] = useState(initialState)
 	const [newSubject, setNewSubject] = useState('')
 
+	// at this stage we only have on class with default section
 	const defaultSectionId = Object.keys(state.sections)[0]
 
 
@@ -77,6 +80,7 @@ export const CreateClass: React.FC<TCreateClassProps> = ({ skipStage }) => {
 
 	}
 
+	// TODO: replace it with generic function
 	const handleInput = (event: React.ChangeEvent<HTMLInputElement & HTMLSelectElement & HTMLTextAreaElement>) => {
 		const { name, value } = event.target
 
@@ -90,6 +94,7 @@ export const CreateClass: React.FC<TCreateClassProps> = ({ skipStage }) => {
 		setState({ ...state, [name]: value })
 	}
 
+	// TODO: replace it with generic function with reset path of dependent single variable
 	const handleInputByPath = (path: string[], value: string | boolean) => {
 		const updatedState = Dynamic.put(state, path, value) as MISClass
 		setState(updatedState)
@@ -135,18 +140,6 @@ export const CreateClass: React.FC<TCreateClassProps> = ({ skipStage }) => {
 				</select>
 
 				<div>Section*</div>
-				{/* <div className="grid grid-cols-5 gap-3">
-					{
-						Object.entries(state.sections)
-							.map(([id, section]) => (
-								<div
-									key={id}
-									onClick={() => deleteSection(id)}
-									className={clsx("text-center p-1 border cursor-pointer rounded-xl text-white text-sm bg-green-brand hover:bg-red-brand", {})}>
-									<span>{section.name}</span>
-								</div>))
-					}
-				</div> */}
 				<div className="flex flex-row items-center justify-between">
 					<input
 						name="section"
@@ -154,9 +147,6 @@ export const CreateClass: React.FC<TCreateClassProps> = ({ skipStage }) => {
 						onChange={handleInput}
 						placeholder="Type section name"
 						className="w-full tw-input bg-transparent border-blue-brand ring-1" />
-					{/* <div
-						onClick={addNewSection}
-						className="ml-4 w-8 h-8 flex items-center justify-center rounded-full border cursor-pointer bg-blue-brand hover:bg-blue-400">+</div> */}
 				</div>
 
 				<div>Subjects*</div>
@@ -198,14 +188,18 @@ export const CreateClass: React.FC<TCreateClassProps> = ({ skipStage }) => {
 									onClick={() => handleInputByPath(["sections", defaultSectionId, "faculty_id"], faculty.id)}
 									className="flex flex-col items-center space-y-2">
 									<img
-										className={clsx("w-16 h-16 rounded-full cursor-pointer border-2 border-transparent hover:border-green-brand", {
-											"border-2 border-green-brand": state.sections[defaultSectionId].faculty_id === faculty.id
-										})}
+										className={clsx("w-16 h-16 rounded-full cursor-pointer border-2 border-transparent hover:border-green-brand",
+											{
+												"border-2 border-green-brand": state.sections[defaultSectionId].faculty_id === faculty.id
+											}
+										)}
 										src={UserIconSvg} alt="user-logo" />
 
-									<div className={clsx("text-xs", {
-										"text-green-brand": state.sections[defaultSectionId].faculty_id === faculty.id
-									})}>
+									<div className={clsx("text-xs",
+										{
+											"text-green-brand": state.sections[defaultSectionId].faculty_id === faculty.id
+										}
+									)}>
 										{faculty.Name}</div>
 								</div>
 							))
@@ -221,7 +215,6 @@ export const CreateClass: React.FC<TCreateClassProps> = ({ skipStage }) => {
 						onClick={skipStage}
 						className="tw-btn bg-orange-brand text-white">Skip</button>
 				</div>
-				<div className="h-1 py-1 text-xs text-red-brand">{ }</div>
 			</form>
 		</div>
 	)

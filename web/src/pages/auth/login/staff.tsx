@@ -5,17 +5,15 @@ import clsx from 'clsx'
 
 import chunkify from 'utils/chunkify'
 import toTitleCase from 'utils/toTitleCase'
-import { ActionTypes, OnboardingStage } from 'constants/index'
 import { createLogin } from 'actions'
 import { Spinner } from 'components/Animation/spinner'
 import { AppLayout } from 'components/Layout/appLayout'
-import { EyePassword } from 'components/Password'
+import { ShowHidePassword } from 'components/password'
+import { ActionTypes, OnboardingStage } from 'constants/index'
 
 import UserIconSvg from 'assets/svgs/user.svg'
 
-
-
-type TProps = RootReducerState & {
+type LoginProps = RootReducerState & {
 	users: RootDBState["users"]
 	onboarding: RootDBState["onboarding"]
 	school: {
@@ -26,20 +24,20 @@ type TProps = RootReducerState & {
 	unsyncd_changes: number
 }
 
-const USER_GROUP_SIZE = 10
+const USERS_PER_GROUP = 10
 
-const Login: React.FC<TProps> = ({ auth, initialized, users, school, connected, unsyncd_changes, onboarding }) => {
+const Login: React.FC<LoginProps> = ({ auth, initialized, users, school, connected, unsyncd_changes, onboarding }) => {
 
 	const dispatch = useDispatch()
 
-	const [userGroupIndex, setUserGroupIndex] = useState(0)
+	const [usersGroupIndex, setUsersGroupIndex] = useState(0)
 	const [user, setUser] = useState<MISUser>()
 
 	if (!initialized && auth.token) {
 		return (
 			<AppLayout title={"Staff Login"}>
 				<div className="p-5 pb-0 md:p-10 md:pb-0 text-gray-700">
-					<div className="text-center animate-pulse">Loading Database, Pleae wait...</div>
+					<div className="text-center animate-pulse">Loading Database, Please wait...</div>
 				</div>
 			</AppLayout>
 		)
@@ -79,8 +77,10 @@ const Login: React.FC<TProps> = ({ auth, initialized, users, school, connected, 
 	const switchSchoolHandler = () => {
 
 		if (unsyncd_changes > 0) {
-			const res = window.confirm(`You have ${unsyncd_changes} pending changes. If you switch schools without exporting data, data will be lost. Are you sure you want to continue?`)
-			if (!res) {
+			const msg = `You have ${unsyncd_changes} pending changes. If you switch school without exporting data, data will be lost.
+				Are you sure you want to continue?`
+
+			if (!window.confirm()) {
 				return
 			}
 		}
@@ -101,6 +101,7 @@ const Login: React.FC<TProps> = ({ auth, initialized, users, school, connected, 
 					<div className="w-2/5 h-60 border border-r-0 rounded-md rounded-tr-none rounded-br-none shadow-md">
 						<div className="flex flex-col items-center md:p-10 space-y-2">
 							<div className="w-20 h-20 p-1 border border-gray-300 rounded-full">
+								{/* TODO: change favicon.ico */}
 								<img className="rounded-full" src={school.logo || 'favicon.ico'} alt="school-logo" />
 							</div>
 							<div className="font-semibold text-lg text-center">{toTitleCase(school.name)}</div>
@@ -136,25 +137,39 @@ const Login: React.FC<TProps> = ({ auth, initialized, users, school, connected, 
 										<div className="md:mt-6">
 											<div className="grid md:grid-cols-5 md:gap-0 md:h-60">
 												{
-													chunkify(filteredUsers, USER_GROUP_SIZE)[userGroupIndex].map(([uid, user]: [string, MISUser]) => (
-														<div key={uid} className="group flex flex-col items-center mb-4 space-y-2">
-															<div className="w-20 h-20 cursor-pointer" onClick={() => setUser(user)}>
-																<img className="rounded-full border-2 border-transparent group-hover:border-red-brand focus:border-red-brand" src={UserIconSvg} alt="school-logo" />
+													chunkify(filteredUsers, USERS_PER_GROUP)[usersGroupIndex]
+														.map(([uid, user]: [string, MISUser]) => (
+															<div key={uid} className="group flex flex-col items-center mb-4 space-y-2">
+																<div className="w-20 h-20 cursor-pointer" onClick={() => setUser(user)}>
+																	<img className="rounded-full border-2 border-transparent group-hover:border-red-brand focus:border-red-brand"
+																		src={UserIconSvg}
+																		alt="school-logo"
+																	/>
+																</div>
+																<div className="text-xs text-white group-hover:text-blue-brand">{user.name}</div>
 															</div>
-															<div className="text-xs text-white group-hover:text-blue-brand">{user.name}</div>
-														</div>
-													))
+														))
 												}
 											</div>
 										</div>
 										<div className="flex flex-row items-center justify-center mt-4 space-x-4">
 											{
-												[...new Array(Math.ceil(filteredUsers.length / USER_GROUP_SIZE))].map((v, index) => (
-													<div key={index}
-														onClick={() => setUserGroupIndex(index)}
-														className={`h-5 w-5 rounded-full text-sm text-center cursor-pointer hover:bg-yellow-400 hover:text-white shadow-md ${index === userGroupIndex ? 'bg-yellow-400 text-white' : 'bg-white '}`}
-													>{index + 1}</div>
-												))
+												// generating buttons for each user group (panel)
+												// value or index can be both used to highlight the current
+												// group of users
+												[...new Array(Math.ceil(filteredUsers.length / USERS_PER_GROUP))]
+													.map((v, index) => (
+														<div key={index}
+															onClick={() => setUsersGroupIndex(index)}
+															className={clsx("h-5 w-5 rounded-full text-sm text-center cursor-pointer hover:bg-yellow-400 hover:text-white shadow-md",
+																{
+																	"bg-yellow-400 text-white": index === usersGroupIndex,
+																	"bg-white": index !== usersGroupIndex
+																}
+															)}>
+															{index + 1}
+														</div>
+													))
 											}
 										</div>
 									</>
@@ -180,25 +195,27 @@ export const StaffLogin = connect((state: RootReducerState) => ({
 	unsyncd_changes: Object.keys(state.queued.mutations || {}).length
 }))(Login)
 
-type TLoginForm = {
+type LoginFormProps = {
 	user?: MISUser
 	auth: RootReducerState["auth"]
 }
 
-const LoginForm: React.FC<TLoginForm> = ({ user, auth }) => {
+const LoginForm: React.FC<LoginFormProps> = ({ user, auth }) => {
 
 	const dispatch = useDispatch()
 
+	// TODO: create single state variable
 	const [password, setPassword] = useState('')
 	const [hasError, setHasError] = useState('')
 	const [isSubmitted, setIsSubmitted] = useState(false)
-	const [openEye, setOpenEye] = useState(false)
+	const [showHidePassword, setShowHidePassword] = useState(false)
 
 	useEffect(() => {
 		if (auth.attempt_failed && isSubmitted && !auth.loading) {
 
 			// just to create a fake server delay
 			setTimeout(() => {
+				// TODO: add RHT
 				setHasError('Password is incorrect!')
 				setIsSubmitted(false)
 			}, 1500)
@@ -213,6 +230,7 @@ const LoginForm: React.FC<TLoginForm> = ({ user, auth }) => {
 
 		event.preventDefault()
 
+		// TODO: show RHT
 		if (!password) {
 			return
 		}
@@ -235,28 +253,33 @@ const LoginForm: React.FC<TLoginForm> = ({ user, auth }) => {
 						required
 						autoFocus={true}
 						onChange={(event) => setPassword(event.target.value)}
-						type={openEye ? 'text' : 'password'}
+						type={showHidePassword ? 'text' : 'password'}
 						autoCapitalize="off"
 						autoCorrect="off"
 						autoComplete="off"
 						placeholder="Enter password"
 						className="tw-input w-full" />
 					<div
-						onClick={() => setOpenEye(!openEye)}
+						onClick={() => setShowHidePassword(!showHidePassword)}
 						className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
 						{
-							<EyePassword open={openEye} />
+							<ShowHidePassword open={showHidePassword} />
 						}
 					</div>
 				</div>
-				<button className={`inline-flex w-full items-center tw-btn-blue py-3 ${isSubmitted ? 'pointer-events-none' : ''}`} disabled={isSubmitted}>
-					{isSubmitted ?
-						<>
-							<Spinner className={"animate-spin h-5 w-5"} />
-							<span className={"mx-auto animate-pulse"}>Logging In</span>
-						</>
-						:
-						<span className={"mx-auto"}>Login</span>
+				<button
+					disabled={isSubmitted}
+					className={clsx("inline-flex w-full items-center tw-btn-blue py-3", {
+						"pointer-events-none": isSubmitted
+					})}>
+					{
+						isSubmitted ?
+							<>
+								<Spinner className={"animate-spin h-5 w-5"} />
+								<span className={"mx-auto animate-pulse"}>Logging In</span>
+							</>
+							:
+							<span className={"mx-auto"}>Login</span>
 					}
 				</button>
 				<div className="h-1 py-1 text-xs text-red-brand">{hasError}</div>

@@ -5,7 +5,7 @@ interface Team {
 	district?: string
 	phone?: string
 }
-
+// TODO: move all public folder (public/images) to google cloud storage
 const TeamMembers: Array<Team> = [
 	{
 		designation: "Principal Investigator",

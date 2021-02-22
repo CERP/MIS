@@ -13,6 +13,40 @@ body {
 	border-bottom: 10px solid rgba(45, 212, 191, var(--tw-bg-opacity));
 }
 
+.form-checkbox {
+	appearance: none;
+	color-adjust: exact;
+	display: inline-block;
+	vertical-align: middle;
+	background-origin: border-box;
+	user-select: none;
+	flex-shrink: 0;
+	height: 1em;
+	width: 1em;
+	color: #5ECDB9;
+	background-color: #fff;
+	border-color: #cfcfcf;
+	border-width: 1px;
+	border-radius: 0.25rem;
+	cursor: pointer;
+  }
+  
+  .form-checkbox:checked {
+	background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg viewBox='0 0 16 16' fill='%23fff' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0-1.414-1.414L7 8.586 5.707 7.293z'/%3E%3C/svg%3E");
+	border-color: transparent;
+	background-color: currentColor;
+	background-size: 100% 100%;
+	background-position: 50%;
+	background-repeat: no-repeat;
+  }
+  
+  .form-checkbox:focus {
+	outline: none;
+	box-shadow: 0 0 0 2px #74ACED;
+	border-color: #74ACED;
+  }
+  
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

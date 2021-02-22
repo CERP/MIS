@@ -6,6 +6,7 @@ import { validateMobileNumber } from 'utils/helpers'
 import { createStudentMerge } from 'actions'
 
 
+// TODO: move this to single single source of default
 const blankStudent = (): MISStudent => ({
 	id: v4(),
 	Name: "",
@@ -48,6 +49,7 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({ section }) => {
 
 	const dispatch = useDispatch()
 
+	// adding students to only created section
 	const [state, setState] = useState({
 		section_id: section?.id,
 		...blankStudent()
@@ -57,6 +59,7 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({ section }) => {
 		event.preventDefault()
 
 		if (!validateMobileNumber(state.Phone)) {
+			// TODO: show RHT
 			return window.alert("Please enter correct phone!")
 		}
 
@@ -69,6 +72,7 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({ section }) => {
 		})
 	}
 
+	// TODO: replace it with generic change handler
 	const handleInput = (event: React.ChangeEvent<HTMLInputElement & HTMLSelectElement & HTMLTextAreaElement>) => {
 		const { name, value } = event.target
 		setState({ ...state, [name]: value })
@@ -86,7 +90,7 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({ section }) => {
 				onChange={handleInput}
 				value={state.Name}
 				required
-				placeholder="e.g. John Doe"
+				placeholder="Type name here"
 				className="tw-input w-full bg-transparent border-blue-brand ring-1" />
 			<div className="">Father Name*</div>
 			<input
@@ -95,7 +99,7 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({ section }) => {
 				onChange={handleInput}
 				value={state.ManName}
 				required
-				placeholder="e.g. John Doe"
+				placeholder="Type father name here"
 				className="tw-input w-full bg-transparent border-blue-brand ring-1" />
 			<div className="">Contact Number*</div>
 			<input

@@ -10,7 +10,7 @@ import { SwitchButton } from 'components/input/switch'
 import { validateMobileNumber } from 'utils/helpers'
 import { createFacultyMerge, deleteFaculty, uploadFacultyProfilePicture } from 'actions'
 import { StaffType } from 'constants/index'
-import { EyePassword } from 'components/Password'
+import { ShowHidePassword } from 'components/password'
 import { hash } from 'utils'
 import { getImageString, getDownsizedImage } from 'utils/image'
 
@@ -313,7 +313,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 								onClick={() => setState({ ...state, showPassword: !showPassword })}
 								className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
 								{
-									<EyePassword open={showPassword} />
+									<ShowHidePassword open={showPassword} />
 								}
 							</div>
 						</div>
