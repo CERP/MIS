@@ -1,12 +1,10 @@
 import React, { useMemo, useState } from 'react';
-import { connect } from 'react-redux';
 import { getStudentsByGroup, getClassnameFromSectionId } from 'utils/TIP'
-import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
 import DetailedCard from './DetailedCard'
 
 interface P {
     students: RootDBState["students"]
-    classes: RootDBState["classes"]
+    sorted_sections: AugmentedSection[]
 }
 
 type OrderedGroupItem = {
@@ -25,14 +23,12 @@ const ordered_groups: Array<OrderedGroupItem> = [
 
 const subjects: TIPSubjects[] = ["English", "Urdu", "Maths"]
 
-const GroupView: React.FC<P> = ({ students, classes }) => {
+const GroupView: React.FC<P> = ({ students, sorted_sections }) => {
 
     const [group, setGroup] = useState<TIPGrades>('1')
     const [subject, setSubject] = useState<TIPSubjects>('English')
 
     const filtered_students = useMemo(() => getStudentsByGroup(students, group, subject), [subject, group])
-
-    const sorted_sections = useMemo(() => getSectionsFromClasses(classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0)), [])
 
     return <><div className='flex flex-row justify-around w-full'>
         <select className='tw-select' onChange={(e) => setGroup(e.target.value as TIPGrades)}>
@@ -70,7 +66,4 @@ const GroupView: React.FC<P> = ({ students, classes }) => {
     </>
 }
 
-export default connect((state: RootReducerState) => ({
-    students: state.db.students,
-    classes: state.db.classes
-}))(GroupView)
+export default GroupView
