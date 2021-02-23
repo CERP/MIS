@@ -115,7 +115,7 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 		<div className="flex flex-col justify-between w-full mx-4">
 			{
 				Object.keys(questionsObj)
-					.sort((a, b) => a.localeCompare(b))
+					.sort((a, b) => a.localeCompare(b, 'en', { numeric: true }))
 					.map(function (q_id, index) {
 						const question = questionsObj[q_id]
 						const is_correct = result.questions[q_id]?.is_correct

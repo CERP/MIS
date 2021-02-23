@@ -101,7 +101,7 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id, curriculum }) => {
 			</div>
 		}
 		{
-			<div className="w-full flex justify-center">
+			layout !== Layouts.SUMMATIVE && <div className="w-full flex justify-center">
 				<Link className="container sm:px-8 bg-white rounded-xl m-3 h-28 flex flex-row justify-center w-full items-center shadow-lg no-underline"
 					to={"/targeted-instruction/diagnostic-result"}>
 					<img className="h-12 py-4 pl-4" src={DiagnosticItalic} alt="img" />

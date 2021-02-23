@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { getGradesFromTests } from 'utils/TIP'
 import { connect } from 'react-redux'
 import Headings from '../../Headings'
-import Levels from '../../Levels'
-import Card from '../../Card'
-import Subjects from '../../Subjects'
+// import Levels from '../../Levels'
+// import Card from '../../Card'
+// import Subjects from '../../Subjects'
 
 interface P {
 	targeted_instruction: RootReducerState["targeted_instruction"]
@@ -15,7 +15,8 @@ const FormativeTestResult: React.FC<P> = (props) => {
 	const grades = getGradesFromTests(props.targeted_instruction)
 
 	return <div className="flex flex-wrap content-between">
-		<Card class_name={class_name} subject='' lesson_name='' lesson_no='' />
+		<Headings heading="This page is not available right now." sub_heading="" />
+		{/* <Card class_name={class_name} subject='' lesson_name='' lesson_no='' />
 		<Headings heading="Midpoint Test Result" sub_heading={class_name ?
 			"Select the subject you want to evaluate" :
 			"Select the Group you want to evaluate"} />
@@ -24,7 +25,7 @@ const FormativeTestResult: React.FC<P> = (props) => {
 			<Levels
 				setSectionId={setClassName}
 				grades={grades}
-			/>}
+			/>} */}
 	</div>
 }
 

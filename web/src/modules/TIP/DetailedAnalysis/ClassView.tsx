@@ -25,8 +25,8 @@ const ClassView: React.FC<P> = ({ students, sorted_sections }) => {
             </div>
             <div className="flex flex-row justify-between w-6/12 text-xs m-4">
                 {
-                    ['Eng', 'Maths', 'Urdu'].map((sub) => (
-                        <div key={sub} className="font-bold">{sub}</div>
+                    ['Urdu', 'Eng', 'Maths'].map((sub) => (
+                        <div key={sub} className="font-bold w-2/6 flex justify-center items-center">{sub}</div>
                     ))
                 }
             </div>
