@@ -17,7 +17,7 @@ const ChangeTIPGroup: React.FC<P> = ({ subject, selected_grade, current_grade, o
     const current_group = convertLearningGradeToGroupName(current_grade)
     const new_group = convertLearningGradeToGroupName(selected_grade)
     return (
-        <div className="flex flex-col rounded-t-xl padding-3 w-3/12 bg-white">
+        <div className="flex flex-col rounded-t-xl padding-3 md:w-6/12 lg:w-3/12 bg-white">
             <div className="right-2 top-2 absolute text-danger-tip-brand cursor-pointer" onClick={onClose}>
                 X
         </div>

@@ -82,7 +82,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 						url[2] === "oral-test" ?
 							`/${url[1]}/${url[2]}/${subject}/answer-pdf` :
 							`/${url[1]}/${url[2]}/${class_name}/${subject}/answer-pdf`}>
-					<button className="bg-green-tip-brand font-bold text-lg border-none rounded-md text-white text-left p-2 w-full focus:outline-none">
+					<button className="bg-see-green-tip-brand font-bold text-lg border-none rounded-md text-white text-left p-2 w-full focus:outline-none">
 						Answer Sheet
 					</button>
 				</Link>

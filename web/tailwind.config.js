@@ -33,6 +33,7 @@ module.exports = {
 			colors: {
 				'red-tip-brand': '#FC6171',
 				'green-tip-brand': '#00CD8A',
+				'see-green-tip-brand': '#1BB4BB',
 				'yellow-tip-brand': '#FFD350',
 				'orange-tip-brand': '#FF6600',
 				'blue-tip-brand': '#043B6F',

@@ -40,26 +40,28 @@ const TIPGroupModal: React.FC<P> = ({ subject, grades, setSelectedGrade, setShow
         setSelectedGrade(grade)
     }
     return (
-        <div className="flex flex-col rounded-t-xl padding-3 w-4/12 bg-white">
+        <div className="flex flex-col rounded-t-xl padding-3 lg:w-3/12 bg-white">
             <div className="right-2 top-2 absolute text-danger-tip-brand cursor-pointer" onClick={onClose}>
                 X
         </div>
-            <div className="text-center rounded-t-xl bg-blue-tip-brand h-16 text-white flex justify-center items-center text-xl">
+            <div className="text-center rounded-t-lg bg-blue-tip-brand h-16 text-white flex justify-center items-center text-xl">
                 Select new group for {subject}
             </div>
-            <div className="grid grid-cols-2 grid-rows-2 content-center p-3 pr-0">
-                {
-                    grades && grades
-                        .sort((a, b) => a.localeCompare(b))
-                        .map((grade, index) => {
-                            return <div key={grade} >
-                                <div className={`${index_map[index]} sm:w-1/5 md:w-2/5 lg:w-3/5 cursor-pointer container sm:px-8 rounded-lg m-2 h-20 flex items-center justify-center shadow-lg`}
-                                    onClick={() => onClickGrade(convertLearningLevelToGrade(grade))}>
-                                    <div className="text-white font-bold mb-1">{`${grade_map[grade]} Group`}</div>
+            <div className="flex justify-center items-center">
+                <div className="grid grid-cols-2 grid-rows-2 content-center p-3">
+                    {
+                        grades && grades
+                            .sort((a, b) => a.localeCompare(b))
+                            .map((grade, index) => {
+                                return <div key={grade} >
+                                    <div className={`${index_map[index]} sm:w-1/5 md:w-3/5 lg:w-3/5 cursor-pointer container sm:px-8 rounded-lg m-2 h-20 flex items-center justify-center shadow-lg`}
+                                        onClick={() => onClickGrade(convertLearningLevelToGrade(grade))}>
+                                        <div className="text-white font-bold mb-1">{`${grade_map[grade]} Group`}</div>
+                                    </div>
                                 </div>
-                            </div>
-                        })
-                }
+                            })
+                    }
+                </div>
             </div>
         </div >
     )

@@ -21,11 +21,11 @@ const StudentInfoModal: React.FC<P> = ({ learning_levels, onClose, setShowTIPGro
         setSelectSubject(sub)
     }
     return (
-        <div className="flex flex-col rounded-t-xl padding-3 w-4/12 bg-gray-300 bg-white">
+        <div className="flex flex-col rounded-t-xl padding-3 md:w-6/12 lg:w-4/12 bg-gray-300 bg-white">
             <div className="right-2 top-2 absolute text-danger-tip-brand cursor-pointer" onClick={onClose}>
                 X
         </div>
-            <div className="text-center  rounded-t-xl bg-blue-tip-brand h-16 text-white flex flex-row justify-around items-center text-xl">
+            <div className="text-center rounded-t-lg bg-blue-tip-brand h-16 text-white flex flex-row justify-around items-center text-xl">
                 {['Subject', 'Group', 'Action'].map((item) => (<div key={item}>{item}</div>))}
             </div>
             {
