@@ -557,10 +557,8 @@ export const markFaculty = (faculty: MISTeacher, date: string, status: MISTeache
 
 	dispatch(createMerges([
 		{
-			path: ["db", "faculty", faculty.id, "attendance", date],
-			value: {
-				[status]: time
-			}
+			path: ["db", "faculty", faculty.id, "attendance", date, status],
+			value: time
 		}
 	]))
 }

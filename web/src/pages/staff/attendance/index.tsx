@@ -6,7 +6,7 @@ import clsx from 'clsx'
 
 import { AttendanceStatsCard } from 'components/attendance'
 import { AppLayout } from 'components/Layout/appLayout'
-import { markFaculty } from 'actions'
+import { markFaculty, undoFacultyAttendance } from 'actions'
 import { TModal } from 'components/Modal'
 import { useComponentVisible } from 'utils/customHooks'
 import toTitleCase from 'utils/toTitleCase'
@@ -71,6 +71,16 @@ export const StaffAttendance = () => {
 	}, [faculty, attendanceDate])
 
 	const markAttendanceHandler = (member: MISTeacher, status: AttendanceStatus) => {
+		const record = member.attendance?.[attendanceDate] || {} as { [id in MISTeacherAttendanceStatus]: number }
+		const prevStatus = Object.keys(record)?.[0]
+
+		// this should remove any previous key-pair value
+		// to make sure, there should be single entry in the system for the staff teacher
+		// for the given attendance date
+		if (prevStatus) {
+			dispatch(undoFacultyAttendance(member, attendanceDate))
+		}
+
 		dispatch(markFaculty(member, attendanceDate, status))
 	}
 
@@ -182,14 +192,10 @@ const Card: React.FC<CardProps> = ({ member, attendanceDate, markAttendance }) =
 		toggleLeave: false
 	})
 
-	const record = member?.attendance?.[attendanceDate] || {} as { [id in MISTeacherAttendanceStatus]: number }
+	const record = member.attendance?.[attendanceDate] || {} as { [id in MISTeacherAttendanceStatus]: number }
 	const status = Object.keys(record)?.[0]
 
 	// TODO: handle check_in and check_out time
-	// TODO: discuss with team about this problem
-	// - handle multiple values of attendance - required logic to handle multiple status against single entry of the attendance
-	//  (revert the changes of action)
-	// - handle single status of the 
 
 	return (
 		<div className="p-2 md:p-3 text-sm md:text-base border border-gray-50 rounded-md space-y-1 shadow-md">
