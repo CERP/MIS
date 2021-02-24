@@ -5,9 +5,9 @@ import clsx from 'clsx'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { ShowHidePassword } from 'components/password'
-import { Spinner } from 'components/Animation/spinner'
+import { Spinner } from 'components/animation/spinner'
 import { getDistricts } from 'constants/locations'
-import { validateMobileNumber, validatePassword } from 'utils/helpers'
+import { isValidPhone, isValidPassword } from 'utils/helpers'
 import { createSignUp } from 'actions'
 import { OnboardingStage } from 'constants/index'
 import toTitleCase from 'utils/toTitleCase'
@@ -88,7 +88,7 @@ export const SchoolSignup = () => {
 			return window.alert('Please fill all required fields')
 		}
 
-		if (!validatePassword(state.schoolPassword)) {
+		if (!isValidPassword(state.schoolPassword)) {
 			return window.alert('Password contains at least 4 characters - alphabets(lower and upercase) and number')
 		}
 
@@ -96,7 +96,7 @@ export const SchoolSignup = () => {
 			return window.alert('Password mismatch')
 		}
 
-		if (!validateMobileNumber(state.phone)) {
+		if (!isValidPhone(state.phone)) {
 			return window.alert('Please enter correct mobile number')
 		}
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import moment from 'moment'
 import { v4 } from 'node-uuid'
 
-import { validateMobileNumber } from 'utils/helpers'
+import { isValidPhone } from 'utils/helpers'
 import { ShowHidePassword } from 'components/password'
 
 import UserIconSvg from 'assets/svgs/user.svg'
@@ -63,7 +63,7 @@ export const AdminCreateForm: React.FC<TAdminCreateForm> = ({ onBack }) => {
 	const createAdmin = (event: React.FormEvent) => {
 		event.preventDefault()
 
-		if (!validateMobileNumber(state.Phone)) {
+		if (!isValidPhone(state.Phone)) {
 			return window.alert("Please provide correct phone number!")
 		}
 

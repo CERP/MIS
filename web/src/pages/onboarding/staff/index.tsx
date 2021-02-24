@@ -1,20 +1,20 @@
 import React, { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import Dynamic from '@cerp/dynamic'
+import moment from 'moment'
 import { v4 } from 'node-uuid'
 import { hash } from 'utils'
-import moment from 'moment'
-import Dynamic from '@cerp/dynamic'
-import { useDispatch } from 'react-redux'
 
 import { SwitchButton } from 'components/input/switch'
-import { OnboardingStage, StaffType } from 'constants/index'
-import { validateMobileNumber } from 'utils/helpers'
+import { isValidPhone } from 'utils/helpers'
 import { ShowHidePassword } from 'components/password'
 import { createFacultyMerge } from 'actions'
 import { createMerges } from 'actions/core'
+import { OnboardingStage, StaffType } from 'constants/index'
 
 import UserIconSvg from 'assets/svgs/user.svg'
 
-type TAddStaffProps = {
+type AddStaffProps = {
 	onBack?: (close: boolean) => void
 	skipStage?: () => void
 }
@@ -55,18 +55,19 @@ const initialState: MISTeacher = {
 	Type: StaffType.TEACHING
 }
 
-export const AddStaff: React.FC<TAddStaffProps> = ({ skipStage }) => {
+export const AddStaff: React.FC<AddStaffProps> = ({ skipStage }) => {
 
 	const dispatch = useDispatch()
 
+	// TODO: consolidate state
 	const [state, setState] = useState(initialState)
-	const [openEye, setOpenEye] = useState(false)
+	const [showHidePassword, setShowHidePassword] = useState(false)
 	const [showAdditionalFields, setShowAdditionalFields] = useState(false)
 
 	const handleSubmit = (event: React.FormEvent) => {
 		event.preventDefault()
 
-		if (!validateMobileNumber(state.Phone)) {
+		if (!isValidPhone(state.Phone)) {
 			// TODO: Show RHT
 			return window.alert("Please provide correct phone number!")
 		}
@@ -123,17 +124,17 @@ export const AddStaff: React.FC<TAddStaffProps> = ({ skipStage }) => {
 						name="Password"
 						required
 						onChange={handleInput}
-						type={openEye ? 'text' : 'password'}
+						type={showHidePassword ? 'text' : 'password'}
 						autoCapitalize="off"
 						autoCorrect="off"
 						autoComplete="off"
 						placeholder="Enter password"
 						className="tw-input w-full bg-transparent border-blue-brand ring-1" />
 					<div
-						onClick={() => setOpenEye(!openEye)}
+						onClick={() => setShowHidePassword(!showHidePassword)}
 						className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
 						{
-							<ShowHidePassword open={openEye} />
+							<ShowHidePassword open={showHidePassword} />
 						}
 					</div>
 				</div>

@@ -7,7 +7,7 @@ import { Redirect, RouteComponentProps } from 'react-router-dom'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { SwitchButton } from 'components/input/switch'
-import { validateMobileNumber } from 'utils/helpers'
+import { isValidPhone } from 'utils/helpers'
 import { createFacultyMerge, deleteFaculty, uploadFacultyProfilePicture } from 'actions'
 import { StaffType } from 'constants/index'
 import { ShowHidePassword } from 'components/password'
@@ -79,7 +79,7 @@ type CreateOrUpdateStaffProps = RouteComponentProps<RouteInfo>
 type StateProps = {
 	profile: MISTeacher
 	showPassword: boolean
-	redirect: string | boolean
+	redirect: string
 }
 
 export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match, location }) => {
@@ -99,7 +99,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 			permissions: isNewStaff ? blankTeacher().permissions : editableFaculty && editableFaculty.permissions,
 		},
 		showPassword: false,
-		redirect: false
+		redirect: ''
 	})
 
 	// better to use nested properties from state
@@ -117,7 +117,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 	const handleSubmit = (event: React.FormEvent) => {
 		event.preventDefault()
 
-		if (!validateMobileNumber(profile.Phone)) {
+		if (!isValidPhone(profile.Phone)) {
 			return window.alert("Please provide correct phone number!")
 		}
 
@@ -145,12 +145,14 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 		}
 	}
 
+	// TODO: replace this with generic handler
 	const handleInput = (event: React.ChangeEvent<HTMLInputElement & HTMLSelectElement & HTMLTextAreaElement>) => {
 		const { name, value, checked, type } = event.target
 
 		setState({ ...state, profile: { ...profile, [name]: value } })
 	}
 
+	// TODO: replace this with generic handler
 	const handleInputByPath = (path: string[], value: boolean) => {
 		const updatedProfile = Dynamic.put(profile, path, value) as MISTeacher
 		setState({ ...state, profile: updatedProfile })
@@ -184,9 +186,12 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 	// this will only works when new users would be creating or delete action happen
 	if (redirect) {
 		return (
-			<Redirect to={redirect as string} />
+			<Redirect to={redirect} />
 		)
 	}
+
+	// TODO: add camera modal
+	// TODO: add logic on the backend to handle image uploading
 
 	return (
 		<AppLayout title={`${isNewStaff ? "New Staff" : "Update Staff"}`}>

@@ -1,10 +1,11 @@
-import { AppLayout } from 'components/Layout/appLayout'
 import React, { useMemo } from 'react'
 import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
+
+import getSectionsFromClasses from 'utils/getSectionsFromClasses'
+import { AppLayout } from 'components/Layout/appLayout'
 
 import UserIconSvg from 'assets/svgs/user.svg'
-import getSectionsFromClasses from 'utils/getSectionsFromClasses'
-import { Link } from 'react-router-dom'
 
 export const StaffList = () => {
 
@@ -41,7 +42,8 @@ export const StaffList = () => {
 						</div>
 					</div>
 
-					<select className="tw-select mt-0 rounded shadow text-teal-500 w-2/5" style={{ marginTop: 0 }}>
+					{/* TODO: don't use inline styles */}
+					<select className="tw-select rounded shadow text-teal-500 w-2/5" style={{ marginTop: 0 }}>
 						<option>Active</option>
 						<option>InActive</option>
 					</select>
@@ -66,12 +68,12 @@ export const StaffList = () => {
 }
 
 
-type TCardProps = {
+type CardProps = {
 	teacher: MISTeacher
 	sections: AugmentedSection[]
 }
 
-const Card = ({ teacher, sections }: TCardProps) => {
+const Card = ({ teacher, sections }: CardProps) => {
 
 	const teacherSection = sections.find(s => s.faculty_id === teacher.id)
 

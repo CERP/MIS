@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 import { AppLayout } from 'components/Layout/appLayout'
-import { PackageList } from 'components/Package'
+import { PackageList } from 'components/package'
 
 export const Pricing = () => {
 	return (

@@ -2,9 +2,9 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 import { getTeamMembersInfo } from 'constants/aboutTeam'
-import { PackageList } from 'components/Package'
+import { PackageList } from 'components/package'
 import { AppLayout } from 'components/Layout/appLayout'
-import { CustomerFeedback } from 'components/Feedback'
+import { CustomerFeedback } from 'components/feedback'
 
 import iconCall from './assets/call.svg'
 import iconCloud from './assets/cloud.svg'

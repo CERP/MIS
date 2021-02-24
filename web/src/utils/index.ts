@@ -73,3 +73,11 @@ export const formatPhone = (phone: string): string => {
 	// append '0' at start if not present due to auto excel conversion text to number
 	return "0".concat(phone)
 }
+
+/**
+ * Takes a MIS student and check if it's validate student
+ * @param student
+ */
+export const isValidStudent = (student: MISStudent): boolean => {
+	return !!(student && student.id && student.Name && student.section_id)
+}

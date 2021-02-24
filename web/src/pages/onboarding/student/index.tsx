@@ -1,32 +1,33 @@
 import React, { useCallback, useMemo, useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import Papa from 'papaparse'
 import { v4 } from 'node-uuid'
-import { useSelector, useDispatch } from 'react-redux'
 import moment from 'moment'
 import clsx from 'clsx'
 
 import downloadCSV from 'utils/downloadCSV'
-import toTitleCase from 'utils/toTitleCase'
 import { formatCNIC, formatPhone } from 'utils'
+import { toTitleCase } from 'utils/toTitleCase'
 
-import UserIconSvg from 'assets/svgs/user.svg'
 import { TextDivider } from 'components/divider'
-import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { AddStudentForm } from './add'
 import { createStudentMerges, deleteStudentById } from 'actions'
+import getSectionsFromClasses from 'utils/getSectionsFromClasses'
+
+import UserIconSvg from 'assets/svgs/user.svg'
 
 interface AddStudentProps {
 	onBack?: (close: boolean) => void
 	skipStage?: () => void
 }
 
-type TState = {
+type State = {
 	importedStudents: MISStudent[]
 	isUploadingCSV: boolean
 	uploadedFileName: string
 }
 
-const initialState: TState = {
+const initialState: State = {
 	importedStudents: [] as MISStudent[],
 	isUploadingCSV: false,
 	uploadedFileName: ''
@@ -166,6 +167,9 @@ export const AddStudent: React.FC<AddStudentProps> = ({ skipStage }) => {
 	}
 
 	const isMoreThanMaxStudents = Object.keys(students).length > MAX_STUDENTS
+
+	// TODO: add modal to show the details of imported student
+	// TODO: add RHT
 
 	return (
 		<div className="md:w-4/5 md:mx-auto flex flex-col items-center rounded-2xl bg-gray-700 my-4 md:mt-8">

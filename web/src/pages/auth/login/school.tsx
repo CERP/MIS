@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { AppLayout } from 'components/Layout/appLayout'
 import { ShowHidePassword } from 'components/password'
 import { createSchoolLogin } from 'actions'
-import { Spinner } from 'components/Animation/spinner'
+import { Spinner } from 'components/animation/spinner'
 import { OnboardingStage } from 'constants/index'
 import { DownloadIcon } from 'assets/icons'
 

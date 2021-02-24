@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { Redirect, RouteComponentProps } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import Dynamic from '@cerp/dynamic'
 import { v4 } from 'node-uuid'
 import clsx from 'clsx'
@@ -146,12 +146,15 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 
 	const removeSection = (sectionId: string) => {
 
+		// TODO: change it with custom alert component
 		if (!window.confirm("Are you sure you want to delete?")) {
 			return
 		}
 
 		// delete from local page state
-		deleteByPath(["class", "sections", sectionId])
+		if (isNewSchool) {
+			deleteByPath(["class", "sections", sectionId])
+		}
 
 		if (!isNewSchool) {
 			// delete from root and server

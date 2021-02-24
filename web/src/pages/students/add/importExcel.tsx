@@ -54,10 +54,6 @@ export const ImportStudentsCSV = () => {
 
 	const [state, setState] = useState(initialState)
 
-	const downloadCSVTemplate = useCallback(() => {
-		downloadCSV([studentCSVHeaders], "student-import-template")
-	}, [])
-
 	const handleUploadCSV = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
 
 		const convertCSVToStudents = (studentImportCSV: string) => {
@@ -146,6 +142,9 @@ export const ImportStudentsCSV = () => {
 		)
 	}
 
+	// TODO: SVGs to common source of import
+	// TODO: add modal to preview student
+
 	return (
 		<AppLayout title="Excel Import">
 			<div className="p-5 md:p-10 md:pb-0 text-gray-700 relative print:hidden space-y-8">
@@ -153,7 +152,7 @@ export const ImportStudentsCSV = () => {
 				<div className="space-y-4 pb-2">
 
 					<button type="button" className="inline-flex w-full tw-btn bg-orange-brand text-white"
-						onClick={downloadCSVTemplate}
+						onClick={() => downloadCSV([studentCSVHeaders], "student-import-template")}
 					>
 						<svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -218,8 +217,8 @@ export const ImportStudentsCSV = () => {
 						</label>
 					</button>
 					{
-						state.importedStudents.length > 0 && (<>
-							<div className="my-4">
+						state.importedStudents.length > 0 && (
+							<div className="mt-4">
 								<div className="text-center">{state.uploadedFileName}</div>
 								<div className={"w-full h-48 overflow-y-scroll text-xs md:text-base rounded-md"}>
 									<div className="table w-full">
@@ -244,9 +243,9 @@ export const ImportStudentsCSV = () => {
 										</div>
 									</div>
 								</div>
+								<button type="button" onClick={saveImportedStudents} className="w-full tw-btn bg-teal-500 text-white mt-4">Save</button>
 							</div>
-							<button type="button" onClick={saveImportedStudents} className="w-full tw-btn bg-teal-500 text-white">Save</button>
-						</>)
+						)
 					}
 				</div>
 			</div>

@@ -1,16 +1,17 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import moment from 'moment'
 import { Link } from 'react-router-dom'
+import moment from 'moment'
 import clsx from 'clsx'
 
 import { AttendanceStatsCard } from 'components/attendance'
 import { AppLayout } from 'components/Layout/appLayout'
-import { markAllStudents, markStudent } from 'actions'
-import getSectionsFromClasses from 'utils/getSectionsFromClasses'
-import toTitleCase from 'utils/toTitleCase'
 import { TModal } from 'components/Modal'
 import { useComponentVisible } from 'utils/customHooks'
+import { toTitleCase } from 'utils/toTitleCase'
+import { markAllStudents, markStudent } from 'actions'
+import getSectionsFromClasses from 'utils/getSectionsFromClasses'
+
 
 type State = {
 	selectedSection?: string
@@ -20,6 +21,7 @@ type State = {
 	}
 }
 
+// TODO: move this to constant file
 enum AttendanceStatus {
 	PRESENT = "PRESENT",
 	ABSENT = "ABSENT",

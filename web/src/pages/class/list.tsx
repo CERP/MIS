@@ -1,15 +1,18 @@
-import { AppLayout } from 'components/Layout/appLayout'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-import toTitleCase from 'utils/toTitleCase'
 
+import { toTitleCase } from 'utils/toTitleCase'
+import { AppLayout } from 'components/Layout/appLayout'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 
 export const ClassList = () => {
 
 	const { classes, students } = useSelector((state: RootReducerState) => state.db)
 	const [search, setSearch] = useState('')
+
+	// TODO: add search options and filter
+	// TODO: add options to class card
 
 	return (
 		<AppLayout title="Classes">
@@ -33,6 +36,7 @@ export const ClassList = () => {
 							placeholder="Search by class name"
 							autoComplete="off" />
 						<div className="absolute text-gray-500 left-0 ml-2 mr-4 my-3 top-0">
+							{/* TODO: move this to common place of import */}
 							<svg className="h-4 w-4 mt-px fill-current" xmlns="http://www.w3.org/2000/svg" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 56.966 56.966" width="512px" height="512px">
 								<path d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z" />
 							</svg>
@@ -61,12 +65,12 @@ export const ClassList = () => {
 }
 
 
-type TCardProps = {
+type CardProps = {
 	misClass: MISClass
 	students: RootDBState["students"]
 }
 
-const Card = ({ misClass, students }: TCardProps) => {
+const Card = ({ misClass, students }: CardProps) => {
 
 	const sections = getSectionsFromClasses({ [misClass.id]: misClass })
 	const sectionIds = sections.reduce((agg, curr) => [...agg, curr.id], [])
@@ -92,7 +96,9 @@ const Card = ({ misClass, students }: TCardProps) => {
 				</div>
 			</div>
 			<div className="absolute -top-8 md:-top-12 left-0 right-0">
-				<div className="bg-white border flex font-semibold h-16 items-center justify-center md:h-24 md:w-24 mx-auto rounded-full shadow-md w-16">{misClass.classYear}</div>
+				<div className="bg-white border flex font-semibold h-16 items-center justify-center md:h-24 md:w-24 mx-auto rounded-full shadow-md w-16">
+					{misClass.classYear}
+				</div>
 			</div>
 		</div>
 	)

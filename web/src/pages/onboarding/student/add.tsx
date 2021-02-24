@@ -1,8 +1,8 @@
-import React, { useCallback, useState } from 'react'
-import { v4 } from 'node-uuid'
+import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
+import { v4 } from 'node-uuid'
 
-import { validateMobileNumber } from 'utils/helpers'
+import { isValidPhone } from 'utils/helpers'
 import { createStudentMerge } from 'actions'
 
 
@@ -58,7 +58,7 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({ section }) => {
 	const handleSubmit = (event: React.FormEvent) => {
 		event.preventDefault()
 
-		if (!validateMobileNumber(state.Phone)) {
+		if (!isValidPhone(state.Phone)) {
 			// TODO: show RHT
 			return window.alert("Please enter correct phone!")
 		}

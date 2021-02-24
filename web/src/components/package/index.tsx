@@ -9,8 +9,8 @@ export const PackageList = () => {
 			<div className="mt-10 px-10 md:px-40">
 				<div className="grid gap-12 grid-cols-1 md:grid-cols-3">
 					{
-						(packages || []).map((pkg, index) => (
-							<PackageCard key={pkg.title + index} {...pkg} />
+						packages.map((pkg, index) => (
+							<PackageCard key={pkg.title + index} schoolPackage={pkg} />
 						))
 					}
 				</div>
@@ -25,25 +25,27 @@ export const PackageList = () => {
 	)
 }
 
-type CardProps = Package
+type CardProps = {
+	schoolPackage: Package
+}
 
-export const PackageCard = (props: CardProps) => {
+export const PackageCard = ({ schoolPackage }: CardProps) => {
 
 	return (
 		<div className={"rounded-3xl bg-white shadow-md"}>
-			<div className={`m-1 py-5 px-3 rounded-3xl flex flex-col items-center ${props.popular ? 'bg-gray-700 text-white' : ''}`}>
-				<div className="font-semibold text-lg">{props.title}</div>
+			<div className={`m-1 py-5 px-3 rounded-3xl flex flex-col items-center ${schoolPackage.popular ? 'bg-gray-700 text-white' : ''}`}>
+				<div className="font-semibold text-lg">{schoolPackage.title}</div>
 				{
-					props.popular ? <div className="my-2 px-2 text-xs rounded-full uppercase bg-purple-700 text-white">Popular</div>
+					schoolPackage.popular ? <div className="my-2 px-2 text-xs rounded-full uppercase bg-purple-700 text-white">Popular</div>
 						:
 						<div className="my-4" />
 				}
 				<div className="relative mt-4">
-					<div className="font-bold text-2xl">{props.price}</div>
-					<div className="absolute top-0 -right-6 text-xs">{props.currency}</div>
+					<div className="font-bold text-2xl">{schoolPackage.price}</div>
+					<div className="absolute top-0 -right-6 text-xs">{schoolPackage.currency}</div>
 				</div>
-				<div className="text-gray-500">Annual {props.annual_charge}</div>
-				<div className="font-lg font-semibold mt-4">{props.limit} Students</div>
+				<div className="text-gray-500">Annual {schoolPackage.annual_charge}</div>
+				<div className="font-lg font-semibold mt-4">{schoolPackage.limit} Students</div>
 				<div className="mt-4 py-3 text-center w-full bg-teal-500 cursor-pointer hover:bg-teal-600 text-white rounded-md">Choose Plan</div>
 			</div>
 		</div>

@@ -1,9 +1,10 @@
-import { AppLayout } from 'components/Layout/appLayout'
 import React, { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import toTitleCase from 'utils/toTitleCase'
+import { AppLayout } from 'components/Layout/appLayout'
+import { toTitleCase } from 'utils/toTitleCase'
+import { isValidStudent } from 'utils'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 
 import UserIconSvg from 'assets/svgs/user.svg'
@@ -15,17 +16,23 @@ type Filter = {
 export const StudentList = () => {
 
 	const { students, classes } = useSelector((state: RootReducerState) => state.db)
+
+	// TODO: create single state variable
 	const [search, setSearch] = useState('')
 	const [filter, setFilter] = useState<Filter>({
 		active: true
 	})
 
-	// TODO: add a check here for ax_limit: state.db.max_limit
-	// to restrict adding students
-
 	const sections = useMemo(() => {
 		return getSectionsFromClasses(classes)
 	}, [classes])
+
+	// TODO: add search options and filters
+	// TODO: add print button
+	// TODO: add options to cards
+	// TODO: add pagination
+	// TODO: add a check here for max_limit: state.db.max_limit
+	// to restrict adding students
 
 	return (
 		<AppLayout title="Students">
@@ -49,6 +56,7 @@ export const StudentList = () => {
 							placeholder="Search by name, class, roll #, phone #"
 							autoComplete="off" />
 						<div className="absolute text-gray-500 left-0 ml-2 mr-4 my-3 top-0">
+							{/* TODO: move this to common place of import */}
 							<svg className="h-4 w-4 mt-px fill-current" xmlns="http://www.w3.org/2000/svg" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 56.966 56.966" width="512px" height="512px">
 								<path d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z" />
 							</svg>
@@ -69,7 +77,9 @@ export const StudentList = () => {
 									))
 							}
 						</select>
-						<select className="tw-select rounded shadow text-teal-500 w-full" onChange={(e) => setFilter({ ...filter, active: e.target.value === 'true' })}>
+						<select
+							className="tw-select rounded shadow text-teal-500 w-full"
+							onChange={(e) => setFilter({ ...filter, active: e.target.value === 'true' })}>
 							<option value={'true'}>Active</option>
 							<option value={'false'}>InActive</option>
 						</select>
@@ -80,7 +90,7 @@ export const StudentList = () => {
 				<div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-12 gap-y-12 md:gap-y-20">
 					{
 						Object.values(students)
-							.filter(f => f && f.Name && f.section_id && (f.Active === filter.active) && (search ? f.Name.includes(search) : true))
+							.filter(s => isValidStudent(s) && (s.Active === filter.active) && (search ? s.Name.includes(search) : true))
 							.sort((a, b) => a.Name.localeCompare(b.Name))
 							.map(f => (
 								<Link key={f.id} to={`students/${f.id}/profile`}>
@@ -96,12 +106,12 @@ export const StudentList = () => {
 }
 
 
-type TCardProps = {
+type CardProps = {
 	student: MISStudent
 	sections: AugmentedSection[]
 }
 
-const Card = ({ student, sections }: TCardProps) => {
+const Card = ({ student, sections }: CardProps) => {
 
 	const studentSection = sections.find(s => s.id === student.section_id)
 
@@ -129,7 +139,10 @@ const Card = ({ student, sections }: TCardProps) => {
 				</div>
 			</div>
 			<div className="absolute -top-8 md:-top-12 left-0 right-0">
-				<img src={student.ProfilePicture?.url || student.ProfilePicture?.image_string || UserIconSvg} className="mx-auto h-16 w-16 md:h-24 md:w-24 rounded-full shadow-lg bg-gray-500 hover:bg-gray-700" alt={student.Name || "student"} />
+				<img
+					src={student.ProfilePicture?.url || student.ProfilePicture?.image_string || UserIconSvg}
+					className="mx-auto h-16 w-16 md:h-24 md:w-24 rounded-full shadow-lg bg-gray-500 hover:bg-gray-700"
+					alt={student.Name || "student"} />
 			</div>
 		</div>
 	)
