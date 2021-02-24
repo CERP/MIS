@@ -39,7 +39,7 @@ const GenerateEmptyTest = (type: TIPTestType): TIPDiagnosticReport => {
 const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, saveReport, setLearningLevel, history }) => {
 
 	const { class_name, subject, std_id, section_id, test_id } = match.params
-	const [showToast, setShowToast] = useState(false)
+	// const [showToast, setShowToast] = useState(false)
 
 	let test_type: TIPTestType = "Diagnostic"
 
@@ -96,7 +96,7 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 	const onSave = () => {
 
 		let complete = false
-		setShowToast(true)
+		// setShowToast(true)
 		if (!result.questions || Object.values(result.questions).length == 0) {
 			alert('Please mark questions')
 			return;
@@ -118,16 +118,12 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 				`/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades`)
 	}
 
-	const onCloseTIPModal = () => {
-		setShowToast(false)
-	}
-
 	return <div className="flex flex-wrap content-between bg-white">
-		{showToast && (
+		{/* {showToast && (
 			<Modal>
-				<TIPModal title={'title'} onClose={onCloseTIPModal} />
+				<TIPModal title={'title'} onClose={() => setShowToast(false)} />
 			</Modal>
-		)}
+		)} */}
 		<Card class_name={class_name ? class_name : 'Oral Test'} subject={subject} lesson_name='' lesson_no='' />
 		<div className="flex flex-col justify-between w-full mx-4">
 			{
