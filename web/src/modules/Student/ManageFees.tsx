@@ -8,7 +8,8 @@ import Layout from 'components/Layout'
 import former from "utils/former"
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { addMultipleFees, addFee, deleteMultipleFees, resetFees } from 'actions'
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom'
+import { isValidStudent } from 'utils'
 
 interface P {
 	students: RootDBState["students"]
@@ -177,7 +178,7 @@ class ManageFees extends Component<propTypes, S> {
 		if (this.state.fee_filter === "to_all_students" || (this.state.fee_filter === "to_single_class")) {
 
 			const fees = Object.values(students)
-				.filter(s => s && s.id && s.Name && s.Active && (this.state.selected_section_id === "" ? true : s.section_id === this.state.selected_section_id))
+				.filter(s => isValidStudent(s) && (this.state.selected_section_id === "" ? true : s.section_id === this.state.selected_section_id))
 				.map(student => {
 					const fee_id = v4()
 					return {
@@ -244,17 +245,18 @@ class ManageFees extends Component<propTypes, S> {
 		const { reset_fee_filter, reset_of_selected_section_id, reset_of_selected_student_id } = this.state
 
 		let students = Object.values(this.props.students)
+			.filter(s => isValidStudent(s))
 			.filter(student => {
 
 				if (reset_fee_filter === "to_all_students") {
 					return true
 				}
 
-				if (reset_fee_filter === "to_single_class" && student && student.Name && student.Active && student.section_id && student.section_id === reset_of_selected_section_id) {
+				if (reset_fee_filter === "to_single_class" && student.section_id === reset_of_selected_section_id) {
 					return true
 				}
 
-				if (reset_fee_filter === "to_single_student" && student.section_id && student.id === reset_of_selected_student_id) {
+				if (reset_fee_filter === "to_single_student" && student.id === reset_of_selected_student_id) {
 					return true
 				}
 

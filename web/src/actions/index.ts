@@ -650,7 +650,7 @@ export const assignLearningLevel = (student_id: string, subject: string, level: 
 	)
 }
 
-export const mergeTIPResult = ( student_id: string, diagnostic_report: TIPDiagnosticReport, test_id: string) => (dispatch: Function) => {
+export const mergeTIPResult = (student_id: string, diagnostic_report: TIPDiagnosticReport, test_id: string) => (dispatch: Function) => {
 	dispatch(
 		createMerges([
 			{
@@ -1200,21 +1200,28 @@ export const removeSubjectFromDatesheet = (id: string, subj: string, section_id:
 }
 
 export const resetFees = (students: MISStudent[]) => (dispatch: Function) => {
-	const merges = students.reduce((agg, curr) => {
-		return [
-			...agg,
-			{
-				path: ['db', 'students', curr.id, 'fees'],
-				value: {},
-			},
-			{
-				path: ['db', 'students', curr.id, 'payments'],
-				value: {},
-			},
-		]
-	}, [])
+	let deletes_fees = []
+	let deletes_payments = []
 
-	dispatch(createMerges(merges))
+	for (const s of Object.values(students)) {
+
+		for (const fid of Object.keys(s.fees)) {
+			deletes_fees.push({
+				path: ['db', 'students', s.id, 'fees', fid],
+			})
+		}
+
+		for (const pid of Object.keys(s.payments)) {
+			deletes_payments.push({
+				path: ['db', 'students', s.id, 'payments', pid],
+			})
+		}
+	}
+
+	dispatch(createDeletes([
+		...deletes_fees,
+		...deletes_payments
+	]))
 }
 
 export const RESET_ADMIN_PASSWORD = 'RESET_ADMIN_PASSWORD'

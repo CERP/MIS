@@ -53,3 +53,12 @@ export const checkTime = async (): Promise<boolean> => {
 type ServerResponse = {
 	os_time: number
 }
+
+/**
+ * Takes a MIS student and check if it's validate student. A valid student means has id,
+ * name and section id and is active as well
+ * @param student
+ */
+export const isValidStudent = (student: MISStudent): boolean => {
+	return !!(student && student.id && student.Name && student.section_id && student.Active)
+} 
