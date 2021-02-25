@@ -119,7 +119,6 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 		// assign level to student
 		complete && setLearningLevel(std_id, subject, level)
 		complete && saveReport(std_id, result, test_id)
-
 	}
 
 	const redirect = () => {
