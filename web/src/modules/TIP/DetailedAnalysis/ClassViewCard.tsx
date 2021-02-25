@@ -1,73 +1,72 @@
-//@ts-nocheck
 import React, { useState } from 'react';
 import { connect } from 'react-redux'
 import clsx from 'clsx';
-import Modal from 'components/Modal'
+import { TModal } from '../Modal'
 import StudentInfoModal from './StudentInfoModal'
 import TIPGroupModal from './TIPGroupModal'
 import ChangeTIPGroup from './ChangeTIPGroup'
 import { convertLearningGradeToGroupName, getGradesFromTests } from 'utils/TIP'
 import { assignLearningLevel } from 'actions'
+import { useComponentVisible } from 'utils/customHooks';
 
 interface P {
     name: string
     std_id: string
-    learning_levels: RootDBState["students"]["targeted_instruction"]
+    learning_levels: MISStudent["targeted_instruction"]["learning_level"]
     targeted_instruction: RootReducerState["targeted_instruction"]
 
     setLearningLevel: (student_id: string, subject: string, level: TIPGrades) => void
 }
 
 const ClassViewCard: React.FC<P> = ({ name, learning_levels, targeted_instruction, std_id, setLearningLevel }) => {
-    const [show_student_info_modal, setShowStudentInfoModal] = useState(false)
+    const [show_std_info_modal, setShowStdInfoModal] = useState(false)
     const [show_tip_group_modal, setShowTIPGroupModal] = useState(false)
     const [show_change_group_modal, setShowChangeGroupModal] = useState(false)
+    const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false)
 
-    const [current_grade, setCurrentGrade] = useState('')
-    const [selected_subject, setSelectSubject] = useState('')
-    const [selected_grade, setSelectedGrade] = useState('')
+    const [current_grade, setCurrentGrade] = useState<TIPGrades>()
+    const [selected_subject, setSelectSubject] = useState<TIPSubjects>()
+    const [selected_grade, setSelectedGrade] = useState<TIPGrades>()
 
     const grades = getGradesFromTests(targeted_instruction)
 
     const reAssignGrade = () => {
-        console.log(std_id, selected_subject, selected_grade)
         setLearningLevel(std_id, selected_subject, selected_grade)
+        setIsComponentVisible(false)
         setShowChangeGroupModal(false)
     }
 
     return <>
         {
-            show_student_info_modal && <Modal>
-                <StudentInfoModal learning_levels={learning_levels}
-                    onClose={() => setShowStudentInfoModal(false)}
-                    setCurrentGrade={setCurrentGrade}
-                    setShowTIPGroupModal={setShowTIPGroupModal}
-                    setSelectSubject={setSelectSubject}
-                    setShowStudentInfoModal={setShowStudentInfoModal}
-                />
-            </Modal>
-        }
-        {
-            show_tip_group_modal && <Modal>
-                <TIPGroupModal
-                    subject={selected_subject}
-                    grades={grades}
-                    setSelectedGrade={setSelectedGrade}
-                    setShowChangeGroupModal={setShowChangeGroupModal}
-                    setShowTIPGroupModal={setShowTIPGroupModal}
-
-                    onClose={() => setShowStudentInfoModal(false)} />
-            </Modal>
-        }
-        {
-            show_change_group_modal && <Modal>
-                <ChangeTIPGroup
-                    subject={selected_subject}
-                    selected_grade={selected_grade}
-                    current_grade={current_grade}
-                    reAssignGrade={reAssignGrade}
-                    onClose={() => setShowChangeGroupModal(false)} />
-            </Modal>
+            isComponentVisible && <TModal>
+                {show_std_info_modal &&
+                    !show_tip_group_modal &&
+                    !show_change_group_modal && <div ref={ref}>
+                        <StudentInfoModal
+                            learning_levels={learning_levels}
+                            setCurrentGrade={setCurrentGrade}
+                            setShowTIPGroupModal={setShowTIPGroupModal}
+                            setSelectSubject={setSelectSubject}
+                        />
+                    </div>}
+                {show_tip_group_modal && <div ref={ref}>
+                    <TIPGroupModal
+                        subject={selected_subject}
+                        grades={grades}
+                        setSelectedGrade={setSelectedGrade}
+                        setShowChangeGroupModal={setShowChangeGroupModal}
+                        setShowTIPGroupModal={setShowTIPGroupModal}
+                    />
+                </div>}
+                {show_change_group_modal && <div ref={ref}>
+                    <ChangeTIPGroup
+                        subject={selected_subject}
+                        selected_grade={selected_grade}
+                        current_grade={current_grade}
+                        reAssignGrade={reAssignGrade}
+                    />
+                </div>}
+            </TModal>
         }
         <div className="h-10 items-center text-xs w-full mt-4 flex flex-row justify-around shadow-lg">
             <div className="w-6/12 flex flex-row justify-between px-3 items-center m-2">
@@ -84,7 +83,7 @@ const ClassViewCard: React.FC<P> = ({ name, learning_levels, targeted_instructio
                                     "bg-gray-400": grade === 'Oral',
                                     "bg-gray-600": grade === 'Remediation Not Needed'
                                 }, `bg-${grade.toLowerCase()}-tip-brand`)}
-                                    onClick={() => setShowStudentInfoModal(true)}>{grade}</div>
+                                    onClick={() => { setIsComponentVisible(true), setShowStdInfoModal(true) }}>{grade === 'Remediation Not Needed' ? 'none' : grade}</div>
                             </div>
                         })
                 }

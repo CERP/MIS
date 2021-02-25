@@ -9,18 +9,14 @@ interface P {
     current_grade: TIPGrades
 
     reAssignGrade: () => void
-    onClose: () => void
 }
 
-const ChangeTIPGroup: React.FC<P> = ({ subject, selected_grade, current_grade, onClose, reAssignGrade }) => {
+const ChangeTIPGroup: React.FC<P> = ({ subject, selected_grade, current_grade, reAssignGrade }) => {
 
     const current_group = convertLearningGradeToGroupName(current_grade)
     const new_group = convertLearningGradeToGroupName(selected_grade)
     return (
-        <div className="flex flex-col rounded-t-xl padding-3 md:w-6/12 lg:w-3/12 bg-white">
-            <div className="right-2 top-2 absolute text-danger-tip-brand cursor-pointer" onClick={onClose}>
-                X
-        </div>
+        <div className="flex flex-col rounded-t-xl padding-3 bg-white">
             <div className="rounded-t-lg text-center bg-blue-tip-brand h-16 text-white flex justify-center items-center text-xl">
                 Change Group for {subject}
             </div>
