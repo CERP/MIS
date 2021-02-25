@@ -1,11 +1,11 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-import iconAttendance from './assets/attendance.svg'
 import iconFee from './assets/fee.svg'
 import iconMarks from './assets/marks.svg'
 import iconSms from './assets/sms.svg'
 import iconExams from './assets/exams.svg'
+import iconAttendance from './assets/attendance.svg'
 
 const links: CardProps[] = [
 	{
@@ -14,27 +14,27 @@ const links: CardProps[] = [
 		icon: iconAttendance
 	},
 	{
-		link: "",
-		title: "fee",
+		link: "/school/fees",
+		title: "fees",
 		icon: iconFee
 	},
 	{
-		link: "",
+		link: "/school/exams",
 		title: "exams",
 		icon: iconExams
 	},
 	{
-		link: "",
+		link: "/school/expenses",
 		title: "expense",
 		icon: "/favicon.ico"
 	},
 	{
-		link: "",
+		link: "/school/diary",
 		title: "diary",
 		icon: "/favicon.ico"
 	},
 	{
-		link: "",
+		link: "/school/sms",
 		title: "SMS",
 		icon: iconSms
 	},
@@ -44,12 +44,12 @@ const links: CardProps[] = [
 		icon: "/favicon.ico"
 	},
 	{
-		link: "",
+		link: "/school/analytics",
 		title: "Analytics",
 		icon: iconMarks
 	},
 	{
-		link: "",
+		link: "/targeted/instruction",
 		title: "TIP",
 		icon: "/favicon.ico"
 	}
