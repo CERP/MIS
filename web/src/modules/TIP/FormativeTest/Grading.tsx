@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import clsx from 'clsx'
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { calculateLearningLevelFromDiagnosticTest, calculateLearningLevelFromOralTest } from 'utils/TIP'
 import { mergeTIPResult, assignLearningLevel } from 'actions'
-import Modal from 'components/Modal'
-import TIPModal from '../TIPModal'
+import { convertLearningGradeToGroupName } from 'utils/TIP'
+import { useComponentVisible } from 'utils/customHooks';
+import { TModal } from '../Modal'
 import Card from '../Card'
 
 interface P {
@@ -38,8 +40,9 @@ const GenerateEmptyTest = (type: TIPTestType): TIPDiagnosticReport => {
 
 const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, saveReport, setLearningLevel, history }) => {
 
-	const { class_name, subject, std_id, section_id, test_id } = match.params
-	// const [showToast, setShowToast] = useState(false)
+	const { class_name, subject, section_id, std_id, test_id } = match.params
+	const [group, setGroup] = useState<TIPLearningGroups>()
+	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false)
 
 	let test_type: TIPTestType = "Diagnostic"
 
@@ -96,7 +99,6 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 	const onSave = () => {
 
 		let complete = false
-		// setShowToast(true)
 		if (!result.questions || Object.values(result.questions).length == 0) {
 			alert('Please mark questions')
 			return;
@@ -105,12 +107,22 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 		const level = url[2] === 'oral-test' ? calculateLearningLevelFromOralTest(result)
 			: calculateLearningLevelFromDiagnosticTest(result)
 
+		setGroup(convertLearningGradeToGroupName(level))
+
 		if (Object.keys(result.questions).length === Object.keys(questionsObj).length) {
 			complete = true
 		}
+
+		//display modal => to see assigned group
+		setIsComponentVisible(true)
+
 		// assign level to student
 		complete && setLearningLevel(std_id, subject, level)
 		complete && saveReport(std_id, result, test_id)
+
+	}
+
+	const redirect = () => {
 		history.push(test_type === "Diagnostic" ?
 			`/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades` :
 			test_type === "Oral" ?
@@ -119,11 +131,21 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 	}
 
 	return <div className="flex flex-wrap content-between bg-white">
-		{/* {showToast && (
-			<Modal>
-				<TIPModal title={'title'} onClose={() => setShowToast(false)} />
-			</Modal>
-		)} */}
+		{isComponentVisible && (
+			<TModal>
+				<div ref={ref} className="h-32 bg-white">
+					<div className={clsx("text-center p-3 rounded-md text-white text-lg dont-bold", {
+						"bg-gray-400": group === 'Oral',
+						"bg-gray-600": group === 'Remediation Not Needed'
+					}, `bg-${group.toLowerCase()}-tip-brand`)}>
+						{group} Group
+						</div>
+					<div className="w-full flex justify-center items-center mt-6">
+						<button className="w-6/12 p-3 border-none bg-green-tip-brand text-white rounded-lg outline-none" onClick={redirect}>OK</button>
+					</div>
+				</div>
+			</TModal>
+		)}
 		<Card class_name={class_name ? class_name : 'Oral Test'} subject={subject} lesson_name='' lesson_no='' />
 		<div className="flex flex-col justify-between w-full mx-4">
 			{
