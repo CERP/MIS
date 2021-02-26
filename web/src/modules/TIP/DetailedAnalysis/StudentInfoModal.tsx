@@ -7,13 +7,13 @@ interface P {
 
     setCurrentGrade: (grade: TIPGrades) => void
     setSelectSubject: (sub: TIPSubjects) => void
-    setShowTIPGroupModal: (showModal: boolean) => void
+    setModalType: (modal_type: string) => void
 }
 
-const StudentInfoModal: React.FC<P> = ({ learning_levels, setShowTIPGroupModal, setCurrentGrade, setSelectSubject }) => {
+const StudentInfoModal: React.FC<P> = ({ learning_levels, setModalType, setCurrentGrade, setSelectSubject }) => {
 
     const onEdit = (sub: TIPSubjects, grade: TIPGrades) => {
-        setShowTIPGroupModal(true)
+        setModalType('tip_groups')
         setCurrentGrade(grade)
         setSelectSubject(sub)
     }

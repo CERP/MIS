@@ -6,16 +6,14 @@ interface P {
     subject: TIPSubjects
     grades: TIPLevels[]
 
-    setShowChangeGroupModal: (showModal: boolean) => void
-    setShowTIPGroupModal: (showModal: boolean) => void
+    setModalType: (modal_type: string) => void
     setSelectedGrade: (grade: TIPGrades) => void
 }
 
-const TIPGroupModal: React.FC<P> = ({ subject, grades, setSelectedGrade, setShowTIPGroupModal, setShowChangeGroupModal }) => {
+const TIPGroupModal: React.FC<P> = ({ subject, grades, setSelectedGrade, setModalType }) => {
 
     const onClickGrade = (grade: TIPGrades) => {
-        setShowChangeGroupModal(true)
-        setShowTIPGroupModal(false)
+        setModalType('change_group')
         setSelectedGrade(grade)
     }
     return (

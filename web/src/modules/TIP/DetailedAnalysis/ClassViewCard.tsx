@@ -17,9 +17,7 @@ interface P {
 }
 
 const ClassViewCard: React.FC<P> = ({ std, targeted_instruction, setLearningLevel }) => {
-    const [show_std_info_modal, setShowStdInfoModal] = useState(false)
-    const [show_tip_group_modal, setShowTIPGroupModal] = useState(false)
-    const [show_change_group_modal, setShowChangeGroupModal] = useState(false)
+    const [modal_type, setModalType] = useState('')
     const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false)
 
     const [current_grade, setCurrentGrade] = useState<TIPGrades>()
@@ -31,32 +29,28 @@ const ClassViewCard: React.FC<P> = ({ std, targeted_instruction, setLearningLeve
     const reAssignGrade = () => {
         setLearningLevel(std.id, selected_subject, selected_grade)
         setIsComponentVisible(false)
-        setShowChangeGroupModal(false)
     }
 
     return <>
         {
             isComponentVisible && <TModal>
-                {show_std_info_modal &&
-                    !show_tip_group_modal &&
-                    !show_change_group_modal && <div ref={ref}>
-                        <StudentInfoModal
-                            learning_levels={std.targeted_instruction.learning_level}
-                            setCurrentGrade={setCurrentGrade}
-                            setShowTIPGroupModal={setShowTIPGroupModal}
-                            setSelectSubject={setSelectSubject}
-                        />
-                    </div>}
-                {show_tip_group_modal && <div ref={ref}>
+                {modal_type === 'test_info' && <div ref={ref}>
+                    <StudentInfoModal
+                        learning_levels={std.targeted_instruction.learning_level}
+                        setCurrentGrade={setCurrentGrade}
+                        setModalType={setModalType}
+                        setSelectSubject={setSelectSubject}
+                    />
+                </div>}
+                {modal_type === 'tip_groups' && <div ref={ref}>
                     <TIPGroupModal
                         subject={selected_subject}
                         grades={grades}
                         setSelectedGrade={setSelectedGrade}
-                        setShowChangeGroupModal={setShowChangeGroupModal}
-                        setShowTIPGroupModal={setShowTIPGroupModal}
+                        setModalType={setModalType}
                     />
                 </div>}
-                {show_change_group_modal && <div ref={ref}>
+                {modal_type === 'change_group' && <div ref={ref}>
                     <ChangeTIPGroup
                         subject={selected_subject}
                         selected_grade={selected_grade}
@@ -81,7 +75,7 @@ const ClassViewCard: React.FC<P> = ({ std, targeted_instruction, setLearningLeve
                                     "bg-gray-400": grade === 'Oral',
                                     "bg-gray-600": grade === 'Remediation Not Needed'
                                 }, `bg-${grade.toLowerCase()}-tip-brand`)}
-                                    onClick={() => { setIsComponentVisible(true), setShowStdInfoModal(true) }}>{grade === 'Remediation Not Needed' ? 'none' : grade}</div>
+                                    onClick={() => { setIsComponentVisible(true), setModalType('test_info') }}>{grade === 'Remediation Not Needed' ? 'none' : grade}</div>
                             </div>
                         })
                 }
