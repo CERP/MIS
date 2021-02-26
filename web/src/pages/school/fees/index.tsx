@@ -2,10 +2,14 @@ import React from 'react'
 import cond from 'cond-construct'
 import { RouteComponentProps } from 'react-router-dom'
 
-import Card from 'components/cards/pill-button'
-import { AppLayout } from 'components/Layout/appLayout'
 import { FeeSettings } from './settings'
 import { VoucherSettings } from './voucher-settings'
+import { FeeCollection } from './collection'
+import { ResetFee } from './reset'
+import { PrintVoucher } from './print-voucher'
+
+import Card from 'components/cards/pill-button'
+import { AppLayout } from 'components/Layout/appLayout'
 
 const MenuItems = [
 	{
@@ -52,9 +56,10 @@ export const SchoolFees: React.FC<Props> = ({ match }) => {
 	const renderComponent = () => (
 		cond([
 			[page === Pages.FEE_SETTINGS, <FeeSettings key={Pages.FEE_SETTINGS} />],
-			[page === Pages.VOUCHER_SETTINGS, <VoucherSettings key={Pages.FEE_SETTINGS} />],
-			[page === Pages.FEE_COLLECTION, <FeeSettings key={Pages.FEE_SETTINGS} />],
-			[page === Pages.FEE_RESET, <FeeSettings key={Pages.FEE_SETTINGS} />],
+			[page === Pages.VOUCHER_SETTINGS, <VoucherSettings key={Pages.VOUCHER_SETTINGS} />],
+			[page === Pages.PRINT_VOUCHER, <PrintVoucher key={Pages.PRINT_VOUCHER} />],
+			[page === Pages.FEE_COLLECTION, <FeeCollection key={Pages.FEE_COLLECTION} />],
+			[page === Pages.FEE_RESET, <ResetFee key={Pages.FEE_RESET} />],
 		])
 	)
 
