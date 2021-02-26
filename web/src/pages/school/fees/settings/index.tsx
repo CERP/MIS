@@ -42,7 +42,7 @@ export const FeeSettings = () => {
 	)
 
 	return (
-		<AppLayout title={"Fee Setting"}>
+		<AppLayout title={"Fee Settings"}>
 			<Tabbar tab={activeTab} setTab={setActiveTab} content={TabbarContent} />
 			{renderComponent()}
 		</AppLayout>

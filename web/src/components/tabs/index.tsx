@@ -10,7 +10,7 @@ type TabbarProps = {
 export const Tabbar = ({ tab, setTab, content }: TabbarProps) => {
 	return (
 		<div className="sticky inset-0 top-16 z-30">
-			<div className="text-center w-full inline-grid grid-cols-3 ga-x-4 bg-teal-500 px-4 pt-2 pb-0 shadow-xl text-teal-200 text-lg">
+			<div className="text-center w-full inline-grid grid-cols-3 ga-x-4 bg-teal-500 px-4 pt-2 pb-0 shadow-lg text-teal-200 text-lg">
 				{
 					content.map((item: any) => (
 						<div key={item.tab}

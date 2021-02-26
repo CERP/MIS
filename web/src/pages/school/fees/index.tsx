@@ -1,9 +1,9 @@
 import React from 'react'
 import cond from 'cond-construct'
+import { RouteComponentProps } from 'react-router-dom'
 
 import Card from 'components/cards/pill-button'
 import { AppLayout } from 'components/Layout/appLayout'
-import { RouteComponentProps } from 'react-router-dom'
 import { FeeSettings } from './settings'
 
 const MenuItems = [
@@ -48,11 +48,13 @@ export const SchoolFees: React.FC<Props> = ({ match }) => {
 
 	const { page } = match.params
 
-	// TODO: introduce cond-construct here
-
 	const renderComponent = () => (
 		cond([
-			[page === Pages.FEE_SETTINGS, <FeeSettings key={Pages.FEE_SETTINGS} />]
+			[page === Pages.FEE_SETTINGS, <FeeSettings key={Pages.FEE_SETTINGS} />],
+			[page === Pages.VOUCHER_SETTINGS, <FeeSettings key={Pages.FEE_SETTINGS} />],
+			[page === Pages.PRINT_VOUCHER, <FeeSettings key={Pages.FEE_SETTINGS} />],
+			[page === Pages.FEE_COLLECTION, <FeeSettings key={Pages.FEE_SETTINGS} />],
+			[page === Pages.FEE_RESET, <FeeSettings key={Pages.FEE_SETTINGS} />],
 		])
 	)
 
