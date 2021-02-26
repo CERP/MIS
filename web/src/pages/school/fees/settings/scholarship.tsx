@@ -72,20 +72,23 @@ export const Scholarship = () => {
 								)
 								.sort((a, b) => (parseInt(a.RollNumber) ?? 0) - (parseInt(b.RollNumber) ?? 0))
 								.map((c, index) => (
-									<div key={c.id} className={clsx("table-row", {
-										"bg-gray-100": index % 2 === 0,
-										"bg-gray-200": index % 2 === 1
-									}
-									)}>
-										<div className="table-cell px-2 py-2 text-left">
-											<div className="flex flex-col">
-												<div className="">{toTitleCase(c.Name)}</div>
-												<div className="text-teal-500 text-sm">Final:{ }</div>
-											</div>
+									<div key={c.id} className={clsx("table-row", index % 2 === 0 ? "bg-gray-100" : "bg-gray-200")}>
+										<div className="table-cell p-2 text-left">
+											<div className="">{toTitleCase(c.Name)}</div>
 										</div>
-										<input className="w-32 py-1 tw-input" />
-										<div className="table-cell px-2 py-2">
-											<input className="w-16 py-1 tw-input" />
+										<div className="table-cell p-2">
+											<input
+												type="number"
+												className="w-32 py-1 tw-input" placeholder="e.g. Need based" />
+										</div>
+										<div className="table-cell p-2">
+											<div className="flex flex-col items-center">
+												<input
+													type="number"
+													className="w-16 py-1 tw-input" />
+												<div className="text-teal-500 text-xs p-1 text-left">Final:1500</div>
+											</div>
+
 										</div>
 									</div>
 								))
