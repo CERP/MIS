@@ -43,14 +43,14 @@ const TIPGroupModal: React.FC<P> = ({ subject, grades, setSelectedGrade, setShow
             <div className="text-center rounded-t-lg bg-blue-tip-brand h-12 md:h-16 lg:h-16 text-white flex flex-row justify-around items-center text-sm md:text-lg lg:text-lg">
                 Select new group for {subject}
             </div>
-            <div className="flex justify-center items-center">
-                <div className="grid grid-cols-2 grid-rows-2 gap-3 md:gap-5 lg:gap-7 content-center p-3">
+            <div className="flex justify-center items-center p-2">
+                <div className="grid grid-cols-2 grid-rows-2 gap-6 md:gap-6 lg:gap-10 content-center py-3">
                     {
                         grades && grades
                             .sort((a, b) => a.localeCompare(b))
                             .map((grade, index) => {
                                 return <div key={grade}>
-                                    <div className={`${index_map[index]} px-0 md:px-1 lg:px-2 text-sm md:text-base cursor-pointer container rounded-lg h-12 md:h-16 lg:16 flex items-center justify-center shadow-lg`}
+                                    <div className={`${index_map[index]} py-3 px-1 md:py-5 md:px-1 lg:py-6 lg:px-2 text-sm md:text-base cursor-pointer container rounded-lg flex items-center justify-center shadow-lg`}
                                         onClick={() => onClickGrade(convertLearningLevelToGrade(grade))}>
                                         <div className="text-white font-bold mb-1">{`${grade_map[grade]} Group`}</div>
                                     </div>

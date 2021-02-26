@@ -24,12 +24,12 @@ const ChangeTIPGroup: React.FC<P> = ({ subject, selected_grade, current_grade, r
                 <Headings heading='' sub_heading={`Are you sure you want to change ${subject} sorting from 
             ${current_group} to ${new_group}`} />
                 <div className="flex flex-row justify-around items-center mt-5">
-                    <div className={clsx("text-center p-3 rounded-md text-white text-lg", {
+                    <div className={clsx("text-center py-2 px-1 md:py-3 md:px-3 lg:py-3 lg:px-4 rounded-md text-white text-lg", {
                         "bg-gray-400": current_group === 'Oral',
                         "bg-gray-600": current_group === 'Remediation Not Needed'
                     }, `bg-${current_group.toLowerCase()}-tip-brand`)}>{current_group === 'Remediation Not Needed' ? current_group : `${current_group} Group`}</div>
                 To
-                    <div className={clsx("text-center p-3 rounded-md text-white text-lg", {
+                    <div className={clsx("text-center py-2 px-1 md:py-3 md:px-3 lg:py-3 lg:px-4 rounded-md text-white text-lg", {
                         "bg-gray-400": current_group === 'Oral',
                         "bg-gray-600": current_group === 'Remediation Not Needed'
                     }, `bg-${new_group.toLowerCase()}-tip-brand`)}>{new_group} Group</div>
