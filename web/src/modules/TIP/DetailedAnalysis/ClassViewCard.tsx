@@ -69,10 +69,10 @@ const ClassViewCard: React.FC<P> = ({ name, learning_levels, targeted_instructio
             </TModal>
         }
         <div className="h-10 items-center text-xs w-full mt-4 flex flex-row justify-around shadow-lg">
-            <div className="w-4/12 flex flex-row justify-between px-3 items-center m-2">
+            <div className="w-4/12 md:w-6/12 flex flex-row justify-between px-3 items-center m-2">
                 <div className="font-bold text-center">{name}</div>
             </div>
-            <div className="flex flex-row justify-between w-8/12 text-xs m-4">
+            <div className="flex flex-row justify-between w-8/12 md:w-6/12 text-xs m-4">
                 {
                     Object.entries(learning_levels || {})
                         .sort(([sub,]) => sub.localeCompare(sub))

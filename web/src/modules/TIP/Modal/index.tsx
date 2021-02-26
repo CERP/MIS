@@ -13,7 +13,7 @@ export const TModal: React.FC<TModalProps> = ({ children }) => {
                 </div>
                 {/* This element is to trick the browser into centering the modal contents. */}
                 <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                <div className="inline-block align-bottom rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+                <div className="inline-block align-bottom rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle w-full md:w-5/12 lg:w-5/12"
                     role="dialog" aria-modal="true" aria-labelledby="modal-headline">
                     {
                         children

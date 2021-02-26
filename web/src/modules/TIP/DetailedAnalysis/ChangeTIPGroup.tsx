@@ -17,7 +17,7 @@ const ChangeTIPGroup: React.FC<P> = ({ subject, selected_grade, current_grade, r
     const new_group = convertLearningGradeToGroupName(selected_grade)
     return (
         <div className="flex flex-col rounded-t-xl padding-3 bg-white">
-            <div className="rounded-t-lg text-center bg-blue-tip-brand h-16 text-white flex justify-center items-center text-xl">
+            <div className="text-center rounded-t-lg bg-blue-tip-brand h-12 md:h-16 text-white flex flex-row justify-around items-center text-sm md:text-lg">
                 Change Group for {subject}
             </div>
             <div className="p-2">
