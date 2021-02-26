@@ -196,7 +196,7 @@ const Card: React.FC<CardProps> = ({ member, attendanceDate, markAttendance }) =
 	const status = Object.keys(record)?.[0]
 
 	// TODO: handle check_in and check_out time
-
+	// TODO: handle transition between check_in and checkout time
 	return (
 		<div className="p-2 md:p-3 text-sm md:text-base border border-gray-50 rounded-md space-y-1 shadow-md">
 			<div className="flex flex-row items-center justify-between">
@@ -213,7 +213,7 @@ const Card: React.FC<CardProps> = ({ member, attendanceDate, markAttendance }) =
 						name="present"
 						className={clsx("flex items-center justify-center w-8 h-8 rounded-full shadow-md",
 							{
-								"bg-green-brand text-white": AttendanceStatus.CHECK_IN === status
+								"bg-green-brand text-white": AttendanceStatus.CHECK_IN === status || AttendanceStatus.CHECK_OUT === status,
 							}
 						)}>
 						<span>P</span>
