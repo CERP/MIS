@@ -10,28 +10,26 @@ import { assignLearningLevel } from 'actions'
 import { useComponentVisible } from 'utils/customHooks';
 
 interface P {
-    name: string
-    std_id: string
-    learning_levels: MISStudent["targeted_instruction"]["learning_level"]
+    std: MISStudent
     targeted_instruction: RootReducerState["targeted_instruction"]
 
     setLearningLevel: (student_id: string, subject: string, level: TIPGrades) => void
 }
 
-const ClassViewCard: React.FC<P> = ({ name, learning_levels, targeted_instruction, std_id, setLearningLevel }) => {
+const ClassViewCard: React.FC<P> = ({ std, targeted_instruction, setLearningLevel }) => {
     const [show_std_info_modal, setShowStdInfoModal] = useState(false)
     const [show_tip_group_modal, setShowTIPGroupModal] = useState(false)
     const [show_change_group_modal, setShowChangeGroupModal] = useState(false)
     const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false)
 
     const [current_grade, setCurrentGrade] = useState<TIPGrades>()
-    const [selected_subject, setSelectSubject] = useState<TIPSubjects>()
     const [selected_grade, setSelectedGrade] = useState<TIPGrades>()
+    const [selected_subject, setSelectSubject] = useState<TIPSubjects>()
 
     const grades = getGradesFromTests(targeted_instruction)
 
     const reAssignGrade = () => {
-        setLearningLevel(std_id, selected_subject, selected_grade)
+        setLearningLevel(std.id, selected_subject, selected_grade)
         setIsComponentVisible(false)
         setShowChangeGroupModal(false)
     }
@@ -43,7 +41,7 @@ const ClassViewCard: React.FC<P> = ({ name, learning_levels, targeted_instructio
                     !show_tip_group_modal &&
                     !show_change_group_modal && <div ref={ref}>
                         <StudentInfoModal
-                            learning_levels={learning_levels}
+                            learning_levels={std.targeted_instruction.learning_level}
                             setCurrentGrade={setCurrentGrade}
                             setShowTIPGroupModal={setShowTIPGroupModal}
                             setSelectSubject={setSelectSubject}
@@ -70,11 +68,11 @@ const ClassViewCard: React.FC<P> = ({ name, learning_levels, targeted_instructio
         }
         <div className="h-10 items-center text-xs w-full mt-4 flex flex-row justify-around shadow-lg">
             <div className="w-4/12 md:w-6/12 flex flex-row justify-between px-3 items-center m-2">
-                <div className="font-bold text-center">{name}</div>
+                <div className="font-bold text-center">{std.Name}</div>
             </div>
             <div className="flex flex-row justify-between w-8/12 md:w-6/12 text-xs m-4">
                 {
-                    Object.entries(learning_levels || {})
+                    Object.entries(std.targeted_instruction.learning_level || {})
                         .sort(([sub,]) => sub.localeCompare(sub))
                         .map(([, grade_obj]) => {
                             const grade = convertLearningGradeToGroupName(grade_obj.grade)

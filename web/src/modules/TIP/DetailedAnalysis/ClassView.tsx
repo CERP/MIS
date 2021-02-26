@@ -38,9 +38,8 @@ const ClassView: React.FC<P> = ({ students, sorted_sections }) => {
                     .map((std) => (
                         <ClassViewCard
                             key={std.id}
-                            std_id={std.id}
-                            name={std.Name}
-                            learning_levels={std.targeted_instruction.learning_level} />
+                            std={std}
+                        />
                     ))
             }
         </div>

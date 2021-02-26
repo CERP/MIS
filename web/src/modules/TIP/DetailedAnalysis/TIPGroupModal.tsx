@@ -1,4 +1,5 @@
 import React from 'react'
+import { index_map, grade_map } from 'constants/TIP'
 import { convertLearningLevelToGrade } from 'utils/TIP'
 
 interface P {
@@ -8,27 +9,6 @@ interface P {
     setShowChangeGroupModal: (showModal: boolean) => void
     setShowTIPGroupModal: (showModal: boolean) => void
     setSelectedGrade: (grade: TIPGrades) => void
-}
-
-const index_map = [
-    'bg-light-blue-tip-brand',
-    'bg-yellow-tip-brand',
-    'bg-green-tip-brand',
-    'bg-orange-tip-brand',
-    'bg-red-tip-brand'
-]
-
-const grade_map = {
-    '1': 'Blue',
-    '2': 'Yellow',
-    '3': 'Green',
-    '4': 'Orange',
-
-    'Level 0': 'Blue',
-    'Level 1': 'Yellow',
-    'Level 2': 'Green',
-    'Level 3': 'Orange',
-    'Oral': 'red'
 }
 
 const TIPGroupModal: React.FC<P> = ({ subject, grades, setSelectedGrade, setShowTIPGroupModal, setShowChangeGroupModal }) => {
