@@ -276,13 +276,14 @@ type SubjectLessonProgress = {
 }
 
 /**
- * Returns the maximum amount of lessons which have been completed by a teacher.
+ * Here, we check the lesson progress in order. If a teacher has completed the first 17 lessons for any subject, this will return 17
+ * if a teacher has completed all 35 lessons it will return 35
+ * otherwise, it returns 0. 
  * 
- * Looks through the teachers curriculum object, and out of all possible learning levels and subjects
- * Returns the max completed.
+ * This function is to be used only to decide which layout to show on the tip landing page.
  * @param teacher 
  */
-export const getLessonProgress = (teacher: MISTeacher, curriculum: TIPCurriculum) => {
+export const getLessonProgress = (teacher: MISTeacher) => {
 
 	// When a teacher has no progress
 	if (!teacher.targeted_instruction || !teacher.targeted_instruction.curriculum) {
@@ -291,32 +292,38 @@ export const getLessonProgress = (teacher: MISTeacher, curriculum: TIPCurriculum
 
 	const teacher_curriculum = teacher.targeted_instruction.curriculum;
 
-	let num_checked = 0, total = 0, exit_loops = false;
+	for (let [, learning_levels] of Object.entries(teacher_curriculum)) {
+		// go through each subject
+		// in any of these, do we complete the first 17 lessons or not?
 
-	for (let [, subjects] of Object.entries(teacher_curriculum)) {
-		for (let [sub, lesson_plans] of Object.entries(subjects)) {
-			num_checked = 0
-			total = 0
-			for (let lesson of Object.values(lesson_plans)) {
-				// debugger
-				console.log(sub, lesson)
-				total = total + 1
-				if (lesson.taken) {
-					num_checked = num_checked + 1
-				}
-				// if (total !== num_checked) {
-				// 	exit_loops = true
-				// 	return num_checked
-				// }
+		let first_17 = true;
+		let completed_all = true;
+
+		for (let subject of Object.values(learning_levels)) {
+
+			const ordered_lessons = Object.entries(subject)
+				.sort(([l1_id,], [l2_id,]) => l1_id.localeCompare(l2_id))
+				.map(([, l]) => l)
+
+
+			console.log(ordered_lessons)
+			for (let i = 0; i < 17; i++) {
+				first_17 = ordered_lessons[i].taken;
 			}
-			if (exit_loops) {
-				return num_checked
-			}
+
+			completed_all = ordered_lessons.filter(lesson => lesson.taken).length == 35;
 		}
-		if (exit_loops) {
-			return num_checked
+
+		if (completed_all) {
+			return 35;
+		}
+
+		if (first_17) {
+			return 17;
 		}
 	}
+
+	return 0;
 
 	// create map of {learning_level: {subject: { completed, total } }}
 	// ultimately we want to take the number with the max completion.

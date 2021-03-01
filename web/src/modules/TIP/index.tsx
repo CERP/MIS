@@ -22,7 +22,7 @@ type PropsType = P & RouteComponentProps
 
 const Home: React.FC<PropsType> = ({ faculty, faculty_id, curriculum }) => {
 
-	const max_progress = useMemo(() => getLessonProgress(faculty[faculty_id], curriculum), [faculty_id])
+	const max_progress = useMemo(() => getLessonProgress(faculty[faculty_id]), [faculty_id])
 
 	// here we decide which layout to show based on our max_progress on the lessons
 	let layout = Layouts.DIAGNOSTIC
