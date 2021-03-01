@@ -291,48 +291,75 @@ export const getLessonProgress = (teacher: MISTeacher, curriculum: TIPCurriculum
 
 	const teacher_curriculum = teacher.targeted_instruction.curriculum;
 
+	let num_checked = 0, total = 0, exit_loops = false;
+
+	for (let [, subjects] of Object.entries(teacher_curriculum)) {
+		for (let [sub, lesson_plans] of Object.entries(subjects)) {
+			num_checked = 0
+			total = 0
+			for (let lesson of Object.values(lesson_plans)) {
+				// debugger
+				console.log(sub, lesson)
+				total = total + 1
+				if (lesson.taken) {
+					num_checked = num_checked + 1
+				}
+				// if (total !== num_checked) {
+				// 	exit_loops = true
+				// 	return num_checked
+				// }
+			}
+			if (exit_loops) {
+				return num_checked
+			}
+		}
+		if (exit_loops) {
+			return num_checked
+		}
+	}
+
 	// create map of {learning_level: {subject: { completed, total } }}
 	// ultimately we want to take the number with the max completion.
-	const lesson_progress = Object.entries(teacher_curriculum)
-		.reduce<LessonProgress>((agg, [learning_level, subjects]) => {
+	// const lesson_progress = Object.entries(teacher_curriculum)
+	// 	.reduce<LessonProgress>((agg, [learning_level, subjects]) => {
 
-			const lesson_progress = Object.entries(subjects)
-				.reduce<SubjectLessonProgress>((subject_agg, [subject, lesson_plans]) => {
+	// 		const lesson_progress = Object.entries(subjects)
+	// 			.reduce<SubjectLessonProgress>((subject_agg, [subject, lesson_plans]) => {
 
-					if (curriculum[learning_level as TIPLevels] === undefined) {
-						return subject_agg
-					}
+	// 				if (curriculum[learning_level as TIPLevels] === undefined) {
+	// 					return subject_agg
+	// 				}
 
-					const num_checked = Object.values(lesson_plans)
-						.filter(lp => lp.taken)
-						.length
+	// 				const num_checked = Object.values(lesson_plans)
+	// 					.filter(lp => lp.taken)
+	// 					.length
 
-					const total = Object.values(curriculum[learning_level as TIPLevels][subject]).length
+	// 				const total = Object.values(curriculum[learning_level as TIPLevels][subject]).length
 
-					return {
-						...subject_agg,
-						[subject]: {
-							complete: num_checked,
-							total
-						}
-					}
-				}, {} as SubjectLessonProgress)
+	// 				return {
+	// 					...subject_agg,
+	// 					[subject]: {
+	// 						complete: num_checked,
+	// 						total
+	// 					}
+	// 				}
+	// 			}, {} as SubjectLessonProgress)
 
-			return {
-				...agg,
-				[learning_level]: lesson_progress
-			}
-		}, {})
+	// 		return {
+	// 			...agg,
+	// 			[learning_level]: lesson_progress
+	// 		}
+	// 	}, {})
 
-	const overall_max = Object.values(lesson_progress)
-		.reduce((max, subjects) => {
-			return Object.values(subjects)
-				.reduce((sm, curr) => {
-					return Math.max(sm, curr.complete)
-				}, max)
-		}, 0)
+	// const overall_max = Object.values(lesson_progress)
+	// 	.reduce((max, subjects) => {
+	// 		return Object.values(subjects)
+	// 			.reduce((sm, curr) => {
+	// 				return Math.max(sm, curr.complete)
+	// 			}, max)
+	// 	}, 0)
 
-	return overall_max;
+	// return overall_max;
 }
 
 /**
