@@ -305,21 +305,19 @@ export const getLessonProgress = (teacher: MISTeacher) => {
 				.sort(([l1_id,], [l2_id,]) => l1_id.localeCompare(l2_id))
 				.map(([, l]) => l)
 
-
-			console.log(ordered_lessons)
 			for (let i = 0; i < 17; i++) {
-				first_17 = ordered_lessons[i].taken;
+				first_17 = first_17 && ordered_lessons[i] && ordered_lessons[i].taken;
 			}
 
 			completed_all = ordered_lessons.filter(lesson => lesson.taken).length == 35;
-		}
 
-		if (completed_all) {
-			return 35;
-		}
-
-		if (first_17) {
-			return 17;
+			if (completed_all) {
+				return 35;
+			}
+	
+			if (first_17) {
+				return 17;
+			}
 		}
 	}
 

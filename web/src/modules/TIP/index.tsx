@@ -9,7 +9,6 @@ import Card from './Card'
 interface P {
 	faculty: RootDBState["faculty"]
 	faculty_id: string
-	curriculum: TIPCurriculum
 }
 
 enum Layouts {
@@ -20,9 +19,9 @@ enum Layouts {
 
 type PropsType = P & RouteComponentProps
 
-const Home: React.FC<PropsType> = ({ faculty, faculty_id, curriculum }) => {
+const Home: React.FC<PropsType> = ({ faculty, faculty_id }) => {
 
-	const max_progress = useMemo(() => getLessonProgress(faculty[faculty_id]), [faculty_id])
+	const max_progress = getLessonProgress(faculty[faculty_id])
 
 	// here we decide which layout to show based on our max_progress on the lessons
 	let layout = Layouts.DIAGNOSTIC
@@ -131,6 +130,5 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id, curriculum }) => {
 
 export default connect((state: RootReducerState) => ({
 	faculty: state.db.faculty,
-	faculty_id: state.auth.faculty_id,
-	curriculum: state.targeted_instruction.curriculum
+	faculty_id: state.auth.faculty_id
 }))(Home)
