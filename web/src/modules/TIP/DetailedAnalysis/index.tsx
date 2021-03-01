@@ -1,65 +1,71 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { connect } from 'react-redux';
-import { getStudentsByGroup, getClassnameFromSectionId } from 'utils/TIP'
+import Headings from '../Headings';
+import Card from '../Card';
+import GroupView from './GroupView'
+import ClassView from './ClassView'
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
-import DetailedCard from './DetailedCard'
-import Card from '../Card'
-
 interface P {
-    students: RootDBState["students"]
     classes: RootDBState["classes"]
+    students: RootDBState["students"]
+    targeted_instruction: RootReducerState['targeted_instruction']
 }
 
-const DetailedAnalysis: React.FC<P> = ({ students, classes }) => {
+const DetailedAnalysis: React.FC<P> = ({ classes, students, targeted_instruction }) => {
+    const [view_type, setViewType] = useState('')
 
-    const [group, setGroup] = useState<TIPGrades>('1')
-    const [subject, setSubject] = useState<TIPSubjects>('English')
+    const valid_classes = Object.values(targeted_instruction.tests)
+        .filter(t => t.type === "Diagnostic")
+        .map(x => x.grade)
+        .reduce<Record<string, boolean>>((agg, curr) => ({
+            ...agg,
+            [curr.toLowerCase()]: true
+        }), {})
 
-    const groups = { "0": "Blue", "1": "Yellow", "2": "Green", "3": "Orange" }
-    const subjects: TIPSubjects[] = ["English", "Urdu", "Maths"]
+    // for all the sections in the school, we will only show ones which have 
+    // a diagnostic test for it. the name has to be close enough to one of the valid_classes
+    // which we extract from the diagnostic tests
+    const sorted_sections = useMemo(() => getSectionsFromClasses(classes), [])
+        .sort((a, b) => (a.classYear || 0) - (b.classYear || 0))
+        .filter(s => {
+            return valid_classes[s.className.toLowerCase()]
+        })
 
-    const filtered_students = useMemo(() => getStudentsByGroup(students, group, subject), [subject, group])
-
-    const sorted_sections = useMemo(() => getSectionsFromClasses(classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0)), [])
-
-    return <><Card class_name='' subject='' lesson_name='' lesson_no='' />
-        <div className='flex flex-row justify-around w-full'>
-            <select className='tw-select' onChange={(e) => setGroup(e.target.value as TIPGrades)}>
-                <option value="">Group</option>
-                {
-                    Object.entries(groups).map(([grade, group]) => (
-                        <option key={grade} value={grade === "0" ? "KG" : grade}>{group}</option>
-                    ))
-                }
-            </select>
-            <select className='tw-select' onChange={(e) => setSubject(e.target.value as TIPSubjects)}>
-                <option value="">Subject</option>
-                {
-                    subjects.map((sub) => (
-                        <option key={sub} value={sub}>{sub}</option>
-                    ))
-                }
-            </select>
-        </div >
-        <div className="h-10 items-center text-white text-xs bg-blue-primary w-full mt-4 flex flex-row justify-around">
-            <div className="w-6/12 flex flex-row justify-between px-3 items-center m-2">
-                <div className="font-bold text-center">Name</div>
+    return <div className="bg-white h-full">
+        <Card class_name='' subject='' lesson_name='' lesson_no='' />
+        {
+            view_type === '' && <div className="py-10">
+                <Headings heading="" sub_heading='Do you want to see Class view or Group view' />
             </div>
-            <div className="flex flex-row justify-between w-6/12 text-xs m-4">
-                <div className="font-bold">Roll no</div>
-                <div className="font-bold">Class</div>
+        }
+        <div className="flex flex-row justify-around px-3">
+            <button className={`border-none shadow-lg rounded-md p-3 outline-none ${view_type === 'class_view' ? 'bg-see-green-tip-brand text-white' : 'bg-white text-blue-900'}`}
+                onClick={() => setViewType('class_view')}>Class View</button>
+            <button className={`border-none shadow-lg rounded-md p-3 outline-none ${view_type === 'group_view' ? 'bg-see-green-tip-brand text-white' : 'bg-white text-blue-900'}`}
+                onClick={() => setViewType('group_view')}>Group View</button>
+        </div>
+        {
+            view_type === 'class_view' && <div className="py-10">
+                <Headings heading="" sub_heading='Select your Class' />
             </div>
-        </div>
-        <div className="flex flex-col">
-            {Object.values(filtered_students || {}).map((std) => {
-                const class_name = getClassnameFromSectionId(sorted_sections, std.section_id)
-                return <DetailedCard key={std.id} name={std.Name} roll_no={std.RollNumber} class_name={class_name} />
-            })}
-        </div>
-    </>
+        }
+        {
+            view_type === 'group_view' && <div className="py-10">
+                <Headings heading="" sub_heading='Select your Group and Subject' />
+            </div>
+        }
+        {
+            view_type === 'class_view' && <ClassView sorted_sections={sorted_sections} students={students} />
+        }
+        {
+            view_type === 'group_view' && <GroupView sorted_sections={sorted_sections} students={students} />
+        }
+    </div>
 }
+
 
 export default connect((state: RootReducerState) => ({
     students: state.db.students,
-    classes: state.db.classes
+    classes: state.db.classes,
+    targeted_instruction: state.targeted_instruction
 }))(DetailedAnalysis)

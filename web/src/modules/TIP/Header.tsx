@@ -19,7 +19,7 @@ const Header: React.FC<PropsType> = ({ history }) => {
 				<Link to={'/targeted-instruction'}> <img className="h-8" src={TIP} /> </Link>
 			</div>
 			<div className="rounded-full shadow-lg bg-white w-10 h-10 flex justify-center items-center">
-				<img className="h-3" src={Burger} />
+				<Link to={'/'}> <img className="h-6" src="/favicon.ico" /> </Link>
 			</div>
 		</div>
 	</div>

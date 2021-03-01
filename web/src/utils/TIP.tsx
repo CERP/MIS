@@ -276,13 +276,14 @@ type SubjectLessonProgress = {
 }
 
 /**
- * Returns the maximum amount of lessons which have been completed by a teacher.
+ * Here, we check the lesson progress in order. If a teacher has completed the first 17 lessons for any subject, this will return 17
+ * if a teacher has completed all 35 lessons it will return 35
+ * otherwise, it returns 0. 
  * 
- * Looks through the teachers curriculum object, and out of all possible learning levels and subjects
- * Returns the max completed.
+ * This function is to be used only to decide which layout to show on the tip landing page.
  * @param teacher 
  */
-export const getLessonProgress = (teacher: MISTeacher, curriculum: TIPCurriculum) => {
+export const getLessonProgress = (teacher: MISTeacher) => {
 
 	// When a teacher has no progress
 	if (!teacher.targeted_instruction || !teacher.targeted_instruction.curriculum) {
@@ -291,48 +292,79 @@ export const getLessonProgress = (teacher: MISTeacher, curriculum: TIPCurriculum
 
 	const teacher_curriculum = teacher.targeted_instruction.curriculum;
 
+	for (let [, learning_levels] of Object.entries(teacher_curriculum)) {
+		// go through each subject
+		// in any of these, do we complete the first 17 lessons or not?
+
+		let first_17 = true;
+		let completed_all = true;
+
+		for (let subject of Object.values(learning_levels)) {
+
+			const ordered_lessons = Object.entries(subject)
+				.sort(([l1_id,], [l2_id,]) => l1_id.localeCompare(l2_id))
+				.map(([, l]) => l)
+
+			for (let i = 0; i < 17; i++) {
+				first_17 = first_17 && ordered_lessons[i] && ordered_lessons[i].taken;
+			}
+
+			completed_all = ordered_lessons.filter(lesson => lesson.taken).length == 35;
+
+			if (completed_all) {
+				return 35;
+			}
+	
+			if (first_17) {
+				return 17;
+			}
+		}
+	}
+
+	return 0;
+
 	// create map of {learning_level: {subject: { completed, total } }}
 	// ultimately we want to take the number with the max completion.
-	const lesson_progress = Object.entries(teacher_curriculum)
-		.reduce<LessonProgress>((agg, [learning_level, subjects]) => {
+	// const lesson_progress = Object.entries(teacher_curriculum)
+	// 	.reduce<LessonProgress>((agg, [learning_level, subjects]) => {
 
-			const lesson_progress = Object.entries(subjects)
-				.reduce<SubjectLessonProgress>((subject_agg, [subject, lesson_plans]) => {
+	// 		const lesson_progress = Object.entries(subjects)
+	// 			.reduce<SubjectLessonProgress>((subject_agg, [subject, lesson_plans]) => {
 
-					if (curriculum[learning_level as TIPLevels] === undefined) {
-						return subject_agg
-					}
+	// 				if (curriculum[learning_level as TIPLevels] === undefined) {
+	// 					return subject_agg
+	// 				}
 
-					const num_checked = Object.values(lesson_plans)
-						.filter(lp => lp.taken)
-						.length
+	// 				const num_checked = Object.values(lesson_plans)
+	// 					.filter(lp => lp.taken)
+	// 					.length
 
-					const total = Object.values(curriculum[learning_level as TIPLevels][subject]).length
+	// 				const total = Object.values(curriculum[learning_level as TIPLevels][subject]).length
 
-					return {
-						...subject_agg,
-						[subject]: {
-							complete: num_checked,
-							total
-						}
-					}
-				}, {} as SubjectLessonProgress)
+	// 				return {
+	// 					...subject_agg,
+	// 					[subject]: {
+	// 						complete: num_checked,
+	// 						total
+	// 					}
+	// 				}
+	// 			}, {} as SubjectLessonProgress)
 
-			return {
-				...agg,
-				[learning_level]: lesson_progress
-			}
-		}, {})
+	// 		return {
+	// 			...agg,
+	// 			[learning_level]: lesson_progress
+	// 		}
+	// 	}, {})
 
-	const overall_max = Object.values(lesson_progress)
-		.reduce((max, subjects) => {
-			return Object.values(subjects)
-				.reduce((sm, curr) => {
-					return Math.max(sm, curr.complete)
-				}, max)
-		}, 0)
+	// const overall_max = Object.values(lesson_progress)
+	// 	.reduce((max, subjects) => {
+	// 		return Object.values(subjects)
+	// 			.reduce((sm, curr) => {
+	// 				return Math.max(sm, curr.complete)
+	// 			}, max)
+	// 	}, 0)
 
-	return overall_max;
+	// return overall_max;
 }
 
 /**

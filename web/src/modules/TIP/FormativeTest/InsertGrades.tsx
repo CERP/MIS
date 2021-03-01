@@ -34,22 +34,24 @@ const InsertGrades: React.FC<PropsType> = (props) => {
 
 	return <div className="flex flex-wrap content-between">
 		<Card class_name={class_name ? class_name : 'Oral Test'} subject={subject} lesson_name='' lesson_no='' />
-		{<div className="m-3 flex flex-wrap w-full justify-start">
+		{<div className="m-3 w-full grid grid-cols-3 md:grid-cols-6 lg:grid-cols-12">
 			{Object.values(students)
 				.sort((a, b) => a.Name.localeCompare(b.Name))
 				.map((std) => {
 
 					const checked = std.targeted_instruction && std.targeted_instruction.results && std.targeted_instruction.results[test_id]
-					return <Link key={std.id} className="relative no-underline h-24 flex flex-col items-center justify-center"
+					return <Link key={std.id} className="relative no-underline h-24 flex flex-col items-center justify-center mb-1"
 						to={url[2] === "diagnostic-test" ?
 							`/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades/${std.id}/grading` :
 							url[2] === "oral-test" ?
 								`/${url[1]}/${url[2]}/${subject}/${test_id}/insert-grades/${std.id}/grading` :
 								`/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades/${std.id}/grading`}>
-						<img className="border border-solid border-green-primary rounded-full h-14 w-14" src="https://www.atmeplay.com/images/users/avtar/avtar_nouser.png" alt="img" />
+						<img className="relative border border-solid border-see-green-tip-brand rounded-full h-14 w-14" src="https://www.atmeplay.com/images/users/avtar/avtar_nouser.png" alt="img" />
 						{checked
-							&& <img src={Check} className="absolute h-5 right-4 bottom-7" />}
-						<div className="text-xs flex items-center justify-center w-24 md:w-28 truncate">{std.Name}</div>
+							&& <div className="relative">
+								<img src={Check} className="h-5 bottom-1 -right-9 absolute" />
+							</div>}
+						<div className="text-xs flex items-center justify-center w-24 md:w-28 overflow-ellipsis mt-2">{std.Name}</div>
 						<div className="text-xs flex items-center justify-center">{std.RollNumber}</div>
 					</Link>
 				})}
@@ -59,7 +61,7 @@ const InsertGrades: React.FC<PropsType> = (props) => {
 				className="w-full no-underline flex justify-center items-center"
 				to={url[2] === "diagnostic-test" ? `/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades/test-result` :
 					`/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades/test-result`}>
-				<button className="bg-blue-primary h-11 font-bold text-lg border-none rounded text-white p-2 w-6/12">Finish</button>
+				<button className="bg-blue-tip-brand h-11 font-bold text-lg border-none rounded text-white p-2 w-6/12">Finish</button>
 			</Link>
 		</div>
 	</div>

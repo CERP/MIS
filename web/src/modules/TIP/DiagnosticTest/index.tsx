@@ -31,15 +31,6 @@ const DiagnosticTest: React.FC<P> = (props) => {
 		.sort((a, b) => (a.classYear || 0) - (b.classYear || 0))
 		.filter(s => {
 			return valid_classes[s.className.toLowerCase()]
-			/*
-			const matching = Object.keys(valid_classes)
-				.filter(c => {
-					return s.className.toLowerCase().indexOf(c) > -1
-				})
-				.length
-
-			return matching == 1
-			*/
 		})
 
 	const class_name = useMemo(() => getClassnameFromSectionId(sorted_sections, sectionId), [sectionId])
