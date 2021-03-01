@@ -51,7 +51,7 @@ const DetailedAnalysis: React.FC<P> = ({ classes, students, targeted_instruction
         }
         {
             view_type === 'group_view' && <div className="py-10">
-                <Headings heading="" sub_heading='Select your Goryp and Subject' />
+                <Headings heading="" sub_heading='Select your Group and Subject' />
             </div>
         }
         {

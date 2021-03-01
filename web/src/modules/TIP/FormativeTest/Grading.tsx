@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import clsx from 'clsx'
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { calculateLearningLevelFromDiagnosticTest, calculateLearningLevelFromOralTest } from 'utils/TIP'
@@ -7,6 +6,7 @@ import { mergeTIPResult, assignLearningLevel } from 'actions'
 import { convertLearningGradeToGroupName } from 'utils/TIP'
 import { useComponentVisible } from 'utils/customHooks';
 import { TModal } from '../Modal'
+import DisplayGroupModal from './DisplayGroupModal'
 import Card from '../Card'
 
 interface P {
@@ -114,7 +114,7 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 		}
 
 		//display modal => to see assigned group
-		setIsComponentVisible(true)
+		complete ? setIsComponentVisible(true) : redirect()
 
 		// assign level to student
 		complete && setLearningLevel(std_id, subject, level)
@@ -133,15 +133,7 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 		{isComponentVisible && (
 			<TModal>
 				<div ref={ref} className="h-32 bg-white">
-					<div className={clsx("text-center p-3 rounded-md text-white text-lg dont-bold", {
-						"bg-gray-400": group === 'Oral',
-						"bg-gray-600": group === 'Remediation Not Needed'
-					}, `bg-${group.toLowerCase()}-tip-brand`)}>
-						{group} Group
-						</div>
-					<div className="w-full flex justify-center items-center mt-6">
-						<button className="w-6/12 p-3 border-none bg-green-tip-brand text-white rounded-lg outline-none" onClick={redirect}>OK</button>
-					</div>
+					<DisplayGroupModal group={group} redirect={redirect} />
 				</div>
 			</TModal>
 		)}
