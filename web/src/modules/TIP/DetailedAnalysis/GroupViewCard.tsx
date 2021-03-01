@@ -6,7 +6,7 @@ interface P {
     name: string
 }
 
-const DetailedCard: React.FC<P> = ({ roll_no, class_name, name }) => {
+const GroupViewCard: React.FC<P> = ({ roll_no, class_name, name }) => {
 
     return <div className="h-10 items-center text-xs w-full mt-4 flex flex-row justify-around shadow-lg">
         <div className="w-6/12 flex flex-row justify-between px-3 items-center m-2">
@@ -19,4 +19,4 @@ const DetailedCard: React.FC<P> = ({ roll_no, class_name, name }) => {
     </div>
 }
 
-export default DetailedCard
+export default GroupViewCard

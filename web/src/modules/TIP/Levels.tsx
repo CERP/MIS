@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { index_map, grade_map } from 'constants/TIP'
 interface P {
     setSectionId: (sectionId: string) => any
     grades: TIPLevels[]
@@ -9,27 +9,6 @@ interface P {
 // for formative, grades will be tiplevels
 // for diagnostic, grades will be tipgrades
 const Levels: React.FC<P> = ({ setSectionId, grades }) => {
-
-    const index_map = [
-        'bg-light-blue-primary',
-        'bg-yellow-primary',
-        'bg-green-primary',
-        'bg-orange-primary',
-        'bg-red-primary'
-    ]
-
-    const grade_map = {
-        '1': 'Blue',
-        '2': 'Yellow',
-        '3': 'Green',
-        '4': 'Orange',
-
-        'Level 0': 'Blue',
-        'Level 1': 'Yellow',
-        'Level 2': 'Green',
-        'Level 3': 'Orange',
-        'Oral': 'red'
-    }
 
     // "grade" is misleading as we only deal with TIPLevels here. we map the level to a 
     // TIPGrade inside the map function below (mapped_grade)

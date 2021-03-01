@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
+import clsx from 'clsx'
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { calculateLearningLevelFromDiagnosticTest, calculateLearningLevelFromOralTest } from 'utils/TIP'
-import Card from '../Card'
 import { mergeTIPResult, assignLearningLevel } from 'actions'
+import { convertLearningGradeToGroupName } from 'utils/TIP'
+import { useComponentVisible } from 'utils/customHooks';
+import { TModal } from '../Modal'
+import Card from '../Card'
 
 interface P {
 	teacher_name: string
@@ -36,7 +40,9 @@ const GenerateEmptyTest = (type: TIPTestType): TIPDiagnosticReport => {
 
 const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, saveReport, setLearningLevel, history }) => {
 
-	const { class_name, subject, std_id, section_id, test_id } = match.params
+	const { class_name, subject, section_id, std_id, test_id } = match.params
+	const [group, setGroup] = useState<TIPLearningGroups>()
+	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false)
 
 	let test_type: TIPTestType = "Diagnostic"
 
@@ -92,6 +98,7 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 
 	const onSave = () => {
 
+		let complete = false
 		if (!result.questions || Object.values(result.questions).length == 0) {
 			alert('Please mark questions')
 			return;
@@ -100,9 +107,21 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 		const level = url[2] === 'oral-test' ? calculateLearningLevelFromOralTest(result)
 			: calculateLearningLevelFromDiagnosticTest(result)
 
+		setGroup(convertLearningGradeToGroupName(level))
+
+		if (Object.keys(result.questions).length === Object.keys(questionsObj).length) {
+			complete = true
+		}
+
+		//display modal => to see assigned group
+		setIsComponentVisible(true)
+
 		// assign level to student
-		setLearningLevel(std_id, subject, level)
-		saveReport(std_id, result, test_id)
+		complete && setLearningLevel(std_id, subject, level)
+		complete && saveReport(std_id, result, test_id)
+	}
+
+	const redirect = () => {
 		history.push(test_type === "Diagnostic" ?
 			`/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades` :
 			test_type === "Oral" ?
@@ -111,11 +130,26 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 	}
 
 	return <div className="flex flex-wrap content-between bg-white">
+		{isComponentVisible && (
+			<TModal>
+				<div ref={ref} className="h-32 bg-white">
+					<div className={clsx("text-center p-3 rounded-md text-white text-lg dont-bold", {
+						"bg-gray-400": group === 'Oral',
+						"bg-gray-600": group === 'Remediation Not Needed'
+					}, `bg-${group.toLowerCase()}-tip-brand`)}>
+						{group} Group
+						</div>
+					<div className="w-full flex justify-center items-center mt-6">
+						<button className="w-6/12 p-3 border-none bg-green-tip-brand text-white rounded-lg outline-none" onClick={redirect}>OK</button>
+					</div>
+				</div>
+			</TModal>
+		)}
 		<Card class_name={class_name ? class_name : 'Oral Test'} subject={subject} lesson_name='' lesson_no='' />
 		<div className="flex flex-col justify-between w-full mx-4">
 			{
 				Object.keys(questionsObj)
-					.sort((a, b) => a.localeCompare(b))
+					.sort((a, b) => a.localeCompare(b, 'en', { numeric: true }))
 					.map(function (q_id, index) {
 						const question = questionsObj[q_id]
 						const is_correct = result.questions[q_id]?.is_correct
@@ -128,12 +162,12 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 							</div>
 							<div className="rounded-xl w-32 h-6 bg-white border border-solid border-gray-100 flex justify-center items-center">
 								<button className={is_correct !== undefined && !is_correct ?
-									"border-none h-full rounded-xl text-xs outline-none text-white bg-incorrect-red" :
+									"border-none h-full rounded-xl text-xs outline-none text-white bg-danger-tip-brand" :
 									"border-none bg-white h-full rounded-xl text-xs outline-non"}
 									onClick={() => markQuestion(q_id, question, false)}>Incorrect
 								</button>
 								<button className={is_correct ?
-									"border-none h-full rounded-xl text-xs text-white bg-correct-green outline-none" :
+									"border-none h-full rounded-xl text-xs text-white bg-success-tip-brand outline-none" :
 									"border-none bg-white h-full rounded-xl text-xs outline-none"}
 									onClick={() => markQuestion(q_id, question, true)}>Correct
 								</button>
@@ -143,7 +177,7 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 		</div>
 		<div className="w-full mt-5 flex justify-center">
 			<button
-				className="bg-blue-primary h-11 font-bold text-base border-none rounded-md text-white p-2 w-9/12 mb-4"
+				className="bg-blue-tip-brand h-11 font-bold text-base border-none rounded-md text-white p-2 w-9/12 mb-4"
 				onClick={onSave}>Save and Continue</button>
 		</div>
 	</div>
