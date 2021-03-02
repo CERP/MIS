@@ -1,5 +1,6 @@
 import React from 'react'
-import { index_map, grade_map } from 'constants/TIP'
+import clsx from 'clsx'
+import { grade_map } from 'constants/TIP'
 import { convertLearningLevelToGrade } from 'utils/TIP'
 
 interface P {
@@ -28,7 +29,13 @@ const TIPGroupModal: React.FC<P> = ({ subject, grades, setSelectedGrade, setModa
                             .sort((a, b) => a.localeCompare(b))
                             .map((grade, index) => {
                                 return <div key={grade}>
-                                    <div className={`${index_map[index]} py-3 px-1 md:py-5 md:px-1 lg:py-6 lg:px-2 text-sm md:text-base cursor-pointer container rounded-lg flex items-center justify-center shadow-lg`}
+                                    <div
+                                        className={clsx("py-3 px-1 md:py-5 md:px-1 lg:py-6 lg:px-2 text-sm md:text-base cursor-pointer container rounded-lg flex items-center justify-center shadow-lg", {
+                                            "bg-light-blue-tip-brand": index === 0,
+                                            "bg-yellow-tip-brand": index === 1,
+                                            "bg-green-tip-brand": index === 2,
+                                            "bg-orange-tip-brand": index === 3
+                                        })}
                                         onClick={() => onClickGrade(convertLearningLevelToGrade(grade))}>
                                         <div className="text-white font-bold mb-1">{`${grade_map[grade]} Group`}</div>
                                     </div>
