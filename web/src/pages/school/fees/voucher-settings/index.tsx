@@ -1,12 +1,97 @@
-import React from 'react'
+import React, { useState } from 'react'
+import Dynamic from '@cerp/dynamic'
+
+import { useDispatch, useSelector } from 'react-redux'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { SwitchButton } from 'components/input/switch'
+import { mergeSettings } from 'actions'
+
+
+type State = {
+	vouchersPerPage: string
+} & MISSettings["classes"]["feeVoucher"]
+
+const getBlankFeeVoucherSetings = (): MISSettings["classes"]["feeVoucher"] => {
+	return {
+		dueDays: "",
+		feeFine: "",
+		notice: "",
+		bankInfo: {
+			name: "",
+			accountTitle: "",
+			accountNo: ""
+		},
+		options: {
+			showDueDays: false,
+			showFine: false,
+			showNotice: false,
+			showBankInfo: false
+		}
+	}
+}
 
 export const VoucherSettings = () => {
+	const dispatch = useDispatch()
+	const { settings } = useSelector((state: RootReducerState) => state.db)
 
-	// TODO: copy logic from previous fee voucher settings
-	// TODO: add RHT
+	const feeVoucher = settings?.classes?.feeVoucher || getBlankFeeVoucherSetings()
+	const { vouchersPerPage } = settings
+
+	// TODO: change string to number
+	const [state, setState] = useState<State>({
+		vouchersPerPage: vouchersPerPage || "1",
+		...feeVoucher
+	})
+
+	const saveFeeVoucher = (): void => {
+
+		const { dueDays, feeFine, notice, bankInfo, options, vouchersPerPage } = state
+
+		let modified_settings: MISSettings
+
+		if (settings?.classes) {
+			modified_settings = {
+				...settings,
+				classes: {
+					...settings.classes,
+					feeVoucher: {
+						dueDays,
+						feeFine,
+						notice,
+						bankInfo,
+						options
+					}
+				},
+				vouchersPerPage
+			}
+		} else {
+			modified_settings = {
+				...settings,
+				classes: {
+					defaultFee: {},
+					feeVoucher: {
+						dueDays,
+						feeFine,
+						notice,
+						bankInfo,
+						options
+					}
+				},
+				vouchersPerPage
+			}
+		}
+
+		// updating MISSettings
+		dispatch(mergeSettings(modified_settings))
+
+	}
+
+	// TODO: replace this with generic handler
+	const handleInputByPath = (path: string[], value: any) => {
+		const updatedState = Dynamic.put(state, path, value)
+		setState(updatedState)
+	}
 
 	return (
 		<AppLayout title={"Voucher Settings"}>
@@ -17,7 +102,8 @@ export const VoucherSettings = () => {
 					<form id='voucher-settings' className="text-white space-y-4 px-4 w-full md:w-3/5">
 						<div>Copies per Page</div>
 						<input
-							name="voucherPerPage"
+							name="vouchersPerPage"
+							onChange={(e) => handleInputByPath(["vouchersPerPage"], e.target.value)}
 							type="number"
 							placeholder="e.g. 1"
 							className="tw-input w-full bg-transparent border-blue-brand ring-1" />
@@ -27,18 +113,21 @@ export const VoucherSettings = () => {
 							<div>Bank Name</div>
 							<input
 								name="bankName"
+								onChange={(e) => handleInputByPath(["bankInfo", "name"], e.target.value)}
 								type="text"
-								placeholder="e.g. The Punjab Bank"
+								placeholder="e.g. The Punjab of Bank"
 								className="tw-input w-full bg-transparent border-blue-brand ring-1" />
 							<div>Account Title</div>
 							<input
 								name="accountTitle"
+								onChange={(e) => handleInputByPath(["bankInfo", "accountTitle"], e.target.value)}
 								type="text"
 								placeholder="e.g. MISchool"
 								className="tw-input w-full bg-transparent border-blue-brand ring-1" />
 							<div>Account Title</div>
 							<input
-								name="accountNumber"
+								name="accountNo"
+								onChange={(e) => handleInputByPath(["bankInfo", "accountNo"], e.target.value)}
 								type="text"
 								placeholder="IBAN or other"
 								className="tw-input w-full bg-transparent border-blue-brand ring-1" />
@@ -47,13 +136,15 @@ export const VoucherSettings = () => {
 						<div>Due Date</div>
 						<input
 							name="dueDays"
+							onChange={(e) => handleInputByPath(["dueDays"], e.target.value)}
 							type="number"
 							placeholder="e.g. 2 (days after first of each month)"
 							className="tw-input w-full bg-transparent border-blue-brand ring-1" />
 
 						<div>Late Fine</div>
 						<input
-							name="lateFeeFine"
+							name="feeFine"
+							onChange={(e) => handleInputByPath(["feeFine"], e.target.value)}
 							type="number"
 							placeholder="amount per day"
 							className="tw-input w-full bg-transparent border-blue-brand ring-1" />
@@ -61,6 +152,7 @@ export const VoucherSettings = () => {
 						<div>Fee Notice</div>
 						<textarea
 							name="notice"
+							onChange={(e) => handleInputByPath(["notice"], e.target.value)}
 							rows={2}
 							placeholder="Fee Notice"
 							className="tw-input w-full bg-transparent border-blue-brand ring-1" />
@@ -68,23 +160,25 @@ export const VoucherSettings = () => {
 						<div className="font-bold">Include on Voucher?</div>
 						<div className="space-y-1">
 							<SwitchButton title={"Show Bank Details"}
-								state={false}
-								callback={() => window.alert("hello")} />
+								state={state.options.showBankInfo}
+								callback={() => handleInputByPath(["options", "showDueDays"], state.options.showBankInfo)} />
 
 							<SwitchButton title={"Show Due Date"}
-								state={false}
-								callback={() => window.alert("hello")} />
+								state={state.options.showDueDays}
+								callback={() => handleInputByPath(["options", "showDueDays"], state.options.showDueDays)} />
 
 							<SwitchButton title={"Show Fine"}
-								state={false}
-								callback={() => window.alert("hello")} />
+								state={state.options.showFine}
+								callback={() => handleInputByPath(["options", "showFine"], state.options.showFine)} />
 
 							<SwitchButton title={"Show Notice"}
-								state={false}
-								callback={() => window.alert("hello")} />
+								state={state.options.showNotice}
+								callback={() => handleInputByPath(["options", "showNotice"], state.options.showNotice)} />
 						</div>
 
-						<button type="submit" className={"w-full items-center tw-btn bg-green-brand py-3 font-semibold my-4"}>
+						<button
+							onClick={saveFeeVoucher}
+							type="button" className={"w-full items-center tw-btn bg-green-brand py-3 font-semibold my-4"}>
 							Save Settings
 						</button>
 					</form>
