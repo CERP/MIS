@@ -64,11 +64,11 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 				}}
 			/>
 			<div className="flex flex-row justify-between my-4 w-full">
-				<div className="bg-blue-150 rounded-full flex justify-center items-center h-12 w-12 ml-3"
+				<div className="bg-light-blue-tip-brand rounded-full flex justify-center items-center h-12 w-12 ml-3"
 					onClick={() => window.print()}>
 					<img className="h-5 w-5" src={Printer} />
 				</div>
-				<div className="bg-blue-150 rounded-full flex justify-center items-center h-12 w-12 mr-3"
+				<div className="bg-light-blue-tip-brand rounded-full flex justify-center items-center h-12 w-12 mr-3"
 					onClick={() => downloadPdf(test_id, pdf_url)}>
 					<img className="h-5 w-5" src={Download} />
 				</div>
@@ -82,7 +82,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 						url[2] === "oral-test" ?
 							`/${url[1]}/${url[2]}/${subject}/answer-pdf` :
 							`/${url[1]}/${url[2]}/${class_name}/${subject}/answer-pdf`}>
-					<button className="bg-see-green-tip-brand font-bold text-lg border-none rounded-md text-white text-left p-2 w-full focus:outline-none">
+					<button className="bg-sea-green-tip-brand font-bold text-lg border-none rounded-md text-white text-left p-2 w-full focus:outline-none">
 						Answer Sheet
 					</button>
 				</Link>
@@ -93,7 +93,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 					url[2] === "oral-test" ?
 						`/${url[1]}/${url[2]}/${subject}/${test_id}/insert-grades` :
 						`/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades`}>
-					<button className="bg-blue-150 font-bold text-lg border-none rounded-md text-white text-left p-2 w-full focus:outline-none">
+					<button className="bg-light-blue-tip-brand font-bold text-lg border-none rounded-md text-white text-left p-2 w-full focus:outline-none">
 						Insert Grades
 						</button>
 				</Link>

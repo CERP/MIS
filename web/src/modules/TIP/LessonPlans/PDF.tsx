@@ -54,11 +54,11 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
                 }}
             />
             <div className="flex flex-row justify-between my-4 w-full">
-                <div className="bg-blue-150 rounded-full flex justify-center items-center h-12 w-12 ml-3"
+                <div className="bg-light-blue-tip-brand rounded-full flex justify-center items-center h-12 w-12 ml-3"
                     onClick={() => window.print()}>
                     <img className="h-5 w-5" src={Printer} />
                 </div>
-                <div className="bg-blue-150 rounded-full flex justify-center items-center h-12 w-12 mr-3"
+                <div className="bg-light-blue-tip-brand rounded-full flex justify-center items-center h-12 w-12 mr-3"
                     onClick={() => downloadPdf(lesson.lesson_title, pdf_url)}>
                     <img className="h-5 w-5" src={Download} />
                 </div>

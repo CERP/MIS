@@ -65,11 +65,11 @@ const AnswerSheet: React.FC<PropsType> = ({ match, targeted_instruction, history
                 }}
             />
             <div className="flex flex-row justify-between my-4 w-full">
-                <div className="bg-blue-150 rounded-full flex justify-center items-center h-12 w-12 ml-3"
+                <div className="bg-light-blue-tip-brand rounded-full flex justify-center items-center h-12 w-12 ml-3"
                     onClick={() => window.print()}>
                     <img className="h-5 w-5" src={Printer} />
                 </div>
-                <div className="bg-blue-150 rounded-full flex justify-center items-center h-12 w-12 mr-3"
+                <div className="bg-light-blue-tip-brand rounded-full flex justify-center items-center h-12 w-12 mr-3"
                     onClick={() => downloadPdf(test_id, pdf_url)}>
                     <img className="h-5 w-5" src={Download} />
                 </div>
@@ -77,7 +77,7 @@ const AnswerSheet: React.FC<PropsType> = ({ match, targeted_instruction, history
         </div>
         <div className="w-full my-2">
             <div className="w-full no-underline flex justify-center items-center" onClick={() => history.goBack()}>
-                <button className="bg-blue-150 h-11 font-bold text-lg border-none rounded text-white p-2 w-11/12">Go back</button>
+                <button className="bg-light-blue-tip-brand h-11 font-bold text-lg border-none rounded text-white p-2 w-11/12">Go back</button>
             </div>
         </div>
     </div>

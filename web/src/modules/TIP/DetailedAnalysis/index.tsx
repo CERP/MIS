@@ -39,9 +39,9 @@ const DetailedAnalysis: React.FC<P> = ({ classes, students, targeted_instruction
             </div>
         }
         <div className="flex flex-row justify-around px-3">
-            <button className={`border-none shadow-lg rounded-md p-3 outline-none ${view_type === 'class_view' ? 'bg-see-green-tip-brand text-white' : 'bg-white text-blue-900'}`}
+            <button className={`border-none shadow-lg rounded-md p-3 outline-none ${view_type === 'class_view' ? 'bg-sea-green-tip-brand text-white' : 'bg-white text-blue-900'}`}
                 onClick={() => setViewType('class_view')}>Class View</button>
-            <button className={`border-none shadow-lg rounded-md p-3 outline-none ${view_type === 'group_view' ? 'bg-see-green-tip-brand text-white' : 'bg-white text-blue-900'}`}
+            <button className={`border-none shadow-lg rounded-md p-3 outline-none ${view_type === 'group_view' ? 'bg-sea-green-tip-brand text-white' : 'bg-white text-blue-900'}`}
                 onClick={() => setViewType('group_view')}>Group View</button>
         </div>
         {

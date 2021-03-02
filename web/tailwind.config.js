@@ -33,7 +33,7 @@ module.exports = {
 			colors: {
 				'red-tip-brand': '#FC6171',
 				'green-tip-brand': '#00CD8A',
-				'see-green-tip-brand': '#1BB4BB',
+				'sea-green-tip-brand': '#1BB4BB',
 				'yellow-tip-brand': '#FFD350',
 				'orange-tip-brand': '#FF6600',
 				'blue-tip-brand': '#043B6F',
@@ -43,7 +43,6 @@ module.exports = {
 				'light-blue-tip-brand': '#3478B9',
 				'danger-tip-brand': '#FF002A',
 				'success-tip-brand': '#00FF43',
-				'blue-150': '#3478B9',
 				'blue-50': '#7BACAE',
 				'red-250': '#FF9191',
 				'green-250': '#C6EFCE',

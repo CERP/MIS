@@ -1,5 +1,6 @@
 import React from 'react';
-import { index_map, grade_map } from 'constants/TIP'
+import clsx from 'clsx';
+import { grade_map } from 'constants/TIP'
 interface P {
     setSectionId: (sectionId: string) => any
     grades: TIPLevels[]
@@ -21,7 +22,12 @@ const Levels: React.FC<P> = ({ setSectionId, grades }) => {
 
                     return <div
                         key={grade}
-                        className={`${index_map[index]} cursor-pointer flex-wrap container w-2/5 sm:px-8 rounded-lg m-3 h-32 flex items-center justify-center flex-col shadow-lg`}
+                        className={clsx("cursor-pointer flex-wrap container w-2/5 sm:px-8 rounded-lg m-3 h-32 flex items-center justify-center flex-col shadow-lg", {
+                            "bg-light-blue-tip-brand": index === 0,
+                            "bg-yellow-tip-brand": index === 1,
+                            "bg-green-tip-brand": index === 2,
+                            "bg-orange-tip-brand": index === 3
+                        })}
                         onClick={() => setSectionId(grade)}>
                         <div className="text-white text-xs font-bold mb-1">{`${grade_map[grade]} Group`}</div>
                         <div className="text-xs text-white font-thin">{`Remedial ${grade}`}</div>
