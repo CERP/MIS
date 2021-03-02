@@ -46,7 +46,7 @@ const InsertGrades: React.FC<PropsType> = (props) => {
 							url[2] === "oral-test" ?
 								`/${url[1]}/${url[2]}/${subject}/${test_id}/insert-grades/${std.id}/grading` :
 								`/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades/${std.id}/grading`}>
-						<img className="relative border border-solid border-see-green-tip-brand rounded-full h-14 w-14" src="https://www.atmeplay.com/images/users/avtar/avtar_nouser.png" alt="img" />
+						<img className="relative border border-solid border-sea-green-tip-brand rounded-full h-14 w-14" src="https://www.atmeplay.com/images/users/avtar/avtar_nouser.png" alt="img" />
 						{checked
 							&& <div className="relative">
 								<img src={Check} className="h-5 bottom-1 -right-9 absolute" />

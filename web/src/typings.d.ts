@@ -177,7 +177,7 @@ interface SLOMapping {
 	[slo_id: string]: {
 		description: string
 		category: string
-		link: strng
+		link: string
 	}
 }
 
