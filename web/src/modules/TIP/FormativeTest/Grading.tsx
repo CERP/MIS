@@ -114,7 +114,7 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 		}
 
 		//display modal => to see assigned group
-		complete ? setIsComponentVisible(true) : redirect()
+		complete ? setIsComponentVisible(true) : alert('Please mark all questions')
 
 		// assign level to student
 		complete && setLearningLevel(std_id, subject, level)
