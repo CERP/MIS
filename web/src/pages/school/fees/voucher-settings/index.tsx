@@ -7,7 +7,6 @@ import { AppLayout } from 'components/Layout/appLayout'
 import { SwitchButton } from 'components/input/switch'
 import { mergeSettings } from 'actions'
 
-
 type State = {
 	vouchersPerPage: string
 } & MISSettings["classes"]["feeVoucher"]
@@ -84,6 +83,7 @@ export const VoucherSettings = () => {
 
 		// updating MISSettings
 		dispatch(mergeSettings(modified_settings))
+		// TODO: use RHT
 
 	}
 
@@ -103,6 +103,7 @@ export const VoucherSettings = () => {
 						<div>Copies per Page</div>
 						<input
 							name="vouchersPerPage"
+							value={state.vouchersPerPage}
 							onChange={(e) => handleInputByPath(["vouchersPerPage"], e.target.value)}
 							type="number"
 							placeholder="e.g. 1"
@@ -113,6 +114,7 @@ export const VoucherSettings = () => {
 							<div>Bank Name</div>
 							<input
 								name="bankName"
+								value={state.bankInfo?.name}
 								onChange={(e) => handleInputByPath(["bankInfo", "name"], e.target.value)}
 								type="text"
 								placeholder="e.g. The Punjab of Bank"
@@ -120,6 +122,7 @@ export const VoucherSettings = () => {
 							<div>Account Title</div>
 							<input
 								name="accountTitle"
+								value={state.bankInfo.accountTitle}
 								onChange={(e) => handleInputByPath(["bankInfo", "accountTitle"], e.target.value)}
 								type="text"
 								placeholder="e.g. MISchool"
@@ -127,6 +130,8 @@ export const VoucherSettings = () => {
 							<div>Account Title</div>
 							<input
 								name="accountNo"
+								value={state.bankInfo.accountNo}
+
 								onChange={(e) => handleInputByPath(["bankInfo", "accountNo"], e.target.value)}
 								type="text"
 								placeholder="IBAN or other"
@@ -136,6 +141,7 @@ export const VoucherSettings = () => {
 						<div>Due Date</div>
 						<input
 							name="dueDays"
+							value={state.dueDays}
 							onChange={(e) => handleInputByPath(["dueDays"], e.target.value)}
 							type="number"
 							placeholder="e.g. 2 (days after first of each month)"
@@ -144,6 +150,7 @@ export const VoucherSettings = () => {
 						<div>Late Fine</div>
 						<input
 							name="feeFine"
+							value={state.feeFine}
 							onChange={(e) => handleInputByPath(["feeFine"], e.target.value)}
 							type="number"
 							placeholder="amount per day"
@@ -152,28 +159,29 @@ export const VoucherSettings = () => {
 						<div>Fee Notice</div>
 						<textarea
 							name="notice"
+							value={state.notice}
 							onChange={(e) => handleInputByPath(["notice"], e.target.value)}
 							rows={2}
 							placeholder="Fee Notice"
 							className="tw-input w-full bg-transparent border-blue-brand ring-1" />
 
 						<div className="font-bold">Include on Voucher?</div>
-						<div className="space-y-1">
+						<div className="space-y-2 text-sm">
 							<SwitchButton title={"Show Bank Details"}
 								state={state.options.showBankInfo}
-								callback={() => handleInputByPath(["options", "showDueDays"], state.options.showBankInfo)} />
+								callback={() => handleInputByPath(["options", "showBankInfo"], !state.options.showBankInfo)} />
 
 							<SwitchButton title={"Show Due Date"}
 								state={state.options.showDueDays}
-								callback={() => handleInputByPath(["options", "showDueDays"], state.options.showDueDays)} />
+								callback={() => handleInputByPath(["options", "showDueDays"], !state.options.showDueDays)} />
 
 							<SwitchButton title={"Show Fine"}
 								state={state.options.showFine}
-								callback={() => handleInputByPath(["options", "showFine"], state.options.showFine)} />
+								callback={() => handleInputByPath(["options", "showFine"], !state.options.showFine)} />
 
 							<SwitchButton title={"Show Notice"}
 								state={state.options.showNotice}
-								callback={() => handleInputByPath(["options", "showNotice"], state.options.showNotice)} />
+								callback={() => handleInputByPath(["options", "showNotice"], !state.options.showNotice)} />
 						</div>
 
 						<button

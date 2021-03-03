@@ -5,9 +5,9 @@ import Dynamic from '@cerp/dynamic'
 import { toTitleCase } from 'utils/toTitleCase'
 import { mergeSettings } from 'actions'
 
-type State = {} & MISSettings["classes"]["defaultFee"]
+type State = MISSettings["classes"]["defaultFee"]
 
-// TODO: handle on edits
+// TODO: handle only edits
 const getDefaultFeeForClasses = (classes: RootDBState["classes"]): State => {
 	return Object.keys(classes)
 		.reduce((agg, curr) => {
@@ -56,19 +56,19 @@ export const DefaultFee = () => {
 		}
 
 		dispatch(mergeSettings(modified_settings))
-		// TODO: add RHT
+		// TODO: show RHT
 	}
 
 	// TODO: replace this with generic handler
 	const handleInputByPath = (path: string[], value: number) => {
-		const updatedState = Dynamic.put(state, path, value) as RootDBState["settings"]["classes"]["defaultFee"]
+		const updatedState = Dynamic.put(state, path, value) as State
 		setState(updatedState)
 	}
 
 	return (
 		<div className="my-4 p-5 space-y-4 w-full md:w-9/12 mx-auto">
 			<div className={"w-full overflow-y-auto text-sm md:text-base rounded-md"}>
-				<div className="table w-full text-center">
+				<div className="table w-full">
 					<div className="table-header-group bg-gray-700">
 						<div className="table-row font-bold text-base text-white">
 							<div className="table-cell p-2">Class</div>

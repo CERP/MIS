@@ -34,7 +34,7 @@ const MenuItems = [
 	},
 	{
 		title: "Reset Fees",
-		link: "/school/fee/reset",
+		link: "/school/fees/reset",
 		icon: ""
 	}
 ]
