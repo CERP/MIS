@@ -16,7 +16,7 @@ import { StudentIcon, HorizontalDots } from 'assets/icons'
 import { chunkify } from 'utils/chunkify'
 import { deleteStudentById } from 'actions/index'
 import DropdownMenu from 'components/Dropdown/DropdownMenu'
-import { useComponentVisible } from 'utils/customHooks'
+import { useComponentVisible } from 'hooks/useComponentVisible'
 
 import './style.css'
 

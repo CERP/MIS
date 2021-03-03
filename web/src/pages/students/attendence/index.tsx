@@ -7,10 +7,11 @@ import clsx from 'clsx'
 import { AttendanceStatsCard } from 'components/attendance'
 import { AppLayout } from 'components/Layout/appLayout'
 import { TModal } from 'components/Modal'
-import { useComponentVisible } from 'utils/customHooks'
+import { useComponentVisible } from 'hooks/useComponentVisible'
 import { toTitleCase } from 'utils/toTitleCase'
 import { markAllStudents, markStudent } from 'actions'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
+import { isValidStudent } from 'utils'
 
 
 type State = {
@@ -33,7 +34,7 @@ enum AttendanceStatus {
 
 const getStudentsForSection = (sectionId: string, students: RootDBState["students"]) => (
 	Object.values(students)
-		.filter(s => s.Name && s.section_id === sectionId)
+		.filter(s => isValidStudent(s) && s.section_id === sectionId)
 )
 
 const deriveSelectedStudents = (sectionId: string, students: RootDBState["students"]) => (
@@ -45,7 +46,12 @@ const deriveSelectedStudents = (sectionId: string, students: RootDBState["studen
 export const StudentAttendance = () => {
 	const dispatch = useDispatch()
 	const { classes, students } = useSelector((state: RootReducerState) => state.db)
-	const { ref: modalRef, isComponentVisible, setIsComponentVisible } = useComponentVisible(false)
+
+	const {
+		ref: sendSmsModalRef,
+		isComponentVisible: showSendSmsModal,
+		setIsComponentVisible: setShowSendSmsModal
+	} = useComponentVisible(false)
 
 	const [state, setState] = useState<State>({
 		date: Date.now(),
@@ -150,9 +156,9 @@ export const StudentAttendance = () => {
 						</select>
 					</div>
 					{
-						isComponentVisible &&
+						showSendSmsModal &&
 						<TModal>
-							<div className="bg-white p-6 sm:p-8 space-y-2" ref={modalRef}>
+							<div className="bg-white p-6 sm:p-8 space-y-2" ref={sendSmsModalRef}>
 								<h1 className="text-center">Select options to send SMS</h1>
 								<div>Send to:</div>
 								<div className="flex items-center">
@@ -189,7 +195,7 @@ export const StudentAttendance = () => {
 						<AttendanceStatsCard attendance={studentsAttendance} />
 						<div className="absolute -bottom-3 md:-bottom-4 flex flex-row items-center justify-center w-full space-x-4 px-4">
 							<button
-								onClick={() => setIsComponentVisible(!isComponentVisible)}
+								onClick={() => setShowSendSmsModal(!showSendSmsModal)}
 								className="p-1 md:p-2 shadow-md bg-blue-brand text-white rounded-3xl w-2/5">
 								Send SMS
 							</button>

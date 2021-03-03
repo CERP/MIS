@@ -1,14 +1,15 @@
 import React, { useMemo, useState } from 'react'
-import clsx from 'clsx'
 import { useDispatch, useSelector } from 'react-redux'
+import clsx from 'clsx'
 
 import { isValidStudent } from 'utils'
 import { toTitleCase } from 'utils/toTitleCase'
-import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { AppLayout } from 'components/Layout/appLayout'
 import { resetFees } from 'actions'
-import { useComponentVisible } from 'utils/customHooks'
+import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
+
+import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 
 enum ResetFeeOptions {
 	EMPTY_OPTION,

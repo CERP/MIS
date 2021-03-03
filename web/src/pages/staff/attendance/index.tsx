@@ -8,8 +8,8 @@ import { AttendanceStatsCard } from 'components/attendance'
 import { AppLayout } from 'components/Layout/appLayout'
 import { markFaculty, undoFacultyAttendance } from 'actions'
 import { TModal } from 'components/Modal'
-import { useComponentVisible } from 'utils/customHooks'
-import toTitleCase from 'utils/toTitleCase'
+import { useComponentVisible } from 'hooks/useComponentVisible'
+import { toTitleCase } from 'utils/toTitleCase'
 
 
 type State = {
@@ -31,7 +31,11 @@ export const StaffAttendance = () => {
 	const dispatch = useDispatch()
 
 	const { faculty } = useSelector((state: RootReducerState) => state.db)
-	const { ref: modalRef, isComponentVisible, setIsComponentVisible } = useComponentVisible(false)
+	const {
+		ref: sendSmsModalRef,
+		isComponentVisible: showSendSmsModal,
+		setIsComponentVisible: setShowSendSmsModal
+	} = useComponentVisible(false)
 
 	const [state, setState] = useState<State>({
 		date: Date.now()
@@ -39,7 +43,7 @@ export const StaffAttendance = () => {
 
 	const attendanceDate = moment(state.date).format("YYYY-MM-DD")
 
-	const studentsAttendance = useMemo(() => {
+	const staffAttendance = useMemo(() => {
 
 		let attendance = { PRESENT: 0, LEAVE: 0, ABSENT: 0, UNMARK: 0 }
 
@@ -56,6 +60,7 @@ export const StaffAttendance = () => {
 					else if (record.absent) {
 						attendance.ABSENT += 1
 					}
+					// TODO: handle other leave status as well
 					else if (record.leave) {
 						attendance.LEAVE += 1
 					}
@@ -75,9 +80,12 @@ export const StaffAttendance = () => {
 		const prevStatus = Object.keys(record)?.[0]
 
 		// this should remove any previous key-pair value
-		// to make sure, there should be single entry in the system for the staff teacher
-		// for the given attendance date
-		if (prevStatus) {
+		// to make sure, there should be single entry in the system for the staff for the given attendance date
+		// if attendance status is other than check_in or check_out
+
+		// if previous attendance status is check_in, don't dispatch, this is to make sure
+		// check_in and check_out, both should be present in the database
+		if (prevStatus && prevStatus !== AttendanceStatus.CHECK_IN && status !== AttendanceStatus.CHECK_OUT) {
 			dispatch(undoFacultyAttendance(member, attendanceDate))
 		}
 
@@ -100,9 +108,9 @@ export const StaffAttendance = () => {
 							className="tw-input w-full bg-transparent border-blue-brand ring-1 text-sm" />
 					</div>
 					{
-						isComponentVisible &&
+						showSendSmsModal &&
 						<TModal>
-							<div className="bg-white p-6 sm:p-8 space-y-2" ref={modalRef}>
+							<div className="bg-white p-6 sm:p-8 space-y-2" ref={sendSmsModalRef}>
 								<h1 className="text-center">Select option to send SMS</h1>
 								<div>Send to:</div>
 								<div className="flex items-center">
@@ -136,10 +144,10 @@ export const StaffAttendance = () => {
 						</TModal>
 					}
 					<div className="relative text-sm md:text-base">
-						<AttendanceStatsCard attendance={studentsAttendance} />
+						<AttendanceStatsCard attendance={staffAttendance} />
 						<div className="absolute -bottom-3 md:-bottom-4 flex flex-row items-center justify-center w-full space-x-4 px-4">
 							<button
-								onClick={() => setIsComponentVisible(!isComponentVisible)}
+								onClick={() => setShowSendSmsModal(!showSendSmsModal)}
 								className="p-1 md:p-2 shadow-md bg-blue-brand text-white rounded-3xl w-2/5">
 								Send SMS
 							</button>
