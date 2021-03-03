@@ -5,26 +5,23 @@ import { TModal } from '../Modal'
 import StudentInfoModal from './StudentInfoModal'
 import TIPGroupModal from './TIPGroupModal'
 import ChangeTIPGroup from './ChangeTIPGroup'
-import { convertLearningGradeToGroupName, getGradesFromTests } from 'utils/TIP'
+import { convertLearningGradeToGroupName } from 'utils/TIP'
 import { assignLearningLevel } from 'actions'
 import { useComponentVisible } from 'utils/customHooks';
 
 interface P {
     std: MISStudent
-    targeted_instruction: RootReducerState["targeted_instruction"]
 
     setLearningLevel: (student_id: string, subject: string, level: TIPGrades) => void
 }
 
-const ClassViewCard: React.FC<P> = ({ std, targeted_instruction, setLearningLevel }) => {
+const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
     const [modal_type, setModalType] = useState('')
     const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false)
 
     const [current_grade, setCurrentGrade] = useState<TIPGrades>()
     const [selected_grade, setSelectedGrade] = useState<TIPGrades>()
     const [selected_subject, setSelectSubject] = useState<TIPSubjects>()
-
-    const grades = getGradesFromTests(targeted_instruction)
 
     const reAssignGrade = () => {
         setLearningLevel(std.id, selected_subject, selected_grade)
@@ -45,7 +42,6 @@ const ClassViewCard: React.FC<P> = ({ std, targeted_instruction, setLearningLeve
                 {modal_type === 'tip_groups' && <div ref={ref}>
                     <TIPGroupModal
                         subject={selected_subject}
-                        grades={grades}
                         setSelectedGrade={setSelectedGrade}
                         setModalType={setModalType}
                     />
@@ -84,8 +80,7 @@ const ClassViewCard: React.FC<P> = ({ std, targeted_instruction, setLearningLeve
     </>
 }
 
-export default connect((state: RootReducerState) => ({
-    targeted_instruction: state.targeted_instruction
+export default connect(() => ({
 }), (dispatch: Function) => ({
     setLearningLevel: (student_id: string, subject: string, level: TIPGrades) => dispatch(assignLearningLevel(student_id, subject, level))
 }))(ClassViewCard)

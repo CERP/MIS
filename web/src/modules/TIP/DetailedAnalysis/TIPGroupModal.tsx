@@ -1,17 +1,27 @@
 import React from 'react'
 import clsx from 'clsx'
-import { grade_map } from 'constants/TIP'
 import { convertLearningLevelToGrade } from 'utils/TIP'
 
 interface P {
     subject: TIPSubjects
-    grades: TIPLevels[]
 
     setModalType: (modal_type: string) => void
     setSelectedGrade: (grade: TIPGrades) => void
 }
 
-const TIPGroupModal: React.FC<P> = ({ subject, grades, setSelectedGrade, setModalType }) => {
+type OrderedGroupItem = {
+    group: TIPLevels
+    color: TIPLearningGroups
+}
+
+const ordered_groups: Array<OrderedGroupItem> = [
+    { group: "Level KG", color: "Blue" },
+    { group: "Level 1", color: "Yellow" },
+    { group: "Level 2", color: "Green" },
+    { group: "Level 3", color: "Orange" }
+]
+
+const TIPGroupModal: React.FC<P> = ({ subject, setSelectedGrade, setModalType }) => {
 
     const onClickGrade = (grade: TIPGrades) => {
         setModalType('change_group')
@@ -25,10 +35,9 @@ const TIPGroupModal: React.FC<P> = ({ subject, grades, setSelectedGrade, setModa
             <div className="flex justify-center items-center p-2">
                 <div className="grid grid-cols-2 grid-rows-2 gap-6 md:gap-6 lg:gap-10 content-center py-3">
                     {
-                        grades && grades
-                            .sort((a, b) => a.localeCompare(b))
-                            .map((grade, index) => {
-                                return <div key={grade}>
+                        ordered_groups && ordered_groups
+                            .map((ordered_group, index) => {
+                                return <div key={ordered_group.group}>
                                     <div
                                         className={clsx("py-3 px-1 md:py-5 md:px-1 lg:py-6 lg:px-2 text-sm md:text-base cursor-pointer container rounded-lg flex items-center justify-center shadow-lg", {
                                             "bg-light-blue-tip-brand": index === 0,
@@ -36,8 +45,8 @@ const TIPGroupModal: React.FC<P> = ({ subject, grades, setSelectedGrade, setModa
                                             "bg-green-tip-brand": index === 2,
                                             "bg-orange-tip-brand": index === 3
                                         })}
-                                        onClick={() => onClickGrade(convertLearningLevelToGrade(grade))}>
-                                        <div className="text-white font-bold mb-1">{`${grade_map[grade]} Group`}</div>
+                                        onClick={() => onClickGrade(convertLearningLevelToGrade(ordered_group.group))}>
+                                        <div className="text-white font-bold mb-1">{`${ordered_group.color} Group`}</div>
                                     </div>
                                 </div>
                             })

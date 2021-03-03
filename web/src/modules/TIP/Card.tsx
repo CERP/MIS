@@ -13,8 +13,9 @@ interface P {
 
 const Card: React.FC<P> = ({ class_name, teacher_name, school_name, subject, lesson_name, lesson_no }) => {
 
-    const class_num = class_name.substring(class_name.length - 1)
-    const color = class_num === '0' ? "light-blue" : class_num === '1' ? "yellow" : class_num === '2' ? "green" : class_num === '3' ? "orange" : "sea-green"
+    const class_num = class_name.substring(class_name.length - 2).trim()
+
+    const color = class_num === 'KG' ? "light-blue" : class_num === '1' ? "yellow" : class_num === '2' ? "green" : class_num === '3' ? "orange" : "sea-green"
 
     const group_name = convertLearningGradeToGroupName(convertLearningLevelToGrade(class_name as TIPLevels))
 
