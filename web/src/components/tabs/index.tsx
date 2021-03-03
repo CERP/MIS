@@ -7,10 +7,11 @@ type TabbarProps = {
 	setTab: (tab: any) => void
 }
 
+// TODO: apply to home page as well
 export const Tabbar = ({ tab, setTab, content }: TabbarProps) => {
 	return (
 		<div className="sticky inset-0 top-16 z-30">
-			<div className="text-center w-full inline-grid grid-cols-3 ga-x-4 bg-teal-500 px-4 pt-2 pb-0 shadow-lg text-teal-200 text-lg">
+			<div className="bg-green-brand gap-x-4 grid-cols-3 inline-grid pb-0 pt-2 shadow-md text-center text-lg text-teal-200 w-full">
 				{
 					content.map((item: any) => (
 						<div key={item.tab}
