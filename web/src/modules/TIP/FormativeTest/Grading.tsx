@@ -6,7 +6,7 @@ import { mergeTIPResult, assignLearningLevel } from 'actions'
 import { convertLearningGradeToGroupName } from 'utils/TIP'
 import { useComponentVisible } from 'utils/customHooks';
 import { TModal } from '../Modal'
-import DisplayGroupModal from './DisplayGroupModal'
+import DisplayAssignedGroupModal from './DisplayAssignedGroupModal'
 import Card from '../Card'
 
 interface P {
@@ -42,6 +42,7 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 
 	const { class_name, subject, section_id, std_id, test_id } = match.params
 	const [group, setGroup] = useState<TIPLearningGroups>()
+	const [modal_type, setModaltype] = useState('')
 	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false)
 
 	let test_type: TIPTestType = "Diagnostic"
@@ -114,11 +115,17 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 		}
 
 		//display modal => to see assigned group
-		complete ? setIsComponentVisible(true) : alert('Please mark all questions')
+		complete ?
+			(setIsComponentVisible(true), setModaltype('assign_group_modal')) :
+			(setIsComponentVisible(true), setModaltype('warning_modal'))
 
 		// assign level to student
 		complete && setLearningLevel(std_id, subject, level)
 		complete && saveReport(std_id, result, test_id)
+	}
+
+	const onClear = () => {
+
 	}
 
 	const redirect = () => {
@@ -132,8 +139,21 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 	return <div className="flex flex-wrap content-between bg-white">
 		{isComponentVisible && (
 			<TModal>
-				<div ref={ref} className="h-32 bg-white">
-					<DisplayGroupModal group={group} redirect={redirect} />
+				<div ref={ref} className="bg-white pb-3">
+					{
+						modal_type === 'assign_group_modal' && <DisplayAssignedGroupModal group={group} redirect={redirect} />
+					}
+					{
+						modal_type === 'warning_modal' && <>
+							<div className="text-center p-3 md:p-4 lg:p-5 rounded-md text-sm md:text-base lg:text-xl font-bold">
+								you have not finished grading student, Do you want to finish grading or go back to another page?
+							</div>
+							<div className="w-full flex justify-around items-center mt-3">
+								<button className="w-5/12 p-2 md:p-2 lg:p-3 border-none bg-blue-tip-brand text-white rounded-lg outline-none font-bold text-sm md:text-base lg:text-xl" onClick={redirect}>Leave Page</button>
+								<button className="w-5/12 p-2 md:p-2 lg:p-3 border-none bg-blue-tip-brand text-white rounded-lg outline-none font-bold text-sm md:text-base lg:text-xl" onClick={() => (setIsComponentVisible(false), setModaltype(''))}>Finish Grading</button>
+							</div>
+						</>
+					}
 				</div>
 			</TModal>
 		)}
@@ -167,10 +187,13 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 						</div>
 					})}
 		</div>
-		<div className="w-full mt-5 flex justify-center">
+		<div className="w-full mt-5 flex justify-around">
 			<button
-				className="bg-blue-tip-brand h-11 font-bold text-base border-none rounded-md text-white p-2 w-9/12 mb-4"
+				className="bg-blue-tip-brand font-bold text-base border-none rounded-md text-white p-2 w-6/12 mb-4"
 				onClick={onSave}>Save and Continue</button>
+			<button
+				className="bg-blue-tip-brand font-bold text-base border-none rounded-md text-white p-2 lg:p-2 w-4/12 mb-4"
+				onClick={onClear}>Clear</button>
 		</div>
 	</div>
 }
