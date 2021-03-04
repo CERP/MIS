@@ -27,11 +27,11 @@ const TeamMembers: Array<Team> = [
 		avatar_url: "images/taimur.jpg",
 		designation: "Technology Lead"
 	},
-	{
-		designation: "Research Assistant",
-		avatar_url: "https://storage.googleapis.com/ilmx-product-images/aboutabsar.jpg",
-		name: "Absar Ali"
-	},
+	// {
+	// 	designation: "Research Assistant",
+	// 	avatar_url: "https://storage.googleapis.com/ilmx-product-images/aboutabsar.jpg",
+	// 	name: "Absar Ali"
+	// },
 	{
 		designation: "Research Assistant",
 		avatar_url: "https://storage.googleapis.com/ilmx-product-images/aboutfarah.jpeg",
@@ -42,11 +42,11 @@ const TeamMembers: Array<Team> = [
 		avatar_url: "/images/ayesha.jpg",
 		designation: "Research Assistant"
 	},
-	{
-		designation: "Data Research Assistant",
-		avatar_url: "https://storage.googleapis.com/ilmx-product-images/yusuf.jpeg",
-		name: "Yusuf Khwaja"
-	},
+	// {
+	// 	designation: "Data Research Assistant",
+	// 	avatar_url: "https://storage.googleapis.com/ilmx-product-images/yusuf.jpeg",
+	// 	name: "Yusuf Khwaja"
+	// },
 	{
 		designation: "Field Manager",
 		avatar_url: "https://storage.googleapis.com/ilmx-product-images/aboutumer.jpg",

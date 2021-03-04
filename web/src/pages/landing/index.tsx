@@ -19,20 +19,25 @@ import iconTeacher from './assets/teacher.svg'
 
 export const Landing = () => {
 
+	// TODO: show modal for help button
+
 	return (
 		<AppLayout>
-			<div className="w-full mt-20">
+			<div className="w-full mt-10 md:mt-20">
 				<div className="flex flex-row flex-wrap h-full md:h-96">
 					<div className="w-full md:w-1/3 h-full">
 						<div className="px-10 md:px-20">
-							<div className="text-4xl md:text-5xl font-bold ">We Help Schools thrive.</div>
-							<div className="mt-4 text-lg">With <span className="text-red-brand font-bold">MISchool</span> which is a Single solution for all your school management issues.</div>
+							<div className="text-6xl 2xl:text-7xl font-bold">We Help Schools thrive.</div>
+							<div className="mt-4 text-lg 2xl:text-2xl">With <span className="text-red-brand font-bold">MISchool</span> which is a single solution for all your school management issues.</div>
 						</div>
-						<div className="px-10 my-10 md:mt-20 md:pl-20 md:pr-0">
+						<div className="px-10 my-10 2xl:mt-8 md:pl-20 md:pr-0">
 							<div className="flex flex-row space-x-2">
-								<Link to="/school-login" className="w-full py-3 px-6 rounded-md border-2 text-center text-lg border-teal-400 text-teal-400 hover:bg-teal-400 hover:text-white">Sign in </Link>
-								<Link to="/signup" className="w-full py-3 px-6 text-center rounded-md text-lg bg-teal-400 text-white hover:bg-teal-500">Sign up</Link>
+								<Link to="/school-login" className="w-1/2 py-2 md:py-3 px-6 rounded-md border-2 text-center text-lg text-green-brand border-green-brand hover:bg-green-brand hover:text-white">
+									Login
+								</Link>
+								<Link to="/signup" className="w-full py-2 md:py-3 px-6 text-center rounded-md text-lg text-white bg-green-brand hover:bg-teal-500">Try For Free</Link>
 							</div>
+							<div className="my-2">Not sure? Click here to <span className="text-green-brand cursor-pointer">Schedule a demo</span></div>
 						</div>
 					</div>
 					<div className="w-full md:w-2/3 px-10 md:pr-0">
@@ -46,7 +51,6 @@ export const Landing = () => {
 					</div>
 				</div>
 				<div className="mt-20 py-10 bg-teal-50 md:min-h-screen">
-
 					<div className=" text-3xl font-semibold text-center">Why Us?</div>
 					<div className="flex flex-row flex-wrap mt-10 md:mt-20">
 						<div className="w-full md:w-1/3 h-full">
@@ -80,7 +84,7 @@ export const Landing = () => {
 
 					{/*TODO: make an array of objects and render using map()  */}
 
-					<div className="flex flex-row flex-wrap items-center  justify-center px-20 space-y-4 md:space-x-16 md:space-y-0 mt-10">
+					<div className="flex flex-row flex-wrap items-center justify-center px-20 space-y-4 md:space-x-16 md:space-y-0 mt-10">
 						<div className="flex flex-col items-center space-y-2">
 							<img className="w-24 h-24 md:w-28 md:h-28 m-8 shadow-md rounded-full" src={iconGlobe} alt="city" />
 							<div className="text-2xl font-bold">50+</div>
@@ -195,7 +199,11 @@ export const Landing = () => {
 						</div>
 					</div>
 				</div>
-
+				<div className="fixed z-50 bottom-10 right-5 rounded-full border border-white bg-green-brand shadow-md p-2 text-white">
+					<svg className="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+						<path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+					</svg>
+				</div>
 			</div>
 		</AppLayout>
 	)

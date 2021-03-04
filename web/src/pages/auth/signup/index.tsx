@@ -69,7 +69,7 @@ export const SchoolSignup = () => {
 	}, [loading, succeed, reason])
 
 
-	const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+	const createSchoolAccount = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
 
 		const compulsoryFields = checkCompulsoryFields(state, [
@@ -141,7 +141,7 @@ export const SchoolSignup = () => {
 
 	return (
 		<AppLayout title={"School Signup"}>
-			<div className="p-5 pb-0 md:p-10 md:pb-0 text-gray-700">
+			<div className="p-6 pb-0 md:p-10 md:pb-0 text-gray-700">
 				{
 					// explictly check reason is empty string instead of undefined
 					(!loading && succeed && reason === '') ?
@@ -151,19 +151,19 @@ export const SchoolSignup = () => {
 						:
 						<>
 							<div className="flex flex-col items-center space-y-2">
-								<div className="text-2xl font-bold">Sign up to MISchool</div>
-								<div className="text-sm mt-5">
+								<div className="text-2xl md:text-2xl 2xl:text-3xl font-bold">Sign up to MISchool</div>
+								<div className="text-sm mt-4 md:text-lg">
 									<span className="text-gray-500">Have an account? </span>
-									<Link to="school-login" className="text-blue-500 text-base">Sign in</Link>
+									<Link to="school-login" className="text-blue-500">Login</Link>
 								</div>
 							</div>
 
 							<div className="w-full mt-5 md:mt-10 pb-10 md:px-16">
 								<div className="mx-auto md:w-9/12">
 									<form id="signup"
-										onSubmit={onFormSubmit}
+										onSubmit={createSchoolAccount}
 										className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-2 mx-auto">
-										<div>
+										<div className="space-y-2">
 											<div>Name</div>
 											<input
 												name="name"
@@ -172,9 +172,9 @@ export const SchoolSignup = () => {
 												autoCapitalize="off"
 												autoComplete="off"
 												placeholder="Type your name"
-												className="w-full md:w-11/12 tw-input" />
+												className="w-full tw-input" />
 										</div>
-										<div>
+										<div className="space-y-2">
 											<div>School Name</div>
 											<input
 												name="schoolName"
@@ -183,21 +183,21 @@ export const SchoolSignup = () => {
 												autoCapitalize="off"
 												autoComplete="off"
 												placeholder="Type your school name"
-												className="w-full md:w-11/12 tw-input" />
+												className="w-full tw-input" />
 										</div>
-										<div>
+										<div className="space-y-2">
 											<div>Mobile Number (School Id)</div>
 											<input
 												name="phone"
-												type="number"
+												type="text"
 												onChange={onInputChange}
 												autoCapitalize="off"
 												autoCorrect="off"
 												autoComplete="off"
 												placeholder="e.g. 0300xxxxxxx"
-												className="w-full md:w-11/12 tw-input" />
+												className="w-full tw-input" />
 										</div>
-										<div>
+										<div className="space-y-2 hidden md:block">
 											<div>Password</div>
 											<div className="relative">
 												<input
@@ -209,30 +209,52 @@ export const SchoolSignup = () => {
 													required
 													type={togglePassword ? 'text' : 'password'}
 													placeholder="Enter password"
-													className="w-full md:w-11/12 tw-input" />
+													className="w-full tw-input" />
 												<div
 													onClick={() => setTogglePassword(!togglePassword)}
-													className="absolute inset-y-0 right-0 md:right-8 pr-3 flex items-center cursor-pointer">
+													className="absolute inset-y-0 right-2 pr-3 flex items-center cursor-pointer">
 													{
 														<ShowHidePassword open={togglePassword} />
 													}
 												</div>
 											</div>
 										</div>
-										<div>
+										<div className="space-y-2">
 											<div>City/District</div>
 											<select
 												name="city"
 												required
 												onChange={onInputChange}
-												className="w-full md:w-11/12 tw-select">
+												className="w-full tw-select">
 												<option value="">Choose from list</option>
 												{
 													getDistricts().sort().map(d => (<option key={d} value={d}>{toTitleCase(d)}</option>))
 												}
 											</select>
 										</div>
-										<div>
+										<div className="space-y-2 block md:hidden">
+											<div>Password</div>
+											<div className="relative">
+												<input
+													name="schoolPassword"
+													onChange={onInputChange}
+													autoCapitalize="off"
+													autoCorrect="off"
+													autoComplete="off"
+													required
+													type={togglePassword ? 'text' : 'password'}
+													placeholder="Enter password"
+													className="w-full tw-input" />
+												<div
+													onClick={() => setTogglePassword(!togglePassword)}
+													className="absolute inset-y-0 right-2 pr-3 flex items-center cursor-pointer">
+													{
+														<ShowHidePassword open={togglePassword} />
+													}
+												</div>
+											</div>
+										</div>
+										<div className="space-y-2">
 											<div>Confirm Password</div>
 											<div className="relative">
 												<input
@@ -244,10 +266,10 @@ export const SchoolSignup = () => {
 													required
 													type={toggleConfirmPassword ? 'text' : 'password'}
 													placeholder="Enter confirm password"
-													className="w-full md:w-11/12 tw-input" />
+													className="w-full tw-input" />
 												<div
 													onClick={() => setToggleConfirmedPassword(!toggleConfirmPassword)}
-													className="absolute inset-y-0 right-0 md:right-8 pr-3 flex items-center cursor-pointer">
+													className="absolute inset-y-0 right-2 pr-3 flex items-center cursor-pointer">
 													{
 														<ShowHidePassword open={toggleConfirmPassword} />
 													}

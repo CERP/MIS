@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { Link, Redirect } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
+import { createSchoolLogin } from 'actions'
 import { AppLayout } from 'components/Layout/appLayout'
 import { ShowHidePassword } from 'components/password'
-import { createSchoolLogin } from 'actions'
 import { Spinner } from 'components/animation/spinner'
 import { OnboardingStage } from 'constants/index'
 import { DownloadIcon } from 'assets/icons'
@@ -125,15 +125,15 @@ export const SchoolLogin = () => {
 		<AppLayout title={"School Login"}>
 			<div className="p-5 pb-0 md:p-10 md:pb-0 text-gray-700">
 				<div className="flex flex-col items-center space-y-2">
-					<div className="text-2xl font-bold">Log in to MISchool</div>
-					<div className="text-sm mt-5">
+					<div className="text-2xl font-bold 2xl:text-3xl">Login to MISchool</div>
+					<div className="text-sm mt-4 md:text-lg">
 						<span className="text-gray-500">Don't have an account? </span>
 						<Link to="/signup" className="text-blue-500 text-base">Sign up</Link>
 					</div>
 				</div>
 
 				<div className="w-full mt-5 px-5 md:mt-10 md:px-16">
-					<div className="bg-white shadow-md mx-auto border md:w-1/3 rounded-md py-6 px-6 md:px-8">
+					<div className="bg-white shadow-md mx-auto border border-gray-100 md:w-1/3 rounded-xl py-6 px-6 md:px-8">
 						<form onSubmit={handleSubmit} className="flex flex-col justify-items-start">
 							<div className="my-2">Mobile Number (School Id)</div>
 							<input

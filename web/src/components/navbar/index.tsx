@@ -36,7 +36,7 @@ export const AppHeader = () => {
 			})}>
 				<Menu>
 					{({ open: openMenu }: { open: boolean }) => (
-						<div className="flex flex-col max-w-screen-xl px-4 mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-8">
+						<div className="flex flex-col max-w-screen-3xl mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-16">
 							<div className="flex flex-row items-center justify-between p-4">
 
 								{
@@ -77,26 +77,23 @@ export const AppHeader = () => {
 											enterTo="transform opacity-100 scale-100"
 											leave="transition ease-in duration-75"
 											leaveFrom="transform opacity-100 scale-100"
-											leaveTo="transform opacity-0 scale-95"
-										>
+											leaveTo="transform opacity-0 scale-95">
+
 											<Menu.Items
 												static
-												className="absolute right-0 w-44 -top-2 origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg outline-none z-50"
-											>
+												className="absolute right-0 w-44 -top-2 origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg outline-none z-50">
 												<div className="py-1">
 													<Menu.Item>
 														<Link
 															to={`/staff/${auth?.faculty_id}/profile`}
-															className={"text-gray-700 flex justify-between w-full px-4 py-2 text-sm leading-5 text-left"}
-														>
+															className={"text-gray-700 flex justify-between w-full px-4 py-2 text-sm leading-5 text-left"}>
 															View Profile
-																</Link>
+														</Link>
 													</Menu.Item>
 												</div>
 												<div className="py-1">
 													<Menu.Item>
-														<button
-															onClick={handleLogout}
+														<button onClick={handleLogout}
 															className="text-gray-700 flex justify-between w-full px-4 py-2 text-sm leading-5 text-left" >
 															Logout
 														</button>
@@ -144,7 +141,7 @@ export const AppHeader = () => {
 										<Link className="px-4 py-2 mt-2 bg-transparent rounded-lg md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none focus:shadow-outline" to="/contact-us">Contact Us</Link>
 										<Link to="/school-login" className="px-4 py-2 mt-2 bg-transparent rounded-lg md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none focus:shadow-outline">
 											Login
-								 </Link>
+										</Link>
 									</nav >
 							}
 
