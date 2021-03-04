@@ -16,7 +16,8 @@ const class_map: Record<TIPLevels, TIPGrades> = {
 	"Level 1": "1",
 	"Level 2": "2",
 	"Level 3": "3",
-	"Oral": "Oral Test"
+	"Oral": "Oral Test",
+	"Remediation Not Needed": "Not Needed"
 }
 
 const InsertGrades: React.FC<PropsType> = (props) => {

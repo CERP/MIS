@@ -64,7 +64,7 @@ interface RootDBState {
 
 type TIPGrades = "1" | "2" | "3" | "KG" | "Oral Test" | "Not Needed"
 type TIPLearningGroups = "Blue" | "Yellow" | "Green" | "Orange" | "Oral" | "Remediation Not Needed"
-type TIPLevels = "Level KG" | "Level 1" | "Level 2" | "Level 3" | "Oral" 
+type TIPLevels = "Level KG" | "Level 1" | "Level 2" | "Level 3" | "Oral" | "Remediation Not Needed" 
 type TIPSubjects = "Maths" | "Urdu" | "English"
 
 type TIPCurriculum = {
