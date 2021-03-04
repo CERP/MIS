@@ -12,7 +12,7 @@ import { useComponentVisible } from 'utils/customHooks';
 interface P {
     std: MISStudent
 
-    setLearningLevel: (student_id: string, subject: string, level: TIPGrades) => void
+    setLearningLevel: (student_id: string, subject: TIPSubjects, level: TIPGrades) => void
 }
 
 const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
@@ -82,5 +82,5 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 
 export default connect(() => ({
 }), (dispatch: Function) => ({
-    setLearningLevel: (student_id: string, subject: string, level: TIPGrades) => dispatch(assignLearningLevel(student_id, subject, level))
+    setLearningLevel: (student_id: string, subject: TIPSubjects, level: TIPGrades) => dispatch(assignLearningLevel(student_id, subject, level))
 }))(ClassViewCard)

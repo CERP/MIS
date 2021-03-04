@@ -639,7 +639,7 @@ export const addPayment = (
 	)
 }
 
-export const assignLearningLevel = (student_id: string, subject: string, level: TIPGrades) => (dispatch: Function) => {
+export const assignLearningLevel = (student_id: string, subject: TIPSubjects, level: TIPGrades) => (dispatch: Function) => {
 	dispatch(
 		createMerges([
 			{
@@ -656,6 +656,26 @@ export const mergeTIPResult = (student_id: string, diagnostic_report: TIPDiagnos
 			{
 				path: ['db', 'students', student_id, 'targeted_instruction', 'results', test_id],
 				value: diagnostic_report
+			}
+		])
+	)
+}
+
+export const resetStudentLearningLevel = (student_id: string, subject: TIPSubjects) => (dispatch: Function) => {
+	dispatch(
+		createDeletes([
+			{
+				path: ['db', 'students', student_id, 'targeted_instruction', 'learning_level', subject]
+			}
+		])
+	)
+}
+
+export const resetStudentGrades = (student_id: string, test_id: string) => (dispatch: Function) => {
+	dispatch(
+		createDeletes([
+			{
+				path: ['db', 'students', student_id, 'targeted_instruction', 'results', test_id]
 			}
 		])
 	)

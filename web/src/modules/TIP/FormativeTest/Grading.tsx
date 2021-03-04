@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { calculateLearningLevelFromDiagnosticTest, calculateLearningLevelFromOralTest } from 'utils/TIP'
-import { mergeTIPResult, assignLearningLevel } from 'actions'
+import { mergeTIPResult, assignLearningLevel, resetStudentLearningLevel, resetStudentGrades } from 'actions'
 import { convertLearningGradeToGroupName } from 'utils/TIP'
 import { useComponentVisible } from 'utils/customHooks';
-import { TModal } from '../Modal'
 import DisplayAssignedGroupModal from './DisplayAssignedGroupModal'
+import { TModal } from '../Modal'
 import Card from '../Card'
 
 interface P {
@@ -14,13 +14,15 @@ interface P {
 	students: RootDBState["students"]
 	targeted_instruction: RootReducerState['targeted_instruction']
 
-	setLearningLevel: (student_id: string, subject: string, level: TIPGrades) => void
+	resetStudentLearningLevel: (student_id: string, subject: TIPSubjects) => void
+	resetStudentGrades: (student_id: string, test_id: string) => void
+	setLearningLevel: (student_id: string, subject: TIPSubjects, level: TIPGrades) => void
 	saveReport: (student_id: string, diagnostic_report: TIPDiagnosticReport, test_id: string) => void
 }
 
 interface RouteParams {
 	class_name: string
-	subject: string
+	subject: TIPSubjects
 	section_id: string
 	std_id: string
 	test_id: string
@@ -38,7 +40,7 @@ const GenerateEmptyTest = (type: TIPTestType): TIPDiagnosticReport => {
 	}
 }
 
-const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, saveReport, setLearningLevel, history }) => {
+const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, saveReport, setLearningLevel, resetStudentLearningLevel, resetStudentGrades, history }) => {
 
 	const { class_name, subject, section_id, std_id, test_id } = match.params
 	const [group, setGroup] = useState<TIPLearningGroups>()
@@ -124,8 +126,10 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 		complete && saveReport(std_id, result, test_id)
 	}
 
-	const onClear = () => {
-
+	const onResetStudentGrades = () => {
+		resetStudentLearningLevel(std_id, subject)
+		resetStudentGrades(std_id, test_id)
+		redirect()
 	}
 
 	const redirect = () => {
@@ -189,11 +193,11 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 		</div>
 		<div className="w-full mt-5 flex justify-around">
 			<button
-				className="bg-blue-tip-brand font-bold text-base border-none rounded-md text-white p-2 w-6/12 mb-4"
+				className="bg-blue-tip-brand font-bold text-sm md:text-base lg:text-lg border-none rounded-md text-white py-2 w-1/7 mb-4"
 				onClick={onSave}>Save and Continue</button>
 			<button
-				className="bg-blue-tip-brand font-bold text-base border-none rounded-md text-white p-2 lg:p-2 w-4/12 mb-4"
-				onClick={onClear}>Clear</button>
+				className="bg-blue-tip-brand font-bold text-sm md:text-base lg:text-lg border-none rounded-md text-white py-2 w-1/7 mb-4"
+				onClick={onResetStudentGrades}>Reset Student Grades</button>
 		</div>
 	</div>
 }
@@ -203,6 +207,8 @@ export default connect((state: RootReducerState) => ({
 	students: state.db.students,
 	targeted_instruction: state.targeted_instruction
 }), (dispatch: Function) => ({
+	resetStudentGrades: (student_id: string, test_id: string) => dispatch(resetStudentGrades(student_id, test_id)),
+	resetStudentLearningLevel: (student_id: string, subject: TIPSubjects) => dispatch(resetStudentLearningLevel(student_id, subject)),
 	saveReport: (student_id: string, diagnostic_report: TIPDiagnosticReport, test_id: string) => dispatch(mergeTIPResult(student_id, diagnostic_report, test_id)),
-	setLearningLevel: (student_id: string, subject: string, level: TIPGrades) => dispatch(assignLearningLevel(student_id, subject, level))
+	setLearningLevel: (student_id: string, subject: TIPSubjects, level: TIPGrades) => dispatch(assignLearningLevel(student_id, subject, level))
 }))(withRouter(Grading))
