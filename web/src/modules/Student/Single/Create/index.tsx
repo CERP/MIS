@@ -894,7 +894,7 @@ class SingleStudent extends Component<propTypes, S> {
 								placeholder="Alternate Phone Number"
 								disabled={!admin}
 							/>
-							{!this.isNew() && <a className="button blue call-link" href={`tel:${this.state.profile.Phone}`} > Call</a>}
+							{!this.isNew() && <a className="button blue call-link" href={`tel:${this.state.profile.AlternatePhone}`} > Call</a>}
 						</div>
 					</div>}
 
