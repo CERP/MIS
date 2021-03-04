@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { calculateLearningLevelFromDiagnosticTest, calculateLearningLevelFromOralTest } from 'utils/TIP'
-import { mergeTIPResult, assignLearningLevel } from 'actions'
+import { mergeTIPResult, assignLearningLevel, resetStudentLearningLevel, resetStudentGrades } from 'actions'
 import { convertLearningGradeToGroupName } from 'utils/TIP'
 import { useComponentVisible } from 'utils/customHooks';
+import AssignedGroupModal from './AssignedGroupModal'
 import { TModal } from '../Modal'
-import DisplayGroupModal from './DisplayGroupModal'
 import Card from '../Card'
 
 interface P {
@@ -14,13 +14,15 @@ interface P {
 	students: RootDBState["students"]
 	targeted_instruction: RootReducerState['targeted_instruction']
 
-	setLearningLevel: (student_id: string, subject: string, level: TIPGrades) => void
+	resetStudentLearningLevel: (student_id: string, subject: TIPSubjects) => void
+	resetStudentGrades: (student_id: string, test_id: string) => void
+	setLearningLevel: (student_id: string, subject: TIPSubjects, level: TIPGrades) => void
 	saveReport: (student_id: string, diagnostic_report: TIPDiagnosticReport, test_id: string) => void
 }
 
 interface RouteParams {
 	class_name: string
-	subject: string
+	subject: TIPSubjects
 	section_id: string
 	std_id: string
 	test_id: string
@@ -38,10 +40,11 @@ const GenerateEmptyTest = (type: TIPTestType): TIPDiagnosticReport => {
 	}
 }
 
-const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, saveReport, setLearningLevel, history }) => {
+const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, saveReport, setLearningLevel, resetStudentLearningLevel, resetStudentGrades, history }) => {
 
 	const { class_name, subject, section_id, std_id, test_id } = match.params
 	const [group, setGroup] = useState<TIPLearningGroups>()
+	const [modal_type, setModaltype] = useState('')
 	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false)
 
 	let test_type: TIPTestType = "Diagnostic"
@@ -114,11 +117,19 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 		}
 
 		//display modal => to see assigned group
-		complete ? setIsComponentVisible(true) : redirect()
+		complete ?
+			(setIsComponentVisible(true), setModaltype('assign_group_modal')) :
+			(setIsComponentVisible(true), setModaltype('warning_modal'))
 
 		// assign level to student
 		complete && setLearningLevel(std_id, subject, level)
 		complete && saveReport(std_id, result, test_id)
+	}
+
+	const onResetStudentGrades = () => {
+		resetStudentLearningLevel(std_id, subject)
+		resetStudentGrades(std_id, test_id)
+		redirect()
 	}
 
 	const redirect = () => {
@@ -132,8 +143,21 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 	return <div className="flex flex-wrap content-between bg-white">
 		{isComponentVisible && (
 			<TModal>
-				<div ref={ref} className="h-32 bg-white">
-					<DisplayGroupModal group={group} redirect={redirect} />
+				<div ref={ref} className="bg-white pb-3">
+					{
+						modal_type === 'assign_group_modal' && <AssignedGroupModal group={group} redirect={redirect} />
+					}
+					{
+						modal_type === 'warning_modal' && <>
+							<div className="text-center p-3 md:p-4 lg:p-5 rounded-md text-sm md:text-base lg:text-xl font-bold">
+								you have not finished grading student, Do you want to finish grading or go back to another page?
+							</div>
+							<div className="w-full flex justify-around items-center mt-3">
+								<button className="w-5/12 p-2 md:p-2 lg:p-3 border-none bg-blue-tip-brand text-white rounded-lg outline-none font-bold text-sm md:text-base lg:text-xl" onClick={redirect}>Leave Page</button>
+								<button className="w-5/12 p-2 md:p-2 lg:p-3 border-none bg-blue-tip-brand text-white rounded-lg outline-none font-bold text-sm md:text-base lg:text-xl" onClick={() => (setIsComponentVisible(false), setModaltype(''))}>Finish Grading</button>
+							</div>
+						</>
+					}
 				</div>
 			</TModal>
 		)}
@@ -167,10 +191,13 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 						</div>
 					})}
 		</div>
-		<div className="w-full mt-5 flex justify-center">
+		<div className="w-full mt-5 flex justify-around">
 			<button
-				className="bg-blue-tip-brand h-11 font-bold text-base border-none rounded-md text-white p-2 w-9/12 mb-4"
+				className="bg-blue-tip-brand font-bold text-sm md:text-base lg:text-lg border-none rounded-md text-white py-2 w-1/7 mb-4"
 				onClick={onSave}>Save and Continue</button>
+			<button
+				className="bg-blue-tip-brand font-bold text-sm md:text-base lg:text-lg border-none rounded-md text-white py-2 w-1/7 mb-4"
+				onClick={onResetStudentGrades}>Reset Student Grades</button>
 		</div>
 	</div>
 }
@@ -180,6 +207,8 @@ export default connect((state: RootReducerState) => ({
 	students: state.db.students,
 	targeted_instruction: state.targeted_instruction
 }), (dispatch: Function) => ({
+	resetStudentGrades: (student_id: string, test_id: string) => dispatch(resetStudentGrades(student_id, test_id)),
+	resetStudentLearningLevel: (student_id: string, subject: TIPSubjects) => dispatch(resetStudentLearningLevel(student_id, subject)),
 	saveReport: (student_id: string, diagnostic_report: TIPDiagnosticReport, test_id: string) => dispatch(mergeTIPResult(student_id, diagnostic_report, test_id)),
-	setLearningLevel: (student_id: string, subject: string, level: TIPGrades) => dispatch(assignLearningLevel(student_id, subject, level))
+	setLearningLevel: (student_id: string, subject: TIPSubjects, level: TIPGrades) => dispatch(assignLearningLevel(student_id, subject, level))
 }))(withRouter(Grading))

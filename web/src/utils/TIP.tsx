@@ -254,11 +254,12 @@ export const convertLearningGradeToGroupName = (grade: TIPGrades) => {
 export const convertLearningLevelToGrade = (level: TIPLevels): TIPGrades => {
 
 	const conversion_map: Record<TIPLevels, TIPGrades> = {
-		"Level 0": "KG",
+		"Level KG": "KG",
 		"Level 1": "1",
 		"Level 2": "2",
 		"Level 3": "3",
-		"Oral": "Oral Test"
+		"Oral": "Oral Test",
+		"Remediation Not Needed": "Not Needed"
 	}
 
 	return conversion_map[level]
@@ -314,7 +315,7 @@ export const getLessonProgress = (teacher: MISTeacher) => {
 			if (completed_all) {
 				return 35;
 			}
-	
+
 			if (first_17) {
 				return 17;
 			}

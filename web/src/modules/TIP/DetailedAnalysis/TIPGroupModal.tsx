@@ -1,17 +1,28 @@
 import React from 'react'
 import clsx from 'clsx'
-import { grade_map } from 'constants/TIP'
 import { convertLearningLevelToGrade } from 'utils/TIP'
 
 interface P {
     subject: TIPSubjects
-    grades: TIPLevels[]
 
     setModalType: (modal_type: string) => void
     setSelectedGrade: (grade: TIPGrades) => void
 }
 
-const TIPGroupModal: React.FC<P> = ({ subject, grades, setSelectedGrade, setModalType }) => {
+type OrderedGroupItem = {
+    group: TIPLevels
+    color: TIPLearningGroups
+}
+
+const ordered_groups: Array<OrderedGroupItem> = [
+    { group: "Level KG", color: "Blue" },
+    { group: "Level 1", color: "Yellow" },
+    { group: "Level 2", color: "Green" },
+    { group: "Level 3", color: "Orange" },
+    { group: "Remediation Not Needed", color: "Remediation Not Needed" }
+]
+
+const TIPGroupModal: React.FC<P> = ({ subject, setSelectedGrade, setModalType }) => {
 
     const onClickGrade = (grade: TIPGrades) => {
         setModalType('change_group')
@@ -22,27 +33,27 @@ const TIPGroupModal: React.FC<P> = ({ subject, grades, setSelectedGrade, setModa
             <div className="text-center rounded-t-lg bg-blue-tip-brand h-12 md:h-16 lg:h-16 text-white flex flex-row justify-around items-center text-sm md:text-lg lg:text-lg">
                 Select new group for {subject}
             </div>
-            <div className="flex justify-center items-center p-2">
-                <div className="grid grid-cols-2 grid-rows-2 gap-6 md:gap-6 lg:gap-10 content-center py-3">
-                    {
-                        grades && grades
-                            .sort((a, b) => a.localeCompare(b))
-                            .map((grade, index) => {
-                                return <div key={grade}>
-                                    <div
-                                        className={clsx("py-3 px-1 md:py-5 md:px-1 lg:py-6 lg:px-2 text-sm md:text-base cursor-pointer container rounded-lg flex items-center justify-center shadow-lg", {
-                                            "bg-light-blue-tip-brand": index === 0,
-                                            "bg-yellow-tip-brand": index === 1,
-                                            "bg-green-tip-brand": index === 2,
-                                            "bg-orange-tip-brand": index === 3
-                                        })}
-                                        onClick={() => onClickGrade(convertLearningLevelToGrade(grade))}>
-                                        <div className="text-white font-bold mb-1">{`${grade_map[grade]} Group`}</div>
-                                    </div>
+            <div className="flex flex-wrap flex-row justify-around w-full">
+                {
+                    ordered_groups && ordered_groups
+                        .map((ordered_group, index) => {
+                            return <div key={ordered_group.group}>
+                                <div
+                                    className={clsx("flex flex-wrap p-3 md:px-4 md:py-3 lg:px-10 lg:py-5 rounded-lg m-2 md:m-2 lg:m-4 items-center shadow-lg cursor-pointer text-sm md:text-base lg:text-lg", {
+                                        "bg-light-blue-tip-brand": index === 0,
+                                        "bg-yellow-tip-brand": index === 1,
+                                        "bg-green-tip-brand": index === 2,
+                                        "bg-orange-tip-brand": index === 3,
+                                        "bg-gray-600": index === 4
+                                    })}
+                                    onClick={() => onClickGrade(convertLearningLevelToGrade(ordered_group.group))}>
+                                    <div className="text-white font-bold mb-1">{`${ordered_group.color === 'Remediation Not Needed' ?
+                                        ordered_group.color :
+                                        `${ordered_group.color} Group`}`}</div>
                                 </div>
-                            })
-                    }
-                </div>
+                            </div>
+                        })
+                }
             </div>
         </div >
     )
