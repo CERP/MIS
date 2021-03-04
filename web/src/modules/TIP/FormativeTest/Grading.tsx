@@ -5,7 +5,7 @@ import { calculateLearningLevelFromDiagnosticTest, calculateLearningLevelFromOra
 import { mergeTIPResult, assignLearningLevel, resetStudentLearningLevel, resetStudentGrades } from 'actions'
 import { convertLearningGradeToGroupName } from 'utils/TIP'
 import { useComponentVisible } from 'utils/customHooks';
-import DisplayAssignedGroupModal from './DisplayAssignedGroupModal'
+import AssignedGroupModal from './AssignedGroupModal'
 import { TModal } from '../Modal'
 import Card from '../Card'
 
@@ -145,7 +145,7 @@ const Grading: React.FC<PropsType> = ({ students, targeted_instruction, match, s
 			<TModal>
 				<div ref={ref} className="bg-white pb-3">
 					{
-						modal_type === 'assign_group_modal' && <DisplayAssignedGroupModal group={group} redirect={redirect} />
+						modal_type === 'assign_group_modal' && <AssignedGroupModal group={group} redirect={redirect} />
 					}
 					{
 						modal_type === 'warning_modal' && <>

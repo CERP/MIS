@@ -7,7 +7,7 @@ interface P {
     redirect: () => void
 }
 
-const DisplayAssignedGroupModal: React.FC<P> = ({ group, redirect }) => {
+const AssignedGroupModal: React.FC<P> = ({ group, redirect }) => {
 
     return <>
         <div className={clsx("text-center p-3 rounded-md text-white text-lg font-bold", {
@@ -22,5 +22,5 @@ const DisplayAssignedGroupModal: React.FC<P> = ({ group, redirect }) => {
     </>
 }
 
-export default DisplayAssignedGroupModal
+export default AssignedGroupModal
 
