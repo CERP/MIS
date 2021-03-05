@@ -61,60 +61,142 @@ interface MISOnboarding {
 	stage: "ADD_STAFF" | "ADD_CLASS" | "ADD_STUDENTS" | "COMPLETED"
 }
 
-interface Curriculum {
-	[learning_level: string]: LearningLevels
-}
+/**
+ * TIP Types
+ */
 
-interface LearningLevels {
-	[lesson_id: string]: {
-		lesson_number: number
-		name: string
-		subject: string
-		description: string
-		video_links: string[]
-		pdf_links: string
+
+type TIPGrades = "1" | "2" | "3" | "KG" | "Oral Test" | "Not Needed"
+type TIPLearningGroups = "Blue" | "Yellow" | "Green" | "Orange" | "Oral" | "Remediation Not Needed"
+type TIPLevels = "Level KG" | "Level 1" | "Level 2" | "Level 3" | "Oral" | "Remediation Not Needed"
+type TIPSubjects = "Maths" | "Urdu" | "English"
+
+type TIPCurriculum = {
+	[learning_level in TIPLevels]: {
+		[subject: string]: TIPLessonPlans
 	}
 }
 
-interface Tests {
-	[id: string]: MISTest
+// This is the TIP curriculum which lives inside the 
+// MISTeacher object.
+type TIPTeacherCurriculum = {
+	[learning_level in TIPLevels]: {
+		[subject: string]: TIPTeacherLessonPlans
+	}
+}
+
+interface TIPTeacherLessonPlans {
+	[lesson_id: string]: TIPTeacherLesson
+}
+
+interface TIPLessonPlans {
+	[lesson_id: string]: TIPLesson
+}
+
+interface TIPLesson {
+	lesson_number: string
+	lesson_title: string
+	lesson_link: string
+	material_names: string[]
+	subject: string
+	lesson_duration: string
+	material_links: string
+	activity_links: string
+	teaching_manual_link: string
+}
+
+type TIPTeacherLesson = { taken: boolean }
+
+interface TIPTests {
+	[id: string]: TIPTest
+}
+
+type TIPTestType = "Diagnostic" | "Formative" | "Summative" | "Oral"
+
+interface TIPTest {
+	name: string
+	subject: string
+	grade: string
+	type: TIPTestType
+	label: string
+	pdf_url: string
+	answer_pdf_url: string
+	questions: {
+		[question_id: string]: TIPQuestion
+	}
+}
+
+interface TIPQuestion {
+	question_text: string
+	answer: string
+	grade: TIPGrades
+	slo_category: string
+	slo: string[]
+}
+
+type TIPGradedQuestion = TIPQuestion & {
+	is_correct: boolean
+}
+
+// Too generic, bad name
+// are we still using this?
+interface SLOResult {
+	[std_id: string]: {
+		std_name: string
+		obtain: number
+		total: number
+		slo_obj: SloObj
+	}
+}
+
+interface SloObj {
+	[slo_name]: {
+		obtain: number
+		total: number
+	}
+}
+
+// Am not sure what this is supposed to be for...
+type DiagnosticRes = {
+	[level in TIPGrades]: {
+		students: {
+			[student_id: string]: MISStudent
+		}
+	}
+}
+
+type TIPDiagnosticReport = {
+	checked?: boolean
+	type: TIPTestType
+	questions?: {
+		[question_id: string]: TIPGradedQuestion
+	}
+}
+
+type Levels = {
+	[level: string]: number
 }
 
 interface SLOMapping {
 	[slo_id: string]: {
 		description: string
 		category: string
-		link: strng
-	}
-}
-
-interface MISTest {
-	name: string
-	subject: string
-	grade: string
-	type: string
-	label: string
-	pdf_url: string
-	questions: {
-		[question_id: string]: {
-			answer: string
-			slo: string[]
-		}
-	}
-}
-
-interface Columns {
-	name: string
-	selector: string
-	sortable: boolean
-}
-
-interface GraphData {
-	[name: string]: {
-		percentage: number
 		link: string
 	}
 }
+
+// TODO: way too generic of a name to keep in the typings file
+interface Params {
+	class_name: string
+	subject: string
+	section_id: string
+	std_id: string
+	test_id: string
+	lesson_number: string
+}
+/**
+ * END TIP Section
+ */
 
 interface BaseAnalyticsEvent {
 	type: string
@@ -182,9 +264,9 @@ interface RootReducerState {
 		hasError: boolean
 	}
 	targeted_instruction: {
-		tests: Tests
+		tests: TIPTests
 		slo_mapping: SLOMapping
-		curriculum: Curriculum
+		curriculum: TIPCurriculum
 	}
 }
 
@@ -319,11 +401,14 @@ interface MISStudent {
 	certificates: {
 		[id: string]: MISCertificate
 	}
-	diagnostic_result: DiagnosticResult
-	learning_levels: {
-		[learning_level_id: string]: {
-			test_id: string
-			date_assigned: string
+	targeted_instruction: {
+		results: {
+			[test_id: string]: TIPDiagnosticReport
+		}
+		learning_level: {
+			[subject: string]: {
+				grade: TIPGrades
+			}
 		}
 	}
 }
@@ -335,6 +420,7 @@ type Report = {
 	}
 }
 
+
 type MISReport = {
 	[name: string]: {
 		correct: number
@@ -343,17 +429,6 @@ type MISReport = {
 	}
 }
 
-type DiagnosticResult = {
-	[test_id: string]: MISDiagnosticReport
-}
-
-type MISDiagnosticReport = {
-	[question_id: string]: {
-		answer: string
-		isCorrect: boolean
-		slo: string[]
-	}
-}
 
 interface MISFamilyInfo {
 	ManName: string
@@ -482,6 +557,9 @@ interface MISTeacher {
 		id: string
 		url: string
 		image_string: string
+	}
+	targeted_instruction: {
+		curriculum: TIPTeacherCurriculum
 	}
 }
 

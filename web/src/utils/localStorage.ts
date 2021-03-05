@@ -76,7 +76,7 @@ const initState: RootReducerState = {
 	targeted_instruction: {
 		tests: {},
 		slo_mapping: {},
-		curriculum: {}
+		curriculum: {} as TIPCurriculum
 	}
 }
 

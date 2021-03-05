@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="86" height="64" viewBox="0 0 86 64">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #043b6f;
+        font-size: 55px;
+        font-family: Helvetica;
+      }
+    </style>
+  </defs>
+  <text id="TIP" class="cls-1" transform="translate(0 52)"><tspan x="0" y="0">TIP</tspan></text>
+</svg>

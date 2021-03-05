@@ -47,10 +47,9 @@ const TrackedRoute = ({
 
 	const { paid, trial_period, date } = package_info
 
-	const daysPassedSinceTrial = moment().diff(moment(date), "days")
+	const daysPassedSinceTrial = moment().diff(moment(date), 'days')
 
 	if (date !== -1 && !paid && daysPassedSinceTrial > trial_period + 1) {
-
 		return <Redirect to="/verify-code" />
 	}
 
@@ -95,12 +94,15 @@ const TrackedRoute = ({
 
 }
 
-export default connect((state: RootReducerState) => ({
-	...state.auth,
-	initialized: state.initialized,
-	faculty: state.db.faculty,
-	package_info: state.db.package_info || { date: -1, trial_period: 15, paid: false }, //If package info is undefined
-}), (dispatch: Function) => ({
-	trackRoute: (path: string) => dispatch(trackRoute(path)),
-	logout: () => dispatch(createLogout())
-}))(TrackedRoute);
+export default connect(
+	(state: RootReducerState) => ({
+		...state.auth,
+		initialized: state.initialized,
+		faculty: state.db.faculty,
+		package_info: state.db.package_info || { date: -1, trial_period: 15, paid: false }, //If package info is undefined
+	}),
+	(dispatch: Function) => ({
+		trackRoute: (path: string) => dispatch(trackRoute(path)),
+		logout: () => dispatch(createLogout()),
+	})
+)(TrackedRoute)

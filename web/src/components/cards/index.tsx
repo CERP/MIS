@@ -17,8 +17,16 @@ interface P {
 	children?: React.ReactNode
 }
 
-const Card: React.FC<P> = ({ items, create, createText, totalItems, search, children, onDeleteStudent, onPrintStudentIdCard }) => {
-
+const Card: React.FC<P> = ({
+	items,
+	create,
+	createText,
+	totalItems,
+	search,
+	children,
+	onDeleteStudent,
+	onPrintStudentIdCard,
+}) => {
 	const hanleSearchInputChange = (value: string) => {
 		search(value)
 	}
@@ -26,19 +34,27 @@ const Card: React.FC<P> = ({ items, create, createText, totalItems, search, chil
 	return (
 		<div className="card-wrap">
 			<div className="total">
-				<div className="label">Total: <strong> {totalItems} </strong> </div>
+				<div className="label">
+					Total: <strong> {totalItems} </strong>{' '}
+				</div>
 				{create && <CreateButtonElem to={create} text={createText} />}
 			</div>
-			<input className="search-bar no-print" type="text" placeholder="Search by name | class | admission # | phone #" onChange={(e) => hanleSearchInputChange(e.target.value)} />
+			<input
+				className="search-bar no-print"
+				type="text"
+				placeholder="Search by name | class | admission # | phone #"
+				onChange={(e) => hanleSearchInputChange(e.target.value)}
+			/>
 			{children}
 			<div className="card-list">
-				{
-					items.map((item: any) => <StudentItem
-						key={item.id + "-" + item.section_id}
+				{items.map((item: any) => (
+					<StudentItem
+						key={item.id + '-' + item.section_id}
 						student={item}
 						deleteStudent={onDeleteStudent}
-						printStudentIdCard={onPrintStudentIdCard} />)
-				}
+						printStudentIdCard={onPrintStudentIdCard}
+					/>
+				))}
 			</div>
 		</div>
 	)
@@ -52,5 +68,9 @@ type CreateButtonElemProps = {
 }
 
 const CreateButtonElem: React.FC<CreateButtonElemProps> = ({ to, text }) => {
-	return <Link className="button blue" to={to}>{text}</Link>
+	return (
+		<Link className="button blue" to={to}>
+			{text}
+		</Link>
+	)
 }

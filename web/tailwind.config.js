@@ -35,7 +35,23 @@ module.exports = {
 				'green-brand': '#5ECDB9',
 				'orange-brand': '#FFC107',
 				'blue-brand': '#74ACED',
-				'gray-brand': '#E0E0E0'
+				'gray-brand': '#E0E0E0',
+				'red-tip-brand': '#FC6171',
+				'green-tip-brand': '#00CD8A',
+				'sea-green-tip-brand': '#1BB4BB',
+				'yellow-tip-brand': '#FFD350',
+				'orange-tip-brand': '#FF6600',
+				'blue-tip-brand': '#043B6F',
+				'purple-tip-brand': '#9C00F7',
+				'black-tip-brand': '#000000',
+				'gray-tip-brand': '#808080',
+				'light-blue-tip-brand': '#3478B9',
+				'danger-tip-brand': '#FF002A',
+				'success-tip-brand': '#00FF43',
+				'blue-50': '#7BACAE',
+				'red-250': '#FF9191',
+				'green-250': '#C6EFCE',
+				'yellow-250': '#FFEB9C'
 			},
 			screens: {
 				'print': { 'raw': 'print' }
@@ -703,6 +719,12 @@ module.exports = {
 			'3/6': '50%',
 			'4/6': '66.666667%',
 			'5/6': '83.333333%',
+<<<<<<< HEAD
+=======
+			'1/7': '45%',
+			'13/12': '88.333333%',
+			'14/12': '95%',
+>>>>>>> 51398457ff708025749bc2ace421cd69fb475701
 			'1/12': '8.333333%',
 			'2/12': '16.666667%',
 			'3/12': '25%',

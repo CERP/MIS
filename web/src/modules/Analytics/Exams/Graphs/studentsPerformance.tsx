@@ -30,7 +30,6 @@ interface S {
 const CHUNK_SIZE = 22
 
 class StudentsPerformance extends Component<PropsType, S> {
-
 	background_calculation: NodeJS.Timeout
 
 	former: Former
@@ -41,7 +40,7 @@ class StudentsPerformance extends Component<PropsType, S> {
 			loading: true,
 			loading_percentage: 0,
 			graph_data: [],
-			student_name: ''
+			student_name: '',
 		}
 
 		this.former = new Former(this, [])
@@ -56,33 +55,30 @@ class StudentsPerformance extends Component<PropsType, S> {
 	}
 
 	calculate = () => {
-
 		const { relevant_students, grades } = this.props
 
-		let i = 0;
+		let i = 0
 		clearTimeout(this.background_calculation)
 
 		let graph_data: GraphData[] = []
 
 		const reducify = () => {
-
 			// set the percentage bar every 10% change
 			const interval = Math.floor(relevant_students.length / 10)
 			if (i % interval === 0) {
 				this.setState({
-					loading_percentage: (i / relevant_students.length) * 100
+					loading_percentage: (i / relevant_students.length) * 100,
 				})
 			}
 
 			if (i >= relevant_students.length) {
-
 				const sorted_data = graph_data.sort((a, b) => a.percentage - b.percentage)
 
 				// we are done calculating
 				this.setState({
 					loading: false,
 					loading_percentage: 0,
-					graph_data: sorted_data
+					graph_data: sorted_data,
 				})
 			}
 
@@ -91,7 +87,7 @@ class StudentsPerformance extends Component<PropsType, S> {
 
 			if (!student || !student.Name) {
 				this.background_calculation = setTimeout(reducify, 0)
-				return;
+				return
 			}
 
 			// first, get their exam marks sheet.
@@ -105,18 +101,16 @@ class StudentsPerformance extends Component<PropsType, S> {
 				marks_obtained: marks_sheet.marks.obtained,
 				total_marks: marks_sheet.marks.total,
 				grade: calculateGrade(marks_sheet.marks.obtained, marks_sheet.marks.total, grades),
-				percentage: this.getPercentage(marks_sheet.marks.obtained, marks_sheet.marks.total)
+				percentage: this.getPercentage(marks_sheet.marks.obtained, marks_sheet.marks.total),
 			})
 
 			this.background_calculation = setTimeout(reducify, 0)
 		}
 
 		this.background_calculation = setTimeout(reducify, 0)
-
 	}
 
 	getPercentage = (marks_obtained: number, total_marks: number): number => {
-
 		const percentage = (marks_obtained / total_marks) * 100
 
 		return parseFloat(percentage.toFixed(2))
@@ -157,7 +151,6 @@ class StudentsPerformance extends Component<PropsType, S> {
 	*/
 
 	render() {
-
 		if (this.state.loading) {
 			return <ProgressBar percentage={this.state.loading_percentage} />
 		}
@@ -169,68 +162,90 @@ class StudentsPerformance extends Component<PropsType, S> {
 
 		const name = this.state.student_name
 
-		const table_data = graph_data
-			.filter(s => name ? s.name.toLocaleLowerCase().includes(name.toLocaleLowerCase()) : true)
+		const table_data = graph_data.filter((s) =>
+			name ? s.name.toLocaleLowerCase().includes(name.toLocaleLowerCase()) : true
+		)
 
-		return <>
-			<div className="school-grades-graph no-print">
-				<div className="title divider">Students Position Graph</div>
-				<div className="section">
-					<ResponsiveContainer width="100%" height={280}>
-						<BarChart data={graph_data} barSize={5}>
-							<XAxis dataKey="percentage" type="category" />
-							<YAxis />
-							<Tooltip content={BarLabel} />
-							<Bar dataKey="percentage" fill="#74aced" />
-						</BarChart>
-					</ResponsiveContainer>
-				</div>
-
-				<div className="divider">Students Position List</div>
-				<div className="section">
-					<div className="row">
-						<input
-							className="search-bar"
-							type="text"
-							{...this.former.super_handle(["student_name"])}
-							placeholder="search"
-						/>
+		return (
+			<>
+				<div className="school-grades-graph no-print">
+					<div className="title divider">Students Position Graph</div>
+					<div className="section">
+						<ResponsiveContainer width="100%" height={280}>
+							<BarChart data={graph_data} barSize={5}>
+								<XAxis dataKey="percentage" type="category" />
+								<YAxis />
+								<Tooltip content={BarLabel} />
+								<Bar dataKey="percentage" fill="#74aced" />
+							</BarChart>
+						</ResponsiveContainer>
 					</div>
-					<div className="table row">
-						<label><b>Name</b></label>
-						<label><b>Marks</b></label>
-						<label><b>Percentage</b></label>
-						<label><b>Grade</b></label>
-					</div>
-					{
-						// to avoid sorting the data in descending order again,
-						// accessing items in reverse order from sorted data
-						table_data
-							.map((_, i: number) => {
 
+					<div className="divider">Students Position List</div>
+					<div className="section">
+						<div className="row">
+							<input
+								className="search-bar"
+								type="text"
+								{...this.former.super_handle(['student_name'])}
+								placeholder="search"
+							/>
+						</div>
+						<div className="mis-table row">
+							<label>
+								<b>Name</b>
+							</label>
+							<label>
+								<b>Marks</b>
+							</label>
+							<label>
+								<b>Percentage</b>
+							</label>
+							<label>
+								<b>Grade</b>
+							</label>
+						</div>
+						{
+							// to avoid sorting the data in descending order again,
+							// accessing items in reverse order from sorted data
+							table_data.map((_, i: number) => {
 								const student = table_data[table_data.length - 1 - i]
 
-								return <div className="table row" key={student.id}>
-									<Link to={`/student/${student.id}/marks`}>{student.name}</Link>
-									<div>{student.marks_obtained}/{student.total_marks}</div>
-									<div>{student.percentage}%</div>
-									<div>{student.grade}</div>
-								</div>
+								return (
+									<div className="mis-table row" key={student.id}>
+										<Link to={`/student/${student.id}/marks`}>
+											{student.name}
+										</Link>
+										<div>
+											{student.marks_obtained}/{student.total_marks}
+										</div>
+										<div>{student.percentage}%</div>
+										<div>{student.grade}</div>
+									</div>
+								)
 							})
-					}
-					<div className="print button" onClick={() => window.print()} style={{ marginTop: "10px" }}>Print</div>
+						}
+						<div
+							className="print button"
+							onClick={() => window.print()}
+							style={{ marginTop: '10px' }}>
+							Print
+						</div>
+					</div>
 				</div>
-			</div>
-			{
-				chunkify(table_data, CHUNK_SIZE, true)
-					.map((chunk_items: GraphData[], i: number) => <StudentsPerformanceList key={i}
-						students_class={students_class}
-						items={chunk_items}
-						schoolName={""}
-						chunkSize={i === 0 ? 0 : CHUNK_SIZE * i}
-					/>)
-			}
-		</>
+				{chunkify(table_data, CHUNK_SIZE, true).map(
+					(chunk_items: GraphData[], i: number) => (
+						<StudentsPerformanceList
+							key={i}
+							students_class={students_class}
+							items={chunk_items}
+							schoolName={''}
+							chunkSize={i === 0 ? 0 : CHUNK_SIZE * i}
+						/>
+					)
+				)}
+			</>
+		)
 	}
 }
 
@@ -240,30 +255,29 @@ interface BarLabelProps {
 }
 
 const BarLabel: React.SFC<BarLabelProps> = ({ payload, active }) => {
-
 	if (active) {
-
 		const student = payload[0].payload
 
-		return <div className="custom-tooltip form">
-			<div className="row">
-				<label>Name:</label>
-				<div>{student.name}</div>
+		return (
+			<div className="custom-tooltip form">
+				<div className="row">
+					<label>Name:</label>
+					<div>{student.name}</div>
+				</div>
+				<div className="row">
+					<label>Father Name:</label>
+					<div>{student.manName}</div>
+				</div>
+				<div className="row">
+					<label>Percent:</label>
+					<div>{student.percentage}</div>
+				</div>
+				<div className="row">
+					<label>Grade</label>
+					<div>{student.grade}</div>
+				</div>
 			</div>
-			<div className="row">
-				<label>Father Name:</label>
-				<div>{student.manName}</div>
-			</div>
-			<div className="row">
-				<label>Percent:</label>
-				<div>{student.percentage}</div>
-
-			</div>
-			<div className="row">
-				<label>Grade</label>
-				<div>{student.grade}</div>
-			</div>
-		</div>
+		)
 	}
 }
 

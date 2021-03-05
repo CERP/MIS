@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="70" height="94" viewBox="0 0 70 94">
+  <g id="Group_1587" data-name="Group 1587" transform="translate(-234 -623.072)">
+    <g id="Rectangle_699" data-name="Rectangle 699" transform="translate(234 634.072)" fill="#fff" stroke="#043b6f" stroke-width="2">
+      <rect width="70" height="83" rx="5" stroke="none"/>
+      <rect x="1" y="1" width="68" height="81" rx="4" fill="none"/>
+    </g>
+    <rect id="Rectangle_700" data-name="Rectangle 700" width="34" height="9" transform="translate(252 632.072)" fill="#9c9c9c"/>
+    <g id="Ellipse_190" data-name="Ellipse 190" transform="translate(262 623.072)" fill="#fff" stroke="#9c9c9c" stroke-width="2">
+      <circle cx="7.5" cy="7.5" r="7.5" stroke="none"/>
+      <circle cx="7.5" cy="7.5" r="6.5" fill="none"/>
+    </g>
+    <g id="Rectangle_701" data-name="Rectangle 701" transform="translate(242 650.072)" fill="#fff" stroke="#3478b9" stroke-width="1">
+      <rect width="13" height="13" stroke="none"/>
+      <rect x="0.5" y="0.5" width="12" height="12" fill="none"/>
+    </g>
+    <text id="DAY_1" data-name="DAY 1" transform="translate(279 659.072)" fill="#3478b9" font-size="9" font-family="HelveticaLTStd-Bold, Helvetica LT Std" font-weight="700"><tspan x="-12.578" y="0">DAY 1</tspan></text>
+    <path id="Path_3673" data-name="Path 3673" d="M-7999.883,98h30.087" transform="translate(8263.753 565.317)" fill="none" stroke="#3478b9" stroke-width="1"/>
+    <g id="Rectangle_701-2" data-name="Rectangle 701" transform="translate(242 669.072)" fill="#fff" stroke="#3478b9" stroke-width="1">
+      <rect width="13" height="13" stroke="none"/>
+      <rect x="0.5" y="0.5" width="12" height="12" fill="none"/>
+    </g>
+    <text id="DAY_2" data-name="DAY 2" transform="translate(279 678.072)" fill="#3478b9" font-size="9" font-family="HelveticaLTStd-Bold, Helvetica LT Std" font-weight="700"><tspan x="-12.578" y="0">DAY 2</tspan></text>
+    <path id="Path_3673-2" data-name="Path 3673" d="M-7999.883,98h30.087" transform="translate(8263.753 584.515)" fill="none" stroke="#3478b9" stroke-width="1"/>
+    <g id="Rectangle_701-3" data-name="Rectangle 701" transform="translate(242 688.072)" fill="#fff" stroke="#3478b9" stroke-width="1">
+      <rect width="13" height="14" stroke="none"/>
+      <rect x="0.5" y="0.5" width="12" height="13" fill="none"/>
+    </g>
+    <text id="DAY_3" data-name="DAY 3" transform="translate(279 697.072)" fill="#3478b9" font-size="9" font-family="HelveticaLTStd-Bold, Helvetica LT Std" font-weight="700"><tspan x="-12.578" y="0">DAY 3</tspan></text>
+    <path id="Path_3673-3" data-name="Path 3673" d="M-7999.883,98h30.087" transform="translate(8263.753 603.714)" fill="none" stroke="#3478b9" stroke-width="1"/>
+    <path id="Path_3674" data-name="Path 3674" d="M-7999.882,98h52.277" transform="translate(8241.563 608.513)" fill="none" stroke="#3478b9" stroke-width="1"/>
+  </g>
+</svg>

@@ -237,7 +237,7 @@ class Reports extends Component<propsType, S> {
 			<div className="reports-page no-print">
 				<div className="title">Grade Book</div>
 				<div className="form section exams-filter">
-					<div className="table">
+					<div className="mis-table">
 						<div className="row">
 							<label>Class/Section</label>
 							<select {...this.former.super_handle(["section_id"], () => true, this.onStateChange)}>

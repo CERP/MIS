@@ -150,13 +150,14 @@ export const getSchoolInfo = (school_id: string) => (dispatch: Dispatch, getStat
 			school_id
 		}
 	})
-		.then((res: { trial_info: any; student_info: any; meta: TrialsDataRow["value"]; targeted_instruction: any }) => {
+		.then((res: { trial_info: any; student_info: any; meta: TrialsDataRow["value"]; targeted_instruction: any; tip_pilot: any }) => {
 			dispatch({
 				type: SCHOOL_INFO,
 				trial_info: res.trial_info,
 				student_info: res.student_info,
 				meta: res.meta,
-				targeted_instruction_access: res.targeted_instruction.targeted_instruction_access
+				targeted_instruction_access: res.targeted_instruction.targeted_instruction_access,
+				tip_pilot: res.tip_pilot.tip_pilot
 			})
 		})
 		.catch(err => {
@@ -245,6 +246,39 @@ export const giveTipAccess = (school_id: string, TIP_access: boolean) => (dispat
 		})
 		.catch(err => {
 			console.error("error", err)
+			alert("Updation Failed")
+		})
+}
+
+export const giveTipPilotAccess = (school_id: string, tip_pilot: boolean) => (dispatch: Dispatch, getState: GetState, syncr: Syncr) => {
+	const state = getState();
+
+	const merges = {
+		["db, tip_pilot"]: {
+			"date": moment.now(),
+			"action": {
+				"path": ["db", "tip_pilot"],
+				"type": "MERGE",
+				"value": tip_pilot
+			}
+		}
+	}
+
+
+	syncr.send({
+		type: "TIP_PILOT_ACCESS",
+		client_type: state.auth.client_type,
+		client_id: state.client_id,
+		id: state.auth.id,
+		payload: {
+			school_id,
+			merges
+		}
+	})
+		.then((res) => {
+			alert(res)
+		})
+		.catch(err => {
 			alert("Updation Failed")
 		})
 }

@@ -20,12 +20,12 @@
 	background-color: white;
 }
 
-.payment-history .table.row {
+.payment-history .mis-table.row {
 	border-bottom: 1px solid #222;
 	line-height: 2rem;
 }
 
-.payment-history .table.row.last {
+.payment-history .mis-table.row.last {
 	border-top: 1px solid #222;
 	border-bottom: none;
 }
@@ -39,17 +39,16 @@
 	flex-direction: row;
 }
 
-.student-fees .print-wrap>* {
+.student-fees .print-wrap > * {
 	display: none;
 	width: 100%;
 }
 
-.student-fees .print-wrap>*:first-child {
+.student-fees .print-wrap > *:first-child {
 	display: block;
 }
 
 @media print {
-
 	.payment-history.section.print-page {
 		margin-top: 15mm;
 		width: 285px;
@@ -58,14 +57,14 @@
 		border-radius: 0px;
 		font-family: Georgia, 'Times New Roman', Times, serif;
 	}
-	.student-fees .print-wrap>* {
+	.student-fees .print-wrap > * {
 		display: block;
 		width: 100%;
 	}
 	.payment-history.section .row.info * {
-		font-size: 0.70rem;
+		font-size: 0.7rem;
 	}
-	
+
 	.payment-history {
 		margin: 10px 10px;
 	}
@@ -80,7 +79,8 @@
 	.payment-history .print-table table tbody {
 		font-size: 0.75rem !important;
 	}
-	.payment-history .fee-notice, .bank-info {
+	.payment-history .fee-notice,
+	.bank-info {
 		width: 100%;
 		margin-top: 10px;
 		font-size: 0.75rem;
@@ -101,12 +101,12 @@
 	}
 }
 
-.pending-amount{
-	color: #FC6171;
+.pending-amount {
+	color: #fc6171;
 	font-weight: bold;
 }
-.advance-amount{
-	color: #5ECDB9;
+.advance-amount {
+	color: #5ecdb9;
 	font-weight: bold;
 }
 .payment-history fieldset {
@@ -137,7 +137,7 @@
 
 .payment-history .payment .button.delete {
 	text-align: center;
-    padding: 0;
-    width: 15px;
-    line-height: 15px;
+	padding: 0;
+	width: 15px;
+	line-height: 15px;
 }

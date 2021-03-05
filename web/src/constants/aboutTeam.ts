@@ -8,24 +8,24 @@ interface Team {
 // TODO: move all public folder (public/images) to google cloud storage
 const TeamMembers: Array<Team> = [
 	{
-		designation: "Principal Investigator",
-		avatar_url: "https://storage.googleapis.com/ilmx-product-images/asimk-min.jpg",
-		name: "Asim Khwaja"
+		designation: 'Principal Investigator',
+		avatar_url: 'https://storage.googleapis.com/ilmx-product-images/asimk-min.jpg',
+		name: 'Asim Khwaja',
 	},
 	{
-		designation: "LEAPS Director",
-		avatar_url: "https://storage.googleapis.com/ilmx-product-images/aboutzainab.jpg",
-		name: "Zainab Qureshi"
+		designation: 'LEAPS Director',
+		avatar_url: 'https://storage.googleapis.com/ilmx-product-images/aboutzainab.jpg',
+		name: 'Zainab Qureshi',
 	},
 	{
-		designation: "Project Manager",
-		avatar_url: "https://storage.googleapis.com/ilmx-product-images/aboutrooh.jpg",
-		name: "Roohullah Gulzari"
+		designation: 'Project Manager',
+		avatar_url: 'https://storage.googleapis.com/ilmx-product-images/aboutrooh.jpg',
+		name: 'Roohullah Gulzari',
 	},
 	{
-		name: "Taimur Shah",
-		avatar_url: "images/taimur.jpg",
-		designation: "Technology Lead"
+		name: 'Taimur Shah',
+		avatar_url: 'images/taimur.jpg',
+		designation: 'Technology Lead',
 	},
 	// {
 	// 	designation: "Research Assistant",
@@ -33,14 +33,14 @@ const TeamMembers: Array<Team> = [
 	// 	name: "Absar Ali"
 	// },
 	{
-		designation: "Research Assistant",
-		avatar_url: "https://storage.googleapis.com/ilmx-product-images/aboutfarah.jpeg",
-		name: "Farah Basit"
+		designation: 'Research Assistant',
+		avatar_url: 'https://storage.googleapis.com/ilmx-product-images/aboutfarah.jpeg',
+		name: 'Farah Basit',
 	},
 	{
-		name: "Ayesha Ahmed",
-		avatar_url: "/images/ayesha.jpg",
-		designation: "Research Assistant"
+		name: 'Ayesha Ahmed',
+		avatar_url: '/images/ayesha.jpg',
+		designation: 'Research Assistant',
 	},
 	// {
 	// 	designation: "Data Research Assistant",
@@ -48,30 +48,30 @@ const TeamMembers: Array<Team> = [
 	// 	name: "Yusuf Khwaja"
 	// },
 	{
-		designation: "Field Manager",
-		avatar_url: "https://storage.googleapis.com/ilmx-product-images/aboutumer.jpg",
-		name: "Umer Farooq"
+		designation: 'Field Manager',
+		avatar_url: 'https://storage.googleapis.com/ilmx-product-images/aboutumer.jpg',
+		name: 'Umer Farooq',
 	},
 	{
-		name: "Bisma Hafeez",
-		avatar_url: "/images/bisma.jpg",
-		designation: "Call Center Assistant",
+		name: 'Bisma Hafeez',
+		avatar_url: '/images/bisma.jpg',
+		designation: 'Call Center Assistant',
 		// phone: "+923481112004"
 	},
 	{
-		avatar_url: "https://storage.googleapis.com/ilmx-product-images/aboutali.jpg",
-		designation: "Field Associate",
-		name: "Ali Husnain"
+		avatar_url: 'https://storage.googleapis.com/ilmx-product-images/aboutali.jpg',
+		designation: 'Field Associate',
+		name: 'Ali Husnain',
 	},
 	{
-		avatar_url: "https://storage.googleapis.com/ilmx-product-images/aboutasim.jpg",
-		designation: "Field Associate",
-		name: "Asim Zaheer"
+		avatar_url: 'https://storage.googleapis.com/ilmx-product-images/aboutasim.jpg',
+		designation: 'Field Associate',
+		name: 'Asim Zaheer',
 	},
 	{
-		avatar_url: "https://storage.googleapis.com/ilmx-product-images/aboutkaleem.jpg",
-		designation: "Field Associate",
-		name: "Kaleem Majeed"
+		avatar_url: 'https://storage.googleapis.com/ilmx-product-images/aboutkaleem.jpg',
+		designation: 'Field Associate',
+		name: 'Kaleem Majeed',
 	},
 
 	// {
@@ -86,26 +86,26 @@ const TeamMembers: Array<Team> = [
 	// },
 
 	{
-		name: "Farooq Azhar",
-		avatar_url: "/images/farooq_azhar.jpg",
-		designation: "Field Associate",
+		name: 'Farooq Azhar',
+		avatar_url: '/images/farooq_azhar.jpg',
+		designation: 'Field Associate',
 		// district: "Sialkot",
 		// phone: "+923410924945"
 	},
 	{
-		name: "Zahid Riaz",
-		avatar_url: "/images/zahid.jpg",
-		designation: "Field Associate",
+		name: 'Zahid Riaz',
+		avatar_url: '/images/zahid.jpg',
+		designation: 'Field Associate',
 		// district: "Gujranwala",
 		// phone: "+923460089862"
 	},
 	{
-		name: "Ali Zohaib",
-		avatar_url: "/images/ali_zohaib.jpg",
-		designation: "Field Associate",
+		name: 'Ali Zohaib',
+		avatar_url: '/images/ali_zohaib.jpg',
+		designation: 'Field Associate',
 		// district: "Lahore, Kasur & Sheikhupura",
 		// phone: "+923410924944"
-	}
+	},
 ]
 
 export const getTeamMembersInfo = () => TeamMembers

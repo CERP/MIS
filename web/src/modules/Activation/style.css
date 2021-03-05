@@ -32,7 +32,7 @@
 
 .mis-activation .activation-code {
 	width: 80%;
-	margin:20px auto;
+	margin: 20px auto;
 }
 
 .mis-activation .activation-code input {
@@ -56,8 +56,7 @@
 	color: #5ecdb9;
 }
 
-
-@media (max-width: 572px){
+@media (max-width: 572px) {
 	.mis-activation .section {
 		width: 90%;
 	}
@@ -66,7 +65,7 @@
 		width: 32px;
 		height: 32px;
 	}
-	
+
 	.mis-activation .trial-alert .trial-text {
 		font-size: 1rem;
 	}

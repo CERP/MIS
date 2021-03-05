@@ -61,8 +61,10 @@ const blankStudent = (): MISStudent => ({
 	exams: {},
 	certificates: {},
 	prospective_section_id: "",
-	diagnostic_result: {},
-	learning_levels: {}
+	targeted_instruction: {
+		results: {},
+		learning_level: {}
+	}
 })
 // should be a dropdown of choices. not just teacher or admin.
 
@@ -113,12 +115,14 @@ class SingleStudent extends Component<propTypes, S> {
 		super(props)
 
 		const id = props.match.params.id
-		const student = props.students[id] ? props.students[id].tags ?
+		const student = this.isNew() ? blankStudent() : (props.students[id] && props.students[id].tags ?
 			props.students[id]
 			: {
 				...props.students[id],
 				tags: {}
-			} : blankStudent()
+			})
+
+		console.log("See the students", student)
 
 		this.state = {
 			profile: student,
@@ -134,6 +138,7 @@ class SingleStudent extends Component<propTypes, S> {
 			show_hide_fee: true,
 			toggleMoreInfo: false
 		}
+
 
 		this.former = new Former(this, ["profile"])
 		this.siblings = []
@@ -452,6 +457,10 @@ class SingleStudent extends Component<propTypes, S> {
 		// this means every time students upgrades, we will change the fields to whatever was just sent.
 		// this means it will be very annoying for someone to edit the user at the same time as someone else
 		// which is probably a good thing. 
+
+		if (this.isNew()) {
+			return
+		}
 
 		const nextStudent = newProps.students[newProps.match.params.id]
 
@@ -885,7 +894,7 @@ class SingleStudent extends Component<propTypes, S> {
 								placeholder="Alternate Phone Number"
 								disabled={!admin}
 							/>
-							{!this.isNew() && <a className="button blue call-link" href={`tel:${this.state.profile.Phone}`} > Call</a>}
+							{!this.isNew() && <a className="button blue call-link" href={`tel:${this.state.profile.AlternatePhone}`} > Call</a>}
 						</div>
 					</div>}
 
@@ -1031,7 +1040,7 @@ class SingleStudent extends Component<propTypes, S> {
 							{this.state.show_hide_fee ? "Hide" : "Show"} Payments Section
 						</div>
 					</div>}
-
+					{console.log("INSIDE RENDER", this.state)}
 					{this.state.show_hide_fee && (admin || (this.props.user && this.props.user.permissions.fee)) && !prospective ? <div className="divider">Payment</div> : false}
 					{this.state.show_hide_fee && (admin || (this.props.user && this.props.user.permissions.fee)) && !prospective ?
 						Object.entries(this.state.profile.fees).map(([id, fee]) => {

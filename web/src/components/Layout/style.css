@@ -145,23 +145,23 @@ a.block {
 	font-size: 1rem;
 }
 
-.table.row {
+.mis-table.row {
 	justify-content: space-between;
 	line-height: 1.5rem;
 }
 
-.table.row * {
+.mis-table.row * {
 	width: 100%;
 }
 
-.table.row .centered {
+.mis-table.row .centered {
 	text-align: center;
 }
 
-.table.row *:last-child {
+.mis-table.row *:last-child {
 	text-align: right;
 }
-.table.row *:first-child {
+.mis-table.row *:first-child {
 	text-align: left;
 }
 

@@ -80,7 +80,8 @@ const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerSta
 					trial_info: (action as SchoolInfoAction).trial_info,
 					student_info: (action as SchoolInfoAction).student_info,
 					meta: (action as SchoolInfoAction).meta,
-					targeted_instruction_access: (action as SchoolInfoAction).targeted_instruction_access
+					targeted_instruction_access: (action as SchoolInfoAction).targeted_instruction_access,
+					tip_pilot: (action as SchoolInfoAction).tip_pilot
 				}
 			}
 		}

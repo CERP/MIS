@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps } from 'react-router'
 import { Link } from 'react-router-dom'
 import List from 'components/List'
 
@@ -17,82 +17,80 @@ interface Family {
 	}
 }
 
-interface S {
-
-}
+interface S {}
 
 type P = {
 	students: RootDBState['students']
 } & RouteComponentProps
 
 class FamilyModule extends React.Component<P, S> {
-
 	render() {
-		// here 
+		// here
 
-		const reduced: Families = Object.values(this.props.students)
-			.reduce((agg, curr) => {
+		const reduced: Families = Object.values(this.props.students).reduce((agg, curr) => {
+			if (!curr.FamilyID) {
+				return agg
+			}
 
-				if(!curr.FamilyID) {
-					return agg;
+			const k = `${curr.FamilyID}`
+
+			const existing = agg[k]
+			if (existing) {
+				return {
+					...agg,
+					[k]: {
+						id: k,
+						students: {
+							...agg[k].students,
+							[curr.id]: curr,
+						},
+					},
 				}
-
-				const k = `${curr.FamilyID}`
-
-				const existing = agg[k]
-				if(existing) {
-					return {
-						...agg,
-						[k]: {
-							id: k,
-							students: {
-								...agg[k].students,
-								[curr.id]: curr
-							}
-						}
-					}
+			} else {
+				return {
+					...agg,
+					[k]: {
+						id: k,
+						students: {
+							[curr.id]: curr,
+						},
+					},
 				}
-				else {
-					return {
-						...agg,
-						[k]: {
-							id: k,
-							students: {
-								[curr.id]: curr
-							}
-						}
-					}
-				}
+			}
+		}, {} as Families)
 
-			}, {} as Families)
-		
 		const families = Object.entries(reduced)
 			.filter(([fid, f]) => Object.values(f.students).length > 0)
 			.reduce((agg, [fid, f]) => {
 				return {
 					...agg,
-					[fid]: f
+					[fid]: f,
 				}
 			}, {} as Families)
 
-		return <Layout history={this.props.history}>
-			<div className="family">
-				<div className="title">Families</div>
-				<List 
-					items={Object.values(families)}
-					Component={FamilyItem}
-					toLabel={(fam: Family) => fam.id}
-				/>
-			</div>
-		</Layout>
+		return (
+			<Layout history={this.props.history}>
+				<div className="family">
+					<div className="title">Families</div>
+					<List
+						items={Object.values(families)}
+						Component={FamilyItem}
+						toLabel={(fam: Family) => fam.id}
+					/>
+				</div>
+			</Layout>
+		)
 	}
 }
 
 const FamilyItem: React.SFC<Family> = ({ id, students }) => {
-
-	return <Link key={id} to={`/families/${id}`}>{id}</Link>
+	return (
+		<Link key={id} to={`/families/${id}`}>
+			{id}
+		</Link>
+	)
 }
 
 export default connect((state: RootReducerState) => ({
-	students: state.db.students
+	students: state.db.students,
 }))(FamilyModule)
