@@ -66,7 +66,7 @@ import { StudentList } from 'pages/students/list'
 import { CreateOrUpdateStudent } from 'pages/students/add/create'
 import { AddStudentSelect } from 'pages/students/add'
 import { ImportStudentsCSV } from 'pages/students/add/importExcel'
-import { StudentAttendance } from 'pages/students/attendence'
+import { StudentsAttendance } from 'pages/students/attendance'
 import { StaffAttendance } from 'pages/staff/attendance'
 import { SchoolAttendance } from 'pages/school/attendance'
 import { SchoolFees } from 'pages/school/fees'
@@ -108,7 +108,7 @@ export default class Routes extends React.Component {
 					<TrackedRoute path="/staff" exact component={StaffList} />
 					<TrackedRoute path="/staff/attendance" exact component={StaffAttendance} />
 
-					<TrackedRoute path="/students/attendance" exact component={StudentAttendance} />
+					<TrackedRoute path="/students/attendance" exact component={StudentsAttendance} />
 					<TrackedRoute path="/students/add-selection" exact component={AddStudentSelect} />
 					<TrackedRoute path="/students/excel-import" exact component={ImportStudentsCSV} />
 					<TrackedRoute path="/students/:id/profile" exact component={CreateOrUpdateStudent} />

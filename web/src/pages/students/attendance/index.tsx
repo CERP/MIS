@@ -43,7 +43,7 @@ const deriveSelectedStudents = (sectionId: string, students: RootDBState["studen
 )
 
 
-export const StudentAttendance = () => {
+export const StudentsAttendance = () => {
 	const dispatch = useDispatch()
 	const { classes, students } = useSelector((state: RootReducerState) => state.db)
 
@@ -244,7 +244,7 @@ const Card: React.FC<CardProps> = ({ student, attendanceDate, markAttendance }) 
 			<div className="flex flex-row items-center justify-between">
 				<div className="flex flex-col w-1/2 items-start">
 					<Link className="overflow-ellipsis truncate hover:underline hover:text-blue-brand w-11/12 md:w-auto"
-						to={`/student/${student.id}/attendance`}>
+						to={`/students/${student.id}/attendance`}>
 						{toTitleCase(student.Name)}
 					</Link>
 					<div className="text-xs text-gray-600">R# {student.RollNumber}</div>
