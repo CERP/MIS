@@ -15,7 +15,8 @@ import AutoLogin from 'modules/Login/autoLogin'
 // import ClassModule from 'modules/Class/List'
 // import ClassSingle from 'modules/Class/Single'
 // import Attendance from 'modules/Attendance'
-import TeacherAttendance from 'modules/Teacher-Attendance'
+// import TeacherAttendance from 'modules/Teacher-Attendance'
+
 import SMS from 'modules/SMS'
 import Marks from 'modules/Marks'
 import ExamList from 'modules/Marks/ExamList'
@@ -69,7 +70,6 @@ import { StudentAttendance } from 'pages/students/attendence'
 import { StaffAttendance } from 'pages/staff/attendance'
 import { SchoolAttendance } from 'pages/school/attendance'
 import { SchoolFees } from 'pages/school/fees'
-
 
 export default class Routes extends React.Component {
 
@@ -166,7 +166,7 @@ export default class Routes extends React.Component {
 					<TrackedRoute exact path="/signup" component={SchoolSignup} />
 					<TrackedRoute exact path="/school/setup" component={SchoolSetup} />
 					<TrackedRoute exact path="/school/onboarding" component={SchoolOnboarding} />
-
+					<TrackedRoute path="/targeted-instruction" component={TargetedInstruction} />
 					<Route path="/auto-login" component={AutoLogin} />
 
 					<Route exact path="/pricing" component={Pricing} />
