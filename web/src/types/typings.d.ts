@@ -401,7 +401,7 @@ interface MISStudent {
 	certificates: {
 		[id: string]: MISCertificate
 	}
-	targeted_instruction: {
+	targeted_instruction?: {
 		results: {
 			[test_id: string]: TIPDiagnosticReport
 		}
@@ -558,7 +558,7 @@ interface MISTeacher {
 		url: string
 		image_string: string
 	}
-	targeted_instruction: {
+	targeted_instruction?: {
 		curriculum: TIPTeacherCurriculum
 	}
 }
