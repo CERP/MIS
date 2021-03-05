@@ -24,7 +24,7 @@ const Routing = (props) => {
 	const path = props.location.pathname.substring(0, 21)
 
 	return <>
-	<Header />
+		<Header />
 		<Switch>
 			<Route exact path={path} component={HomePage} />
 
@@ -97,28 +97,28 @@ const Routing = (props) => {
 
 			<Route exact path={`${path}/formative-test`} component={FormativeTest} />
 
-			<Route 
-				exact 
-				path={`${path}/formative-result/:class_name/:subject/result`} 
+			<Route
+				exact
+				path={`${path}/formative-result/:class_name/:subject/result`}
 				component={FormativeResult}
 			/>
 
-			<Route exact path={`${path}/formative-result`} component={FormativeTestResult} /> 
+			<Route exact path={`${path}/formative-result`} component={FormativeTestResult} />
 
 			<Route
 				exact
-				path={`${path}/summative-test/:class_name/:subject/:test_id/insert-grades/:std_id/grading`} 
-				component={Grading} 
+				path={`${path}/summative-test/:class_name/:subject/:test_id/insert-grades/:std_id/grading`}
+				component={Grading}
 			/>
 			<Route
 				exact
-				path={`${path}/summative-test/:class_name/:subject/:test_id/insert-grades/test-result`} 
-				component={FormativeResult} 
+				path={`${path}/summative-test/:class_name/:subject/:test_id/insert-grades/test-result`}
+				component={FormativeResult}
 			/>
 			<Route
 				exact
-				path={`${path}/summative-test/:class_name/:subject/:test_id/insert-grades`} 
-				component={InsertGrades} 
+				path={`${path}/summative-test/:class_name/:subject/:test_id/insert-grades`}
+				component={InsertGrades}
 			/>
 
 			<Route exact path={`${path}/summative-test/:class_name/:subject/answer_pdf`} component={AnswerSheet} />
@@ -127,11 +127,11 @@ const Routing = (props) => {
 
 			<Route exact path={`${path}/summative-test`} component={SummativeTest} />
 
-			<Route 
+			<Route
 				exact
 				path={`${path}/lesson-plans/:class_name/:subject/:lesson_number/list/pdf`}
 				component={LessonPlanPDF}
-			  />
+			/>
 			<Route exact path={`${path}/lesson-plans/:class_name/:subject/list`} component={List} />
 
 			<Route exact path={`${path}/lesson-plans`} component={LessonPlans} />

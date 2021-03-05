@@ -31,7 +31,7 @@ const GroupView: React.FC<P> = ({ students, sorted_sections }) => {
     const filtered_students = useMemo(() => getStudentsByGroup(students, group, subject), [subject, group])
 
     return <><div className='flex flex-row justify-around w-full'>
-        <select className='tw-select' onChange={(e) => setGroup(e.target.value as TIPGrades)}>
+        <select className='tw-select-tip' onChange={(e) => setGroup(e.target.value as TIPGrades)}>
             <option value="">Group</option>
             {
                 ordered_groups.map((ordered_group) => (
@@ -39,7 +39,7 @@ const GroupView: React.FC<P> = ({ students, sorted_sections }) => {
                 ))
             }
         </select>
-        <select className='tw-select' onChange={(e) => setSubject(e.target.value as TIPSubjects)}>
+        <select className='tw-select-tip' onChange={(e) => setSubject(e.target.value as TIPSubjects)}>
             <option value="">Subject</option>
             {
                 subjects.map((sub) => (

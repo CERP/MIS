@@ -95,8 +95,6 @@ export const ImportStudentsCSV = () => {
 						exams: {},
 						tags: {},
 						certificates: {},
-						diagnostic_result: {},
-						learning_levels: {}
 					}
 
 					return student

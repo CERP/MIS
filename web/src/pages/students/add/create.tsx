@@ -47,8 +47,6 @@ const blankStudent = (): MISStudent => ({
 	exams: {},
 	certificates: {},
 	prospective_section_id: "",
-	diagnostic_result: {},
-	learning_levels: {}
 })
 
 interface RouteInfo {

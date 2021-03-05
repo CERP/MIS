@@ -7,7 +7,7 @@ import TIPGroupModal from './TIPGroupModal'
 import ChangeTIPGroup from './ChangeTIPGroup'
 import { convertLearningGradeToGroupName } from 'utils/TIP'
 import { assignLearningLevel } from 'actions'
-import { useComponentVisible } from 'utils/customHooks';
+import { useComponentVisible } from 'hooks/useComponentVisible'
 
 interface P {
     std: MISStudent

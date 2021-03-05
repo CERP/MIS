@@ -10,7 +10,7 @@ const ClassView: React.FC<P> = ({ students, sorted_sections }) => {
     const [section_id, setSectionId] = useState('')
 
     return <><div className='flex flex-row justify-around w-full'>
-        <select className='tw-select' onChange={(e) => setSectionId(e.target.value)}>
+        <select className='tw-select-tip' onChange={(e) => setSectionId(e.target.value)}>
             <option value="">Select Class</option>
             {
                 sorted_sections.map((class_obj) => {

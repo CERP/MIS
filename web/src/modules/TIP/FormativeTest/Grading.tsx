@@ -4,7 +4,7 @@ import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { calculateLearningLevelFromDiagnosticTest, calculateLearningLevelFromOralTest } from 'utils/TIP'
 import { mergeTIPResult, assignLearningLevel, resetStudentLearningLevel, resetStudentGrades } from 'actions'
 import { convertLearningGradeToGroupName } from 'utils/TIP'
-import { useComponentVisible } from 'utils/customHooks';
+import { useComponentVisible } from 'hooks/useComponentVisible';
 import AssignedGroupModal from './AssignedGroupModal'
 import { TModal } from '../Modal'
 import Card from '../Card'

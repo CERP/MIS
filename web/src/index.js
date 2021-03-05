@@ -9,16 +9,16 @@ import * as serviceWorkerRegistration from './serviceWorkerRegistration'
 
 import reducer from './reducers'
 import Routes from './routes'
-import { saveDb, initState } from './utils/indexedDb'
 import debounce from 'utils/debounce'
+import { saveDb, initState } from './utils/indexedDb'
 import { loadDB, connected, disconnected, processImageQueue } from './actions/core'
 import { hostWSS } from 'utils/hostConfig'
 import { checkTime } from 'utils'
 import { ActionTypes } from 'constants/index'
-
-import './index.css'
-import './styles/main.css'
 import { fetchTargetedInstruction } from 'actions'
+
+import './styles/helper.css'
+import './styles/main.css'
 
 const initialState = initState
 
