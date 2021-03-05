@@ -70,11 +70,13 @@ export const SchoolFees: React.FC<Props> = ({ match }) => {
 					<AppLayout title={"School Fees"}>
 						<div className="p-6 md:w-2/5 mx-auto">
 							<div className="text-center text-2xl mb-4 font-bold">School Fee</div>
-							{
-								MenuItems.map((item, index) => (
-									<Card key={item.link + index} {...item} />
-								))
-							}
+							<div className="space-y-4">
+								{
+									MenuItems.map((item, index) => (
+										<Card key={item.link + index} {...item} />
+									))
+								}
+							</div>
 						</div>
 					</AppLayout>
 					:

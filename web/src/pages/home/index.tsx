@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom'
 import cond from 'cond-construct'
 import clsx from 'clsx'
 
-import { SettingTab } from './settings'
+import { SettingsTab } from './settings'
 import { ActionTab } from './actions'
 import { StatsTab } from './statistics'
 
@@ -16,6 +16,8 @@ enum Tabs {
 	STATS
 }
 
+const tabTitles = ["Settings", "Actions", "Statistics"]
+
 export const Home = () => {
 
 	const { auth } = useSelector((state: RootReducerState) => state)
@@ -24,7 +26,7 @@ export const Home = () => {
 
 	const renderComponent = () => (
 		cond([
-			[activeTab === Tabs.SETTINGS, () => <SettingTab />],
+			[activeTab === Tabs.SETTINGS, () => <SettingsTab />],
 			[activeTab === Tabs.ACTIONS, () => <ActionTab />],
 			[activeTab === Tabs.STATS, () => <StatsTab />],
 		])
@@ -38,7 +40,7 @@ export const Home = () => {
 	}
 
 	return (
-		<AppLayout title="Home">
+		<AppLayout title={"Home" + " - " + tabTitles[activeTab]}>
 			<Tabbar tab={activeTab} setTab={setActiveTab} />
 			{renderComponent()}
 		</AppLayout>
@@ -57,17 +59,17 @@ const Tabbar = ({ tab, setTab }: TabbarProps) => {
 				<div
 					onClick={() => setTab(Tabs.SETTINGS)}
 					className={clsx("pb-2 cursor-pointer", { "border-b-4 border-white text-white": tab === Tabs.SETTINGS })}>
-					<span>Settings</span>
+					<span>{tabTitles[Tabs.SETTINGS]}</span>
 				</div>
 				<div
 					onClick={() => setTab(Tabs.ACTIONS)}
 					className={clsx("pb-2 cursor-pointer", { "border-b-4 border-white text-white": tab === Tabs.ACTIONS })}>
-					<span>Actions</span>
+					<span>{tabTitles[Tabs.ACTIONS]}</span>
 				</div>
 				<div
 					onClick={() => setTab(Tabs.STATS)}
 					className={clsx("pb-2 cursor-pointer", { "border-b-4 border-white text-white": tab === Tabs.STATS })}>
-					<span>Statistics</span>
+					<span>{tabTitles[Tabs.STATS]}</span>
 				</div>
 			</div>
 		</div>

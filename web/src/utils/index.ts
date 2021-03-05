@@ -75,9 +75,17 @@ export const formatPhone = (phone: string): string => {
 }
 
 /**
- * Takes a MIS student and check if it's validate student
+ * Takes a MIS student and check if it's valid student
  * @param student
  */
 export const isValidStudent = (student: MISStudent): boolean => {
 	return !!(student && student.id && student.Name && student.section_id)
+}
+
+/**
+ * Takes a MIS staff and check if it's valid staff
+ */
+
+export const isValidTeacher = (teacher: MISTeacher): boolean => {
+	return !!(teacher && teacher.id && teacher.Name)
 }

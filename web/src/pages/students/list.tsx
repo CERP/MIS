@@ -10,6 +10,7 @@ import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import UserIconSvg from 'assets/svgs/user.svg'
 
 type Filter = {
+	search: string
 	active: boolean
 }
 
@@ -20,7 +21,8 @@ export const StudentList = () => {
 	// TODO: create single state variable
 	const [search, setSearch] = useState('')
 	const [filter, setFilter] = useState<Filter>({
-		active: true
+		active: true,
+		search: ''
 	})
 
 	const sections = useMemo(() => {
@@ -46,7 +48,12 @@ export const StudentList = () => {
 				</Link>
 
 				<div className="text-center font-bold text-2xl my-4">School Students</div>
-				<div className="text-gray-700 text-center">Total = {Object.keys(students).length}</div>
+				<div className="text-gray-700 text-center">Total = {
+					Object.values(students).filter(s => isValidStudent(s)
+						&& s.Active === filter.active
+					).length
+				}
+				</div>
 				<div className="flex flex-col md:flex-row items-center justify-between mt-4 mb-12 md:mb-20 space-y-4 md:space-y-0 md:space-x-60">
 
 					<div className="relative w-full md:w-3/5">
@@ -64,10 +71,10 @@ export const StudentList = () => {
 					</div>
 
 					<div className="flex flex-row items-center space-x-2 w-full">
-						<select className="tw-select rounded shadow text-teal-500 w-full">
+						<select className="tw-select rounded shadow text-green-brand w-full">
 							<option>Tag</option>
 						</select>
-						<select className="tw-select rounded shadow text-teal-500 w-full">
+						<select className="tw-select rounded shadow text-green-brand w-full">
 							<option>Choose Class</option>
 							{
 								sections
@@ -78,7 +85,7 @@ export const StudentList = () => {
 							}
 						</select>
 						<select
-							className="tw-select rounded shadow text-teal-500 w-full"
+							className="tw-select rounded shadow text-green-brand w-full"
 							onChange={(e) => setFilter({ ...filter, active: e.target.value === 'true' })}>
 							<option value={'true'}>Active</option>
 							<option value={'false'}>InActive</option>
@@ -117,16 +124,16 @@ const Card = ({ student, sections }: CardProps) => {
 
 	return (
 		<div className="relative">
-			<div className="bg-white rounded-xl text-center border border-gray-200 shadow-md px-3 py-4 md:p-5">
-				<div className="font-bold pt-8 truncate w-4/5 mx-auto">{student.Name}</div>
+			<div className="bg-white rounded-xl text-center border border-gray-50 shadow-md px-3 py-4 md:p-5">
+				<div className="font-bold pt-8 truncate w-4/5 mx-auto">{(toTitleCase(student.Name))}</div>
 				<div className="mt-2 space-y-0 text-sm md:text-base">
 					<div className="flex items-center justify-between flex-row">
 						<div className="text-gray-900 font-semibold">Father</div>
-						<div className="text-gray-500 text-xs md:text-base lg:text-lg truncate">{student.ManName}</div>
+						<div className="text-gray-500 text-xs md:text-base lg:text-lg truncate">{toTitleCase(student.ManName)}</div>
 					</div>
 					<div className="flex items-center justify-between flex-row">
 						<div className="text-gray-900 font-semibold">Class</div>
-						<div className="text-gray-500 text-xs md:text-base lg:text-lg truncate">{studentSection?.namespaced_name}</div>
+						<div className="text-gray-500 text-xs md:text-base lg:text-lg truncate">{toTitleCase(studentSection?.namespaced_name)}</div>
 					</div>
 					<div className="flex items-center justify-between flex-row">
 						<div className="text-gray-900 font-semibold">Roll #</div>
@@ -141,8 +148,8 @@ const Card = ({ student, sections }: CardProps) => {
 			<div className="absolute -top-8 md:-top-12 left-0 right-0">
 				<img
 					src={student.ProfilePicture?.url || student.ProfilePicture?.image_string || UserIconSvg}
-					className="mx-auto h-16 w-16 md:h-24 md:w-24 rounded-full shadow-lg bg-gray-500 hover:bg-gray-700"
-					alt={student.Name || "student"} />
+					className="mx-auto h-16 w-16 md:h-24 md:w-24 rounded-full shadow-md bg-gray-500 hover:bg-gray-700"
+					alt={student.Name.split(" ")[0] || "student"} />
 			</div>
 		</div>
 	)

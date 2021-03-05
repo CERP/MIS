@@ -49,11 +49,10 @@ const links: CardProps[] = [
 		icon: iconMarks
 	},
 	{
-		link: "/targeted/instruction",
+		link: "/targeted-instruction",
 		title: "TIP",
 		icon: "/favicon.ico"
 	}
-
 ]
 
 export const ActionTab = () => {
