@@ -2,6 +2,7 @@ import { Dispatch } from 'redux'
 import Syncr from '@cerp/syncr'
 import { loadDb } from 'utils/indexedDb'
 import { v4 } from 'node-uuid'
+import { hostHTTPS } from 'utils/hostConfig'
 const SYNC = 'SYNC'
 const client_type = 'mis'
 
@@ -177,10 +178,8 @@ export const processImageQueue = () => (
 
 	const [merge_key, image_merge] = items[0]
 
-	//@ts-ignore
-	const host = window.api_url || window.debug_host
 
-	fetch(`https://${host}/upload/image`, {
+	fetch(`${hostHTTPS}/upload/image`, {
 		method: 'POST',
 		mode: 'cors',
 		cache: 'no-cache',
