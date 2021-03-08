@@ -9,6 +9,7 @@ import { ActionTab } from './actions'
 import { StatsTab } from './statistics'
 
 import { AppLayout } from 'components/Layout/appLayout'
+import { useMediaPredicate } from 'react-media-hook'
 
 enum Tabs {
 	SETTINGS,
@@ -23,6 +24,8 @@ export const Home = () => {
 	const { auth } = useSelector((state: RootReducerState) => state)
 
 	const [activeTab, setActiveTab] = useState(Tabs.ACTIONS)
+
+	// const isDesktop = useMediaPredicate("(min-width: 768px)")
 
 	const renderComponent = () => (
 		cond([

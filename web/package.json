@@ -24,6 +24,7 @@
 		"react-data-table-component": "^6.11.6",
 		"react-dom": "^16.14.0",
 		"react-hot-toast": "^1.0.1",
+		"react-media-hook": "^0.4.9",
 		"react-qr-reader": "^2.2.1",
 		"react-redux": "^7.2.2",
 		"react-router": "^5.2.0",
@@ -35,6 +36,7 @@
 	},
 	"scripts": {
 		"start": "export NODE_ENV=development HTTPS=true && npm run watch:css && react-scripts start",
+		"start-windows": "SET NODE_ENV=development && SET PORT=8002 && SET HTTPS=true && npm run watch:css && react-scripts start",
 		"build": "export NODE_ENV=production && npm run build:css && react-scripts build",
 		"test": "react-scripts test",
 		"eject": "react-scripts eject",
