@@ -4,12 +4,13 @@ import { connect, useDispatch } from 'react-redux'
 import clsx from 'clsx'
 
 import chunkify from 'utils/chunkify'
-import toTitleCase from 'utils/toTitleCase'
+import { toTitleCase } from 'utils/toTitleCase'
 import { createLogin } from 'actions'
 import { Spinner } from 'components/animation/spinner'
 import { AppLayout } from 'components/Layout/appLayout'
 import { ShowHidePassword } from 'components/password'
 import { ActionTypes, OnboardingStage } from 'constants/index'
+import { useMediaPredicate } from "react-media-hook"
 
 import UserIconSvg from 'assets/svgs/user.svg'
 
@@ -23,8 +24,6 @@ type LoginProps = RootReducerState & {
 	assets: RootDBState["assets"]
 	unsyncd_changes: number
 }
-
-const USERS_PER_GROUP = 10
 
 const Login: React.FC<LoginProps> = ({ auth, initialized, users, school, connected, unsyncd_changes, onboarding }) => {
 
@@ -93,28 +92,32 @@ const Login: React.FC<LoginProps> = ({ auth, initialized, users, school, connect
 		})
 	}
 
+	const USERS_PER_GROUP = useMediaPredicate("(min-width: 640px)") ? 10 : 6
+
+	// renders number of button to view user group
+	const userGroups = Math.ceil(filteredUsers.length / USERS_PER_GROUP)
+
 	return (
 		<AppLayout title={'Staff Login'}>
 			<div className="p-5 pb-0 md:p-10 md:pb-0 text-gray-700">
-				<div className="text-xl md:text-2xl text-center font-bold">Staff Login into MISchool</div>
-				<div className="w-3/4 mx-auto flex md:flex-row items-center mt-10 md:t-20">
-					<div className="w-2/5 h-60 border border-r-0 rounded-md rounded-tr-none rounded-br-none shadow-md">
+				<div className="text-xl md:text-2xl text-center font-bold">MISchool Staff Login</div>
+				<div className="w-full md:w-3/4 mx-auto flex flex-col md:flex-row items-center mt-10 md:t-20">
+					<div className="relative border md:w-2/5 p-5 rounded-2xl rounded-bl-none md:rounded-bl-2xl md:rounded-tr-none rounded-br-none shadow-md w-4/5">
 						<div className="flex flex-col items-center md:p-10 space-y-2">
-							<div className="w-20 h-20 p-1 border border-gray-300 rounded-full">
-								{/* TODO: change favicon.ico */}
-								<img className="rounded-full" src={school.logo || 'favicon.ico'} alt="school-logo" />
-							</div>
+							<img className="w-20 h-20 p-1 border border-gray-300 rounded-full" src={school.logo || 'favicon.ico'} alt="school-logo" />
 							<div className="font-semibold text-lg text-center">{toTitleCase(school.name)}</div>
+							<div className="font-medium"></div>
 							<button
 								disabled={!connected}
 								onClick={() => switchSchoolHandler()}
-								className={clsx("w-7/12 tw-btn-red", {
+								className={clsx("w-full md:w-7/12 tw-btn-red", {
 									"bg-gray-500 pointer-events-none": !connected,
 								})}>Switch School</button>
 						</div>
+						<div className=""></div>
 					</div>
-					<div className="w-2/3 h-96 border border-l-0 rounded-md bg-gray-700 shadow-md">
-						<div className="md:p-10">
+					<div className="bg-gray-700 border border-l-0 h-96 rounded-2xl shadow-md w-full md:w-2/3 ">
+						<div className="p-5 md:p-10">
 							{
 								user ?
 									<div className="relative">
@@ -133,45 +136,48 @@ const Login: React.FC<LoginProps> = ({ auth, initialized, users, school, connect
 									</div>
 									:
 									<>
-										<div className="text-white text-center">Please choose your Staff Login</div>
+										<div className="text-white text-center">Choose your Staff Login</div>
 										<div className="md:mt-6">
-											<div className="grid md:grid-cols-5 md:gap-0 md:h-60">
+											<div className="grid grid-cols-3 md:grid-cols-5 md:gap-0 md:h-60">
 												{
 													chunkify(filteredUsers, USERS_PER_GROUP)[usersGroupIndex]
 														.map(([uid, user]: [string, MISUser]) => (
 															<div key={uid} className="group flex flex-col items-center mb-4 space-y-2">
 																<div className="w-20 h-20 cursor-pointer" onClick={() => setUser(user)}>
-																	<img className="rounded-full border-2 border-transparent group-hover:border-red-brand focus:border-red-brand"
+																	<img className="rounded-full border-2 border-transparent group-hover:border-green-brand focus:border-green-brand"
 																		src={UserIconSvg}
 																		alt="school-logo"
 																	/>
 																</div>
-																<div className="text-xs text-white group-hover:text-blue-brand">{user.name}</div>
+																<div className="text-xs text-white group-hover:text-blue-brand text-center">{toTitleCase(user.name)}</div>
 															</div>
 														))
 												}
 											</div>
 										</div>
-										<div className="flex flex-row items-center justify-center mt-4 space-x-4">
-											{
-												// generating buttons for each user group (panel)
-												// value or index can be both used to highlight the current
-												// group of users
-												[...new Array(Math.ceil(filteredUsers.length / USERS_PER_GROUP))]
-													.map((v, index) => (
-														<div key={index}
-															onClick={() => setUsersGroupIndex(index)}
-															className={clsx("h-5 w-5 rounded-full text-sm text-center cursor-pointer hover:bg-yellow-400 hover:text-white shadow-md",
-																{
-																	"bg-yellow-400 text-white": index === usersGroupIndex,
-																	"bg-white": index !== usersGroupIndex
-																}
-															)}>
-															{index + 1}
-														</div>
-													))
-											}
-										</div>
+										{
+											userGroups > 1 &&
+											<div className="flex flex-row items-center justify-center space-x-4">
+												{
+													// generating buttons for each user group (panel)
+													// value or index can be both used to highlight the current
+													// group of users
+													[...new Array(userGroups)]
+														.map((v, index) => (
+															<div key={index}
+																onClick={() => setUsersGroupIndex(index)}
+																className={clsx("w-6 h-6 md:h-8 md:w-8 rounded-full text-sm flex items-center justify-center cursor-pointer hover:bg-yellow-400 hover:text-white shadow-md",
+																	{
+																		"bg-yellow-400 text-white": index === usersGroupIndex,
+																		"bg-white": index !== usersGroupIndex
+																	}
+																)}>
+																{index + 1}
+															</div>
+														))
+												}
+											</div>
+										}
 									</>
 							}
 						</div>
