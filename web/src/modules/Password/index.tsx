@@ -116,7 +116,9 @@ const AdminResetPassword: React.FC<PropsType> = ({ history, faculty, ilmxUser, i
 											<div className="box-title">Send Temporary Password</div>
 											<div className="box">
 												<div style={{ marginTop: "1rem", marginBottom: "0.25rem" }}>Please select admin and enter phone number to send password</div>
-												<select onChange={(e) => handleSelectionChange(e.target.value)} style={{ width: "100%", marginBottom: "0.5rem" }}>
+												<select
+													className="tw-select"
+													onChange={(e) => handleSelectionChange(e.target.value)} style={{ width: "100%", marginBottom: "0.5rem" }}>
 													<option value="">Select Admin</option>
 													{
 														adminFaculty
@@ -124,8 +126,9 @@ const AdminResetPassword: React.FC<PropsType> = ({ history, faculty, ilmxUser, i
 															.map(f => <option key={f.id} value={f.id}>{f.Name}</option>)
 													}
 												</select>
-												<div className="">
+												<div className="w-full">
 													<input type="text"
+														className="tw-input w-full"
 														placeholder="Mobile number"
 														onBlur={(e) => setPhoneNumber(e.target.value)}
 														onKeyDown={handleKeyDown} />

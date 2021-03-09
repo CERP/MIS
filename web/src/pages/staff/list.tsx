@@ -65,7 +65,7 @@ export const StaffList = () => {
 					</select>
 				</div>
 
-				<div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-12 gap-y-12 md:gap-y-20">
+				<div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-12 gap-y-10 md:gap-y-20">
 					{
 						filteredStaff
 							.sort((a, b) => a.Name.localeCompare(b.Name))
@@ -94,8 +94,8 @@ const Card = ({ teacher, sections }: CardProps) => {
 
 	return (
 		<div className="relative">
-			<div className="bg-white rounded-xl text-center border border-gray-200 shadow-md px-3 py-4 md:p-5">
-				<div className="font-bold pt-8 truncate w-4/5 mx-auto">{toTitleCase(teacher.Name)}</div>
+			<div className="bg-white rounded-xl text-center border border-gray-100 shadow-md px-3 py-4 md:p-5">
+				<div className="font-bold pt-8 truncate w-3/5 mx-auto">{toTitleCase(teacher.Name)}</div>
 				<div className="mt-2 space-y-0 text-sm md:text-base">
 					<div className="flex items-center justify-between flex-row">
 						<div className="text-gray-900 font-semibold">Father</div>
@@ -115,8 +115,8 @@ const Card = ({ teacher, sections }: CardProps) => {
 					</div>
 				</div>
 			</div>
-			<div className="absolute -top-8 md:-top-12 left-0 right-0">
-				<img src={UserIconSvg} className="mx-auto h-16 w-16 md:h-24 md:w-24 rounded-full shadow-lg bg-gray-500 hover:bg-gray-700" alt={teacher.Name || "faculty"} />
+			<div className="absolute -top-10 left-0 right-0">
+				<img src={UserIconSvg} className="mx-auto h-20 w-20 rounded-full shadow-lg bg-gray-500 hover:bg-gray-700" alt={teacher.Name || "faculty"} />
 			</div>
 		</div>
 	)

@@ -94,7 +94,7 @@ export const StudentList = () => {
 
 				</div>
 
-				<div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-12 gap-y-12 md:gap-y-20">
+				<div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-12 gap-y-12 md:gap-y-20">
 					{
 						Object.values(students)
 							.filter(s => isValidStudent(s) && (s.Active === filter.active) && (search ? s.Name.includes(search) : true))
@@ -145,10 +145,10 @@ const Card = ({ student, sections }: CardProps) => {
 					</div>
 				</div>
 			</div>
-			<div className="absolute -top-8 md:-top-12 left-0 right-0">
+			<div className="absolute -top-10 left-0 right-0">
 				<img
 					src={student.ProfilePicture?.url || student.ProfilePicture?.image_string || UserIconSvg}
-					className="mx-auto h-16 w-16 md:h-24 md:w-24 rounded-full shadow-md bg-gray-500 hover:bg-gray-700"
+					className="mx-auto h-20 w-20  rounded-full shadow-md bg-gray-500 hover:bg-gray-700"
 					alt={student.Name.split(" ")[0] || "student"} />
 			</div>
 		</div>

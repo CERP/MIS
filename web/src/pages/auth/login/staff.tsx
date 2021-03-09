@@ -104,8 +104,8 @@ const Login: React.FC<LoginProps> = ({ auth, initialized, users, school, connect
 				<div className="w-full md:w-3/4 mx-auto flex flex-col md:flex-row items-center mt-10 md:t-20">
 					<div className="relative border md:w-2/5 p-5 rounded-2xl rounded-bl-none md:rounded-bl-2xl md:rounded-tr-none rounded-br-none shadow-md w-4/5">
 						<div className="flex flex-col items-center md:p-10 space-y-2">
-							<img className="w-20 h-20 p-1 border border-gray-300 rounded-full" src={school.logo || 'favicon.ico'} alt="school-logo" />
-							<div className="font-semibold text-lg text-center">{toTitleCase(school.name)}</div>
+							<img className="w-16 h-16 md:w-20 md:h-20 p-1 border border-gray-300 rounded-full" src={school.logo || 'favicon.ico'} alt="school-logo" />
+							<div className="font-semibold text-center">{school.name}</div>
 							<div className="font-medium"></div>
 							<button
 								disabled={!connected}
@@ -116,12 +116,12 @@ const Login: React.FC<LoginProps> = ({ auth, initialized, users, school, connect
 						</div>
 						<div className=""></div>
 					</div>
-					<div className="bg-gray-700 border border-l-0 h-96 rounded-2xl shadow-md w-full md:w-2/3 ">
+					<div className="bg-gray-700 border border-l-0 rounded-2xl shadow-md w-full md:w-2/3 ">
 						<div className="p-5 md:p-10">
 							{
 								user ?
 									<div className="relative">
-										<div className="w-3/5 mx-auto">
+										<div className="w-full md:w-3/5 mx-auto">
 											<LoginForm user={user} auth={auth} />
 										</div>
 										<div className="absolute left-0 top-0">
@@ -140,7 +140,7 @@ const Login: React.FC<LoginProps> = ({ auth, initialized, users, school, connect
 										<div className="md:mt-6">
 											<div className="grid grid-cols-3 md:grid-cols-5 md:gap-0 md:h-60">
 												{
-													chunkify(filteredUsers, USERS_PER_GROUP)[usersGroupIndex]
+													chunkify(filteredUsers || [], USERS_PER_GROUP)[usersGroupIndex]
 														.map(([uid, user]: [string, MISUser]) => (
 															<div key={uid} className="group flex flex-col items-center mb-4 space-y-2">
 																<div className="w-20 h-20 cursor-pointer" onClick={() => setUser(user)}>
@@ -166,7 +166,7 @@ const Login: React.FC<LoginProps> = ({ auth, initialized, users, school, connect
 														.map((v, index) => (
 															<div key={index}
 																onClick={() => setUsersGroupIndex(index)}
-																className={clsx("w-6 h-6 md:h-8 md:w-8 rounded-full text-sm flex items-center justify-center cursor-pointer hover:bg-yellow-400 hover:text-white shadow-md",
+																className={clsx("w-8 h-8 md:h-10 md:w-10 rounded-full text-sm md:text-base md:font-semibold flex items-center justify-center cursor-pointer hover:bg-yellow-400 hover:text-white shadow-md",
 																	{
 																		"bg-yellow-400 text-white": index === usersGroupIndex,
 																		"bg-white": index !== usersGroupIndex
