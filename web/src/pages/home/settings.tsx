@@ -2,11 +2,12 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 
 import Card from 'components/cards/pill-button'
+import { isValidStudent, isValidTeacher } from 'utils'
 
 import iconClasses from './assets/classes.svg'
 import iconTeachers from './assets/teachers.svg'
 import iconStudents from './assets/students.svg'
-import { isValidStudent, isValidTeacher } from 'utils'
+import iconFamily from './assets/family.png'
 
 export const SettingsTab = () => {
 
@@ -14,6 +15,8 @@ export const SettingsTab = () => {
 
 	const totalStaff = Object.values(faculty).filter(f => isValidTeacher(f) && f.Active).length
 	const totalStudents = Object.values(students).filter(s => isValidStudent(s) && s.Active).length
+
+	// TODO: add write logic to count families
 
 	return (
 		<div className="p-6 md:w-2/5 mx-auto">
@@ -36,6 +39,12 @@ export const SettingsTab = () => {
 					link="/students"
 					caption={`Total = ${totalStudents}`}
 					icon={iconStudents}
+				/>
+				<Card
+					title={"Families"}
+					link="/families"
+					caption={"Total = 0"}
+					icon={iconFamily}
 				/>
 				<Card
 					title={"Profile"}

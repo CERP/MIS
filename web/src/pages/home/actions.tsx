@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { isMobile } from 'utils/helpers'
 
 import iconFee from './assets/fee.svg'
 import iconMarks from './assets/marks.svg'
@@ -58,9 +59,7 @@ const links: CardProps[] = [
 export const ActionTab = () => {
 	return (
 		<div className="p-10 md:w-4/5 mx-auto">
-
 			<div className="text-center text-lg mb-6 md:hidden">What would you like to do?</div>
-
 			<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
 				{
 					links.map((link, index) => (
@@ -68,6 +67,18 @@ export const ActionTab = () => {
 					))
 				}
 			</div>
+			{
+				isMobile() && (
+					<a href="https://github.com/CERP/MIS/raw/master/android/app/release/app-release.apk" target="_blank" rel="noreferrer">
+						<div className="flex items-center fixed z-50 bottom-4 right-4 rounded-full bg-blue-brand text-white lg:hidden py-2 px-4 w-11/12 text-sm mr-0.5">
+							<svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+							</svg>
+							<span className="ml-4">Tap here to Download Companion App</span>
+						</div>
+					</a>
+				)
+			}
 		</div>
 	)
 }
