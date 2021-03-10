@@ -1,4 +1,4 @@
-interface Team {
+export interface Team {
 	name: string
 	avatar_url: string
 	designation: string
