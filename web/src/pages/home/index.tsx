@@ -2,14 +2,13 @@ import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import cond from 'cond-construct'
-import clsx from 'clsx'
 
 import { SettingsTab } from './settings'
 import { ActionTab } from './actions'
 import { StatsTab } from './statistics'
 
 import { AppLayout } from 'components/Layout/appLayout'
-import { useMediaPredicate } from 'react-media-hook'
+import { Tabbar } from 'components/tabs'
 
 enum Tabs {
 	SETTINGS,
@@ -17,15 +16,26 @@ enum Tabs {
 	STATS
 }
 
-const tabTitles = ["Settings", "Actions", "Statistics"]
+const TabbarContent = [
+	{
+		tab: Tabs.SETTINGS,
+		title: "Settings"
+	},
+	{
+		tab: Tabs.ACTIONS,
+		title: "Actions"
+	},
+	{
+		tab: Tabs.STATS,
+		title: "Statistics"
+	},
+]
+
 
 export const Home = () => {
 
 	const { auth } = useSelector((state: RootReducerState) => state)
-
 	const [activeTab, setActiveTab] = useState(Tabs.ACTIONS)
-
-	// const isDesktop = useMediaPredicate("(min-width: 768px)")
 
 	const renderComponent = () => (
 		cond([
@@ -43,38 +53,9 @@ export const Home = () => {
 	}
 
 	return (
-		<AppLayout title={"Home" + " - " + tabTitles[activeTab]}>
-			<Tabbar tab={activeTab} setTab={setActiveTab} />
+		<AppLayout title={"Home" + " - " + TabbarContent[activeTab].title}>
+			<Tabbar tab={activeTab} setTab={setActiveTab} content={TabbarContent} />
 			{renderComponent()}
 		</AppLayout>
-	)
-}
-
-type TabbarProps = {
-	tab: Tabs
-	setTab: (tab: Tabs) => void
-}
-
-const Tabbar = ({ tab, setTab }: TabbarProps) => {
-	return (
-		<div className="sticky inset-0 top-16 z-30">
-			<div className="bg-green-brand gap-x-4 grid-cols-3 inline-grid pb-0 pt-2 shadow-md text-center text-lg text-teal-200 w-full">
-				<div
-					onClick={() => setTab(Tabs.SETTINGS)}
-					className={clsx("pb-2 cursor-pointer", { "border-b-4 border-white text-white": tab === Tabs.SETTINGS })}>
-					<span>{tabTitles[Tabs.SETTINGS]}</span>
-				</div>
-				<div
-					onClick={() => setTab(Tabs.ACTIONS)}
-					className={clsx("pb-2 cursor-pointer", { "border-b-4 border-white text-white": tab === Tabs.ACTIONS })}>
-					<span>{tabTitles[Tabs.ACTIONS]}</span>
-				</div>
-				<div
-					onClick={() => setTab(Tabs.STATS)}
-					className={clsx("pb-2 cursor-pointer", { "border-b-4 border-white text-white": tab === Tabs.STATS })}>
-					<span>{tabTitles[Tabs.STATS]}</span>
-				</div>
-			</div>
-		</div>
 	)
 }

@@ -7,7 +7,6 @@ type TabbarProps = {
 	setTab: (tab: any) => void
 }
 
-// TODO: apply to home page as well
 export const Tabbar = ({ tab, setTab, content }: TabbarProps) => {
 	return (
 		<div className="sticky inset-0 top-16 z-30">
