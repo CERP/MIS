@@ -197,7 +197,7 @@ export const SchoolSignup = () => {
 												placeholder="e.g. 0300xxxxxxx"
 												className="w-full tw-input" />
 										</div>
-										<div className="space-y-2 hidden md:block">
+										<div className="space-y-2">
 											<div>Password</div>
 											<div className="relative">
 												<input
@@ -231,28 +231,6 @@ export const SchoolSignup = () => {
 													getDistricts().sort().map(d => (<option key={d} value={d}>{toTitleCase(d)}</option>))
 												}
 											</select>
-										</div>
-										<div className="space-y-2 block md:hidden">
-											<div>Password</div>
-											<div className="relative">
-												<input
-													name="schoolPassword"
-													onChange={onInputChange}
-													autoCapitalize="off"
-													autoCorrect="off"
-													autoComplete="off"
-													required
-													type={togglePassword ? 'text' : 'password'}
-													placeholder="Enter password"
-													className="w-full tw-input" />
-												<div
-													onClick={() => setTogglePassword(!togglePassword)}
-													className="absolute inset-y-0 right-2 pr-3 flex items-center cursor-pointer">
-													{
-														<ShowHidePassword open={togglePassword} />
-													}
-												</div>
-											</div>
 										</div>
 										<div className="space-y-2">
 											<div>Confirm Password</div>
