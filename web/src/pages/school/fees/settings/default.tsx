@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Dynamic from '@cerp/dynamic'
+import toast from 'react-hot-toast'
 
 import { toTitleCase } from 'utils/toTitleCase'
 import { mergeSettings } from 'actions'
@@ -56,7 +57,7 @@ export const DefaultFee = () => {
 		}
 
 		dispatch(mergeSettings(modified_settings))
-		// TODO: show RHT
+		toast.success("Default fee has been updated.")
 	}
 
 	// TODO: replace this with generic handler

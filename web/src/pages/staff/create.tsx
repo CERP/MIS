@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import { v4 } from 'node-uuid'
-import moment from 'moment'
-import Dynamic from '@cerp/dynamic'
 import { useDispatch, useSelector } from 'react-redux'
 import { Redirect, RouteComponentProps } from 'react-router-dom'
+import moment from 'moment'
+import Dynamic from '@cerp/dynamic'
+import toast from 'react-hot-toast'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { SwitchButton } from 'components/input/switch'
@@ -127,8 +128,8 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 					dispatch(createFacultyMerge({ ...profile, Password: hashed }))
 				})
 
-			// TODO: show RHT
-			// also think about the redirection
+			toast.success("New staff has been added.")
+
 			setTimeout(() => {
 				setState({ ...state, redirect: '/staff' })
 			}, 1500)
@@ -136,12 +137,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 		} else {
 			dispatch(createFacultyMerge(profile))
 
-			// TODO: show RHT
-			// for now adding windows.alert
-
-			setTimeout(() => {
-				window.alert("Profile updated")
-			}, 1500)
+			toast.success("Staff profile has been updated.")
 		}
 	}
 
@@ -169,18 +165,19 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 	}
 
 	const deleteStaff = () => {
-		// for using window confirmation
+		// TODO: for now using window confirmation
 		// will change it to Alert Modal
 
-		if (window.confirm("Are you sure you want to delete?")) {
+		if (window.confirm("There is no undo, Are you sure you want to delete?")) {
 			dispatch(deleteFaculty(profile.id))
+
+			toast.success("Staff has been deleted.")
 
 			setTimeout(() => {
 				setState({ ...state, redirect: '/staff' })
 			}, 1000)
 		}
 
-		// TODO: show RHT
 	}
 
 	// this will only works when new users would be creating or delete action happen

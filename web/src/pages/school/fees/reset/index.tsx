@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import clsx from 'clsx'
+import toast from 'react-hot-toast'
 
 import { isValidStudent } from 'utils'
 import { toTitleCase } from 'utils/toTitleCase'
@@ -73,9 +74,9 @@ export const ResetFee = () => {
 
 		})
 
-		// TODO: use RHT
-
 		dispatch(resetFees(filteredStudents))
+
+		toast.success("Fees have been reset.")
 
 		// close the modal
 		setShowConfirmResetModal(false)

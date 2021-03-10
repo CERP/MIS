@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { v4 } from 'node-uuid'
+import toast from 'react-hot-toast'
 
 import { isValidPhone } from 'utils/helpers'
 import { createStudentMerge } from 'actions'
@@ -57,8 +58,7 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({ section }) => {
 		event.preventDefault()
 
 		if (!isValidPhone(state.Phone)) {
-			// TODO: show RHT
-			return window.alert("Please enter correct phone!")
+			return toast.error("Please enter correct phone number.")
 		}
 
 		dispatch(createStudentMerge(state))

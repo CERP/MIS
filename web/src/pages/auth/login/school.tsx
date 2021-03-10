@@ -42,7 +42,6 @@ export const SchoolLogin = () => {
 	useEffect(() => {
 
 		if (auth.attempt_failed && isSubmitted && !auth.loading) {
-			// TODO: use RHT
 			setHasError('School Id or Password is incorrect!')
 
 			setIsSubmitted(false)

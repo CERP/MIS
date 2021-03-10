@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import Dynamic from '@cerp/dynamic'
-import moment from 'moment'
 import { v4 } from 'node-uuid'
 import { hash } from 'utils'
+import Dynamic from '@cerp/dynamic'
+import moment from 'moment'
+import toast from 'react-hot-toast'
 
 import { SwitchButton } from 'components/input/switch'
 import { isValidPhone } from 'utils/helpers'
@@ -68,13 +69,11 @@ export const AddStaff: React.FC<AddStaffProps> = ({ skipStage }) => {
 		event.preventDefault()
 
 		if (!isValidPhone(state.Phone)) {
-			// TODO: Show RHT
-			return window.alert("Please provide correct phone number!")
+			return toast.error("Please provide correct phone number.")
 		}
 
 		hash(state.Password)
 			.then(hashed => {
-				// TODO: Show RHT
 				dispatch(createFacultyMerge({ ...state, Password: hashed }, false))
 				dispatch(createMerges([
 					{
@@ -82,6 +81,8 @@ export const AddStaff: React.FC<AddStaffProps> = ({ skipStage }) => {
 						value: OnboardingStage.ADD_CLASS
 					}
 				]))
+
+				toast.error("New staff has been added.")
 			})
 
 	}

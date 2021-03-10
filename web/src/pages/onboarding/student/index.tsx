@@ -15,6 +15,7 @@ import { createStudentMerges, deleteStudentById } from 'actions'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 
 import UserIconSvg from 'assets/svgs/user.svg'
+import toast from 'react-hot-toast'
 
 interface AddStudentProps {
 	onBack?: (close: boolean) => void
@@ -161,13 +162,13 @@ export const AddStudent: React.FC<AddStudentProps> = ({ skipStage }) => {
 
 	const saveImportedStudents = () => {
 		dispatch(createStudentMerges(state.importedStudents))
+		toast.success("Students have been saved.")
 		setState({ ...state, importedStudents: [] })
 	}
 
 	const isMoreThanMaxStudents = Object.keys(students).length > MAX_STUDENTS
 
 	// TODO: add modal to show the details of imported student
-	// TODO: add RHT
 
 	return (
 		<div className="md:w-4/5 md:mx-auto flex flex-col items-center rounded-2xl bg-gray-700 my-4 md:mt-8">
@@ -175,6 +176,7 @@ export const AddStudent: React.FC<AddStudentProps> = ({ skipStage }) => {
 				<div className="text-white text-center text-base my-5">Adding Students to {defaultSection?.namespaced_name}</div>
 
 				<div className="flex items-center flex-row my-4">
+					{/* TODO: add real profile picture */}
 					<img className="w-20 h-20 rounded-full" src={UserIconSvg} alt="user-logo" />
 					<div className="flex flex-col space-y-1 text-sm text-white ml-10">
 						<div className="text-semibold">{sectionTeacherName}</div>

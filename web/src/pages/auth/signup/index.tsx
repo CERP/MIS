@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { Link, Redirect } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import clsx from 'clsx'
+import toast from 'react-hot-toast'
+
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { ShowHidePassword } from 'components/password'
@@ -60,10 +62,11 @@ export const SchoolSignup = () => {
 		if (loading === false && succeed === false && reason !== "") {
 
 			const errorMsg = 'Account creation failed!' + (reason?.includes(state.phone) ? `${state.phone} already exists` : reason)
-			setHasError(errorMsg)
+			// setHasError(errorMsg)
 
 			setTimeout(() => {
-				setHasError('')
+				// setHasError('')
+				toast.error(errorMsg)
 			}, 3000)
 		}
 	}, [loading, succeed, reason])
@@ -85,19 +88,19 @@ export const SchoolSignup = () => {
 		// TODO: try using cond() from cond-construct instead fo IFs
 
 		if (compulsoryFields) {
-			return window.alert('Please fill all required fields')
+			return toast.error('Please fill all required fields')
 		}
 
 		if (!isValidPassword(state.schoolPassword)) {
-			return window.alert('Password contains at least 4 characters - alphabets(lower and upercase) and number')
+			return toast.error('Password contains at least 4 characters - alphabets(lower and upercase) and number')
 		}
 
 		if (state.schoolPassword !== state.confirm_password) {
-			return window.alert('Password mismatch')
+			return toast.error('Password mismatch')
 		}
 
 		if (!isValidPhone(state.phone)) {
-			return window.alert('Please enter correct mobile number')
+			return toast.error('Please enter correct mobile number')
 		}
 
 		// get rid of consfirm_password
@@ -285,8 +288,6 @@ export const SchoolSignup = () => {
 		</AppLayout>
 	)
 }
-
-
 
 const SignupSuccess = (signup: State) => {
 	return (

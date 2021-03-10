@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { Redirect, RouteComponentProps } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import Dynamic from '@cerp/dynamic'
 import { v4 } from 'node-uuid'
+import toast from 'react-hot-toast'
+import Dynamic from '@cerp/dynamic'
 import clsx from 'clsx'
 
 import { createEditClass, deleteSection, deleteSubject } from 'actions'
@@ -54,7 +55,7 @@ type State = {
 export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> = ({ match }) => {
 
 	const classId = match.params.id
-	const isNewSchool = location.pathname.indexOf("new") >= 0
+	const isNewClass = location.pathname.indexOf("new") >= 0
 
 	const dispatch = useDispatch()
 	const { faculty, classes } = useSelector((state: RootReducerState) => state.db)
@@ -69,14 +70,15 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 	const handleSubmit = (event: React.FormEvent) => {
 		event.preventDefault()
 
-		// validate the fields
-		// show alerts based on each
+		//TODO: validate the fields
+		//TODO: show alerts based on each
 
 		// dispatch createClass merge
 		dispatch(createEditClass(state.class))
+		const msg = isNewClass ? "New class has been created" : "Class info has been updated"
+		toast.success(msg)
 
-		// TODO: ADD RHT
-		if (isNewSchool) {
+		if (isNewClass) {
 			setTimeout(() => {
 				setState({ ...state, redirectTo: '/classes' })
 			}, 1500)
@@ -139,7 +141,7 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 
 	const removeSubject = (subject: string) => {
 		deleteByPath(["class", "subjects", subject])
-		if (!isNewSchool) {
+		if (!isNewClass) {
 			dispatch(deleteSubject(state.class.id, subject))
 		}
 	}
@@ -152,11 +154,11 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 		}
 
 		// delete from local page state
-		if (isNewSchool) {
+		if (isNewClass) {
 			deleteByPath(["class", "sections", sectionId])
 		}
 
-		if (!isNewSchool) {
+		if (!isNewClass) {
 			// delete from root and server
 			dispatch(deleteSection(state.class.id, sectionId))
 		}
@@ -184,9 +186,9 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 	}
 
 	return (
-		<AppLayout title={`${isNewSchool ? "Add New Class" : "Update Class"}`}>
+		<AppLayout title={`${isNewClass ? "Add New Class" : "Update Class"}`}>
 			<div className="p-5 md:p-10 md:pb-0 text-gray-700 relative">
-				<div className="text-2xl font-bold mt-4 mb-8 text-center">{isNewSchool ? "Add New Class" : 'Update Class'}</div>
+				<div className="text-2xl font-bold mt-4 mb-8 text-center">{isNewClass ? "Add New Class" : 'Update Class'}</div>
 				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 my-4 md:mt-8">
 
 					<div className="text-white text-center text-base my-5">Fill Class Information</div>
@@ -299,7 +301,7 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 							<button
 								type={"submit"}
 								className="w-full items-center tw-btn-blue py-3 font-semibold my-4">
-								{isNewSchool ? 'Create Class' : 'Update Class'}
+								{isNewClass ? 'Create Class' : 'Update Class'}
 							</button>
 						</div>
 					</form>

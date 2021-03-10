@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import Dynamic from '@cerp/dynamic'
-
 import { useDispatch, useSelector } from 'react-redux'
+import Dynamic from '@cerp/dynamic'
+import toast from 'react-hot-toast'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { SwitchButton } from 'components/input/switch'
@@ -83,7 +83,8 @@ export const VoucherSettings = () => {
 
 		// updating MISSettings
 		dispatch(mergeSettings(modified_settings))
-		// TODO: use RHT
+
+		toast.success("Voucher settings has been saved.")
 
 	}
 

@@ -1,17 +1,18 @@
 import React, { useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { v4 } from 'node-uuid'
+import { Redirect } from 'react-router-dom'
 import Papa from 'papaparse'
 import moment from 'moment'
 import clsx from 'clsx'
-import { Redirect } from 'react-router-dom'
+import toast from 'react-hot-toast'
 
 import { AppLayout } from 'components/Layout/appLayout'
-import getSectionsFromClasses from 'utils/getSectionsFromClasses'
-import toTitleCase from 'utils/toTitleCase'
-import downloadCSV from 'utils/downloadCSV'
+import { toTitleCase } from 'utils/toTitleCase'
 import { formatCNIC, formatPhone } from 'utils'
 import { createStudentMerges } from 'actions'
+import downloadCSV from 'utils/downloadCSV'
+import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 
 type State = {
 	classId: string
@@ -128,10 +129,12 @@ export const ImportStudentsCSV = () => {
 
 	const saveImportedStudents = () => {
 		dispatch(createStudentMerges(state.importedStudents))
-		// TODO: ADD RHT
+
+		toast.success("Students has been saved.")
+
 		setTimeout(() => {
 			setState({ ...state, redirectTo: '/students' })
-		}, 1500)
+		}, 1000)
 	}
 
 	if (state.redirectTo) {

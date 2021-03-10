@@ -5,6 +5,7 @@ import { v4 } from 'node-uuid'
 import { useDispatch, useSelector } from 'react-redux'
 import clsx from 'clsx'
 import moment from 'moment'
+import toast from 'react-hot-toast'
 
 import { createStudentMerge, deleteStudentById, uploadStudentProfilePicture } from 'actions'
 import { SwitchButton } from 'components/input/switch'
@@ -124,26 +125,20 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 		event.preventDefault()
 
 		if (!isValidPhone(state.profile.Phone)) {
-			return window.alert("Please provide correct phone number!")
+			return toast.error("Please provide correct phone number.")
 		}
 
-		// TODO: show notification
 		// TODO: introduce object props trim()
-
 		dispatch(createStudentMerge(state.profile))
 
+		const msg = isNewStudent ? "New student has been added." : "Student profile has been updated."
+		toast.success(msg)
+
 		if (isNewStudent) {
-			// TODO: show RHT
-			// also think about the redirection
 			setTimeout(() => {
 				setState({ ...state, redirect: '/students' })
 			}, 1500)
-		} else {
-			setTimeout(() => {
-				window.alert("Profile updated")
-			}, 1500)
 		}
-
 	}
 
 	const handleInput = (event: React.ChangeEvent<HTMLInputElement & HTMLSelectElement & HTMLTextAreaElement>) => {
@@ -180,18 +175,19 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 	}
 
 	const deleteStudent = () => {
-		// for using window confirmation
+		// TODO: for now using window confirmation
 		// will change it to Alert Modal
 
-		if (window.confirm("Are you sure you want to delete?")) {
+		if (window.confirm("There is no undo, Are you sure you want to delete?")) {
 			dispatch(deleteStudentById(state.profile.id))
+
+			toast.success("Student has been deleted.")
 
 			setTimeout(() => {
 				setState({ ...state, redirect: '/students' })
 			}, 1000)
 		}
 
-		// TODO: show RHT
 	}
 
 	const addTag = () => {

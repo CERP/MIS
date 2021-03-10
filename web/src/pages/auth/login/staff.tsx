@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, Redirect } from 'react-router-dom'
 import { connect, useDispatch } from 'react-redux'
 import clsx from 'clsx'
+import toast from 'react-hot-toast'
 
 import chunkify from 'utils/chunkify'
 import { toTitleCase } from 'utils/toTitleCase'
@@ -31,6 +32,17 @@ const Login: React.FC<LoginProps> = ({ auth, initialized, users, school, connect
 
 	const [usersGroupIndex, setUsersGroupIndex] = useState(0)
 	const [user, setUser] = useState<MISUser>()
+
+	const filteredUsers = Object.entries(users)
+		.filter(([, f]) => f.hasLogin !== false)
+		.sort(([, a], [, b]) => a.name.localeCompare(b.name))
+
+	// For desktop screen, there would be 10 users per group
+	// and but for mobile, would be 6 users per group
+	const USERS_PER_GROUP = useMediaPredicate("(min-width: 640px)") ? 10 : 6
+
+	// renders number of buttons to view user group
+	const userGroups = Math.ceil(filteredUsers.length / USERS_PER_GROUP)
 
 	if (!initialized && auth.token) {
 		return (
@@ -69,12 +81,9 @@ const Login: React.FC<LoginProps> = ({ auth, initialized, users, school, connect
 		return <Redirect to="/school/setup" />
 	}
 
-	const filteredUsers = Object.entries(users)
-		.filter(([, f]) => f.hasLogin !== false)
-		.sort(([, a], [, b]) => a.name.localeCompare(b.name))
-
 	const switchSchoolHandler = () => {
 
+		// TODO: convert it to react-alert modal
 		if (unsyncd_changes > 0) {
 			const msg = `You have ${unsyncd_changes} pending changes. If you switch school without exporting data, data will be lost.
 				Are you sure you want to continue?`
@@ -91,11 +100,6 @@ const Login: React.FC<LoginProps> = ({ auth, initialized, users, school, connect
 			type: ActionTypes.SWITCH_SCHOOL
 		})
 	}
-
-	const USERS_PER_GROUP = useMediaPredicate("(min-width: 640px)") ? 10 : 6
-
-	// renders number of button to view user group
-	const userGroups = Math.ceil(filteredUsers.length / USERS_PER_GROUP)
 
 	return (
 		<AppLayout title={'Staff Login'}>
@@ -216,12 +220,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ user, auth }) => {
 	const [isSubmitted, setIsSubmitted] = useState(false)
 	const [showHidePassword, setShowHidePassword] = useState(false)
 
+	// TODO: handle twice rendering ecause of auth.attempt_failed
+	//  and auth.loading in a robust way
 	useEffect(() => {
 		if (auth.attempt_failed && isSubmitted && !auth.loading) {
 
 			// just to create a fake server delay
 			setTimeout(() => {
-				// TODO: add RHT
 				setHasError('Password is incorrect!')
 				setIsSubmitted(false)
 			}, 1500)
@@ -236,8 +241,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ user, auth }) => {
 
 		event.preventDefault()
 
-		// TODO: show RHT
 		if (!password) {
+			toast.error("Please enter your password")
 			return
 		}
 
@@ -249,6 +254,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ user, auth }) => {
 	return (
 		<div className="flex flex-col items-center space-y-3">
 			<div className="w-24 h-24">
+				{/* TODO: use real picture here */}
 				<img className="rounded-full" src={UserIconSvg} alt="school-logo" />
 			</div>
 			<div className="text-sm mt-2 text-white">{toTitleCase(user.name)}</div>
