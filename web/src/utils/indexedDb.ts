@@ -256,14 +256,19 @@ const addFacultyID = (state: RootReducerState) => {
 
 	const faculty = Object.values(state.db.faculty).find(f => f.Name === state.auth.name);
 
-	state.auth.faculty_id = faculty.id;
+	state.auth.faculty_id = faculty?.id;
 
 	return state;
 }
 
+// TODO: at some time in future, remove this and diagnose the consequences
 const checkPermissions = (state: RootReducerState) => {
 
-	const permission = state.db.faculty[state.auth.faculty_id].permissions
+	const permission = state.db?.faculty?.[state.auth.faculty_id]?.permissions
+
+	if (!permission) {
+		return state
+	}
 
 	if (permission.dailyStats !== undefined && permission.fee !== undefined &&
 		permission.setupPage !== undefined && permission.expense !== undefined) {
