@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom'
 import Syncr from '@cerp/syncr'
 import { createStore, applyMiddleware } from 'redux'
 import thunkMiddleware from 'redux-thunk'
-import 'core-js/features/object'
+
+import { Toaster } from 'react-hot-toast'
 
 import * as serviceWorkerRegistration from './serviceWorkerRegistration'
 
@@ -60,6 +61,23 @@ store.subscribe(
 	}, 1000)
 )
 
-ReactDOM.render(<Routes store={store} />, document.getElementById('root'))
+ReactDOM.render(
+	<>
+		<Toaster position={"top-right"}
+			toastOptions={{
+				style: {
+					margin: '30px',
+					background: '#363636',
+					color: '#fff',
+					width: '270px'
+				},
+				className: 'text-xs',
+				duration: 2000
+			}}
+		/>
+		<Routes store={store} />
+	</>,
+	document.getElementById('root')
+)
 
 serviceWorkerRegistration.register()

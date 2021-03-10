@@ -10175,10 +10175,10 @@
   "resolved" "https://registry.npmjs.org/react-error-overlay/-/react-error-overlay-6.0.8.tgz"
   "version" "6.0.8"
 
-"react-hot-toast@^1.0.1":
-  "integrity" "sha512-og5MNzjNHa7BTjdThj3cwGoyD8tLoxMN9c8/Sme6bBLCnlrF54QrNOJW5gJkETTsuAHVsUK5z8Q6vvkc+9OfCg=="
-  "resolved" "https://registry.npmjs.org/react-hot-toast/-/react-hot-toast-1.0.1.tgz"
-  "version" "1.0.1"
+"react-hot-toast@^1.0.2":
+  "integrity" "sha512-wp89H0WA6EtiexAg5l3ys+WaZ3u0xM/FJWxl6YxR3hlquWhKvO9snBgTe4ATPEcgbS6pbc43RbuBINOkYOzA5A=="
+  "resolved" "https://registry.npmjs.org/react-hot-toast/-/react-hot-toast-1.0.2.tgz"
+  "version" "1.0.2"
   dependencies:
     "goober" "^2.0.15"
 
