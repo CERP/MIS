@@ -4,8 +4,8 @@ import { RouteComponentProps, withRouter, Link } from 'react-router-dom'
 import { Download, Printer } from 'assets/icons'
 import { downloadPdf } from 'utils/TIP'
 import Card from './Card'
-import { Viewer, RenderPageProps } from '@react-pdf-viewer/core';
-import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
+import { Viewer, RenderPageProps, SpecialZoomLevel, Worker } from '@react-pdf-viewer/core';
+import { scrollModePlugin } from '@react-pdf-viewer/scroll-mode';
 
 // Import styles
 import '@react-pdf-viewer/core/lib/styles/index.css';
@@ -53,7 +53,6 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 	if (url[2].indexOf('test') >= 0) {
 		pdf_url = targeted_instruction?.tests[test_id]?.pdf_url
 	}
-	const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
 	const renderPage = (props: RenderPageProps) => {
 		return (
@@ -65,16 +64,23 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 		);
 	};
 
+	const plugin_instance = scrollModePlugin()
+
 	return <div className="flex flex-wrap flex-col content-between w-full items-center justify-items-center">
 		<Card class_name={class_name ? class_name : 'Oral Test'} subject={subject} lesson_name='' lesson_no='' />
-		<div className="rounded-lg border-black">
-			<Viewer
-				fileUrl={decodeURIComponent(pdf_url)}
-				renderPage={renderPage}
-				plugins={[
-					defaultLayoutPluginInstance
-				]}
-			/>
+		<div className="border border-thin border-black rounded-md">
+			<div className="rounded-lg h-96">
+				<Worker workerUrl="https://unpkg.com/pdfjs-dist@2.6.347/build/pdf.worker.min.js">
+					<Viewer
+						fileUrl={decodeURIComponent(pdf_url)}
+						renderPage={renderPage}
+						defaultScale={SpecialZoomLevel.PageFit}
+						plugins={[
+							plugin_instance
+						]}
+					/>
+				</Worker>
+			</div>
 			<div className="flex flex-row justify-between my-4 w-full">
 				<div className="bg-light-blue-tip-brand rounded-full flex justify-center items-center h-12 w-12 ml-3"
 					onClick={() => window.print()}>
