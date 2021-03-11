@@ -113,7 +113,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
                         </div>
                     }) :
                         <div className="bg-white p-2 my-3 rounded-md mb-2 flex flex-row justify-between text-blue-900">
-                            {`There are no ${btn_type.replace('_', ' ')} for this lesson plan`}
+                            {`There are no ${btn_type.replace('/_/g', ' ')} for this lesson plan`}
                         </div>
                 }
 
