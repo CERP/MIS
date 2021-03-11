@@ -3,7 +3,7 @@ import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { connect } from 'react-redux';
 import Card from '../Card'
 import { Check, WhiteTick } from 'assets/icons'
-import { lessonPlanTaken } from 'actions'
+import { lessonPlanTaken, clearLessonPlans } from 'actions'
 import Dynamic from '@cerp/dynamic';
 import Headings from '../Headings';
 
@@ -13,6 +13,7 @@ interface P {
 	curriculum: TIPCurriculum
 
 	lessonPlanTaken: (faculty_id: string, learning_level_id: string, subject: string, lesson_number: string, value: boolean) => void
+	clearLessonPlans: (faculty_id: string, learning_level_id: string, subject: string) => void
 }
 
 /**
@@ -37,7 +38,7 @@ const blankLessonPlan = (lesson_plans: TIPLessonPlans): TIPTeacherLessonPlans =>
 
 type PropsType = P & RouteComponentProps
 
-const List: React.FC<PropsType> = ({ match, faculty, faculty_id, history, curriculum, lessonPlanTaken }) => {
+const List: React.FC<PropsType> = ({ match, faculty, faculty_id, history, curriculum, lessonPlanTaken, clearLessonPlans }) => {
 
 	const { class_name, subject } = match.params as Params
 	const url = match.url.split('/')
@@ -60,6 +61,10 @@ const List: React.FC<PropsType> = ({ match, faculty, faculty_id, history, curric
 	const redirect = (e: any, lesson_number: string) => {
 		e.stopPropagation();
 		history.push(`/${url[1]}/${url[2]}/${class_name}/${subject}/${lesson_number}/list/pdf`)
+	}
+
+	const onClearAll = () => {
+		clearLessonPlans(faculty_id, class_name, subject)
 	}
 
 	return <div className="flex flex-wrap content-between">
@@ -94,8 +99,9 @@ const List: React.FC<PropsType> = ({ match, faculty, faculty_id, history, curric
 						}
 					</div>
 				})}
-		<div className="w-full flex justify-center items-center print:hidden" onClick={() => window.print()}>
-			<button className="border-none bg-green-tip-brand rounded-md text-white text-lg p-2 w-3/6 my-3">Print All</button>
+		<div className="w-full flex justify-around print:hidden">
+			<button className="border-none bg-green-tip-brand rounded-md text-white text-lg p-2 w-1/7 my-3" onClick={() => window.print()}>Print All</button>
+			<button className="border-none bg-green-tip-brand rounded-md text-white text-lg p-2 w-1/7 my-3" onClick={onClearAll}>Clear All</button>
 		</div>
 	</div>
 }
@@ -106,4 +112,5 @@ export default connect((state: RootReducerState) => ({
 	curriculum: state.targeted_instruction.curriculum
 }), (dispatch: Function) => ({
 	lessonPlanTaken: (faculty_id: string, learning_level_id: string, subject: string, lesson_number: string, value: boolean) => dispatch(lessonPlanTaken(faculty_id, learning_level_id, subject, lesson_number, value)),
+	clearLessonPlans: (faculty_id: string, learning_level_id: string, subject: string) => dispatch(clearLessonPlans(faculty_id, learning_level_id, subject))
 }))(withRouter(List))

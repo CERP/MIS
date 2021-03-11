@@ -660,7 +660,7 @@ export const mergeTIPResult = (student_id: string, diagnostic_report: TIPDiagnos
 		])
 	)
 }
-
+//reset student's learning levels 
 export const resetStudentLearningLevel = (student_id: string, subject: TIPSubjects) => (dispatch: Function) => {
 	dispatch(
 		createDeletes([
@@ -670,7 +670,7 @@ export const resetStudentLearningLevel = (student_id: string, subject: TIPSubjec
 		])
 	)
 }
-
+//reset student's grades
 export const resetStudentGrades = (student_id: string, test_id: string) => (dispatch: Function) => {
 	dispatch(
 		createDeletes([
@@ -704,6 +704,25 @@ export const lessonPlanTaken = (
 				],
 				value: value,
 			},
+		])
+	)
+}
+//clear all marked(checked) lesson plans
+export const clearLessonPlans = (faculty_id: string, learning_level_id: string,	subject: string) => (dispatch: Function) => {
+
+	dispatch(
+		createDeletes([
+			{
+				path: [
+					'db',
+					'faculty',
+					faculty_id,
+					'targeted_instruction',
+					'curriculum',
+					learning_level_id,
+					subject
+				]
+			}
 		])
 	)
 }
