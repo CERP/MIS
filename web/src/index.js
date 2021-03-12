@@ -15,31 +15,29 @@ import { loadDB, connected, disconnected, processImageQueue } from './actions/co
 import { hostWSS } from 'utils/hostConfig'
 import { checkTime } from 'utils'
 import { ActionTypes } from 'constants/index'
-
-import './index.css'
-import './styles/main.css'
 import { fetchTargetedInstruction } from 'actions'
+
+import 'styles/helper.css'
+import 'styles/main.css'
 
 const initialState = initState
 
 const syncr = new Syncr(hostWSS)
 syncr.on('connect', () => store.dispatch(connected()))
 syncr.on('connect', () =>
-	checkTime()
-		.then((correct) => {
-			const text = correct ? '' : 'Your device time or timezone is incorrect!'
-			store.dispatch({
-				type: ActionTypes.ALERT_BANNER_TEXT,
-				data: text
-			})
+	checkTime().then((correct) => {
+		const text = correct ? '' : 'Your device time or timezone is incorrect!'
+		store.dispatch({
+			type: ActionTypes.ALERT_BANNER_TEXT,
+			data: text,
 		})
+	})
 )
 
 syncr.on('disconnect', () => store.dispatch(disconnected()))
 syncr.on('message', (msg) => store.dispatch(msg))
 syncr.on('verify', () => store.dispatch(processImageQueue()))
 syncr.on('verify', () => {
-	console.log("FIRING");
 	store.dispatch(fetchTargetedInstruction())
 })
 
