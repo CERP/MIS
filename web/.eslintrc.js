@@ -1,14 +1,16 @@
 module.exports = {
+	plugins: ['@typescript-eslint/eslint-plugin', 'react', 'prettier'],
 	parser: '@typescript-eslint/parser',
-	extends: ['plugin:react/recommended', 'plugin:@typescript-eslint/recommended'],
+	extends: ['plugin:react/recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
 	parserOptions: {
 		ecmaVersion: 2018,
 		sourceType: 'module',
 		ecmaFeatures: {
-			jsx: true,
-		},
+			jsx: true
+		}
 	},
 	rules: {
+		'prettier/prettier': ['error'],
 		camelcase: [0, { properties: 'never' }],
 		'@typescript-eslint/camelcase': [0, { properties: 'never' }],
 		'react/prop-types': [0],
@@ -20,9 +22,9 @@ module.exports = {
 			'error',
 			{
 				multiline: {
-					delimiter: 'none',
-				},
-			},
+					delimiter: 'none'
+				}
+			}
 		],
 		'prefer-const': [0],
 		'@typescript-eslint/prefer-const': [0, { destructuring: 'any' }],
@@ -35,11 +37,11 @@ module.exports = {
 		'react/jsx-key': ['warn'],
 		'@typescript-eslint/no-extra-semi': ['warn'],
 		'@typescript-eslint/no-empty-function': ['warn'],
-		'@typescript-eslint/no-var-requires': 0,
+		'@typescript-eslint/no-var-requires': 0
 	},
 	settings: {
 		react: {
-			version: 'detect',
-		},
-	},
+			version: 'detect'
+		}
+	}
 }
