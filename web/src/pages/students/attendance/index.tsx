@@ -13,7 +13,7 @@ import { toTitleCase } from 'utils/toTitleCase'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 
-import { SmsModalContent } from './sms-modal-content'
+import { SmsModalContentWrapper } from './sms-modal-content-wrapper'
 
 type State = {
 	selectedSection?: string
@@ -130,9 +130,6 @@ export const StudentsAttendance = () => {
 		dispatch(markStudent(student, attendanceDate, status))
 	}
 
-	// TODO: add logic to handle modal for sms sending
-	// TODO: add logic to handle log sms history
-
 	return (
 		<AppLayout title="Students Attedance">
 			<div className="p-5 md:p-10 print:hidden">
@@ -164,7 +161,7 @@ export const StudentsAttendance = () => {
 					{showSendSmsModal && (
 						<TModal>
 							<div className="bg-white p-6 sm:p-8 space-y-2" ref={sendSmsModalRef}>
-								<SmsModalContent
+								<SmsModalContentWrapper
 									date={attendanceDate}
 									students={students}
 									markedStudents={selectedStudents}
