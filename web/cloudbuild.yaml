@@ -60,4 +60,5 @@ steps:
           - '--data-urlencode'
           - 'payload={"channel": "#mis", "username": "deploybot", "text": "MISchool has been succesfully deployed version $SHORT_SHA to $BRANCH_NAME", "icon_emoji": ":construction_worker:"}'
           - '$_SLACK_URL'
-    timeout: 1200s
+
+timeout: 1200s
