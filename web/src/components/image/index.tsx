@@ -22,6 +22,11 @@ export const UploadImage = ({
 		setIsComponentVisible: setShowCamera
 	} = useComponentVisible(false)
 
+	const onCameraImageTaken = (imgString: string) => {
+		handleCameraImageTaken(imgString)
+		setShowCamera(!showCamera)
+	}
+
 	return (
 		<>
 			<div
@@ -51,7 +56,7 @@ export const UploadImage = ({
 				<TModal>
 					<div ref={cameraModalRef}>
 						<Camera
-							onImageAccepted={handleCameraImageTaken}
+							onImageAccepted={onCameraImageTaken}
 							height={100}
 							width={100}
 							format="jpeg"

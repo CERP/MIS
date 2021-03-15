@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import Dynamic from '@cerp/dynamic'
 import { RouteComponentProps } from 'react-router-dom'
 import { v4 } from 'node-uuid'
@@ -88,12 +88,17 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 		newTag: ''
 	})
 
-	// TODO: have to handle in coming props
-	// Alert: it's is very important
+	useEffect(() => {
+		if (isNewStudent()) {
+			return
+		}
 
-	// useEffect(() => {
+		const nextStudent = students[match.params.id]
 
-	// } , [profile, students])
+		if (nextStudent) {
+			setState(prevState => ({ ...prevState, profile: nextStudent }))
+		}
+	}, [students])
 
 	const uniqueTags = useMemo(() => {
 		const tags = new Set<string>()
@@ -119,12 +124,12 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 		// TODO: introduce object props trim()
 		dispatch(createStudentMerge(state.profile))
 
-		const msg = isNewStudent
+		const msg = isNewStudent()
 			? 'New student has been added.'
 			: 'Student profile has been updated.'
 		toast.success(msg)
 
-		if (isNewStudent) {
+		if (isNewStudent()) {
 			setTimeout(() => {
 				setState({ ...state, redirect: '/students' })
 			}, 1500)
@@ -190,7 +195,6 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 		handleInputByPath(['profile', 'tags', state.newTag], true, ['newTag'])
 	}
 
-	// TODO: fix camera image taken
 	const takeImage = (imgString: string) => {
 		getDownsizedImage(imgString, 600, 'jpeg').then(img => {
 			dispatch(uploadStudentProfilePicture(state.profile, img))
@@ -198,10 +202,10 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 	}
 
 	return (
-		<AppLayout title={`${isNewStudent ? 'New Student' : 'Update Student'}`}>
+		<AppLayout title={`${isNewStudent() ? 'New Student' : 'Update Student'}`}>
 			<div className="p-5 md:p-10 md:pb-0 text-gray-700 relative print:hidden">
 				<div className="text-2xl font-bold mt-4 mb-8 text-center">
-					{isNewStudent ? 'Add Student' : 'Update Student'}
+					{isNewStudent() ? 'Add Student' : 'Update Student'}
 				</div>
 				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 pb-6 my-4 md:mt-8">
 					<div className="text-white text-center text-base my-5">
@@ -486,11 +490,11 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 							<button
 								type={'submit'}
 								className="w-full items-center tw-btn bg-green-brand py-3 font-semibold my-4">
-								{isNewStudent ? 'Save' : 'Update'}
+								{isNewStudent() ? 'Save' : 'Update'}
 							</button>
 						</div>
 
-						{!isNewStudent && (
+						{!isNewStudent() && (
 							<button
 								type={'button'}
 								onClick={deleteStudent}
