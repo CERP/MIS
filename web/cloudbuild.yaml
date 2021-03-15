@@ -22,6 +22,7 @@ steps:
           - '--build-arg'
           - 'GA_ID=$_GA_ID'
           - 'web'
+      timeout: 1200s
       env:
           - 'VERSION=$SHORT_SHA'
           - 'GA_ID=$_GA_ID'
