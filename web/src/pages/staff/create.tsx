@@ -15,7 +15,6 @@ import { ShowHidePassword } from 'components/password'
 import { hash } from 'utils'
 import { getImageString, getDownsizedImage } from 'utils/image'
 
-import UserIconSvg from 'assets/svgs/user.svg'
 import { UploadImage } from 'components/image'
 
 const blankTeacher = (): MISTeacher => ({
@@ -191,9 +190,6 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 	if (redirect) {
 		return <Redirect to={redirect} />
 	}
-
-	// TODO: add camera modal
-	// TODO: add logic on the backend to handle image uploading
 
 	return (
 		<AppLayout title={`${isNewStaff() ? 'New Staff' : 'Update Staff'}`}>

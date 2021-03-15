@@ -65,18 +65,16 @@ export const StaffList = () => {
 						</div>
 					</div>
 
-					{/* TODO: don't use inline styles */}
 					<select
 						value={isActive.toString()}
 						onChange={e => setIsAtive(e.target.value === 'true')}
-						className="tw-select rounded shadow text-teal-500 w-2/5"
-						style={{ marginTop: 0 }}>
+						className="mt-0 tw-select rounded shadow text-teal-500 w-2/5">
 						<option value={'true'}>Active</option>
 						<option value={'false'}>InActive</option>
 					</select>
 				</div>
 
-				<div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-12 gap-y-10 md:gap-y-20">
+				<div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-12 gap-y-12 md:gap-y-20">
 					{filteredStaff
 						.sort((a, b) => a.Name.localeCompare(b.Name))
 						.map(f => (
