@@ -10,7 +10,7 @@ module.exports = {
 		}
 	},
 	rules: {
-		'prettier/prettier': ['error'],
+		'prettier/prettier': ['warn'],
 		camelcase: [0, { properties: 'never' }],
 		'@typescript-eslint/camelcase': [0, { properties: 'never' }],
 		'react/prop-types': [0],
