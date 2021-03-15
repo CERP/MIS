@@ -16,8 +16,8 @@ export const mergeSettings = (settings: MISSettings) => (dispatch: Function) => 
 		createMerges([
 			{
 				path: ['db', 'settings'],
-				value: settings,
-			},
+				value: settings
+			}
 		])
 	)
 }
@@ -30,7 +30,7 @@ export const createFacultyMerge = (faculty: MISTeacher, is_first?: boolean) => (
 		createMerges([
 			{
 				path: ['db', 'faculty', faculty.id],
-				value: faculty,
+				value: faculty
 			},
 			{
 				path: ['db', 'users', faculty.id],
@@ -38,9 +38,9 @@ export const createFacultyMerge = (faculty: MISTeacher, is_first?: boolean) => (
 					name: faculty.Name,
 					password: faculty.Password,
 					type: faculty.Admin ? 'admin' : 'teacher',
-					hasLogin: faculty.HasLogin,
-				},
-			},
+					hasLogin: faculty.HasLogin
+				}
+			}
 		])
 	)
 
@@ -48,7 +48,7 @@ export const createFacultyMerge = (faculty: MISTeacher, is_first?: boolean) => (
 		dispatch({
 			type: LOCAL_LOGIN,
 			name: faculty.Name,
-			password: faculty.Password,
+			password: faculty.Password
 		})
 	}
 }
@@ -59,8 +59,8 @@ export const createStudentMerge = (student: MISStudent) => (dispatch: Function) 
 		createMerges([
 			{
 				path: ['db', 'students', student.id],
-				value: student,
-			},
+				value: student
+			}
 		])
 	)
 }
@@ -68,9 +68,9 @@ export const createStudentMerge = (student: MISStudent) => (dispatch: Function) 
 export const createStudentMerges = (students: MISStudent[]) => (dispatch: Function) => {
 	dispatch(
 		createMerges(
-			students.map((s) => ({
+			students.map(s => ({
 				path: ['db', 'students', s.id],
-				value: s,
+				value: s
 			}))
 		)
 	)
@@ -80,8 +80,8 @@ export const deleteStudent = (student: MISStudent) => (dispatch: Function) => {
 	dispatch(
 		createDeletes([
 			{
-				path: ['db', 'students', student.id],
-			},
+				path: ['db', 'students', student.id]
+			}
 		])
 	)
 }
@@ -90,8 +90,8 @@ export const deleteStudentById = (student_id: string) => (dispatch: Function) =>
 	dispatch(
 		createDeletes([
 			{
-				path: ['db', 'students', student_id],
-			},
+				path: ['db', 'students', student_id]
+			}
 		])
 	)
 }
@@ -118,7 +118,7 @@ export const deleteFaculty = (faculty_id: string) => (
 				c.sections[s_id].faculty_id === faculty_id
 			) {
 				deletes.push({
-					path: ['db', 'classes', c.id, 'sections', s_id, 'faculty_id'],
+					path: ['db', 'classes', c.id, 'sections', s_id, 'faculty_id']
 				})
 			}
 		}
@@ -127,12 +127,12 @@ export const deleteFaculty = (faculty_id: string) => (
 	dispatch(
 		createDeletes([
 			{
-				path: ['db', 'faculty', faculty_id],
+				path: ['db', 'faculty', faculty_id]
 			},
 			{
-				path: ['db', 'users', faculty_id],
+				path: ['db', 'users', faculty_id]
 			},
-			...deletes,
+			...deletes
 		])
 	)
 }
@@ -168,33 +168,33 @@ export const promoteStudents = (promotion_map: PromotionMap, section_metadata: S
 				...agg,
 				{
 					path: ['db', 'students', student_id, 'Active'],
-					value: false,
+					value: false
 				},
 				{
 					path: ['db', 'students', student_id, 'section_id'],
-					value: '',
+					value: ''
 				},
 				{
 					path: ['db', 'students', student_id, 'class_history', current, 'end_date'],
-					value: new Date().getTime(),
+					value: new Date().getTime()
 				},
 				{
 					path: ['db', 'students', student_id, 'tags', next],
-					value: true,
-				},
+					value: true
+				}
 			]
 		}
 
-		const meta = section_metadata.find((x) => x.id === next)
+		const meta = section_metadata.find(x => x.id === next)
 		return [
 			...agg,
 			{
 				path: ['db', 'students', student_id, 'section_id'],
-				value: next,
+				value: next
 			},
 			{
 				path: ['db', 'students', student_id, 'class_history', current, 'end_date'],
-				value: new Date().getTime(),
+				value: new Date().getTime()
 			},
 			{
 				path: ['db', 'students', student_id, 'class_history', next],
@@ -202,9 +202,9 @@ export const promoteStudents = (promotion_map: PromotionMap, section_metadata: S
 					start_date: new Date().getTime(),
 					class_id: meta.class_id, // class id
 					class_name: meta.className,
-					namespaced_name: meta.namespaced_name,
-				},
-			},
+					namespaced_name: meta.namespaced_name
+				}
+			}
 		]
 	}, [])
 
@@ -216,17 +216,17 @@ export const promoteStudents = (promotion_map: PromotionMap, section_metadata: S
 export const LOCAL_LOGOUT = 'LOCAL_LOGOUT'
 export const createLogout = () => {
 	return {
-		type: LOCAL_LOGOUT,
+		type: LOCAL_LOGOUT
 	}
 }
 
 export const LOCAL_LOGIN = 'LOCAL_LOGIN'
 export const createLogin = (name: string, password: string) => (dispatch: Function) => {
-	hash(password).then((hashed) => {
+	hash(password).then(hashed => {
 		dispatch({
 			type: LOCAL_LOGIN,
 			name,
-			password: hashed,
+			password: hashed
 		})
 	})
 }
@@ -255,7 +255,7 @@ export const createSignUp = (profile: Profile) => (
 ) => {
 	// dispatch action to say you are loading/sending the sign up
 	dispatch({
-		type: SIGN_UP_LOADING,
+		type: SIGN_UP_LOADING
 	})
 
 	const signup_obj = {
@@ -278,8 +278,8 @@ export const createSignUp = (profile: Profile) => (
 			computer_operator: '',
 			owner_easypaisa_number: profile.ownerEasypaisaNumber,
 			previous_software_name: '',
-			previous_management_system: '',
-		},
+			previous_management_system: ''
+		}
 	}
 
 	syncr
@@ -287,16 +287,16 @@ export const createSignUp = (profile: Profile) => (
 			type: 'SIGN_UP',
 			client_type,
 			sign_up_id: v4(),
-			payload: signup_obj,
+			payload: signup_obj
 		})
-		.then((res) => {
+		.then(res => {
 			console.log(res)
 			dispatch({
-				type: SIGN_UP_SUCCEED,
+				type: SIGN_UP_SUCCEED
 			})
 			// dispatch action to say sign up succeeded
 		})
-		.catch((err) => {
+		.catch(err => {
 			console.error(err)
 			if (err === 'timeout') {
 				console.log('your internet sucks')
@@ -304,7 +304,7 @@ export const createSignUp = (profile: Profile) => (
 
 			dispatch({
 				type: SIGN_UP_FAILED,
-				reason: err,
+				reason: err
 			})
 			// dispatch action to say sign up failed
 		})
@@ -321,7 +321,7 @@ export const uploadStudentProfilePicture = (student: MISStudent, image_string: s
 	const merge_item: ImageMergeItem = {
 		path,
 		image_string,
-		id,
+		id
 	}
 
 	dispatch(uploadImages([merge_item]))
@@ -336,7 +336,7 @@ export const createSchoolLogin = (school_id: string, password: string) => (
 	const action = {
 		type: SCHOOL_LOGIN,
 		school_id,
-		password,
+		password
 	}
 
 	dispatch(action)
@@ -348,17 +348,17 @@ export const createSchoolLogin = (school_id: string, password: string) => (
 			payload: {
 				school_id,
 				password,
-				client_id: getState().client_id,
-			},
+				client_id: getState().client_id
+			}
 		})
-		.then((res) => {
+		.then(res => {
 			syncr.verify()
 
 			dispatch({
-				type: 'GETTING_DB',
+				type: 'GETTING_DB'
 			})
 		})
-		.catch((err) => {
+		.catch(err => {
 			console.error(err)
 			dispatch(createLoginFail())
 		})
@@ -371,7 +371,7 @@ export const autoSchoolLogin = (
 	refcode: string
 ) => (dispatch: Function, getState: () => RootReducerState, syncr: Syncr) => {
 	const action = {
-		type: SCHOOL_LOGIN,
+		type: SCHOOL_LOGIN
 	}
 
 	dispatch(action)
@@ -385,8 +385,8 @@ export const autoSchoolLogin = (
 				token,
 				client_id: getState().client_id,
 				ilmx_school_id: refcode,
-				ilmx_client_id: client_id,
-			},
+				ilmx_client_id: client_id
+			}
 		})
 		.then((res: { status: string; number: string }) => {
 			syncr.verify()
@@ -395,10 +395,10 @@ export const autoSchoolLogin = (
 			localStorage.setItem('user', 'ILMX')
 
 			dispatch({
-				type: 'AUTO_LOGIN_SUCCEED',
+				type: 'AUTO_LOGIN_SUCCEED'
 			})
 		})
-		.catch((err) => {
+		.catch(err => {
 			console.error(err)
 			dispatch(createLoginFail())
 		})
@@ -409,8 +409,8 @@ export const createEditClass = (newClass: MISClass) => (dispatch: Function) => {
 		createMerges([
 			{
 				path: ['db', 'classes', newClass.id],
-				value: newClass,
-			},
+				value: newClass
+			}
 		])
 	)
 }
@@ -422,10 +422,10 @@ export const deleteClass = (Class: MISClass) => (
 	const state = getState()
 
 	const students = Object.values(state.db.students)
-		.filter((student) => Class.sections[student.section_id] !== undefined)
-		.map((student) => ({
+		.filter(student => Class.sections[student.section_id] !== undefined)
+		.map(student => ({
 			path: ['db', 'students', student.id, 'section_id'],
-			value: '',
+			value: ''
 		}))
 
 	dispatch(createMerges(students))
@@ -433,8 +433,8 @@ export const deleteClass = (Class: MISClass) => (
 	dispatch(
 		createDeletes([
 			{
-				path: ['db', 'classes', Class.id],
-			},
+				path: ['db', 'classes', Class.id]
+			}
 		])
 	)
 }
@@ -446,10 +446,10 @@ export const deleteSection = (classId: string, sectiondId: string) => (
 	const state = getState()
 
 	const students = Object.values(state.db.students)
-		.filter((student) => student.section_id === sectiondId)
-		.map((student) => ({
+		.filter(student => student.section_id === sectiondId)
+		.map(student => ({
 			path: ['db', 'students', student.id, 'section_id'],
-			value: '',
+			value: ''
 		}))
 
 	// we need to remove section Id from students so they can be assigned new section
@@ -459,8 +459,8 @@ export const deleteSection = (classId: string, sectiondId: string) => (
 	dispatch(
 		createDeletes([
 			{
-				path: ['db', 'classes', classId, 'sections', sectiondId],
-			},
+				path: ['db', 'classes', classId, 'sections', sectiondId]
+			}
 		])
 	)
 }
@@ -469,8 +469,8 @@ export const deleteSubject = (classId: string, subject: string) => (dispatch: Fu
 	dispatch(
 		createDeletes([
 			{
-				path: ['db', 'classes', classId, 'subjects', subject],
-			},
+				path: ['db', 'classes', classId, 'subjects', subject]
+			}
 		])
 	)
 }
@@ -482,8 +482,8 @@ export const addStudentToSection = (section_id: string, student: MISStudent) => 
 		createMerges([
 			{
 				path: ['db', 'students', student.id, 'section_id'],
-				value: section_id,
-			},
+				value: section_id
+			}
 		])
 	)
 }
@@ -505,9 +505,9 @@ export const markStudent = (
 				value: {
 					date,
 					status,
-					time,
-				},
-			},
+					time
+				}
+			}
 		])
 	)
 }
@@ -526,9 +526,9 @@ export const markAllStudents = (
 				value: {
 					date,
 					status,
-					time,
-				},
-			},
+					time
+				}
+			}
 		]
 	}, [])
 
@@ -542,8 +542,8 @@ export const addStudentToFamily = (student: MISStudent, family_id: string) => (
 		createMerges([
 			{
 				path: ['db', 'students', student.id, 'FamilyID'],
-				value: family_id,
-			},
+				value: family_id
+			}
 		])
 	)
 }
@@ -552,27 +552,27 @@ export const saveFamilyInfo = (siblings: MISStudent[], info: MISFamilyInfo) => (
 	dispatch: Function
 ) => {
 	const siblingMerges = siblings
-		.map((s) => [
+		.map(s => [
 			{
 				path: ['db', 'students', s.id, 'ManName'],
-				value: info.ManName,
+				value: info.ManName
 			},
 			{
 				path: ['db', 'students', s.id, 'Phone'],
-				value: info.Phone,
+				value: info.Phone
 			},
 			{
 				path: ['db', 'students', s.id, 'AlternatePhone'],
-				value: info.AlternatePhone,
+				value: info.AlternatePhone
 			},
 			{
 				path: ['db', 'students', s.id, 'ManCNIC'],
-				value: info.ManCNIC,
+				value: info.ManCNIC
 			},
 			{
 				path: ['db', 'students', s.id, 'Address'],
-				value: info.Address,
-			},
+				value: info.Address
+			}
 		])
 		.reduce((agg, curr) => {
 			return [...agg, ...curr]
@@ -593,8 +593,8 @@ export const markFaculty = (
 		createMerges([
 			{
 				path: ['db', 'faculty', faculty.id, 'attendance', date, status],
-				value: time,
-			},
+				value: time
+			}
 		])
 	)
 }
@@ -605,8 +605,8 @@ export const undoFacultyAttendance = (faculty: MISTeacher, date: string) => (
 	dispatch(
 		createDeletes([
 			{
-				path: ['db', 'faculty', faculty.id, 'attendance', date],
-			},
+				path: ['db', 'faculty', faculty.id, 'attendance', date]
+			}
 		])
 	)
 }
@@ -632,25 +632,39 @@ export const addPayment = (
 					date,
 					type,
 					fee_id,
-					fee_name,
-				},
-			},
+					fee_name
+				}
+			}
 		])
 	)
 }
 
-export const assignLearningLevel = (student_id: string, subject: TIPSubjects, level: TIPGrades) => (dispatch: Function) => {
+export const assignLearningLevel = (student_id: string, subject: TIPSubjects, level: TIPGrades) => (
+	dispatch: Function
+) => {
 	dispatch(
 		createMerges([
 			{
-				path: ['db', 'students', student_id, 'targeted_instruction', 'learning_level', subject, 'grade'],
+				path: [
+					'db',
+					'students',
+					student_id,
+					'targeted_instruction',
+					'learning_level',
+					subject,
+					'grade'
+				],
 				value: level
 			}
 		])
 	)
 }
 
-export const mergeTIPResult = (student_id: string, diagnostic_report: TIPDiagnosticReport, test_id: string) => (dispatch: Function) => {
+export const mergeTIPResult = (
+	student_id: string,
+	diagnostic_report: TIPDiagnosticReport,
+	test_id: string
+) => (dispatch: Function) => {
 	dispatch(
 		createMerges([
 			{
@@ -660,17 +674,26 @@ export const mergeTIPResult = (student_id: string, diagnostic_report: TIPDiagnos
 		])
 	)
 }
-//reset student's learning levels 
-export const resetStudentLearningLevel = (student_id: string, subject: TIPSubjects) => (dispatch: Function) => {
+
+export const resetStudentLearningLevel = (student_id: string, subject: TIPSubjects) => (
+	dispatch: Function
+) => {
 	dispatch(
 		createDeletes([
 			{
-				path: ['db', 'students', student_id, 'targeted_instruction', 'learning_level', subject]
+				path: [
+					'db',
+					'students',
+					student_id,
+					'targeted_instruction',
+					'learning_level',
+					subject
+				]
 			}
 		])
 	)
 }
-//reset student's grades
+
 export const resetStudentGrades = (student_id: string, test_id: string) => (dispatch: Function) => {
 	dispatch(
 		createDeletes([
@@ -700,16 +723,19 @@ export const lessonPlanTaken = (
 					learning_level_id,
 					subject,
 					lesson_number,
-					'taken',
+					'taken'
 				],
-				value: value,
-			},
+				value: value
+			}
 		])
 	)
 }
-//clear all marked(checked) lesson plans
-export const clearLessonPlans = (faculty_id: string, learning_level_id: string,	subject: string) => (dispatch: Function) => {
 
+export const clearLessonPlans = (
+	faculty_id: string,
+	learning_level_id: string,
+	subject: string
+) => (dispatch: Function) => {
 	dispatch(
 		createDeletes([
 			{
@@ -735,15 +761,15 @@ type PaymentAddItem = {
 export const addMultiplePayments = (payments: PaymentAddItem[]) => (dispatch: Function) => {
 	// payments is array of { student, payment_id, amount, date, type, fee_id, fee_name }
 
-	const merges = payments.map((p) => ({
+	const merges = payments.map(p => ({
 		path: ['db', 'students', p.student.id, 'payments', p.payment_id],
 		value: {
 			amount: p.amount,
 			date: p.date,
 			type: p.type,
 			fee_id: p.fee_id,
-			fee_name: p.fee_name,
-		},
+			fee_name: p.fee_name
+		}
 	}))
 
 	dispatch(createMerges(merges))
@@ -764,8 +790,8 @@ export const addHistoricalPayment = (payment: historicalPayment, student_id: str
 				type: 'OWED',
 				fee_name: name,
 				amount: amount_owed,
-				date,
-			},
+				date
+			}
 		})
 	}
 	if (amount_paid > 0) {
@@ -774,8 +800,8 @@ export const addHistoricalPayment = (payment: historicalPayment, student_id: str
 			value: {
 				type: 'SUBMITTED',
 				amount: amount_paid,
-				date,
-			},
+				date
+			}
 		})
 	}
 
@@ -785,8 +811,8 @@ export const addHistoricalPayment = (payment: historicalPayment, student_id: str
 			value: {
 				type: 'FORGIVEN',
 				amount: amount_forgiven,
-				date,
-			},
+				date
+			}
 		})
 	}
 
@@ -817,9 +843,9 @@ export const addExpense = (
 					category,
 					quantity,
 					date,
-					time,
-				},
-			},
+					time
+				}
+			}
 		])
 	)
 }
@@ -854,9 +880,9 @@ export const addSalaryExpense = (
 					advance,
 					deduction,
 					date,
-					time,
-				},
-			},
+					time
+				}
+			}
 		])
 	)
 }
@@ -880,9 +906,9 @@ export const editExpense = (expenses: ExpenseEditItem) => (
 				path: ['db', 'expenses', id],
 				value: {
 					...state.db.expenses[id],
-					amount,
-				},
-			},
+					amount
+				}
+			}
 		]
 	}, [])
 
@@ -895,8 +921,8 @@ export const deleteExpense = (id: string) => (dispatch: Function) => {
 	dispatch(
 		createDeletes([
 			{
-				path: ['db', 'expenses', id],
-			},
+				path: ['db', 'expenses', id]
+			}
 		])
 	)
 }
@@ -909,14 +935,14 @@ type FeeAddItem = MISStudentFee & {
 export const addMultipleFees = (fees: FeeAddItem[]) => (dispatch: Function) => {
 	// fees is an array of { student, fee_id, amount, type, period, name}
 
-	const merges = fees.map((f) => ({
+	const merges = fees.map(f => ({
 		path: ['db', 'students', f.student.id, 'fees', f.fee_id],
 		value: {
 			amount: f.amount,
 			name: f.name,
 			period: f.period,
-			type: f.type,
-		},
+			type: f.type
+		}
 	}))
 
 	dispatch(createMerges(merges))
@@ -936,9 +962,9 @@ export const addFee = (student_fee: SingleFeeItem) => (dispatch: Function) => {
 				amount: student_fee.amount,
 				name: student_fee.name,
 				period: student_fee.period,
-				type: student_fee.type,
-			},
-		},
+				type: student_fee.type
+			}
+		}
 	]
 
 	dispatch(createMerges(merges))
@@ -955,16 +981,16 @@ export const deleteMultipleFees = (students_fees: FeeDeleteItem) => (dispatch: F
 	// students_fees is an object that contains fee id as key and object { student_id: string, payment_id: [] } as value
 	const deletes = Object.entries(students_fees).reduce(
 		(agg, [fee_id, { student_id, paymentIds }]) => {
-			const pay_deletes = paymentIds.map((pid) => ({
-				path: ['db', 'students', student_id, 'payments', pid],
+			const pay_deletes = paymentIds.map(pid => ({
+				path: ['db', 'students', student_id, 'payments', pid]
 			}))
 
 			return [
 				...agg,
 				{
-					path: ['db', 'students', student_id, 'fees', fee_id],
+					path: ['db', 'students', student_id, 'fees', fee_id]
 				},
-				...pay_deletes,
+				...pay_deletes
 			]
 		},
 		[]
@@ -980,8 +1006,8 @@ export const createTemplateMerges = (templates: RootDBState['sms_templates']) =>
 		createMerges([
 			{
 				path: ['db', 'sms_templates'],
-				value: templates,
-			},
+				value: templates
+			}
 		])
 	)
 }
@@ -1009,9 +1035,9 @@ export const mergeExam = (exam: Exam, class_id: string, section_id: string) => (
 				value: {
 					score: student_mark.score,
 					grade: student_mark.grade,
-					remarks: student_mark.remarks,
-				},
-			},
+					remarks: student_mark.remarks
+				}
+			}
 		],
 		[]
 	)
@@ -1020,9 +1046,9 @@ export const mergeExam = (exam: Exam, class_id: string, section_id: string) => (
 		createMerges([
 			{
 				path: ['db', 'exams', id],
-				value: { id, name, subject, total_score, date, class_id, section_id },
+				value: { id, name, subject, total_score, date, class_id, section_id }
 			},
-			...student_merges,
+			...student_merges
 		])
 	)
 }
@@ -1039,8 +1065,8 @@ export const updateBulkExams = (exam_marks_sheet: ExamScoreSheet) => (dispatch: 
 				merges.push({
 					path: ['db', 'students', student.id, 'exams', exam.id],
 					value: {
-						...exam.stats,
-					},
+						...exam.stats
+					}
 				})
 			}
 		}
@@ -1055,8 +1081,8 @@ export const removeStudentFromExam = (e_id: string, student_id: string) => (disp
 	dispatch(
 		createDeletes([
 			{
-				path: ['db', 'students', student_id, 'exams', e_id],
-			},
+				path: ['db', 'students', student_id, 'exams', e_id]
+			}
 		])
 	)
 }
@@ -1064,16 +1090,16 @@ export const removeStudentFromExam = (e_id: string, student_id: string) => (disp
 export const deleteExam = (students: string[], exam_id: string) => (dispatch: Function) => {
 	//students  is an array of student Id's
 
-	const deletes = students.map((s_id) => ({
-		path: ['db', 'students', s_id, 'exams', exam_id],
+	const deletes = students.map(s_id => ({
+		path: ['db', 'students', s_id, 'exams', exam_id]
 	}))
 
 	dispatch(
 		createDeletes([
 			{
-				path: ['db', 'exams', exam_id],
+				path: ['db', 'exams', exam_id]
 			},
-			...deletes,
+			...deletes
 		])
 	)
 }
@@ -1083,8 +1109,8 @@ export const logSms = (history: AugmentedSmsHistory) => (dispatch: Function) => 
 		createMerges([
 			{
 				path: ['db', 'analytics', 'sms_history', v4()],
-				value: history,
-			},
+				value: history
+			}
 		])
 	)
 }
@@ -1093,9 +1119,9 @@ export const addTag = (students: MISStudent[], tag: string) => (dispatch: Functi
 	//students is an array of single or multiple students
 	//tag is the text od tag
 
-	const merges = students.map((s) => ({
+	const merges = students.map(s => ({
 		path: ['db', 'students', s.id, 'tags', tag],
-		value: true,
+		value: true
 	}))
 
 	dispatch(createMerges(merges))
@@ -1107,8 +1133,8 @@ export const addLogo = (logo_string: string) => (dispatch: Function) => {
 		createMerges([
 			{
 				path: ['db', 'assets', 'schoolLogo'],
-				value: logo_string,
-			},
+				value: logo_string
+			}
 		])
 	)
 }
@@ -1118,7 +1144,7 @@ export const addDiary = (date: string, section_id: string, diary: MISDiary['sect
 ) => {
 	const merges = Object.entries(diary).map(([subject, homework]) => ({
 		path: ['db', 'diary', date, section_id, subject],
-		value: homework,
+		value: homework
 	}))
 
 	dispatch(createMerges(merges))
@@ -1132,12 +1158,12 @@ export const editPayment = (payments: AugmentedMISPaymentMap) => (dispatch: Func
 				...agg,
 				{
 					path: ['db', 'students', student_id, 'payments', p_id, 'amount'],
-					value: amount,
+					value: amount
 				},
 				{
 					path: ['db', 'students', student_id, 'fees', fee_id, 'amount'],
-					value: Math.abs(amount).toString(), // because we're handling fees as string value
-				},
+					value: Math.abs(amount).toString() // because we're handling fees as string value
+				}
 			]
 		},
 		[]
@@ -1158,9 +1184,9 @@ export const issueCertificate = (type: string, student_id: string, faculty_id: s
 				value: {
 					type,
 					faculty_id,
-					date,
-				},
-			},
+					date
+				}
+			}
 		])
 	)
 }
@@ -1172,8 +1198,8 @@ export const resetTrial = (days = 7) => (dispatch: Function) => {
 		createMerges([
 			{
 				path: ['db', 'package_info', 'date'],
-				value: date,
-			},
+				value: date
+			}
 		])
 	)
 }
@@ -1183,8 +1209,8 @@ export const markPurchased = () => (dispatch: Function) => {
 		createMerges([
 			{
 				path: ['db', 'package_info', 'paid'],
-				value: true,
-			},
+				value: true
+			}
 		])
 	)
 }
@@ -1195,9 +1221,9 @@ export const trackRoute = (route: string) => (dispatch: Function) => {
 			{
 				type: 'ROUTE',
 				meta: {
-					route: route.split('/').splice(1),
-				},
-			},
+					route: route.split('/').splice(1)
+				}
+			}
 		])
 	)
 }
@@ -1215,8 +1241,8 @@ export const saveDateSheet = (datesheetMerges: DateSheetMerges, section_id: stri
 				...agg,
 				{
 					path: ['db', 'planner', 'datesheet', section_id, id, subj],
-					value: ds,
-				},
+					value: ds
+				}
 			]
 		}, [])
 
@@ -1232,8 +1258,8 @@ export const removeSubjectFromDatesheet = (id: string, subj: string, section_id:
 	dispatch(
 		createDeletes([
 			{
-				path: ['db', 'planner', 'datesheet', section_id, id, subj],
-			},
+				path: ['db', 'planner', 'datesheet', section_id, id, subj]
+			}
 		])
 	)
 }
@@ -1243,24 +1269,20 @@ export const resetFees = (students: MISStudent[]) => (dispatch: Function) => {
 	let deletes_payments = []
 
 	for (const s of Object.values(students)) {
-
 		for (const fid of Object.keys(s.fees)) {
 			deletes_fees.push({
-				path: ['db', 'students', s.id, 'fees', fid],
+				path: ['db', 'students', s.id, 'fees', fid]
 			})
 		}
 
 		for (const pid of Object.keys(s.payments)) {
 			deletes_payments.push({
-				path: ['db', 'students', s.id, 'payments', pid],
+				path: ['db', 'students', s.id, 'payments', pid]
 			})
 		}
 	}
 
-	dispatch(createDeletes([
-		...deletes_fees,
-		...deletes_payments
-	]))
+	dispatch(createDeletes([...deletes_fees, ...deletes_payments]))
 }
 
 export const RESET_ADMIN_PASSWORD = 'RESET_ADMIN_PASSWORD'
@@ -1283,14 +1305,14 @@ export const sendTempPassword = (faculty: MISTeacher, password: string) => (
 				number: faculty.Phone,
 				password,
 				school_id: getState().auth.school_id,
-				client_id: getState().client_id,
-			},
+				client_id: getState().client_id
+			}
 		})
-		.then((res) => {
+		.then(res => {
 			console.log(res)
 			dispatch(createFacultyMerge(faculty))
 		})
-		.catch((err) => {
+		.catch(err => {
 			console.error(err)
 		})
 }
@@ -1316,20 +1338,20 @@ export const fetchTargetedInstruction = () => (
 			payload: {
 				school_id: state.auth.school_id,
 				token: state.auth.token,
-				client_id: state.client_id,
-			},
+				client_id: state.client_id
+			}
 		})
-		.then((response) =>
+		.then(response =>
 			dispatch({
 				type: 'GET_TARGETED_INSTRUCTION_SUCCESS',
-				payload: response,
+				payload: response
 			})
 		)
-		.catch((err) => {
-			console.error("targeted instruction failure")
+		.catch(err => {
+			console.error('targeted instruction failure')
 			console.log(err)
 			dispatch({
-				type: 'GET_TARGETED_INSTRUCTION_FAILURE',
+				type: 'GET_TARGETED_INSTRUCTION_FAILURE'
 			})
 		})
 }
@@ -1337,8 +1359,8 @@ export const deletePayment = (student_id: string, payment_id: string) => (dispat
 	dispatch(
 		createDeletes([
 			{
-				path: ['db', 'students', student_id, 'payments', payment_id],
-			},
+				path: ['db', 'students', student_id, 'payments', payment_id]
+			}
 		])
 	)
 }
