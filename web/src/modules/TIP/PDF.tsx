@@ -98,7 +98,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 				</div>
 			</div>
 			<div className="flex flex-row justify-around my-4 w-full print:hidden">
-				<div className="w-1/7">
+				<div className="w-5/12">
 					<Link
 						className="no-underline"
 						to={
@@ -108,12 +108,12 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 									? `/${url[1]}/${url[2]}/${subject}/answer-pdf`
 									: `/${url[1]}/${url[2]}/${class_name}/${subject}/answer-pdf`
 						}>
-						<button className="bg-sea-green-tip-brand font-bold text-lg border-none rounded-md text-white text-left p-2 w-full focus:outline-none">
+						<button className="bg-sea-green-tip-brand font-bold sm:text-sm md:text-base lg:text-lg border-none rounded-md text-white text-left p-3 md:p-2 lg:p-2 w-full focus:outline-none text-center">
 							Answer Sheet
 						</button>
 					</Link>
 				</div>
-				<div className="w-1/7">
+				<div className="w-5/12">
 					<Link
 						className="no-underline"
 						to={
@@ -123,7 +123,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 									? `/${url[1]}/${url[2]}/${subject}/${test_id}/insert-grades`
 									: `/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades`
 						}>
-						<button className="bg-light-blue-tip-brand font-bold text-lg border-none rounded-md text-white text-left p-2 w-full focus:outline-none">
+						<button className="bg-light-blue-tip-brand font-bold sm:text-sm md:text-base lg:text-lg border-none rounded-md text-white text-left p-3 md:p-2 lg:p-2 w-full focus:outline-none text-center">
 							Insert Grades
 						</button>
 					</Link>

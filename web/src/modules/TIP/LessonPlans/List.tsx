@@ -137,12 +137,12 @@ const List: React.FC<PropsType> = ({
 				})}
 			<div className="w-full flex justify-around print:hidden">
 				<button
-					className="border-none bg-green-tip-brand rounded-md text-white text-lg p-2 w-1/7 my-3"
+					className="border-none bg-green-tip-brand rounded-md text-white text-lg p-2 w-5/12 my-3"
 					onClick={() => window.print()}>
 					Print All
 				</button>
 				<button
-					className="border-none bg-green-tip-brand rounded-md text-white text-lg p-2 w-1/7 my-3"
+					className="border-none bg-green-tip-brand rounded-md text-white text-lg p-2 w-5/12 my-3"
 					onClick={onClearAll}>
 					Clear All
 				</button>
