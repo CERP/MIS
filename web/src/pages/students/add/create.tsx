@@ -214,8 +214,8 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 					<div className="flex flex-row items-baseline justify-between w-3/5 md:w-1/4">
 						<UploadImage
 							src={
-								state.profile.ProfilePicture.url ||
-								state.profile.ProfilePicture.image_string
+								state.profile.ProfilePicture?.url ||
+								state.profile.ProfilePicture?.image_string
 							}
 							handleImageChange={uploadProfileImage}
 							handleCameraImageTaken={takeImage}
