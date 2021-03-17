@@ -7,10 +7,10 @@ import { mergeSettings } from 'actions'
 import './../style.css'
 
 interface P {
-	classes: RootDBState["classes"]
-	settings: RootDBState["settings"]
+	classes: RootDBState['classes']
+	settings: RootDBState['settings']
 
-	mergeSettings: (settings: RootDBState["settings"]) => void
+	mergeSettings: (settings: RootDBState['settings']) => void
 }
 
 type S = {
@@ -20,42 +20,43 @@ type S = {
 		text?: string
 	}
 	vouchersPerPage: string
-} & MISSettings["classes"]["feeVoucher"]
+} & MISSettings['classes']['feeVoucher']
 
 class VoucherSettings extends Component<P, S> {
-
 	former: Former
 	constructor(props: P) {
 		super(props)
 
 		const settings = this.props.settings
-		const feeVoucher = settings.classes && settings.classes.feeVoucher ? settings.classes.feeVoucher : this.setFeeVoucherSetings()
+		const feeVoucher =
+			settings.classes && settings.classes.feeVoucher
+				? settings.classes.feeVoucher
+				: this.setFeeVoucherSetings()
 
 		const { vouchersPerPage } = settings
 
 		this.state = {
-
 			banner: {
 				active: false,
 				good: false,
-				text: ""
+				text: ''
 			},
-			vouchersPerPage: vouchersPerPage || "1",
+			vouchersPerPage: vouchersPerPage || '1',
 			...feeVoucher
 		}
 
 		this.former = new Former(this, [])
 	}
 
-	setFeeVoucherSetings = (): MISSettings["classes"]["feeVoucher"] => {
+	setFeeVoucherSetings = (): MISSettings['classes']['feeVoucher'] => {
 		return {
-			dueDays: "",
-			feeFine: "",
-			notice: "",
+			dueDays: '',
+			feeFine: '',
+			notice: '',
 			bankInfo: {
-				name: "",
-				accountTitle: "",
-				accountNo: ""
+				name: '',
+				accountTitle: '',
+				accountNo: ''
 			},
 			options: {
 				showDueDays: false,
@@ -67,7 +68,6 @@ class VoucherSettings extends Component<P, S> {
 	}
 
 	onSaveFeeVoucher = (): void => {
-
 		const { dueDays, feeFine, notice, bankInfo, options, vouchersPerPage } = this.state
 		const settings = this.props.settings
 
@@ -92,6 +92,7 @@ class VoucherSettings extends Component<P, S> {
 			modified_settings = {
 				...settings,
 				classes: {
+					additionalFee: {},
 					defaultFee: {},
 					feeVoucher: {
 						dueDays,
@@ -109,7 +110,7 @@ class VoucherSettings extends Component<P, S> {
 			banner: {
 				active: true,
 				good: true,
-				text: "Voucher Settings has been saved!"
+				text: 'Voucher Settings has been saved!'
 			}
 		})
 
@@ -120,83 +121,131 @@ class VoucherSettings extends Component<P, S> {
 	}
 
 	render() {
-
-		return <div className="class-settings fee-voucher">
-			{this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
-			<div className="title">Fee Voucher Settings</div>
-			<div className="section-container section form fee-voucher">
-				<div className="row">
-					<label>Fee Vouchers per Page</label>
-					<select {...this.former.super_handle(["vouchersPerPage"])}>
-						<option value="1">1</option>
-						<option value="2">2</option>
-						<option value="3">3</option>
-					</select>
+		return (
+			<div className="class-settings fee-voucher">
+				{this.state.banner.active ? (
+					<Banner isGood={this.state.banner.good} text={this.state.banner.text} />
+				) : (
+					false
+				)}
+				<div className="title">Fee Voucher Settings</div>
+				<div className="section-container section form fee-voucher">
+					<div className="row">
+						<label>Fee Vouchers per Page</label>
+						<select {...this.former.super_handle(['vouchersPerPage'])}>
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+						</select>
+					</div>
+					<div className="row">
+						<label>No. of Fee due Days</label>
+						<input
+							type="number"
+							{...this.former.super_handle(['dueDays'])}
+							placeholder="e.g. 2 days after first of each month"
+						/>
+					</div>
+					<div className="row">
+						<label>Late Fee Fine</label>
+						<input
+							type="number"
+							{...this.former.super_handle(['feeFine'])}
+							placeholder="e.g. Rs. 10 per day"
+						/>
+					</div>
+					<div className="row">
+						<label>Fee Notice</label>
+						<textarea
+							{...this.former.super_handle(['notice'])}
+							placeholder="School fee notice for the students"
+							style={{ borderRadius: 4 }}
+						/>
+					</div>
+					<div>
+						<fieldset>
+							<legend>Bank Information</legend>
+							<div className="row">
+								<label>Bank Name</label>
+								<input
+									type="text"
+									{...this.former.super_handle(['bankInfo', 'name'])}
+									placeholder="e.g. HBL"
+								/>
+							</div>
+							<div className="row">
+								<label>Account Title</label>
+								<input
+									type="text"
+									{...this.former.super_handle(['bankInfo', 'accountTitle'])}
+									placeholder="e.g. MISCHOOL"
+								/>
+							</div>
+							<div className="row">
+								<label>Account No</label>
+								<input
+									type="text"
+									{...this.former.super_handle(['bankInfo', 'accountNo'])}
+									placeholder="e.g. 01782338901"
+								/>
+							</div>
+						</fieldset>
+					</div>
+					<div className="options">
+						<fieldset>
+							<legend>Options</legend>
+							<div className="row">
+								<label>Show Due Date</label>
+								<input
+									type="checkbox"
+									{...this.former.super_handle([
+										'options',
+										'showDueDays'
+									])}></input>
+							</div>
+							<div className="row">
+								<label>Show Fine</label>
+								<input
+									type="checkbox"
+									{...this.former.super_handle(['options', 'showFine'])}></input>
+							</div>
+							<div className="row">
+								<label>Show Notice</label>
+								<input
+									type="checkbox"
+									{...this.former.super_handle([
+										'options',
+										'showNotice'
+									])}></input>
+							</div>
+							<div className="row">
+								<label>Show Bank Info</label>
+								<input
+									type="checkbox"
+									{...this.former.super_handle([
+										'options',
+										'showBankInfo'
+									])}></input>
+							</div>
+						</fieldset>
+					</div>
+					<div
+						className="button blue"
+						style={{ marginTop: 10 }}
+						onClick={this.onSaveFeeVoucher}>
+						Save
+					</div>
 				</div>
-				<div className="row">
-					<label>No. of Fee due Days</label>
-					<input type="number" {...this.former.super_handle(["dueDays"])}
-						placeholder="e.g. 2 days after first of each month" />
-				</div>
-				<div className="row">
-					<label>Late Fee Fine</label>
-					<input type="number"{...this.former.super_handle(["feeFine"])}
-						placeholder="e.g. Rs. 10 per day" />
-				</div>
-				<div className="row">
-					<label>Fee Notice</label>
-					<textarea {...this.former.super_handle(["notice"])}
-						placeholder="School fee notice for the students" style={{ borderRadius: 4 }} />
-				</div>
-				<div>
-					<fieldset>
-						<legend>Bank Information</legend>
-						<div className="row">
-							<label>Bank Name</label>
-							<input type="text" {...this.former.super_handle(["bankInfo", "name"])}
-								placeholder="e.g. HBL" />
-						</div>
-						<div className="row">
-							<label>Account Title</label>
-							<input type="text" {...this.former.super_handle(["bankInfo", "accountTitle"])}
-								placeholder="e.g. MISCHOOL" />
-						</div>
-						<div className="row">
-							<label>Account No</label>
-							<input type="text" {...this.former.super_handle(["bankInfo", "accountNo"])}
-								placeholder="e.g. 01782338901" />
-						</div>
-					</fieldset>
-				</div>
-				<div className="options">
-					<fieldset>
-						<legend>Options</legend>
-						<div className="row">
-							<label>Show Due Date</label>
-							<input type="checkbox" {...this.former.super_handle(["options", "showDueDays"])}></input>
-						</div>
-						<div className="row">
-							<label>Show Fine</label>
-							<input type="checkbox" {...this.former.super_handle(["options", "showFine"])}></input>
-						</div>
-						<div className="row">
-							<label>Show Notice</label>
-							<input type="checkbox" {...this.former.super_handle(["options", "showNotice"])}></input>
-						</div>
-						<div className="row">
-							<label>Show Bank Info</label>
-							<input type="checkbox" {...this.former.super_handle(["options", "showBankInfo"])}></input>
-						</div>
-					</fieldset>
-				</div>
-				<div className="button blue" style={{ marginTop: 10 }} onClick={this.onSaveFeeVoucher}>Save</div>
 			</div>
-		</div>
+		)
 	}
 }
-export default connect((state: RootReducerState) => ({
-	classes: state.db.classes,
-	settings: state.db.settings
-}), (dispatch: Function) => ({
-	mergeSettings: (settings: RootDBState["settings"]) => dispatch(mergeSettings(settings)),
-}))(VoucherSettings)
+export default connect(
+	(state: RootReducerState) => ({
+		classes: state.db.classes,
+		settings: state.db.settings
+	}),
+	(dispatch: Function) => ({
+		mergeSettings: (settings: RootDBState['settings']) => dispatch(mergeSettings(settings))
+	})
+)(VoucherSettings)

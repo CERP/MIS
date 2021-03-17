@@ -10,18 +10,20 @@ interface P {
 }
 
 type S = {
-	fee: MISStudentFee
+	fee: MISClassFee
 }
 
-
 class DefaultFeeSettings extends Component<P, S> {
-
 	former: Former
 	constructor(props: P) {
 		super(props)
 
 		const { settings, classId } = props
-		const fee = settings && settings.classes && settings.classes.defaultFee && settings.classes.defaultFee[classId]
+		const fee =
+			settings &&
+			settings.classes &&
+			settings.classes.defaultFee &&
+			settings.classes.defaultFee[classId]
 
 		this.state = {
 			fee: fee || this.setDefaultFee()
@@ -30,28 +32,26 @@ class DefaultFeeSettings extends Component<P, S> {
 		this.former = new Former(this, [])
 	}
 
-	setDefaultFee = (): MISStudentFee => {
+	setDefaultFee = (): MISClassFee => {
 		return {
-			name: "",
-			type: "FEE",
-			amount: "",
-			period: "MONTHLY"
+			name: '',
+			type: 'FEE',
+			amount: 0,
+			period: 'MONTHLY'
 		}
 	}
 
-	isDisabled = (): boolean => {
+	// isDisabled = (): boolean => {
+	// 	const amount = this.state.fee.amount
+	// 	const name = this.state.fee.name.trim()
 
-		const amount = this.state.fee.amount.trim()
-		const name = this.state.fee.name.trim()
-
-		return amount.length === 0 || isNaN(parseFloat(amount)) || name.length === 0
-	}
+	// 	return amount.length === 0 || isNaN(parseFloat(amount)) || name.length === 0
+	// }
 
 	onSaveDefaultFee = (): void => {
+		// if (this.isDisabled()) return
 
-		if (this.isDisabled())
-			return
-
+		// @ts-ignore
 		const amount = parseFloat(this.state.fee.amount)
 		const settings = this.props.settings
 		const class_id = this.props.classId
@@ -68,7 +68,7 @@ class DefaultFeeSettings extends Component<P, S> {
 						[class_id]: {
 							...this.state.fee,
 							name: this.state.fee.name.trim(),
-							amount: Math.abs(amount).toString()
+							amount: Math.abs(amount)
 						}
 					}
 				}
@@ -77,11 +77,12 @@ class DefaultFeeSettings extends Component<P, S> {
 			modified_settings = {
 				...settings,
 				classes: {
+					additionalFee: {},
 					defaultFee: {
 						[class_id]: {
 							...this.state.fee,
 							name: this.state.fee.name.trim(),
-							amount: Math.abs(amount).toString() // fee must be absolute value
+							amount: Math.abs(amount)
 						}
 					}
 				}
@@ -90,37 +91,51 @@ class DefaultFeeSettings extends Component<P, S> {
 
 		// updating MISSettings
 		this.props.mergeSettings(modified_settings)
-		alert("Default Fee has been added")
+		alert('Default Fee has been added')
 	}
 
 	render() {
-		const disabled = this.isDisabled()
+		// const disabled = this.isDisabled()
 
-		return <div className="class-settings">
-			<div className="divider">Default Fee</div>
-			<div className="section">
-				<div className="row">
-					<label>Type</label>
-					<input type="text" disabled value={this.state.fee.type} />
-				</div>
-				<div className="row">
-					<label>Name</label>
-					<input type="text" {...this.former.super_handle(["fee", "name"])} placeholder="Enter Name" />
-				</div>
-				<div className="row">
-					<label>Amount</label>
-					<input type="number" {...this.former.super_handle(["fee", "amount"])} placeholder="Enter Amount" />
-				</div>
-				<div className="row">
-					<label>Fee Period</label>
-					<input type="text" disabled value={this.state.fee.period} />
-				</div>
+		return (
+			<div className="class-settings">
+				<div className="divider">Default Fee</div>
+				<div className="section">
+					<div className="row">
+						<label>Type</label>
+						<input type="text" disabled value={this.state.fee.type} />
+					</div>
+					<div className="row">
+						<label>Name</label>
+						<input
+							type="text"
+							{...this.former.super_handle(['fee', 'name'])}
+							placeholder="Enter Name"
+						/>
+					</div>
+					<div className="row">
+						<label>Amount</label>
+						<input
+							type="number"
+							{...this.former.super_handle(['fee', 'amount'])}
+							placeholder="Enter Amount"
+						/>
+					</div>
+					<div className="row">
+						<label>Fee Period</label>
+						<input type="text" disabled value={this.state.fee.period} />
+					</div>
 
-				<div className="note-message"><span>Note:</span> This is default class fee (MONTHLY) which will be added to every newly created student</div>
-				<div className={`button blue ${disabled ? 'disabled' : ''}`} onClick={this.onSaveDefaultFee}>Set Default Fee </div>
-
+					<div className="note-message">
+						<span>Note:</span> This is default class fee (MONTHLY) which will be added
+						to every newly created student
+					</div>
+					<div className={`button blue`} onClick={this.onSaveDefaultFee}>
+						Set Default Fee
+					</div>
+				</div>
 			</div>
-		</div>
+		)
 	}
 }
 export default DefaultFeeSettings

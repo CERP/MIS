@@ -1,4 +1,3 @@
-
 interface RootDBState {
 	faculty: {
 		[id: string]: MISTeacher
@@ -36,7 +35,7 @@ interface RootDBState {
 	package_info: MISPackage
 	diary: MISDiary
 	planner: {
-		// Will be able to add more planner stuff here i.e Teacher/Class shedule e.t.c 
+		// Will be able to add more planner stuff here i.e Teacher/Class shedule e.t.c
 		datesheet: {
 			[section_id: string]: {
 				[id: string]: MISDateSheet
@@ -58,18 +57,17 @@ interface RootDBState {
 	onboarding: MISOnboarding
 }
 interface MISOnboarding {
-	stage: "ADD_STAFF" | "ADD_CLASS" | "ADD_STUDENTS" | "COMPLETED"
+	stage: 'ADD_STAFF' | 'ADD_CLASS' | 'ADD_STUDENTS' | 'COMPLETED'
 }
 
 /**
  * TIP Types
  */
 
-
-type TIPGrades = "1" | "2" | "3" | "KG" | "Oral Test" | "Not Needed"
-type TIPLearningGroups = "Blue" | "Yellow" | "Green" | "Orange" | "Oral" | "Remediation Not Needed"
-type TIPLevels = "Level KG" | "Level 1" | "Level 2" | "Level 3" | "Oral" | "Remediation Not Needed"
-type TIPSubjects = "Maths" | "Urdu" | "English"
+type TIPGrades = '1' | '2' | '3' | 'KG' | 'Oral Test' | 'Not Needed'
+type TIPLearningGroups = 'Blue' | 'Yellow' | 'Green' | 'Orange' | 'Oral' | 'Remediation Not Needed'
+type TIPLevels = 'Level KG' | 'Level 1' | 'Level 2' | 'Level 3' | 'Oral' | 'Remediation Not Needed'
+type TIPSubjects = 'Maths' | 'Urdu' | 'English'
 
 type TIPCurriculum = {
 	[learning_level in TIPLevels]: {
@@ -77,7 +75,7 @@ type TIPCurriculum = {
 	}
 }
 
-// This is the TIP curriculum which lives inside the 
+// This is the TIP curriculum which lives inside the
 // MISTeacher object.
 type TIPTeacherCurriculum = {
 	[learning_level in TIPLevels]: {
@@ -111,7 +109,7 @@ interface TIPTests {
 	[id: string]: TIPTest
 }
 
-type TIPTestType = "Diagnostic" | "Formative" | "Summative" | "Oral"
+type TIPTestType = 'Diagnostic' | 'Formative' | 'Summative' | 'Oral'
 
 interface TIPTest {
 	name: string
@@ -203,12 +201,12 @@ interface BaseAnalyticsEvent {
 	meta: any
 }
 interface RouteAnalyticsEvent extends BaseAnalyticsEvent {
-	type: "ROUTE"
+	type: 'ROUTE'
 	time: number
 	meta: { route: string }
 }
 
-type QueueStatus = "queued" | "processing" | "failed"
+type QueueStatus = 'queued' | 'processing' | 'failed'
 
 interface ImageMergeItem {
 	id: string
@@ -229,7 +227,7 @@ interface RootReducerState {
 				action: {
 					path: string[]
 					value?: any
-					type: "MERGE" | "DELETE"
+					type: 'MERGE' | 'DELETE'
 				}
 				date: number
 			}
@@ -276,7 +274,6 @@ interface MISSMSHistory {
 	count: number
 }
 
-
 interface MISSettings {
 	shareData: boolean
 	schoolName: string
@@ -288,7 +285,7 @@ interface MISSettings {
 	}
 	schoolCode: string
 	vouchersPerPage: string
-	sendSMSOption: "SIM" | "API"
+	sendSMSOption: 'SIM' | 'API'
 	devices: {
 		[client_id: string]: string
 	}
@@ -302,7 +299,12 @@ interface MISSettings {
 	}
 	classes: {
 		defaultFee: {
-			[class_id: string]: MISStudentFee
+			[classId: string]: MISClassFee
+		}
+		additionalFee: {
+			[classId: string]: {
+				[feeId: string]: MISClassFee
+			}
 		}
 		feeVoucher?: {
 			dueDays: string
@@ -326,7 +328,7 @@ interface MISSettings {
 interface MISUser {
 	name: string
 	password: string
-	type: "admin" | "teacher"
+	type: 'admin' | 'teacher'
 	hasLogin: boolean
 }
 
@@ -379,7 +381,7 @@ interface MISStudent {
 	Notes: string
 	StartDate: number
 	AdmissionNumber: string
-	BloodType?: "" | "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-"
+	BloodType?: '' | 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-'
 	FamilyID?: string
 	Religion?: string
 	section_id: string
@@ -420,7 +422,6 @@ type Report = {
 	}
 }
 
-
 type MISReport = {
 	[name: string]: {
 		correct: number
@@ -428,7 +429,6 @@ type MISReport = {
 		link?: string
 	}
 }
-
 
 interface MISFamilyInfo {
 	ManName: string
@@ -467,15 +467,22 @@ interface MISStudentExam {
 
 interface MISStudentFee {
 	name: string
-	type: "FEE" | "SCHOLARSHIP" | ""
+	type: 'FEE' | 'SCHOLARSHIP' | ''
 	amount: string
-	period: "MONTHLY" | "SINGLE" | ""
+	period: 'MONTHLY' | 'SINGLE' | ''
+}
+
+interface MISClassFee {
+	name: string
+	type: 'FEE' | ''
+	amount: number
+	period: 'MONTHLY' | 'SINGLE' | ''
 }
 
 interface MISStudentPayment {
 	amount: number
 	date: number
-	type: "SUBMITTED" | "FORGIVEN" | "OWED"
+	type: 'SUBMITTED' | 'FORGIVEN' | 'OWED'
 	fee_id?: string
 	fee_name?: string
 }
@@ -491,31 +498,41 @@ interface BaseMISExpense {
 	amount: number
 	label: string
 	type: string
-	category: "SALARY" | "BILLS" | "STATIONERY" | "REPAIRS" | "RENT" | "ACTIVITY" | "DAILY" | "PETTY_CASH" | "OTHER" | "" | string
+	category:
+		| 'SALARY'
+		| 'BILLS'
+		| 'STATIONERY'
+		| 'REPAIRS'
+		| 'RENT'
+		| 'ACTIVITY'
+		| 'DAILY'
+		| 'PETTY_CASH'
+		| 'OTHER'
+		| ''
+		| string
 	date: number
 	time: number
 }
 
 interface MISExpense extends BaseMISExpense {
-	expense: "MIS_EXPENSE"
-	type: "PAYMENT_GIVEN"
+	expense: 'MIS_EXPENSE'
+	type: 'PAYMENT_GIVEN'
 	quantity: number
 }
 
 interface MISSalaryExpense extends BaseMISExpense {
-	expense: "SALARY_EXPENSE"
-	type: "PAYMENT_DUE" | "PAYMENT_GIVEN"
+	expense: 'SALARY_EXPENSE'
+	type: 'PAYMENT_DUE' | 'PAYMENT_GIVEN'
 	faculty_id: string
-	category: "SALARY"
+	category: 'SALARY'
 	advance: number
 	deduction: number
 	deduction_reason: string
 }
 
-
 interface MISStudentAttendanceEntry {
 	date: string
-	status: "PRESENT" | "ABSENT" | "LEAVE" | "SHORT_LEAVE" | "SICK_LEAVE" | "CASUAL_LEAVE"
+	status: 'PRESENT' | 'ABSENT' | 'LEAVE' | 'SHORT_LEAVE' | 'SICK_LEAVE' | 'CASUAL_LEAVE'
 	time: number
 }
 
@@ -551,7 +568,7 @@ interface MISTeacher {
 		family: boolean
 		prospective: boolean
 	}
-	Type?: "TEACHING" | "NON_TEACHING" | ""
+	Type?: 'TEACHING' | 'NON_TEACHING' | ''
 	SubAdmin?: boolean
 	ProfilePicture?: {
 		id: string
@@ -564,9 +581,14 @@ interface MISTeacher {
 }
 
 type MISTeacherAttendanceStatus =
-	| "check_in" | "check_out" | "absent" | "leave"
-	| "CASUAL_LEAVE" | "SICK_LEAVE" | "SHORT_LEAVE"
-	| "PRIVILEGED_LEAVE"
+	| 'check_in'
+	| 'check_out'
+	| 'absent'
+	| 'leave'
+	| 'CASUAL_LEAVE'
+	| 'SICK_LEAVE'
+	| 'SHORT_LEAVE'
+	| 'PRIVILEGED_LEAVE'
 
 interface MISTeacherAttendance {
 	[date: string]: {
@@ -602,10 +624,10 @@ interface MISDateSheet {
 
 type AugmentedMISExam = MISExam & { stats: MISStudentExam }
 interface StudentMarksSheet {
-	id: MISStudent["id"]
-	name: MISStudent["Name"]
-	manName: MISStudent["ManName"]
-	rollNo: MISStudent["RollNumber"]
+	id: MISStudent['id']
+	name: MISStudent['Name']
+	manName: MISStudent['ManName']
+	rollNo: MISStudent['RollNumber']
 	section_id?: MISStudent['section_id']
 	marks?: { total: number; obtained: number }
 	position?: number
@@ -626,13 +648,13 @@ type AugmentedStudent = {
 	forwardTo?: string
 } & MISStudent
 
-type MISGrades = RootDBState["settings"]["exams"]["grades"]
+type MISGrades = RootDBState['settings']['exams']['grades']
 type AugmentedStudent = {
 	section?: AugmentedSection
 	forwardTo?: string
 } & MISStudent
 
-type MISGrades = RootDBState["settings"]["exams"]["grades"]
+type MISGrades = RootDBState['settings']['exams']['grades']
 
 interface MISPackage {
 	date: number
@@ -643,14 +665,14 @@ interface BaseIlmxEvent {
 	type: string
 }
 interface IlmxVideoEvent {
-	type: "VIDEO"
+	type: 'VIDEO'
 	lesson_id: string
 	student_id: string
 	duration: number
 }
 
 interface IlmxExamEvent {
-	type: "ASSESSMENT"
+	type: 'ASSESSMENT'
 	student_id: string
 	score: number
 	total_score: number
@@ -675,7 +697,7 @@ interface IlmxLessonVideos {
 
 interface IlmxLesson {
 	name: string
-	type: "Video" | ""
+	type: 'Video' | ''
 	link: string
 	chapter_name: string
 }
@@ -691,7 +713,7 @@ type AugmentedIlmxLesson = {
 	}
 } & IlmxLesson
 
-type MISGrades = RootDBState["settings"]["exams"]["grades"]
+type MISGrades = RootDBState['settings']['exams']['grades']
 
 interface MISBanner {
 	active: boolean
@@ -713,10 +735,10 @@ type AugmentedSmsHistory = {
 } & MISSMSHistory
 
 interface Package {
-	title: "Taleem-1" | "Taleem-2" | "Taleem-3" | ""
+	title: 'Taleem-1' | 'Taleem-2' | 'Taleem-3' | ''
 	popular?: boolean
 	price: string
-	currency: "PKR"
+	currency: 'PKR'
 	annual_charge: string
 	limit: string
 }
@@ -729,7 +751,7 @@ type SchoolSignup = {
 	confirm_password?: string
 	schoolName: string
 
-	packageName: "FREE_TRIAL" | "TALEEM1" | "TALEEM2" | "TALEEM3"
+	packageName: 'FREE_TRIAL' | 'TALEEM1' | 'TALEEM2' | 'TALEEM3'
 
 	typeOfLogin?: string
 	referralSchoolName?: string
