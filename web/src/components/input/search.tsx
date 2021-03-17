@@ -1,18 +1,19 @@
 import React from 'react'
+import clsx from 'clsx'
+import toast from 'react-hot-toast'
 
-interface SearchInputProps {
-	setSearch: (searchText: string) => void
-}
-
-export const SearchInput = ({ setSearch }: SearchInputProps) => {
+export const SearchInput = (
+	props: React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
+) => {
 	return (
 		<div className="relative w-full md:w-3/5">
 			<input
-				type="text"
+				{...props}
+				type="search"
 				name="search"
-				className="tw-input pl-8 rounded-3xl shadow w-full"
+				onReset={() => toast.error('heloow')}
+				className={clsx(props.className, 'tw-input pl-8 rounded-3xl shadow w-full')}
 				placeholder="Search by name..."
-				onChange={e => setSearch(e.target.value)}
 				autoComplete="off"
 			/>
 			<div className="absolute text-gray-500 left-0 ml-2 mr-4 my-3 top-0">

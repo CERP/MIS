@@ -40,7 +40,7 @@ export const StaffList = () => {
 				<div className="text-center font-bold text-2xl my-4">School Staff</div>
 				<div className="text-gray-700 text-center">Total = {filteredStaff.length}</div>
 				<div className="flex flex-row items-center justify-between mt-4 mb-12 md:mb-20 space-x-4 md:space-y-0 md:space-x-60">
-					<SearchInput setSearch={setSearch} />
+					<SearchInput onChange={e => setSearch(e.target.value)} />
 					<select
 						value={isActive.toString()}
 						onChange={e => setIsAtive(e.target.value === 'true')}

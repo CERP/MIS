@@ -56,7 +56,7 @@ export const StudentList = () => {
 					}
 				</div>
 				<div className="flex flex-col md:flex-row items-center justify-between mt-4 mb-12 md:mb-20 space-y-4 md:space-y-0 md:space-x-60">
-					<SearchInput setSearch={setSearch} />
+					<SearchInput onChange={e => setSearch(e.target.value)} />
 					<div className="flex flex-row items-center space-x-2 w-full">
 						<select className="tw-select rounded shadow text-green-brand w-full">
 							<option>Tag</option>

@@ -30,7 +30,7 @@ export const ClassList = () => {
 				</div>
 
 				<div className="flex flex-col md:flex-row items-center justify-between mt-4 mb-12 md:mb-20 space-y-2 md:space-y-0 md:space-x-60">
-					<SearchInput setSearch={setSearch} />
+					<SearchInput onChange={e => setSearch(e.target.value)} />
 				</div>
 
 				<div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-12 gap-y-12 md:gap-y-20">
