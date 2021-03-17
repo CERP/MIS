@@ -322,7 +322,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 							/>
 							<div
 								onClick={() => setState({ ...state, showPassword: !showPassword })}
-								className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
+								className="absolute bg-gray-700 cursor-pointer flex inset-y-0 items-center m-2  px-3 py-2 right-0">
 								{<ShowHidePassword open={showPassword} />}
 							</div>
 						</div>
