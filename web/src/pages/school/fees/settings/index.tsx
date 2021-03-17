@@ -5,7 +5,7 @@ import { Tabbar } from 'components/tabs'
 import { AppLayout } from 'components/Layout/appLayout'
 
 import { DefaultFee } from './default'
-import { AdditionalFee } from './additional'
+import { AdditionalFee } from './additional-fee'
 import { Scholarship } from './scholarship'
 
 enum Tabs {
@@ -17,32 +17,30 @@ enum Tabs {
 const TabbarContent = [
 	{
 		tab: Tabs.DEFAULT,
-		title: "Default"
+		title: 'Default'
 	},
 	{
 		tab: Tabs.ADDITIONAL,
-		title: "Additional"
+		title: 'Additional'
 	},
 	{
 		tab: Tabs.SCHOLARSHIP,
-		title: "Scholarship"
-	},
+		title: 'Scholarship'
+	}
 ]
 
 export const FeeSettings = () => {
-
 	const [activeTab, setActiveTab] = useState(Tabs.DEFAULT)
 
-	const renderComponent = () => (
+	const renderComponent = () =>
 		cond([
 			[activeTab === Tabs.DEFAULT, () => <DefaultFee />],
 			[activeTab === Tabs.ADDITIONAL, () => <AdditionalFee />],
-			[activeTab === Tabs.SCHOLARSHIP, () => <Scholarship />],
+			[activeTab === Tabs.SCHOLARSHIP, () => <Scholarship />]
 		])
-	)
 
 	return (
-		<AppLayout title={"Fee Settings"}>
+		<AppLayout title={'Fee Settings'}>
 			<Tabbar tab={activeTab} setTab={setActiveTab} content={TabbarContent} />
 			{renderComponent()}
 		</AppLayout>
