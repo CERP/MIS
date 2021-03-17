@@ -45,4 +45,8 @@
 	.tw-select-tip {
 		@apply rounded-lg block bg-white border-none outline-none py-2 px-4 leading-tight text-blue-900 shadow-lg text-base;
 	}
+
+	.tw-is-form-bg-black {
+		@apply bg-transparent border-blue-brand ring-1 text-gray-200
+	}
 }

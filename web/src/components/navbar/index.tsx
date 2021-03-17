@@ -36,9 +36,11 @@ export const AppHeader = () => {
 					{({ open: openMenu }: { open: boolean }) => (
 						<div className="flex flex-col max-w-screen-3xl mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-16">
 							<div className="flex flex-row items-center justify-between p-4">
-								{isUserLogged && location.pathname !== '/home' ? (
+								{isUserLogged &&
+									location.pathname !== '/home' &&
+									location.pathname !== '/' ? (
 									<div
-										className="focus:shadow-outline text-red-brand rounded-full shadow-sm p-2 border border-gray-200 bg-white"
+										className="focus:shadow-outline text-red-brand rounded-full shadow-sm p-2 border border-gray-200 bg-white cursor-pointer"
 										onClick={() => history.goBack()}>
 										<svg
 											className="w-6"
