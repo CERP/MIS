@@ -9,27 +9,6 @@ export const getSubjectsFromTests = (
 	return [...new Set(subjects)]
 }
 
-/**
- * Gives an array of all the grades (TIPLevels) that are available based on the targeted instruction tests
- * NOT including diagnostic test
- * @param targeted_instruction
- */
-export const getGradesFromTests = (
-	targeted_instruction: RootReducerState['targeted_instruction']
-): TIPLevels[] => {
-	// note that unique_levels will have a key which is a TIPLevels type (level 0, level 1, ... etc)
-	const unique_levels = Object.values(targeted_instruction.tests)
-		.filter(t => t.type !== 'Diagnostic')
-		.reduce<Record<TIPLevels, number>>((agg, test) => {
-			return {
-				...agg,
-				[test.grade as TIPLevels]: 1
-			}
-		}, {} as Record<TIPLevels, number>)
-
-	return Object.keys(unique_levels) as TIPLevels[]
-}
-
 export const getClassnameFromSectionId = (
 	sortedSections: AugmentedSection[],
 	sectionId: string
