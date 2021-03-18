@@ -1,3 +1,4 @@
+//@ts-nocheck
 export const getSubjectsFromTests = (
 	targeted_instruction: RootReducerState['targeted_instruction']
 ): string[] => {
@@ -414,50 +415,36 @@ export const getLessonProgress = (teacher: MISTeacher) => {
  * @param test_id
  * @param type
  */
-/*
-export const getResult = (students: MISStudent, test_id: string, type: string) => {
+export const getResult = (students: MISStudent, test_id: string) => {
 	return Object.entries(students).reduce((agg, [std_id, std_obj]) => {
-		if (std_obj.targeted_instruction[type][test_id].checked) {
+		if (std_obj.targeted_instruction.results[test_id].checked) {
 			return {
 				...agg,
-				[std_id]: Object.values(std_obj.targeted_instruction[type][test_id].questions)
-					.reduce((agg2, question) => {
-						const val = question.is_correct ? 1 : 0
-						const slo_category = question.slo_category
-						if (agg2 && agg2.slo_obj && agg2.slo_obj[slo_category]) {
-							return {
-								...agg2,
-								std_name: std_obj.Name,
-								obtain: agg2.obtain + val,
-								total: agg2.total + 1,
-								slo_obj: {
-									...agg2.slo_obj,
-									[slo_category]: {
-										obtain: agg2.slo_obj[slo_category].obtain + val,
-										total: agg2.slo_obj[slo_category].total + 1
-									}
-								}
-							}
-						} else if (agg2.total > 0) {
-							return {
-								...agg2,
-								std_name: std_obj.Name,
-								obtain: agg2.obtain + val,
-								total: agg2.total + 1,
-								slo_obj: {
-									...agg2.slo_obj,
-									[slo_category]: {
-										obtain: val,
-										total: 1
-									}
-								}
-							}
-						}
+				[std_id]: Object.values(
+					std_obj.targeted_instruction.results[test_id].questions
+				).reduce((agg2, question) => {
+					const val = question.is_correct ? 1 : 0
+					const slo_category = question.slo_category
+					if (agg2 && agg2.slo_obj && agg2.slo_obj[slo_category]) {
 						return {
 							...agg2,
 							std_name: std_obj.Name,
-							obtain: val,
-							total: 1,
+							obtain: agg2.obtain + val,
+							total: agg2.total + 1,
+							slo_obj: {
+								...agg2.slo_obj,
+								[slo_category]: {
+									obtain: agg2.slo_obj[slo_category].obtain + val,
+									total: agg2.slo_obj[slo_category].total + 1
+								}
+							}
+						}
+					} else if (agg2.total > 0) {
+						return {
+							...agg2,
+							std_name: std_obj.Name,
+							obtain: agg2.obtain + val,
+							total: agg2.total + 1,
 							slo_obj: {
 								...agg2.slo_obj,
 								[slo_category]: {
@@ -466,21 +453,33 @@ export const getResult = (students: MISStudent, test_id: string, type: string) =
 								}
 							}
 						}
-					}, {})
+					}
+					return {
+						...agg2,
+						std_name: std_obj.Name,
+						obtain: val,
+						total: 1,
+						slo_obj: {
+							...agg2.slo_obj,
+							[slo_category]: {
+								obtain: val,
+								total: 1
+							}
+						}
+					}
+				}, {})
 			}
 		}
 		return { ...agg }
 	}, {})
 }
-*/
 
 /**
  *
  * @param result
  */
-/*
-export const getClassResult = (result: Result) => {
 
+export const getClassResult = (result: Result) => {
 	return Object.values(result || {}).reduce((agg, std_obj) => {
 		for (let [slo, slo_obj] of Object.entries(std_obj.slo_obj)) {
 			if (agg[slo]) {
@@ -504,7 +503,6 @@ export const getClassResult = (result: Result) => {
 		return agg
 	}, {})
 }
-*/
 
 export const downloadPdf = (name: string, pdf_url: string) => {
 	const e = document.createElement('a')
@@ -514,4 +512,17 @@ export const downloadPdf = (name: string, pdf_url: string) => {
 	document.body.appendChild(e)
 	e.click()
 	document.body.removeChild(e)
+}
+
+export const getTestType = (value: string) => {
+	switch (value) {
+		case 'oral-test':
+			return 'Oral'
+		case 'formative-test':
+			return 'Formative'
+		case 'summative-test':
+			return 'Summative'
+		default:
+			return 'Diagnostic'
+	}
 }
