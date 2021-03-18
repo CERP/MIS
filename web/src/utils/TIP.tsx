@@ -357,7 +357,7 @@ export const getLessonProgress = (teacher: MISTeacher) => {
  */
 export const getResult = (students: MISStudent[], test_id: string) => {
 	return Object.entries(students).reduce((agg, [std_id, std_obj]) => {
-		if (std_obj.targeted_instruction.results[test_id].checked) {
+		if (std_obj.targeted_instruction.results[test_id]?.checked) {
 			return {
 				...agg,
 				[std_id]: Object.values(
@@ -459,6 +459,7 @@ export const getTestType = (value: string) => {
 		case 'oral-test':
 			return 'Oral'
 		case 'formative-test':
+		case 'formative-result':
 			return 'Formative'
 		case 'summative-test':
 			return 'Summative'
