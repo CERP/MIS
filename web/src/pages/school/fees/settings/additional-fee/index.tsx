@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 import { AddFeeToStudent } from './single-student'
 import { AddFeeToClass } from './single-class'
 import cond from 'cond-construct'
+import clsx from 'clsx'
 
 enum AddFeeOptions {
 	STUDENT,
@@ -20,11 +21,8 @@ type State = {
 	addFeeTo: AddFeeOptions
 	classId: string
 	studentId: string
-	fee: {
-		amount: number
-		label: string
-		period: FeePeriod | ''
-	}
+	feeId: string
+	fee: MISClassFee | MISStudentFee
 }
 
 export const AdditionalFee = () => {
@@ -34,10 +32,12 @@ export const AdditionalFee = () => {
 		addFeeTo: AddFeeOptions.STUDENT,
 		classId: '',
 		studentId: '',
+		feeId: '',
 		fee: {
 			amount: 0,
-			label: '',
-			period: ''
+			name: '',
+			type: 'FEE',
+			period: FeePeriod.SINGLE
 		}
 	})
 
@@ -49,6 +49,12 @@ export const AdditionalFee = () => {
 		setState({ ...state, studentId: sid })
 	}
 
+	const updateFee = (id: string) => {
+		const student = students[state.studentId]
+		const fee = student?.fees?.[id]
+		setState({ ...state, fee })
+	}
+
 	const renderAddView = () =>
 		cond([
 			[
@@ -57,6 +63,8 @@ export const AdditionalFee = () => {
 					key={state.addFeeTo}
 					students={students}
 					setStudentId={setStudent}
+					setFeeId={updateFee}
+					resetStudent={() => setState({ ...state, studentId: '', feeId: '' })}
 				/>
 			],
 			[
@@ -65,8 +73,8 @@ export const AdditionalFee = () => {
 			]
 		])
 
-	// in case of AddFeeOptions.CLASS, store addtional fee template info inside settings object
-	// and generate payment against the students
+	const isFormDisabled =
+		!state.fee.name?.trim() || state.fee.name?.trim().length < 3 || !state.fee?.amount
 
 	return (
 		<div className="p-5 md:p-10 md:pb-0 relative print:hidden">
@@ -91,6 +99,7 @@ export const AdditionalFee = () => {
 							/>
 							<div className="text-sm">Student</div>
 						</div>
+
 						<div className="flex items-center">
 							<input
 								name="toClass"
@@ -128,27 +137,96 @@ export const AdditionalFee = () => {
 
 					{renderAddView()}
 
-					<div className="flex flex-row items-center space-x-4">
-						<div className="flex flex-col space-y-4 w-full">
-							<div>Label</div>
-							<input
-								name="label"
-								type="text"
-								placeholder="Enter label"
-								className="tw-is-form-bg-black tw-input w-full"
-							/>
+					<form className="space-y-4">
+						<div className="flex flex-row items-center space-x-4">
+							<div className="flex flex-col space-y-4 w-full">
+								<div>Label</div>
+								<input
+									name="name"
+									type="text"
+									required
+									onChange={e =>
+										setState({
+											...state,
+											fee: { ...state.fee, name: e.target.value }
+										})
+									}
+									value={state.fee.name}
+									placeholder="Enter label"
+									className="tw-is-form-bg-black tw-input w-full"
+								/>
+							</div>
+							<div className="flex flex-col space-y-4 w-3/5">
+								<div>Amount</div>
+								<input
+									name="amount"
+									type="number"
+									required
+									onChange={e =>
+										setState({
+											...state,
+											// @ts-ignore
+											fee: {
+												...state.fee,
+												amount: e.target.valueAsNumber ?? 0
+											}
+										})
+									}
+									value={state.fee.amount > 0 ? state.fee.amount : ''}
+									placeholder="Enter amount"
+									className="tw-is-form-bg-black tw-input w-full"
+								/>
+							</div>
 						</div>
-						<div className="flex flex-col space-y-4 w-3/5">
-							<div>Amount</div>
-							<input
-								name="amount"
-								type="number"
-								placeholder="Enter amount"
-								className="tw-is-form-bg-black tw-input w-full"
-							/>
+
+						<div>Duration</div>
+						<div className="flex items-center flex-wrap justify-between">
+							<div className="flex items-center">
+								<input
+									name="periodSingle"
+									type="radio"
+									onChange={() =>
+										setState({
+											...state,
+											fee: {
+												...state.fee,
+												period: FeePeriod.SINGLE
+											}
+										})
+									}
+									checked={state.fee.period === FeePeriod.SINGLE}
+									className="mr-2 w-4 h-4 cursor-pointer"
+								/>
+								<div className="text-sm">One Time</div>
+							</div>
+							<div className="flex items-center">
+								<input
+									name="periodMonthly"
+									type="radio"
+									onChange={() =>
+										setState({
+											...state,
+											fee: {
+												...state.fee,
+												period: FeePeriod.MONTHLY
+											}
+										})
+									}
+									checked={state.fee.period === FeePeriod.MONTHLY}
+									className="mr-2 w-4 h-4 cursor-pointer"
+								/>
+								<div className="sm:text-sm text-base">Every Month</div>
+							</div>
 						</div>
-					</div>
-					<button className="tw-btn-blue w-full font-semibold">Add Additional Fee</button>
+						<button
+							disabled={isFormDisabled}
+							type="submit"
+							className={clsx('tw-btn-blue w-full font-semibold', {
+								'bg-blue-300 pointer-events-none': isFormDisabled
+							})}>
+							Add Additional Fee
+						</button>
+					</form>
 				</div>
 			</div>
 		</div>
