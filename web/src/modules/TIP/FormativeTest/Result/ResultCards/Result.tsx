@@ -60,7 +60,7 @@ const Result: React.FC<PropsType> = props => {
 	return (
 		<div className="flex flex-wrap content-between mt-3">
 			<Headings
-				heading={url[2] === 'formative-test' ? 'Midpoint Test Result' : 'Final Test Result'}
+				heading={test_type === 'Formative' ? 'Midpoint Test Result' : 'Final Test Result'}
 				sub_heading=""
 			/>
 			{type === 'single_std_view' ? (
