@@ -1,4 +1,3 @@
-//@ts-nocheck
 import React, { useState, useMemo } from 'react'
 import { connect } from 'react-redux'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
@@ -51,11 +50,11 @@ const Result: React.FC<PropsType> = props => {
 	const test_id = test_ids.length > 0 ? test_ids[0] : ''
 
 	const level = class_map[class_name ? (class_name as TIPLevels) : 'Oral']
-	const group_students = useMemo(() => getStudentsByGroup(props.students, level, subject), [
-		subject
-	])
-
-	const result: Result = useMemo(() => getResult(group_students, test_id), [subject])
+	const group_students: MISStudent[] = useMemo(
+		() => getStudentsByGroup(props.students, level, subject),
+		[subject]
+	)
+	const result: SLOBasedResult = useMemo(() => getResult(group_students, test_id), [subject])
 	const class_result: SloObj = useMemo(() => getClassResult(result), [])
 
 	return (

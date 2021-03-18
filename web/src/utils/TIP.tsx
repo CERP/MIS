@@ -1,4 +1,3 @@
-//@ts-nocheck
 export const getSubjectsFromTests = (
 	targeted_instruction: RootReducerState['targeted_instruction']
 ): string[] => {
@@ -73,44 +72,6 @@ export const getStudentsByGroup = (
 		.filter(s => s.targeted_instruction.learning_level)
 		.filter(s => s.targeted_instruction.learning_level[subject])
 		.filter(s => s.targeted_instruction.learning_level[subject].grade === group)
-}
-
-export const getPDF = (
-	selectedSubject: string,
-	selectedSection: string,
-	targeted_instruction: RootReducerState['targeted_instruction'],
-	type: string
-) => {
-	let url, id
-	let misTest = targeted_instruction.tests
-	for (let [test_id, obj] of Object.entries(misTest)) {
-		if (
-			obj.grade.substring(obj.grade.length - 1) ===
-			selectedSection.substring(selectedSection.length - 1) &&
-			obj.subject === selectedSubject &&
-			obj.type === type
-		) {
-			url = obj.pdf_url
-			id = test_id
-			break
-		} else {
-			url = ''
-			id = ''
-		}
-	}
-	return [id, url]
-}
-
-export const getQuestionList = (
-	diagnostic_result: MISStudent['targeted_instruction']['results'],
-	test_id: string
-) => {
-	return Object.entries(diagnostic_result).reduce((agg, [id, test]) => {
-		if (id === test_id) {
-			return test
-		}
-		return agg
-	}, {})
 }
 
 export const calculateResult = (students: RootDBState['students'], sub: string) => {
@@ -415,7 +376,7 @@ export const getLessonProgress = (teacher: MISTeacher) => {
  * @param test_id
  * @param type
  */
-export const getResult = (students: MISStudent, test_id: string) => {
+export const getResult = (students: MISStudent[], test_id: string) => {
 	return Object.entries(students).reduce((agg, [std_id, std_obj]) => {
 		if (std_obj.targeted_instruction.results[test_id].checked) {
 			return {
@@ -467,7 +428,7 @@ export const getResult = (students: MISStudent, test_id: string) => {
 							}
 						}
 					}
-				}, {})
+				}, {} as SLOBasedResult['slo_obj'])
 			}
 		}
 		return { ...agg }
@@ -479,8 +440,8 @@ export const getResult = (students: MISStudent, test_id: string) => {
  * @param result
  */
 
-export const getClassResult = (result: Result) => {
-	return Object.values(result || {}).reduce((agg, std_obj) => {
+export const getClassResult = (result: SLOBasedResult) => {
+	return Object.values(result || {}).reduce<SloObj>((agg, std_obj) => {
 		for (let [slo, slo_obj] of Object.entries(std_obj.slo_obj)) {
 			if (agg[slo]) {
 				agg = {

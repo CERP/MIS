@@ -141,7 +141,7 @@ type TIPGradedQuestion = TIPQuestion & {
 
 // Too generic, bad name
 // are we still using this?
-interface SLOResult {
+interface SLOBasedResult {
 	[std_id: string]: {
 		std_name: string
 		obtain: number
@@ -151,7 +151,7 @@ interface SLOResult {
 }
 
 interface SloObj {
-	[slo_name]: {
+	[slo_name: string]: {
 		obtain: number
 		total: number
 	}
