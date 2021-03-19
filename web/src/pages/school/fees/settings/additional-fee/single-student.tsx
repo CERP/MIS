@@ -1,15 +1,17 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import clsx from 'clsx'
 import { Transition } from '@headlessui/react'
 
 import { SearchInput } from 'components/input/search'
 import { isValidStudent } from 'utils'
 import { toTitleCase } from 'utils/toTitleCase'
+import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 
 import UserIconSvg from 'assets/svgs/user.svg'
 
 interface AddFeeToStudentProps {
 	students: RootDBState['students']
+	classes: RootDBState['classes']
 	setStudentId: (sid: string) => void
 	setFee: (feeId: string) => void
 	resetStudent: () => void
@@ -23,16 +25,30 @@ enum FeePeriod {
 
 export const AddFeeToStudent = ({
 	students,
+	classes,
 	setStudentId,
 	setFee,
 	resetStudent
 }: AddFeeToStudentProps) => {
 	const [searchText, setSearchText] = useState('')
-	const [student, setStudent] = useState<MISStudent>()
+	const [student, setStudent] = useState<MISStudent & { section: AugmentedSection }>()
 
 	const clearStudent = () => {
 		setStudent(undefined), resetStudent()
 	}
+
+	const sectionStudents = useMemo(() => {
+		const sections = getSectionsFromClasses(classes)
+		return Object.values(students)
+			.filter(s => isValidStudent(s) && s.Active)
+			.map(s => {
+				const section = sections.find(section => s.section_id === section.id)
+				return {
+					...s,
+					section
+				}
+			})
+	}, [students, classes])
 
 	return (
 		<>
@@ -51,14 +67,11 @@ export const AddFeeToStudent = ({
 					enterFrom="opacity-0"
 					enterTo="opacity-100">
 					<div className="w-full max-h-40 overflow-y-auto bg-white rounded-3xl text-gray-900 p-4">
-						{Object.values(students)
-							.filter(
-								s =>
-									isValidStudent(s) &&
-									s.Active &&
-									(searchText
-										? s.Name.toLowerCase().includes(searchText.toLowerCase())
-										: true)
+						{sectionStudents
+							.filter(s =>
+								searchText
+									? s.Name.toLowerCase().includes(searchText.toLowerCase())
+									: true
 							)
 							.map(s => (
 								<div
@@ -78,8 +91,9 @@ export const AddFeeToStudent = ({
 											className="w-6 h-6 mr-2 bg-gray-500 rounded-full"
 											alt={s.Name}
 										/>
-										<div>{toTitleCase(s.Name)}</div>
+										<div className="text-sm">{toTitleCase(s.Name)}</div>
 									</div>
+									<div className="text-xs">{s.section?.namespaced_name}</div>
 								</div>
 							))}
 					</div>
@@ -104,6 +118,7 @@ export const AddFeeToStudent = ({
 							/>
 							<div>{student?.Name}</div>
 						</div>
+						<div className="text-xs">{student?.section?.namespaced_name}</div>
 						<button
 							onClick={clearStudent}
 							className="cursor-pointer flex items-center justify-center w-6 h-6 text-white bg-red-brand rounded-full p-1">
@@ -118,7 +133,7 @@ export const AddFeeToStudent = ({
 }
 
 type PreviousFeeProps = {
-	student: MISStudent
+	student: MISStudent & { section: AugmentedSection }
 	setFee: (feeId: string) => void
 }
 
