@@ -43,6 +43,13 @@ const ClassView: React.FC<P> = ({ students, sorted_sections }) => {
 					))}
 			</div>
 			<ClassViewPrintable students={students} section_id={section_id} />
+			<div className="w-full mt-5 text-center print:hidden">
+				<button
+					className="bg-blue-tip-brand font-bold text-sm md:text-base lg:text-lg border-none rounded-md text-white py-2 w-11/12 mb-4"
+					onClick={() => window.print()}>
+					Print
+				</button>
+			</div>
 		</>
 	)
 }

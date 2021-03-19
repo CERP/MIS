@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { getStudentsByGroup, getClassnameFromSectionId } from 'utils/TIP'
+import GroupViewPrintable from '../Printable/GroupView'
 import GroupViewCard from './GroupViewCard'
 
 interface P {
@@ -34,7 +35,7 @@ const GroupView: React.FC<P> = ({ students, sorted_sections }) => {
 
 	return (
 		<>
-			<div className="flex flex-row justify-around w-full">
+			<div className="flex flex-row justify-around w-full print:hidden">
 				<select className="tw-select" onChange={e => setGroup(e.target.value as TIPGrades)}>
 					<option value="">Group</option>
 					{ordered_groups.map(ordered_group => (
@@ -54,7 +55,7 @@ const GroupView: React.FC<P> = ({ students, sorted_sections }) => {
 					))}
 				</select>
 			</div>
-			<div className="h-10 items-center text-white text-xs bg-blue-tip-brand w-full mt-4 flex flex-row justify-around">
+			<div className="h-10 items-center text-white text-xs bg-blue-tip-brand w-full mt-4 flex flex-row justify-around print:hidden">
 				<div className="w-6/12 flex flex-row justify-between px-3 items-center m-2">
 					<div className="font-bold text-center">Name</div>
 				</div>
@@ -63,7 +64,7 @@ const GroupView: React.FC<P> = ({ students, sorted_sections }) => {
 					<div className="font-bold">Class</div>
 				</div>
 			</div>
-			<div className="flex flex-col">
+			<div className="flex flex-col print:hidden">
 				{Object.values(filtered_students || {}).map(std => {
 					const class_name = getClassnameFromSectionId(sorted_sections, std.section_id)
 					return (
@@ -75,6 +76,14 @@ const GroupView: React.FC<P> = ({ students, sorted_sections }) => {
 						/>
 					)
 				})}
+			</div>
+			<GroupViewPrintable students={filtered_students} sorted_sections={sorted_sections} />
+			<div className="w-full mt-5 text-center print:hidden">
+				<button
+					className="bg-blue-tip-brand font-bold text-sm md:text-base lg:text-lg border-none rounded-md text-white py-2 w-11/12 mb-4"
+					onClick={() => window.print()}>
+					Print
+				</button>
 			</div>
 		</>
 	)
