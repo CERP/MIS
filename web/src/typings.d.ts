@@ -188,7 +188,7 @@ interface SLOMapping {
 
 // TODO: way too generic of a name to keep in the typings file
 interface Params {
-	class_name: string
+	class_name: TIPLevels
 	subject: TIPSubjects
 	section_id: string
 	std_id: string

@@ -1,12 +1,20 @@
 import React, { useState, useMemo } from 'react'
+import clsx from 'clsx'
 import { connect } from 'react-redux'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
-import { getStudentsByGroup, getResult, getClassResult, getTestType } from 'utils/TIP'
 import Headings from '../../../Headings'
 import ChildView from './ChildView'
 import SkillView from './SkillView'
 import SingleStdView from './SingleStdView'
 import SingleSloView from './SingleSloView'
+import {
+	getStudentsByGroup,
+	getResult,
+	getClassResult,
+	getTestType,
+	convertLearningGradeToGroupName,
+	convertLearningLevelToGrade
+} from 'utils/TIP'
 interface P {
 	students: RootDBState['students']
 	targeted_instruction: RootReducerState['targeted_instruction']
@@ -14,14 +22,19 @@ interface P {
 
 type PropsType = P & RouteComponentProps
 
-const class_map: Record<TIPLevels, TIPGrades> = {
-	'Level KG': 'KG',
-	'Level 1': '1',
-	'Level 2': '2',
-	'Level 3': '3',
-	Oral: 'Oral Test',
-	'Remediation Not Needed': 'Not Needed'
+type OrderedGroupItem = {
+	group: TIPGrades
+	color: TIPLearningGroups
 }
+
+const ordered_groups: Array<OrderedGroupItem> = [
+	{ group: 'KG', color: 'Blue' },
+	{ group: '1', color: 'Yellow' },
+	{ group: '2', color: 'Green' },
+	{ group: '3', color: 'Orange' },
+	{ group: 'Oral Test', color: 'Oral' },
+	{ group: 'Not Needed', color: 'Remediation Not Needed' }
+]
 
 const Result: React.FC<PropsType> = props => {
 	const url = props.match.url.split('/')
@@ -29,19 +42,14 @@ const Result: React.FC<PropsType> = props => {
 
 	const { class_name, subject } = props.match.params as Params
 
+	const grade = convertLearningLevelToGrade(class_name)
+	const group = convertLearningGradeToGroupName(grade).toLowerCase()
+
+	const [selectedGroup, setSelectedGroup] = useState<TIPGrades>(grade)
 	const [id, setId] = useState('')
 	const [name, setName] = useState('')
 	const [slo, setSlo] = useState('')
 	const [type, setType] = useState(test_type === 'Formative' ? 'skill_view' : 'child_view')
-
-	const group =
-		class_name === '1'
-			? 'blue'
-			: class_name === '2'
-				? 'yellow'
-				: class_name === '3'
-					? 'green'
-					: 'orange'
 
 	const test_ids = Object.entries(props.targeted_instruction.tests)
 		.filter(([, t]) => t.type === test_type && t.subject === subject && t.grade === class_name)
@@ -49,14 +57,17 @@ const Result: React.FC<PropsType> = props => {
 
 	const test_id = test_ids.length > 0 ? test_ids[0] : ''
 
-	const level = class_map[class_name ? (class_name as TIPLevels) : 'Oral']
 	const group_students: MISStudent[] = useMemo(
-		() => getStudentsByGroup(props.students, level, subject),
-		[subject]
+		() => getStudentsByGroup(props.students, selectedGroup, subject),
+		[selectedGroup]
 	)
-	const result: SLOBasedResult = useMemo(() => getResult(group_students, test_id), [subject])
-	const class_result: SloObj = useMemo(() => getClassResult(result), [])
-
+	console.log('stddd', group_students)
+	const result: SLOBasedResult = useMemo(() => getResult(group_students, test_id), [
+		subject,
+		group_students
+	])
+	const class_result: SloObj = useMemo(() => getClassResult(result), [result])
+	console.log(selectedGroup)
 	return (
 		<div className="flex flex-wrap content-between mt-3">
 			<Headings
@@ -69,7 +80,7 @@ const Result: React.FC<PropsType> = props => {
 						className="flex flex-row justify-center w-full"
 						onClick={() => setType('child_view')}>
 						<div
-							className={`bg-${group}-primary h-6 my-3 w-3/4 rounded-3xl py-1 px-3 flex justify-center items-center`}>
+							className={`bg-${group}-tip-brand h-6 my-3 w-3/4 rounded-3xl py-1 px-3 flex justify-center items-center`}>
 							<img
 								className="h-8 w-8 rounded-full pl-0 absolute left-7 top-14"
 								src="https://cdn.dribbble.com/users/2199928/screenshots/11532918/shot-cropped-1590177932366.png?compress=1&resize=400x300"
@@ -110,11 +121,29 @@ const Result: React.FC<PropsType> = props => {
 					</div>
 				</div>
 			) : test_type === 'Summative' ? (
-				<div className="flex flex-row justify-around w-full my-3 mx-6">
-					<button
-						className={`rounded-md text-white border-none bg-${group}-primary py-2 outline-none w-5/6 text-lg font-bold `}>
-						Group {class_name}
-					</button>
+				<div className="flex flex-row justify-around items-center w-full my-3 mx-6">
+					<select
+						className={clsx(
+							'rounded-md text-white border-none py-2 outline-none w-5/6 text-lg font-bold',
+							{
+								'bg-gray-400': selectedGroup === 'Oral Test',
+								'bg-gray-600': selectedGroup === 'Not Needed',
+								'bg-blue-tip-brand': selectedGroup === '2',
+								'bg-yellow-tip-brand': selectedGroup === '3',
+								'bg-green-tip-brand': selectedGroup === '2',
+								'bg-orange-tip-brand': selectedGroup === '3'
+							}
+						)}
+						onChange={e => setSelectedGroup(e.target.value as TIPGrades)}>
+						<option className="capitalize text-center" value="">
+							{group} Group
+						</option>
+						{ordered_groups.map(ordered_group => (
+							<option key={ordered_group.group} value={ordered_group.group}>
+								{ordered_group.color} Group
+							</option>
+						))}
+					</select>
 				</div>
 			) : (
 							<div className="flex flex-row justify-around w-full my-3 mx-6">
