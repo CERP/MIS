@@ -25,6 +25,13 @@ type State = {
 	fee: MISClassFee | MISStudentFee
 }
 
+const defaultFee: State['fee'] = {
+	amount: 0,
+	name: '',
+	type: 'FEE',
+	period: FeePeriod.SINGLE
+}
+
 export const AdditionalFee = () => {
 	const { settings, classes, students } = useSelector((state: RootReducerState) => state.db)
 
@@ -33,12 +40,7 @@ export const AdditionalFee = () => {
 		classId: '',
 		studentId: '',
 		feeId: '',
-		fee: {
-			amount: 0,
-			name: '',
-			type: 'FEE',
-			period: FeePeriod.SINGLE
-		}
+		fee: defaultFee
 	})
 
 	const setStudent = (sid: string) => {
@@ -46,13 +48,19 @@ export const AdditionalFee = () => {
 	}
 
 	const setClass = (sid: string) => {
-		setState({ ...state, studentId: sid })
+		setState({ ...state, classId: sid })
 	}
 
-	const updateFee = (id: string) => {
+	const setFee = (id: string) => {
 		const student = students[state.studentId]
 		const fee = student?.fees?.[id]
-		setState({ ...state, fee })
+		setState({ ...state, feeId: id, fee })
+	}
+
+	const setClassFee = (id: string) => {
+		const classAdditional = settings?.classes.additionalFees[state.classId]
+		const fee = classAdditional?.[id]
+		setState({ ...state, feeId: id, fee })
 	}
 
 	const renderAddView = () =>
@@ -63,23 +71,35 @@ export const AdditionalFee = () => {
 					key={state.addFeeTo}
 					students={students}
 					setStudentId={setStudent}
-					setFeeId={updateFee}
-					resetStudent={() => setState({ ...state, studentId: '', feeId: '' })}
+					setFee={setFee}
+					resetStudent={() =>
+						setState({ ...state, studentId: '', feeId: '', fee: defaultFee })
+					}
 				/>
 			],
 			[
 				state.addFeeTo === AddFeeOptions.CLASS,
-				<AddFeeToClass key={state.addFeeTo} classes={classes} setClassId={setClass} />
+				<AddFeeToClass
+					key={state.addFeeTo}
+					classes={classes}
+					setClass={setClass}
+					settings={settings}
+					setFee={setClassFee}
+				/>
 			]
 		])
 
 	const isFormDisabled =
-		!state.fee.name?.trim() || state.fee.name?.trim().length < 3 || !state.fee?.amount
+		!state.fee?.name?.trim() ||
+		state.fee?.name?.trim().length < 3 ||
+		!state.fee?.amount ||
+		(state.addFeeTo === AddFeeOptions.STUDENT ? !state.studentId : false) ||
+		(state.addFeeTo === AddFeeOptions.CLASS ? !state.classId : false)
 
 	return (
 		<div className="p-5 md:p-10 md:pb-0 relative print:hidden">
 			<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-4 rounded-2xl bg-gray-700 py-4 my-4 md:mt-8 text-white min-h-screen">
-				<div className="text-center text-base">Manage additional Fees</div>
+				<div className="text-center text-xl font-semibold">Manage additional Fees</div>
 				<div className="space-y-6 px-4 w-full md:w-3/5">
 					<div className="font-semibold">Add Fee For:</div>
 					<div className="flex items-center flex-wrap justify-between">
@@ -142,7 +162,7 @@ export const AdditionalFee = () => {
 							<div className="flex flex-col space-y-4 w-full">
 								<div>Label</div>
 								<input
-									name="name"
+									name="feeName"
 									type="text"
 									required
 									onChange={e =>
@@ -172,7 +192,7 @@ export const AdditionalFee = () => {
 											}
 										})
 									}
-									value={state.fee.amount > 0 ? state.fee.amount : ''}
+									value={state.fee.amount || 0 > 0 ? state.fee.amount : ''}
 									placeholder="Enter amount"
 									className="tw-is-form-bg-black tw-input w-full"
 								/>
@@ -222,10 +242,17 @@ export const AdditionalFee = () => {
 							disabled={isFormDisabled}
 							type="submit"
 							className={clsx('tw-btn-blue w-full font-semibold', {
-								'bg-blue-300 pointer-events-none': isFormDisabled
+								'bg-gray-300 pointer-events-none': isFormDisabled
 							})}>
-							Add Additional Fee
+							{state.feeId ? 'Update Additional Fee' : 'Add Additional Fee'}
 						</button>
+						{state.feeId && (
+							<button
+								type="button"
+								className={clsx('tw-btn-red w-full font-semibold')}>
+								Delete Additional Fee
+							</button>
+						)}
 					</form>
 				</div>
 			</div>

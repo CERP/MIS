@@ -1,33 +1,37 @@
 import React, { useState } from 'react'
-
+import clsx from 'clsx'
 import { Transition } from '@headlessui/react'
+
 import { SearchInput } from 'components/input/search'
 import { isValidStudent } from 'utils'
+import { toTitleCase } from 'utils/toTitleCase'
 
 import UserIconSvg from 'assets/svgs/user.svg'
-import clsx from 'clsx'
 
 interface AddFeeToStudentProps {
 	students: RootDBState['students']
 	setStudentId: (sid: string) => void
-	setFeeId?: (feeId: string) => void
+	setFee: (feeId: string) => void
 	resetStudent: () => void
 }
 
+// TODO: move to single source of import
 enum FeePeriod {
 	MONTHLY = 'MONTHLY',
 	SINGLE = 'SINGLE'
 }
 
-export const AddFeeToStudent = ({ students, setStudentId, setFeeId }: AddFeeToStudentProps) => {
+export const AddFeeToStudent = ({
+	students,
+	setStudentId,
+	setFee,
+	resetStudent
+}: AddFeeToStudentProps) => {
 	const [searchText, setSearchText] = useState('')
 	const [student, setStudent] = useState<MISStudent>()
 
 	const clearStudent = () => {
-		// clear fee, student id if selected
-		setStudentId('')
-		setFeeId('')
-		setStudent(undefined)
+		setStudent(undefined), resetStudent()
 	}
 
 	return (
@@ -74,7 +78,7 @@ export const AddFeeToStudent = ({ students, setStudentId, setFeeId }: AddFeeToSt
 											className="w-6 h-6 mr-2 bg-gray-500 rounded-full"
 											alt={s.Name}
 										/>
-										<div>{s.Name}</div>
+										<div>{toTitleCase(s.Name)}</div>
 									</div>
 								</div>
 							))}
@@ -106,7 +110,7 @@ export const AddFeeToStudent = ({ students, setStudentId, setFeeId }: AddFeeToSt
 							x
 						</button>
 					</div>
-					{student && <PreviousFees student={student} setFee={setFeeId} />}
+					{student && <PreviousFees student={student} setFee={setFee} />}
 				</Transition>
 			}
 		</>
@@ -133,10 +137,8 @@ const PreviousFees = ({ student, setFee }: PreviousFeeProps) => {
 					key={id}
 					onClick={() => handleSelectedFee(id, fee)}
 					className={clsx(
-						'flex felx-row justify-between items-center p-2 bg-blue-brand text-sm rounded-lg cursor-pointer hover:bg-green-brand',
-						{
-							'bg-green-brand': id === selectedFee
-						}
+						'flex felx-row justify-between items-center p-2 text-sm rounded-lg cursor-pointer hover:bg-green-brand',
+						id === selectedFee ? 'bg-green-brand' : 'bg-blue-brand'
 					)}>
 					<div className="flex flex-col">
 						<div className="font-semibold">Duration</div>
