@@ -92,7 +92,7 @@ class VoucherSettings extends Component<P, S> {
 			modified_settings = {
 				...settings,
 				classes: {
-					additionalFee: {},
+					additionalFees: {},
 					defaultFee: {},
 					feeVoucher: {
 						dueDays,
