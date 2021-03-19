@@ -45,7 +45,7 @@ const DetailedAnalysis: React.FC<P> = ({ classes, students, targeted_instruction
 					/>
 				</div>
 			)}
-			<div className="flex flex-row justify-around px-3">
+			<div className="flex flex-row justify-around px-3 print:hidden">
 				<button
 					className={`border-none shadow-lg rounded-md p-3 outline-none ${view_type === 'class_view'
 							? 'bg-sea-green-tip-brand text-white'
