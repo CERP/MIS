@@ -113,7 +113,7 @@ function getDefaultSettings(): RootDBState['settings'] {
 		exams: defaultExams,
 		classes: {
 			defaultFee: {},
-			additionalFee: {},
+			additionalFees: {},
 			feeVoucher: {
 				dueDays: '',
 				feeFine: '',
@@ -218,8 +218,8 @@ class Settings extends Component<propsType, S> {
 		const defaultSettings = getDefaultSettings()
 
 		return {
-			additionalFee: {
-				...(settings?.classes ?? defaultSettings.classes).additionalFee
+			additionalFees: {
+				...(settings?.classes ?? defaultSettings.classes).additionalFees
 			},
 			defaultFee: {
 				...(settings

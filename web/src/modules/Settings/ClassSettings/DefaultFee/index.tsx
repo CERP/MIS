@@ -77,7 +77,7 @@ class DefaultFeeSettings extends Component<P, S> {
 			modified_settings = {
 				...settings,
 				classes: {
-					additionalFee: {},
+					additionalFees: {},
 					defaultFee: {
 						[class_id]: {
 							...this.state.fee,

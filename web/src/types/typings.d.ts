@@ -301,7 +301,7 @@ interface MISSettings {
 		defaultFee: {
 			[classId: string]: MISClassFee
 		}
-		additionalFee: {
+		additionalFees: {
 			[classId: string]: {
 				[feeId: string]: MISClassFee
 			}

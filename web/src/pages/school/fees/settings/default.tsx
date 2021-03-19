@@ -48,7 +48,7 @@ export const DefaultFee = () => {
 			modified_settings = {
 				...settings,
 				classes: {
-					additionalFee: {},
+					additionalFees: {},
 					defaultFee: state
 				}
 			}
