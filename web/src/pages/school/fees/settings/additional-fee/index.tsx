@@ -1,10 +1,18 @@
 import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+
+import cond from 'cond-construct'
+import clsx from 'clsx'
+import { v4 } from 'node-uuid'
+import { createDeletes, createMerges } from 'actions/core'
 
 import { AddFeeToStudent } from './single-student'
 import { AddFeeToClass } from './single-class'
-import cond from 'cond-construct'
-import clsx from 'clsx'
+import toast from 'react-hot-toast'
+import { TModal } from 'components/Modal'
+import { useComponentVisible } from 'hooks/useComponentVisible'
+import toTitleCase from 'utils/toTitleCase'
+import { isValidStudent } from 'utils'
 
 enum AddFeeOptions {
 	STUDENT,
@@ -33,23 +41,22 @@ const defaultFee: State['fee'] = {
 }
 
 export const AdditionalFee = () => {
+	const dispatch = useDispatch()
 	const { settings, classes, students } = useSelector((state: RootReducerState) => state.db)
 
+	const {
+		ref: confirmAddFeeModalRef,
+		isComponentVisible: confirmAddFeeModal,
+		setIsComponentVisible: setConfirmAddFeeModal
+	} = useComponentVisible(false)
+
 	const [state, setState] = useState<State>({
-		addFeeTo: AddFeeOptions.STUDENT,
+		addFeeTo: 3, // TODO: use some understandable hack
 		classId: '',
 		studentId: '',
 		feeId: '',
 		fee: defaultFee
 	})
-
-	const setStudent = (sid: string) => {
-		setState({ ...state, studentId: sid })
-	}
-
-	const setClass = (sid: string) => {
-		setState({ ...state, classId: sid })
-	}
 
 	const setFee = (id: string) => {
 		const student = students[state.studentId]
@@ -58,9 +65,99 @@ export const AdditionalFee = () => {
 	}
 
 	const setClassFee = (id: string) => {
-		const classAdditional = settings?.classes.additionalFees[state.classId]
+		const classAdditional = settings?.classes.additionalFees?.[state.classId]
 		const fee = classAdditional?.[id]
 		setState({ ...state, feeId: id, fee })
+	}
+
+	const addOrUpdateFee = () => {
+		// if there's an updatable fee, get the id from state
+		// if it isn't, generate unique id
+		const feeId = state.feeId || v4()
+
+		// For this case, we're keeping template in settings.classes.additionalFees
+		// to generate payments on run time.
+		// Note: make sure it will handle all cases to generate to payments for single or monthly payment
+		if (state.addFeeTo === AddFeeOptions.CLASS) {
+			dispatch(
+				createMerges([
+					{
+						path: ['db', 'settings', 'classes', 'additionalFees', state.classId, feeId],
+						value: state.fee
+					}
+				])
+			)
+		}
+
+		if (state.addFeeTo === AddFeeOptions.STUDENT) {
+			dispatch(
+				createMerges([
+					{
+						path: ['db', 'students', state.studentId, 'fees', feeId],
+						value: state.fee
+					}
+				])
+			)
+		}
+
+		if (state.addFeeTo === AddFeeOptions.ALL) {
+			const merges = Object.values(students)
+				.filter(s => isValidStudent(s) && s.Active)
+				.reduce(
+					(agg, curr) => [
+						...agg,
+						{
+							path: ['db', 'students', curr.id, 'fees', feeId],
+							value: state.fee
+						}
+					],
+					[]
+				)
+			// TODO: make it handle all possible cases
+			dispatch(createMerges(merges))
+		}
+
+		toast.success('Additional fee has been added')
+		setConfirmAddFeeModal(false)
+
+		setState({ ...state, fee: defaultFee, feeId: '' })
+	}
+
+	const deleteFee = () => {
+		// TODO: use custom alert
+		if (!window.confirm('Are you sure you want to remove fee?')) {
+			return
+		}
+
+		if (state.addFeeTo === AddFeeOptions.CLASS) {
+			dispatch(
+				createDeletes([
+					{
+						path: [
+							'db',
+							'settings',
+							'classes',
+							'additionalFees',
+							state.classId,
+							state.feeId
+						]
+					}
+				])
+			)
+		}
+
+		if (state.addFeeTo === AddFeeOptions.STUDENT) {
+			dispatch(
+				createDeletes([
+					{
+						path: ['db', 'students', state.studentId, 'fees']
+					}
+				])
+			)
+		}
+
+		toast.success('Addition fee has been deleted')
+		setState({ ...state, fee: defaultFee, feeId: '' })
 	}
 
 	const renderAddView = () =>
@@ -70,7 +167,8 @@ export const AdditionalFee = () => {
 				<AddFeeToStudent
 					key={state.addFeeTo}
 					students={students}
-					setStudentId={setStudent}
+					classes={classes}
+					setStudentId={id => setState({ ...state, studentId: id })}
 					setFee={setFee}
 					resetStudent={() =>
 						setState({ ...state, studentId: '', feeId: '', fee: defaultFee })
@@ -82,12 +180,19 @@ export const AdditionalFee = () => {
 				<AddFeeToClass
 					key={state.addFeeTo}
 					classes={classes}
-					setClass={setClass}
+					setClass={id => setState({ ...state, classId: id })}
 					settings={settings}
 					setFee={setClassFee}
 				/>
 			]
 		])
+
+	const handleSubmitForm = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault()
+
+		// TODO: add validation here
+		setConfirmAddFeeModal(true)
+	}
 
 	const isFormDisabled =
 		!state.fee?.name?.trim() ||
@@ -102,7 +207,7 @@ export const AdditionalFee = () => {
 				<div className="text-center text-xl font-semibold">Manage additional Fees</div>
 				<div className="space-y-6 px-4 w-full md:w-3/5">
 					<div className="font-semibold">Add Fee For:</div>
-					<div className="flex items-center flex-wrap justify-between">
+					<div className="flex items-center space-x-8">
 						<div className="flex items-center">
 							<input
 								name="toStudent"
@@ -136,28 +241,62 @@ export const AdditionalFee = () => {
 							/>
 							<div className="text-sm">Class</div>
 						</div>
-						<div className="flex items-center">
-							<input
-								name="toAll"
-								type="radio"
-								onChange={() =>
-									setState({
-										...state,
-										addFeeTo: AddFeeOptions.ALL,
-										classId: '',
-										studentId: ''
-									})
-								}
-								checked={state.addFeeTo === AddFeeOptions.ALL}
-								className="mr-2 w-4 h-4 cursor-pointer"
-							/>
-							<div className="text-sm">All</div>
-						</div>
+						{state.addFeeTo !== AddFeeOptions.STUDENT && (
+							<div className="flex items-center">
+								<input
+									name="toAll"
+									type="radio"
+									onChange={() =>
+										setState({
+											...state,
+											addFeeTo: AddFeeOptions.ALL,
+											classId: '',
+											studentId: ''
+										})
+									}
+									checked={state.addFeeTo === AddFeeOptions.ALL}
+									className="mr-2 w-4 h-4 cursor-pointer"
+								/>
+								<div className="text-sm">All Students</div>
+							</div>
+						)}
 					</div>
 
 					{renderAddView()}
-
-					<form className="space-y-4">
+					{confirmAddFeeModal && (
+						<TModal>
+							<div
+								className="bg-white md:p-10 p-8 space-y-2 text-center"
+								ref={confirmAddFeeModalRef}>
+								<div>Confirm Additional Fee</div>
+								<div className="font-semibold text-lg md:text-xl"></div>
+								<div className="text-green-brand font-semibold text-lg">
+									{state.fee.name} - Rs. {state.fee.amount}
+								</div>
+								<div className="">
+									will be added to{' '}
+									{state.addFeeTo === AddFeeOptions.CLASS
+										? 'Class'
+										: state.addFeeTo === AddFeeOptions.STUDENT
+											? toTitleCase(students[state.studentId].Name)
+											: 'All Students'}
+								</div>
+								<div className="flex flex-row justify-between space-x-4">
+									<button
+										onClick={() => setConfirmAddFeeModal(false)}
+										className="py-1 md:py-2 tw-btn bg-gray-400 hover:bg-gray-500 text-white w-full">
+										Cancel
+									</button>
+									<button
+										onClick={addOrUpdateFee}
+										className="py-1 md:py-2 tw-btn-red w-full">
+										Confirm
+									</button>
+								</div>
+							</div>
+						</TModal>
+					)}
+					<form className="space-y-4" onSubmit={handleSubmitForm}>
 						<div className="flex flex-row items-center space-x-4">
 							<div className="flex flex-col space-y-4 w-full">
 								<div>Label</div>
@@ -200,7 +339,7 @@ export const AdditionalFee = () => {
 						</div>
 
 						<div>Duration</div>
-						<div className="flex items-center flex-wrap justify-between">
+						<div className="flex items-center space-x-8">
 							<div className="flex items-center">
 								<input
 									name="periodSingle"
@@ -241,15 +380,19 @@ export const AdditionalFee = () => {
 						<button
 							disabled={isFormDisabled}
 							type="submit"
-							className={clsx('tw-btn-blue w-full font-semibold', {
-								'bg-gray-300 pointer-events-none': isFormDisabled
-							})}>
+							className={clsx(
+								'tw-btn w-full font-semibold',
+								isFormDisabled
+									? 'bg-gray-300 pointer-events-none'
+									: 'bg-green-brand'
+							)}>
 							{state.feeId ? 'Update Additional Fee' : 'Add Additional Fee'}
 						</button>
 						{state.feeId && (
 							<button
+								onClick={deleteFee}
 								type="button"
-								className={clsx('tw-btn-red w-full font-semibold')}>
+								className={'tw-btn-red w-full font-semibold'}>
 								Delete Additional Fee
 							</button>
 						)}

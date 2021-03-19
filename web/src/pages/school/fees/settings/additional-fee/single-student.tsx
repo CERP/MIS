@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import clsx from 'clsx'
 import { Transition } from '@headlessui/react'
 
@@ -36,6 +36,13 @@ export const AddFeeToStudent = ({
 	const clearStudent = () => {
 		setStudent(undefined), resetStudent()
 	}
+
+	useEffect(() => {
+		if (student) {
+			const section = getSectionsFromClasses(classes).find(s => s.id === student.id)
+			setStudent({ ...students?.[student.id], section })
+		}
+	}, [students])
 
 	const sectionStudents = useMemo(() => {
 		const sections = getSectionsFromClasses(classes)
