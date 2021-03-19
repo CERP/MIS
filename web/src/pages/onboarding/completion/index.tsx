@@ -31,11 +31,11 @@ export const OnboardingCompletion = () => {
 				/>
 				<div className="text-center space-y-4">
 					<div className="text-lg font-semibold">
-						Class {lastCreatedSection.namespaced_name}
+						Class {lastCreatedSection?.namespaced_name || 'Not Created'}
 						<span> created</span>
 					</div>
 					<div className="text-lg font-semibold">
-						Class Teacher: {sectionTeacher?.Name}
+						Class Teacher: {sectionTeacher?.Name || 'Not Available'}
 					</div>
 					<div className="text-lg font-semibold">
 						Total Students: {Object.keys(students).length}

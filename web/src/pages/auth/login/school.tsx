@@ -172,7 +172,7 @@ export const SchoolLogin = () => {
 											showHidePassword: !state.showHidePassword
 										})
 									}
-									className="absolute bg-gray-700 cursor-pointer flex inset-y-0 items-center m-2  px-3 py-2 right-0">
+									className="absolute cursor-pointer flex inset-y-0 items-center m-2  px-3 py-2 right-0">
 									{<ShowHidePassword open={state.showHidePassword} />}
 								</div>
 							</div>
