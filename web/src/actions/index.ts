@@ -1265,24 +1265,50 @@ export const removeSubjectFromDatesheet = (id: string, subj: string, section_id:
 }
 
 export const resetFees = (students: MISStudent[]) => (dispatch: Function) => {
-	let deletes_fees = []
-	let deletes_payments = []
+	const { deletes, merges } = (students || []).reduce(
+		(agg, curr) => {
+			// Make sure create merges for fees and payments
+			// If fees exist to avoid unnecessary dispatch deletes action
+			if (curr.fees && Object.keys(curr.fees).length > 0) {
+				return {
+					deletes: [
+						...agg.deletes,
+						{
+							path: ['db', 'students', curr.id, 'fees']
+						},
+						{
+							path: ['db', 'students', curr.id, 'payment']
+						}
+					],
+					merges: [
+						...agg.merges,
+						{
+							path: ['db', 'students', curr.id, 'fees'],
+							value: {}
+						},
+						{
+							path: ['db', 'students', curr.id, 'payment'],
+							value: {}
+						}
+					]
+				}
+			}
+			return agg
+		},
+		{ deletes: [], merges: [] }
+	)
 
-	for (const s of Object.values(students)) {
-		for (const fid of Object.keys(s.fees)) {
-			deletes_fees.push({
-				path: ['db', 'students', s.id, 'fees', fid]
-			})
-		}
-
-		for (const pid of Object.keys(s.payments)) {
-			deletes_payments.push({
-				path: ['db', 'students', s.id, 'payments', pid]
-			})
-		}
+	if (deletes.length > 0) {
+		dispatch(createDeletes(deletes))
 	}
 
-	dispatch(createDeletes([...deletes_fees, ...deletes_payments]))
+	// here need to create merge because deleting path, removes fees and payments keys from
+	// student profile. To prevent this, have to create merge action as well.
+	// Recently it causes bugs in single student profile and possible, it will create issues in
+	// other places of app where fees or payment are being processed.
+	if (merges.length > 0) {
+		dispatch(createMerges(merges))
+	}
 }
 
 export const RESET_ADMIN_PASSWORD = 'RESET_ADMIN_PASSWORD'
