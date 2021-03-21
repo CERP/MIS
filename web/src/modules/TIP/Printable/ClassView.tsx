@@ -9,10 +9,10 @@ interface P {
 const ClassViewPrintable: React.FC<P> = ({ students, section_id }) => {
 	return (
 		<div className="flex flex-wrap content-between hidden print:block">
-			<table className="w-full border border-black">
+			<table className="w-11/12 m-auto border border-black">
 				<thead>
 					<tr>
-						<div className="h-10 items-center w-full mt-4 flex flex-row justify-around">
+						<th className="h-10 items-center w-full mt-4 flex flex-row justify-around">
 							<div className="w-4/12 md:w-6/12 flex flex-row justify-between px-3 items-center m-2">
 								<td className="font-bold text-center text-lg">Name</td>
 							</div>
@@ -25,7 +25,7 @@ const ClassViewPrintable: React.FC<P> = ({ students, section_id }) => {
 									</td>
 								))}
 							</div>
-						</div>
+						</th>
 					</tr>
 				</thead>
 				<tbody>

@@ -7,6 +7,7 @@ import ChildView from './ChildView'
 import SkillView from './SkillView'
 import SingleStdView from './SingleStdView'
 import SingleSloView from './SingleSloView'
+import { DownArrow } from 'assets/icons'
 import {
 	getStudentsByGroup,
 	getResult,
@@ -45,7 +46,8 @@ const Result: React.FC<PropsType> = props => {
 	const grade = convertLearningLevelToGrade(class_name)
 	const group = convertLearningGradeToGroupName(grade).toLowerCase()
 
-	const [selectedGroup, setSelectedGroup] = useState<TIPGrades>(grade)
+	const [display_dropdown, setDisplayDropdown] = useState(false)
+	const [selected_group, setSelectedGroup] = useState<TIPGrades>(grade)
 	const [id, setId] = useState('')
 	const [name, setName] = useState('')
 	const [slo, setSlo] = useState('')
@@ -58,8 +60,8 @@ const Result: React.FC<PropsType> = props => {
 	const test_id = test_ids.length > 0 ? test_ids[0] : ''
 
 	const group_students: MISStudent[] = useMemo(
-		() => getStudentsByGroup(props.students, selectedGroup, subject),
-		[selectedGroup]
+		() => getStudentsByGroup(props.students, selected_group, subject),
+		[selected_group]
 	)
 	console.log('stddd', group_students)
 	const result: SLOBasedResult = useMemo(() => getResult(group_students, test_id), [
@@ -67,7 +69,7 @@ const Result: React.FC<PropsType> = props => {
 		group_students
 	])
 	const class_result: SloObj = useMemo(() => getClassResult(result), [result])
-	console.log(selectedGroup)
+
 	return (
 		<div className="flex flex-wrap content-between mt-3">
 			<Headings
@@ -121,30 +123,46 @@ const Result: React.FC<PropsType> = props => {
 					</div>
 				</div>
 			) : test_type === 'Summative' ? (
-				<div className="flex flex-row justify-around items-center w-full my-3 mx-6">
-					<select
-						className={clsx(
-							'rounded-md text-white border-none py-2 outline-none w-5/6 text-lg font-bold',
-							{
-								'bg-gray-400': selectedGroup === 'Oral Test',
-								'bg-gray-600': selectedGroup === 'Not Needed',
-								'bg-blue-tip-brand': selectedGroup === '2',
-								'bg-yellow-tip-brand': selectedGroup === '3',
-								'bg-green-tip-brand': selectedGroup === '2',
-								'bg-orange-tip-brand': selectedGroup === '3'
-							}
-						)}
-						onChange={e => setSelectedGroup(e.target.value as TIPGrades)}>
-						<option className="capitalize text-center" value="">
-							{group} Group
-						</option>
-						{ordered_groups.map(ordered_group => (
-							<option key={ordered_group.group} value={ordered_group.group}>
-								{ordered_group.color} Group
-							</option>
-						))}
-					</select>
-				</div>
+				<>
+					<div className="flex flex-row justify-center items-center w-full my-3 mx-6">
+						<button
+							className={clsx(
+								'rounded-md text-white border-none py-2 outline-none w-5/6 text-lg font-bold',
+								{
+									'bg-gray-400': selected_group === 'Oral Test',
+									'bg-gray-600': selected_group === 'Not Needed',
+									'bg-blue-tip-brand': selected_group === 'KG',
+									'bg-yellow-tip-brand': selected_group === '1',
+									'bg-green-tip-brand': selected_group === '2',
+									'bg-orange-tip-brand': selected_group === '3'
+								}
+							)}
+							onClick={() => setDisplayDropdown(!display_dropdown)}>
+							{convertLearningGradeToGroupName(selected_group)} Group
+							<img
+								className="right-16 md:right-24 lg:right-40 top-36 absolute"
+								src={DownArrow}
+							/>
+						</button>
+					</div>
+					{display_dropdown && (
+						<div className="w-full absolute top-44 flex justify-center">
+							<div className="w-5/6  bg-white border border-black">
+								{ordered_groups.map(ordered_group => (
+									<div
+										className="hover:bg-light-blue-tip-brand hover:text-white p-2 cursor-pointer"
+										key={ordered_group.group}
+										onClick={() => (
+											setSelectedGroup(ordered_group.group),
+											setDisplayDropdown(!display_dropdown)
+										)}>
+										{ordered_group.color} Group
+									</div>
+								))}
+							</div>
+						</div>
+					)}
+				</>
 			) : (
 							<div className="flex flex-row justify-around w-full my-3 mx-6">
 								<button

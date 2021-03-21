@@ -7,7 +7,7 @@ interface P {
 
 const ClassViewCard: React.FC<P> = ({ std }) => {
 	return (
-		<div className="h-10 items-center w-full mt-4 flex flex-row justify-around border-b-1 border-black">
+		<td className="h-10 items-center mt-4 flex flex-row justify-around border-b border-black">
 			<div className="w-4/12 md:w-6/12 flex flex-row justify-between px-3 items-center m-2">
 				<div className="font-bold text-center">{std.Name}</div>
 			</div>
@@ -25,7 +25,7 @@ const ClassViewCard: React.FC<P> = ({ std }) => {
 						)
 					})}
 			</div>
-		</div>
+		</td>
 	)
 }
 
