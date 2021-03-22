@@ -5,6 +5,7 @@ import { Transition } from '@headlessui/react'
 import { SearchInput } from 'components/input/search'
 import { isValidStudent } from 'utils'
 import { toTitleCase } from 'utils/toTitleCase'
+import { MISFeePeriods } from 'constants/index'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 
 import UserIconSvg from 'assets/svgs/user.svg'
@@ -15,12 +16,6 @@ interface AddFeeToStudentProps {
 	setStudentId: (sid: string) => void
 	setFee: (feeId: string) => void
 	resetStudent: () => void
-}
-
-// TODO: move to single source of import
-enum FeePeriod {
-	MONTHLY = 'MONTHLY',
-	SINGLE = 'SINGLE'
 }
 
 export const AddFeeToStudent = ({
@@ -153,7 +148,7 @@ const PreviousFees = ({ student, setFee }: PreviousFeeProps) => {
 	}
 
 	return (
-		<div className="max-h-40 md:max-h-60 mt-4 space-y-2">
+		<div className="max-h-40 md:max-h-60 mt-4 space-y-2  pr-2 overflow-y-auto">
 			{Object.entries(student.fees || {}).map(([id, fee]) => (
 				<div
 					key={id}
@@ -164,7 +159,9 @@ const PreviousFees = ({ student, setFee }: PreviousFeeProps) => {
 					)}>
 					<div className="flex flex-col">
 						<div className="font-semibold">Duration</div>
-						<div>{fee.period === FeePeriod.MONTHLY ? 'Every Month' : 'One Time'}</div>
+						<div>
+							{fee.period === MISFeePeriods.MONTHLY ? 'Every Month' : 'One Time'}
+						</div>
 					</div>
 					<div className="flex flex-col">
 						<div className="font-semibold">Label</div>

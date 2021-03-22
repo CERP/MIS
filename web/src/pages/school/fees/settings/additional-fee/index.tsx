@@ -1,28 +1,24 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-
+import { v4 } from 'node-uuid'
 import cond from 'cond-construct'
 import clsx from 'clsx'
-import { v4 } from 'node-uuid'
+import toast from 'react-hot-toast'
+
 import { createDeletes, createMerges } from 'actions/core'
 
 import { AddFeeToStudent } from './single-student'
 import { AddFeeToClass } from './single-class'
-import toast from 'react-hot-toast'
 import { TModal } from 'components/Modal'
-import { useComponentVisible } from 'hooks/useComponentVisible'
-import toTitleCase from 'utils/toTitleCase'
+import { toTitleCase } from 'utils/toTitleCase'
 import { isValidStudent } from 'utils'
+import { MISFeePeriods } from 'constants/index'
+import { useComponentVisible } from 'hooks/useComponentVisible'
 
 enum AddFeeOptions {
 	STUDENT,
 	CLASS,
 	ALL
-}
-
-enum FeePeriod {
-	MONTHLY = 'MONTHLY',
-	SINGLE = 'SINGLE'
 }
 
 type State = {
@@ -37,7 +33,7 @@ const defaultFee: State['fee'] = {
 	amount: 0,
 	name: '',
 	type: 'FEE',
-	period: FeePeriod.SINGLE
+	period: MISFeePeriods.SINGLE
 }
 
 export const AdditionalFee = () => {
@@ -349,11 +345,11 @@ export const AdditionalFee = () => {
 											...state,
 											fee: {
 												...state.fee,
-												period: FeePeriod.SINGLE
+												period: MISFeePeriods.SINGLE
 											}
 										})
 									}
-									checked={state.fee.period === FeePeriod.SINGLE}
+									checked={state.fee.period === MISFeePeriods.SINGLE}
 									className="mr-2 w-4 h-4 cursor-pointer"
 								/>
 								<div className="text-sm">One Time</div>
@@ -367,11 +363,11 @@ export const AdditionalFee = () => {
 											...state,
 											fee: {
 												...state.fee,
-												period: FeePeriod.MONTHLY
+												period: MISFeePeriods.MONTHLY
 											}
 										})
 									}
-									checked={state.fee.period === FeePeriod.MONTHLY}
+									checked={state.fee.period === MISFeePeriods.MONTHLY}
 									className="mr-2 w-4 h-4 cursor-pointer"
 								/>
 								<div className="sm:text-sm text-base">Every Month</div>

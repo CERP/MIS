@@ -10,8 +10,13 @@ export enum StaffType {
 }
 
 export enum OnboardingStage {
-	ADD_STAFF = "ADD_STAFF",
-	ADD_CLASS = "ADD_CLASS",
-	ADD_STUDENTS = "ADD_STUDENTS",
-	COMPLETED = "COMPLETED"
+	ADD_STAFF = 'ADD_STAFF',
+	ADD_CLASS = 'ADD_CLASS',
+	ADD_STUDENTS = 'ADD_STUDENTS',
+	COMPLETED = 'COMPLETED'
+}
+
+export enum MISFeePeriods {
+	MONTHLY = 'MONTHLY',
+	SINGLE = 'SINGLE'
 }

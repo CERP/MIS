@@ -2,19 +2,14 @@ import React, { useState } from 'react'
 import { Transition } from '@headlessui/react'
 import clsx from 'clsx'
 
-import toTitleCase from 'utils/toTitleCase'
+import { toTitleCase } from 'utils/toTitleCase'
+import { MISFeePeriods } from 'constants/index'
 
 interface AddFeeToClassProps {
 	classes: RootDBState['classes']
 	settings: MISSettings
 	setClass: (classId: string) => void
 	setFee: (feeId: string) => void
-}
-
-// TODO: move to single source of import
-enum FeePeriod {
-	MONTHLY = 'MONTHLY',
-	SINGLE = 'SINGLE'
 }
 
 export const AddFeeToClass = ({ classes, settings, setClass, setFee }: AddFeeToClassProps) => {
@@ -72,7 +67,7 @@ const PreviousFees = ({ fees, setFee }: PreviousFeeProps) => {
 	}
 
 	return (
-		<div className="max-h-40 md:max-h-60 mt-4 space-y-2">
+		<div className="max-h-40 md:max-h-60 mt-4 space-y-2 pr-2 overflow-y-auto">
 			{Object.entries(fees || {}).map(([id, fee]) => (
 				<div
 					key={id}
@@ -83,7 +78,9 @@ const PreviousFees = ({ fees, setFee }: PreviousFeeProps) => {
 					)}>
 					<div className="flex flex-col">
 						<div className="font-semibold">Duration</div>
-						<div>{fee.period === FeePeriod.MONTHLY ? 'Every Month' : 'One Time'}</div>
+						<div>
+							{fee.period === MISFeePeriods.MONTHLY ? 'Every Month' : 'One Time'}
+						</div>
 					</div>
 					<div className="flex flex-col">
 						<div className="font-semibold">Label</div>
