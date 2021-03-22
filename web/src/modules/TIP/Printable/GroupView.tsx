@@ -14,7 +14,7 @@ const GroupViewPrintable: React.FC<P> = ({ students, sorted_sections }) => {
 				<table className="w-full border border-black">
 					<thead>
 						<tr>
-							<div className="h-10 items-center w-full mt-4 flex flex-row justify-around">
+							<div className="h-10 items-center w-full mt-4 flex flex-row justify-around text-black">
 								<div className="w-6/12 flex flex-row justify-between px-3 items-center m-2">
 									<div className="font-bold text-center">Name</div>
 								</div>

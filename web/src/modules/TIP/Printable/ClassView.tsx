@@ -12,12 +12,12 @@ const ClassViewPrintable: React.FC<P> = ({ students, section_id }) => {
 			<table className="w-11/12 m-auto border border-black">
 				<thead>
 					<tr>
-						<th className="h-10 items-center w-full mt-4 flex flex-row justify-around">
+						<div className="h-10 items-center w-full mt-4 flex flex-row justify-around">
 							<div className="w-4/12 md:w-6/12 flex flex-row justify-between px-3 items-center m-2">
 								<td className="font-bold text-center text-lg">Name</td>
 							</div>
 							<div className="flex flex-row justify-between w-8/12 md:w-6/12 text-xs m-4 text-lg">
-								{['Urdu', 'Maths', 'Eng'].map(sub => (
+								{['Urdu', 'Maths', 'English'].map(sub => (
 									<td
 										key={sub}
 										className="font-bold w-2/6 flex justify-center items-center">
@@ -25,7 +25,7 @@ const ClassViewPrintable: React.FC<P> = ({ students, section_id }) => {
 									</td>
 								))}
 							</div>
-						</th>
+						</div>
 					</tr>
 				</thead>
 				<tbody>
