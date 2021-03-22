@@ -9,7 +9,7 @@ legend {
 		overflow-x: scroll;
 	}
 }
-.table-row {
+.mis-table-row {
 	display: flex;
 	flex-direction: row;
 	border-bottom: 2px solid #e0e0e0;
@@ -24,7 +24,7 @@ legend {
 	width: 30%;
 	line-height: 2.8rem;
 }
-.table-row.table-header {
+.mis-table-row.table-header {
 	font-weight: bold;
 	padding-top: 8px;
 	padding-bottom: 8px;
