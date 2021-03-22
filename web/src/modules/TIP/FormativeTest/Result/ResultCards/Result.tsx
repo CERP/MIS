@@ -63,7 +63,7 @@ const Result: React.FC<PropsType> = props => {
 		() => getStudentsByGroup(props.students, selected_group, subject),
 		[selected_group]
 	)
-	console.log('stddd', group_students)
+
 	const result: SLOBasedResult = useMemo(() => getResult(group_students, test_id), [
 		subject,
 		group_students
@@ -82,9 +82,19 @@ const Result: React.FC<PropsType> = props => {
 						className="flex flex-row justify-center w-full"
 						onClick={() => setType('child_view')}>
 						<div
-							className={`bg-${group}-tip-brand h-6 my-3 w-3/4 rounded-3xl py-1 px-3 flex justify-center items-center`}>
+							className={clsx(
+								'h-6 my-3 w-3/4 rounded-3xl py-1 px-3 flex justify-center items-center',
+								{
+									'bg-gray-400': selected_group === 'Oral Test',
+									'bg-gray-600': selected_group === 'Not Needed',
+									'bg-blue-tip-brand': selected_group === 'KG',
+									'bg-yellow-tip-brand': selected_group === '1',
+									'bg-green-tip-brand': selected_group === '2',
+									'bg-orange-tip-brand': selected_group === '3'
+								}
+							)}>
 							<img
-								className="h-8 w-8 rounded-full pl-0 absolute left-7 top-14"
+								className="h-8 w-8 rounded-full pl-0 absolute left-10 md:left-20 lg:left-40 top-32"
 								src="https://cdn.dribbble.com/users/2199928/screenshots/11532918/shot-cropped-1590177932366.png?compress=1&resize=400x300"
 								alt="img"
 							/>
@@ -97,7 +107,7 @@ const Result: React.FC<PropsType> = props => {
 							onClick={() => setType('child_view')}>
 							<div className="bg-blue-tip-brand h-5 my-3 w-3/4 rounded-3xl py-1 px-3">
 								<img
-									className="h-7 w-8 rounded-full pl-0 absolute left-7 top-14"
+									className="h-7 w-8 rounded-full pl-0 absolute left-10 md:left-20 lg:left-40 top-32"
 									src="https://cdn.dribbble.com/users/2199928/screenshots/11532918/shot-cropped-1590177932366.png?compress=1&resize=400x300"
 									alt="img"
 								/>
@@ -113,11 +123,11 @@ const Result: React.FC<PropsType> = props => {
 					onClick={() => setType('skill_view')}>
 					<div className="bg-blue-tip-brand h-5 my-3 w-3/4 rounded-3xl py-1 px-3">
 						<img
-							className="h-7 w-8 rounded-full pl-0 absolute left-7 top-14"
+							className="h-7 w-8 rounded-full pl-0 absolute left-10 md:left-20 lg:left-40 top-32"
 							src="https://cdn.dribbble.com/users/2199928/screenshots/11532918/shot-cropped-1590177932366.png?compress=1&resize=400x300"
 							alt="img"
 						/>
-						<div className="text-white truncate ml-5 w-5/6">
+						<div className="text-white truncate ml-5 w-5/6 flex justify-center">
 							Skill View - {slo.replace('$', ',')}
 						</div>
 					</div>
@@ -168,8 +178,8 @@ const Result: React.FC<PropsType> = props => {
 								<button
 									className={
 										type === 'skill_view'
-											? 'border-none rounded-3xl text-white bg-blue-tip-brand py-1 px-6 outline-none'
-											: 'rounded-3xl text-blue-tip-brand broder border-solid border-blue-tip-brand py-1 px-6 bg-white outline-none'
+											? 'border-none rounded-3xl text-white bg-blue-tip-brand py-2 px-6 outline-none'
+											: 'rounded-3xl text-blue-tip-brand broder border-solid border-blue-tip-brand py-2 px-6 bg-white outline-none'
 									}
 									onClick={() => setType('skill_view')}>
 									Skill View
@@ -177,8 +187,8 @@ const Result: React.FC<PropsType> = props => {
 								<button
 									className={
 										type === 'child_view'
-											? 'border-none rounded-3xl text-white bg-blue-tip-brand py-1 px-6 outline-none'
-											: 'rounded-3xl text-blue-tip-brand broder border-solid border-blue-tip-brand py-1 px-6 bg-white outline-none'
+											? 'border-none rounded-3xl text-white bg-blue-tip-brand py-2 px-6 outline-none'
+											: 'rounded-3xl text-blue-tip-brand broder border-solid border-blue-tip-brand py-2 px-6 bg-white outline-none'
 									}
 									onClick={() => setType('child_view')}>
 									Child View

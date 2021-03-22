@@ -99,7 +99,10 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 	)
 }
 
-export default connect((dispatch: Function) => ({
-	setLearningLevel: (student_id: string, subject: TIPSubjects, level: TIPGrades) =>
-		dispatch(assignLearningLevel(student_id, subject, level))
-}))(ClassViewCard)
+export default connect(
+	() => ({}),
+	(dispatch: Function) => ({
+		setLearningLevel: (student_id: string, subject: TIPSubjects, level: TIPGrades) =>
+			dispatch(assignLearningLevel(student_id, subject, level))
+	})
+)(ClassViewCard)
