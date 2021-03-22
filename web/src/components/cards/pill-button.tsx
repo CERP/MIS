@@ -1,5 +1,5 @@
-import React from "react"
-import { Link } from "react-router-dom"
+import React from 'react'
+import { Link } from 'react-router-dom'
 
 type CardProps = {
 	title: string
@@ -20,8 +20,18 @@ export const PillCardButton = ({ title, caption, icon, link }: CardProps) => {
 					</div>
 				</div>
 				<div className="flex items-center w-10 h-10 rounded-full border bg-blue-brand">
-					<svg className="w-8 mx-auto text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-						<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+					<svg
+						className="w-8 mx-auto text-white"
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor">
+						<path
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							strokeWidth={2}
+							d="M9 5l7 7-7 7"
+						/>
 					</svg>
 				</div>
 			</div>

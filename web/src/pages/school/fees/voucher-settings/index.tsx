@@ -232,7 +232,7 @@ export const VoucherSettings = () => {
 							onClick={saveFeeVoucher}
 							type="button"
 							className={
-								'w-full items-center tw-btn bg-green-brand py-3 font-semibold my-4'
+								'w-full items-center tw-btn bg-teal-brand py-3 font-semibold my-4'
 							}>
 							Save Settings
 						</button>

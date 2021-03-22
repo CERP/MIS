@@ -19,31 +19,28 @@ enum Tabs {
 const TabbarContent = [
 	{
 		tab: Tabs.SETTINGS,
-		title: "Settings"
+		title: 'Settings'
 	},
 	{
 		tab: Tabs.ACTIONS,
-		title: "Actions"
+		title: 'Actions'
 	},
 	{
 		tab: Tabs.STATS,
-		title: "Statistics"
-	},
+		title: 'Statistics'
+	}
 ]
 
-
 export const Home = () => {
-
 	const { auth } = useSelector((state: RootReducerState) => state)
 	const [activeTab, setActiveTab] = useState(Tabs.ACTIONS)
 
-	const renderComponent = () => (
+	const renderComponent = () =>
 		cond([
 			[activeTab === Tabs.SETTINGS, () => <SettingsTab />],
 			[activeTab === Tabs.ACTIONS, () => <ActionTab />],
-			[activeTab === Tabs.STATS, () => <StatsTab />],
+			[activeTab === Tabs.STATS, () => <StatsTab />]
 		])
-	)
 
 	// TODO: remove this logic
 	// add more robust way of redirection
@@ -53,7 +50,7 @@ export const Home = () => {
 	}
 
 	return (
-		<AppLayout title={"Home" + " - " + TabbarContent[activeTab].title}>
+		<AppLayout title={'Home' + ' - ' + TabbarContent[activeTab].title}>
 			<Tabbar tab={activeTab} setTab={setActiveTab} content={TabbarContent} />
 			{renderComponent()}
 		</AppLayout>

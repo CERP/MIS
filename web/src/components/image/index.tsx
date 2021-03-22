@@ -31,7 +31,7 @@ export const UploadImage = ({
 		<>
 			<div
 				onClick={() => setShowCamera(!showCamera)}
-				className="bg-white p-1 rounded-full text-green-brand cursor-pointer">
+				className="bg-white p-1 rounded-full text-teal-brand cursor-pointer">
 				<svg
 					className="w-5"
 					xmlns="http://www.w3.org/2000/svg"
@@ -69,7 +69,7 @@ export const UploadImage = ({
 				<img className="rounded-full" src={src || UserIconSvg} alt="image" />
 			</div>
 			<label
-				className="bg-white p-1 rounded-full text-green-brand cursor-pointer"
+				className="bg-white p-1 rounded-full text-teal-brand cursor-pointer"
 				title="Upload Image">
 				<input
 					type="file"

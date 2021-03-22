@@ -25,12 +25,12 @@ export const AppHeader = () => {
 		<div
 			className={clsx('antialiased sticky top-0 z-50 print:hidden', {
 				'bg-gray-100 shadow-md': !isUserLogged,
-				'bg-green-brand': isUserLogged
+				'bg-teal-brand': isUserLogged
 			})}>
 			<div
 				className={clsx('w-full text-gray-700', {
 					'bg-white': !isUserLogged,
-					'bg-green-brand': isUserLogged
+					'bg-teal-brand': isUserLogged
 				})}>
 				<Menu>
 					{({ open: openMenu }: { open: boolean }) => (

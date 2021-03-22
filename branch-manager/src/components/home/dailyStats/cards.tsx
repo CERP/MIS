@@ -24,7 +24,7 @@ const AttendanceCard: React.FC<P1> = ({ title, attendance, loading }) => (
 	<CardWrapperInner>
 		<CardTitle title={title} />
 		<div className="flex justify-between p-2 text-white font-semibold text-sm">
-			<div className="bg-green-brand leading-tight p-3 pb-2 mr-2 rounded-lg w-24 h-14">
+			<div className="bg-teal-brand leading-tight p-3 pb-2 mr-2 rounded-lg w-24 h-14">
 				<p>Present</p>
 				{loading ? <Spinner className="mx-auto" /> : <p>{attendance?.present || '0'}</p>}
 			</div>
@@ -44,7 +44,7 @@ const PaymentReceivedCard: React.FC<P2> = ({ title, payment, loading }) => (
 	<CardWrapperInner>
 		<CardTitle title={title} />
 		<div className="flex justify-center p-2 text-white font-semibold text-sm">
-			<div className="bg-green-brand leading-tight p-3 pb-2 mr-2 rounded-lg w-24 h-14">
+			<div className="bg-teal-brand leading-tight p-3 pb-2 mr-2 rounded-lg w-24 h-14">
 				<p>Students</p>
 				{loading ? <Spinner className="mx-auto" /> : <p>{payment?.count || '0'}</p>}
 			</div>

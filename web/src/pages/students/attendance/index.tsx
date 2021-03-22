@@ -182,7 +182,7 @@ export const StudentsAttendance = () => {
 							</button>
 							<button
 								onClick={markAllPresentHandler}
-								className="p-1 md:p-2 shadow-md bg-green-brand text-white rounded-3xl w-2/5">
+								className="p-1 md:p-2 shadow-md bg-teal-brand text-white rounded-3xl w-2/5">
 								Mark All Present
 							</button>
 						</div>
@@ -234,7 +234,7 @@ const Card: React.FC<CardProps> = ({ student, attendanceDate, markAttendance }) 
 						className={clsx(
 							'flex items-center justify-center w-8 h-8 rounded-full shadow-md',
 							{
-								'bg-green-brand text-white': AttendanceStatus.PRESENT === status
+								'bg-teal-brand text-white': AttendanceStatus.PRESENT === status
 							}
 						)}>
 						<span>P</span>

@@ -35,7 +35,8 @@ module.exports = {
 				'green-brand': '#5ECDB9',
 				'orange-brand': '#FFC107',
 				'blue-brand': '#74ACED',
-				'gray-brand': '#E0E0E0'
+				'gray-brand': '#E0E0E0',
+				'teal-brand': '#1bb4bb'
 			},
 			screens: {
 				'print': { 'raw': 'print' }

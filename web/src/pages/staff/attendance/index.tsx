@@ -125,7 +125,7 @@ export const StaffAttendance = () => {
 								className="p-1 md:p-2 shadow-md bg-blue-brand text-white rounded-3xl w-2/5">
 								Send SMS
 							</button>
-							<button className="p-1 md:p-2 shadow-md bg-green-brand text-white rounded-3xl w-2/5">
+							<button className="p-1 md:p-2 shadow-md bg-teal-brand text-white rounded-3xl w-2/5">
 								Mark All Present
 							</button>
 						</div>
@@ -195,7 +195,7 @@ const Card: React.FC<CardProps> = ({ member, attendanceDate, markAttendance }) =
 						className={clsx(
 							'flex items-center justify-center w-8 h-8 rounded-full shadow-md',
 							{
-								'bg-green-brand text-white':
+								'bg-teal-brand text-white':
 									AttendanceStatus.CHECK_IN === status ||
 									AttendanceStatus.CHECK_OUT === status
 							}
@@ -241,7 +241,7 @@ const Card: React.FC<CardProps> = ({ member, attendanceDate, markAttendance }) =
 					<button
 						onClick={() => markAttendance(member, AttendanceStatus.CHECK_IN)}
 						className={clsx('tw-btn-blue', {
-							'bg-green-brand text-white': AttendanceStatus.CHECK_IN === status
+							'bg-teal-brand text-white': AttendanceStatus.CHECK_IN === status
 						})}>
 						<span>Check In</span>
 						{record.check_in && (
@@ -253,7 +253,7 @@ const Card: React.FC<CardProps> = ({ member, attendanceDate, markAttendance }) =
 						disabled={AttendanceStatus.CHECK_IN != status}
 						onClick={() => markAttendance(member, AttendanceStatus.CHECK_OUT)}
 						className={clsx('tw-btn-blue', {
-							'tw-btn bg-green-brand text-white':
+							'tw-btn bg-teal-brand text-white':
 								AttendanceStatus.CHECK_OUT === status
 						})}>
 						<span>Check Out</span>

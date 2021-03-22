@@ -209,7 +209,7 @@ export const CreateClass: React.FC<CreateClassProps> = ({ skipStage }) => {
 
 								<div
 									className={clsx('text-xs', {
-										'text-green-brand':
+										'text-teal-brand':
 											state.sections[defaultSectionId].faculty_id ===
 											faculty.id
 									})}>

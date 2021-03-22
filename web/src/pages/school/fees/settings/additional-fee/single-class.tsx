@@ -73,8 +73,8 @@ const PreviousFees = ({ fees, setFee }: PreviousFeeProps) => {
 					key={id}
 					onClick={() => handleSelectedFee(id)}
 					className={clsx(
-						'flex felx-row justify-between items-center p-2 text-sm rounded-lg cursor-pointer hover:bg-green-brand',
-						id === selectedFee ? 'bg-green-brand' : 'bg-blue-brand'
+						'flex felx-row justify-between items-center p-2 text-sm rounded-lg cursor-pointer hover:bg-teal-brand',
+						id === selectedFee ? 'bg-teal-brand' : 'bg-blue-brand'
 					)}>
 					<div className="flex flex-col">
 						<div className="font-semibold">Duration</div>

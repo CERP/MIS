@@ -266,7 +266,7 @@ export const AdditionalFee = () => {
 								ref={confirmAddFeeModalRef}>
 								<div>Confirm Additional Fee</div>
 								<div className="font-semibold text-lg md:text-xl"></div>
-								<div className="text-green-brand font-semibold text-lg">
+								<div className="text-teal-brand font-semibold text-lg">
 									{state.fee.name} - Rs. {state.fee.amount}
 								</div>
 								<div className="">
@@ -380,7 +380,7 @@ export const AdditionalFee = () => {
 								'tw-btn w-full font-semibold',
 								isFormDisabled
 									? 'bg-gray-300 pointer-events-none'
-									: 'bg-green-brand'
+									: 'bg-teal-brand'
 							)}>
 							{state.feeId ? 'Update Additional Fee' : 'Add Additional Fee'}
 						</button>

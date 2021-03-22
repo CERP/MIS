@@ -14,7 +14,7 @@ export const AttendanceStatsCard = ({ attendance }: AttendanceStatsCard) => (
 	<div className="sm:w-full p-5 pt-2 md:pt-5 shadow-md rounded-lg border border-gray-50">
 		<div></div>
 		<div className="flex flex-row justify-between text-sm md:text-base">
-			<div className="flex flex-col items-center justify-center text-green-brand">
+			<div className="flex flex-col items-center justify-center text-teal-brand">
 				<div className="text-lg font-semibold">{attendance.PRESENT}</div>
 				<div>Present</div>
 			</div>

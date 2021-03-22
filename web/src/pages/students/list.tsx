@@ -58,10 +58,10 @@ export const StudentList = () => {
 				<div className="flex flex-col md:flex-row items-center justify-between mt-4 mb-12 md:mb-20 space-y-4 md:space-y-0 md:space-x-60">
 					<SearchInput onChange={e => setSearch(e.target.value)} />
 					<div className="flex flex-row items-center space-x-2 w-full">
-						<select className="tw-select rounded shadow text-green-brand w-full">
+						<select className="tw-select rounded shadow text-teal-brand w-full">
 							<option>Tag</option>
 						</select>
-						<select className="tw-select rounded shadow text-green-brand w-full">
+						<select className="tw-select rounded shadow text-teal-brand w-full">
 							<option>Choose Class</option>
 							{sections
 								.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
@@ -72,7 +72,7 @@ export const StudentList = () => {
 								))}
 						</select>
 						<select
-							className="tw-select rounded shadow text-green-brand w-full"
+							className="tw-select rounded shadow text-teal-brand w-full"
 							onChange={e =>
 								setFilter({ ...filter, active: e.target.value === 'true' })
 							}>

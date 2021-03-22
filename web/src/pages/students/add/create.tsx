@@ -489,7 +489,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 
 							<button
 								type={'submit'}
-								className="w-full items-center tw-btn bg-green-brand py-3 font-semibold my-4">
+								className="w-full items-center tw-btn bg-teal-brand py-3 font-semibold my-4">
 								{isNewStudent() ? 'Save' : 'Update'}
 							</button>
 						</div>
