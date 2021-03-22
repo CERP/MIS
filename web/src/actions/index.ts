@@ -1269,7 +1269,10 @@ export const resetFees = (students: MISStudent[]) => (dispatch: Function) => {
 		(agg, curr) => {
 			// Make sure create merges for fees and payments
 			// If fees exist to avoid unnecessary dispatch deletes action
-			if (curr.fees && Object.keys(curr.fees).length > 0) {
+			if (
+				(curr.fees && Object.keys(curr.fees).length > 0) ||
+				(curr.payments && Object.keys(curr.payments).length > 0)
+			) {
 				return {
 					deletes: [
 						...agg.deletes,
@@ -1277,7 +1280,7 @@ export const resetFees = (students: MISStudent[]) => (dispatch: Function) => {
 							path: ['db', 'students', curr.id, 'fees']
 						},
 						{
-							path: ['db', 'students', curr.id, 'payment']
+							path: ['db', 'students', curr.id, 'payments']
 						}
 					],
 					merges: [
@@ -1287,7 +1290,7 @@ export const resetFees = (students: MISStudent[]) => (dispatch: Function) => {
 							value: {}
 						},
 						{
-							path: ['db', 'students', curr.id, 'payment'],
+							path: ['db', 'students', curr.id, 'payments'],
 							value: {}
 						}
 					]
