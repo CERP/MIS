@@ -41,7 +41,7 @@ const DiagnosticTest: React.FC<P> = props => {
 	])
 
 	return (
-		<div className="flex flex-wrap content-between">
+		<div className="flex flex-wrap content-between mt-20">
 			<Card class_name={class_name} subject="" lesson_name="" lesson_no="" />
 			<Headings
 				heading="Starting Test"
@@ -54,8 +54,8 @@ const DiagnosticTest: React.FC<P> = props => {
 			{class_name ? (
 				<Subjects class_name={class_name} section_id={sectionId} />
 			) : (
-					<Classes setSectionId={setSectionId} sortedSections={sorted_sections} />
-				)}
+				<Classes setSectionId={setSectionId} sortedSections={sorted_sections} />
+			)}
 		</div>
 	)
 }

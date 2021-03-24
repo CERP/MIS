@@ -10,7 +10,7 @@ const SummativeTest: React.FC<P> = () => {
 	const [class_name, setClassName] = useState('')
 
 	return (
-		<div className="flex flex-wrap content-between">
+		<div className="flex flex-wrap content-between mt-20">
 			<Card class_name={class_name} subject="" lesson_name="" lesson_no="" />
 			<Headings
 				heading="Final Test"
@@ -23,8 +23,8 @@ const SummativeTest: React.FC<P> = () => {
 			{class_name ? (
 				<Subjects class_name={class_name} section_id="" />
 			) : (
-					<Levels setSectionId={setClassName} />
-				)}
+				<Levels setSectionId={setClassName} />
+			)}
 		</div>
 	)
 }

@@ -36,7 +36,7 @@ const InsertGrades: React.FC<PropsType> = props => {
 	console.log(students)
 
 	return (
-		<div className="flex flex-wrap content-between">
+		<div className="flex flex-wrap content-between mt-20">
 			<Card
 				class_name={class_name ? class_name : 'Oral Test'}
 				subject={subject}

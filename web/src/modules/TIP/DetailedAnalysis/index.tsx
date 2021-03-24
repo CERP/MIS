@@ -35,7 +35,7 @@ const DetailedAnalysis: React.FC<P> = ({ classes, students, targeted_instruction
 		})
 
 	return (
-		<div className="bg-white h-full">
+		<div className="bg-white h-full mt-20">
 			<Card class_name="" subject="" lesson_name="" lesson_no="" />
 			{view_type === '' && (
 				<div className="py-10">

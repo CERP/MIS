@@ -66,7 +66,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 	const plugin_instance = scrollModePlugin()
 
 	return (
-		<div className="flex flex-wrap flex-col content-between w-full items-center justify-items-center">
+		<div className="flex flex-wrap flex-col content-between w-full items-center justify-items-center mt-20">
 			<Card
 				class_name={class_name ? class_name : 'Oral Test'}
 				subject={subject}

@@ -157,7 +157,7 @@ const Grading: React.FC<PropsType> = ({
 	}
 
 	return (
-		<div className="flex flex-wrap content-between bg-white">
+		<div className="flex flex-wrap content-between bg-white mt-20">
 			{isComponentVisible && (
 				<TModal>
 					<div ref={ref} className="bg-white pb-3">
