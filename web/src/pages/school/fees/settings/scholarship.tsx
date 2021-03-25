@@ -1,13 +1,15 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import clsx from 'clsx'
-import { useSelector } from 'react-redux'
-import { Transition } from '@headlessui/react'
+import toast from 'react-hot-toast'
 import { v4 } from 'node-uuid'
+import { useDispatch, useSelector } from 'react-redux'
+import { Transition } from '@headlessui/react'
 
 import { isValidStudent } from 'utils'
 import { toTitleCase } from 'utils/toTitleCase'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { SearchInput } from 'components/input/search'
+import { addMultipleFees } from 'actions'
 
 type State = {
 	classId: string
@@ -32,10 +34,13 @@ const blankFee = (): MISStudentFee => ({
 	period: 'MONTHLY'
 })
 
-export const Scholarship = () => {
-	const { students, classes, settings } = useSelector((state: RootReducerState) => state.db)
+type FeeAddItem = MISStudentFee & {
+	student: MISStudent
+	fee_id: string
+}
 
-	const feeStudents = Object.values(students || {})
+const getFeeStudents = (students: MISStudent[]) => {
+	return students
 		.filter(s => isValidStudent(s) && s.Active)
 		.reduce<State['students']>((agg, curr) => {
 			const [id, scholarshipFee] = Object.entries(curr.fees || {}).find(
@@ -53,15 +58,29 @@ export const Scholarship = () => {
 				}
 			}
 		}, {})
+}
+
+export const Scholarship = () => {
+	const dispatch = useDispatch()
+	const { students, classes, settings } = useSelector((state: RootReducerState) => state.db)
 
 	const [state, setState] = useState<State>({
 		sectionId: '',
 		search: '',
-		students: feeStudents,
+		students: {},
 		classId: Object.values(classes).sort((a, b) => {
 			return (a.classYear ?? 0) - (b.classYear ?? 0)
 		})?.[0].id
 	})
+
+	useEffect(() => {
+		setState(prevState => {
+			return {
+				...prevState,
+				students: getFeeStudents(Object.values(students || {}))
+			}
+		})
+	}, [students])
 
 	const classDefaultFee = settings?.classes?.defaultFee?.[state.classId]
 	const classAdditionalFees = settings?.classes?.additionalFees?.[state.classId]
@@ -75,6 +94,53 @@ export const Scholarship = () => {
 	const handleInputChange = (e: React.ChangeEvent<HTMLSelectElement & HTMLInputElement>) => {
 		const { name, value } = e.target
 		setState({ ...state, [name]: value })
+	}
+
+	const handleChangeScholarship = (studentId: string, amount: number) => {
+		const scholarship = state['students'][studentId]
+
+		setState({
+			...state,
+			students: {
+				...state.students,
+				[studentId]: {
+					edited: true,
+					fee: {
+						...scholarship['fee'],
+						amount: amount as any
+					}
+				}
+			}
+		})
+	}
+
+	const saveScholarship = () => {
+		const updatedScholarships = Object.entries(state.students || {}).reduce<FeeAddItem[]>(
+			(agg, [studentId, feeItem]) => {
+				const { edited, fee } = feeItem
+
+				if (edited) {
+					const { id, ...rest } = fee
+					return [
+						...agg,
+						{
+							student: students[studentId],
+							fee_id: id,
+							...rest
+						}
+					]
+				}
+
+				return agg
+			},
+			[]
+		)
+
+		if (updatedScholarships.length > 0) {
+			dispatch(addMultipleFees(updatedScholarships))
+			const msg = `Scholarship has been updated for ${updatedScholarships.length} students`
+			toast.success(msg)
+		}
 	}
 
 	return (
@@ -162,12 +228,15 @@ export const Scholarship = () => {
 							classFee={classDefaultFee}
 							additionalFees={classAdditionalFees}
 							key={s.id}
+							onChangeScholarship={handleChangeScholarship}
 							student={s}
 						/>
 					))}
 			</div>
 			<div className="flex justify-end">
-				<button className="tw-btn-blue w-full md:w-1/4">Save Scholarship</button>
+				<button onClick={saveScholarship} className="tw-btn-blue w-full md:w-1/4">
+					Save Scholarship
+				</button>
 			</div>
 		</div>
 	)
@@ -175,7 +244,7 @@ export const Scholarship = () => {
 
 type CardProps = {
 	student: MISStudent
-	onChangeScholarship?: (studentId: string, amount: number) => void
+	onChangeScholarship: (studentId: string, amount: number) => void
 	classFee: MISClassFee
 	additionalFees: {
 		[id: string]: MISClassFee
@@ -219,29 +288,36 @@ const Card = ({ student, onChangeScholarship, classFee, additionalFees }: CardPr
 							<svg
 								className="w-4 h-4 text-white"
 								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke="currentColor">
+								viewBox="0 0 20 20"
+								fill="currentColor">
 								{isExpanded ? (
 									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-										d="M5 15l7-7 7 7"
+										fillRule="evenodd"
+										d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
+										clipRule="evenodd"
 									/>
 								) : (
 									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-										d="M19 9l-7 7-7-7"
+										fillRule="evenodd"
+										d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+										clipRule="evenodd"
 									/>
 								)}
 							</svg>
 						</div>
 					</div>
 				</div>
-				<input className="tw-input w-1/3" type="number" placeholder="Enter amount" />
+				<input
+					onChange={e =>
+						onChangeScholarship(
+							student.id,
+							isNaN(e.target.valueAsNumber) ? 0 : e.target.valueAsNumber
+						)
+					}
+					className="tw-input w-1/3"
+					type="number"
+					placeholder="Enter amount"
+				/>
 			</div>
 			{
 				<Transition
