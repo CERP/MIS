@@ -18,11 +18,17 @@ type State = {
 	students?: {
 		[id: string]: {
 			edited: boolean
-			fee: MISStudentFee & {
-				id: string
-			}
+			fee: AugmentedFee
 		}
 	}
+}
+type FeeAddItem = MISStudentFee & {
+	student: MISStudent
+	fee_id: string
+}
+
+type AugmentedFee = MISStudentFee & {
+	id: string
 }
 
 const SPECIAL_SCHOLARSHIP = 'SPECIAL_SCHOLARSHIP'
@@ -33,11 +39,6 @@ const blankFee = (): MISStudentFee => ({
 	type: 'SCHOLARSHIP',
 	period: 'MONTHLY'
 })
-
-type FeeAddItem = MISStudentFee & {
-	student: MISStudent
-	fee_id: string
-}
 
 const getFeeStudents = (students: MISStudent[]) => {
 	return students
@@ -230,6 +231,7 @@ export const Scholarship = () => {
 							key={s.id}
 							onChangeScholarship={handleChangeScholarship}
 							student={s}
+							scholarshipFee={state.students?.[s.id]?.fee}
 						/>
 					))}
 			</div>
@@ -249,9 +251,16 @@ type CardProps = {
 	additionalFees: {
 		[id: string]: MISClassFee
 	}
+	scholarshipFee: AugmentedFee
 }
 
-const Card = ({ student, onChangeScholarship, classFee, additionalFees }: CardProps) => {
+const Card = ({
+	student,
+	onChangeScholarship,
+	classFee,
+	additionalFees,
+	scholarshipFee
+}: CardProps) => {
 	const [isExpanded, setIsExpanded] = useState(false)
 
 	// displayable fees
@@ -314,6 +323,7 @@ const Card = ({ student, onChangeScholarship, classFee, additionalFees }: CardPr
 							isNaN(e.target.valueAsNumber) ? 0 : e.target.valueAsNumber
 						)
 					}
+					defaultValue={scholarshipFee.amount}
 					className="tw-input w-1/3"
 					type="number"
 					placeholder="Enter amount"
