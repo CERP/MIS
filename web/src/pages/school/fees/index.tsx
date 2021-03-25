@@ -1,48 +1,47 @@
 import React from 'react'
 import cond from 'cond-construct'
-import { RouteComponentProps } from 'react-router-dom'
+import { Link, RouteComponentProps } from 'react-router-dom'
 
 import { FeeSettings } from './settings'
 import { VoucherSettings } from './voucher-settings'
 import { FamilyPayments } from './payments/family'
 import { StudentPayments } from './payments/student'
-
 import { ResetFee } from './reset'
 import { PrintVoucher } from './print-voucher'
-
 import Card from 'components/cards/pill-button'
 import { AppLayout } from 'components/Layout/appLayout'
+
+import iconFeeSettings from './assets/fee-settings.svg'
+import iconSinglePayment from './assets/single-payment.svg'
+import iconMultiplePayments from './assets/multiple-payments.svg'
+import iconPrinter from './assets/printer.png'
+import iconVoucherSettings from './assets/voucher-settings.png'
 
 const MenuItems = [
 	{
 		title: 'Fee Settings',
 		link: '/school/fees/settings',
-		icon: ''
+		icon: iconFeeSettings
 	},
 	{
 		title: 'Voucher Settings',
 		link: '/school/fees/voucher-settings',
-		icon: ''
+		icon: iconVoucherSettings
 	},
 	{
 		title: 'Print Voucher',
 		link: '/school/fees/print-voucher',
-		icon: ''
+		icon: iconPrinter
 	},
 	{
 		title: 'Family Payment',
 		link: '/school/fees/family',
-		icon: ''
+		icon: iconMultiplePayments
 	},
 	{
 		title: 'Student Payment',
 		link: '/school/fees/student',
-		icon: ''
-	},
-	{
-		title: 'Reset Fees',
-		link: '/school/fees/reset',
-		icon: ''
+		icon: iconSinglePayment
 	}
 ]
 
@@ -75,8 +74,13 @@ export const SchoolFees: React.FC<Props> = ({ match }) => {
 		<>
 			{page === undefined ? (
 				<AppLayout title={'School Fees'}>
-					<div className="p-6 md:w-2/5 mx-auto">
-						<div className="text-center text-2xl mb-4 font-bold">School Fee</div>
+					<div className="p-6 md:w-2/5 mx-auto space-y-4">
+						<div className="text-center text-2xl font-bold">Manage Fees</div>
+						<div className="text-right">
+							<Link to="/school/fees/reset" className="tw-btn-red rounded-3xl">
+								Reset
+							</Link>
+						</div>
 						<div className="space-y-4">
 							{MenuItems.map((item, index) => (
 								<Card key={item.link + index} {...item} />
