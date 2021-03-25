@@ -151,25 +151,30 @@ export const VoucherSettings = () => {
 							/>
 						</div>
 
-						<div>Due Date</div>
-						<input
-							name="dueDays"
-							value={state.dueDays}
-							onChange={e => handleInputByPath(['dueDays'], e.target.value)}
-							type="number"
-							placeholder="e.g. 2 (days after first of each month)"
-							className="tw-input w-full bg-transparent border-blue-brand ring-1"
-						/>
-
-						<div>Late Fine</div>
-						<input
-							name="feeFine"
-							value={state.feeFine}
-							onChange={e => handleInputByPath(['feeFine'], e.target.value)}
-							type="number"
-							placeholder="amount per day"
-							className="tw-input w-full bg-transparent border-blue-brand ring-1"
-						/>
+						<div className="flex flex-row items-center space-x-2 md:space-x-4">
+							<div className="flex flex-col space-y-2">
+								<div>Due Days</div>
+								<input
+									name="dueDays"
+									value={state.dueDays}
+									onChange={e => handleInputByPath(['dueDays'], e.target.value)}
+									type="number"
+									placeholder="e.g. 2 (days after first of each month)"
+									className="tw-input w-full bg-transparent border-blue-brand ring-1"
+								/>
+							</div>
+							<div className="flex flex-col space-y-2">
+								<div>Late Fine</div>
+								<input
+									name="feeFine"
+									value={state.feeFine}
+									onChange={e => handleInputByPath(['feeFine'], e.target.value)}
+									type="number"
+									placeholder="amount per day"
+									className="tw-input w-full bg-transparent border-blue-brand ring-1"
+								/>
+							</div>
+						</div>
 
 						<div>Fee Notice</div>
 						<textarea
@@ -178,7 +183,7 @@ export const VoucherSettings = () => {
 							onChange={e => handleInputByPath(['notice'], e.target.value)}
 							rows={2}
 							placeholder="Fee Notice"
-							className="tw-input w-full bg-transparent border-blue-brand ring-1"
+							className="tw-input w-full bg-transparent border-blue-brand ring-1 focus-within:bg-transparent"
 						/>
 
 						<div className="font-bold">Include on Voucher?</div>
