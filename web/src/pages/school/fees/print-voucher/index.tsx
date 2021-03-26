@@ -71,7 +71,7 @@ export const PrintVoucher = () => {
 		<AppLayout title={'Print Voucher'}>
 			<div className="p-5 md:p-10 md:pb-0 relative">
 				<div className="text-2xl font-bold mt-4 mb-8 text-center">Print Voucher</div>
-				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-4 rounded-2xl bg-gray-700 p-4 my-4 md:mt-8">
+				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-4 rounded-2xl bg-gray-700 p-4 my-4 md:mt-8 min-h-screen">
 					<div className="flex flex-row items-center justify-between w-full md:w-3/5 space-x-4">
 						<CustomSelect
 							onChange={month => setState({ ...state, month })}
@@ -232,6 +232,7 @@ export const StudentListSearch = ({ students, setStudentId, classes }: StudentLi
 
 	const clearStudent = () => {
 		setStudent(undefined)
+		setStudentId('')
 	}
 
 	useEffect(() => {
@@ -325,11 +326,9 @@ export const StudentListSearch = ({ students, setStudentId, classes }: StudentLi
 						/>
 						<div>{student?.Name}</div>
 					</div>
+					<div className="text-xs">{student?.section?.namespaced_name}</div>
 					<button
-						onClick={() => {
-							setStudent(undefined)
-							setStudentId('')
-						}}
+						onClick={clearStudent}
 						className="cursor-pointer flex items-center justify-center w-6 h-6 text-white bg-red-brand rounded-full p-1">
 						x
 					</button>

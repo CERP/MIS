@@ -77,7 +77,9 @@ export const SchoolFees: React.FC<Props> = ({ match }) => {
 					<div className="p-6 md:w-2/5 mx-auto space-y-4">
 						<div className="text-center text-2xl font-bold">Manage Fees</div>
 						<div className="text-right">
-							<Link to="/school/fees/reset" className="tw-btn-red rounded-3xl">
+							<Link
+								to="/school/fees/reset"
+								className="tw-btn-red rounded-3xl shadow-md">
 								Reset
 							</Link>
 						</div>

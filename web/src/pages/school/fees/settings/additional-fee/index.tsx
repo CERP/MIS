@@ -216,7 +216,7 @@ export const AdditionalFee = () => {
 									})
 								}
 								checked={state.addFeeTo === AddFeeOptions.STUDENT}
-								className="mr-2 w-4 h-4 cursor-pointer"
+								className="form-radio text-teal-brand mr-2 w-4 h-4 cursor-pointer"
 							/>
 							<div className="text-sm">Student</div>
 						</div>
@@ -233,7 +233,7 @@ export const AdditionalFee = () => {
 									})
 								}
 								checked={state.addFeeTo === AddFeeOptions.CLASS}
-								className="mr-2 w-4 h-4 cursor-pointer"
+								className="form-radio text-teal-brand mr-2 w-4 h-4 cursor-pointer"
 							/>
 							<div className="text-sm">Class</div>
 						</div>
@@ -251,7 +251,7 @@ export const AdditionalFee = () => {
 										})
 									}
 									checked={state.addFeeTo === AddFeeOptions.ALL}
-									className="mr-2 w-4 h-4 cursor-pointer"
+									className="form-radio text-teal-brand mr-2 w-4 h-4 cursor-pointer"
 								/>
 								<div className="text-sm">All Students</div>
 							</div>
@@ -350,7 +350,7 @@ export const AdditionalFee = () => {
 										})
 									}
 									checked={state.fee.period === MISFeePeriods.SINGLE}
-									className="mr-2 w-4 h-4 cursor-pointer"
+									className="form-radio text-teal-brand mr-2 w-4 h-4 cursor-pointer"
 								/>
 								<div className="text-sm">One Time</div>
 							</div>
@@ -368,7 +368,7 @@ export const AdditionalFee = () => {
 										})
 									}
 									checked={state.fee.period === MISFeePeriods.MONTHLY}
-									className="mr-2 w-4 h-4 cursor-pointer"
+									className="form-radio text-teal-brand mr-2 w-4 h-4 cursor-pointer"
 								/>
 								<div className="sm:text-sm text-base">Every Month</div>
 							</div>
@@ -378,9 +378,7 @@ export const AdditionalFee = () => {
 							type="submit"
 							className={clsx(
 								'tw-btn w-full font-semibold',
-								isFormDisabled
-									? 'bg-gray-300 pointer-events-none'
-									: 'bg-teal-brand'
+								isFormDisabled ? 'bg-gray-300 pointer-events-none' : 'bg-teal-brand'
 							)}>
 							{state.feeId ? 'Update Additional Fee' : 'Add Additional Fee'}
 						</button>
