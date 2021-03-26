@@ -63,7 +63,7 @@ const Result: React.FC<PropsType> = props => {
 			{type === 'single_std_view' ? (
 				test_type === 'Summative' ? (
 					<div
-						className="flex flex-row justify-center w-full"
+						className="flex flex-row justify-center w-full cursor-pointer"
 						onClick={() => setType('child_view')}>
 						<div
 							className={clsx(
@@ -87,7 +87,7 @@ const Result: React.FC<PropsType> = props => {
 					<div
 						className="flex flex-row justify-center w-full"
 						onClick={() => setType('child_view')}>
-						<div className="bg-blue-tip-brand h-6 my-4 w-3/4 rounded-3xl py-1 pt-2 flex justify-center items-center">
+						<div className="bg-blue-tip-brand h-6 my-4 w-3/4 rounded-3xl py-1 pt-2 flex justify-center items-center cursor-pointer">
 							<div className="absolute rounded-full w-3/4">
 								<img className="h-9 w-9 rounded-full" src={User} alt="img" />
 							</div>
@@ -101,12 +101,12 @@ const Result: React.FC<PropsType> = props => {
 				<div
 					className="flex flex-row justify-center items-center w-full"
 					onClick={() => setType('skill_view')}>
-					<div className="bg-blue-tip-brand h-6 my-4 w-3/4 rounded-3xl py-1 pt-2 flex justify-center items-center">
+					<div className="bg-blue-tip-brand h-6 my-4 w-3/4 rounded-3xl py-1 pt-2 flex justify-center items-center cursor-pointer">
 						<div className="absolute rounded-full w-3/4">
 							<img className="h-9 w-9 rounded-full" src={User} alt="img" />
 						</div>
 						<div className="text-sm md:text-md lg:text-lg text-white truncate w-full flex justify-center items-center">
-							Skill View - {slo.replace('$', ',')}
+							Skill View - {slo.replaceAll('$', ',')}
 						</div>
 					</div>
 				</div>
@@ -210,7 +210,7 @@ const Result: React.FC<PropsType> = props => {
 					return (
 						<SkillView
 							key={slo}
-							slo={slo.replace('$', ',')}
+							slo={slo.replaceAll('$', ',')}
 							obtain={obj.obtain}
 							total={obj.total}
 							setType={setType}

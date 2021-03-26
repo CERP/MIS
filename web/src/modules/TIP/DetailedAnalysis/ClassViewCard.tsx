@@ -77,14 +77,14 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 									key={grade}
 									className="w-2/6 flex justify-center items-center cursor-pointer">
 									<div
-										className={clsx(
-											'px-2 py-1 rounded-md text-white',
-											{
-												'bg-gray-400': grade === 'Oral',
-												'bg-gray-600': grade === 'Remediation Not Needed'
-											},
-											`bg-${grade.toLowerCase()}-tip-brand`
-										)}
+										className={clsx('px-2 py-1 rounded-md text-white', {
+											'bg-blue-tip-brand': grade === 'Blue',
+											'bg-yellow-tip-brand': grade === 'Yellow',
+											'bg-green-tip-brand': grade === 'Green',
+											'bg-orange-tip-brand': grade === 'Orange',
+											'bg-gray-400': grade === 'Oral',
+											'bg-gray-600': grade === 'Remediation Not Needed'
+										})}
 										onClick={() => {
 											setIsComponentVisible(true), setModalType('test_info')
 										}}>

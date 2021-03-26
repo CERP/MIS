@@ -1,4 +1,5 @@
 import React from 'react'
+import clsx from 'clsx'
 import { ArrowBack, User } from 'assets/icons'
 
 interface P {
@@ -33,13 +34,14 @@ const ChildView: React.FC<P> = ({
 
 	return (
 		<div
-			className={`${percentage >= 60
-					? 'bg-green-250'
-					: percentage >= 50
-						? 'bg-yellow-250'
-						: 'bg-red-250'
-				} 
-    flex flex-row justify-between items-center px-3 my-1 h-14 shadow-lg w-full`}
+			className={clsx(
+				'flex flex-row justify-between items-center px-3 my-1 h-14 shadow-lg w-full',
+				{
+					'bg-green-250': percentage >= 60,
+					'bg-yellow-250': percentage >= 50
+				},
+				'bg-red-250'
+			)}
 			onClick={redirect}>
 			<div className="flex flex-row justify-between items-center w-full">
 				<div className="w-2/4 flex flex-row justify-start content-center items-center">
@@ -55,7 +57,7 @@ const ChildView: React.FC<P> = ({
 									: 'P'
 								: `${obtain}/${total}`}
 						</div>
-						<div>{`${percentage}%`}</div>
+						<div>{percentage}%</div>
 					</div>
 					<div className="w-1/5 flex justify-end">
 						<div className="bg-white rounded-full h-7 w-7 flex justify-center items-center">

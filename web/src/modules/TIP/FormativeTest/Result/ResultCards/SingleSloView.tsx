@@ -1,6 +1,5 @@
-//@ts-nocheck
 import React from 'react'
-
+import clsx from 'clsx'
 interface P {
 	slo: string
 	name: string
@@ -12,19 +11,20 @@ const SingleSloView: React.FC<P> = ({ slo, slo_obj, name }) => {
 
 	return (
 		<div
-			className={`${percentage >= 60
-					? 'bg-green-250'
-					: percentage >= 50
-						? 'bg-yellow-250'
-						: 'bg-red-250'
-				}
-     flex flex-row justify-between items-center px-3 my-1 h-14 shadow-lg w-full`}>
+			className={clsx(
+				'flex flex-row justify-between items-center px-3 my-1 h-14 shadow-lg w-full',
+				{
+					'bg-green-250': percentage >= 60,
+					'bg-yellow-250': percentage >= 50
+				},
+				'bg-red-250'
+			)}>
 			<div className="flex flex-row justify-between w-full">
 				<div className="w-full flex flex-row justify-between px-3 items-center text-left text-sm md:text-md lg:text-lg">
 					<div className="font-bold capitalize">{name}</div>
 					<div className="flex flex-row justify-between w-3/12">
 						<div>{`${slo_obj[slo].obtain}/${slo_obj[slo].total}`}</div>
-						<div>{`${percentage}%`}</div>
+						<div>{percentage}%</div>
 					</div>
 				</div>
 			</div>

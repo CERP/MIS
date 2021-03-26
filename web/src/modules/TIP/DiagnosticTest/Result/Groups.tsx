@@ -17,15 +17,15 @@ const Groups: React.FC<P> = ({ students, color, level }) => {
 	return (
 		<div className="flex flex-wrap flex-col justify-between w-full">
 			<div
-				className={clsx(
-					'flex flex-row justify-between py-1 items-center text-white px-3',
-					{
-						'bg-gray-400': color === 'Oral',
-						'bg-gray-600': color === 'Remediation Not Needed',
-						'bg-red-tip-brand': color === 'Not Graded'
-					},
-					`bg-${color.toLowerCase()}-tip-brand`
-				)}>
+				className={clsx('flex flex-row justify-between py-1 items-center text-white px-3', {
+					'bg-gray-400': color === 'Oral',
+					'bg-gray-600': color === 'Remediation Not Needed',
+					'bg-red-tip-brand': color === 'Not Graded',
+					'bg-blue-tip-brand': color === 'Blue',
+					'bg-yellow-tip-brand': color === 'Yellow',
+					'bg-green-tip-brand': color === 'Green',
+					'bg-orange-tip-brand': color === 'Orange'
+				})}>
 				<div className="capitalize text-sm mr-1">
 					{color === 'Remediation Not Needed' ||
 						color === 'Oral' ||
