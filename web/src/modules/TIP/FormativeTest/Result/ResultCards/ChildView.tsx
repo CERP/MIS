@@ -1,5 +1,5 @@
 import React from 'react'
-import { ArrowBack } from 'assets/icons'
+import { ArrowBack, User } from 'assets/icons'
 
 interface P {
 	name: string
@@ -43,11 +43,7 @@ const ChildView: React.FC<P> = ({
 			onClick={redirect}>
 			<div className="flex flex-row justify-between items-center w-full">
 				<div className="w-2/4 flex flex-row justify-start content-center items-center">
-					<img
-						className="h-6 rounded-full p-3"
-						src="https://cdn.dribbble.com/users/2199928/screenshots/11532918/shot-cropped-1590177932366.png?compress=1&resize=400x300"
-						alt="img"
-					/>
+					<img className="h-6 rounded-full p-3" src={User} alt="img" />
 					<div className="font-bold">{name}</div>
 				</div>
 				<div className="flex flex-row justify-around w-2/4 text-sm md:text-md lg:text-lg">

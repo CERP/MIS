@@ -7,6 +7,7 @@ import ChildView from './ChildView'
 import SkillView from './SkillView'
 import SingleStdView from './SingleStdView'
 import SingleSloView from './SingleSloView'
+import { User } from 'assets/icons'
 import {
 	getStudentsByGroup,
 	getResult,
@@ -66,7 +67,7 @@ const Result: React.FC<PropsType> = props => {
 						onClick={() => setType('child_view')}>
 						<div
 							className={clsx(
-								'h-6 my-4 w-3/4 rounded-3xl py-1 px-3 flex justify-center items-center',
+								'h-6 my-4 w-3/4 rounded-3xl py-1 pt-2 flex justify-center items-center',
 								{
 									'bg-gray-400': grade === 'Oral Test',
 									'bg-gray-600': grade === 'Not Needed',
@@ -76,11 +77,9 @@ const Result: React.FC<PropsType> = props => {
 									'bg-orange-tip-brand': grade === '3'
 								}
 							)}>
-							<img
-								className="h-8 w-8 rounded-full pl-0 absolute left-10 md:left-20 lg:left-40 top-32"
-								src="https://cdn.dribbble.com/users/2199928/screenshots/11532918/shot-cropped-1590177932366.png?compress=1&resize=400x300"
-								alt="img"
-							/>
+							<div className="absolute rounded-full w-3/4">
+								<img className="h-9 w-9 rounded-full top-32" src={User} alt="img" />
+							</div>
 							<div className="text-white flex justify-center capitalize">{`${name} | ${group} Group`}</div>
 						</div>
 					</div>
@@ -88,12 +87,10 @@ const Result: React.FC<PropsType> = props => {
 					<div
 						className="flex flex-row justify-center w-full"
 						onClick={() => setType('child_view')}>
-						<div className="bg-blue-tip-brand h-5 my-4 w-3/4 rounded-3xl py-1 px-3">
-							<img
-								className="h-7 w-8 rounded-full pl-0 absolute left-10 md:left-20 lg:left-40 top-32"
-								src="https://cdn.dribbble.com/users/2199928/screenshots/11532918/shot-cropped-1590177932366.png?compress=1&resize=400x300"
-								alt="img"
-							/>
+						<div className="bg-blue-tip-brand h-6 my-4 w-3/4 rounded-3xl py-1 pt-2 flex justify-center items-center">
+							<div className="absolute rounded-full w-3/4">
+								<img className="h-9 w-9 rounded-full" src={User} alt="img" />
+							</div>
 							<div className="text-white flex justify-center">
 								Child View - {name}
 							</div>
@@ -104,12 +101,10 @@ const Result: React.FC<PropsType> = props => {
 				<div
 					className="flex flex-row justify-center items-center w-full"
 					onClick={() => setType('skill_view')}>
-					<div className="bg-blue-tip-brand my-4 w-3/4 rounded-3xl py-2 px-3">
-						<img
-							className="h-8 w-8 rounded-full pl-0 absolute left-10 md:left-20 lg:left-40 top-32"
-							src="https://cdn.dribbble.com/users/2199928/screenshots/11532918/shot-cropped-1590177932366.png?compress=1&resize=400x300"
-							alt="img"
-						/>
+					<div className="bg-blue-tip-brand h-6 my-4 w-3/4 rounded-3xl py-1 pt-2 flex justify-center items-center">
+						<div className="absolute rounded-full w-3/4">
+							<img className="h-9 w-9 rounded-full" src={User} alt="img" />
+						</div>
 						<div className="text-sm md:text-md lg:text-lg text-white truncate w-full flex justify-center items-center">
 							Skill View - {slo.replace('$', ',')}
 						</div>
@@ -163,7 +158,7 @@ const Result: React.FC<PropsType> = props => {
 						<div className="font-bold w-2/4 text-right mr-5">Class Average</div>
 					</>
 				)}
-				{(type === 'child_view' || type === 'single_slo_view') &&
+				{type === 'child_view' &&
 					(test_type === 'Formative' || url[2] === 'formative-result') && (
 						<>
 							<div className="font-bold w-2/4 flex justify-center md:justify-start lg:justify-start">
@@ -175,6 +170,18 @@ const Result: React.FC<PropsType> = props => {
 									<div>%</div>
 								</div>
 								<div className="w-3/12"></div>
+							</div>
+						</>
+					)}
+				{type === 'single_slo_view' &&
+					(test_type === 'Formative' || url[2] === 'formative-result') && (
+						<>
+							<div className="font-bold w-2/4 flex justify-start md:justify-start lg:justify-start">
+								<span className="pl-0 md:pl-14 lg:pl-14">Name</span>
+							</div>
+							<div className="w-3/12 flex flex-row justify-between font-bold text-sm md:text-md lg:text-lg">
+								<div>Score</div>
+								<div>%</div>
 							</div>
 						</>
 					)}

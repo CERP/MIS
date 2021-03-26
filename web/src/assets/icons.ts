@@ -38,6 +38,7 @@ import backArrow from './svgs/left-arrow.svg'
 import burger from './svgs/burger.svg'
 import tip from './svgs/TIP.svg'
 import down from './svgs/down.svg'
+import user from './svgs/user.svg'
 
 export const EditIcon = deleteIcon
 export const DeleteIcon = editIcon
@@ -79,3 +80,4 @@ export const BackArrow = backArrow
 export const Burger = burger
 export const TIP = tip
 export const DownArrow = down
+export const User = user
