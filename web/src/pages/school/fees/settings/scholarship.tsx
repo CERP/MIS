@@ -273,21 +273,25 @@ const Card = ({
 		...Object.values(student.fees || {})
 	]
 
-	const totalFeeAmount = fees.reduce(
-		(agg, curr) =>
-			curr.type === 'SCHOLARSHIP'
-				? agg - parseFloat(curr.amount.toString())
-				: agg + parseFloat(curr.amount.toString()),
-		0
-	)
+	const totalFeeAmount = fees
+		.filter(f => f.name && f.amount)
+		.reduce(
+			(agg, curr) =>
+				curr.type === 'SCHOLARSHIP'
+					? agg - parseFloat(curr.amount.toString())
+					: agg + parseFloat(curr.amount.toString()),
+			0
+		)
 
 	return (
 		<div className="border border-gray-100 shadow-md rounded-lg p-2 bg-white w-full">
 			<div className="flex flex-row justify-between">
-				<div className="flex flex-col">
+				<div className="flex flex-col w-full">
 					<div>{toTitleCase(student.Name)}</div>
 					<div className="flex flex-row items-center space-x-2">
-						<div className="text-teal-brand">Final = Rs. {totalFeeAmount}</div>
+						<div className="text-teal-brand w-2/5 md:w-1/3">
+							Final = Rs. {totalFeeAmount}
+						</div>
 						<div
 							className={clsx(
 								'rounded-full cursor-pointer shadow-md p-px',
@@ -323,7 +327,7 @@ const Card = ({
 							isNaN(e.target.valueAsNumber) ? 0 : e.target.valueAsNumber
 						)
 					}
-					defaultValue={scholarshipFee.amount}
+					defaultValue={scholarshipFee?.amount}
 					className="tw-input w-1/3"
 					type="number"
 					placeholder="Enter amount"
