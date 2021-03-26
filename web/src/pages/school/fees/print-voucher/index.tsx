@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import moment from 'moment'
 import cond from 'cond-construct'
 import toast from 'react-hot-toast'
@@ -14,6 +14,7 @@ import months from 'constants/months'
 
 import UserIconSvg from 'assets/svgs/user.svg'
 import { CustomSelect } from 'components/select'
+import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
 
 type State = {
 	printFor: 'STUDENT' | 'CLASS' | 'FAMILY'
@@ -41,7 +42,12 @@ export const PrintVoucher = () => {
 		return cond([
 			[
 				state.printFor === 'STUDENT',
-				<StudentListSearch key={state.printFor} students={students} setStudentId={setId} />
+				<StudentListSearch
+					classes={classes}
+					key={state.printFor}
+					students={students}
+					setStudentId={setId}
+				/>
 			],
 			[
 				state.printFor === 'CLASS',
@@ -216,12 +222,37 @@ export const PrintForClass = ({ classes, setClassId }: PrintForClassProps) => {
 // for student
 interface StudentListSearchProps {
 	students: RootDBState['students']
+	classes: RootDBState['classes']
 	setStudentId: (sid: string) => void
 }
 
-export const StudentListSearch = ({ students, setStudentId }: StudentListSearchProps) => {
+export const StudentListSearch = ({ students, setStudentId, classes }: StudentListSearchProps) => {
 	const [searchText, setSearchText] = useState('')
-	const [student, setStudent] = useState<MISStudent>()
+	const [student, setStudent] = useState<MISStudent & { section: AugmentedSection }>()
+
+	const clearStudent = () => {
+		setStudent(undefined)
+	}
+
+	useEffect(() => {
+		if (student) {
+			const section = getSectionsFromClasses(classes).find(s => s.id === student.id)
+			setStudent({ ...students?.[student.id], section })
+		}
+	}, [students])
+
+	const sectionStudents = useMemo(() => {
+		const sections = getSectionsFromClasses(classes)
+		return Object.values(students)
+			.filter(s => isValidStudent(s) && s.Active)
+			.map(s => {
+				const section = sections.find(section => s.section_id === section.id)
+				return {
+					...s,
+					section
+				}
+			})
+	}, [students, classes])
 
 	return (
 		<>
@@ -240,7 +271,7 @@ export const StudentListSearch = ({ students, setStudentId }: StudentListSearchP
 					enterFrom="opacity-0"
 					enterTo="opacity-100">
 					<div className="w-full max-h-40 overflow-y-auto bg-white rounded-3xl text-gray-900 p-4">
-						{Object.values(students)
+						{sectionStudents
 							.filter(
 								s =>
 									isValidStudent(s) &&
@@ -267,8 +298,9 @@ export const StudentListSearch = ({ students, setStudentId }: StudentListSearchP
 											className="w-6 h-6 mr-2 bg-gray-500 rounded-full"
 											alt={s.Name}
 										/>
-										<div>{s.Name}</div>
+										<div className="text-sm">{toTitleCase(s.Name)}</div>
 									</div>
+									<div className="text-xs">{s.section?.namespaced_name}</div>
 								</div>
 							))}
 					</div>
