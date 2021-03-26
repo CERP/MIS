@@ -1,39 +1,37 @@
 import React, { useState } from 'react'
-
-import { AppLayout } from 'components/Layout/appLayout'
 import moment from 'moment'
-
-import { Transition } from '@headlessui/react'
-import { SearchInput } from 'components/input/search'
-import { isValidStudent } from 'utils'
-
-import UserIconSvg from 'assets/svgs/user.svg'
-import toTitleCase from 'utils/toTitleCase'
 import cond from 'cond-construct'
+import toast from 'react-hot-toast'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { type } from 'os'
-import toast from 'react-hot-toast'
+import { Transition } from '@headlessui/react'
+
+import { AppLayout } from 'components/Layout/appLayout'
+import { SearchInput } from 'components/input/search'
+import { isValidStudent } from 'utils'
+import { toTitleCase } from 'utils/toTitleCase'
 import months from 'constants/months'
+
+import UserIconSvg from 'assets/svgs/user.svg'
+import { CustomSelect } from 'components/select'
+
 type State = {
 	printFor: 'STUDENT' | 'CLASS' | 'FAMILY'
 	id: string
 	month: string
-	year: string
 }
 
 export const PrintVoucher = () => {
-	const { settings, classes, students } = useSelector((state: RootReducerState) => state.db)
+	const { classes, students } = useSelector((state: RootReducerState) => state.db)
+
+	const currentYear = moment().format('YYYY')
+	const currentMonth = moment().format('MMMM')
 
 	const [state, setState] = useState<State>({
 		printFor: 'STUDENT',
 		id: '',
-		month: '',
-		year: ''
+		month: currentMonth
 	})
-
-	const [month, setMonth] = useState(moment().format('YYYY-MM'))
-	const [year, setYear] = useState('')
 
 	const setId = (sid: string) => {
 		setState({ ...state, id: sid })
@@ -43,11 +41,11 @@ export const PrintVoucher = () => {
 		return cond([
 			[
 				state.printFor === 'STUDENT',
-				<AddFeeToStudent key={state.printFor} students={students} setStudentId={setId} />
+				<StudentListSearch key={state.printFor} students={students} setStudentId={setId} />
 			],
 			[
 				state.printFor === 'CLASS',
-				<AddFeeToClass key={state.printFor} classes={classes} setClassId={setId} />
+				<PrintForClass key={state.printFor} classes={classes} setClassId={setId} />
 			],
 			[
 				state.printFor === 'FAMILY',
@@ -58,52 +56,66 @@ export const PrintVoucher = () => {
 
 	const getPreviewRoute = (): string => {
 		if (state.id === '') {
-			toast.error('Nothing Selected')
+			toast.error('Please choose from list to continue')
 		}
-		return `${window.location.pathname}/print-preview?type=${state.printFor}&id=${state.id}&month=${month}&year=${year}`
+		return `${window.location.pathname}/print-preview?type=${state.printFor}&id=${state.id}&month=${state.month}&year=${currentYear}`
 	}
 
 	return (
 		<AppLayout title={'Print Voucher'}>
 			<div className="p-5 md:p-10 md:pb-0 relative">
 				<div className="text-2xl font-bold mt-4 mb-8 text-center">Print Voucher</div>
-				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-4 rounded-2xl bg-gray-700 p-4 my-4 md:mt-8 text-white min-h-screen">
-					<div className="flex flex-row items-center justify-between w-full md:w-3/5 ">
-						<select
-							className="tw-select bg-transparent bg-gray-700 mr-1 border-blue-brand w-full text-white"
-							onChange={e => setMonth(e.target.value)}
-							value={month}>
-							<option value=""> Month</option>
-							{months.map(month => {
-								return (
-									<option key={month} value={month}>
-										{month}
-									</option>
-								)
-							})}
-						</select>
-						<select
-							className="tw-select bg-transparent bg-gray-700 border-green-brand w-full text-white"
-							onChange={e => setYear(e.target.value)}
-							value={year}>
-							<option value="">Year</option>
-							{[...Array(30)].map((e, i) => (
-								<option key={i} value={`${2000 + (i + 1)}`}>
-									{2000 + (i + 1)}
-								</option>
-							))}
-						</select>
+				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-4 rounded-2xl bg-gray-700 p-4 my-4 md:mt-8">
+					<div className="flex flex-row items-center justify-between w-full md:w-3/5 space-x-4">
+						<CustomSelect
+							onChange={month => setState({ ...state, month })}
+							data={months}
+							selectedItem={state.month}>
+							<svg
+								className="w-5 h-5 text-gray-500"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor">
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth={2}
+									d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+								/>
+							</svg>
+						</CustomSelect>
+						<CustomSelect
+							onChange={year => {
+								console.log(year)
+							}}
+							data={[currentYear]}
+							selectedItem={currentYear}>
+							<svg
+								className="w-5 h-5 text-gray-500"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor">
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth={2}
+									d="M19 9l-7 7-7-7"
+								/>
+							</svg>
+						</CustomSelect>
 					</div>
 
 					<div className="space-y-6 w-full md:w-3/5">
-						<div className="">Print Voucher for</div>
-						<div className="flex items-center flex-wrap justify-between">
+						<div className="text-white">Print Voucher for</div>
+						<div className="flex items-center flex-wrap justify-between text-white">
 							<div className="flex items-center">
 								<input
 									type="radio"
 									onChange={() => setState({ ...state, printFor: 'STUDENT' })}
 									checked={state.printFor === 'STUDENT'}
-									className="mr-2 w-4 h-4 cursor-pointer"
+									className="form-radio text-teal-brand mr-2 w-4 h-4 cursor-pointer"
 								/>
 								<div className="text-sm">Student</div>
 							</div>
@@ -112,7 +124,7 @@ export const PrintVoucher = () => {
 									type="radio"
 									onChange={() => setState({ ...state, printFor: 'CLASS' })}
 									checked={state.printFor === 'CLASS'}
-									className="mr-2 w-4 h-4 cursor-pointer"
+									className="form-radio text-teal-brand mr-2 w-4 h-4 cursor-pointer"
 								/>
 								<div className="text-sm">Class</div>
 							</div>
@@ -121,7 +133,7 @@ export const PrintVoucher = () => {
 									type="radio"
 									onChange={() => setState({ ...state, printFor: 'FAMILY' })}
 									checked={state.printFor === 'FAMILY'}
-									className="mr-2 w-4 h-4 cursor-pointer"
+									className="form-radio text-teal-brand mr-2 w-4 h-4 cursor-pointer"
 								/>
 								<div className="text-sm">Family</div>
 							</div>
@@ -131,7 +143,7 @@ export const PrintVoucher = () => {
 					{state.id && (
 						<Link
 							to={getPreviewRoute}
-							className="tw-btn-blue w-full font-semibold text-center m-8">
+							className="tw-btn-blue font-semibold text-center m-8 w-full md:w-3/5">
 							Print
 						</Link>
 					)}
@@ -156,7 +168,7 @@ export const FamilyDropdown: React.FC<FamilyDropdownProps> = ({ students, setFam
 
 	return (
 		<>
-			<div>Select Family</div>
+			<div className="text-white">Select Family</div>
 			<select
 				onChange={e => setFamilyId(e.target.value)}
 				className="tw-is-form-bg-black tw-select py-2 w-full">
@@ -173,15 +185,15 @@ export const FamilyDropdown: React.FC<FamilyDropdownProps> = ({ students, setFam
 	)
 }
 
-interface AddFeeToClassProps {
+interface PrintForClassProps {
 	classes: RootDBState['classes']
 	setClassId: (cid: string) => void
 }
 
-export const AddFeeToClass = ({ classes, setClassId }: AddFeeToClassProps) => {
+export const PrintForClass = ({ classes, setClassId }: PrintForClassProps) => {
 	return (
 		<>
-			<div>Select Class</div>
+			<div className="text-white">Select Class</div>
 			<select
 				onChange={e => setClassId(e.target.value)}
 				name="classId"
@@ -200,18 +212,20 @@ export const AddFeeToClass = ({ classes, setClassId }: AddFeeToClassProps) => {
 	)
 }
 
-interface AddFeeToStudentProps {
+// TODO: move to common place for import and replace withing additional fee
+// for student
+interface StudentListSearchProps {
 	students: RootDBState['students']
 	setStudentId: (sid: string) => void
 }
 
-export const AddFeeToStudent = ({ students, setStudentId }: AddFeeToStudentProps) => {
+export const StudentListSearch = ({ students, setStudentId }: StudentListSearchProps) => {
 	const [searchText, setSearchText] = useState('')
 	const [student, setStudent] = useState<MISStudent>()
 
 	return (
 		<>
-			<div>Select Student</div>
+			<div className="text-white">Select Student</div>
 			{!student?.id && (
 				<SearchInput
 					value={searchText}

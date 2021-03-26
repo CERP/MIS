@@ -1,22 +1,16 @@
-import { AppLayout } from 'components/Layout/appLayout'
-import { StudentLedgerPage } from 'modules/Student/Single/Fees/StudentLedgerPage'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { useLocation } from 'react-router'
+
+import { AppLayout } from 'components/Layout/appLayout'
 import chunkify from 'utils/chunkify'
 import getFilteredPayments from 'utils/getFilteredPayments'
 import getSectionFromId from 'utils/getSectionFromId'
+import { StudentLedgerPage } from 'modules/Student/Single/Fees/StudentLedgerPage'
 
 import './style.css'
 
-// interface RouteInfo {
-// 	type: 'STUDENT' | 'CLASS' | 'FAMILY'
-// 	id: string
-// 	month: string
-// 	year: string
-// }
-
-const PrintPreview: React.FC<{}> = props => {
+const PrintPreview = () => {
 	const params = new URLSearchParams(useLocation().search)
 	const type = params.get('type')
 	const id = params.get('id')
