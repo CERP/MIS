@@ -1,6 +1,11 @@
 import React, { useState } from 'react'
 import { connect } from 'react-redux'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { convertLearningGradeToGroupName, getTestType } from 'utils/TIP'
+import { useComponentVisible } from 'utils/customHooks'
+import AssignedGroupModal from './AssignedGroupModal'
+import { TModal } from '../Modal'
+import Card from '../Card'
 import {
 	calculateLearningLevelFromDiagnosticTest,
 	calculateLearningLevelFromOralTest
@@ -11,12 +16,6 @@ import {
 	resetStudentLearningLevel,
 	resetStudentGrades
 } from 'actions'
-import { convertLearningGradeToGroupName } from 'utils/TIP'
-import { useComponentVisible } from 'utils/customHooks'
-import AssignedGroupModal from './AssignedGroupModal'
-import { TModal } from '../Modal'
-import Card from '../Card'
-
 interface P {
 	teacher_name: string
 	students: RootDBState['students']
@@ -69,19 +68,7 @@ const Grading: React.FC<PropsType> = ({
 	let test_type: TIPTestType = 'Diagnostic'
 
 	const url = match.url.split('/')
-	switch (url[2]) {
-		case 'oral-test':
-			test_type = 'Oral'
-			break
-		case 'formative-test':
-			test_type = 'Formative'
-			break
-		case 'summative-test':
-			test_type = 'Summative'
-			break
-		default:
-			test_type = 'Diagnostic'
-	}
+	test_type = getTestType(url[2])
 
 	const test = targeted_instruction.tests[test_id]
 	const student = students[std_id]
@@ -131,7 +118,7 @@ const Grading: React.FC<PropsType> = ({
 		}
 		// calculate learning level
 		const level =
-			url[2] === 'oral-test'
+			test_type === 'Oral'
 				? calculateLearningLevelFromOralTest(result)
 				: calculateLearningLevelFromDiagnosticTest(result)
 
@@ -143,12 +130,14 @@ const Grading: React.FC<PropsType> = ({
 
 		//display modal => to see assigned group
 		complete
-			? (setIsComponentVisible(true), setModaltype('assign_group_modal'))
+			? test_type === 'Diagnostic' &&
+			(setIsComponentVisible(true), setModaltype('assign_group_modal'))
 			: (setIsComponentVisible(true), setModaltype('warning_modal'))
 
 		// assign level to student
-		complete && setLearningLevel(std_id, subject, level)
+		test_type === 'Diagnostic' && complete && setLearningLevel(std_id, subject, level)
 		complete && saveReport(std_id, result, test_id)
+		test_type !== 'Diagnostic' && redirect()
 	}
 
 	const onResetStudentGrades = () => {
@@ -168,7 +157,7 @@ const Grading: React.FC<PropsType> = ({
 	}
 
 	return (
-		<div className="flex flex-wrap content-between bg-white">
+		<div className="flex flex-wrap content-between bg-white mt-20">
 			{isComponentVisible && (
 				<TModal>
 					<div ref={ref} className="bg-white pb-3">

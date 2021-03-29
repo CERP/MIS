@@ -91,7 +91,7 @@ const List: React.FC<PropsType> = ({
 	}
 
 	return (
-		<div className="flex flex-wrap content-between">
+		<div className="flex flex-wrap content-between mt-20">
 			<Card class_name={class_name} subject={subject} lesson_name="" lesson_no="" />
 
 			<Headings heading={'Lesson Plan Library'} sub_heading={'Click on a plan to view'} />
@@ -124,14 +124,14 @@ const List: React.FC<PropsType> = ({
 									}
 								/>
 							) : (
-									<div
-										className="h-6 w-6 bg-white rounded-full flex items-center justify-center print:hidden cursor-pointer"
-										onClick={e =>
-											done(e, class_name, curr.subject, curr.lesson_number, true)
-										}>
-										<img className="h-3 w-3" src={WhiteTick} />
-									</div>
-								)}
+								<div
+									className="h-6 w-6 bg-white rounded-full flex items-center justify-center print:hidden cursor-pointer"
+									onClick={e =>
+										done(e, class_name, curr.subject, curr.lesson_number, true)
+									}>
+									<img className="h-3 w-3" src={WhiteTick} />
+								</div>
+							)}
 						</div>
 					)
 				})}

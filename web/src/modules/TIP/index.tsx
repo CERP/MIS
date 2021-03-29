@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
 import { RouteComponentProps, Link } from 'react-router-dom'
 import {
@@ -38,7 +38,7 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id }) => {
 	}
 
 	return (
-		<div className="flex flex-wrap content-between bg-white">
+		<div className="flex flex-wrap content-between bg-white mt-20">
 			<Card class_name="" subject="" lesson_name="" lesson_no="" />
 			<Headings heading="Welcome to TIP" sub_heading="What would you like to do today ?" />
 			{

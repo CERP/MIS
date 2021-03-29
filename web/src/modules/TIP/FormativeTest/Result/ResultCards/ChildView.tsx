@@ -1,5 +1,6 @@
-import React from 'react';
-import { ArrowBack } from 'assets/icons'
+import React from 'react'
+import clsx from 'clsx'
+import { ArrowBack, User } from 'assets/icons'
 
 interface P {
 	name: string
@@ -13,33 +14,60 @@ interface P {
 	setType: (type: string) => void
 }
 
-const ChildView: React.FC<P> = ({ name, obtain, total, std_id, test_type, setId, setName, setType }) => {
-
+const ChildView: React.FC<P> = ({
+	name,
+	obtain,
+	total,
+	std_id,
+	test_type,
+	setId,
+	setName,
+	setType
+}) => {
 	const redirect = () => {
 		setType('single_std_view')
 		setId(std_id)
 		setName(name)
 	}
 
-	const percentage = Math.trunc(obtain / total * 100)
+	const percentage = Math.trunc((obtain / total) * 100)
 
-	return <div className={`${percentage >= 60 ? "bg-green-250" :
-		percentage >= 50 ? "bg-yellow-250" : "bg-red-250"} 
-    flex flex-row justify-between items-center px-3 my-1 h-14 shadow-lg w-full`} onClick={redirect}>
-		<div className="flex flex-row justify-between items-center w-full">
-			<div className="w-3/5 flex flex-row justify-start content-center items-center">
-				<img className="h-6 rounded-full p-3" src="https://cdn.dribbble.com/users/2199928/screenshots/11532918/shot-cropped-1590177932366.png?compress=1&resize=400x300" alt="img" />
-				<div className="font-bold">{name}</div>
-			</div>
-			<div className="flex flex-row justify-between w-3/12 text-xs">
-				<div>{(test_type === "summative-test") ? percentage < 50 ? "F" : "P" : `${obtain}/${total}`}</div>
-				<div>{`${percentage}%`}</div>
-			</div>
-			<div className="bg-white rounded-full h-7 w-7 flex justify-center items-center">
-				<img className="h-3" src={ArrowBack} />
+	return (
+		<div
+			className={clsx(
+				'flex flex-row justify-between items-center px-3 my-1 h-14 shadow-lg w-full',
+				{
+					'bg-green-250': percentage >= 60,
+					'bg-yellow-250': percentage >= 50
+				},
+				'bg-red-250'
+			)}
+			onClick={redirect}>
+			<div className="flex flex-row justify-between items-center w-full">
+				<div className="w-2/4 flex flex-row justify-start content-center items-center">
+					<img className="h-6 rounded-full p-3" src={User} alt="img" />
+					<div className="font-bold">{name}</div>
+				</div>
+				<div className="flex flex-row justify-around w-2/4 text-sm md:text-md lg:text-lg">
+					<div className="w-4/5 flex flex-row justify-around">
+						<div>
+							{test_type === 'summative-test'
+								? percentage < 50
+									? 'F'
+									: 'P'
+								: `${obtain}/${total}`}
+						</div>
+						<div>{percentage}%</div>
+					</div>
+					<div className="w-1/5 flex justify-end">
+						<div className="bg-white rounded-full h-7 w-7 flex justify-center items-center">
+							<img className="h-3" src={ArrowBack} />
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
-	</div>
+	)
 }
 
 export default ChildView
