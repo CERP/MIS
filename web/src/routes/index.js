@@ -35,7 +35,7 @@ import PlannerList from 'modules/Planner/ClassList'
 import Planner from 'modules/Planner'
 import CertificateMenu from 'modules/CertificateMenu'
 import HistoricalFee from '../modules/Settings/HistoricalFees/historical-fee'
-import FamilyModule from '../modules/Family'
+// import FamilyModule from '../modules/Family'
 import SingleFamily from '../modules/Family/Single'
 import StudentFees from '../modules/Student/Single/Fees/index'
 import ManageFees from 'modules/Student/ManageFees'
@@ -71,6 +71,7 @@ import { StaffAttendance } from 'pages/staff/attendance'
 import { SchoolAttendance } from 'pages/school/attendance'
 import { SchoolFees } from 'pages/school/fees'
 import { StudentPayments } from 'pages/students/fee-payments/payments'
+import { Family } from 'pages/family'
 
 export default class Routes extends React.Component {
 	constructor(props) {
@@ -196,7 +197,7 @@ export default class Routes extends React.Component {
 						/>
 						<TrackedRoute path="/families/:famId/payments" component={StudentFees} />
 						<TrackedRoute path="/families/:id" component={SingleFamily} />
-						<TrackedRoute path="/families" component={FamilyModule} />
+						<TrackedRoute path="/families" component={Family} />
 
 						<TrackedRoute path="/ClassList" component={PlannerList} />
 						<TrackedRoute path="/planner/:class_id/:section_id" component={Planner} />

@@ -11,7 +11,7 @@ export const SearchInput = (
 				type="search"
 				name="search"
 				className={clsx(props.className, 'tw-input pl-8 rounded-3xl shadow-sm w-full')}
-				placeholder="Search here..."
+				placeholder={props.placeholder || 'Search here...'}
 				autoComplete="off"
 			/>
 			<div className="absolute text-gray-500 left-0 ml-2 mr-4 my-3 top-0">
