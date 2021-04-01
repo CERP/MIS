@@ -30,13 +30,12 @@ class SingleFamily extends React.Component<P, S> {
 		const siblings = this.siblings()
 
 		this.state = {
-			Phone: (siblings.find((s) => s.Phone !== '') || { Phone: '' }).Phone,
-			AlternatePhone: (
-				siblings.find((s) => s.AlternatePhone !== '') || { AlternatePhone: '' }
-			).AlternatePhone,
-			ManName: (siblings.find((s) => s.ManName !== '') || { ManName: '' }).ManName,
-			ManCNIC: (siblings.find((s) => s.ManCNIC !== '') || { ManCNIC: '' }).ManCNIC,
-			Address: (siblings.find((s) => s.Address !== '') || { Address: '' }).Address,
+			Phone: (siblings.find(s => s.Phone !== '') || { Phone: '' }).Phone,
+			AlternatePhone: (siblings.find(s => s.AlternatePhone !== '') || { AlternatePhone: '' })
+				.AlternatePhone,
+			ManName: (siblings.find(s => s.ManName !== '') || { ManName: '' }).ManName,
+			ManCNIC: (siblings.find(s => s.ManCNIC !== '') || { ManCNIC: '' }).ManCNIC,
+			Address: (siblings.find(s => s.Address !== '') || { Address: '' }).Address
 		}
 
 		this.former = new Former(this, [])
@@ -46,7 +45,7 @@ class SingleFamily extends React.Component<P, S> {
 
 	siblings = () => {
 		const famId = this.famId()
-		return Object.values(this.props.students).filter((s) => s.Name && s.FamilyID === famId)
+		return Object.values(this.props.students).filter(s => s.Name && s.FamilyID === famId)
 	}
 
 	addStudent = (student: MISStudent) => {
@@ -68,7 +67,7 @@ class SingleFamily extends React.Component<P, S> {
 
 		// check if they have same phone
 		return siblings.some(
-			(s) =>
+			s =>
 				s.Phone !== siblings[0].Phone ||
 				s.ManCNIC !== siblings[0].ManCNIC ||
 				s.ManName !== siblings[0].ManName ||
@@ -103,7 +102,7 @@ class SingleFamily extends React.Component<P, S> {
 								type="tel"
 								{...this.former.super_handle(
 									['ManCNIC'],
-									(num) => num.length <= 15,
+									num => num.length <= 15,
 									this.addHyphens(['ManCNIC'])
 								)}
 								placeholder="Father CNIC"
@@ -127,7 +126,7 @@ class SingleFamily extends React.Component<P, S> {
 									type="tel"
 									{...this.former.super_handle(
 										['Phone'],
-										(num) => num.length <= 11
+										num => num.length <= 11
 									)}
 									placeholder="Phone Number"
 								/>
@@ -147,7 +146,7 @@ class SingleFamily extends React.Component<P, S> {
 									type="tel"
 									{...this.former.super_handle(
 										['AlternatePhone'],
-										(num) => num.length <= 11
+										num => num.length <= 11
 									)}
 									placeholder="Alternate Phone Number"
 								/>
@@ -162,7 +161,7 @@ class SingleFamily extends React.Component<P, S> {
 
 						<div className="divider">Siblings</div>
 						<div className="section">
-							{this.siblings().map((s) => (
+							{this.siblings().map(s => (
 								<div className="row" key={s.id}>
 									<Link to={`/student/${s.id}/profile`}>{s.Name}</Link>
 								</div>
@@ -203,12 +202,12 @@ class SingleFamily extends React.Component<P, S> {
 
 export default connect(
 	(state: RootReducerState) => ({
-		students: state.db.students,
+		students: state.db.students
 	}),
 	(dispatch: Function) => ({
 		addStudentToFamily: (s: MISStudent, famId: string) =>
 			dispatch(addStudentToFamily(s, famId)),
 		saveFamilyInfo: (siblings: MISStudent[], info: MISFamilyInfo) =>
-			dispatch(saveFamilyInfo(siblings, info)),
+			dispatch(saveFamilyInfo(siblings, info))
 	})
 )(SingleFamily)

@@ -565,32 +565,45 @@ export const addStudentToFamily = (student: MISStudent, family_id: string) => (
 	)
 }
 
-export const saveFamilyInfo = (siblings: MISStudent[], info: MISFamilyInfo) => (
+export const saveFamilyInfo = (siblings: MISStudent[], info: MISFamilyInfo, isNew = false) => (
 	dispatch: Function
 ) => {
 	const siblingMerges = siblings
-		.map(s => [
-			{
-				path: ['db', 'students', s.id, 'ManName'],
-				value: info.ManName
-			},
-			{
-				path: ['db', 'students', s.id, 'Phone'],
-				value: info.Phone
-			},
-			{
-				path: ['db', 'students', s.id, 'AlternatePhone'],
-				value: info.AlternatePhone
-			},
-			{
-				path: ['db', 'students', s.id, 'ManCNIC'],
-				value: info.ManCNIC
-			},
-			{
-				path: ['db', 'students', s.id, 'Address'],
-				value: info.Address
-			}
-		])
+		.map(s => {
+			// create extra merge for family id
+			const createFamily = isNew
+				? [
+						{
+							path: ['db', 'students', s.id, 'FamilyId'],
+							value: s.FamilyID
+						}
+				  ]
+				: []
+
+			return [
+				...createFamily,
+				{
+					path: ['db', 'students', s.id, 'ManName'],
+					value: info.ManName
+				},
+				{
+					path: ['db', 'students', s.id, 'Phone'],
+					value: info.Phone
+				},
+				{
+					path: ['db', 'students', s.id, 'AlternatePhone'],
+					value: info.AlternatePhone
+				},
+				{
+					path: ['db', 'students', s.id, 'ManCNIC'],
+					value: info.ManCNIC
+				},
+				{
+					path: ['db', 'students', s.id, 'Address'],
+					value: info.Address
+				}
+			]
+		})
 		.reduce((agg, curr) => {
 			return [...agg, ...curr]
 		}, [])
