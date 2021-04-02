@@ -1,7 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import toast from 'react-hot-toast'
 import clsx from 'clsx'
+import toast from 'react-hot-toast'
+import Dynamic from '@cerp/dynamic'
+import { UserIcon, TrashIcon, PhoneIcon } from '@heroicons/react/solid'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { Redirect, RouteComponentProps } from 'react-router-dom'
@@ -9,6 +11,9 @@ import { isValidStudent } from 'utils'
 import { StudentDropdownSearch } from 'components/input/search'
 import { addStudentToFamily, saveFamilyInfo } from 'actions'
 import Hyphenator from 'utils/Hyphenator'
+import toTitleCase from 'utils/toTitleCase'
+import getSectionsFromClasses from 'utils/getSectionsFromClasses'
+import { createMerges } from 'actions/core'
 
 type SingleFamilyProps = RouteComponentProps<{ id: string }>
 
@@ -24,7 +29,7 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 	const { students, classes, settings } = useSelector((state: RootReducerState) => state.db)
 
 	const famId = match.params.id
-	const isNewFamily = location.pathname.indexOf('new') >= 0
+	const isNewFam = location.pathname.indexOf('new') >= 0
 
 	const siblings = getSiblings(famId, students)
 
@@ -37,6 +42,19 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 		Address: (siblings.find(s => s.Address !== '') || { Address: '' }).Address
 	})
 
+	const sections = useMemo(() => {
+		return getSectionsFromClasses(classes)
+	}, [classes])
+
+	// make sure if all students removed from family, redirect to families module
+	useEffect(() => {
+		// to avoid redirect when famId = new, add isNewFam check
+		if (!isNewFam && famId && siblings.length === 0) {
+			setState(prevState => ({ ...prevState, redirectTo: '/families' }))
+		}
+	}, [siblings, famId, isNewFam])
+
+	// to show warning msg to override sibling information, if it's different
 	const siblingsUnMatchingInfo = () => {
 		return siblings.some(
 			s =>
@@ -53,17 +71,20 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 		// store students and wait for user to click on
 		// save button to insert the students with input
 		// family id
-		if (isNewFamily) {
+		if (isNewFam) {
 			setState({
 				...state,
 				Phone: student.Phone,
-				AlternatePhone: student.AlternatePhone,
+				AlternatePhone: student.AlternatePhone ?? '',
 				ManName: student.ManName,
 				ManCNIC: student.ManCNIC,
 				Address: student.Address,
 				siblings: {
 					...(state.siblings || {}),
-					[studentId]: student
+					[studentId]: {
+						...student,
+						FamilyID: state.FamilyID?.replaceAll(' ', '-')
+					}
 				}
 			})
 		} else {
@@ -74,16 +95,14 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 	}
 
 	const handleSave = () => {
-		if (isNewFamily) {
+		if (isNewFam) {
 			if (!state.FamilyID) {
 				toast.success('Please enter family name or id')
 				return
 			}
 
-			const siblingStudents = Object.values(state.siblings).map(student => ({
-				...student,
-				FamilyID: state.FamilyID
-			}))
+			// new addition of hyphen '-' in family name or id, if there's space
+			const siblingStudents = Object.values(state.siblings).map(s => s)
 
 			// dispatch an action to save students with new fam id
 			const family: MISFamilyInfo = {
@@ -94,19 +113,21 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 				AlternatePhone: state.AlternatePhone
 			}
 
-			dispatch(saveFamilyInfo(siblingStudents, family))
+			console.log(siblingStudents, family)
+
+			dispatch(saveFamilyInfo(siblingStudents, family, state.FamilyID))
 			toast.success('New family has been created')
 
 			// redirect to '/families'
 			setTimeout(() => {
 				setState({ ...state, redirectTo: '/families' })
-			}, 1500)
+			}, 1000)
 
 			return
 		}
 
 		// Remove extra props here (state.siblings)
-		dispatch(saveFamilyInfo(siblings, state as MISFamilyInfo, true))
+		dispatch(saveFamilyInfo(siblings, state as MISFamilyInfo))
 		toast.success('Family information has been updated')
 	}
 
@@ -123,18 +144,49 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 		setState({ ...state, [name]: value })
 	}
 
+	const handleRemoveStudent = (student: MISStudent) => {
+		if (isNewFam) {
+			const updated = Dynamic.delete(state, ['siblings', student.id]) as State
+
+			// check if there's no sibling, remove family info as well
+			// from previously added student
+			if (Object.keys(updated.siblings || {}).length === 0) {
+				setState({
+					FamilyID: state.FamilyID
+				})
+			} else {
+				setState(updated)
+			}
+
+			return
+		}
+
+		// direct create merge action instead of creating a new action
+		// in actions.ts and import it here
+		// TODO: move to actions.ts for abstractions purpose
+		dispatch(
+			createMerges([
+				{
+					path: ['db', 'students', student.id, 'FamilyID'],
+					value: ''
+				}
+			])
+		)
+
+		toast.success(student.Name + ' has been removed')
+	}
+
 	if (state.redirectTo) {
 		return <Redirect to={state.redirectTo} />
 	}
 
-	const pageTitle = isNewFamily ? 'Create Family' : 'Edit Family'
+	const pageTitle = isNewFam ? 'Create Family' : 'Edit Family'
 
-	// TODO: show list of siblings
-	// TODO: add logic to remove student from family
 	// TODO: think of better way to create first family and add ability
-	// to add more siblings (have to check if already student has been added or not)
-	// TODO: refactor code and add appropriate toasts
+	// to multiple siblings (have to check if already student has been added or not)
 	// TODO: think about better family ids, change space to hyphen
+
+	console.log(state)
 
 	return (
 		<AppLayout title={pageTitle}>
@@ -148,15 +200,15 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 						<input
 							name="FamilyID"
 							required
-							disabled={isNewFamily ? false : !!famId} // don't update the if
-							value={isNewFamily ? state.FamilyID : famId}
+							disabled={isNewFam ? false : !!famId} // don't update the if
+							value={isNewFam ? state.FamilyID : famId}
 							onChange={handleInputChange}
 							placeholder="Type name or id"
 							className={clsx('tw-input w-full tw-is-form-bg-black', {
-								'pointer-events-none bg-gray-500': isNewFamily ? false : !!famId
+								'pointer-events-none bg-gray-500': isNewFam ? false : !!famId
 							})}
 						/>
-						{(isNewFamily ? state.siblings : true) && (
+						{(isNewFam ? state.siblings : true) && (
 							<>
 								<div>Guardian Name</div>
 								<input
@@ -171,7 +223,7 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 									name="ManCNIC"
 									value={state.ManCNIC}
 									onChange={handleInputChange}
-									placeholder="Type CNIC without '-'"
+									placeholder="Type CNIC here"
 									className="tw-input w-full tw-is-form-bg-black"
 								/>
 								<div>Address</div>
@@ -184,21 +236,29 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 									className="tw-input w-full tw-is-form-bg-black focus-within:bg-transparent"
 								/>
 								<div>Contact</div>
-								<input
-									name="Phone"
-									value={state.Phone}
-									onChange={handleInputChange}
-									placeholder="03xxxxxxxxx"
-									className="tw-input w-full tw-is-form-bg-black"
-								/>
+								<div className="flex items-center flex-row w-full">
+									<input
+										name="Phone"
+										type="number"
+										value={state.Phone}
+										onChange={handleInputChange}
+										placeholder="03xxxxxxxxx"
+										className="tw-input w-full tw-is-form-bg-black"
+									/>
+									<PhoneCall phone={state.Phone} />
+								</div>
 								<div>Contact (Other)</div>
-								<input
-									value={state.AlternatePhone}
-									onChange={handleInputChange}
-									name="AlternatePhone"
-									placeholder="03xxxxxxxxx"
-									className="tw-input w-full tw-is-form-bg-black"
-								/>{' '}
+								<div className="flex items-center flex-row w-full">
+									<input
+										value={state.AlternatePhone}
+										onChange={handleInputChange}
+										name="AlternatePhone"
+										type="number"
+										placeholder="03xxxxxxxxx"
+										className="tw-input w-full tw-is-form-bg-black"
+									/>
+									<PhoneCall phone={state.AlternatePhone} />
+								</div>
 							</>
 						)}
 
@@ -209,7 +269,18 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 							</div>
 						)}
 
-						{(isNewFamily ? Object.keys(state.siblings || {}).length === 0 : true) && (
+						<div className="flex flex-col space-y-2">
+							{(isNewFam ? Object.values(state.siblings || {}) : siblings).map(s => (
+								<ListCard
+									key={s.id}
+									student={s}
+									sections={sections}
+									removeStudent={() => handleRemoveStudent(s)}
+								/>
+							))}
+						</div>
+
+						{(isNewFam ? Object.keys(state.siblings || {}).length === 0 : true) && (
 							<>
 								<div>Add Siblings</div>
 								<StudentDropdownSearch
@@ -225,11 +296,14 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 							onClick={handleSave}
 							className={clsx(
 								'tw-btn w-full',
-								isNewFamily && !state.FamilyID
+								// make sure if there's no student selected to be added in family, disable button
+								isNewFam &&
+									(!state.FamilyID ||
+										Object.keys(state.siblings || {}).length === 0)
 									? 'bg-gray-400 pointer-events-none'
 									: 'bg-blue-brand'
 							)}>
-							{isNewFamily ? 'Save' : 'Update'}
+							{isNewFam ? 'Save' : 'Update'}
 						</button>
 					</form>
 				</div>
@@ -243,3 +317,56 @@ const getSiblings = (famId: string, students: RootDBState['students']) => {
 		std => isValidStudent(std) && std.Active && std.FamilyID === famId
 	)
 }
+
+interface ListCardProps {
+	student: MISStudent
+	sections: AugmentedSection[]
+	removeStudent: () => void
+}
+
+const ListCard = ({ student, sections, removeStudent }: ListCardProps) => {
+	const section = sections.find(s => s.id === student.section_id)
+
+	return (
+		<div className="flex flex-row items-center p-2 bg-white w-full justify-between rounded-md text-gray-900">
+			<div className="flex flex-row items-center">
+				{student.ProfilePicture?.url || student.ProfilePicture?.image_string ? (
+					<img
+						className="w-8 h-8 mr-2"
+						src={student.ProfilePicture?.url || student.ProfilePicture?.image_string}
+						alt={student.Name}
+					/>
+				) : (
+					<UserIcon className="w-8 h-8 mr-2 text-blue-brand rounded-full" />
+				)}
+				<div className="flex flex-col">
+					<div className="text-sm">{toTitleCase(student.Name)}</div>
+					<div className="text-xs text-gray-500">{toTitleCase(student.ManName)}</div>
+				</div>
+			</div>
+			<div className="flex flex-row items-center justify-between w-2/5">
+				<div className="flex flex-col items-start">
+					<div className="text-sm">{toTitleCase(section?.className)}</div>
+					<div className="text-xs text-gray-500">{toTitleCase(section?.name)}</div>
+				</div>
+				<div className="ml-4 cursor-pointer" onClick={removeStudent}>
+					<TrashIcon className="text-red-brand w-6 h-6" />
+				</div>
+			</div>
+		</div>
+	)
+}
+
+type PhoneCallProps = {
+	phone: string
+}
+const PhoneCall = ({ phone }: PhoneCallProps) => (
+	<a
+		className={clsx(
+			'md:hidden ml-2 text-white h-10 w-10 rounded-md flex items-center justify-center',
+			phone ? 'bg-blue-brand' : 'pointer-events-none bg-gray-500 text-gray-300'
+		)}
+		href={`tel:${phone}`}>
+		<PhoneIcon className="w-6 h-6" />
+	</a>
+)

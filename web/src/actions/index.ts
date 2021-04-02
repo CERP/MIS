@@ -565,17 +565,17 @@ export const addStudentToFamily = (student: MISStudent, family_id: string) => (
 	)
 }
 
-export const saveFamilyInfo = (siblings: MISStudent[], info: MISFamilyInfo, isNew = false) => (
+export const saveFamilyInfo = (siblings: MISStudent[], info: MISFamilyInfo, famId?: string) => (
 	dispatch: Function
 ) => {
 	const siblingMerges = siblings
 		.map(s => {
 			// create extra merge for family id
-			const createFamily = isNew
+			const createFamily = famId
 				? [
 						{
-							path: ['db', 'students', s.id, 'FamilyId'],
-							value: s.FamilyID
+							path: ['db', 'students', s.id, 'FamilyID'],
+							value: famId.replaceAll(' ', '-') // don't add spaces
 						}
 				  ]
 				: []
@@ -592,7 +592,7 @@ export const saveFamilyInfo = (siblings: MISStudent[], info: MISFamilyInfo, isNe
 				},
 				{
 					path: ['db', 'students', s.id, 'AlternatePhone'],
-					value: info.AlternatePhone
+					value: info.AlternatePhone ?? ''
 				},
 				{
 					path: ['db', 'students', s.id, 'ManCNIC'],
