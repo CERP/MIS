@@ -33,6 +33,7 @@ export const StudentPayments = () => {
 							s =>
 								isValidStudent(s) &&
 								s.Active &&
+								!s.FamilyID && // we have separate page for family students, so don't show them here
 								(search ? s.Name.includes(search) : true)
 						)
 						.sort((a, b) => a.Name.localeCompare(b.Name))
