@@ -412,7 +412,7 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 				...state.payment,
 				[name]:
 					type === 'text' || type === 'checkbox'
-						? value.trim()
+						? value
 						: isNaN(valueAsNumber)
 							? name === 'date'
 								? Date.now()
@@ -458,7 +458,7 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 						state.payment.date,
 						state.payment.type,
 						state.payment.fee_id,
-						state.payment.fee_name
+						state.payment.fee_name.trim()
 					)
 				)
 
@@ -481,7 +481,7 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 					state.payment.date,
 					state.payment.type,
 					state.payment.fee_id,
-					state.payment.fee_name
+					state.payment.fee_name.trim()
 				)
 			)
 
