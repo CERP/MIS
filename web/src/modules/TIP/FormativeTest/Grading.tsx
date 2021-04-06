@@ -241,13 +241,13 @@ const Grading: React.FC<PropsType> = ({
 			<div className="w-full mt-5 flex justify-around">
 				<button
 					className="bg-blue-tip-brand font-bold text-sm md:text-base lg:text-lg border-none rounded-md text-white py-2 w-5/12 mb-4"
-					onClick={onSave}>
-					Save and Continue
+					onClick={onResetStudentGrades}>
+					Reset Student Grades
 				</button>
 				<button
 					className="bg-blue-tip-brand font-bold text-sm md:text-base lg:text-lg border-none rounded-md text-white py-2 w-5/12 mb-4"
-					onClick={onResetStudentGrades}>
-					Reset Student Grades
+					onClick={onSave}>
+					Save and Continue
 				</button>
 			</div>
 		</div>

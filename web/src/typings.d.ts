@@ -112,9 +112,13 @@ interface TIPTests {
 	[id: string]: TIPTest
 }
 
-type TIPTestType = 'Diagnostic' | 'Formative' | 'Summative' | 'Oral'
+interface TIPQuizzes {
+	[id: string]: TIPQuiz
+}
 
-interface TIPTest {
+type TIPTestType = 'Diagnostic' | 'Formative' | 'Summative' | 'Oral' | 'Quiz'
+
+interface BaseTest {
 	name: string
 	subject: string
 	grade: string
@@ -122,9 +126,16 @@ interface TIPTest {
 	label: string
 	pdf_url: string
 	answer_pdf_url: string
+}
+interface TIPTest extends BaseTest {
 	questions: {
 		[question_id: string]: TIPQuestion
 	}
+}
+
+interface TIPQuiz extends BaseTest {
+	slo_category: string
+	slo: string[]
 }
 
 interface TIPQuestion {
@@ -265,6 +276,7 @@ interface RootReducerState {
 		hasError: boolean
 	}
 	targeted_instruction: {
+		quizzes: TIPQuizzes
 		tests: TIPTests
 		slo_mapping: SLOMapping
 		curriculum: TIPCurriculum
