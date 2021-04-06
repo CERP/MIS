@@ -30,7 +30,7 @@ const Levels: React.FC<P> = ({ setSectionId }) => {
 						<div
 							key={ordered_group.group}
 							className={clsx(
-								'cursor-pointer flex-wrap container w-2/5 sm:px-8 rounded-lg m-3 h-32 flex items-center justify-center flex-col shadow-lg',
+								'cursor-pointer flex-wrap container w-2/5 sm:px-8 rounded-lg m-3 h-32 flex items-center justify-center flex-col shadow-lg text-sm md:text-base lg:text-lg text-white',
 								{
 									'bg-light-blue-tip-brand': index === 0,
 									'bg-yellow-tip-brand': index === 1,
@@ -39,8 +39,8 @@ const Levels: React.FC<P> = ({ setSectionId }) => {
 								}
 							)}
 							onClick={() => setSectionId(ordered_group.group)}>
-							<div className="text-white text-xs font-bold mb-1">{`${ordered_group.color} Group`}</div>
-							<div className="text-xs text-white font-thin">{`Remedial ${ordered_group.group}`}</div>
+							<div className="font-bold mb-1">{`${ordered_group.color} Group`}</div>
+							<div className="font-thin">{`Remedial ${ordered_group.group}`}</div>
 						</div>
 					)
 				})}
