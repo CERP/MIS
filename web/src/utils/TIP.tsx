@@ -467,3 +467,9 @@ export const getTestType = (value: string) => {
 			return 'Diagnostic'
 	}
 }
+
+export const getQuizzes = (quizzes: TIPQuizzes, subject: TIPSubjects, level: TIPLevels) => {
+	return Object.values(quizzes)
+		.filter(q => q.grade === level)
+		.filter(q => q.subject === subject)
+}

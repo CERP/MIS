@@ -183,7 +183,7 @@ const Routing = props => {
 
 				<Route
 					exact
-					path={`${path}/quizzes/:class_name/:subject/pdf`}
+					path={`${path}/quizzes/:class_name/:subject/list`}
 					component={QuizList}
 				/>
 
