@@ -8,19 +8,21 @@ import { RouteComponentProps } from 'react-router-dom'
 import { Transition } from '@headlessui/react'
 import { ChevronUpIcon, ChevronDownIcon, CalendarIcon } from '@heroicons/react/outline'
 
+import toTitleCase from 'utils/toTitleCase'
+import months from 'constants/months'
+import numberWithCommas from 'utils/numberWithCommas'
 import { useSectionInfo } from 'hooks/useStudentClassInfo'
 import { AppLayout } from 'components/Layout/appLayout'
-import toTitleCase from 'utils/toTitleCase'
 import { CustomSelect } from 'components/select'
-import months from 'constants/months'
-import { getFilteredPayments } from 'utils/getFilteredPayments'
 import { MISFeeLabels } from 'constants/index'
-import numberWithCommas from 'utils/numberWithCommas'
+import { getFilteredPayments } from 'utils/getFilteredPayments'
 import { checkStudentDuesReturning } from 'utils/checkStudentDues'
 import { addMultiplePayments, addPayment, logSms } from 'actions'
 import { smsIntentLink } from 'utils/intent'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
+
+import UserIconSvg from 'assets/svgs/user.svg'
 
 type State = {
 	filter: {
@@ -136,13 +138,25 @@ export const StudentPayments = ({ match }: StudentPaymentsProps) => {
 	].sort((a, b) => parseInt(a) - parseInt(b))
 
 	return (
-		<AppLayout title="Student Payments">
+		<AppLayout title="Student Payments" showHeaderTitle>
 			<div className="p-5 md:p-10 md:pb-0 text-gray-700 relative print:hidden">
-				<div className="text-2xl font-bold mb-4 text-center">Student Payments</div>
-				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-4 rounded-2xl bg-gray-700 p-5 my-4 md:mt-8">
-					<div className="text-white text-center text-base md:hidden">
-						<div>{toTitleCase(student.Name)}</div>
+				{/* <div className="text-2xl font-bold mb-4 text-center">Student Payments</div> */}
+				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-4 rounded-2xl bg-gray-700 p-5 my-4 mt-16 md:mt-8">
+					<div className="relative text-white text-center text-base md:hidden">
+						<div className="mt-4">{toTitleCase(student.Name)}</div>
 						<div className="text-sm">Class {section?.namespaced_name}</div>
+
+						<div className="-top-20 absolute right-1 rounded-full bg-gray-500 w-24 h-24">
+							<img
+								className="w-24 h-24 rounded-full object-contain"
+								src={
+									student.ProfilePicture?.url ||
+									student.ProfilePicture?.image_string ||
+									UserIconSvg
+								}
+								alt="student"
+							/>
+						</div>
 					</div>
 					<button
 						onClick={() =>
@@ -184,7 +198,7 @@ export const StudentPayments = ({ match }: StudentPaymentsProps) => {
 									<ChevronDownIcon className="w-5 h-5 text-gray-500" />
 								</CustomSelect>
 							</div>
-							<div className="w-full text-sm md:text-base space-y-1 md:space-y-0">
+							<div className="w-full text-sm md:text-base space-y-1">
 								{getFees().map(([id, fee]) => (
 									<div
 										key={id}
@@ -193,22 +207,6 @@ export const StudentPayments = ({ match }: StudentPaymentsProps) => {
 										<div>{fee?.amount ?? 0}</div>
 									</div>
 								))}
-
-								{/* <div className="flex flex-row justify-between text-white w-full font-semibold">
-							<div>
-								This month payable (
-								<span className={clsx('mx-2 text-blue-brand')}>
-									{state.filter.month}
-								</span>
-								)
-							</div>
-							<div>
-								{getFees().reduce(
-									(agg, [id, fee]) => agg + parseFloat(fee.amount as string),
-									0
-								)}
-							</div>
-						</div> */}
 
 								<div className="flex flex-row justify-between text-white w-full font-semibold">
 									<div>
@@ -240,7 +238,9 @@ export const StudentPayments = ({ match }: StudentPaymentsProps) => {
 											: 'text-red-brand'
 									)}>
 									<div>
-										{totalPendingAmount < 0 ? 'Advance' : 'Payable'} amount
+										{totalPendingAmount < 0
+											? 'Advance Amount'
+											: 'Total Payable'}
 									</div>
 									<div>Rs. {numberWithCommas(totalPendingAmount)}</div>
 								</div>
@@ -322,7 +322,7 @@ const PreviousPayments = ({ years, close, student }: PreviousPaymentsProps) => {
 					([id, payment]) => (
 						<div key={id} className="flex flex-row items-start justify-between">
 							<div className="w-1/4">{moment(payment.date).format('DD-MM')}</div>
-							<div className="w-2/5 md:w-1/3 mx-auto text-xs">
+							<div className="w-2/5 md:w-1/3 mx-auto text-xs md:text-sm flex flex-row justify-center">
 								{payment.fee_name === MISFeeLabels.SPECIAL_SCHOLARSHIP
 									? 'Scholarship (M)'
 									: payment.fee_name === 'Monthly'
@@ -333,7 +333,7 @@ const PreviousPayments = ({ years, close, student }: PreviousPaymentsProps) => {
 												? 'Paid'
 												: toTitleCase(payment.fee_name)}
 							</div>
-							<div>
+							<div className="w-1/4 flex flex-row justify-end">
 								{payment.type === 'FORGIVEN'
 									? `-${payment.amount}`
 									: `${payment.amount}`}
@@ -463,7 +463,7 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 				)
 
 				toast.success(
-					`Rs. ${state.payment} has been added as ${state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
+					`Rs. ${state.payment.amount} has been added as ${state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
 					} amount.`
 				)
 
@@ -486,7 +486,7 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 			)
 
 			toast.success(
-				`Rs. ${state.payment} has been added as ${state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
+				`Rs. ${state.payment.amount} has been added as ${state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
 				} amount.`
 			)
 			setState({
@@ -543,7 +543,7 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 
 				<div className="flex flex-row w-full items-center justify-between">
 					<div className="flex items-center flex-row-reverse">
-						<div>Paid as scholarship</div>
+						<div>Scholarship</div>
 						<input
 							type="checkbox"
 							onChange={handleInputChange}

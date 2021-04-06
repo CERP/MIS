@@ -20,9 +20,8 @@ export const StudentPayments = () => {
 	}, [classes])
 
 	return (
-		<AppLayout title="Student Payments">
+		<AppLayout title="Student Payments" showHeaderTitle>
 			<div className="p-5 md:p-10 relative mb-20">
-				<div className="text-center font-bold text-2xl my-4">Student Payments</div>
 				<div className="mt-4 mb-12 md:mb-20 space-y-4 md:space-x-60">
 					<SearchInput onChange={e => setSearch(e.target.value)} />
 				</div>
@@ -34,7 +33,9 @@ export const StudentPayments = () => {
 								isValidStudent(s) &&
 								s.Active &&
 								!s.FamilyID && // we have separate page for family students, so don't show them here
-								(search ? s.Name.includes(search) : true)
+								(search
+									? s.Name.toLowerCase().includes(search.toLowerCase())
+									: true)
 						)
 						.sort((a, b) => a.Name.localeCompare(b.Name))
 						.map(f => (
