@@ -499,17 +499,17 @@ interface BaseMISExpense {
 	label: string
 	type: string
 	category:
-		| 'SALARY'
-		| 'BILLS'
-		| 'STATIONERY'
-		| 'REPAIRS'
-		| 'RENT'
-		| 'ACTIVITY'
-		| 'DAILY'
-		| 'PETTY_CASH'
-		| 'OTHER'
-		| ''
-		| string
+	| 'SALARY'
+	| 'BILLS'
+	| 'STATIONERY'
+	| 'REPAIRS'
+	| 'RENT'
+	| 'ACTIVITY'
+	| 'DAILY'
+	| 'PETTY_CASH'
+	| 'OTHER'
+	| ''
+	| string
 	date: number
 	time: number
 }
@@ -645,6 +645,10 @@ interface ExamFilter {
 }
 type AugmentedStudent = {
 	section?: AugmentedSection
+	classFee?: MISClassFee
+	classAdditionalFees?: {
+		[id: string]: MISClassFee
+	}
 	forwardTo?: string
 } & MISStudent
 

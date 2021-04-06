@@ -41,7 +41,7 @@ export const FamilyPayments = () => {
 						})
 						.sort((a, b) => a.id.localeCompare(b.id))
 						.map(f => (
-							<Link key={f.id} to={`families/${f.id}/payments`}>
+							<Link key={f.id} to={`/families/${f.id}/payments`}>
 								<Card family={f} />
 							</Link>
 						))}
