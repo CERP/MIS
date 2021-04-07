@@ -734,8 +734,6 @@ export const lessonPlanTaken = (
 export const quizTaken = (faculty_id: string, quiz_id: string, value: boolean) => (
 	dispatch: Function
 ) => {
-	debugger
-	console.log('hello', faculty_id, quiz_id)
 	dispatch(
 		createMerges([
 			{
