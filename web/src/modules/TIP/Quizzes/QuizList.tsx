@@ -38,7 +38,14 @@ const blankQuizzes = (quizzes: TIPQuizzes): TIPTeacherQuizzes => {
 	return res
 }
 
-const QuizList: React.FC<PropsType> = ({ match, history, quizzes, faculty, faculty_id }) => {
+const QuizList: React.FC<PropsType> = ({
+	match,
+	history,
+	quizzes,
+	faculty,
+	faculty_id,
+	quizTaken
+}) => {
 	const { class_name, subject } = match.params as Params
 	const url = match.url.split('/')
 
@@ -70,7 +77,7 @@ const QuizList: React.FC<PropsType> = ({ match, history, quizzes, faculty, facul
 			{Object.entries(filterredQuizzes)
 				.sort(([, a], [, b]) => a.quiz_order - b.quiz_order)
 				.map(([quiz_id, quiz]) => {
-					const teacher_record = teacher_lesson_record[quiz.quiz_order] || {
+					const teacher_record = teacher_lesson_record[quiz_id] || {
 						taken: false
 					}
 
