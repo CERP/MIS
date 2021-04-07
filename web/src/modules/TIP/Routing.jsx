@@ -177,8 +177,8 @@ const Routing = props => {
 
 				<Route
 					exact
-					path={`${path}/quizzes/:class_name/:subject/answer_pdf`}
-					component={AnswerSheet}
+					path={`${path}/quizzes/:class_name/:subject/:quiz_id/pdf`}
+					component={PDF}
 				/>
 
 				<Route

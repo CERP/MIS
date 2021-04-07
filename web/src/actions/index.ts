@@ -731,6 +731,29 @@ export const lessonPlanTaken = (
 	)
 }
 
+export const quizTaken = (faculty_id: string, quiz_id: string, value: boolean) => (
+	dispatch: Function
+) => {
+	debugger
+	console.log('hello', faculty_id, quiz_id)
+	dispatch(
+		createMerges([
+			{
+				path: [
+					'db',
+					'faculty',
+					faculty_id,
+					'targeted_instruction',
+					'quizzes',
+					quiz_id,
+					'taken'
+				],
+				value: value
+			}
+		])
+	)
+}
+
 export const clearLessonPlans = (
 	faculty_id: string,
 	learning_level_id: string,

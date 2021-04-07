@@ -90,6 +90,9 @@ interface TIPTeacherLessonPlans {
 	[lesson_id: string]: TIPTeacherLesson
 }
 
+interface TIPTeacherQuizzes {
+	[quiz_id: string]: TIPTeacherQuiz
+}
 interface TIPLessonPlans {
 	[lesson_id: string]: TIPLesson
 }
@@ -108,6 +111,7 @@ interface TIPLesson {
 
 type TIPTeacherLesson = { taken: boolean }
 
+type TIPTeacherQuiz = { taken: boolean }
 interface TIPTests {
 	[id: string]: TIPTest
 }
@@ -134,6 +138,8 @@ interface TIPTest extends BaseTest {
 }
 
 interface TIPQuiz extends BaseTest {
+	quiz_title: string
+	quiz_order: number
 	slo_category: string
 	slo: string[]
 }
@@ -573,6 +579,7 @@ interface MISTeacher {
 	}
 	targeted_instruction: {
 		curriculum: TIPTeacherCurriculum
+		quizzes: TIPTeacherQuizzes
 	}
 }
 
