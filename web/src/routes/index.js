@@ -200,7 +200,7 @@ export default class Routes extends React.Component {
 						/>
 						<TrackedRoute
 							exact
-							path="/families/:famId/payments"
+							path="/families/:id/payments"
 							component={SingleFamilyPayments}
 						/>
 						<TrackedRoute exact path="/families/:id" component={SingleFamily} />
