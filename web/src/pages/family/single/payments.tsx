@@ -173,11 +173,11 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 		state.filter.month
 	)
 
-	const filteredPendingAmount = filteredPayments.reduce(
-		(agg, [, curr]) =>
-			agg - (curr.type === 'SUBMITTED' || curr.type === 'FORGIVEN' ? 1 : -1) * curr.amount,
-		0
-	)
+	// const filteredPendingAmount = filteredPayments.reduce(
+	// 	(agg, [, curr]) =>
+	// 		agg - (curr.type === 'SUBMITTED' || curr.type === 'FORGIVEN' ? 1 : -1) * curr.amount,
+	// 	0
+	// )
 
 	const totalPendingAmount = Object.entries(siblingPayments || {}).reduce(
 		(agg, [, curr]) =>
@@ -192,6 +192,10 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 				.map(([id, payment]) => moment(payment.date).format('YYYY'))
 		)
 	].sort((a, b) => parseInt(a) - parseInt(b))
+
+	// TODO: investigate issues
+	// TODO: refactor
+	// TODO: desktop version
 
 	return (
 		<AppLayout title="Student Payments" showHeaderTitle>
