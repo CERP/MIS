@@ -2,10 +2,14 @@ import React from 'react'
 import { Listbox, Transition } from '@headlessui/react'
 
 interface CustomSelectProps {
-	data: string[]
+	data: string[] | ListItem
 	selectedItem?: string
 	label?: string
 	onChange: (option: string) => void
+}
+
+type ListItem = {
+	[key: string]: string | number
 }
 
 export const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -15,10 +19,26 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
 	onChange,
 	children
 }) => {
+	let listData = data as ListItem
+
+	if (Array.isArray(data)) {
+		listData = data.reduce((agg, curr) => ({ ...agg, [curr]: curr }), {})
+	}
+
+	const handleChange = (option: string) => {
+		const [k, v] = Object.entries(listData).find(([k, v]) => v === option)
+		// set parent state
+		onChange(k)
+	}
+
 	return (
 		<div className="flex items-center justify-center w-full">
 			<div className="w-full max-w-xs mx-auto">
-				<Listbox as="div" className="space-y-1" value={selectedItem} onChange={onChange}>
+				<Listbox
+					as="div"
+					className="space-y-1"
+					value={listData[selectedItem]}
+					onChange={handleChange}>
 					{({ open }) => (
 						<>
 							{label && (
@@ -29,7 +49,9 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
 							<div className="relative">
 								<span className="inline-block w-full rounded-md shadow-sm">
 									<Listbox.Button className="cursor-default relative w-full rounded-md border border-gray-300 bg-white pl-3 pr-10 py-2 text-left focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition ease-in-out duration-150 sm:text-sm sm:leading-5">
-										<span className="block truncate">{selectedItem}</span>
+										<span className="block truncate">
+											{listData[selectedItem]}
+										</span>
 										<span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
 											{children}
 										</span>
@@ -45,8 +67,8 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
 									<Listbox.Options
 										static
 										className="max-h-60 rounded-md py-1 text-base leading-6 shadow-xs overflow-auto focus:outline-none sm:text-sm sm:leading-5">
-										{data.map(d => (
-											<Listbox.Option key={d} value={d}>
+										{Object.entries(listData).map(([k, v]) => (
+											<Listbox.Option key={k} value={v}>
 												{({ selected, active }) => (
 													<div
 														className={`${active
@@ -58,7 +80,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
 																	? 'font-semibold'
 																	: 'font-normal'
 																} block truncate`}>
-															{d}
+															{v}
 														</span>
 														{selected && (
 															<span
