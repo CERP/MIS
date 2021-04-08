@@ -14,6 +14,7 @@ import months from 'constants/months'
 
 import UserIconSvg from 'assets/svgs/user.svg'
 import { CustomSelect } from 'components/select'
+import { CalendarIcon, ChevronDownIcon } from '@heroicons/react/outline'
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
 
 type State = {
@@ -77,19 +78,7 @@ export const PrintVoucher = () => {
 							onChange={month => setState({ ...state, month })}
 							data={months}
 							selectedItem={state.month}>
-							<svg
-								className="w-5 h-5 text-gray-500"
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke="currentColor">
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth={2}
-									d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-								/>
-							</svg>
+							<CalendarIcon className="w-5 h-5 text-gray-500" />
 						</CustomSelect>
 						<CustomSelect
 							onChange={year => {
@@ -97,19 +86,7 @@ export const PrintVoucher = () => {
 							}}
 							data={[currentYear]}
 							selectedItem={currentYear}>
-							<svg
-								className="w-5 h-5 text-gray-500"
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke="currentColor">
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth={2}
-									d="M19 9l-7 7-7-7"
-								/>
-							</svg>
+							<ChevronDownIcon className="w-5 h-5 text-gray-500" />
 						</CustomSelect>
 					</div>
 

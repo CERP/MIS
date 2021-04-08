@@ -10,6 +10,7 @@ import { toTitleCase } from 'utils/toTitleCase'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { SearchInput } from 'components/input/search'
 import { addMultipleFees } from 'actions'
+import { MISFeeLabels } from 'constants/index'
 
 type State = {
 	classId: string
@@ -31,10 +32,8 @@ type AugmentedFee = MISStudentFee & {
 	id: string
 }
 
-const SPECIAL_SCHOLARSHIP = 'SPECIAL_SCHOLARSHIP'
-
 const blankFee = (): MISStudentFee => ({
-	name: SPECIAL_SCHOLARSHIP,
+	name: MISFeeLabels.SPECIAL_SCHOLARSHIP,
 	amount: '',
 	type: 'SCHOLARSHIP',
 	period: 'MONTHLY'
@@ -45,7 +44,7 @@ const getFeeStudents = (students: MISStudent[]) => {
 		.filter(s => isValidStudent(s) && s.Active)
 		.reduce<State['students']>((agg, curr) => {
 			const [id, scholarshipFee] = Object.entries(curr.fees || {}).find(
-				([feeId, fee]) => fee.name === SPECIAL_SCHOLARSHIP
+				([feeId, fee]) => fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP
 			) ?? [v4(), blankFee()]
 
 			return {

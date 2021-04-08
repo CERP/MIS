@@ -1,10 +1,10 @@
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import clsx from 'clsx'
 
+import { useFamily, AugmentedFamily } from 'hooks/useFamily'
 import { AppLayout } from 'components/Layout/appLayout'
 import { SearchInput } from 'components/input/search'
-import { isValidStudent } from 'utils'
 import toTitleCase from 'utils/toTitleCase'
 
 import UserIconSvg from 'assets/svgs/user.svg'
@@ -12,65 +12,13 @@ import UserIconSvg from 'assets/svgs/user.svg'
 type State = {
 	search: string
 }
-interface Families {
-	[famId: string]: Family
-}
-interface Family {
-	id: string
-	name: string
-	phone: string
-	students: {
-		[id: string]: MISStudent
-	}
-}
 
 export const Family = () => {
-	const { students } = useSelector((state: RootReducerState) => state.db)
-
 	const [state, setState] = useState<State>({
 		search: ''
 	})
 
-	const families = useMemo(() => {
-		const reduced = Object.values(students)
-			.filter(s => isValidStudent(s) && s.Active)
-			.reduce<Families>((agg, curr) => {
-				if (!curr.FamilyID) {
-					return agg
-				}
-
-				const k = `${curr.FamilyID}`
-
-				const existing = agg[k]
-				if (existing) {
-					return {
-						...agg,
-						[k]: {
-							id: k,
-							name: curr.ManName,
-							phone: curr.Phone,
-							students: {
-								...agg[k].students,
-								[curr.id]: curr
-							}
-						}
-					}
-				} else {
-					return {
-						...agg,
-						[k]: {
-							id: k,
-							name: curr.ManName,
-							phone: curr.Phone,
-							students: {
-								[curr.id]: curr
-							}
-						}
-					}
-				}
-			}, {} as Families)
-		return reduced
-	}, [students])
+	const { families } = useFamily()
 
 	return (
 		<AppLayout title="Families">
@@ -113,44 +61,55 @@ export const Family = () => {
 }
 
 type CardProps = {
-	family: Family
+	family: AugmentedFamily
 }
 
 const Card = ({ family }: CardProps) => {
 	return (
 		<div className="relative">
 			<div className="bg-white rounded-xl text-center border border-gray-50 shadow-md px-3 py-4 md:p-5">
-				<div className="font-bold pt-8 truncate w-4/5 mx-auto">
+				<div className="font-bold pt-4 truncate w-4/5 mx-auto">
 					{toTitleCase(family.id)}
 				</div>
 				<div className="mt-2 space-y-0 text-sm md:text-base">
-					<div className="flex items-center justify-between flex-row">
-						<div className="text-gray-900 font-semibold">Gaurdian</div>
-						<div className="text-gray-500 text-xs md:text-base lg:text-lg truncate">
-							{toTitleCase(family.name)}
-						</div>
-					</div>
-					<div className="flex items-center justify-between flex-row">
-						<div className="text-gray-900 font-semibold">Phone</div>
-						<div className="text-gray-500 text-xs md:text-base lg:text-lg truncate">
-							{family.phone}
-						</div>
-					</div>
-					<div className="flex items-center justify-between flex-row">
-						<div className="text-gray-900 font-semibold">Siblings</div>
-						<div className="text-gray-500 text-xs md:text-base lg:text-lg">
-							{Object.keys(family.students).length}
-						</div>
-					</div>
+					<CardItem title={'Gaurdian'} val={toTitleCase(family.name)} />
+					<CardItem title={'Phone'} val={toTitleCase(family.phone)} />
+					<CardItem title={'Siblings'} val={Object.keys(family.students).length} />
 				</div>
 			</div>
-			<div className="absolute -top-6 left-0 right-0">
-				<img
-					src={UserIconSvg}
-					className="mx-auto h-16 w-16  rounded-full shadow-md bg-gray-500 hover:bg-gray-700"
-					alt={'student'}
-				/>
-			</div>
+			{Object.values(family.students || {}).map(
+				(s, index) =>
+					index <= 2 && (
+						<img
+							key={s.id}
+							src={
+								s.ProfilePicture?.url ||
+								s.ProfilePicture?.image_string ||
+								UserIconSvg
+							}
+							className={clsx(
+								'-top-6 md:-top-8 absolute  w-12 h-12 md:h-16 md:w-16  rounded-full shadow-md bg-gray-500',
+								{
+									'right-24 md:right-40 z-20': index === 0,
+									'right-16 md:right-28 z-10': index === 1,
+									'right-8 md:right-16': index === 2
+								}
+							)}
+							alt={s.Name}
+						/>
+					)
+			)}
 		</div>
 	)
 }
+
+type CardItemProps = {
+	title: string
+	val: string | number
+}
+const CardItem = ({ title, val }: CardItemProps) => (
+	<div className="flex items-center justify-between flex-row">
+		<div className="text-gray-900 font-semibold">{title}</div>
+		<div className="text-gray-500 text-xs md:text-base lg:text-lg">{val}</div>
+	</div>
+)

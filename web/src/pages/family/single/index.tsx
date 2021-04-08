@@ -186,8 +186,6 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 	// to multiple siblings (have to check if already student has been added or not)
 	// TODO: think about better family ids, change space to hyphen
 
-	console.log(state)
-
 	return (
 		<AppLayout title={pageTitle}>
 			<div className="p-5 md:p-10 md:pb-0 text-gray-700 relative">
@@ -332,7 +330,7 @@ const ListCard = ({ student, sections, removeStudent }: ListCardProps) => {
 			<div className="flex flex-row items-center">
 				{student.ProfilePicture?.url || student.ProfilePicture?.image_string ? (
 					<img
-						className="w-8 h-8 mr-2"
+						className="w-8 h-8 mr-2 rounded-full"
 						src={student.ProfilePicture?.url || student.ProfilePicture?.image_string}
 						alt={student.Name}
 					/>

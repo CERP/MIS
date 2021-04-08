@@ -20,3 +20,7 @@ export enum MISFeePeriods {
 	MONTHLY = 'MONTHLY',
 	SINGLE = 'SINGLE'
 }
+
+export enum MISFeeLabels {
+	SPECIAL_SCHOLARSHIP = 'SPECIAL_SCHOLARSHIP'
+}

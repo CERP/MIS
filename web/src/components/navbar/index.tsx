@@ -5,7 +5,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { createLogout } from 'actions'
 import clsx from 'clsx'
 
-export const AppHeader = () => {
+interface AppHeaderProps {
+	title?: string
+}
+
+export const AppHeader = ({ title }: AppHeaderProps) => {
 	const dispatch = useDispatch()
 	const location = useLocation()
 	const history = useHistory()
@@ -62,6 +66,10 @@ export const AppHeader = () => {
 											alt="brand-logo"
 										/>
 									</Link>
+								)}
+
+								{title && (
+									<div className="text-white font-semibold text-lg">{title}</div>
 								)}
 
 								<Menu.Button className="md:hidden focus:outline-none focus:shadow-outline text-red-brand rounded-full shadow-md p-2 border border-gray-200 bg-white">

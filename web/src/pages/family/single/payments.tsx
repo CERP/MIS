@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import moment from 'moment'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
@@ -11,7 +11,6 @@ import { ChevronUpIcon, ChevronDownIcon, CalendarIcon } from '@heroicons/react/o
 import toTitleCase from 'utils/toTitleCase'
 import months from 'constants/months'
 import numberWithCommas from 'utils/numberWithCommas'
-import { useSectionInfo } from 'hooks/useStudentClassInfo'
 import { AppLayout } from 'components/Layout/appLayout'
 import { CustomSelect } from 'components/select'
 import { MISFeeLabels } from 'constants/index'
@@ -23,6 +22,8 @@ import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
 
 import UserIconSvg from 'assets/svgs/user.svg'
+import { isValidStudent } from 'utils'
+import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 
 type State = {
 	filter: {
@@ -31,27 +32,38 @@ type State = {
 		month: string
 	}
 }
-type StudentPaymentsProps = RouteComponentProps<{ id: string }>
+type SingleFamilyPaymentsProps = RouteComponentProps<{ id: string }>
+type AugmentedFees = Array<[string, MISStudentFee | MISClassFee]>
 
-export const StudentPayments = ({ match }: StudentPaymentsProps) => {
-	const dispatch = useDispatch()
-	const {
-		auth,
-		db: { students, settings, sms_templates }
-	} = useSelector((state: RootReducerState) => state)
-	const { id: studentId } = match.params
-	const student = students?.[studentId]
-
-	const { section } = useSectionInfo(student.section_id)
-
-	const augmentedStudent = {
-		...student,
-		section
+const getPaymentLabel = (feeName: string, type: MISStudentPayment['type']) => {
+	if (feeName === MISFeeLabels.SPECIAL_SCHOLARSHIP) {
+		return 'Scholarship (M)'
+	}
+	// set fee name in default class fee logic
+	if (feeName === 'Montly') {
+		return 'Class Fee'
 	}
 
-	// get class fees
-	const classDefaultFee = settings?.classes?.defaultFee?.[section.class_id]
-	const classAdditionalFees = settings?.classes?.additionalFees?.[section.class_id]
+	if (type === 'FORGIVEN') {
+		return 'Scholarship (A)'
+	}
+
+	if (type === 'SUBMITTED') {
+		return 'Paid'
+	}
+
+	return feeName
+}
+
+export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
+	const dispatch = useDispatch()
+
+	const { id: famId } = match.params
+
+	const {
+		auth,
+		db: { students, settings, sms_templates: smsTemplates, classes }
+	} = useSelector((state: RootReducerState) => state)
 
 	const [state, setState] = useState<State>({
 		filter: {
@@ -61,69 +73,113 @@ export const StudentPayments = ({ match }: StudentPaymentsProps) => {
 		}
 	})
 
-	// generate payments, if not generated
+	const { sections, siblings } = useMemo(() => {
+		// merge siblings sections
+		// merge siblings classes fees
+		const getSiblings = (
+			stds: RootDBState['students'],
+			sections: AugmentedSection[]
+		): AugmentedStudent[] => {
+			return Object.values(stds)
+				.filter(s => isValidStudent(s) && s.Active && s.FamilyID && s.FamilyID === famId)
+				.map(s => {
+					const section = sections.find(sec => sec.id === s.section_id)
+					let classFee = {} as MISClassFee
+					let classAdditionalFees = {} as AugmentedStudent['classAdditionalFees']
+
+					// we don't need of this check, but it's better to have guard
+					if (section) {
+						classFee = settings?.classes?.defaultFee?.[section.class_id]
+						classAdditionalFees = settings?.classes?.additionalFees?.[section.class_id]
+					}
+
+					return {
+						...s,
+						section,
+						classFee,
+						classAdditionalFees
+					}
+				})
+		}
+
+		const sections = getSectionsFromClasses(classes)
+		const siblings = sections?.length > 0 ? getSiblings(students, sections) : []
+
+		console.log(siblings, sections, famId)
+
+		return {
+			sections,
+			siblings
+		}
+	}, [students, classes, famId])
+
+	// generate payments for all siblings, if not generated
 	useEffect(() => {
-		if (augmentedStudent) {
-			const owedPayments = checkStudentDuesReturning(augmentedStudent, settings)
-			if (owedPayments.length > 0) {
-				dispatch(addMultiplePayments(owedPayments))
+		if (siblings.length > 0) {
+			const sibling_payments = siblings.reduce((agg, curr) => {
+				const curr_student_payments = checkStudentDuesReturning(curr, settings)
+				if (curr_student_payments.length > 0) {
+					return [...agg, ...curr_student_payments]
+				}
+				return agg
+			}, [])
+
+			if (sibling_payments.length > 0) {
+				dispatch(addMultiplePayments(sibling_payments))
 			}
 		}
-	}, [augmentedStudent, settings.classes])
+	}, [siblings, settings.classes])
 
-	const getFees = (): Array<[string, MISStudentFee | MISClassFee]> => {
-		return [
-			//  there's no rocket science here,  just want to have unique id and merging class fees and
-			//  student fees to render them
-			[
-				v4(),
-				{
-					...(classDefaultFee || ({} as MISClassFee)),
-					name: 'Class Fee'
-				}
-			],
-			...Object.entries(classAdditionalFees || {}),
-			...(Object.entries(student.fees || {}).map(([feeId, fee]) => {
-				return [
-					feeId,
-					{
-						...fee,
-						amount:
-							fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP
-								? '-' + fee.amount
-								: fee.amount,
-						name:
-							fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP
-								? 'Scholarship (M)'
-								: fee.name
-					}
-				]
-			}) as Array<[string, MISStudentFee]>)
-		]
-	}
-
-	// TODO: if there's no student, show default blank page with nice emoji
+	// TODO: if there's no sibling (which means invalid family id), show default blank page with nice emoji
 	// and add link to go back home
 
-	// if(!student) {
+	// if(siblings.length === 0) {
 	// 	return (
 	//		add component to show invalid state and link to go -> history.goBack()
 	// 	)
 	// }
 
+	const mergedPayments = useCallback(() => {
+		if (siblings.length > 0) {
+			const merged_payments = siblings.reduce(
+				(agg, curr) => ({
+					...agg,
+					...Object.entries(curr.payments || {}).reduce((agg, [pid, p]) => {
+						return {
+							...agg,
+							[pid]: {
+								...p,
+								fee_name:
+									p.fee_name &&
+									`${curr.Name}-${getPaymentLabel(p.fee_name, p.type)}`,
+								student_id: curr.id
+							}
+						}
+					}, {})
+				}),
+				{} as AugmentedMISPaymentMap
+			)
+
+			return merged_payments
+		}
+	}, [siblings])
+
+	const siblingPayments = mergedPayments()
+
+	// for all siblings
 	const filteredPayments = getFilteredPayments(
-		student.payments,
+		siblingPayments,
 		state.filter.year,
 		state.filter.month
 	)
 
-	const filteredPendingAmount = filteredPayments.reduce(
-		(agg, [, curr]) =>
-			agg - (curr.type === 'SUBMITTED' || curr.type === 'FORGIVEN' ? 1 : -1) * curr.amount,
-		0
-	)
+	// const filteredPendingAmount = filteredPayments.reduce(
+	// 	(agg, [, curr]) =>
+	// 		agg - (curr.type === 'SUBMITTED' || curr.type === 'FORGIVEN' ? 1 : -1) * curr.amount,
+	// 	0
+	// )
 
-	const totalPendingAmount = Object.entries(student.payments).reduce(
+	const totalPendingAmount = Object.entries(siblingPayments || {}).reduce(
 		(agg, [, curr]) =>
 			agg - (curr.type === 'SUBMITTED' || curr.type === 'FORGIVEN' ? 1 : -1) * curr.amount,
 		0
@@ -131,32 +187,47 @@ export const StudentPayments = ({ match }: StudentPaymentsProps) => {
 
 	const years = [
 		...new Set(
-			Object.entries(student.payments)
+			Object.entries(siblingPayments)
 				.sort(([, a_payment], [, b_payment]) => a_payment.date - b_payment.date)
 				.map(([id, payment]) => moment(payment.date).format('YYYY'))
 		)
 	].sort((a, b) => parseInt(a) - parseInt(b))
 
+	// TODO: investigate issues
+	// TODO: refactor
+	// TODO: desktop version
+
 	return (
 		<AppLayout title="Student Payments" showHeaderTitle>
 			<div className="p-5 md:p-10 md:pb-0 text-gray-700 relative print:hidden">
 				{/* <div className="text-2xl font-bold mb-4 text-center">Student Payments</div> */}
-				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-4 rounded-2xl bg-gray-700 p-5 my-4 mt-16 md:mt-8">
+				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-4 rounded-2xl bg-gray-700 p-5 my-4 mt-8">
 					<div className="relative text-white text-center text-base md:hidden">
-						<div className="mt-4">{toTitleCase(student.Name)}</div>
-						<div className="text-sm">Class {section?.namespaced_name}</div>
+						<div className="mt-4">{toTitleCase(famId, '-')}</div>
+						<div className="text-sm">Siblings - {siblings?.length}</div>
 
-						<div className="-top-20 absolute right-1 rounded-full bg-gray-500 w-24 h-24">
-							<img
-								className="w-24 h-24 rounded-full object-contain"
-								src={
-									student.ProfilePicture?.url ||
-									student.ProfilePicture?.image_string ||
-									UserIconSvg
-								}
-								alt="student"
-							/>
-						</div>
+						{siblings.map(
+							(s, index) =>
+								index <= 2 && (
+									<img
+										key={s.id}
+										src={
+											s.ProfilePicture?.url ||
+											s.ProfilePicture?.image_string ||
+											UserIconSvg
+										}
+										className={clsx(
+											'-top-12 absolute  w-14 h-14 md:h-20 md:w-20  rounded-full shadow-md bg-gray-500',
+											{
+												'-left-4 z-20': index === 0,
+												'right-2 z-10': index === 1,
+												'-right-8': index === 2
+											}
+										)}
+										alt={s.Name}
+									/>
+								)
+						)}
 					</div>
 					<button
 						onClick={() =>
@@ -199,16 +270,7 @@ export const StudentPayments = ({ match }: StudentPaymentsProps) => {
 								</CustomSelect>
 							</div>
 							<div className="w-full text-sm md:text-base space-y-1">
-								{getFees().map(([id, fee]) => (
-									<div
-										key={id}
-										className="flex flex-row justify-between text-white w-full">
-										<div>{fee.name}</div>
-										<div>{fee?.amount ?? 0}</div>
-									</div>
-								))}
-
-								<div className="flex flex-row justify-between text-white w-full font-semibold">
+								{/* <div className="flex flex-row justify-between text-white w-full font-semibold">
 									<div>
 										{filteredPendingAmount < 0
 											? 'Advance Amount'
@@ -226,6 +288,11 @@ export const StudentPayments = ({ match }: StudentPaymentsProps) => {
 										)
 									</div>
 									<div>{filteredPendingAmount}</div>
+								</div> */}
+								<div className="space-y-4 text-white max-h-72 overflow-y-auto">
+									{siblings.map(sib => (
+										<FeeBreakdownCard key={sib.id} student={sib} />
+									))}
 								</div>
 
 								<div className="border-b-2 border-dashed w-full" />
@@ -246,7 +313,13 @@ export const StudentPayments = ({ match }: StudentPaymentsProps) => {
 								</div>
 							</div>
 							<AddPayment
-								{...{ student, auth, settings, smsTemplates: sms_templates }}
+								{...{
+									siblings,
+									auth,
+									settings,
+									smsTemplates,
+									pendingAmount: totalPendingAmount
+								}}
 							/>
 						</>
 					) : (
@@ -261,7 +334,9 @@ export const StudentPayments = ({ match }: StudentPaymentsProps) => {
 									}
 								})
 							}
-							student={student}
+							students={students}
+							pendingAmount={totalPendingAmount}
+							payments={siblingPayments}
 						/>
 					)}
 				</div>
@@ -270,23 +345,118 @@ export const StudentPayments = ({ match }: StudentPaymentsProps) => {
 	)
 }
 
-interface PreviousPaymentsProps {
-	close: () => void
-	years: string[]
-	student: MISStudent
+interface FeeBreakdownCardProps {
+	student: AugmentedStudent
 }
 
-const PreviousPayments = ({ years, close, student }: PreviousPaymentsProps) => {
-	const [state, setState] = useState({
-		month: moment().format('MMMM'),
-		year: moment().format('YYYY')
-	})
+const FeeBreakdownCard = ({ student }: FeeBreakdownCardProps) => {
+	const [showFees, setShowFees] = useState(false)
 
-	const totalPendingAmount = Object.entries(student.payments).reduce(
+	const getFees = useCallback((): AugmentedFees => {
+		return [
+			//  there's no rocket science here,  just want to have unique id and merging class fees and
+			//  student fees to render them
+			[
+				v4(),
+				{
+					...(student.classFee || ({} as MISClassFee)),
+					name: 'Class Fee'
+				}
+			],
+			...Object.entries(student.classAdditionalFees || {}),
+			...(Object.entries(student.fees || {}).map(([feeId, fee]) => {
+				return [
+					feeId,
+					{
+						...fee,
+						amount:
+							fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP
+								? '-' + fee.amount
+								: fee.amount,
+						name:
+							fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP
+								? 'Scholarship (M)'
+								: fee.name
+					}
+				]
+			}) as Array<[string, MISStudentFee]>)
+		]
+	}, [student])
+
+	const totalPendingAmount = Object.entries(student.payments || {}).reduce(
 		(agg, [, curr]) =>
 			agg - (curr.type === 'SUBMITTED' || curr.type === 'FORGIVEN' ? 1 : -1) * curr.amount,
 		0
 	)
+
+	return (
+		<div className="p-2 w-full bg-gray-500 rounded-md shadow-md">
+			<div className="flex flex-row justify-between items-center">
+				<div className="flex flex-row w-3/5 flex-start items-center">
+					<img
+						className="w-10 h-10 mr-2"
+						src={
+							student.ProfilePicture?.url ||
+							student.ProfilePicture?.image_string ||
+							UserIconSvg
+						}
+						alt={student.Name}
+					/>
+					<div>{toTitleCase(student.Name)}</div>
+				</div>
+				<div className="flex flex-end">
+					<div>{student.section.namespaced_name}</div>
+				</div>
+			</div>
+			<div className="flex flex-row justify-between">
+				<div className="flex flex-row">
+					<div>Pending Amount</div>
+					<div
+						className={clsx(
+							'w-5 h-5 rounded-full ml-4',
+							showFees ? 'bg-red-brand' : 'bg-teal-brand'
+						)}
+						onClick={() => setShowFees(!showFees)}>
+						{showFees ? (
+							<ChevronUpIcon className="w-5 h-5" />
+						) : (
+							<ChevronDownIcon className="w-5 h-5" />
+						)}
+					</div>
+				</div>
+				<div>Rs. {totalPendingAmount}</div>
+			</div>
+			<Transition
+				show={showFees}
+				enter="transition-opacity duration-150"
+				enterFrom="opacity-0"
+				as="div"
+				className="text-xs md:text-sm"
+				enterTo="opacity-100">
+				{getFees().map(([id, fee]) => (
+					<div key={id} className="flex flex-row justify-between">
+						<div>{fee.name}</div>
+						<div>{fee.amount}</div>
+					</div>
+				))}
+			</Transition>
+		</div>
+	)
+}
+
+interface PreviousPaymentsProps {
+	close: () => void
+	years: string[]
+	pendingAmount: number
+	students: RootDBState['students']
+	payments: AugmentedMISPaymentMap
+}
+
+const PreviousPayments = ({ years, close, payments, pendingAmount }: PreviousPaymentsProps) => {
+	const [state, setState] = useState({
+		month: moment().format('MMMM'),
+		year: moment().format('YYYY')
+	})
 
 	return (
 		<Transition
@@ -318,29 +488,19 @@ const PreviousPayments = ({ years, close, student }: PreviousPaymentsProps) => {
 					<div>Label</div>
 					<div>Amount</div>
 				</div>
-				{getFilteredPayments(student.payments, state.year, state.month).map(
-					([id, payment]) => (
-						<div key={id} className="flex flex-row items-start justify-between">
-							<div className="w-1/4">{moment(payment.date).format('DD-MM')}</div>
-							<div className="w-2/5 md:w-1/3 mx-auto text-xs md:text-sm flex flex-row justify-center">
-								{payment.fee_name === MISFeeLabels.SPECIAL_SCHOLARSHIP
-									? 'Scholarship (M)'
-									: payment.fee_name === 'Monthly'
-										? 'Class Fee'
-										: payment.type === 'FORGIVEN'
-											? 'Scholarship (A)'
-											: payment.type === 'SUBMITTED'
-												? 'Paid'
-												: toTitleCase(payment.fee_name)}
-							</div>
-							<div className="w-1/4 flex flex-row justify-end">
-								{payment.type === 'FORGIVEN'
-									? `-${payment.amount}`
-									: `${payment.amount}`}
-							</div>
+				{getFilteredPayments(payments, state.year, state.month).map(([id, payment]) => (
+					<div key={id} className="flex flex-row items-start justify-between">
+						<div className="w-1/4">{moment(payment.date).format('DD-MM')}</div>
+						<div className="w-2/5 md:w-1/3 mx-auto text-xs md:text-sm flex flex-row justify-center">
+							{payment.fee_name}
 						</div>
-					)
-				)}
+						<div className="w-1/4 flex flex-row justify-end">
+							{payment.type === 'FORGIVEN'
+								? `-${payment.amount}`
+								: `${payment.amount}`}
+						</div>
+					</div>
+				))}
 			</div>
 
 			<div className="border-b-2 border-dashed w-full" />
@@ -348,10 +508,10 @@ const PreviousPayments = ({ years, close, student }: PreviousPaymentsProps) => {
 			<div
 				className={clsx(
 					'flex flex-row justify-between w-full font-semibold',
-					totalPendingAmount <= 0 ? 'text-teal-brand' : 'text-red-brand'
+					pendingAmount <= 0 ? 'text-teal-brand' : 'text-red-brand'
 				)}>
-				<div>{totalPendingAmount < 0 ? 'Advance' : 'Pending'} amount</div>
-				<div>Rs. {numberWithCommas(totalPendingAmount)}</div>
+				<div>{pendingAmount < 0 ? 'Advance' : 'Pending'} amount</div>
+				<div>Rs. {numberWithCommas(pendingAmount)}</div>
 			</div>
 			<button onClick={close} className="tw-btn bg-orange-brand w-full text-white">
 				Go Back
@@ -361,7 +521,8 @@ const PreviousPayments = ({ years, close, student }: PreviousPaymentsProps) => {
 }
 
 interface AddPaymentProps {
-	student: AugmentedStudent
+	siblings: AugmentedStudent[]
+	pendingAmount: number
 	auth: RootReducerState['auth']
 	settings: MISSettings
 	smsTemplates: RootDBState['sms_templates']
@@ -374,19 +535,14 @@ const blankPayment = (): MISStudentPayment => ({
 	date: Date.now()
 })
 
-const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) => {
+const AddPayment = ({ siblings, auth, settings, smsTemplates, pendingAmount }: AddPaymentProps) => {
 	const dispatch = useDispatch()
 	const { ref, setIsComponentVisible, isComponentVisible } = useComponentVisible(false)
 	const [state, setState] = useState({
 		payment: blankPayment(),
+		studentId: siblings[0].id,
 		sendSMS: false
 	})
-
-	let balance = [...Object.values(student.payments)].reduce(
-		(agg, curr) =>
-			agg - (curr.type === 'SUBMITTED' || curr.type === 'FORGIVEN' ? 1 : -1) * curr.amount,
-		0
-	)
 
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
@@ -398,8 +554,6 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 		if (name === 'type') {
 			value = value === 'on' ? 'FORGIVEN' : 'SUBMITTED'
 		}
-
-		console.log(value)
 
 		if (name === 'sendSMS') {
 			setState({ ...state, [name]: value === 'on' ? true : false })
@@ -422,22 +576,24 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 		})
 	}
 
+	const student = siblings.find(s => s.id === state.studentId)
+
 	const handleAddPayment = () => {
-		balance = balance - state.payment.amount
+		let balance = pendingAmount - state.payment.amount
 
 		if (state.sendSMS) {
 			// send SMS with replace text for regex etc.
 			const message = smsTemplates.fee
 				.replace(/\$BALANCE/g, `${balance}`)
 				.replace(/\$AMOUNT/g, `${state.payment.amount}`)
-				.replace(/\$NAME/g, student.Name)
-				.replace(/\$FNAME/g, student.ManName)
+			// .replace(/\$NAME/g, student.Name)
+			// .replace(/\$FNAME/g, student.ManName)
 
 			if (settings.sendSMSOption !== 'SIM') {
 				toast.error('Can only send messages from local SIM')
 			} else {
 				const url = smsIntentLink({
-					messages: [{ text: message, number: student.Phone }],
+					messages: [{ text: message, number: 'student.Phone' }],
 					return_link: window.location.href
 				})
 
@@ -491,7 +647,8 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 			)
 			setState({
 				payment: blankPayment(),
-				sendSMS: false
+				sendSMS: false,
+				studentId: siblings[0].id
 			})
 		}
 
@@ -499,11 +656,20 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 		setIsComponentVisible(false)
 	}
 
+	const selectItems = siblings.reduce((agg, curr) => ({ ...agg, [curr.id]: curr.Name }), {})
+
 	return (
 		<>
 			<form
 				className="bg-white rounded-md space-y-1 md:space-y-2 w-full p-2 md:p-4"
 				onSubmit={handleSubmit}>
+				<div>Sibling</div>
+				<CustomSelect
+					data={selectItems}
+					selectedItem={state.studentId}
+					onChange={studentId => setState({ ...state, studentId })}>
+					<ChevronDownIcon className="w-5 h-5 text-gray-500" />
+				</CustomSelect>
 				<div>Label</div>
 				<input
 					type="text"
@@ -577,17 +743,21 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 							Rs. {state.payment.amount} as{' '}
 							{state.payment.type === 'FORGIVEN' ? 'Scholarship' : 'Paid'} Amount
 						</div>
+
+						<div className="text-blue-brand my-1 font-semibold">
+							{toTitleCase(student.Name)}
+						</div>
 						<div className="flex flex-row justify-between">
 							<div>Payment Date</div>
 							<div>{moment(state.payment.date).format('DD-MM-YYYY')}</div>
 						</div>
 						<div className="flex flex-row justify-between">
 							<div>Payable Amount</div>
-							<div>Rs. {balance}</div>
+							<div>Rs. {pendingAmount}</div>
 						</div>
 						<div className="flex flex-row justify-between">
 							<div>Pending after Confirm</div>
-							<div>Rs. {balance - state.payment.amount}</div>
+							<div>Rs. {pendingAmount - state.payment.amount}</div>
 						</div>
 						<div className="flex flex-row justify-between space-x-4 mt-4">
 							<button
