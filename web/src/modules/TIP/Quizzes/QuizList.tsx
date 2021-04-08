@@ -63,9 +63,9 @@ const QuizList: React.FC<PropsType> = ({
 		quizTaken(faculty_id, quiz_id, value)
 	}
 
-	const redirect = (e: any, quiz_id: string) => {
+	const redirect = (e: any) => {
 		e.stopPropagation()
-		history.push(`/${url[1]}/${url[2]}/${class_name}/${subject}/${quiz_id}/pdf`)
+		history.push(`/${url[1]}/${url[2]}/${class_name}/${subject}/pdf`)
 	}
 
 	return (
@@ -85,7 +85,7 @@ const QuizList: React.FC<PropsType> = ({
 						<div
 							key={quiz_id}
 							className="no-underline bg-blue-50 h-20 w-full mx-3 rounded-md mb-3 flex flex-row justify-between items-center px-2"
-							onClick={e => redirect(e, quiz_id)}>
+							onClick={e => redirect(e)}>
 							<div className="flex flex-col justify-between items-center w-full h-15 pl-4">
 								<div className="text-white text-lg font-bold mb-1">
 									{quiz.quiz_title}

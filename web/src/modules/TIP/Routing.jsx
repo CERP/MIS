@@ -21,6 +21,7 @@ import Header from './Header'
 import DetailedAnalysis from './DetailedAnalysis'
 import OralTest from './OralTest'
 import AnswerSheet from './AnswerSheet'
+import QuizGrading from './Quizzes/Grading'
 
 const Routing = props => {
 	const path = props.location.pathname.substring(0, 21)
@@ -110,7 +111,7 @@ const Routing = props => {
 
 				<Route
 					exact
-					path={`${path}/formative-test/:class_name/:subject/answer_pdf`}
+					path={`${path}/formative-test/:class_name/:subject/answer-pdf`}
 					component={AnswerSheet}
 				/>
 
@@ -148,7 +149,7 @@ const Routing = props => {
 
 				<Route
 					exact
-					path={`${path}/summative-test/:class_name/:subject/answer_pdf`}
+					path={`${path}/summative-test/:class_name/:subject/answer-pdf`}
 					component={AnswerSheet}
 				/>
 
@@ -177,9 +178,17 @@ const Routing = props => {
 
 				<Route
 					exact
-					path={`${path}/quizzes/:class_name/:subject/:quiz_id/pdf`}
-					component={PDF}
+					path={`${path}/quizzes/:class_name/:subject/:quiz_id/grading`}
+					component={QuizGrading}
 				/>
+
+				<Route
+					exact
+					path={`${path}/quizzes/:class_name/:subject/answer-pdf`}
+					component={AnswerSheet}
+				/>
+
+				<Route exact path={`${path}/quizzes/:class_name/:subject/pdf`} component={PDF} />
 
 				<Route
 					exact
