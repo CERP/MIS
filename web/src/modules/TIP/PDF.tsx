@@ -37,6 +37,13 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 	if (url[2].indexOf('formative') >= 0) {
 		test_type = 'Formative'
 	}
+	if (url[2].indexOf('oral') >= 0) {
+		test_type = 'Oral'
+	}
+	if (url[2].indexOf('quizzes') >= 0) {
+		test_type = 'Quiz'
+	}
+	console.log(test_type, subject, class_name)
 	const test_ids = Object.entries(targeted_instruction.tests)
 		.filter(([, t]) => t.type === test_type && t.subject === subject && t.grade === class_name)
 		.map(([t_id]) => t_id)
@@ -45,10 +52,20 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 		.filter(([, t]) => t.type === test_type && t.subject === subject && t.grade === 'Oral Test')
 		.map(([t_id]) => t_id)
 
-	const test_id = test_ids.length > 0 ? test_ids[0] : oral_test_ids[0]
+	const quiz_ids = Object.entries(targeted_instruction.quizzes)
+		.filter(([, t]) => t.type === test_type && t.subject === subject && t.grade === class_name)
+		.map(([t_id]) => t_id)
 
+	console.log('jdjaked', test_ids, oral_test_ids, quiz_ids)
+	const test_id =
+		test_ids.length > 0 ? test_ids[0] : test_type === 'Quiz' ? quiz_ids[0] : oral_test_ids[0]
 	let pdf_url = ''
+
 	// if we have a test, we need to chagne pdf_url to load from the test_id
+	if (test_type === 'Quiz') {
+		pdf_url = targeted_instruction?.quizzes[test_id]?.pdf_url
+	}
+
 	if (url[2].indexOf('test') >= 0) {
 		pdf_url = targeted_instruction?.tests[test_id]?.pdf_url
 	}
@@ -102,9 +119,9 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 					<Link
 						className="no-underline"
 						to={
-							url[2] === 'diagnostic-test'
+							test_type === 'Diagnostic'
 								? `/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/answer-pdf`
-								: url[2] === 'oral-test'
+								: test_type === 'Oral'
 									? `/${url[1]}/${url[2]}/${subject}/answer-pdf`
 									: `/${url[1]}/${url[2]}/${class_name}/${subject}/answer-pdf`
 						}>
@@ -117,9 +134,9 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 					<Link
 						className="no-underline"
 						to={
-							url[2] === 'diagnostic-test'
+							test_type === 'Diagnostic'
 								? `/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades`
-								: url[2] === 'oral-test'
+								: test_type === 'Oral'
 									? `/${url[1]}/${url[2]}/${subject}/${test_id}/insert-grades`
 									: `/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades`
 						}>

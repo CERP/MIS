@@ -469,7 +469,7 @@ export const getTestType = (value: string) => {
 }
 
 export const getQuizzes = (quizzes: TIPQuizzes, subject: TIPSubjects, level: TIPLevels) => {
-	return Object.entries(quizzes).reduce((agg, [quiz_id, quiz]) => {
+	return Object.entries(quizzes || {}).reduce((agg, [quiz_id, quiz]) => {
 		if (quiz.grade === level && quiz.subject === subject) {
 			return {
 				...agg,
