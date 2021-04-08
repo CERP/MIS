@@ -34,6 +34,10 @@ const AnswerSheet: React.FC<PropsType> = ({ match, targeted_instruction, history
 	if (url[2].indexOf('formative') >= 0) {
 		test_type = 'Formative'
 	}
+	if (url[2].indexOf('quizzes') >= 0) {
+		test_type = 'Quiz'
+	}
+
 	const test_ids = Object.entries(targeted_instruction.tests)
 		.filter(([, t]) => t.type === test_type && t.subject === subject && t.grade === class_name)
 		.map(([t_id]) => t_id)
@@ -42,10 +46,20 @@ const AnswerSheet: React.FC<PropsType> = ({ match, targeted_instruction, history
 		.filter(([, t]) => t.type === test_type && t.subject === subject && t.grade === 'Oral Test')
 		.map(([t_id]) => t_id)
 
-	const test_id = test_ids.length > 0 ? test_ids[0] : oral_test_ids[0]
+	const quiz_ids = Object.entries(targeted_instruction.quizzes)
+		.filter(([, t]) => t.type === test_type && t.subject === subject && t.grade === class_name)
+		.map(([t_id]) => t_id)
+
+	const test_id =
+		test_ids.length > 0 ? test_ids[0] : quiz_ids.length > 0 ? quiz_ids[0] : oral_test_ids[0]
 
 	let pdf_url = ''
+
 	// if we have a test, we need to chagne pdf_url to load from the test_id
+	if (url[2] === 'quizzes') {
+		pdf_url = targeted_instruction?.quizzes[test_id]?.pdf_url
+	}
+
 	if (url[2].indexOf('test') >= 0) {
 		pdf_url = targeted_instruction?.tests[test_id]?.answer_pdf_url
 	}
@@ -63,7 +77,7 @@ const AnswerSheet: React.FC<PropsType> = ({ match, targeted_instruction, history
 	const plugin_instance = scrollModePlugin()
 
 	return (
-		<div className="flex flex-wrap flex-col content-between w-full items-center justify-items-center">
+		<div className="flex flex-wrap flex-col content-between w-full items-center justify-items-center mt-20">
 			<Card
 				class_name={class_name ? class_name : 'Oral Test'}
 				subject={subject}
