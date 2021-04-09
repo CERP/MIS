@@ -191,6 +191,10 @@ type TIPDiagnosticReport = {
 	}
 }
 
+type TIPQuizReport = {
+	obtain_marks: number
+}
+
 type Levels = {
 	[level: string]: number
 }
@@ -422,6 +426,9 @@ interface MISStudent {
 	targeted_instruction: {
 		results: {
 			[test_id: string]: TIPDiagnosticReport
+		}
+		quiz_result: {
+			[quiz_id: string]: TIPQuizReport
 		}
 		learning_level: {
 			[subject: string]: {

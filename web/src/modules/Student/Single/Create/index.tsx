@@ -63,6 +63,7 @@ const blankStudent = (): MISStudent => ({
 	prospective_section_id: '',
 	targeted_instruction: {
 		results: {},
+		quiz_result: {},
 		learning_level: {}
 	}
 })
