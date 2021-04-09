@@ -71,9 +71,9 @@ const QuizList: React.FC<PropsType> = ({
 	return (
 		<div className="flex flex-wrap content-between mt-20">
 			<Card class_name={class_name} subject={subject} lesson_name="" lesson_no="" />
-
-			<Headings heading={'Quiz Library'} sub_heading={''} />
-
+			<div className="mb-5 flex justify-center w-full">
+				<Headings heading={'Quiz Library'} sub_heading={''} />
+			</div>
 			{Object.entries(filterredQuizzes)
 				.sort(([, a], [, b]) => a.quiz_order - b.quiz_order)
 				.map(([quiz_id, quiz]) => {
@@ -84,7 +84,7 @@ const QuizList: React.FC<PropsType> = ({
 					return (
 						<div
 							key={quiz_id}
-							className="no-underline bg-blue-50 h-20 w-full mx-3 rounded-md mb-3 flex flex-row justify-between items-center px-2"
+							className="no-underline bg-gray-50 h-20 w-full mx-3 rounded-md mb-3 flex flex-row justify-between items-center px-2"
 							onClick={e => redirect(e)}>
 							<div className="flex flex-col justify-between items-center w-full h-15 pl-4">
 								<div className="text-white text-lg font-bold mb-1">
