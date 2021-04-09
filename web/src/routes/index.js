@@ -17,7 +17,7 @@ import AutoLogin from 'modules/Login/autoLogin'
 // import Attendance from 'modules/Attendance'
 // import TeacherAttendance from 'modules/Teacher-Attendance'
 
-import SMS from 'modules/SMS'
+// import SMS from 'modules/SMS'
 import Marks from 'modules/Marks'
 import ExamList from 'modules/Marks/ExamList'
 import SingleExam from 'modules/Marks/SingleExam'
@@ -75,6 +75,7 @@ import { StudentPayments } from 'pages/students/fee-payments/payments'
 import { Family } from 'pages/family'
 import { SingleFamily } from 'pages/family/single'
 import { SingleFamilyPayments } from 'pages/family/single/payments'
+import { SMS } from 'pages/sms'
 
 export default class Routes extends React.Component {
 	constructor(props) {
