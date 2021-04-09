@@ -135,7 +135,9 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 								? `/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades`
 								: url[2] === 'oral-test'
 									? `/${url[1]}/${url[2]}/${subject}/${test_id}/insert-grades`
-									: `/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades`
+									: test_type === 'Quiz'
+										? `/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/grading`
+										: `/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades`
 						}>
 						<button className="bg-light-blue-tip-brand font-bold sm:text-sm md:text-base lg:text-lg border-none rounded-md text-white text-left p-3 md:p-2 lg:p-2 w-full focus:outline-none text-center">
 							Insert Grades
