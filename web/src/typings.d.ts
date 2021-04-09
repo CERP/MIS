@@ -213,7 +213,8 @@ interface Params {
 	subject: TIPSubjects
 	section_id: string
 	std_id: string
-	test_id: string
+	test_id?: string
+	quiz_id?: string
 	lesson_number: string
 }
 /**

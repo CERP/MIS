@@ -22,6 +22,7 @@ import DetailedAnalysis from './DetailedAnalysis'
 import OralTest from './OralTest'
 import AnswerSheet from './AnswerSheet'
 import QuizGrading from './Quizzes/Grading'
+import QuizResult from './Quizzes/Result'
 
 const Routing = props => {
 	const path = props.location.pathname.substring(0, 21)
@@ -175,6 +176,12 @@ const Routing = props => {
 				<Route exact path={`${path}/lesson-plans`} component={LessonPlans} />
 
 				<Route exact path={`${path}/training-videos`} component={TrainingVideos} />
+
+				<Route
+					exact
+					path={`${path}/quizzes/:class_name/:subject/:quiz_id/result`}
+					component={QuizResult}
+				/>
 
 				<Route
 					exact
