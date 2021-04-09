@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import Card from '../Card'
 import { connect } from 'react-redux'
 import { getStudentsByGroup } from 'utils/TIP'
@@ -22,7 +22,6 @@ const class_map: Record<TIPLevels, TIPGrades> = {
 }
 
 const Grading: React.FC<PropsType> = ({ match, students }) => {
-	const [range, setRange] = useState('0')
 	const { subject, class_name } = match.params as Params
 
 	const group = class_map[class_name ? (class_name as TIPLevels) : 'Oral']
@@ -38,13 +37,7 @@ const Grading: React.FC<PropsType> = ({ match, students }) => {
 					<div>Marks Obtained</div>
 				</div>
 				{Object.values(filtered_students).map(std => (
-					<SingleStdGrading
-						key={std.id}
-						std_name={std.Name}
-						roll_num={std.RollNumber}
-						range={range}
-						setRange={setRange}
-					/>
+					<SingleStdGrading key={std.id} student={std} />
 				))}
 			</div>
 		</div>
