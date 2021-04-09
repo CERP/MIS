@@ -44,7 +44,8 @@ module.exports = {
 				'blue-50': '#7BACAE',
 				'red-250': '#FF9191',
 				'green-250': '#C6EFCE',
-				'yellow-250': '#FFEB9C'
+				'yellow-250': '#FFEB9C',
+				'gray-50': '#858585'
 			},
 			screens: {
 				print: { raw: 'print' }

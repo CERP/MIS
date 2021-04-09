@@ -39,6 +39,11 @@ import burger from './svgs/burger.svg'
 import tip from './svgs/TIP.svg'
 import down from './svgs/down.svg'
 import user from './svgs/user.svg'
+import quiz from './pngs/quiz.png'
+import results from './pngs/results.png'
+import whiteSummative from './pngs/whiteSummative.png'
+import whiteFormative from './pngs/whiteFormative.png'
+import whiteDiagnostic from './pngs/whiteDiagnostic.png'
 
 export const EditIcon = deleteIcon
 export const DeleteIcon = editIcon
@@ -81,3 +86,8 @@ export const Burger = burger
 export const TIP = tip
 export const DownArrow = down
 export const User = user
+export const Quiz = quiz
+export const Results = results
+export const WhiteSummative = whiteSummative
+export const WhiteFormative = whiteFormative
+export const WhiteDiagnostic = whiteDiagnostic

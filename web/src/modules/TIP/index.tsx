@@ -6,7 +6,9 @@ import {
 	LessonPlans,
 	TrainingMaterials,
 	DiagnosticItalic,
-	Summative
+	Summative,
+	Quiz,
+	Results
 } from 'assets/icons'
 import { getLessonProgress } from 'utils/TIP'
 import Headings from './Headings'
@@ -45,7 +47,7 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id }) => {
 				<Link
 					className={`flex justify-center content-center w-full mt-2 no-underline`}
 					to={'/targeted-instruction/detailed-analysis'}>
-					<button className="bg-sea-green-tip-brand text-white shadow-lg p-2 px-5 rounded-2xl outline-none cursor-pointer">
+					<button className="border-none bg-sea-green-tip-brand text-white shadow-lg p-2 px-5 rounded-2xl outline-none cursor-pointer">
 						View Class / Groups
 					</button>
 				</Link>
@@ -86,13 +88,13 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id }) => {
 					<Link
 						className="container sm:px-8 bg-white rounded-xl m-3 h-36 flex flex-col content-center items-center shadow-lg no-underline"
 						to={'/targeted-instruction/quizzes'}>
-						<img className="h-20 py-4" src={TrainingMaterials} alt="img" />
+						<img className="h-20 py-4" src={Quiz} alt="img" />
 						<div className="text-xs text-blue-900 font-bold">Quizzes</div>
 					</Link>
 					<Link
 						className="container sm:px-8 bg-white rounded-xl m-3 h-36 flex flex-col content-center items-center shadow-lg no-underline"
 						to={'/targeted-instruction/lesson-plans'}>
-						<img className="h-20 p-4" src={LessonPlans} alt="img" />
+						<img className="h-20 p-4" src={Results} alt="img" />
 						<div className="text-xs text-blue-900 font-bold">Results</div>
 					</Link>
 				</div>
