@@ -675,6 +675,33 @@ export const mergeTIPResult = (
 	)
 }
 
+type QuizResult = {
+	[std_id: string]: number
+}
+
+export const saveTIPQuizResult = (quiz_result: QuizResult, quiz_id: string) => (
+	dispatch: Function
+) => {
+	for (let [student_id, marks] of Object.entries(quiz_result)) {
+		dispatch(
+			createMerges([
+				{
+					path: [
+						'db',
+						'students',
+						student_id,
+						'targeted_instruction',
+						'quiz_result',
+						quiz_id,
+						'obtain_marks'
+					],
+					value: marks
+				}
+			])
+		)
+	}
+}
+
 export const resetStudentLearningLevel = (student_id: string, subject: TIPSubjects) => (
 	dispatch: Function
 ) => {
