@@ -35,7 +35,7 @@ const SingleStdResult: React.FC<PropsType> = ({ match, student }) => {
 					<div>{student.Name}</div>
 				</div>
 			</div>
-			<div className="flex items-center w-1/3 justify-center">3/5</div>
+			<div className="flex items-center w-1/3 justify-center">{obtain_marks}</div>
 			<div className="flex items-center w-1/3 justify-center">
 				<div
 					className={clsx(
