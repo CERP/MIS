@@ -37,7 +37,7 @@ const links: CardProps[] = [
 		icon: iconDiary
 	},
 	{
-		link: '/school/sms',
+		link: '/sms',
 		title: 'SMS',
 		icon: iconSms
 	},
