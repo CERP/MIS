@@ -15,6 +15,7 @@ import { isMobile, isValidPhone } from 'utils/helpers'
 import { smsIntentLink } from 'utils/intent'
 import toTitleCase from 'utils/toTitleCase'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
+import { ToFeeDefaulters } from './to-fee-defaulters'
 
 enum SendSmsOptions {
 	TO_SINGLE_STUDENT,
@@ -23,6 +24,12 @@ enum SendSmsOptions {
 	TO_ALL_STAFF,
 	TO_SINGLE_SECTION,
 	TO_FEE_DEFAULTERS
+}
+
+enum NotPaidMonthDuration {
+	ONE,
+	THREE,
+	SIX
 }
 
 const SmsRecipient = {
@@ -41,6 +48,9 @@ type State = {
 	staffId?: string
 	sectionId?: string
 	message: string
+	defaulterOptions: boolean
+	pendingAmount?: number
+	pendingDuration?: NotPaidMonthDuration
 }
 
 export const SMS = () => {
@@ -53,7 +63,8 @@ export const SMS = () => {
 
 	const [state, setState] = useState<State>({
 		sendTo: SendSmsOptions.TO_SINGLE_STUDENT,
-		message: ''
+		message: '',
+		defaulterOptions: false
 	})
 
 	const sections = getSectionsFromClasses(classes).sort(
@@ -189,6 +200,8 @@ export const SMS = () => {
 
 	const showWarning = state.message && state.message.length > 165
 
+	console.log(state)
+
 	return (
 		<AppLayout title="SMS" showHeaderTitle>
 			<div className="p-5 md:p-10 md:pb-0 relative print:hidden">
@@ -199,7 +212,11 @@ export const SMS = () => {
 						data={SmsRecipient}
 						selectedItem={state.sendTo}
 						onChange={sendTo =>
-							setState({ message: state.message, sendTo: parseInt(sendTo) })
+							setState({
+								message: state.message,
+								sendTo: parseInt(sendTo),
+								defaulterOptions: false
+							})
 						}>
 						<SelectorIcon className="w-5 h-5 text-gray-500" />
 					</CustomSelect>
@@ -240,6 +257,12 @@ export const SMS = () => {
 							onChange={sectionId => setState({ ...state, sectionId })}>
 							<SelectorIcon className="w-5 h-5 text-gray-500" />
 						</CustomSelect>
+					)}
+					{state.sendTo === SendSmsOptions.TO_FEE_DEFAULTERS && (
+						<ToFeeDefaulters
+							showOptions={state.defaulterOptions}
+							toggleOptions={() => { }}
+						/>
 					)}
 					<div className="text-white">Message</div>
 					<textarea
