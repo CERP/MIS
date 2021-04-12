@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux'
@@ -15,7 +15,7 @@ import { isMobile, isValidPhone } from 'utils/helpers'
 import { smsIntentLink } from 'utils/intent'
 import toTitleCase from 'utils/toTitleCase'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
-import { ToFeeDefaulters } from './to-fee-defaulters'
+import { NotPaidMonthDuration, ToFeeDefaulters } from './to-fee-defaulters'
 
 enum SendSmsOptions {
 	TO_SINGLE_STUDENT,
@@ -24,12 +24,6 @@ enum SendSmsOptions {
 	TO_ALL_STAFF,
 	TO_SINGLE_SECTION,
 	TO_FEE_DEFAULTERS
-}
-
-enum NotPaidMonthDuration {
-	ONE,
-	THREE,
-	SIX
 }
 
 const SmsRecipient = {
@@ -51,6 +45,17 @@ type State = {
 	defaulterOptions: boolean
 	pendingAmount?: number
 	pendingDuration?: NotPaidMonthDuration
+	totalStudentDebts?: {
+		[id: string]: { student: MISStudent; debt: StudentDebt; familyId?: string }
+	}
+	backgroundCalculations?: any
+}
+
+type StudentDebt = {
+	OWED: number
+	SUBMITTED: number
+	FORGIVEN: number
+	SCHOLARSHIP: number
 }
 
 export const SMS = () => {
@@ -66,6 +71,96 @@ export const SMS = () => {
 		message: '',
 		defaulterOptions: false
 	})
+
+	useEffect(() => {
+		const calculate = () => {
+			clearTimeout(state.backgroundCalculations)
+
+			let i = 0
+
+			const totalStudentDebts = {} as State['totalStudentDebts']
+
+			const student_list = (Object.values(students) || []).filter(
+				student => isValidStudent(student) && student.Active && student.Phone
+			)
+
+			const reducify = () => {
+				// in loop
+				if (i >= student_list.length) {
+					setState(prevState => ({ ...prevState, totalStudentDebts }))
+				}
+
+				const student = student_list[i]
+				const sid = student.id
+
+				i += 1
+
+				const debt = { OWED: 0, SUBMITTED: 0, FORGIVEN: 0, SCHOLARSHIP: 0 }
+
+				for (const pid in student.payments || {}) {
+					const payment = student.payments[pid]
+
+					// some payment.amount has type string
+					const amount =
+						typeof payment.amount === 'string'
+							? parseFloat(payment.amount)
+							: payment.amount
+
+					// for 'scholarship', payment has also type OWED and negative amount
+					if (amount < 0) {
+						debt['SCHOLARSHIP'] += Math.abs(amount)
+					} else {
+						debt[payment.type] += amount
+					}
+				}
+
+				if (student.FamilyID) {
+					const existing = state.totalStudentDebts[student.FamilyID]
+					if (existing) {
+						state.totalStudentDebts[student.FamilyID] = {
+							student,
+							debt: {
+								OWED: existing.debt.OWED + debt.OWED,
+								SUBMITTED: existing.debt.SUBMITTED + debt.SUBMITTED,
+								FORGIVEN: existing.debt.FORGIVEN + debt.FORGIVEN,
+								SCHOLARSHIP: existing.debt.SCHOLARSHIP + debt.SCHOLARSHIP
+							},
+							familyId: student.FamilyID
+						}
+					} else {
+						state.totalStudentDebts[student.FamilyID] = {
+							student,
+							debt,
+							familyId: student.FamilyID
+						}
+					}
+				} else {
+					state.totalStudentDebts[sid] = { student, debt }
+				}
+
+				setState(prevState => ({
+					...prevState,
+					backgroundCalculations: setTimeout(reducify, 0)
+				}))
+			}
+
+			setState(prevState => ({
+				...prevState,
+				backgroundCalculations: setTimeout(reducify, 0)
+			}))
+		}
+
+		if (state.sendTo === SendSmsOptions.TO_FEE_DEFAULTERS) {
+			// calculate()
+		}
+	}, [
+		state.sendTo,
+		state.defaulterOptions,
+		state.pendingAmount,
+		state.pendingDuration,
+		students,
+		state.backgroundCalculations
+	])
 
 	const sections = getSectionsFromClasses(classes).sort(
 		(a, b) => a.classYear ?? 0 - b.classYear ?? 0
@@ -98,9 +193,8 @@ export const SMS = () => {
 					.length
 		}
 
-		// if(state.sendTo === SendSmsOptions.TO_FEE_DEFAULTERS) {
-
-		// }
+		if (state.sendTo === SendSmsOptions.TO_FEE_DEFAULTERS) {
+		}
 
 		/**
 		 * Note: Changing following for sms log 'type'
@@ -142,6 +236,9 @@ export const SMS = () => {
 		const alert = toTitleCase(member.Name) + ' has invalid phone.'
 		toast.error(alert)
 	}
+
+	const calculateDebt = ({ SUBMITTED, FORGIVEN, OWED, SCHOLARSHIP }: StudentDebt) =>
+		(SUBMITTED + FORGIVEN + SCHOLARSHIP - OWED) * -1
 
 	const getMessages = useCallback(() => {
 		// send sms to only single staff or student
@@ -261,7 +358,17 @@ export const SMS = () => {
 					{state.sendTo === SendSmsOptions.TO_FEE_DEFAULTERS && (
 						<ToFeeDefaulters
 							showOptions={state.defaulterOptions}
-							toggleOptions={() => { }}
+							toggleOptions={() =>
+								setState({
+									sendTo: state.sendTo,
+									message: state.message,
+									defaulterOptions: !state.defaulterOptions
+								})
+							}
+							setPendingAmount={amnt => setState({ ...state, pendingAmount: amnt })}
+							setNotPaidDuration={duration =>
+								setState({ ...state, pendingDuration: duration })
+							}
 						/>
 					)}
 					<div className="text-white">Message</div>

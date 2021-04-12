@@ -1,12 +1,25 @@
-import clsx from 'clsx'
 import React from 'react'
+import clsx from 'clsx'
+
+export enum NotPaidMonthDuration {
+	ONE,
+	THREE,
+	SIX
+}
 
 interface ToFeeDefaultersProps {
 	toggleOptions: () => void
 	showOptions: boolean
+	setPendingAmount: (amt: number) => void
+	setNotPaidDuration: (duration: NotPaidMonthDuration) => void
 }
 
-export const ToFeeDefaulters = ({ toggleOptions, showOptions }: ToFeeDefaultersProps) => {
+export const ToFeeDefaulters = ({
+	toggleOptions,
+	showOptions,
+	setPendingAmount,
+	setNotPaidDuration
+}: ToFeeDefaultersProps) => {
 	return (
 		<div className="space-y-2 text-white">
 			<div className="flex flex-row items-center">
@@ -24,14 +37,7 @@ export const ToFeeDefaulters = ({ toggleOptions, showOptions }: ToFeeDefaultersP
 				<>
 					<div className="">Pending Fee more than</div>
 					<input
-						// onChange={e =>
-						//     setState({
-						//         ...state,
-						//         pendingAmount: isNaN(e.target.valueAsNumber)
-						//             ? 0
-						//             : e.target.valueAsNumber
-						//     })
-						// }
+						onChange={e => setPendingAmount(e.target.valueAsNumber)}
 						className="tw-input tw-is-form-bg-black focus-within:bg-transparent w-full"
 						placeholder="Enter pending amount"
 						type="number"
@@ -40,12 +46,7 @@ export const ToFeeDefaulters = ({ toggleOptions, showOptions }: ToFeeDefaultersP
 					<div className="flex flex-row justify-between">
 						<div className="flex flex-row items-center">
 							<input
-								// onChange={() =>
-								//     setState({
-								//         ...state,
-								//         pendingDuration: NotPaidMonthDuration.ONE
-								//     })
-								// }
+								onChange={() => setNotPaidDuration(NotPaidMonthDuration.ONE)}
 								className="form-radio text-teal-brand mr-2"
 								type="radio"
 								name="duration"
@@ -54,12 +55,7 @@ export const ToFeeDefaulters = ({ toggleOptions, showOptions }: ToFeeDefaultersP
 						</div>
 						<div className="flex flex-row items-center">
 							<input
-								// onChange={() =>
-								//     setState({
-								//         ...state,
-								//         pendingDuration: NotPaidMonthDuration.THREE
-								//     })
-								// }
+								onChange={() => setNotPaidDuration(NotPaidMonthDuration.THREE)}
 								className="form-radio text-teal-brand mr-2"
 								type="radio"
 								name="duration"
@@ -68,12 +64,7 @@ export const ToFeeDefaulters = ({ toggleOptions, showOptions }: ToFeeDefaultersP
 						</div>
 						<div className="flex flex-row items-center">
 							<input
-								// onChange={() =>
-								//     setState({
-								//         ...state,
-								//         pendingDuration: NotPaidMonthDuration.SIX
-								//     })
-								// }
+								onChange={() => setNotPaidDuration(NotPaidMonthDuration.SIX)}
 								className="form-radio text-teal-brand mr-2"
 								type="radio"
 								name="duration"
