@@ -52,7 +52,7 @@ import { Home } from 'pages/home'
 import { StaffList } from 'pages/staff/list'
 import { CreateOrUpdateStaff } from 'pages/staff/create'
 import { Landing } from 'pages/landing'
-import { Contact } from 'pages/contact'
+import { ContactUs } from 'pages/contact-s'
 import { Feature } from 'pages/features'
 import { AboutUs } from 'pages/about-us'
 import { Pricing } from 'pages/pricing'
@@ -234,7 +234,7 @@ export default class Routes extends React.Component {
 						<Route exact path="/pricing" component={Pricing} />
 						<Route exact path="/about-us" component={AboutUs} />
 						<Route exact path="/features" component={Feature} />
-						<Route exact path="/contact-us" component={Contact} />
+						<Route exact path="/contact-us" component={ContactUs} />
 					</Switch>
 				</BrowserRouter>
 			</Provider>
