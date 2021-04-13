@@ -1,5 +1,5 @@
 import React from 'react'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { RouteComponentProps } from 'react-router-dom'
 import { Check, WhiteTick } from 'assets/icons'
 import { getQuizzes } from 'utils/TIP'
 import { connect } from 'react-redux'
@@ -123,4 +123,4 @@ export default connect(
 		quizTaken: (faculty_id: string, quiz_id: string, value: boolean) =>
 			dispatch(quizTaken(faculty_id, quiz_id, value))
 	})
-)(withRouter(QuizList))
+)(QuizList)

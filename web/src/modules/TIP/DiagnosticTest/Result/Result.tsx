@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { connect } from 'react-redux'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { RouteComponentProps } from 'react-router-dom'
 import { getStudentsBySectionId, calculateResult, convertLearningGradeToGroupName } from 'utils/TIP'
 import Groups from './Groups'
 import Card from '../../Card'
@@ -31,4 +31,4 @@ const Result: React.FC<PropsType> = props => {
 
 export default connect((state: RootReducerState) => ({
 	students: state.db.students
-}))(withRouter(Result))
+}))(Result)

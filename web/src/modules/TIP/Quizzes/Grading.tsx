@@ -3,7 +3,7 @@ import Card from '../Card'
 import { connect } from 'react-redux'
 import { getStudentsByGroup, convertLearningLevelToGrade } from 'utils/TIP'
 import SingleStdGrading from './SingleStdGrading'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { RouteComponentProps } from 'react-router-dom'
 import { saveTIPQuizResult, resetTIPQuizResult } from 'actions'
 import './style.css'
 
@@ -111,4 +111,4 @@ export default connect(
 		resetTIPQuizResult: (quiz_result: QuizResult, quiz_id: string) =>
 			dispatch(resetTIPQuizResult(quiz_result, quiz_id))
 	})
-)(withRouter(Grading))
+)(Grading)
