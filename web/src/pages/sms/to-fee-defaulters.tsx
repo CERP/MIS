@@ -2,9 +2,9 @@ import React from 'react'
 import clsx from 'clsx'
 
 export enum NotPaidMonthDuration {
-	ONE,
-	THREE,
-	SIX
+	ONE = 1,
+	THREE = 3,
+	SIX = 6
 }
 
 interface ToFeeDefaultersProps {
@@ -35,7 +35,7 @@ export const ToFeeDefaulters = ({
 			</div>
 			{showOptions && (
 				<>
-					<div className="">Pending Fee more than</div>
+					<div className="">Pending dues more than</div>
 					<input
 						onChange={e => setPendingAmount(e.target.valueAsNumber)}
 						className="tw-input tw-is-form-bg-black focus-within:bg-transparent w-full"
