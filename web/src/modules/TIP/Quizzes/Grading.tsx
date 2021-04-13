@@ -58,6 +58,13 @@ const Grading: React.FC<PropsType> = ({
 	}
 
 	const onReset = () => {
+		const reports: QuizResult = filtered_students.reduce((agg, student) => {
+			return {
+				...agg,
+				[student.id]: 0
+			}
+		}, {})
+		setStdResult(reports)
 		resetTIPQuizResult(std_result, quiz_id)
 	}
 

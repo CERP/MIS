@@ -9,7 +9,7 @@ interface P {
 }
 
 const SingleStdGrading: React.FC<P> = ({ student, obtain_marks, handleChange }) => {
-	const [range, setRange] = useState(obtain_marks ? obtain_marks : 0)
+	const [range, setRange] = useState(obtain_marks ?? 0)
 
 	const onMark = (value: number, std_id: string) => {
 		setRange(value)
