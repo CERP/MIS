@@ -11,7 +11,14 @@ interface P {
 
 	setName: (name: string) => void
 	setId: (id: string) => void
-	setType: (type: string) => void
+	setType: (type: Types) => void
+}
+
+enum Types {
+	SKILL_VIEW,
+	CHILD_VIEW,
+	SINGLE_STD_VIEW,
+	SINGLE_SLO_VIEW
 }
 
 const ChildView: React.FC<P> = ({
@@ -25,7 +32,7 @@ const ChildView: React.FC<P> = ({
 	setType
 }) => {
 	const redirect = () => {
-		setType('single_std_view')
+		setType(Types.SINGLE_STD_VIEW)
 		setId(std_id)
 		setName(name)
 	}

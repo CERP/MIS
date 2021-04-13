@@ -23,6 +23,13 @@ interface P {
 
 type PropsType = P & RouteComponentProps
 
+enum Types {
+	SKILL_VIEW,
+	CHILD_VIEW,
+	SINGLE_STD_VIEW,
+	SINGLE_SLO_VIEW
+}
+
 const Result: React.FC<PropsType> = props => {
 	const url = props.match.url.split('/')
 	const test_type = getTestType(url[2])
@@ -35,7 +42,9 @@ const Result: React.FC<PropsType> = props => {
 	const [id, setId] = useState('')
 	const [name, setName] = useState('')
 	const [slo, setSlo] = useState('')
-	const [type, setType] = useState(test_type === 'Formative' ? 'skill_view' : 'child_view')
+	const [type, setType] = useState(
+		test_type === 'Formative' ? Types.SKILL_VIEW : Types.CHILD_VIEW
+	)
 
 	const test_ids = Object.entries(props.targeted_instruction.tests)
 		.filter(([, t]) => t.type === test_type && t.subject === subject && t.grade === class_name)
@@ -60,11 +69,11 @@ const Result: React.FC<PropsType> = props => {
 				heading={test_type === 'Formative' ? 'Midpoint Test Result' : 'Final Test Result'}
 				sub_heading=""
 			/>
-			{type === 'single_std_view' ? (
+			{type === Types.SINGLE_STD_VIEW ? (
 				test_type === 'Summative' ? (
 					<div
 						className="flex flex-row justify-center w-full cursor-pointer"
-						onClick={() => setType('child_view')}>
+						onClick={() => setType(Types.CHILD_VIEW)}>
 						<div
 							className={clsx(
 								'h-6 my-4 w-3/4 rounded-3xl py-1 pt-2 flex justify-center items-center',
@@ -86,7 +95,7 @@ const Result: React.FC<PropsType> = props => {
 				) : (
 					<div
 						className="flex flex-row justify-center w-full"
-						onClick={() => setType('child_view')}>
+						onClick={() => setType(Types.CHILD_VIEW)}>
 						<div className="bg-blue-tip-brand h-6 my-4 w-3/4 rounded-3xl py-1 pt-2 flex justify-center items-center cursor-pointer">
 							<div className="absolute rounded-full w-3/4">
 								<img className="h-9 w-9 rounded-full" src={User} alt="img" />
@@ -97,10 +106,10 @@ const Result: React.FC<PropsType> = props => {
 						</div>
 					</div>
 				)
-			) : type === 'single_slo_view' ? (
+			) : type === Types.SINGLE_SLO_VIEW ? (
 				<div
 					className="flex flex-row justify-center items-center w-full"
-					onClick={() => setType('skill_view')}>
+					onClick={() => setType(Types.SKILL_VIEW)}>
 					<div className="bg-blue-tip-brand h-6 my-4 w-3/4 rounded-3xl py-1 pt-2 flex justify-center items-center cursor-pointer">
 						<div className="absolute rounded-full w-3/4">
 							<img className="h-9 w-9 rounded-full" src={User} alt="img" />
@@ -131,34 +140,34 @@ const Result: React.FC<PropsType> = props => {
 				<div className="flex flex-row justify-around w-full my-3 mx-6">
 					<button
 						className={
-							type === 'skill_view'
+							type === Types.SKILL_VIEW
 								? 'border-none rounded-3xl text-white bg-blue-tip-brand py-2 px-6 outline-none'
 								: 'rounded-3xl text-blue-tip-brand broder border-solid border-blue-tip-brand py-2 px-6 bg-white outline-none'
 						}
-						onClick={() => setType('skill_view')}>
+						onClick={() => setType(Types.SKILL_VIEW)}>
 						Skill View
 					</button>
 					<button
 						className={
-							type === 'child_view'
+							type === Types.CHILD_VIEW
 								? 'border-none rounded-3xl text-white bg-blue-tip-brand py-2 px-6 outline-none'
 								: 'rounded-3xl text-blue-tip-brand broder border-solid border-blue-tip-brand py-2 px-6 bg-white outline-none'
 						}
-						onClick={() => setType('child_view')}>
+						onClick={() => setType(Types.CHILD_VIEW)}>
 						Child View
 					</button>
 				</div>
 			)}
 			<div
-				className={`flex flex-row ${type === 'child_view' ? 'justify-around' : 'justify-between px-8'
+				className={`flex flex-row ${type === Types.CHILD_VIEW ? 'justify-around' : 'justify-between px-8'
 					} py-2 items-center text-white text-sm md:text-md lg:text-lg bg-blue-tip-brand w-full mb-1`}>
-				{type === 'skill_view' && (
+				{type === Types.SKILL_VIEW && (
 					<>
 						<div className="font-bold w-2/4">skill</div>
 						<div className="font-bold w-2/4 text-right mr-5">Class Average</div>
 					</>
 				)}
-				{type === 'child_view' &&
+				{type === Types.CHILD_VIEW &&
 					(test_type === 'Formative' || url[2] === 'formative-result') && (
 						<>
 							<div className="font-bold w-2/4 flex justify-center md:justify-start lg:justify-start">
@@ -173,7 +182,7 @@ const Result: React.FC<PropsType> = props => {
 							</div>
 						</>
 					)}
-				{type === 'single_slo_view' &&
+				{type === Types.SINGLE_SLO_VIEW &&
 					(test_type === 'Formative' || url[2] === 'formative-result') && (
 						<>
 							<div className="font-bold w-2/4 flex justify-start md:justify-start lg:justify-start">
@@ -185,7 +194,7 @@ const Result: React.FC<PropsType> = props => {
 							</div>
 						</>
 					)}
-				{type === 'child_view' && test_type === 'Summative' && (
+				{type === Types.CHILD_VIEW && test_type === 'Summative' && (
 					<>
 						<div className="font-bold">Name</div>
 						<div className="flex flex-row justify-between w-3/12 font-bold text-sm md:text-md lg:text-lg">
@@ -194,7 +203,7 @@ const Result: React.FC<PropsType> = props => {
 						</div>
 					</>
 				)}
-				{type === 'single_std_view' && (
+				{type === Types.SINGLE_STD_VIEW && (
 					<>
 						<div className="font-bold">skill</div>
 						<div className="flex flex-row justify-between w-3/12 font-bold text-sm md:text-md lg:text-lg">
@@ -204,7 +213,7 @@ const Result: React.FC<PropsType> = props => {
 					</>
 				)}
 			</div>
-			{type === 'skill_view' &&
+			{type === Types.SKILL_VIEW &&
 				test_type !== 'Summative' &&
 				Object.entries(class_result).map(([slo, obj]) => {
 					return (
@@ -218,7 +227,7 @@ const Result: React.FC<PropsType> = props => {
 						/>
 					)
 				})}
-			{type === 'single_slo_view' &&
+			{type === Types.SINGLE_SLO_VIEW &&
 				test_type !== 'Summative' &&
 				Object.entries(result || {}).map(([std_id, res]) => {
 					return (
@@ -230,7 +239,7 @@ const Result: React.FC<PropsType> = props => {
 						/>
 					)
 				})}
-			{type === 'child_view' &&
+			{type === Types.CHILD_VIEW &&
 				Object.entries(result || {}).map(([std_id, res]) => {
 					return (
 						<ChildView
@@ -246,7 +255,7 @@ const Result: React.FC<PropsType> = props => {
 						/>
 					)
 				})}
-			{type === 'single_std_view' &&
+			{type === Types.SINGLE_STD_VIEW &&
 				Object.entries(result[id].slo_obj || {}).map(([slo, obj]) => {
 					return (
 						<SingleStdView key={slo} slo={slo} obtain={obj.obtain} total={obj.total} />
