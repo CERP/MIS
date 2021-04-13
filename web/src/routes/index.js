@@ -54,7 +54,7 @@ import { CreateOrUpdateStaff } from 'pages/staff/create'
 import { Landing } from 'pages/landing'
 import { Contact } from 'pages/contact'
 import { Feature } from 'pages/features'
-import { About } from 'pages/about'
+import { AboutUs } from 'pages/about-us'
 import { Pricing } from 'pages/pricing'
 import { SchoolLogin, StaffLogin } from 'pages/auth/login'
 import { SchoolSignup } from 'pages/auth/signup'
@@ -232,7 +232,7 @@ export default class Routes extends React.Component {
 						/>
 
 						<Route exact path="/pricing" component={Pricing} />
-						<Route exact path="/about-us" component={About} />
+						<Route exact path="/about-us" component={AboutUs} />
 						<Route exact path="/features" component={Feature} />
 						<Route exact path="/contact-us" component={Contact} />
 					</Switch>

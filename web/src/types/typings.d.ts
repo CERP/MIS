@@ -761,3 +761,11 @@ type SchoolSignup = {
 	referralSchoolName?: string
 	ownerEasypaisaNumber?: string
 }
+
+interface MISEvent {
+	title: string
+	date: string
+	location: string
+	body: string
+	images: string[]
+}
