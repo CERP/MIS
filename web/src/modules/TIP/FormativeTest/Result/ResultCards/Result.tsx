@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react'
 import clsx from 'clsx'
 import { connect } from 'react-redux'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { RouteComponentProps } from 'react-router-dom'
 import Headings from '../../../Headings'
 import ChildView from './ChildView'
 import SkillView from './SkillView'
@@ -259,4 +259,4 @@ const Result: React.FC<PropsType> = props => {
 export default connect((state: RootReducerState) => ({
 	students: state.db.students,
 	targeted_instruction: state.targeted_instruction
-}))(withRouter(Result))
+}))(Result)

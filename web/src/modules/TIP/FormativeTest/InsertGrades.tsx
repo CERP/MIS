@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { connect } from 'react-redux'
-import { RouteComponentProps, Link, withRouter } from 'react-router-dom'
+import { RouteComponentProps, Link } from 'react-router-dom'
 import { getStudentsBySectionId, getStudentsByGroup, convertLearningLevelToGrade } from 'utils/TIP'
 import Card from '../Card'
 import { Check } from 'assets/icons'
@@ -96,4 +96,4 @@ const InsertGrades: React.FC<PropsType> = props => {
 
 export default connect((state: RootReducerState) => ({
 	students: state.db.students
-}))(withRouter(InsertGrades))
+}))(InsertGrades)

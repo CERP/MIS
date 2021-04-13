@@ -3,7 +3,7 @@ import Card from '../../Card'
 import { connect } from 'react-redux'
 import { getStudentsByGroup, convertLearningLevelToGrade } from 'utils/TIP'
 import SingleStdResult from './SingleStdResult'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { RouteComponentProps } from 'react-router-dom'
 
 interface P {
 	students: RootDBState['students']
@@ -36,4 +36,4 @@ const Result: React.FC<PropsType> = ({ match, students }) => {
 
 export default connect((state: RootReducerState) => ({
 	students: state.db.students
-}))(withRouter(Result))
+}))(Result)

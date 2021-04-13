@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { connect } from 'react-redux'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { RouteComponentProps } from 'react-router-dom'
 import { Download, Printer, BlueDownload } from 'assets/icons'
 import { downloadPdf } from 'utils/TIP'
 import Card from '../Card'
@@ -150,4 +150,4 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 
 export default connect((state: RootReducerState) => ({
 	targeted_instruction: state.targeted_instruction
-}))(withRouter(PDF))
+}))(PDF)

@@ -1,5 +1,5 @@
 import React from 'react'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { RouteComponentProps } from 'react-router-dom'
 import { connect } from 'react-redux'
 import Card from '../Card'
 import { Check, WhiteTick } from 'assets/icons'
@@ -169,4 +169,4 @@ export default connect(
 		clearLessonPlans: (faculty_id: string, learning_level_id: string, subject: string) =>
 			dispatch(clearLessonPlans(faculty_id, learning_level_id, subject))
 	})
-)(withRouter(List))
+)(List)

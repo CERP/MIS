@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { connect } from 'react-redux'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { RouteComponentProps } from 'react-router-dom'
 import { convertLearningGradeToGroupName, getTestType } from 'utils/TIP'
 import { useComponentVisible } from 'utils/customHooks'
 import AssignedGroupModal from './AssignedGroupModal'
@@ -270,4 +270,4 @@ export default connect(
 		setLearningLevel: (student_id: string, subject: TIPSubjects, level: TIPGrades) =>
 			dispatch(assignLearningLevel(student_id, subject, level))
 	})
-)(withRouter(Grading))
+)(Grading)

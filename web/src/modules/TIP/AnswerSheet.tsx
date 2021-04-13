@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { RouteComponentProps } from 'react-router-dom'
 import { Download, Printer } from 'assets/icons'
 import { downloadPdf } from 'utils/TIP'
 import { Viewer, RenderPageProps, SpecialZoomLevel, Worker } from '@react-pdf-viewer/core'
@@ -123,4 +123,4 @@ const AnswerSheet: React.FC<PropsType> = ({ match, targeted_instruction, history
 
 export default connect((state: RootReducerState) => ({
 	targeted_instruction: state.targeted_instruction
-}))(withRouter(AnswerSheet))
+}))(AnswerSheet)
