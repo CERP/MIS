@@ -7,15 +7,22 @@ interface P {
 	obtain: number
 	total: number
 
-	setType: (type: string) => void
+	setType: (type: Types) => void
 	setSlo: (slo: string) => void
+}
+
+enum Types {
+	SKILL_VIEW,
+	CHILD_VIEW,
+	SINGLE_STD_VIEW,
+	SINGLE_SLO_VIEW
 }
 
 const SkillView: React.FC<P> = ({ slo, obtain, total, setType, setSlo }) => {
 	const percentage = Math.trunc((obtain / total) * 100)
 
 	const setValues = (slo: string) => {
-		setType('single_slo_view')
+		setType(Types.SINGLE_SLO_VIEW)
 		setSlo(slo.replaceAll(',', '$'))
 	}
 

@@ -139,38 +139,6 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id }) => {
 					</div>
 				</div>
 			)}
-			{/* {layout !== Layouts.SUMMATIVE && (
-				<div className="w-full flex justify-center">
-					<Link
-						className="container sm:px-8 bg-white rounded-xl m-3 h-28 flex flex-row justify-center w-full items-center shadow-lg no-underline"
-						to={'/targeted-instruction/diagnostic-result'}>
-						<img className="h-12 py-4 pl-4" src={DiagnosticItalic} alt="img" />
-						<div className="text-blue-900 text-lg font-bold">Class Results</div>
-					</Link>
-				</div>
-			)} */}
-			{/* {layout === Layouts.SUMMATIVE && (
-				<div className="flex flex-row content-center items-center justify-center w-full">
-					<div className="flex flex-row content-center items-center xl:w-11/12 w-full">
-						<Link
-							className="container sm:px-8 bg-white rounded-xl m-3 h-40 flex flex-col content-center items-center shadow-lg no-underline"
-							to={'/targeted-instruction/diagnostic-result'}>
-							<img className="h-12 py-6" src={DiagnosticItalic} alt="img" />
-							<div className="text-base text-blue-900 font-bold text-center">
-								Starting Test Results
-							</div>
-						</Link>
-						<Link
-							className="container sm:px-8 bg-white rounded-xl m-3 h-40 flex flex-col content-center items-center shadow-lg no-underline"
-							to={'/targeted-instruction/formative-result'}>
-							<img className="h-16 p-4" src={Formative} alt="img" />
-							<div className="text-base text-blue-900 font-bold text-center">
-								Midpoint Test Results
-							</div>
-						</Link>
-					</div>
-				</div>
-			)} */}
 		</div>
 	)
 }
