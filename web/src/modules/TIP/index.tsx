@@ -93,7 +93,7 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id }) => {
 					</Link>
 					<Link
 						className="container sm:px-8 bg-white rounded-xl m-3 h-36 flex flex-col content-center items-center shadow-lg no-underline"
-						to={'/targeted-instruction/lesson-plans'}>
+						to={'/targeted-instruction/results'}>
 						<img className="h-20 p-4" src={Results} alt="img" />
 						<div className="text-xs text-blue-900 font-bold">Results</div>
 					</Link>

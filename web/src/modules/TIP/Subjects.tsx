@@ -16,27 +16,33 @@ const Subjects: React.FC<PropsType> = ({ match, targeted_instruction, class_name
 	const url = match.url.split('/')
 	const subjects: string[] = useMemo(() => getSubjectsFromTests(targeted_instruction), [])
 
+	const getRoute = (url: string[], sub: string) => {
+		if (url[2] === 'diagnostic-result') {
+			return `/${url[1]}/${url[2]}/${section_id}/${class_name}/${sub}/result`
+		} else if (url[2] === 'formative-result') {
+			return `/${url[1]}/${url[2]}/${class_name}/${sub}/result`
+		} else if (url[2] === 'lesson-plans') {
+			return `/${url[1]}/${url[2]}/${class_name}/${sub}/list`
+		} else if (url[2] === 'diagnostic-test') {
+			return `/${url[1]}/${url[2]}/${section_id}/${class_name}/${sub}/pdf`
+		} else if (url[2] === 'oral-test') {
+			return `/${url[1]}/${url[2]}/${sub}/pdf`
+		} else if (url[2] === 'quizzes') {
+			return `/${url[1]}/${url[2]}/${class_name}/${sub}/list`
+		} else if (url[2] === 'quiz-result') {
+			return `/${url[1]}/${url[2]}/${class_name}/${sub}/detailed-result`
+		} else {
+			return `/${url[1]}/${url[2]}/${class_name}/${sub}/pdf`
+		}
+	}
+
 	return (
 		<div className="flex flex-wrap flex-row justify-around w-full mx-4">
 			{subjects.map(sub => (
 				<Link
 					key={sub}
 					className="container w-full sm:px-8 bg-white rounded-lg m-3 h-36 flex items-center justify-start flex-col shadow-lg no-underline"
-					to={
-						url[2] === 'diagnostic-result'
-							? `/${url[1]}/${url[2]}/${section_id}/${class_name}/${sub}/result`
-							: url[2] === 'formative-result'
-								? `/${url[1]}/${url[2]}/${class_name}/${sub}/result`
-								: url[2] === 'lesson-plans'
-									? `/${url[1]}/${url[2]}/${class_name}/${sub}/list`
-									: url[2] === 'diagnostic-test'
-										? `/${url[1]}/${url[2]}/${section_id}/${class_name}/${sub}/pdf`
-										: url[2] === 'oral-test'
-											? `/${url[1]}/${url[2]}/${sub}/pdf`
-											: url[2] === 'quizzes'
-												? `/${url[1]}/${url[2]}/${class_name}/${sub}/list`
-												: `/${url[1]}/${url[2]}/${class_name}/${sub}/pdf`
-					}>
+					to={getRoute(url, sub)}>
 					<img
 						className="flex items-center justify-center h-20 p-2"
 						src={sub === 'English' ? English : sub === 'Urdu' ? Urdu : Maths}
