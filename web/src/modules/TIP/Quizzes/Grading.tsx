@@ -4,13 +4,14 @@ import { connect } from 'react-redux'
 import { getStudentsByGroup, convertLearningLevelToGrade } from 'utils/TIP'
 import SingleStdGrading from './SingleStdGrading'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
-import { saveTIPQuizResult } from 'actions'
+import { saveTIPQuizResult, resetTIPQuizResult } from 'actions'
 import './style.css'
 
 interface P {
 	students: RootDBState['students']
 
 	saveTIPQuizResult: (result: QuizResult, quiz_id: string) => void
+	resetTIPQuizResult: (result: QuizResult, quiz_id: string) => void
 }
 
 type PropsType = P & RouteComponentProps
@@ -19,7 +20,13 @@ type QuizResult = {
 	[std_id: string]: number
 }
 
-const Grading: React.FC<PropsType> = ({ match, history, students, saveTIPQuizResult }) => {
+const Grading: React.FC<PropsType> = ({
+	match,
+	history,
+	students,
+	saveTIPQuizResult,
+	resetTIPQuizResult
+}) => {
 	const url = match.url.split('/')
 	const [std_result, setStdResult] = useState<QuizResult>({})
 	const { subject, class_name, quiz_id } = match.params as Params
@@ -46,9 +53,12 @@ const Grading: React.FC<PropsType> = ({ match, history, students, saveTIPQuizRes
 	}
 
 	const onSave = () => {
-		// console.log('testing', std_result)
 		saveTIPQuizResult(std_result, quiz_id)
 		history.push(`/${url[1]}/${url[2]}/${class_name}/${subject}/${quiz_id}/result`)
+	}
+
+	const onReset = () => {
+		resetTIPQuizResult(std_result, quiz_id)
 	}
 
 	return (
@@ -69,7 +79,9 @@ const Grading: React.FC<PropsType> = ({ match, history, students, saveTIPQuizRes
 				))}
 			</div>
 			<div className="w-full fixed bottom-0 flex flex-row justify-between">
-				<button className="w-11/13 bg-blue-tip-brand text-white border-none p-3 font-bold text-sm md:text-base lg:text-lg">
+				<button
+					className="w-11/13 bg-blue-tip-brand text-white border-none p-3 font-bold text-sm md:text-base lg:text-lg"
+					onClick={onReset}>
 					Reset
 				</button>
 				<button
@@ -88,6 +100,8 @@ export default connect(
 	}),
 	(dispatch: Function) => ({
 		saveTIPQuizResult: (quiz_result: QuizResult, quiz_id: string) =>
-			dispatch(saveTIPQuizResult(quiz_result, quiz_id))
+			dispatch(saveTIPQuizResult(quiz_result, quiz_id)),
+		resetTIPQuizResult: (quiz_result: QuizResult, quiz_id: string) =>
+			dispatch(resetTIPQuizResult(quiz_result, quiz_id))
 	})
 )(withRouter(Grading))
