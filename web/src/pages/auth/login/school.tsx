@@ -137,7 +137,7 @@ export const SchoolLogin = () => {
 				</div>
 
 				<div className="w-full mt-5 px-5 md:mt-10 md:px-16">
-					<div className="bg-white shadow-md mx-auto border border-gray-100 md:w-1/3 rounded-xl py-6 px-6 md:px-8">
+					<div className="bg-white shadow mx-auto border border-gray-150 md:w-1/3 rounded-xl py-6 px-6 md:px-8">
 						<form onSubmit={handleSubmit} className="flex flex-col justify-items-start">
 							<div className="my-2">Mobile Number (School Id)</div>
 							<input

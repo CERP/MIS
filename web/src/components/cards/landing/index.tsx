@@ -43,7 +43,7 @@ export const TeamMemberCard = ({ member }: TeamMemberCardProps) => (
 		<div className="mb-2 w-40 p-1 h-40 rounded-full border-4 border-teal-500">
 			<img src={member.avatar_url} className="rounded-full object-cover" />
 		</div>
-		<div className="text-lg font-semibold">{member.name}</div>
+		<div className="font-semibold">{member.name}</div>
 		<div className="text-xs text-gray-500">{member.designation}</div>
 	</div>
 )

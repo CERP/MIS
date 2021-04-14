@@ -28,12 +28,12 @@ export const AppHeader = ({ title }: AppHeaderProps) => {
 	return (
 		<div
 			className={clsx('antialiased sticky top-0 z-50 print:hidden', {
-				'bg-gray-100 shadow-md': !isUserLogged,
+				'': !isUserLogged,
 				'bg-teal-brand': isUserLogged
 			})}>
 			<div
 				className={clsx('w-full text-gray-700', {
-					'bg-white': !isUserLogged,
+					'border-b bg-white': !isUserLogged,
 					'bg-teal-brand': isUserLogged
 				})}>
 				<Menu>
@@ -79,7 +79,7 @@ export const AppHeader = ({ title }: AppHeaderProps) => {
 									className={clsx(
 										'focus:outline-none focus:shadow-outline text-red-brand rounded-full shadow-md p-2 border border-gray-200 bg-white',
 										{
-											hidden: !isUserLogged
+											'md:hidden': !isUserLogged
 										}
 									)}>
 									<svg
@@ -175,7 +175,7 @@ export const AppHeader = ({ title }: AppHeaderProps) => {
 																<a
 																	className="flex row items-start bg-transparent px-2 py-1 text-white focus:outline-none focus:shadow-outline"
 																	href="#testimonials">
-																	Testimonials{' '}
+																	Testimonials
 																</a>
 
 																<a
