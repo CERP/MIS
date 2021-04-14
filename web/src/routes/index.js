@@ -4,20 +4,8 @@ import { Provider } from 'react-redux'
 
 import ErrorComponent from 'components/Error'
 
-// import Home from 'modules/Landing'
-// import TeacherList from 'modules/Teacher/List'
-// import TeacherSingle from 'modules/Teacher/Single'
-// import StudentList from 'modules/Student/List'
-// import StudentSingle from 'modules/Student/Single'
-// import Login from 'modules/Login'
 import AutoLogin from 'modules/Login/autoLogin'
-// import SchoolLogin from 'modules/Login/school'
-// import ClassModule from 'modules/Class/List'
-// import ClassSingle from 'modules/Class/Single'
-// import Attendance from 'modules/Attendance'
-// import TeacherAttendance from 'modules/Teacher-Attendance'
 
-// import SMS from 'modules/SMS'
 import Marks from 'modules/Marks'
 import ExamList from 'modules/Marks/ExamList'
 import SingleExam from 'modules/Marks/SingleExam'
@@ -29,15 +17,11 @@ import PromotionPage from 'modules/Settings/promote-students'
 import TargetedInstruction from 'modules/TIP/Routing'
 import Help from 'modules/Help'
 import Diary from 'modules/Diary'
-// import Front from 'modules/Front'
 import FeeMenu from 'modules/FeeMenu'
 import PlannerList from 'modules/Planner/ClassList'
 import Planner from 'modules/Planner'
 import CertificateMenu from 'modules/CertificateMenu'
 import HistoricalFee from '../modules/Settings/HistoricalFees/historical-fee'
-// import FamilyModule from '../modules/Family'
-// import SingleFamily from '../modules/Family/Single'
-// import StudentFees from '../modules/Student/Single/Fees/index'
 import ManageFees from 'modules/Student/ManageFees'
 import ResetPassword from 'modules/Password/index'
 import TrackedRoute from 'components/TrackedRoute'
@@ -217,6 +201,12 @@ export default class Routes extends React.Component {
 						<TrackedRoute path="/fees/add-historical-fee" component={HistoricalFee} />
 						<TrackedRoute path="/fee-menu" component={FeeMenu} />
 						<TrackedRoute path="/reset-password" component={ResetPassword} />
+
+						<TrackedRoute
+							path="/targeted-instruction"
+							component={TargetedInstruction}
+						/>
+
 						<Route path="/verify-code" component={MISActivation} />
 						<Route exact path="/" component={Landing} />
 
@@ -226,11 +216,6 @@ export default class Routes extends React.Component {
 						<Route exact path="/school/setup" component={SchoolSetup} />
 						<Route exact path="/school/onboarding" component={SchoolOnboarding} />
 						<Route path="/auto-login" component={AutoLogin} />
-						<TrackedRoute
-							path="/targeted-instruction"
-							component={TargetedInstruction}
-						/>
-
 						<Route exact path="/pricing" component={Pricing} />
 						<Route exact path="/about-us" component={AboutUs} />
 						<Route exact path="/features" component={Feature} />
