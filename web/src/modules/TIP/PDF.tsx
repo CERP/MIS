@@ -16,18 +16,9 @@ interface P {
 
 type PropsType = P & RouteComponentProps<Params>
 
-interface Params {
-	class_name: TIPLevels
-	subject: string
-	section_id: string
-	std_id: string
-	test_id: string
-	lesson_number: string
-}
-
 const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 	const url = match.url.split('/')
-	const { class_name, subject, section_id } = match.params
+	const { class_name, subject, section_id, quiz_id } = match.params
 
 	// if test, this will find the test_id
 	let test_type: TIPTestType = 'Diagnostic'
@@ -49,12 +40,8 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 		.filter(([, t]) => t.type === test_type && t.subject === subject && t.grade === 'Oral Test')
 		.map(([t_id]) => t_id)
 
-	const quiz_ids = Object.entries(targeted_instruction.quizzes)
-		.filter(([, t]) => t.type === test_type && t.subject === subject && t.grade === class_name)
-		.map(([t_id]) => t_id)
-
-	const test_id =
-		test_ids.length > 0 ? test_ids[0] : quiz_ids.length > 0 ? quiz_ids[0] : oral_test_ids[0]
+	let test_id =
+		test_ids.length > 0 ? test_ids[0] : test_type === 'Quiz' ? quiz_id : oral_test_ids[0]
 
 	let pdf_url = ''
 
