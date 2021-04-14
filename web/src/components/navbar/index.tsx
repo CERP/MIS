@@ -39,7 +39,10 @@ export const AppHeader = ({ title }: AppHeaderProps) => {
 				<Menu>
 					{({ open: openMenu }: { open: boolean }) => (
 						<div className="flex flex-col max-w-screen-3xl mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-16">
-							<div className="flex flex-row items-center justify-between p-4">
+							<div
+								className={clsx('flex flex-row items-center justify-between p-4', {
+									'w-full': isUserLogged
+								})}>
 								{isUserLogged &&
 									location.pathname !== '/home' &&
 									location.pathname !== '/' ? (
@@ -72,7 +75,13 @@ export const AppHeader = ({ title }: AppHeaderProps) => {
 									<div className="text-white font-semibold text-lg">{title}</div>
 								)}
 
-								<Menu.Button className="md:hidden focus:outline-none focus:shadow-outline text-red-brand rounded-full shadow-md p-2 border border-gray-200 bg-white">
+								<Menu.Button
+									className={clsx(
+										'focus:outline-none focus:shadow-outline text-red-brand rounded-full shadow-md p-2 border border-gray-200 bg-white',
+										{
+											hidden: !isUserLogged
+										}
+									)}>
 									<svg
 										fill="currentColor"
 										viewBox="0 0 20 20"
@@ -104,7 +113,7 @@ export const AppHeader = ({ title }: AppHeaderProps) => {
 										leaveTo="transform opacity-0 scale-95">
 										<Menu.Items
 											static
-											className="absolute right-0 w-44 -top-2 origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg outline-none z-50">
+											className="absolute right-2 w-44 -top-2 md:top-6 origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg outline-none z-50">
 											<div className="py-1">
 												<Menu.Item>
 													<Link
