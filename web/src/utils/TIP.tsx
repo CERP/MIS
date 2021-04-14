@@ -479,3 +479,10 @@ export const getQuizzes = (quizzes: TIPQuizzes, subject: TIPSubjects, level: TIP
 		return { ...agg }
 	}, {})
 }
+
+export const getQuizSLOs = (quizzes: TIPQuizzes) => {
+	const sloArray = Object.values(quizzes || {}).reduce((agg, quiz) => {
+		return [...agg, quiz.slo]
+	}, [])
+	return [...new Set(sloArray)]
+}
