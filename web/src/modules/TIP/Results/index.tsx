@@ -17,19 +17,19 @@ const Results: React.FC<PropsType> = () => {
 			<Headings heading="Results" sub_heading="Select the result you wanna see" />
 			<div className="flex flex-row justify-around w-full mt-5 p-3">
 				<Link
-					className="bg-sea-green-tip-brand px-2 rounded-lg h-48 flex flex-col justify-center items-center"
+					className="bg-sea-green-tip-brand px-2 rounded-lg h-48 flex flex-col justify-center items-center shadow-lg"
 					to={'/targeted-instruction/diagnostic-result'}>
 					<img className="py-11 pl-2" src={WhiteDiagnostic} />
 					<div className="text-white">Starting Test</div>
 				</Link>
 				<Link
-					className="bg-sea-green-tip-brand px-2 rounded-lg h-48 flex flex-col justify-center items-center"
+					className="bg-sea-green-tip-brand px-2 rounded-lg h-48 flex flex-col justify-center items-center shadow-lg"
 					to={'/targeted-instruction/formative-result'}>
 					<img className="py-11 pl-2" src={WhiteFormative} />
 					<div className="text-white">Midpoint Test</div>
 				</Link>
 				<Link
-					className="bg-sea-green-tip-brand px-2 rounded-lg h-48 flex flex-col justify-center items-center"
+					className="bg-sea-green-tip-brand px-2 rounded-lg h-48 flex flex-col justify-center items-center shadow-lg"
 					to={'/targeted-instruction/formative-result'}>
 					<img className="py-11 pr-2" src={WhiteSummative} />
 					<div className="text-white">Final Test</div>
@@ -37,7 +37,7 @@ const Results: React.FC<PropsType> = () => {
 			</div>
 			<div className="w-full px-4">
 				<Link
-					className="bg-gray-50 rounded-lg flex flex-row justify-around items-center w-full no-underline"
+					className="bg-gray-50 rounded-lg flex flex-row justify-around items-center w-full no-underline shadow-lg"
 					to={'/targeted-instruction/quiz-result'}>
 					<img className="py-3" src={Quiz} />
 					<div className="text-white text-lg">Quizzes</div>
