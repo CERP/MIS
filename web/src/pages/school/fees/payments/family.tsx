@@ -70,28 +70,25 @@ const Card = ({ family }: CardProps) => {
 					<CardItem title={'Pending'} val={0} />
 				</div>
 			</div>
-			{Object.values(family.students || {}).map(
-				(s, index) =>
-					index <= 2 && (
-						<img
-							key={s.id}
-							src={
-								s.ProfilePicture?.url ||
-								s.ProfilePicture?.image_string ||
-								UserIconSvg
-							}
-							className={clsx(
-								'-top-6 md:-top-8 absolute w-12 h-12 md:h-16 md:w-16  rounded-full shadow-md bg-gray-500',
-								{
-									'right-24 md:right-40 z-20': index === 0,
-									'right-16 md:right-28 z-10': index === 1,
-									'right-8 md:right-16': index === 2
+			<div className="absolute left-0 right-0 -top-6 md:-top-8 flex -space-x-2 overflow-hidden justify-center">
+				{Object.values(family.students || {}).map(
+					(s, index) =>
+						index <= 2 && (
+							<img
+								key={s.id}
+								src={
+									s.ProfilePicture?.url ||
+									s.ProfilePicture?.image_string ||
+									UserIconSvg
 								}
-							)}
-							alt={s.Name}
-						/>
-					)
-			)}
+								className={clsx(
+									' w-12 h-12 md:h-16 md:w-16 rounded-full shadow-md bg-gray-500 inline-block ring-2 ring-white'
+								)}
+								alt={s.Name}
+							/>
+						)
+				)}
+			</div>
 		</div>
 	)
 }
