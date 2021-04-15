@@ -7,7 +7,12 @@ import ChildView from './ChildView'
 import SkillView from './SkillView'
 import SingleSloView from './SkillView/SingleSloView'
 import SingleStdView from './ChildView/SingleStdView'
-import { getSingleSloQuizResult, getStudentsByGroup, convertLearningLevelToGrade } from 'utils/TIP'
+import {
+	getSingleStdQuizResult,
+	getSingleSloQuizResult,
+	getStudentsByGroup,
+	convertLearningLevelToGrade
+} from 'utils/TIP'
 
 interface P {
 	students: RootDBState['students']
@@ -27,6 +32,7 @@ const DetailedQuizResult: React.FC<PropsType> = ({ match, targeted_instruction, 
 	const { class_name, subject } = match.params as Params
 	const [type, setType] = useState(Types.SKILL_VIEW)
 	const [selected_slo, setSelectedSlo] = useState([])
+	const [selected_std_id, setSelectedStdId] = useState('')
 
 	const group = convertLearningLevelToGrade(class_name ? (class_name as TIPLevels) : 'Oral')
 	const filtered_students = useMemo(() => getStudentsByGroup(students, group, subject), [
@@ -44,6 +50,18 @@ const DetailedQuizResult: React.FC<PropsType> = ({ match, targeted_instruction, 
 			),
 		[selected_slo]
 	)
+
+	const singleStdQuizResult: SingleStdQuizResult = useMemo(
+		() =>
+			getSingleStdQuizResult(
+				students[selected_std_id],
+				targeted_instruction,
+				subject,
+				class_name
+			),
+		[selected_std_id]
+	)
+
 	return (
 		<div className="flex flex-wrap content-between mt-20">
 			<Card class_name={class_name} subject={subject} lesson_name="" lesson_no="" />
@@ -81,11 +99,14 @@ const DetailedQuizResult: React.FC<PropsType> = ({ match, targeted_instruction, 
 			{type === Types.CHILD_VIEW && (
 				<ChildView
 					setType={setType}
+					setSelectedStdId={setSelectedStdId}
 					filtered_students={filtered_students}
 					targeted_instruction={targeted_instruction}
 				/>
 			)}
-			{type === Types.SINGLE_STD_VIEW && <SingleStdView setType={setType} />}
+			{type === Types.SINGLE_STD_VIEW && (
+				<SingleStdView setType={setType} singleStdQuizResult={singleStdQuizResult} />
+			)}
 		</div>
 	)
 }
