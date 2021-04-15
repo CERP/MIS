@@ -153,6 +153,13 @@ interface SingleSloQuizResult {
 		midpoint_test_marks: number
 	}
 }
+
+interface SingleStdQuizResult {
+	[slo: string]: {
+		quiz_marks: number
+		midpoint_test_marks: number
+	}
+}
 interface TIPQuestion {
 	question_text: string
 	answer: string
@@ -202,6 +209,7 @@ type TIPDiagnosticReport = {
 
 type TIPQuizReport = {
 	obtain_marks: number
+	total_marks: number
 }
 
 type Levels = {

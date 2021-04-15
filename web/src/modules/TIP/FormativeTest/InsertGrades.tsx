@@ -23,8 +23,6 @@ const InsertGrades: React.FC<PropsType> = props => {
 			? useMemo(() => getStudentsBySectionId(section_id, props.students), [section_id])
 			: useMemo(() => getStudentsByGroup(props.students, group, subject), [subject])
 
-	console.log(students)
-
 	return (
 		<div className="flex flex-wrap content-between mt-20">
 			<Card

@@ -96,7 +96,6 @@ const Grading: React.FC<PropsType> = ({
 		}),
 		{}
 	)
-	console.log(questionsObj)
 	const markQuestion = (q_id: string, question: TIPQuestion, is_correct: boolean) => {
 		setResult({
 			...result,
