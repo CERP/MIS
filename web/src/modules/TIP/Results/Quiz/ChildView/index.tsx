@@ -7,6 +7,7 @@ interface P {
 	targeted_instruction: RootReducerState['targeted_instruction']
 
 	setType: (type: Types) => void
+	setSelectedStdId: (std_id: string) => void
 }
 
 enum Types {
@@ -16,7 +17,12 @@ enum Types {
 	SINGLE_SLO_VIEW
 }
 
-const ChildView: React.FC<P> = ({ filtered_students, targeted_instruction, setType }) => {
+const ChildView: React.FC<P> = ({
+	filtered_students,
+	targeted_instruction,
+	setType,
+	setSelectedStdId
+}) => {
 	return (
 		<div className="w-full">
 			<div className="bg-blue-tip-brand text-white flex flex-row justify-between items-center w-full py-2">
@@ -34,11 +40,11 @@ const ChildView: React.FC<P> = ({ filtered_students, targeted_instruction, setTy
 						))}
 				</div>
 			</div>
-			{filtered_students.map((std, index) => (
+			{filtered_students.map(std => (
 				<div
-					key={index}
+					key={std.id}
 					className="flex flex-row justify-between w-full items-center bg-gray-100 mb-1"
-					onClick={() => setType(Types.SINGLE_STD_VIEW)}>
+					onClick={() => (setType(Types.SINGLE_STD_VIEW), setSelectedStdId(std.id))}>
 					<div className="w-1/3 flex justify-center">
 						<img className="h-10 w-10 mr-5" src={User} />
 						<div className="flex flex-col justify-between">
