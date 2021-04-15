@@ -140,10 +140,19 @@ interface TIPTest extends BaseTest {
 interface TIPQuiz extends BaseTest {
 	quiz_title: string
 	quiz_order: number
+	total_marks: number
 	slo_category: string
 	slo: string[]
 }
 
+interface SingleSloQuizResult {
+	[std_id: string]: {
+		std_name: string
+		std_roll_num: string
+		quiz_marks: number
+		midpoint_test_marks: number
+	}
+}
 interface TIPQuestion {
 	question_text: string
 	answer: string

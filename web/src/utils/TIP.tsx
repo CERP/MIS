@@ -350,7 +350,7 @@ export const getLessonProgress = (teacher: MISTeacher) => {
 }
 
 /**
- * TODO: what does this do
+ * this function return result of specific TIP test => slo based
  * @param students
  * @param test_id
  * @param type
@@ -418,7 +418,6 @@ export const getResult = (students: MISStudent[], test_id: string) => {
  *
  * @param result
  */
-
 export const getClassResult = (result: SLOBasedResult) => {
 	return Object.values(result || {}).reduce<SloObj>((agg, std_obj) => {
 		for (let [slo, slo_obj] of Object.entries(std_obj.slo_obj)) {
@@ -444,6 +443,11 @@ export const getClassResult = (result: SLOBasedResult) => {
 	}, {})
 }
 
+/**
+ *
+ * @param name
+ * @param pdf_url
+ */
 export const downloadPdf = (name: string, pdf_url: string) => {
 	const e = document.createElement('a')
 	e.setAttribute('href', decodeURIComponent(pdf_url))
@@ -454,6 +458,11 @@ export const downloadPdf = (name: string, pdf_url: string) => {
 	document.body.removeChild(e)
 }
 
+/**
+ *
+ * @param value
+ * @returns current test type
+ */
 export const getTestType = (value: string) => {
 	switch (value) {
 		case 'oral-test':
@@ -468,6 +477,13 @@ export const getTestType = (value: string) => {
 	}
 }
 
+/**
+ *
+ * @param quizzes
+ * @param subject
+ * @param level
+ * @returns TIP Quizzes
+ */
 export const getQuizzes = (quizzes: TIPQuizzes, subject: TIPSubjects, level: TIPLevels) => {
 	return Object.entries(quizzes || {}).reduce((agg, [quiz_id, quiz]) => {
 		if (quiz.grade === level && quiz.subject === subject) {
@@ -480,9 +496,85 @@ export const getQuizzes = (quizzes: TIPQuizzes, subject: TIPSubjects, level: TIP
 	}, {})
 }
 
+/**
+ *
+ * @param quizzes
+ * @returns all SLOs in TIP Quizzes
+ */
 export const getQuizSLOs = (quizzes: TIPQuizzes) => {
 	const sloArray = Object.values(quizzes || {}).reduce((agg, quiz) => {
 		return [...agg, quiz.slo]
 	}, [])
 	return [...new Set(sloArray)]
+}
+
+/**
+ *
+ * @param slo
+ * @returns single slo quiz result
+ */
+export const getSingleSloQuizResult = (
+	targeted_instruction: RootReducerState['targeted_instruction'],
+	students: MISStudent[],
+	slo: string[],
+	subject: TIPSubjects,
+	grade: TIPLevels
+) => {
+	console.log('slo', slo)
+	const quiz_id = Object.entries(targeted_instruction.quizzes || {})
+		.filter(([, t]) => t.slo[0] === slo[0])
+		.map(([t_id]) => t_id)[0]
+
+	const midpoint_test_id = Object.entries(targeted_instruction.tests || {})
+		.filter(([, t]) => t.type === 'Formative' && t.subject === subject && t.grade === grade)
+		.map(([t_id]) => t_id)[0]
+
+	return students.reduce<SingleSloQuizResult>((agg, std) => {
+		const [midpoint_obtain_marks, midpoint_total_marks] = getMidpointSloBaseResult(
+			targeted_instruction,
+			slo,
+			std,
+			midpoint_test_id
+		)
+		const quiz_obtain_marks = std.targeted_instruction?.quiz_result?.[quiz_id]?.obtain_marks
+		const quiz_total_marks = targeted_instruction?.quizzes?.[quiz_id]?.total_marks
+		return {
+			...agg,
+			[std.id]: {
+				std_name: std.Name,
+				std_roll_num: std.RollNumber,
+				quiz_marks: (quiz_obtain_marks / quiz_total_marks) * 100,
+				midpoint_test_marks: (midpoint_obtain_marks / midpoint_total_marks) * 100
+			}
+		}
+	}, {})
+}
+
+/**
+ *
+ * @param targeted_instruction
+ * @param slo
+ * @param std
+ * @param midpoint_test_id
+ * @returns obtain and total marks of midpoint test
+ */
+export const getMidpointSloBaseResult = (
+	targeted_instruction: RootReducerState['targeted_instruction'],
+	slo: string[],
+	std: MISStudent,
+	midpoint_test_id: string
+) => {
+	let obtain_marks = 0
+	const question_ids = Object.entries(
+		targeted_instruction?.tests?.[midpoint_test_id]?.questions || {}
+	)
+		.filter(([, t]) => t.slo[0] === slo[0])
+		.map(([t_id]) => t_id)
+
+	question_ids.map(id => {
+		if (std?.targeted_instruction?.results?.[midpoint_test_id]?.questions[id]?.is_correct) {
+			obtain_marks = obtain_marks + 1
+		}
+	})
+	return [obtain_marks, question_ids.length]
 }
