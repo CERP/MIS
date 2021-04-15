@@ -118,7 +118,7 @@ export const SchoolOnboarding = () => {
 					<>
 						<div className="flex flex-col md:flex-row items-center justify-center space-y-16 md:space-y-0 md:space-x-16 md:w-11/12 mx-auto md:p-10">
 							<div className="flex flex-row items-center md:flex-col">
-								<div className="w-10 h-10 border-2 border-teal-500 mx-auto rounded-full text-lg flex items-center bg-teal-500">
+								<div className="w-10 h-10 border-2 border-teal-brand mx-auto rounded-full text-lg flex items-center bg-teal-brand">
 									<span className="text-white text-center w-full">1</span>
 								</div>
 								<div className="mx-10">Add Faculty</div>
@@ -127,15 +127,15 @@ export const SchoolOnboarding = () => {
 							<div className="flex flex-row items-center md:flex-col">
 								<div
 									className={clsx(
-										'w-10 h-10 border-2 border-teal-500 mx-auto rounded-full text-lg flex items-center',
+										'w-10 h-10 border-2 border-teal-brand mx-auto rounded-full text-lg flex items-center',
 										{
-											'bg-teal-500': AddClassOrStudent
+											'bg-teal-brand': AddClassOrStudent
 										}
 									)}>
 									<span
 										className={clsx('text-center w-full', {
 											'text-white': AddClassOrStudent,
-											'text-teal-500': !AddClassOrStudent
+											'text-teal-brand': !AddClassOrStudent
 										})}>
 										2
 									</span>
@@ -146,15 +146,15 @@ export const SchoolOnboarding = () => {
 							<div className="flex flex-row items-center md:flex-col">
 								<div
 									className={clsx(
-										'w-10 h-10 border-2 border-teal-500 mx-auto rounded-full text-lg flex items-center',
+										'w-10 h-10 border-2 border-teal-brand mx-auto rounded-full text-lg flex items-center',
 										{
-											'bg-teal-500': addStudent
+											'bg-teal-brand': addStudent
 										}
 									)}>
 									<span
 										className={clsx('text-center w-full', {
 											'text-white': addStudent,
-											'text-teal-500': !addStudent
+											'text-teal-brand': !addStudent
 										})}>
 										3
 									</span>
@@ -172,7 +172,7 @@ export const SchoolOnboarding = () => {
 							}
 							className="absolute inset-x-0 -bottom-48 w-4/5 mx-auto flex flex-col space-y-4 md:w-1/3">
 							{stage !== OnboardingStage.COMPLETED && (
-								<button className="tw-btn text-white bg-teal-500">
+								<button className="tw-btn text-white bg-teal-brand">
 									{getOnboardingHeadings(stage as OnboardingStage, true)}
 								</button>
 							)}

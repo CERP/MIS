@@ -40,7 +40,7 @@ export const AppHeader = ({ title }: AppHeaderProps) => {
 					{({ open: openMenu }: { open: boolean }) => (
 						<div className="flex flex-col max-w-screen-3xl mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-16">
 							<div
-								className={clsx('flex flex-row items-center justify-between p-4', {
+								className={clsx('flex flex-row items-center justify-between p-3', {
 									'w-full': isUserLogged
 								})}>
 								{isUserLogged &&

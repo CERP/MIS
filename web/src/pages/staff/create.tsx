@@ -234,7 +234,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 									type="radio"
 									value={'male'}
 									checked={profile.Gender === 'male'}
-									className="mr-2 w-4 h-4"
+									className="mr-2 w-4 h-4 form-radio text-teal-brand"
 								/>
 								<div className="text-sm">Male</div>
 							</div>
@@ -245,7 +245,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 									type="radio"
 									value={'female'}
 									checked={profile.Gender === 'female'}
-									className="mr-2 w-4 h-4"
+									className="mr-2 w-4 h-4 form-radio text-teal-brand"
 								/>
 								<div className="text-sm">Female</div>
 							</div>
@@ -256,7 +256,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 									type="radio"
 									value={'other'}
 									checked={profile.Gender === 'other'}
-									className="mr-2 w-4 h-4"
+									className="mr-2 w-4 h-4 form-radio text-teal-brand"
 								/>
 								<div className="text-sm">Other</div>
 							</div>
@@ -271,7 +271,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 									type="radio"
 									value={StaffType.TEACHING}
 									checked={profile.Type === StaffType.TEACHING}
-									className="mr-2 w-4 h-4"
+									className="mr-2 w-4 h-4 form-radio text-teal-brand"
 								/>
 								<div className="text-sm">Teaching Staff</div>
 							</div>
@@ -282,7 +282,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 									type="radio"
 									value={StaffType.NON_TEACHING}
 									checked={profile.Type === StaffType.NON_TEACHING}
-									className="mr-2 w-4 h-4"
+									className="mr-2 w-4 h-4 form-radio text-teal-brand"
 								/>
 								<div className="text-sm">Non-Teaching Staff</div>
 							</div>
@@ -352,7 +352,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 									onChange={() => handleInputByPath(['Married'], false)}
 									type="radio"
 									checked={!profile.Married}
-									className="mr-2 w-4 h-4"
+									className="mr-2 w-4 h-4 form-radio text-teal-brand"
 								/>
 								<div className="text-sm">Single</div>
 							</div>
@@ -362,7 +362,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 									onChange={() => handleInputByPath(['Married'], true)}
 									type="radio"
 									checked={profile.Married}
-									className="mr-2 w-4 h-4"
+									className="mr-2 w-4 h-4 form-radio text-teal-brand"
 								/>
 								<div className="text-sm">Married</div>
 							</div>

@@ -150,7 +150,7 @@ export const Landing = () => {
 							/>
 						</div>
 
-						<div className="h-36 w-36 rounded-full bg-teal-500 mb-4 mx-auto">
+						<div className="h-36 w-36 rounded-full bg-teal-brand mb-4 mx-auto">
 							<img
 								className="w-20 h-20 m-8 shadow-md rounded-full"
 								src="favicon.ico"
@@ -164,7 +164,7 @@ export const Landing = () => {
 								alt="a3"
 							/>
 						</div>
-						<div className="h-36 w-36 rounded-full bg-teal-500 mb-4 mx-auto">
+						<div className="h-36 w-36 rounded-full bg-teal-brand mb-4 mx-auto">
 							<img
 								className="w-20 h-20 m-8 shadow-md rounded-full"
 								src="favicon.ico"

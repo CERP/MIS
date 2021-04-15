@@ -239,7 +239,7 @@ export const AddStudent: React.FC<AddStudentProps> = ({ skipStage }) => {
 							</button>
 							<button
 								type="button"
-								className="inline-flex w-full tw-btn text-white bg-teal-500">
+								className="inline-flex w-full tw-btn text-white bg-teal-brand">
 								<svg
 									className="w-5 h-5"
 									xmlns="http://www.w3.org/2000/svg"
@@ -368,7 +368,7 @@ export const AddStudent: React.FC<AddStudentProps> = ({ skipStage }) => {
 					<button
 						type="button"
 						onClick={() => skipStage()}
-						className="w-full tw-btn bg-teal-500 text-white">
+						className="w-full tw-btn bg-teal-brand text-white">
 						Finish
 					</button>
 				</div>

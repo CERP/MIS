@@ -319,7 +319,7 @@ export const ImportStudentsCSV = () => {
 							<button
 								type="button"
 								onClick={saveImportedStudents}
-								className="w-full tw-btn bg-teal-500 text-white mt-4">
+								className="w-full tw-btn bg-teal-brand text-white mt-4">
 								Save
 							</button>
 						</div>

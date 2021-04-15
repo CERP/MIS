@@ -31,7 +31,7 @@ export const StaffList = () => {
 		<AppLayout title="Staff">
 			<div className="p-5 md:p-10 relative mb-20">
 				<Link to="staff/new">
-					<div className="flex items-center justify-between fixed z-50 bottom-4 right-4 rounded-full bg-teal-500 text-white lg:hidden py-3 px-6 w-11/12 text-lg mr-0.5">
+					<div className="flex items-center justify-between fixed z-50 bottom-4 right-4 rounded-full bg-teal-brand text-white lg:hidden py-3 px-6 w-11/12 text-lg mr-0.5">
 						<div>Add new Staff</div>
 						<div className="text-xl">+</div>
 					</div>
@@ -44,7 +44,7 @@ export const StaffList = () => {
 					<select
 						value={isActive.toString()}
 						onChange={e => setIsAtive(e.target.value === 'true')}
-						className="mt-0 tw-select rounded shadow text-teal-500 w-2/5">
+						className="mt-0 tw-select rounded shadow text-teal-brand w-2/5">
 						<option value={'true'}>Active</option>
 						<option value={'false'}>InActive</option>
 					</select>

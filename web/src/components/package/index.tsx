@@ -49,7 +49,7 @@ export const PackageCard = ({ schoolPackage }: CardProps) => {
 				</div>
 				<div className="text-gray-500">Annual {schoolPackage.annual_charge}</div>
 				<div className="font-lg font-semibold mt-4">{schoolPackage.limit} Students</div>
-				<div className="mt-4 py-3 text-center w-full bg-teal-500 cursor-pointer hover:bg-teal-600 text-white rounded-md">
+				<div className="mt-4 py-3 text-center w-full bg-teal-brand cursor-pointer hover:shadow-md text-white rounded-md">
 					Choose Plan
 				</div>
 			</div>

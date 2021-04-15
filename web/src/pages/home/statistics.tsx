@@ -105,7 +105,7 @@ export const StatsTab = () => {
 					<div
 						onClick={() => setActiveTab(Tab.STUDENT)}
 						className={clsx(
-							'cursor-pointer hover:bg-teal-brand hover:text-white px-2 rounded-3xl shadow-md',
+							'cursor-pointer hover:bg-teal-brand hover:text-white px-2 py-px rounded-3xl bg-gray-100 shadow-md',
 							{
 								'bg-teal-brand text-white': activeTab === Tab.STUDENT
 							}
@@ -115,7 +115,7 @@ export const StatsTab = () => {
 					<div
 						onClick={() => setActiveTab(Tab.TEACHER)}
 						className={clsx(
-							'cursor-pointer hover:bg-teal-brand hover:text-white px-2 rounded-3xl shadow-md',
+							'cursor-pointer hover:bg-teal-brand hover:text-white px-2 py-px bg-gray-100 rounded-3xl shadow-md',
 							{
 								'bg-teal-brand text-white': activeTab === Tab.TEACHER
 							}

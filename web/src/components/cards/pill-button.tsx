@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { ChevronRightIcon } from '@heroicons/react/outline'
 
 type CardProps = {
 	title: string
@@ -16,24 +17,10 @@ export const PillCardButton = ({ title, caption, icon, link }: CardProps) => {
 					<img className="mr-4 w-12 h-12 rounded-full" src={icon} alt="icon" />
 					<div className="flex flex-col overflow-ellipsis truncate w-10/12">
 						<div className="text-gray-900 font-semibold">{title}</div>
-						{caption && <div className="text-gray-500">{caption}</div>}
+						{caption && <div className="text-gray-500 text-sm">{caption}</div>}
 					</div>
 				</div>
-				<div className="flex items-center w-10 h-10 rounded-full border bg-blue-brand">
-					<svg
-						className="w-8 mx-auto text-white"
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke="currentColor">
-						<path
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							strokeWidth={2}
-							d="M9 5l7 7-7 7"
-						/>
-					</svg>
-				</div>
+				<ChevronRightIcon className="w-10 h-10 p-1 rounded-full border bg-blue-brand text-white" />
 			</div>
 		</Link>
 	)
