@@ -3,6 +3,9 @@ import clsx from 'clsx'
 import { User } from 'assets/icons'
 
 interface P {
+	filtered_students: MISStudent[]
+	targeted_instruction: RootReducerState['targeted_instruction']
+
 	setType: (type: Types) => void
 }
 
@@ -13,23 +16,25 @@ enum Types {
 	SINGLE_SLO_VIEW
 }
 
-const ChildView: React.FC<P> = ({ setType }) => {
+const ChildView: React.FC<P> = ({ filtered_students, targeted_instruction, setType }) => {
 	return (
 		<div className="w-full">
 			<div className="bg-blue-tip-brand text-white flex flex-row justify-between items-center w-full py-2">
 				<div className="w-1/3 flex justify-center font-bold">Names</div>
 				<div className="w-2/3 flex flex-row justify-between">
-					{[1, 2, 3].map(quiz => (
-						<div
-							key={quiz}
-							className="flex flex-col justify-between text-center text-xs md:text-sm lg:text-base">
-							<div>Quiz {quiz}</div>
-							<div>Addition and Subtraction</div>
-						</div>
-					))}
+					{Object.entries(targeted_instruction.quizzes)
+						.slice(0, 2)
+						.map(([quiz_id, quiz]) => (
+							<div
+								key={quiz_id}
+								className="flex flex-col justify-start text-center text-xs md:text-sm lg:text-base w-1/3">
+								<div>Quiz {quiz.quiz_order}</div>
+								<div>{quiz.quiz_title}</div>
+							</div>
+						))}
 				</div>
 			</div>
-			{[1, 2, 3].map((std, index) => (
+			{filtered_students.map((std, index) => (
 				<div
 					key={index}
 					className="flex flex-row justify-between w-full items-center bg-gray-100 mb-1"
@@ -37,44 +42,30 @@ const ChildView: React.FC<P> = ({ setType }) => {
 					<div className="w-1/3 flex justify-center">
 						<img className="h-10 w-10 mr-5" src={User} />
 						<div className="flex flex-col justify-between">
-							<div className="font-bold">Humna</div>
-							<div className="">982HF</div>
+							<div className="font-bold">{std.Name}</div>
+							<div className="">{std.RollNumber}</div>
 						</div>
 					</div>
 					<div className="w-2/3 flex flex-row justify-around">
-						<div
-							className={clsx(
-								'flex flex-row justify-center items-center p-4',
-								{
-									'bg-green-250': 30 >= 80,
-									'bg-yellow-250': 30 >= 40
-								},
-								'bg-red-250'
-							)}>
-							30%
-						</div>
-						<div
-							className={clsx(
-								'flex flex-row justify-center items-center p-4',
-								{
-									'bg-green-250': 60 >= 80,
-									'bg-yellow-250': 60 >= 40
-								},
-								'bg-red-250'
-							)}>
-							60%
-						</div>
-						<div
-							className={clsx(
-								'flex flex-row justify-center items-center p-4',
-								{
-									'bg-green-250': 80 >= 80,
-									'bg-yellow-250': 80 >= 40
-								},
-								'bg-red-250'
-							)}>
-							80%
-						</div>
+						{Object.entries(std.targeted_instruction.quiz_result)
+							.slice(0, 3)
+							.map(([quiz_id, quiz]) => {
+								const percentage = (quiz.obtain_marks / quiz.total_marks) * 100
+								return (
+									<div
+										key={quiz_id}
+										className={clsx(
+											'flex flex-row justify-center items-center py-4 w-1/3',
+											{
+												'bg-green-250': percentage >= 80,
+												'bg-yellow-250': percentage >= 40
+											},
+											'bg-red-250'
+										)}>
+										{percentage}%
+									</div>
+								)
+							})}
 					</div>
 				</div>
 			))}

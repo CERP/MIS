@@ -520,7 +520,6 @@ export const getSingleSloQuizResult = (
 	subject: TIPSubjects,
 	grade: TIPLevels
 ) => {
-	console.log('slo', slo)
 	const quiz_id = Object.entries(targeted_instruction.quizzes || {})
 		.filter(([, t]) => t.slo[0] === slo[0])
 		.map(([t_id]) => t_id)[0]

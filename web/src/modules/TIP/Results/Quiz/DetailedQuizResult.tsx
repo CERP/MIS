@@ -78,7 +78,13 @@ const DetailedQuizResult: React.FC<PropsType> = ({ match, targeted_instruction, 
 			{type === Types.SINGLE_SLO_VIEW && (
 				<SingleSloView slo={selected_slo} singleSloQuizResult={singleSloQuizResult} />
 			)}
-			{type === Types.CHILD_VIEW && <ChildView setType={setType} />}
+			{type === Types.CHILD_VIEW && (
+				<ChildView
+					setType={setType}
+					filtered_students={filtered_students}
+					targeted_instruction={targeted_instruction}
+				/>
+			)}
 			{type === Types.SINGLE_STD_VIEW && <SingleStdView setType={setType} />}
 		</div>
 	)
