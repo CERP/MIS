@@ -4,7 +4,7 @@ import { getQuizSLOs } from 'utils/TIP'
 interface P {
 	quizzes: TIPQuizzes
 
-	setSelectedSlo: (slo: string) => void
+	setSelectedSlo: (slo: string[]) => void
 	setType: (type: Types) => void
 }
 

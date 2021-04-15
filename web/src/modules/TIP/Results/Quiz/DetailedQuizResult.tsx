@@ -7,6 +7,7 @@ import ChildView from './ChildView'
 import SkillView from './SkillView'
 import SingleSloView from './SkillView/SingleSloView'
 import SingleStdView from './ChildView/SingleStdView'
+import { getSingleSloQuizResult, getStudentsByGroup, convertLearningLevelToGrade } from 'utils/TIP'
 
 interface P {
 	students: RootDBState['students']
@@ -22,11 +23,27 @@ enum Types {
 	SINGLE_SLO_VIEW
 }
 
-const DetailedQuizResult: React.FC<PropsType> = ({ match, targeted_instruction }) => {
+const DetailedQuizResult: React.FC<PropsType> = ({ match, targeted_instruction, students }) => {
 	const { class_name, subject } = match.params as Params
 	const [type, setType] = useState(Types.SKILL_VIEW)
-	const [selected_slo, setSelectedSlo] = useState('')
+	const [selected_slo, setSelectedSlo] = useState([])
 
+	const group = convertLearningLevelToGrade(class_name ? (class_name as TIPLevels) : 'Oral')
+	const filtered_students = useMemo(() => getStudentsByGroup(students, group, subject), [
+		subject,
+		group
+	])
+	const singleSloQuizResult: SingleSloQuizResult = useMemo(
+		() =>
+			getSingleSloQuizResult(
+				targeted_instruction,
+				filtered_students,
+				selected_slo,
+				subject,
+				class_name
+			),
+		[selected_slo]
+	)
 	return (
 		<div className="flex flex-wrap content-between mt-20">
 			<Card class_name={class_name} subject={subject} lesson_name="" lesson_no="" />
@@ -34,7 +51,7 @@ const DetailedQuizResult: React.FC<PropsType> = ({ match, targeted_instruction }
 			<div className="flex flex-row justify-around w-full my-3 mx-6">
 				<button
 					className={
-						type === Types.SKILL_VIEW
+						type === Types.SKILL_VIEW || type === Types.SINGLE_SLO_VIEW
 							? 'border-none rounded-3xl text-white bg-sea-green-tip-brand py-2 px-6 outline-none'
 							: 'rounded-3xl text-sea-green-tip-brand broder border-solid border-sea-green-tip-brand py-2 px-6 bg-white outline-none'
 					}
@@ -43,7 +60,7 @@ const DetailedQuizResult: React.FC<PropsType> = ({ match, targeted_instruction }
 				</button>
 				<button
 					className={
-						type === Types.CHILD_VIEW
+						type === Types.CHILD_VIEW || type === Types.SINGLE_STD_VIEW
 							? 'border-none rounded-3xl text-white bg-sea-green-tip-brand py-2 px-6 outline-none'
 							: 'rounded-3xl text-sea-green-tip-brand broder border-solid border-sea-green-tip-brand py-2 px-6 bg-white outline-none'
 					}
@@ -58,7 +75,9 @@ const DetailedQuizResult: React.FC<PropsType> = ({ match, targeted_instruction }
 					setType={setType}
 				/>
 			)}
-			{type === Types.SINGLE_SLO_VIEW && <SingleSloView slo={selected_slo} />}
+			{type === Types.SINGLE_SLO_VIEW && (
+				<SingleSloView slo={selected_slo} singleSloQuizResult={singleSloQuizResult} />
+			)}
 			{type === Types.CHILD_VIEW && <ChildView setType={setType} />}
 			{type === Types.SINGLE_STD_VIEW && <SingleStdView setType={setType} />}
 		</div>
