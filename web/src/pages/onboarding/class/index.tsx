@@ -157,7 +157,7 @@ export const CreateClass: React.FC<CreateClassProps> = ({ skipStage }) => {
 							className={clsx(
 								'text-center p-1 border rounded-xl text-white text-sm',
 								{
-									'bg-teal-500': state.subjects[s]
+									'bg-teal-brand': state.subjects[s]
 								}
 							)}>
 							<span>{s}</span>

@@ -573,7 +573,7 @@ const Recipient = ({ recipient, removeRecipient }: RecipientProps) => {
 			</div>
 			<div className="flex flex-row items-center justify-between w-2/5">
 				<div className="text-sm">{recipient.Phone}</div>
-				<div className="ml-4 cursor-pointer" onClick={removeRecipient}>
+				<div className="ml-2 cursor-pointer" onClick={removeRecipient}>
 					<XCircleIcon className="text-red-brand w-6 h-6" />
 				</div>
 			</div>

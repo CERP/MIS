@@ -244,7 +244,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 									type="radio"
 									value={'male'}
 									checked={state.profile.Gender === 'male'}
-									className="mr-2 w-4 h-4"
+									className="mr-2 w-4 h-4 form-radio text-teal-brand"
 								/>
 								<div className="text-sm">Male</div>
 							</div>
@@ -255,7 +255,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 									type="radio"
 									value={'female'}
 									checked={state.profile.Gender === 'female'}
-									className="mr-2 w-4 h-4"
+									className="mr-2 w-4 h-4 form-radio text-teal-brand"
 								/>
 								<div className="text-sm">Female</div>
 							</div>
@@ -266,7 +266,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 									type="radio"
 									value={'other'}
 									checked={state.profile.Gender === 'other'}
-									className="mr-2 w-4 h-4"
+									className="mr-2 w-4 h-4 form-radio text-teal-brand"
 								/>
 								<div className="text-sm">Other</div>
 							</div>
@@ -444,7 +444,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 									className={clsx(
 										'text-center p-1 border rounded-xl text-white text-sm',
 										{
-											'bg-teal-500': value
+											'bg-teal-brand': value
 										}
 									)}>
 									<span>{tag}</span>

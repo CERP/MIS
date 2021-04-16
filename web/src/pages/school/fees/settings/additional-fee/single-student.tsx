@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import clsx from 'clsx'
 import { Transition } from '@headlessui/react'
+import { XCircleIcon } from '@heroicons/react/outline'
 
 import { SearchInput } from 'components/input/search'
 import { isValidStudent } from 'utils'
@@ -107,7 +108,7 @@ export const AddFeeToStudent = ({
 					enter="transition-opacity duration-150"
 					enterFrom="opacity-0"
 					enterTo="opacity-100">
-					<div className="flex flex-row items-center justify-between py-3 px-2 text-gray-900 rounded-full bg-white">
+					<div className="flex flex-row items-center justify-between p-3 text-gray-900 rounded-full bg-white">
 						<div className="flex flex-row items-center">
 							<img
 								src={
@@ -121,11 +122,10 @@ export const AddFeeToStudent = ({
 							<div>{student?.Name}</div>
 						</div>
 						<div className="text-xs">{student?.section?.namespaced_name}</div>
-						<button
+						<XCircleIcon
 							onClick={clearStudent}
-							className="cursor-pointer flex items-center justify-center w-6 h-6 text-white bg-red-brand rounded-full p-1">
-							x
-						</button>
+							className="w-6 cursor-pointer rounded-full text-white bg-red-brand"
+						/>
 					</div>
 					{student && <PreviousFees student={student} setFee={setFee} />}
 				</Transition>

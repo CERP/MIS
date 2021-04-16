@@ -14,7 +14,7 @@ import months from 'constants/months'
 
 import UserIconSvg from 'assets/svgs/user.svg'
 import { CustomSelect } from 'components/select'
-import { CalendarIcon, ChevronDownIcon } from '@heroicons/react/outline'
+import { CalendarIcon, ChevronDownIcon, XCircleIcon } from '@heroicons/react/outline'
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
 
 type State = {
@@ -290,7 +290,7 @@ export const StudentListSearch = ({ students, setStudentId, classes }: StudentLi
 					enter="transition-opacity duration-150"
 					enterFrom="opacity-0"
 					enterTo="opacity-100"
-					className="flex flex-row items-center justify-between py-3 px-2 text-gray-900 rounded-full bg-white">
+					className="flex flex-row items-center justify-between p-3 text-gray-900 rounded-full bg-white">
 					<div className="flex flex-row items-center">
 						<img
 							src={
@@ -304,11 +304,10 @@ export const StudentListSearch = ({ students, setStudentId, classes }: StudentLi
 						<div>{student?.Name}</div>
 					</div>
 					<div className="text-xs">{student?.section?.namespaced_name}</div>
-					<button
+					<XCircleIcon
 						onClick={clearStudent}
-						className="cursor-pointer flex items-center justify-center w-6 h-6 text-white bg-red-brand rounded-full p-1">
-						x
-					</button>
+						className="w-6 cursor-pointer rounded-full text-white bg-red-brand"
+					/>
 				</Transition>
 			}
 		</>

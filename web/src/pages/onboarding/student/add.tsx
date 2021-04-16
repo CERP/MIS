@@ -112,8 +112,7 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({ section }) => {
 			/>
 
 			<button type="submit" className="w-full tw-btn-blue py-3 font-semibold">
-				{' '}
-				Save and Add new Student{' '}
+				Save and Add new Student
 			</button>
 		</form>
 	)

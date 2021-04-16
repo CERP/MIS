@@ -201,7 +201,7 @@ export const AddStaff: React.FC<AddStaffProps> = ({ skipStage }) => {
 						type="radio"
 						value={StaffType.TEACHING}
 						checked={profile.Type === StaffType.TEACHING}
-						className="mr-2 w-4 h-4"
+						className="mr-2 w-4 h-4 form-radio text-teal-brand"
 					/>
 					<div className="text-sm">Teaching Staff</div>
 				</div>
@@ -229,7 +229,7 @@ export const AddStaff: React.FC<AddStaffProps> = ({ skipStage }) => {
 									type="radio"
 									value={'male'}
 									checked={profile.Gender === 'male'}
-									className="mr-2 w-4 h-4"
+									className="mr-2 w-4 h-4 form-radio text-teal-brand"
 								/>
 								<div className="text-sm">Male</div>
 							</div>
@@ -240,7 +240,7 @@ export const AddStaff: React.FC<AddStaffProps> = ({ skipStage }) => {
 									type="radio"
 									value={'female'}
 									checked={profile.Gender === 'female'}
-									className="mr-2 w-4 h-4"
+									className="mr-2 w-4 h-4 form-radio text-teal-brand"
 								/>
 								<div className="text-sm">Female</div>
 							</div>
@@ -251,7 +251,7 @@ export const AddStaff: React.FC<AddStaffProps> = ({ skipStage }) => {
 									type="radio"
 									value={'other'}
 									checked={profile.Gender === 'other'}
-									className="mr-2 w-4 h-4"
+									className="mr-2 w-4 h-4 form-radio text-teal-brand"
 								/>
 								<div className="text-sm">Other</div>
 							</div>

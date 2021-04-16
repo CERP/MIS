@@ -313,7 +313,7 @@ export const SchoolSignup = () => {
 const SignupSuccess = (signup: State) => {
 	return (
 		<div className="flex flex-col items-center space-y-6">
-			<div className="text-2xl leading-5 font-bold text-teal-500">Congratulations</div>
+			<div className="text-2xl leading-5 font-bold text-teal-brand">Congratulations</div>
 			<div className="text-center">You have successfully signed up on MISchool</div>
 			<div className="w-32 h-32 md:w-40 md:h-40">
 				<img src={iconMarkDone} alt="mark-done" />

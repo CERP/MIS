@@ -21,7 +21,7 @@ export const OnboardingCompletion = () => {
 	return (
 		<div className="md:w-4/5 md:mx-auto flex flex-col items-center rounded-2xl my-4 md:mt-8">
 			<div className="w-4/5 md:w-2/5 mb-6 space-y-8">
-				<div className="font-semibold text-2xl text-center text-teal-500">
+				<div className="font-semibold text-2xl text-center text-teal-brand">
 					Congratulations!
 				</div>
 				<img

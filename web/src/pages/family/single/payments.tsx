@@ -202,32 +202,28 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 			<div className="p-5 md:p-10 md:pb-0 text-gray-700 relative print:hidden">
 				{/* <div className="text-2xl font-bold mb-4 text-center">Student Payments</div> */}
 				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-4 rounded-2xl bg-gray-700 p-5 my-4 mt-8">
-					<div className="relative text-white text-center text-base md:hidden">
+					<div className="relative text-white text-center text-base md:hidden w-full">
 						<div className="mt-4">{toTitleCase(famId, '-')}</div>
 						<div className="text-sm">Siblings - {siblings?.length}</div>
-
-						{siblings.map(
-							(s, index) =>
-								index <= 2 && (
-									<img
-										key={s.id}
-										src={
-											s.ProfilePicture?.url ||
-											s.ProfilePicture?.image_string ||
-											UserIconSvg
-										}
-										className={clsx(
-											'-top-12 absolute  w-14 h-14 md:h-20 md:w-20  rounded-full shadow-md bg-gray-500',
-											{
-												'-left-4 z-20': index === 0,
-												'right-2 z-10': index === 1,
-												'-right-8': index === 2
+						<div className="absolute left-0 right-0 -top-12 flex -space-x-2 overflow-hidden justify-center w-full h-20">
+							{siblings.map(
+								(s, index) =>
+									index <= 2 && (
+										<img
+											key={s.id}
+											src={
+												s.ProfilePicture?.url ||
+												s.ProfilePicture?.image_string ||
+												UserIconSvg
 											}
-										)}
-										alt={s.Name}
-									/>
-								)
-						)}
+											className={clsx(
+												'  w-14 h-14 md:h-20 md:w-20 rounded-full shadow-md bg-gray-500 inline-block ring-2 ring-white'
+											)}
+											alt={s.Name}
+										/>
+									)
+							)}
+						</div>
 					</div>
 					<button
 						onClick={() =>
@@ -413,7 +409,7 @@ const FeeBreakdownCard = ({ student }: FeeBreakdownCardProps) => {
 					<div>Pending Amount</div>
 					<div
 						className={clsx(
-							'w-5 h-5 rounded-full ml-4',
+							'w-5 h-5 rounded-full ml-4 cursor-pointer',
 							showFees ? 'bg-red-brand' : 'bg-teal-brand'
 						)}
 						onClick={() => setShowFees(!showFees)}>
