@@ -503,7 +503,7 @@ export const getQuizzes = (quizzes: TIPQuizzes, subject: TIPSubjects, level: TIP
  */
 export const getQuizSLOs = (quizzes: TIPQuizzes) => {
 	const sloArray = Object.values(quizzes || {}).reduce((agg, quiz) => {
-		return [...agg, quiz.slo]
+		return [...agg, quiz.slo[0]]
 	}, [])
 	return [...new Set(sloArray)]
 }
@@ -639,4 +639,61 @@ export const getSingleStdQuizResult = (
 			}
 		}
 	}, {})
+}
+
+export const getSkillViewQuizResult = (
+	targeted_instruction: RootReducerState['targeted_instruction'],
+	students: MISStudent[],
+	subject: TIPSubjects,
+	grade: TIPLevels
+) => {
+	const midpoint_test_id = getMidpointTestId(targeted_instruction, subject, grade)
+	const SLOs = getQuizSLOs(targeted_instruction.quizzes)
+	return SLOs.reduce((agg, slo) => {
+		let below_average = 0,
+			average = 0,
+			above_average = 0,
+			midpoint_below = 0,
+			midpoint_average = 0,
+			midpoint_above = 0
+		return [
+			...agg,
+			Object.values(students).reduce((agg2, std) => {
+				const quiz_id = getQuizId(targeted_instruction, [slo])
+				const quiz = std?.targeted_instruction?.quiz_result?.[quiz_id]
+				const percentage = (quiz?.obtain_marks / quiz?.total_marks) * 100
+				below_average = below_average + percentage < 40 ? 1 : 0
+				average = average + percentage >= 40 && percentage <= 70 ? 1 : 0
+				above_average = above_average + percentage > 70 ? 1 : 0
+				const [midpoint_obtain_marks, midpoint_total_marks] = getMidpointSloBaseResult(
+					targeted_instruction,
+					[slo],
+					std,
+					midpoint_test_id
+				)
+				const midpoint_percentage = (midpoint_obtain_marks / midpoint_total_marks) * 100
+				midpoint_below = midpoint_below + midpoint_percentage < 40 ? 1 : 0
+				midpoint_average =
+					midpoint_average + midpoint_percentage >= 40 && midpoint_percentage <= 70
+						? 1
+						: 0
+				midpoint_above = midpoint_above + midpoint_percentage > 70 ? 1 : 0
+				return {
+					...agg2,
+					[slo]: {
+						quiz: {
+							below_average,
+							average,
+							above_average
+						},
+						midpoint: {
+							below_average: midpoint_below,
+							average: midpoint_average,
+							above_average: midpoint_above
+						}
+					}
+				}
+			}, {})
+		]
+	}, [])
 }
