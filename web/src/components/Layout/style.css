@@ -4,12 +4,15 @@
 	--darkgrey: #333333;
 }
 
+html,
+body,
+#root,
 .layout {
 	min-height: 100%;
 	width: 100%;
 	margin: 0;
 	position: absolute;
-	background-color: var(--offwhite);
+	background-color: white;
 	overflow: visible;
 }
 
