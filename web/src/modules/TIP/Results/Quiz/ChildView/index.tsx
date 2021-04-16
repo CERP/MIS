@@ -64,7 +64,8 @@ const ChildView: React.FC<P> = ({
 											'flex flex-row justify-center items-center py-4 w-1/3',
 											{
 												'bg-green-250': percentage >= 80,
-												'bg-yellow-250': percentage >= 40
+												'bg-yellow-250':
+													percentage >= 60 && percentage <= 40
 											},
 											'bg-red-250'
 										)}>

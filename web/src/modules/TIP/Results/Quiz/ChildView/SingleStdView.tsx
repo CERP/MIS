@@ -37,11 +37,11 @@ const ChildView: React.FC<P> = ({ singleStdQuizResult, setType }) => {
 								'flex flex-row justify-center items-center p-4',
 								{
 									'bg-green-250': res.quiz_marks >= 80,
-									'bg-yellow-250': res.quiz_marks <= 60 || res.quiz_marks >= 40
+									'bg-yellow-250': res.quiz_marks < 80 && res.quiz_marks >= 40
 								},
 								'bg-red-250'
 							)}>
-							{res.quiz_marks.toFixed(0)}%
+							{isNaN(res.quiz_marks) ? 0 : res.quiz_marks.toFixed(0)}%
 						</div>
 						<div
 							className={clsx(
@@ -49,12 +49,15 @@ const ChildView: React.FC<P> = ({ singleStdQuizResult, setType }) => {
 								{
 									'bg-green-250': res.midpoint_test_marks >= 80,
 									'bg-yellow-250':
-										res.midpoint_test_marks <= 60 ||
+										res.midpoint_test_marks < 80 &&
 										res.midpoint_test_marks >= 40
 								},
 								'bg-red-250'
 							)}>
-							{res.midpoint_test_marks.toFixed(0)}%
+							{isNaN(res.midpoint_test_marks)
+								? 0
+								: res.midpoint_test_marks.toFixed(0)}
+							%
 						</div>
 					</div>
 				</div>

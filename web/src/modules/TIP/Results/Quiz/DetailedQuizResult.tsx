@@ -11,7 +11,8 @@ import {
 	getSingleStdQuizResult,
 	getSingleSloQuizResult,
 	getStudentsByGroup,
-	convertLearningLevelToGrade
+	convertLearningLevelToGrade,
+	getSkillViewQuizResult
 } from 'utils/TIP'
 
 interface P {
@@ -62,6 +63,11 @@ const DetailedQuizResult: React.FC<PropsType> = ({ match, targeted_instruction, 
 		[selected_std_id]
 	)
 
+	const skillViewResult: SkillViewQuizResult[] = useMemo(
+		() => getSkillViewQuizResult(targeted_instruction, filtered_students, subject, class_name),
+		[]
+	)
+
 	return (
 		<div className="flex flex-wrap content-between mt-20">
 			<Card class_name={class_name} subject={subject} lesson_name="" lesson_no="" />
@@ -88,7 +94,7 @@ const DetailedQuizResult: React.FC<PropsType> = ({ match, targeted_instruction, 
 			</div>
 			{type === Types.SKILL_VIEW && (
 				<SkillView
-					quizzes={targeted_instruction.quizzes}
+					skillViewResult={skillViewResult}
 					setSelectedSlo={setSelectedSlo}
 					setType={setType}
 				/>

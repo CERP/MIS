@@ -33,8 +33,13 @@ const SingleSloView: React.FC<P> = ({ slo, singleSloQuizResult }) => {
 						</div>
 					</div>
 					<div className="w-1/2 flex flex-row justify-around">
-						<div>{obj.quiz_marks}%</div>
-						<div>{obj.midpoint_test_marks}%</div>
+						<div>{isNaN(obj.quiz_marks) ? 0 : obj.quiz_marks.toFixed(0)}%</div>
+						<div>
+							{isNaN(obj.midpoint_test_marks)
+								? 0
+								: obj.midpoint_test_marks.toFixed(0)}
+							%
+						</div>
 					</div>
 				</div>
 			))}

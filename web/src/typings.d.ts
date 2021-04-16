@@ -160,6 +160,20 @@ interface SingleStdQuizResult {
 		midpoint_test_marks: number
 	}
 }
+interface SkillViewQuizResult {
+	[slo: string]: {
+		quiz: {
+			below_average: number
+			average: number
+			above_average: number
+		}
+		midpoint: {
+			below_average: number
+			average: number
+			above_average: number
+		}
+	}
+}
 interface TIPQuestion {
 	question_text: string
 	answer: string
