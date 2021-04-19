@@ -52,7 +52,7 @@ export const ContactUs = () => {
 		}
 
 		const reqOpts: RequestInit = {
-			method: 'GET',
+			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
