@@ -9,8 +9,8 @@ import { Toaster } from 'react-hot-toast'
 import * as serviceWorkerRegistration from './serviceWorkerRegistration'
 
 import reducer from './reducers'
-import { Routes } from './routing'
 import debounce from 'utils/debounce'
+import { Routes } from './routing'
 import { saveDb, initState } from './utils/indexedDb'
 import { loadDB, connected, disconnected, processImageQueue } from './actions/core'
 import { hostWSS } from 'utils/hostConfig'
@@ -20,8 +20,6 @@ import { fetchTargetedInstruction } from 'actions'
 
 import './styles/helper.css'
 import './styles/main.css'
-
-const initialState = initState
 
 const syncr = new Syncr(hostWSS)
 syncr.on('connect', () => store.dispatch(connected()))
@@ -46,7 +44,7 @@ syncr.message_timeout = 90000
 
 const store = createStore(
 	reducer,
-	initialState,
+	initState,
 	applyMiddleware(thunkMiddleware.withExtraArgument(syncr))
 )
 
