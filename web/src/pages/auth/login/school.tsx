@@ -63,65 +63,65 @@ export const SchoolLogin = () => {
 		setState({ ...state, [name]: value })
 	}
 
-	// TODO: remove this logic
-	// add more robust way of auth redirection
+	// // TODO: remove this logic
+	// // add more robust way of auth redirection
 
-	// here handling two cases:
-	// - user logged in and onboarding state is completed (new schools), redirect to home page
-	// - user logged in and there's no onboarding state (old schools), redirect to home page
-	if (
-		auth?.faculty_id &&
-		auth?.token &&
-		(onboarding?.stage ? onboarding?.stage === OnboardingStage.COMPLETED : true)
-	) {
-		return <Redirect to="/home" />
-	}
+	// // here handling two cases:
+	// // - user logged in and onboarding state is completed (new schools), redirect to home page
+	// // - user logged in and there's no onboarding state (old schools), redirect to home page
+	// if (
+	// 	auth?.faculty_id &&
+	// 	auth?.token &&
+	// 	(onboarding?.stage ? onboarding?.stage === OnboardingStage.COMPLETED : true)
+	// ) {
+	// 	return <Redirect to="/home" />
+	// }
 
-	// user logged in and there's onboarding state
-	// onboarding component will handle further
-	// desired state component renders
-	if (auth?.faculty_id && auth?.token && onboarding?.stage) {
-		return <Redirect to="/school/onboarding" />
-	}
+	// // user logged in and there's onboarding state
+	// // onboarding component will handle further
+	// // desired state component renders
+	// if (auth?.faculty_id && auth?.token && onboarding?.stage) {
+	// 	return <Redirect to="/onboarding" />
+	// }
 
-	// school logged in and there's no user, start the onboarding process
-	// by creating a new user
-	if (auth?.token && Object.keys(users || {}).length === 0) {
-		return <Redirect to="/school/setup" />
-	}
+	// // school logged in and there's no user, start the onboarding process
+	// // by creating a new user
+	// if (auth?.token && Object.keys(users || {}).length === 0) {
+	// 	return <Redirect to="/setup" />
+	// }
 
-	if (auth?.token) {
-		return <Redirect to="/staff-login" />
-	}
+	// if (auth?.token) {
+	// 	return <Redirect to="/staff-login" />
+	// }
 
-	if (!connected) {
-		return (
-			<AppLayout title={'School Login'}>
-				<div className="p-5 pb-0 md:p-10 md:pb-0 text-gray-700">
-					<div className="text-center animate-pulse">Connecting, Please wait...</div>
-				</div>
-			</AppLayout>
-		)
-	}
+	// if (!connected) {
+	// 	return (
+	// 		<AppLayout title={'School Login'}>
+	// 			<div className="p-5 pb-0 md:p-10 md:pb-0 text-gray-700">
+	// 				<div className="text-center animate-pulse">Connecting, Please wait...</div>
+	// 			</div>
+	// 		</AppLayout>
+	// 	)
+	// }
 
-	if (!initialized) {
-		return (
-			<AppLayout title={'School Login'}>
-				<div className="p-5 pb-0 md:p-10 md:pb-0 text-gray-700">
-					<div className="flex flex-col items-center mt-20">
-						<img
-							className="animate-bounce w-8 md:w-12"
-							src={DownloadIcon}
-							alt="d-icon"
-						/>
-						<div className="text-sm animate-pulse">
-							Downloading Database, Please wait...
-						</div>
-					</div>
-				</div>
-			</AppLayout>
-		)
-	}
+	// if (!initialized) {
+	// 	return (
+	// 		<AppLayout title={'School Login'}>
+	// 			<div className="p-5 pb-0 md:p-10 md:pb-0 text-gray-700">
+	// 				<div className="flex flex-col items-center mt-20">
+	// 					<img
+	// 						className="animate-bounce w-8 md:w-12"
+	// 						src={DownloadIcon}
+	// 						alt="d-icon"
+	// 					/>
+	// 					<div className="text-sm animate-pulse">
+	// 						Downloading Database, Please wait...
+	// 					</div>
+	// 				</div>
+	// 			</div>
+	// 		</AppLayout>
+	// 	)
+	// }
 
 	return (
 		<AppLayout title={'School Login'}>

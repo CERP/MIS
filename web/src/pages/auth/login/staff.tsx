@@ -10,7 +10,7 @@ import { createLogin } from 'actions'
 import { Spinner } from 'components/animation/spinner'
 import { AppLayout } from 'components/Layout/appLayout'
 import { ShowHidePassword } from 'components/password'
-import { ActionTypes, OnboardingStage } from 'constants/index'
+import { ActionTypes } from 'constants/index'
 import { useMediaPredicate } from 'react-media-hook'
 
 import UserIconSvg from 'assets/svgs/user.svg'
@@ -26,15 +26,7 @@ type LoginProps = RootReducerState & {
 	unsyncd_changes: number
 }
 
-const Login: React.FC<LoginProps> = ({
-	auth,
-	initialized,
-	users,
-	school,
-	connected,
-	unsyncd_changes,
-	onboarding
-}) => {
+const Login: React.FC<LoginProps> = ({ auth, users, school, connected, unsyncd_changes }) => {
 	const dispatch = useDispatch()
 
 	const [usersGroupIndex, setUsersGroupIndex] = useState(0)
@@ -50,49 +42,6 @@ const Login: React.FC<LoginProps> = ({
 
 	// renders number of buttons to view user group
 	const userGroups = Math.ceil(filteredUsers.length / USERS_PER_GROUP)
-
-	if (!initialized && auth.token) {
-		return (
-			<AppLayout title={'Staff Login'}>
-				<div className="p-5 pb-0 md:p-10 md:pb-0 text-gray-700">
-					<div className="text-center animate-pulse">
-						Loading Database, Please wait...
-					</div>
-				</div>
-			</AppLayout>
-		)
-	}
-
-	// TODO: remove this logic
-	// add more robust way of redirection
-
-	if (!auth.token) {
-		return <Redirect to="/school-login" />
-	}
-
-	// here handling two cases:
-	// - user logged in and onboarding state is completed (new schools), redirect to home page
-	// - user logged in and there's no onboarding state (old schools), redirect to home page
-	if (
-		auth?.faculty_id &&
-		auth?.token &&
-		(onboarding?.stage ? onboarding?.stage === OnboardingStage.COMPLETED : true)
-	) {
-		return <Redirect to="/home" />
-	}
-
-	// user logged in and there's onboarding state
-	// onboarding component will handle further
-	// desired state component renders
-	if (auth?.faculty_id && auth?.token && onboarding?.stage) {
-		return <Redirect to="/school/onboarding" />
-	}
-
-	// school logged in and there's no user, start the onboarding process
-	// by creating a new user
-	if (auth?.token && Object.keys(users || {}).length === 0) {
-		return <Redirect to="/school/setup" />
-	}
 
 	const switchSchoolHandler = () => {
 		// TODO: convert it to react-alert modal

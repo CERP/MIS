@@ -1,6 +1,4 @@
 import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
-import { Redirect } from 'react-router-dom'
 import cond from 'cond-construct'
 
 import { SettingsTab } from './settings'
@@ -32,7 +30,6 @@ const TabbarContent = [
 ]
 
 export const Home = () => {
-	const { auth } = useSelector((state: RootReducerState) => state)
 	const [activeTab, setActiveTab] = useState(Tabs.ACTIONS)
 
 	const renderComponent = () =>
@@ -41,13 +38,6 @@ export const Home = () => {
 			[activeTab === Tabs.ACTIONS, () => <ActionTab />],
 			[activeTab === Tabs.STATS, () => <StatsTab />]
 		])
-
-	// TODO: remove this logic
-	// add more robust way of redirection
-
-	if (auth?.token && !auth?.faculty_id) {
-		return <Redirect to="/staff-login" />
-	}
 
 	return (
 		<AppLayout title={'Home' + ' - ' + TabbarContent[activeTab].title}>
