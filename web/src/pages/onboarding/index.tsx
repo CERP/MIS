@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import clsx from 'clsx'
 import cond from 'cond-construct'
+import { useDispatch, useSelector } from 'react-redux'
+import { Redirect } from 'react-router-dom'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { OnboardingStage } from 'constants/index'
-
 import { AddStaff } from './staff'
 import { CreateClass } from './class'
 import { AddStudent } from './student'
@@ -49,9 +49,12 @@ const getOnboardingHeadings = (stage: OnboardingStage, button?: boolean) => {
 export const SchoolOnboarding = () => {
 	const dispatch = useDispatch()
 
-	const { db } = useSelector((state: RootReducerState) => state)
+	const {
+		db: { onboarding },
+		auth
+	} = useSelector((state: RootReducerState) => state)
 
-	const persistentStage = db?.onboarding?.stage
+	const persistentStage = onboarding?.stage
 
 	// check if it's first state, set undefined, this is because
 	// we want to show user steps of onboarding
@@ -107,6 +110,14 @@ export const SchoolOnboarding = () => {
 		stage === OnboardingStage.COMPLETED
 
 	const addStudent = stage === OnboardingStage.ADD_STUDENTS || stage === OnboardingStage.COMPLETED
+
+	if (!auth?.faculty_id && !auth?.token) {
+		return <Redirect to="/school-login" />
+	}
+
+	if (!auth?.faculty_id) {
+		return <Redirect to="/staff-login" />
+	}
 
 	return (
 		<AppLayout title={'Onboarding'}>

@@ -1,23 +1,18 @@
 import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { Redirect } from 'react-router-dom'
 import clsx from 'clsx'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { toTitleCase } from 'utils/toTitleCase'
-
 import { addLogo } from 'actions'
 import { AppLayout } from 'components/Layout/appLayout'
 import { CreateAdmin } from './createAdmin'
-import { OnboardingStage } from 'constants/index'
 
 export const SchoolSetup = () => {
 	const dispatch = useDispatch()
 
-	const { auth, db } = useSelector((state: RootReducerState) => state)
-
-	const { schoolLogo } = db?.assets
-	const { stage: setupStage } = db?.onboarding
-	const { schoolName } = db?.settings
+	const {
+		db: { assets, settings }
+	} = useSelector((state: RootReducerState) => state)
 
 	const [toggleAdminForm, setToggleAdminForm] = useState(false)
 
@@ -30,10 +25,6 @@ export const SchoolSetup = () => {
 			dispatch(addLogo(logoString))
 		}
 		reader.readAsDataURL(file)
-	}
-
-	if (auth.name && setupStage !== OnboardingStage.COMPLETED) {
-		return <Redirect to="/school/onboarding" />
 	}
 
 	return (
@@ -56,7 +47,7 @@ export const SchoolSetup = () => {
 											className={clsx(
 												'flex h-20 items-center border justify-center p-1 rounded-full cursor-pointer w-20',
 												{
-													'bg-blue-brand hover:bg-blue-400': !schoolLogo
+													'bg-blue-brand hover:bg-blue-400': !assets.schoolLogo
 												}
 											)}>
 											<input
@@ -65,10 +56,10 @@ export const SchoolSetup = () => {
 												accept="image/x-png,image/jpeg"
 												onChange={uploadSchoolLogo}
 											/>
-											{schoolLogo ? (
+											{assets.schoolLogo ? (
 												<img
 													className="rounded-full"
-													src={schoolLogo || '/favicon.ico'}
+													src={assets.schoolLogo || '/favicon.ico'}
 													alt="school-logo"
 												/>
 											) : (
@@ -79,7 +70,7 @@ export const SchoolSetup = () => {
 										<div className="text-sm">Upload School Logo</div>
 									</div>
 									<div className="font-semibold text-lg text-center">
-										Welcome to {toTitleCase(schoolName)}
+										Welcome to {toTitleCase(settings.schoolName)}
 									</div>
 								</div>
 							</div>
