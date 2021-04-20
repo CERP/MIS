@@ -45,11 +45,13 @@ const ChildView: React.FC<P> = ({
 					key={std.id}
 					className="flex flex-row justify-between w-full items-center bg-gray-100 mb-1"
 					onClick={() => (setType(Types.SINGLE_STD_VIEW), setSelectedStdId(std.id))}>
-					<div className="w-1/3 flex justify-center">
-						<img className="h-10 w-10 mr-5" src={User} />
-						<div className="flex flex-col justify-between">
-							<div className="font-bold">{std.Name}</div>
-							<div className="">{std.RollNumber}</div>
+					<div className="w-1/3 flex justify-center items-center">
+						<div className="flex flex-row w-full md:w-3/5 lg:w-1/2 items-center">
+							<img className="h-10 w-10 mr-2" src={User} />
+							<div className="flex flex-col justify-between">
+								<div className="font-bold">{std.Name}</div>
+								<div className="">{std.RollNumber}</div>
+							</div>
 						</div>
 					</div>
 					<div className="w-2/3 flex flex-row justify-around">
@@ -63,9 +65,8 @@ const ChildView: React.FC<P> = ({
 										className={clsx(
 											'flex flex-row justify-center items-center py-4 w-1/3',
 											{
-												'bg-green-250': percentage >= 80,
-												'bg-yellow-250':
-													percentage >= 60 && percentage <= 40
+												'bg-green-250': percentage >= 75,
+												'bg-yellow-250': percentage < 75 && percentage >= 40
 											},
 											'bg-red-250'
 										)}>
