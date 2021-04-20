@@ -641,6 +641,15 @@ export const getSingleStdQuizResult = (
 	}, {})
 }
 
+/**
+ *
+ * @param targeted_instruction
+ * @param students
+ * @param subject
+ * @param grade
+ * @returns skill base quiz result
+ */
+
 export const getSkillViewQuizResult = (
 	targeted_instruction: RootReducerState['targeted_instruction'],
 	students: MISStudent[],

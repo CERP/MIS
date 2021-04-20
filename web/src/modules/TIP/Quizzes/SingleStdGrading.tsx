@@ -19,12 +19,17 @@ const SingleStdGrading: React.FC<P> = ({ student, obtain_marks, handleChange }) 
 	return (
 		<div className="mb-1 bg-gray-200 w-ful text-sm md:text-base lg:text-lg flex flex-row justify-around">
 			<div className="flex flex-col justify-between items-center text-center w-1/2">
-				<img className="h-8 w-8" src={User} />
+				<img className="h-8 w-8" src={student.ProfilePicture.url} />
 				<div>{student.Name}</div>
 				<div>{student.RollNumber}</div>
 			</div>
 			<div className="flex items-center w-1/2 justify-center">
 				<div className="rounded-full bg-white py-2 px-4 md:px-5 lg:px-8 h-4 shadow-lg flex items-center">
+					<div
+						className={`bg-white rounded-full bg-white w-7 h-7 flex justify-center items-center absolute shadow-lg transform -translate-y-6 translate-x-${obtain_marks * 2
+							}`}>
+						{obtain_marks}
+					</div>
 					<input
 						className="rounded-lg appearance-none bg-gray-400 h-1 w-128 outline-none cursor-pointer"
 						type="range"

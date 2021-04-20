@@ -35,11 +35,11 @@ const Results: React.FC<PropsType> = () => {
 					<div className="text-white">Final Test</div>
 				</Link>
 			</div>
-			<div className="w-full px-4">
+			<div className="w-full px-4 py-5">
 				<Link
 					className="bg-gray-50 rounded-lg flex flex-row justify-around items-center w-full no-underline shadow-lg"
 					to={'/targeted-instruction/quiz-result'}>
-					<img className="py-3" src={Quiz} />
+					<img className="py-3 h-12 w-12" src={Quiz} />
 					<div className="text-white text-lg">Quizzes</div>
 					<div className="bg-white rounded-full h-7 w-7"></div>
 				</Link>
