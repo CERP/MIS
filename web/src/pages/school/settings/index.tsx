@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { DefaultExamGrades } from 'constants/index'
 import { UploadImage } from 'components/image'
 import { exportToJSON } from 'utils/indexedDb'
+import { TModal } from 'components/Modal'
+import { createMerges } from 'actions/core'
 import StudentExportModal from 'modules/Exports/studenExportModal'
-import Modal, { TModal } from 'components/Modal'
+import toast from 'react-hot-toast'
 
 type State = {
 	templates: RootDBState['sms_templates']
 	settings: MISSettings
-	schoolLogo: string
 	toggleExportModal: boolean
 }
 
@@ -110,6 +111,7 @@ const reconstructGradesObject = (settings: MISSettings): MISSettings['exams']['g
 const MIS_VERSION = window.version || 'no version'
 
 export const Settings = () => {
+	const dispatch = useDispatch()
 	const { db, client_id } = useSelector((state: RootReducerState) => state)
 
 	const defaultSettings = getDefaultSettings()
@@ -129,7 +131,6 @@ export const Settings = () => {
 	const [state, setState] = useState<State>({
 		templates: db.sms_templates,
 		settings,
-		schoolLogo: db?.assets?.schoolLogo,
 		toggleExportModal: false
 	})
 
@@ -143,41 +144,53 @@ export const Settings = () => {
 		}))
 	}, [db.settings])
 
-	// onLogoRemove = () => {
-	// 	this.setState({
-	// 		schoolLogo: ''
-	// 	})
-	// 	this.props.addLogo('')
-	// 	this.setState({
-	// 		banner: {
-	// 			active: true,
-	// 			good: false,
-	// 			text: 'Logo Removed!'
-	// 		}
-	// 	})
+	const handleRemoveLogo = () => {
+		dispatch(
+			createMerges([
+				{
+					path: ['db', 'assets', 'schoolLogo'],
+					value: ''
+				}
+			])
+		)
 
-	// 	setTimeout(() => this.setState({ banner: { active: false } }), 2000)
-	// }
+		toast.success('Logo has been removed')
+	}
 
-	// logoHandler = (e: any) => {
-	// 	const file = e.target.files[0]
-	// 	const reader = new FileReader()
+	const handleUploadLogo = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files[0]
+		const reader = new FileReader()
 
-	// 	reader.onloadend = () => {
-	// 		this.setState({
-	// 			schoolLogo: reader.result as string
-	// 		})
-	// 	}
-	// 	reader.readAsDataURL(file)
-	// }
+		if (!file) {
+			return
+		}
+
+		reader.onloadend = () => {
+			dispatch(
+				createMerges([
+					{
+						path: ['db', 'assets', 'schoolLogo'],
+						value: reader.result as string
+					}
+				])
+			)
+
+			toast.success('Logo has been updated')
+		}
+		reader.readAsDataURL(file)
+	}
 
 	return (
 		<AppLayout title="School Profile">
 			<div className="p-5 md:p-10 md:pb-0">
 				<div className="text-2xl font-bold mt-4 mb-8 text-center">School Profile</div>
 				<div className="text-white md:w-4/5 md:mx-auto space-y-4 rounded-2xl bg-gray-700 pb-6 my-4 md:mt-8">
-					<div className="flex flex-row mx-auto items-baseline justify-between w-3/5 md:w-1/4">
-						<UploadImage src={state.schoolLogo} removeImage={() => console.log('')} />
+					<div className="pt-2 flex flex-row mx-auto items-baseline justify-between w-3/5 md:w-1/4">
+						<UploadImage
+							src={db?.assets?.schoolLogo}
+							handleImageChange={handleUploadLogo}
+							removeImage={handleRemoveLogo}
+						/>
 					</div>
 					<form
 						id="staff-form"
