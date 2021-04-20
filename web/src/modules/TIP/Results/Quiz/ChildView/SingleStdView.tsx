@@ -15,6 +15,7 @@ enum Types {
 }
 
 const ChildView: React.FC<P> = ({ singleStdQuizResult, setType }) => {
+	console.log(singleStdQuizResult)
 	return (
 		<div className="w-full">
 			<div className="flex flex-row justify-between w-full bg-blue-tip-brand py-5 items-center text-white font-bold">
@@ -27,17 +28,20 @@ const ChildView: React.FC<P> = ({ singleStdQuizResult, setType }) => {
 			{Object.entries(singleStdQuizResult || {}).map(([slo, res], index) => (
 				<div
 					key={index}
-					className={`flex flex-row justify-between w-full py-2 items-center ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'
+					className={`flex flex-row justify-between w-full mb-1 items-center ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'
 						}`}
 					onClick={() => setType(Types.SINGLE_STD_VIEW)}>
-					<div className="w-1/2 flex justify-center">{slo}</div>
+					<div className="w-1/2 flex justify-start ml-5">
+						<span className="mr-1">{index + 1}.</span>
+						{slo}
+					</div>
 					<div className="w-1/2 flex flex-row justify-around">
 						<div
 							className={clsx(
-								'flex flex-row justify-center items-center p-4',
+								'flex flex-row justify-center items-center h-14 w-16',
 								{
-									'bg-green-250': res.quiz_marks >= 80,
-									'bg-yellow-250': res.quiz_marks < 80 && res.quiz_marks >= 40
+									'bg-green-250': res.quiz_marks >= 75,
+									'bg-yellow-250': res.quiz_marks < 75 && res.quiz_marks >= 40
 								},
 								'bg-red-250'
 							)}>
@@ -45,11 +49,11 @@ const ChildView: React.FC<P> = ({ singleStdQuizResult, setType }) => {
 						</div>
 						<div
 							className={clsx(
-								'flex flex-row justify-center items-center p-4',
+								'flex flex-row justify-center items-center h-14 w-16',
 								{
-									'bg-green-250': res.midpoint_test_marks >= 80,
+									'bg-green-250': res.midpoint_test_marks >= 75,
 									'bg-yellow-250':
-										res.midpoint_test_marks < 80 &&
+										res.midpoint_test_marks < 75 &&
 										res.midpoint_test_marks >= 40
 								},
 								'bg-red-250'

@@ -1,4 +1,5 @@
 import React from 'react'
+import clsx from 'clsx'
 import Headings from '../../../Headings'
 import { User } from 'assets/icons'
 
@@ -23,18 +24,40 @@ const SingleSloView: React.FC<P> = ({ slo, singleSloQuizResult }) => {
 			{Object.values(singleSloQuizResult).map((obj, index) => (
 				<div
 					key={index}
-					className={`flex flex-row justify-between w-full p-2 items-center ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'
+					className={`mb-1 flex flex-row justify-between w-full px-2 items-center ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'
 						}`}>
 					<div className="w-1/2 flex justify-center">
-						<img className="h-10 w-10 mr-5" src={User} />
-						<div className="flex flex-col justify-between">
-							<div className="font-bold">{obj.std_name}</div>
-							<div className="">{obj.std_roll_num}</div>
+						<div className="flex flex-row w-3/4 md:w-3/5 lg:w-1/4">
+							<img className="h-10 w-10 mr-5" src={User} />
+							<div className="flex flex-col justify-between">
+								<div className="font-bold">{obj.std_name}</div>
+								<div className="">{obj.std_roll_num}</div>
+							</div>
 						</div>
 					</div>
 					<div className="w-1/2 flex flex-row justify-around">
-						<div>{isNaN(obj.quiz_marks) ? 0 : obj.quiz_marks.toFixed(0)}%</div>
-						<div>
+						<div
+							className={clsx(
+								'flex flex-row justify-center items-center h-14 w-16',
+								{
+									'bg-green-250': obj.quiz_marks >= 75,
+									'bg-yellow-250': obj.quiz_marks < 75 && obj.quiz_marks >= 40
+								},
+								'bg-red-250'
+							)}>
+							{isNaN(obj.quiz_marks) ? 0 : obj.quiz_marks.toFixed(0)}%
+						</div>
+						<div
+							className={clsx(
+								'flex flex-row justify-center items-center h-14 w-16',
+								{
+									'bg-green-250': obj.midpoint_test_marks >= 75,
+									'bg-yellow-250':
+										obj.midpoint_test_marks < 75 &&
+										obj.midpoint_test_marks >= 40
+								},
+								'bg-red-250'
+							)}>
 							{isNaN(obj.midpoint_test_marks)
 								? 0
 								: obj.midpoint_test_marks.toFixed(0)}
