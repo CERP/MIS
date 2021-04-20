@@ -10,6 +10,7 @@ import { TModal } from 'components/Modal'
 import { createMerges } from 'actions/core'
 import StudentExportModal from 'modules/Exports/studenExportModal'
 import toast from 'react-hot-toast'
+import { mergeSettings } from 'actions'
 
 type State = {
 	templates: RootDBState['sms_templates']
@@ -145,6 +146,10 @@ export const Settings = () => {
 	}, [db.settings])
 
 	const handleRemoveLogo = () => {
+		if (!db?.assets?.schoolLogo) {
+			return toast.error('There is nothing to remove')
+		}
+
 		dispatch(
 			createMerges([
 				{
@@ -157,8 +162,8 @@ export const Settings = () => {
 		toast.success('Logo has been removed')
 	}
 
-	const handleUploadLogo = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files[0]
+	const handleUploadLogo = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const file = event.target.files[0]
 		const reader = new FileReader()
 
 		if (!file) {
@@ -180,6 +185,24 @@ export const Settings = () => {
 		reader.readAsDataURL(file)
 	}
 
+	const handleInputChange = (
+		event: React.ChangeEvent<HTMLInputElement & HTMLTextAreaElement>
+	) => {
+		const { type, name, value, valueAsNumber } = event.target
+		if (type === 'date') {
+			return setState({ ...state, settings: { ...state.settings, [name]: valueAsNumber } })
+		}
+
+		setState({ ...state, settings: { ...state.settings, [name]: value } })
+	}
+
+	const handleFormSubmission = (event: React.ChangeEvent<HTMLFormElement>) => {
+		event.preventDefault()
+		dispatch(mergeSettings(state.settings))
+
+		toast.success('School profile has been updated')
+	}
+
 	return (
 		<AppLayout title="School Profile">
 			<div className="p-5 md:p-10 md:pb-0">
@@ -195,26 +218,32 @@ export const Settings = () => {
 					<form
 						id="staff-form"
 						className="space-y-2 px-4 w-full md:w-3/5  mx-auto"
-						onSubmit={() => console.log('hello')}>
+						onSubmit={handleFormSubmission}>
 						<div>School Name</div>
 						<input
 							type="text"
+							onChange={handleInputChange}
+							name="schoolName"
 							value={state.settings.schoolName}
-							className="tw-input w-full focus-within:bg-transparent"
+							className="tw-input w-full text-gray-500 focus-within:text-gray-200 focus-within:bg-transparent"
 							placeholder="Type school name"
 						/>
 						<div>School Phone</div>
 						<input
 							type="text"
+							onChange={handleInputChange}
+							name="schoolPhoneNumber"
 							value={state.settings.schoolPhoneNumber}
-							className="tw-input w-full focus-within:bg-transparent"
+							className="tw-input w-full text-gray-500 focus-within:text-gray-200 focus-within:bg-transparent"
 							placeholder="Type school phone "
 						/>
 						<div>School Address</div>
 						<textarea
 							rows={4}
+							onChange={handleInputChange}
+							name="schoolAddress"
 							value={state.settings.schoolAddress}
-							className="tw-input w-full focus-within:bg-transparent"
+							className="tw-input w-full text-gray-500 focus-within:text-gray-200 focus-within:bg-transparent"
 							placeholder="Type school address"
 						/>
 						<div className="flex w-full justify-between">
@@ -223,10 +252,11 @@ export const Settings = () => {
 								<input
 									name="start_date"
 									type="date"
-									defaultValue={moment(
-										state.settings.schoolSession.start_date
-									).format('YYYY-MM-DD')}
-									className="pr-0 tw-input w-11/12 text-gray-500 focus-within:bg-transparent"
+									onChange={handleInputChange}
+									value={moment(state.settings.schoolSession.start_date).format(
+										'YYYY-MM-DD'
+									)}
+									className="pr-0 tw-input w-11/12 text-gray-500 focus-within:text-gray-200 focus-within:bg-transparent"
 								/>
 							</div>
 							<div className="space-y-2 w-1/2">
@@ -234,15 +264,18 @@ export const Settings = () => {
 								<input
 									name="end_date"
 									type="date"
-									defaultValue={moment(
-										state.settings.schoolSession.end_date
-									).format('YYYY-MM-DD')}
-									className="mr-auto tw-input w-11/12 text-gray-500 focus-within:bg-transparent"
+									onChange={handleInputChange}
+									value={moment(state.settings.schoolSession.end_date).format(
+										'YYYY-MM-DD'
+									)}
+									className="pr-0  tw-input w-11/12 text-gray-500 focus-within:text-gray-200 focus-within:bg-transparent"
 								/>
 							</div>
 						</div>
 						<div>
-							<button className="my-2 tw-btn-blue w-full">Save Profile</button>
+							<button type="submit" className="my-2 tw-btn-blue w-full">
+								Save Profile
+							</button>
 						</div>
 					</form>
 					<div className="px-4 w-full md:w-3/5  mx-auto">
