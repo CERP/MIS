@@ -24,3 +24,40 @@ export enum MISFeePeriods {
 export enum MISFeeLabels {
 	SPECIAL_SCHOLARSHIP = 'SPECIAL_SCHOLARSHIP'
 }
+
+export const DefaultExamGrades = {
+	grades: {
+		'A+': {
+			percent: '90',
+			remarks: 'Excellent'
+		},
+		A: {
+			percent: '80',
+			remarks: 'Good'
+		},
+		'B+': {
+			percent: '70',
+			remarks: 'Satisfactory'
+		},
+		B: {
+			percent: '65',
+			remarks: 'Must work hard'
+		},
+		'C+': {
+			percent: '60',
+			remarks: 'Poor, work hard'
+		},
+		C: {
+			percent: '55',
+			remarks: 'Very poor'
+		},
+		D: {
+			percent: '50',
+			remarks: 'Very very poor'
+		},
+		F: {
+			percent: '40',
+			remarks: 'Fail'
+		}
+	}
+}

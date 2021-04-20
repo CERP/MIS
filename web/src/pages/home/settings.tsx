@@ -48,7 +48,7 @@ export const SettingsTab = () => {
 				/>
 				<Card
 					title={'Profile'}
-					link="/school-profile"
+					link="/settings"
 					caption={'Profile, Grades, Data etc'}
 					icon={iconStudents}
 				/>

@@ -31,7 +31,7 @@
 	}
 
 	.tw-btn-blue {
-		@apply px-4 py-2 bg-blue-brand rounded-md text-white cursor-pointer hover:bg-blue-400 focus:ring-2 focus:ring-blue-brand outline-none;
+		@apply px-4 py-3 bg-blue-brand rounded-md text-white cursor-pointer hover:bg-blue-400 focus:ring-2 focus:ring-blue-brand outline-none;
 	}
 
 	.tw-btn-red {
@@ -47,6 +47,6 @@
 	}
 
 	.tw-is-form-bg-black {
-		@apply bg-transparent border-blue-brand ring-1 text-gray-200
+		@apply bg-transparent border-blue-brand ring-1 text-gray-200;
 	}
 }
