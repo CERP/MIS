@@ -4,15 +4,17 @@ import { connect } from 'react-redux'
 import { getStudentsByGroup, convertLearningLevelToGrade } from 'utils/TIP'
 import SingleStdGrading from './SingleStdGrading'
 import { RouteComponentProps } from 'react-router-dom'
-import { saveTIPQuizResult, resetTIPQuizResult } from 'actions'
+import { saveTIPQuizResult, resetTIPQuizResult, quizTaken } from 'actions'
 import './style.css'
 
 interface P {
 	students: RootDBState['students']
+	faculty_id: RootReducerState['auth']['faculty_id']
 	targeted_instruction: RootReducerState['targeted_instruction']
 
 	saveTIPQuizResult: (result: QuizResult, quiz_id: string, total_marks: number) => void
 	resetTIPQuizResult: (result: QuizResult, quiz_id: string) => void
+	quizTaken: (faculty_id: string, quiz_id: string, value: boolean) => void
 }
 
 type PropsType = P & RouteComponentProps
@@ -25,9 +27,11 @@ const Grading: React.FC<PropsType> = ({
 	match,
 	history,
 	students,
+	faculty_id,
 	targeted_instruction,
 	saveTIPQuizResult,
-	resetTIPQuizResult
+	resetTIPQuizResult,
+	quizTaken
 }) => {
 	const url = match.url.split('/')
 	const [std_result, setStdResult] = useState<QuizResult>({})
@@ -56,6 +60,7 @@ const Grading: React.FC<PropsType> = ({
 
 	const onSave = () => {
 		saveTIPQuizResult(std_result, quiz_id, targeted_instruction?.quizzes?.[quiz_id].total_marks)
+		quizTaken(faculty_id, quiz_id, true)
 		history.push(`/${url[1]}/${url[2]}/${class_name}/${subject}/${quiz_id}/result`)
 	}
 
@@ -106,12 +111,15 @@ const Grading: React.FC<PropsType> = ({
 export default connect(
 	(state: RootReducerState) => ({
 		students: state.db.students,
+		faculty_id: state.auth.faculty_id,
 		targeted_instruction: state.targeted_instruction
 	}),
 	(dispatch: Function) => ({
 		saveTIPQuizResult: (quiz_result: QuizResult, quiz_id: string, obtain_marks: number) =>
 			dispatch(saveTIPQuizResult(quiz_result, quiz_id, obtain_marks)),
 		resetTIPQuizResult: (quiz_result: QuizResult, quiz_id: string) =>
-			dispatch(resetTIPQuizResult(quiz_result, quiz_id))
+			dispatch(resetTIPQuizResult(quiz_result, quiz_id)),
+		quizTaken: (faculty_id: string, quiz_id: string, value: boolean) =>
+			dispatch(quizTaken(faculty_id, quiz_id, value))
 	})
 )(Grading)
