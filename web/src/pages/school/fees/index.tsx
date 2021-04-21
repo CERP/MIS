@@ -8,8 +8,8 @@ import { FamilyPayments } from './payments/family'
 import { StudentPayments } from './payments/student'
 import { ResetFee } from './reset'
 import { PrintVoucher } from './print-voucher'
-import Card from 'components/cards/pill-button'
 import { AppLayout } from 'components/Layout/appLayout'
+import Card from 'components/cards/pill-button'
 
 import iconFeeSettings from './assets/fee-settings.svg'
 import iconSinglePayment from './assets/single-payment.svg'
@@ -20,27 +20,27 @@ import iconVoucherSettings from './assets/voucher-settings.png'
 const MenuItems = [
 	{
 		title: 'Fee Settings',
-		link: '/school/fees/settings',
+		link: '/fees/settings',
 		icon: iconFeeSettings
 	},
 	{
 		title: 'Voucher Settings',
-		link: '/school/fees/voucher-settings',
+		link: '/fees/voucher-settings',
 		icon: iconVoucherSettings
 	},
 	{
 		title: 'Print Voucher',
-		link: '/school/fees/print-voucher',
+		link: '/fees/print-voucher',
 		icon: iconPrinter
 	},
 	{
 		title: 'Family Payment',
-		link: '/school/fees/family',
+		link: '/fees/family',
 		icon: iconMultiplePayments
 	},
 	{
 		title: 'Student Payment',
-		link: '/school/fees/student',
+		link: '/fees/student',
 		icon: iconSinglePayment
 	}
 ]
@@ -74,12 +74,10 @@ export const SchoolFees: React.FC<Props> = ({ match }) => {
 		<>
 			{page === undefined ? (
 				<AppLayout title={'School Fees'}>
-					<div className="p-6 md:w-2/5 mx-auto space-y-4">
-						<div className="text-center text-2xl font-bold">Manage Fees</div>
+					<div className="p-6 mx-auto space-y-4 md:w-2/5">
+						<div className="text-2xl font-bold text-center">Manage Fees</div>
 						<div className="text-right">
-							<Link
-								to="/school/fees/reset"
-								className="tw-btn-red rounded-3xl shadow-md">
+							<Link to="/fees/reset" className="shadow-md tw-btn-red rounded-3xl">
 								Reset
 							</Link>
 						</div>
