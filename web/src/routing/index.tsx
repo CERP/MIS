@@ -14,7 +14,8 @@ import Analytics from 'modules/Analytics'
 import ReportsMenu from 'modules/ReportsMenu'
 import TargetedInstruction from 'modules/TIP/Routing'
 import Help from 'modules/Help'
-import Diary from 'modules/Diary'
+import Diary from 'pages/school/diary'
+// import Front from 'modules/Front'
 import FeeMenu from 'modules/FeeMenu'
 import PlannerList from 'modules/Planner/ClassList'
 import Planner from 'modules/Planner'
@@ -161,9 +162,8 @@ export class Routes extends React.Component<RoutesProps, State> {
 						/>
 						<PrivateRoute path="/reports/:class_id/:section_id" component={ExamList} />
 						<PrivateRoute path="/reports" component={Marks} />
-
 						<PrivateRoute path="/settings" component={Settings} />
-
+						<PrivateRoute path="/school/diary" component={Diary} />
 						<PrivateRoute path="/analytics/daily-stats" component={DailyStats} />
 						<PrivateRoute path="/analytics" component={Analytics} />
 						<PrivateRoute path="/diary" component={Diary} />
