@@ -13,6 +13,7 @@ import { formatCNIC, formatPhone } from 'utils'
 import { createStudentMerges } from 'actions'
 import downloadCSV from 'utils/downloadCSV'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
+import { DotsVerticalIcon, DownloadIcon, UploadIcon } from '@heroicons/react/outline'
 
 type State = {
 	classId: string
@@ -171,37 +172,24 @@ export const ImportStudentsCSV = () => {
 		return <Redirect to={state.redirectTo} />
 	}
 
-	// TODO: SVGs to common source of import
 	// TODO: add modal to preview student
 
 	return (
 		<AppLayout title="Excel Import">
-			<div className="p-5 md:p-10 md:pb-0 text-gray-700 relative print:hidden space-y-8">
-				<div className="text-center font-bold text-2xl">Add Students</div>
-				<div className="space-y-4 pb-2">
+			<div className="relative p-5 space-y-8 text-gray-700 md:p-10 md:pb-0 print:hidden">
+				<div className="text-2xl font-bold text-center">Add Students</div>
+				<div className="pb-2 space-y-4">
 					<button
 						type="button"
-						className="inline-flex w-full tw-btn bg-orange-brand text-white"
+						className="inline-flex w-full text-white tw-btn bg-orange-brand"
 						onClick={() => downloadCSV([studentCSVHeaders], 'student-import-template')}>
-						<svg
-							className="w-5 h-5"
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor">
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth={2}
-								d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-							/>
-						</svg>
+						<DownloadIcon className="w-5 h-5" />
 						<span className="mx-auto">Download Template</span>
 					</button>
 
 					<div className="bg-gray-700 rounded-lg">
-						<div className="flex flex-row items-center space-x-4 text-white p-5">
-							<div className="flex flex-col space-y-4 w-full">
+						<div className="flex flex-row items-center p-5 space-x-4 text-white">
+							<div className="flex flex-col w-full space-y-4">
 								<div>Class</div>
 								<select
 									name="classId"
@@ -213,7 +201,7 @@ export const ImportStudentsCSV = () => {
 											classId: e.target.value
 										})
 									}
-									className="tw-select bg-transparent border-blue-brand ring-1">
+									className="bg-transparent tw-select border-blue-brand ring-1">
 									<option value={''}>Select Class</option>
 									{Object.values(classes)
 										.filter(c => c)
@@ -225,7 +213,7 @@ export const ImportStudentsCSV = () => {
 										))}
 								</select>
 							</div>
-							<div className="flex flex-col space-y-4 w-full">
+							<div className="flex flex-col w-full space-y-4">
 								<div>Section</div>
 								<select
 									name="sectionId"
@@ -233,7 +221,7 @@ export const ImportStudentsCSV = () => {
 									onChange={e =>
 										setState({ ...state, sectionId: e.target.value })
 									}
-									className="tw-select bg-transparent border-blue-brand ring-1">
+									className="bg-transparent tw-select border-blue-brand ring-1">
 									<option value={''}>Select Section</option>
 									{getSectionsFromClasses(
 										state.classId
@@ -257,19 +245,7 @@ export const ImportStudentsCSV = () => {
 						className={clsx('inline-flex w-full tw-btn text-white bg-blue-300', {
 							'bg-blue-brand': state.sectionId
 						})}>
-						<svg
-							className="w-5 h-5"
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor">
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth={2}
-								d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
-							/>
-						</svg>
+						<UploadIcon className="w-5 h-5" />
 						<label className="w-full mx-auto cursor-pointer">
 							<input
 								disabled={!state.sectionId}
@@ -303,13 +279,7 @@ export const ImportStudentsCSV = () => {
 													</div>
 													<div className="table-cell px-2">{s.Phone}</div>
 													<div className="table-cell p-2">
-														<svg
-															className="w-4 text-gray-400 mx-auto"
-															xmlns="http://www.w3.org/2000/svg"
-															viewBox="0 0 20 20"
-															fill="currentColor">
-															<path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-														</svg>
+														<DotsVerticalIcon className="w-4 mx-auto text-gray-400" />
 													</div>
 												</div>
 											))}
@@ -319,7 +289,7 @@ export const ImportStudentsCSV = () => {
 							<button
 								type="button"
 								onClick={saveImportedStudents}
-								className="w-full tw-btn bg-teal-brand text-white mt-4">
+								className="w-full mt-4 text-white tw-btn bg-teal-brand">
 								Save
 							</button>
 						</div>

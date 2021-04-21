@@ -43,9 +43,9 @@ import { ClassList } from 'pages/class/list'
 import { CreateOrUpdateClass } from 'pages/class/create'
 
 import { StudentList } from 'pages/students/list'
-import { CreateOrUpdateStudent } from 'pages/students/add/create'
-import { AddStudentSelect } from 'pages/students/add'
-import { ImportStudentsCSV } from 'pages/students/add/importExcel'
+import { CreateOrUpdateStudent } from 'pages/students/add'
+import { AddStudentMenu } from 'pages/students/add/menu'
+import { ImportStudentsCSV } from 'pages/students/add/excel-import'
 import { SchoolAttendance } from 'pages/school/attendance'
 import { SchoolFees } from 'pages/school/fees'
 import { StudentPayments } from 'pages/students/fee-payments/payments'
@@ -99,11 +99,7 @@ export class Routes extends React.Component<RoutesProps, State> {
 							component={CreateOrUpdateStaff}
 						/>
 						<PrivateRoute path="/staff" exact component={StaffList} />
-						<PrivateRoute
-							path="/students/add-selection"
-							exact
-							component={AddStudentSelect}
-						/>
+						<PrivateRoute path="/students/new/menu" exact component={AddStudentMenu} />
 						<PrivateRoute
 							path="/students/excel-import"
 							exact
