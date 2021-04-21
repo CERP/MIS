@@ -1,41 +1,85 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState } from 'react'
+import { CameraIcon } from '@heroicons/react/outline'
+import cond from 'cond-construct'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { TextDivider } from 'components/divider'
+import { StudentsAttendance } from 'pages/students/attendance'
+import { StaffAttendance } from 'pages/staff/attendance'
+import { Tabbar } from 'components/tabs'
 
 import iconManualEntry from '../assets/manual-entry.svg'
 
+enum AttendaceMarkOptions {
+	MANUAL,
+	SCAN,
+	MENU
+}
+
+enum Tabs {
+	STAFF_ATTENDANCE,
+	STUDENT_ATTENDANCE
+}
+
+const TabbarContent = [
+	{
+		tab: Tabs.STUDENT_ATTENDANCE,
+		title: 'Students'
+	},
+	{
+		tab: Tabs.STAFF_ATTENDANCE,
+		title: 'Teachers'
+	}
+]
+
 export const SchoolAttendance = () => {
+	const [toggleView, setToggleView] = useState<AttendaceMarkOptions>(AttendaceMarkOptions.MENU)
+	const [activeTab, setActiveTab] = useState<Tabs>(Tabs.STUDENT_ATTENDANCE)
+
+	const renderComponent = () =>
+		cond([
+			[activeTab === Tabs.STUDENT_ATTENDANCE, () => <StudentsAttendance />],
+			[activeTab === Tabs.STAFF_ATTENDANCE, () => <StaffAttendance />]
+		])
+
 	return (
-		<AppLayout title={"School Attendance"}>
-			<div className="p-5 md:p-10 md:pb-0 text-gray-700 relative print:hidden space-y-8">
-				<div className="text-center font-bold text-2xl">Attendance</div>
-				<div className="w-full md:w-3/5 mx-auto">
-					<Link to="/students/attendance-scan">
-						<div className="bg-orange-brand inline-block mx-auto rounded-lg w-full">
-							<div className="p-5 flex flex-col items-center justify-center">
-								<svg className="w-20 h-20 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-								</svg>
-								<div className="text-white mt-4 text-lg">Scan ID Card</div>
+		<AppLayout title={'School Attendance'}>
+			{toggleView === AttendaceMarkOptions.MENU && (
+				<div className="relative p-5 space-y-8 text-gray-700 md:p-10 md:pb-0 print:hidden">
+					<div className="text-2xl font-bold text-center">Attendance</div>
+					<div className="w-full mx-auto md:w-3/5">
+						<div
+							onClick={() => setToggleView(AttendaceMarkOptions.SCAN)}
+							className="inline-block w-full mx-auto rounded-lg cursor-pointer bg-orange-brand hover:shadow-md">
+							<div className="flex flex-col items-center justify-center p-5">
+								<CameraIcon className="w-20 h-20 text-white" />
+								<div className="mt-4 text-lg text-white">Scan ID Card</div>
 							</div>
 						</div>
-					</Link>
-				</div>
-				<TextDivider dividerColor={"bg-gray-900"} textBgColor={"bg-white"} textColor={"text-gray-900"} />
-				<div className="w-full md:w-3/5 mx-auto">
-					<Link to="/students/attendance">
-						<div className="inline-block bg-blue-brand mx-auto rounded-lg w-full">
-							<div className="p-5 flex flex-col items-center justify-center">
+					</div>
+					<TextDivider
+						dividerColor={'bg-gray-900'}
+						textBgColor={'bg-white'}
+						textColor={'text-gray-900'}
+					/>
+					<div className="w-full mx-auto md:w-3/5">
+						<div
+							onClick={() => setToggleView(AttendaceMarkOptions.MANUAL)}
+							className="inline-block w-full mx-auto rounded-lg cursor-pointer bg-blue-brand hover:shadow-md">
+							<div className="flex flex-col items-center justify-center p-5">
 								<img className="w-20 h-20" src={iconManualEntry} alt="icon" />
-								<div className="text-white mt-4 text-lg">Manual Entry</div>
+								<div className="mt-4 text-lg text-white">Manual Entry</div>
 							</div>
 						</div>
-					</Link>
+					</div>
 				</div>
-			</div>
+			)}
+			{toggleView === AttendaceMarkOptions.MANUAL && (
+				<>
+					<Tabbar tab={activeTab} setTab={setActiveTab} content={TabbarContent} />
+					{renderComponent()}
+				</>
+			)}
 		</AppLayout>
 	)
 }

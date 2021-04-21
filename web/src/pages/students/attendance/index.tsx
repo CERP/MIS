@@ -131,76 +131,74 @@ export const StudentsAttendance = () => {
 	}
 
 	return (
-		<AppLayout title="Students Attedance">
-			<div className="p-5 md:p-10 print:hidden">
-				<div className="space-y-6">
-					<div className="flex flex-row items-center space-x-2">
-						<input
-							name="attendance-date"
-							type="date"
-							onChange={e => setState({ ...state, date: e.target.valueAsNumber })}
-							value={attendanceDate}
-							className="tw-input w-full bg-transparent border-blue-brand ring-1 text-sm"
-						/>
+		<div className="p-5 md:p-10 print:hidden">
+			<div className="space-y-6">
+				<div className="flex flex-row items-center space-x-2">
+					<input
+						name="attendance-date"
+						type="date"
+						onChange={e => setState({ ...state, date: e.target.valueAsNumber })}
+						value={attendanceDate}
+						className="w-full text-sm bg-transparent tw-input border-blue-brand ring-1"
+					/>
 
-						<select
-							name="section-id"
-							value={state.selectedSection}
-							onChange={e => setState({ ...state, selectedSection: e.target.value })}
-							className="tw-input w-full bg-transparent border-blue-brand ring-1">
-							{sections
-								.filter(s => s && s.id && s.name)
-								.map(s => (
-									<option key={s.id} value={s.id}>
-										{toTitleCase(s.namespaced_name, '-')}
-									</option>
-								))}
-						</select>
-					</div>
+					<select
+						name="section-id"
+						value={state.selectedSection}
+						onChange={e => setState({ ...state, selectedSection: e.target.value })}
+						className="w-full bg-transparent tw-input border-blue-brand ring-1">
+						{sections
+							.filter(s => s && s.id && s.name)
+							.map(s => (
+								<option key={s.id} value={s.id}>
+									{toTitleCase(s.namespaced_name, '-')}
+								</option>
+							))}
+					</select>
+				</div>
 
-					{showSendSmsModal && (
-						<TModal>
-							<div className="bg-white p-6 sm:p-8 space-y-2" ref={sendSmsModalRef}>
-								<SmsModalContentWrapper
-									date={attendanceDate}
-									students={students}
-									markedStudents={selectedStudents}
-									smsTemplate={sms_templates.attendance || ''}
-									teacherId={faculty_id}
-								/>
-							</div>
-						</TModal>
-					)}
-
-					<div className="relative text-sm md:text-base">
-						<AttendanceStatsCard attendance={studentsAttendance} />
-						<div className="absolute -bottom-3 md:-bottom-4 flex flex-row items-center justify-center w-full space-x-4 px-4">
-							<button
-								onClick={() => setShowSendSmsModal(!showSendSmsModal)}
-								className="p-1 md:p-2 shadow-md bg-blue-brand text-white rounded-3xl w-2/5">
-								Send SMS
-							</button>
-							<button
-								onClick={markAllPresentHandler}
-								className="p-1 md:p-2 shadow-md bg-teal-brand text-white rounded-3xl w-2/5">
-								Mark All Present
-							</button>
-						</div>
-					</div>
-
-					<div className="space-y-2">
-						{Object.keys(selectedStudents).map(studentId => (
-							<Card
-								key={studentId}
-								student={students[studentId]}
-								attendanceDate={attendanceDate}
-								markAttendance={markAttendanceHandler}
+				{showSendSmsModal && (
+					<TModal>
+						<div className="p-6 space-y-2 bg-white sm:p-8" ref={sendSmsModalRef}>
+							<SmsModalContentWrapper
+								date={attendanceDate}
+								students={students}
+								markedStudents={selectedStudents}
+								smsTemplate={sms_templates.attendance || ''}
+								teacherId={faculty_id}
 							/>
-						))}
+						</div>
+					</TModal>
+				)}
+
+				<div className="relative text-sm md:text-base">
+					<AttendanceStatsCard attendance={studentsAttendance} />
+					<div className="absolute flex flex-row items-center justify-center w-full px-4 space-x-4 -bottom-3 md:-bottom-4">
+						<button
+							onClick={() => setShowSendSmsModal(!showSendSmsModal)}
+							className="w-2/5 p-1 text-white shadow-md md:p-2 bg-blue-brand rounded-3xl">
+							Send SMS
+						</button>
+						<button
+							onClick={markAllPresentHandler}
+							className="w-2/5 p-1 text-white shadow-md md:p-2 bg-teal-brand rounded-3xl">
+							Mark All Present
+						</button>
 					</div>
 				</div>
+
+				<div className="space-y-2">
+					{Object.keys(selectedStudents).map(studentId => (
+						<Card
+							key={studentId}
+							student={students[studentId]}
+							attendanceDate={attendanceDate}
+							markAttendance={markAttendanceHandler}
+						/>
+					))}
+				</div>
 			</div>
-		</AppLayout>
+		</div>
 	)
 }
 
@@ -211,17 +209,16 @@ type CardProps = {
 }
 
 const Card: React.FC<CardProps> = ({ student, attendanceDate, markAttendance }) => {
-	// to hide and show leave types
 	const [toggleLeave, setToggleLeave] = useState(false)
 
 	const status = student?.attendance?.[attendanceDate]?.status as AttendanceStatus
 
 	return (
-		<div className="p-2 md:p-3 text-sm md:text-base border border-gray-50 rounded-md space-y-1 shadow-md">
+		<div className="p-2 space-y-1 text-sm border rounded-md shadow-md md:p-3 md:text-base border-gray-50">
 			<div className="flex flex-row items-center justify-between">
-				<div className="flex flex-col w-1/2 items-start">
+				<div className="flex flex-col items-start w-1/2">
 					<Link
-						className="overflow-ellipsis truncate hover:underline hover:text-blue-brand w-11/12 md:w-auto"
+						className="w-11/12 truncate overflow-ellipsis hover:underline hover:text-blue-brand md:w-auto"
 						to={`/students/${student.id}/attendance`}>
 						{toTitleCase(student.Name)}
 					</Link>
@@ -229,7 +226,10 @@ const Card: React.FC<CardProps> = ({ student, attendanceDate, markAttendance }) 
 				</div>
 				<div className="flex flex-row items-center space-x-2">
 					<button
-						onClick={() => markAttendance(student, AttendanceStatus.PRESENT)}
+						onClick={() => {
+							setToggleLeave(false)
+							markAttendance(student, AttendanceStatus.PRESENT)
+						}}
 						name="present"
 						className={clsx(
 							'flex items-center justify-center w-8 h-8 rounded-full shadow-md',
@@ -241,7 +241,10 @@ const Card: React.FC<CardProps> = ({ student, attendanceDate, markAttendance }) 
 					</button>
 
 					<button
-						onClick={() => markAttendance(student, AttendanceStatus.ABSENT)}
+						onClick={() => {
+							setToggleLeave(false)
+							markAttendance(student, AttendanceStatus.ABSENT)
+						}}
 						name="absent"
 						className={clsx(
 							'flex items-center justify-center w-8 h-8 rounded-full shadow-md',
@@ -251,7 +254,6 @@ const Card: React.FC<CardProps> = ({ student, attendanceDate, markAttendance }) 
 						)}>
 						<span>A</span>
 					</button>
-					{/* TODO: handle click outside */}
 					<button
 						name="leave"
 						className={clsx('rounded-lg shadow-md px-2 py-1', {
@@ -267,9 +269,8 @@ const Card: React.FC<CardProps> = ({ student, attendanceDate, markAttendance }) 
 					</button>
 				</div>
 			</div>
-			{/* TODO: apply transition here from headlessui/react */}
 			{toggleLeave && (
-				<div className="flex flex-row justify-end text-xs space-x-2">
+				<div className="flex flex-row justify-end space-x-2 text-xs">
 					<button
 						onClick={() => markAttendance(student, AttendanceStatus.LEAVE)}
 						className={clsx('border border-orange-brand py-1 px-2 rounded-3xl w-16', {
