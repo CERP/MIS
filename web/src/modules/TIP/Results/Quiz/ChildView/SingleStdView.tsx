@@ -15,7 +15,6 @@ enum Types {
 }
 
 const ChildView: React.FC<P> = ({ singleStdQuizResult, setType }) => {
-	console.log(singleStdQuizResult)
 	return (
 		<div className="w-full">
 			<div className="flex flex-row justify-between w-full bg-blue-tip-brand py-5 items-center text-white font-bold">

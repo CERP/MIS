@@ -19,7 +19,7 @@ const SingleStdGrading: React.FC<P> = ({ student, obtain_marks, handleChange }) 
 	return (
 		<div className="mb-1 bg-gray-200 w-ful text-sm md:text-base lg:text-lg flex flex-row justify-around">
 			<div className="flex flex-col justify-between items-center text-center w-1/2">
-				<img className="h-8 w-8" src={student.ProfilePicture.url} />
+				<img className="h-8 w-8" src={User} />
 				<div>{student.Name}</div>
 				<div>{student.RollNumber}</div>
 			</div>
