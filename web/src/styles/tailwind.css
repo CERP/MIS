@@ -4,13 +4,13 @@
 
 @layer components {
 	.tw-table-container {
-		@apply inline-block min-w-full shadow rounded-lg overflow-hidden;
+		@apply inline-block min-w-full overflow-hidden rounded-lg shadow;
 	}
 	.tw-table {
-		@apply w-full table-auto leading-normal;
+		@apply w-full leading-normal table-auto;
 	}
 	.tw-thead {
-		@apply bg-gray-200 border-b-2 border-gray-200 text-gray-700 uppercase text-xs text-center font-semibold tracking-wider;
+		@apply text-xs font-semibold tracking-wider text-center text-gray-700 uppercase bg-gray-200 border-b-2 border-gray-200;
 	}
 	.tw-th {
 		@apply px-5 py-3;
@@ -19,34 +19,37 @@
 		@apply text-center;
 	}
 	.tw-td {
-		@apply px-5 py-3 border-b border-gray-200 text-gray-900 text-sm;
+		@apply px-5 py-3 text-sm text-gray-900 border-b border-gray-200;
 	}
 
 	.tw-input {
-		@apply border focus:ring-2 focus:ring-blue-brand outline-none px-4 py-2 ring-blue-brand rounded-md border-gray-200;
+		@apply px-4 py-2 border border-gray-200 rounded-md outline-none focus:ring-2 focus:ring-blue-brand ring-blue-brand;
 	}
 
 	.tw-btn {
-		@apply px-4 py-3 rounded-md cursor-pointer focus:ring-2 outline-none font-semibold;
+		@apply px-4 py-3 font-semibold rounded-md outline-none cursor-pointer focus:ring-2;
 	}
 
 	.tw-btn-blue {
-		@apply px-4 py-3 bg-blue-brand rounded-md text-white cursor-pointer hover:bg-blue-400 focus:ring-2 focus:ring-blue-brand outline-none;
+		@apply px-4 py-3 text-white rounded-md outline-none cursor-pointer bg-blue-brand hover:bg-blue-400 focus:ring-2 focus:ring-blue-brand;
 	}
 
 	.tw-btn-red {
-		@apply px-4 py-2 bg-red-brand rounded-md text-white cursor-pointer hover:bg-red-400;
+		@apply px-4 py-2 text-white rounded-md cursor-pointer bg-red-brand hover:bg-red-400;
 	}
 
 	.tw-select {
-		@apply rounded-lg border focus:ring-2 focus:ring-blue-brand outline-none bg-white text-gray-500 py-2 px-4;
+		@apply px-4 py-2 text-gray-500 bg-white border rounded-lg outline-none focus:ring-2 focus:ring-blue-brand;
 	}
 
 	.tw-select-tip {
-		@apply rounded-lg block bg-white border-none outline-none py-2 px-4 leading-tight text-blue-900 shadow-lg text-base;
+		@apply block px-4 py-2 text-base leading-tight text-blue-900 bg-white border-none rounded-lg shadow-lg outline-none;
 	}
 
 	.tw-is-form-bg-black {
-		@apply bg-transparent border-blue-brand ring-1 text-gray-200;
+		@apply text-gray-200 bg-transparent border-blue-brand ring-1;
+	}
+	.tw-checkbox {
+		@apply w-5 h-5 rounded text-teal-brand;
 	}
 }

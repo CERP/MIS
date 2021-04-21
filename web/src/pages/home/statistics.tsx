@@ -1,8 +1,11 @@
 import React, { useMemo, useState } from 'react'
-import { useSelector } from 'react-redux'
-import { PieChart, Pie, Sector, ResponsiveContainer } from 'recharts'
 import clsx from 'clsx'
 import moment from 'moment'
+import { useSelector } from 'react-redux'
+import { CashIcon, CloudUploadIcon, RefreshIcon, UsersIcon } from '@heroicons/react/outline'
+import { PieChart, Pie, Sector, ResponsiveContainer } from 'recharts'
+
+import { isMobile } from 'utils/helpers'
 
 enum Tab {
 	TEACHER,
@@ -17,8 +20,8 @@ export const StatsTab = () => {
 
 	const [activeTab, setActiveTab] = useState(Tab.STUDENT)
 
-	const [studentsAttendance, teacherAttendance] = useMemo(() => {
-		const teachersAttendance = { PRESENT: 0, LEAVE: 0, ABSENT: 0 }
+	const [studentsAttendance, staffAttedance] = useMemo(() => {
+		const staffAttendance = { PRESENT: 0, LEAVE: 0, ABSENT: 0 }
 		const studentsAttendance = { PRESENT: 0, LEAVE: 0, ABSENT: 0 }
 
 		for (const student of Object.values(students)) {
@@ -39,23 +42,31 @@ export const StatsTab = () => {
 			}
 		}
 
-		for (const teacher of Object.values(faculty)) {
-			const record = (teacher.attendance || {})[todayDate]
+		for (const staff of Object.values(faculty)) {
+			const record = (staff.attendance || {})[todayDate]
+
+			console.log(record)
 
 			if (record === undefined) {
 				continue
 			}
 
 			if (record.check_in) {
-				teachersAttendance.PRESENT += 1
+				staffAttendance.PRESENT += 1
 			} else if (record.absent) {
-				teachersAttendance.ABSENT += 1
-			} else if (record.leave) {
-				teachersAttendance.LEAVE += 1
+				staffAttendance.ABSENT += 1
+			} else if (
+				record.leave ||
+				record.CASUAL_LEAVE ||
+				record.PRIVILEGED_LEAVE ||
+				record.SHORT_LEAVE ||
+				record.SICK_LEAVE
+			) {
+				staffAttendance.LEAVE += 1
 			}
 		}
 
-		return [studentsAttendance, teachersAttendance]
+		return [studentsAttendance, staffAttendance]
 	}, [students, faculty])
 
 	const [amountCollected, studentsWhoPaid] = useMemo(() => {
@@ -83,7 +94,7 @@ export const StatsTab = () => {
 		return [totalAmount, totalPayee]
 	}, [students])
 
-	const attendanceStats = activeTab === Tab.STUDENT ? studentsAttendance : teacherAttendance
+	const attendanceStats = activeTab === Tab.STUDENT ? studentsAttendance : staffAttedance
 
 	const graphData = Object.entries(attendanceStats).reduce<GraphData[]>((agg, [k, v]) => {
 		return [
@@ -96,12 +107,12 @@ export const StatsTab = () => {
 	}, [])
 
 	return (
-		<div className="p-10 md:w-2/5 mx-auto">
-			<div className="text-center text-2xl mb-6 md:hidden">School Daily Statistics</div>
+		<div className="p-5 mx-auto md:p-10 md:w-2/5">
+			<div className="mb-6 text-2xl text-center md:hidden">School Daily Statistics</div>
 
-			<div className="p-6 bg-white rounded-2xl border shadow-md">
-				<div className="text-center text-lg font-bold">Attendance</div>
-				<div className="flex flex-row justify-between items-center">
+			<div className="p-6 bg-white border shadow-md rounded-2xl">
+				<div className="text-lg font-bold text-center">Attendance</div>
+				<div className="flex flex-row items-center justify-between">
 					<div
 						onClick={() => setActiveTab(Tab.STUDENT)}
 						className={clsx(
@@ -143,33 +154,19 @@ export const StatsTab = () => {
 				</div>
 
 				<div className="w-4/5 mx-auto mt-4">
-					<button className="w-full tw-btn-blue rounded-full uppercase text-sm">
+					<button className="w-full text-sm uppercase rounded-full tw-btn-blue">
 						See Details
 					</button>
 				</div>
 			</div>
 
-			<div className="py-6 px-10 bg-white rounded-2xl border shadow-md mt-4">
-				<div className="text-center text-lg font-bold mb-4">Statistics</div>
+			<div className="px-10 py-6 mt-4 bg-white border shadow-md rounded-2xl">
+				<div className="mb-4 text-lg font-bold text-center">Statistics</div>
 				<div className="flex flex-col space-y-4">
 					<div className="flex flex-row items-center">
-						<div className="mr-10 text-teal-brand">
-							<svg
-								className="w-10 mx-auto"
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke="currentColor">
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth={2}
-									d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
-								/>
-							</svg>
-						</div>
+						<CashIcon className="w-10 mr-10 text-teal-brand " />
 						<div className="flex flex-col">
-							<div className="text-teal-brand font-semibold">
+							<div className="font-semibold text-teal-brand">
 								Rs. {amountCollected}
 							</div>
 							<div className="text-sm text-gray-500">Fee Collected</div>
@@ -177,45 +174,17 @@ export const StatsTab = () => {
 					</div>
 
 					<div className="flex flex-row items-center">
-						<div className="mr-10 text-blue-brand">
-							<svg
-								className="w-10"
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke="currentColor">
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth={2}
-									d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-								/>
-							</svg>
-						</div>
+						<UsersIcon className="w-10 mr-10 text-blue-brand" />
 						<div className="flex flex-col">
-							<div className="text-blue-brand font-semibold">{studentsWhoPaid}</div>
+							<div className="font-semibold text-blue-brand">{studentsWhoPaid}</div>
 							<div className="text-sm text-gray-500">Students</div>
 						</div>
 					</div>
 
 					<div className="flex flex-row items-center">
-						<div className="mr-10 text-orange-brand">
-							<svg
-								className="w-10 mx-auto"
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke="currentColor">
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth={2}
-									d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-								/>
-							</svg>
-						</div>
+						<CloudUploadIcon className="w-10 mr-10 text-orange-brand" />
 						<div className="flex flex-col">
-							<div className="text-orange-brand font-semibold">
+							<div className="font-semibold text-orange-brand">
 								{moment(lastSnapshot).format('HH:mm')}
 							</div>
 							<div className="text-sm text-gray-500">
@@ -225,23 +194,9 @@ export const StatsTab = () => {
 					</div>
 
 					<div className="flex flex-row items-center">
-						<div className="mr-10 text-teal-brand">
-							<svg
-								className="w-10 mx-auto"
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke="currentColor">
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth={2}
-									d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-								/>
-							</svg>
-						</div>
+						<RefreshIcon className="w-10 mr-10 text-teal-brand " />
 						<div className="flex flex-col">
-							<div className="text-teal-brand font-semibold">
+							<div className="font-semibold text-teal-brand">
 								{unsyncedChanges} unsynced
 							</div>
 							<div className="text-sm text-gray-500">changes</div>
@@ -252,6 +207,8 @@ export const StatsTab = () => {
 		</div>
 	)
 }
+
+const mobile = isMobile()
 
 const colorMap: Record<string, string> = {
 	present: '#5ECDB9',
@@ -311,7 +268,7 @@ const renderActiveShape = (props: any) => {
 				cy={cy}
 				startAngle={startAngle}
 				endAngle={endAngle}
-				innerRadius={outerRadius + 6}
+				innerRadius={outerRadius + 5}
 				outerRadius={outerRadius + 10}
 				fill={colorMap[payload.name]}
 			/>
@@ -322,12 +279,12 @@ const renderActiveShape = (props: any) => {
 			</text>
 			<text
 				className="text-xs"
-				x={ex + (cos >= 0 ? 1 : -1) * 12}
+				x={ex + (cos >= 0 ? 1 : -1) * 0}
 				y={ey}
 				dy={18}
 				textAnchor={textAnchor}
 				fill="#999">
-				{`(${(percent * 100).toFixed(2)}%)`}
+				{`${(percent * 100).toFixed(2)}%`}
 			</text>
 		</g>
 	)
@@ -349,6 +306,12 @@ const AttendanceChart: React.FC<TAttendanceChartProps> = ({ graphData }) => {
 		setActiveIndex(index)
 	}
 
+	const INNER_RADIUS = mobile ? 40 : 60
+	const OUTER_RADIUS = mobile ? 55 : 80
+
+	const CX = mobile ? 150 : 200
+	const CY = mobile ? 160 : 150
+
 	return (
 		<div style={{ width: '100%', height: 300 }}>
 			<ResponsiveContainer>
@@ -357,10 +320,10 @@ const AttendanceChart: React.FC<TAttendanceChartProps> = ({ graphData }) => {
 						activeIndex={activeIndex}
 						activeShape={renderActiveShape}
 						data={graphData}
-						cx={150}
-						cy={150}
-						innerRadius={60}
-						outerRadius={80}
+						cx={CX}
+						cy={CY}
+						innerRadius={INNER_RADIUS}
+						outerRadius={OUTER_RADIUS}
 						fill="#74ACED"
 						dataKey="value"
 						onMouseEnter={onPieEnter}

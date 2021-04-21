@@ -38,16 +38,16 @@ export const StudentList = () => {
 
 	return (
 		<AppLayout title="Students">
-			<div className="p-5 md:p-10 relative mb-20">
-				<Link to="/students/add-selection">
+			<div className="relative p-5 mb-20 md:p-10">
+				<Link to="/students/new/menu">
 					<div className="flex items-center justify-between fixed z-50 bottom-4 right-4 rounded-full bg-teal-brand text-white lg:hidden py-3 px-6 w-11/12 text-lg mr-0.5">
 						<div>Add new Student</div>
 						<div className="text-xl">+</div>
 					</div>
 				</Link>
 
-				<div className="text-center font-bold text-2xl my-4">School Students</div>
-				<div className="text-gray-700 text-center">
+				<div className="my-4 text-2xl font-bold text-center">School Students</div>
+				<div className="text-center text-gray-700">
 					Total ={' '}
 					{
 						Object.values(students).filter(
@@ -55,13 +55,13 @@ export const StudentList = () => {
 						).length
 					}
 				</div>
-				<div className="flex flex-col md:flex-row items-center justify-between mt-4 mb-12 md:mb-20 space-y-4 md:space-y-0 md:space-x-60">
+				<div className="flex flex-col items-center justify-between mt-4 mb-12 space-y-4 md:flex-row md:mb-20 md:space-y-0 md:space-x-60">
 					<SearchInput onChange={e => setSearch(e.target.value)} />
-					<div className="flex flex-row items-center space-x-2 w-full">
-						<select className="tw-select rounded shadow text-teal-brand w-full">
+					<div className="flex flex-row items-center w-full space-x-2">
+						<select className="w-full rounded shadow tw-select text-teal-brand">
 							<option>Tag</option>
 						</select>
-						<select className="tw-select rounded shadow text-teal-brand w-full">
+						<select className="w-full rounded shadow tw-select text-teal-brand">
 							<option>Choose Class</option>
 							{sections
 								.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
@@ -72,7 +72,7 @@ export const StudentList = () => {
 								))}
 						</select>
 						<select
-							className="tw-select rounded shadow text-teal-brand w-full"
+							className="w-full rounded shadow tw-select text-teal-brand"
 							onChange={e =>
 								setFilter({ ...filter, active: e.target.value === 'true' })
 							}>
@@ -82,7 +82,7 @@ export const StudentList = () => {
 					</div>
 				</div>
 
-				<div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-12 gap-y-12 md:gap-y-20">
+				<div className="grid grid-cols-1 gap-4 md:grid-cols-4 md:gap-12 gap-y-12 md:gap-y-20">
 					{Object.values(students)
 						.filter(
 							s =>
@@ -112,45 +112,45 @@ const Card = ({ student, sections }: CardProps) => {
 
 	return (
 		<div className="relative">
-			<div className="bg-white rounded-xl text-center border border-gray-50 shadow-md px-3 py-4 md:p-5">
-				<div className="font-bold pt-8 truncate w-4/5 mx-auto">
+			<div className="px-3 py-4 text-center bg-white border shadow-md rounded-xl border-gray-50 md:p-5">
+				<div className="w-4/5 pt-8 mx-auto font-bold truncate">
 					{toTitleCase(student.Name)}
 				</div>
 				<div className="mt-2 space-y-0 text-sm md:text-base">
-					<div className="flex items-center justify-between flex-row">
-						<div className="text-gray-900 font-semibold">Father</div>
-						<div className="text-gray-500 text-xs md:text-base lg:text-lg truncate">
+					<div className="flex flex-row items-center justify-between">
+						<div className="font-semibold text-gray-900">Father</div>
+						<div className="text-xs text-gray-500 truncate md:text-base lg:text-lg">
 							{toTitleCase(student.ManName)}
 						</div>
 					</div>
-					<div className="flex items-center justify-between flex-row">
-						<div className="text-gray-900 font-semibold">Class</div>
-						<div className="text-gray-500 text-xs md:text-base lg:text-lg truncate">
+					<div className="flex flex-row items-center justify-between">
+						<div className="font-semibold text-gray-900">Class</div>
+						<div className="text-xs text-gray-500 truncate md:text-base lg:text-lg">
 							{toTitleCase(studentSection?.namespaced_name)}
 						</div>
 					</div>
-					<div className="flex items-center justify-between flex-row">
-						<div className="text-gray-900 font-semibold">Roll #</div>
-						<div className="text-gray-500 text-xs md:text-base lg:text-lg">
+					<div className="flex flex-row items-center justify-between">
+						<div className="font-semibold text-gray-900">Roll #</div>
+						<div className="text-xs text-gray-500 md:text-base lg:text-lg">
 							{student.RollNumber}
 						</div>
 					</div>
-					<div className="flex items-center justify-between flex-row">
-						<div className="text-gray-900 font-semibold">Phone</div>
-						<div className="text-gray-500 text-xs md:text-base lg:text-lg">
+					<div className="flex flex-row items-center justify-between">
+						<div className="font-semibold text-gray-900">Phone</div>
+						<div className="text-xs text-gray-500 md:text-base lg:text-lg">
 							{student.Phone}
 						</div>
 					</div>
 				</div>
 			</div>
-			<div className="absolute -top-10 left-0 right-0">
+			<div className="absolute left-0 right-0 -top-10">
 				<img
 					src={
 						student.ProfilePicture?.url ||
 						student.ProfilePicture?.image_string ||
 						UserIconSvg
 					}
-					className="mx-auto h-20 w-20  rounded-full shadow-md bg-gray-500 hover:bg-gray-700"
+					className="w-20 h-20 mx-auto bg-gray-500 rounded-full shadow-md hover:bg-gray-700"
 					alt={student.Name.split(' ')[0] || 'student'}
 				/>
 			</div>

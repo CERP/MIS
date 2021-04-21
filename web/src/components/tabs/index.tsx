@@ -9,8 +9,8 @@ type TabbarProps = {
 
 export const Tabbar = ({ tab, setTab, content }: TabbarProps) => {
 	return (
-		<div className="sticky inset-0 top-16 z-30 bg-teal-brand">
-			<div className="gap-x-4 grid-cols-3 inline-grid shadow-md text-center text-lg text-gray-200 w-full">
+		<div className="sticky inset-0 z-30 top-16 bg-teal-brand">
+			<div className="inline-grid w-full grid-flow-col text-lg text-center text-gray-200 shadow-md">
 				{content.map((item: any) => (
 					<div
 						key={item.tab}

@@ -12,27 +12,27 @@ import iconExpense from './assets/expense.svg'
 
 const links: CardProps[] = [
 	{
-		link: '/school/attendance',
+		link: '/attendance',
 		title: 'attendance',
 		icon: iconAttendance
 	},
 	{
-		link: '/school/fees',
+		link: '/fees',
 		title: 'fees',
 		icon: iconFee
 	},
 	{
-		link: '/school/exams',
+		link: '/exams',
 		title: 'exams',
 		icon: iconExams
 	},
 	{
-		link: '/school/expenses',
+		link: '/expenses',
 		title: 'expense',
 		icon: iconExpense
 	},
 	{
-		link: '/school/diary',
+		link: '/diary',
 		title: 'diary',
 		icon: iconDiary
 	},
@@ -47,7 +47,7 @@ const links: CardProps[] = [
 		icon: '/favicon.ico'
 	},
 	{
-		link: '/school/analytics',
+		link: '/analytics',
 		title: 'Analytics',
 		icon: iconMarks
 	},
@@ -60,9 +60,9 @@ const links: CardProps[] = [
 
 export const ActionTab = () => {
 	return (
-		<div className="p-10 md:w-4/5 mx-auto mb-10">
-			<div className="text-center text-lg mb-6 md:hidden">What would you like to do?</div>
-			<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+		<div className="p-10 mx-auto mb-10 md:w-4/5">
+			<div className="mb-6 text-lg text-center md:hidden">What would you like to do?</div>
+			<div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
 				{links.map((link, index) => (
 					<Card key={link.title + index} {...link} />
 				))}
@@ -103,7 +103,7 @@ type CardProps = {
 const Card = ({ title, icon, link }: CardProps) => {
 	return (
 		<Link to={link}>
-			<div className="p-5 border border-gray-50 rounded-2xl shadow-md hover:shadow-lg bg-white">
+			<div className="p-5 bg-white border shadow-md border-gray-50 rounded-2xl hover:shadow-lg">
 				<div className="flex flex-col items-center space-y-4">
 					<img className="w-20 h-20 rounded-full" src={icon} alt="icon" />
 					<div className="text-lg capitalize">{title}</div>

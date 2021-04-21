@@ -15,7 +15,6 @@ import ReportsMenu from 'modules/ReportsMenu'
 import TargetedInstruction from 'modules/TIP/Routing'
 import Help from 'modules/Help'
 import Diary from 'pages/school/diary'
-// import Front from 'modules/Front'
 import FeeMenu from 'modules/FeeMenu'
 import PlannerList from 'modules/Planner/ClassList'
 import Planner from 'modules/Planner'
@@ -44,11 +43,9 @@ import { ClassList } from 'pages/class/list'
 import { CreateOrUpdateClass } from 'pages/class/create'
 
 import { StudentList } from 'pages/students/list'
-import { CreateOrUpdateStudent } from 'pages/students/add/create'
-import { AddStudentSelect } from 'pages/students/add'
-import { ImportStudentsCSV } from 'pages/students/add/importExcel'
-import { StudentsAttendance } from 'pages/students/attendance'
-import { StaffAttendance } from 'pages/staff/attendance'
+import { CreateOrUpdateStudent } from 'pages/students/add'
+import { AddStudentMenu } from 'pages/students/add/menu'
+import { ImportStudentsCSV } from 'pages/students/add/excel-import'
 import { SchoolAttendance } from 'pages/school/attendance'
 import { SchoolFees } from 'pages/school/fees'
 import { StudentPayments } from 'pages/students/fee-payments/payments'
@@ -102,17 +99,7 @@ export class Routes extends React.Component<RoutesProps, State> {
 							component={CreateOrUpdateStaff}
 						/>
 						<PrivateRoute path="/staff" exact component={StaffList} />
-						<PrivateRoute path="/staff/attendance" exact component={StaffAttendance} />
-						<PrivateRoute
-							path="/students/attendance"
-							exact
-							component={StudentsAttendance}
-						/>
-						<PrivateRoute
-							path="/students/add-selection"
-							exact
-							component={AddStudentSelect}
-						/>
+						<PrivateRoute path="/students/new/menu" exact component={AddStudentMenu} />
 						<PrivateRoute
 							path="/students/excel-import"
 							exact
@@ -141,13 +128,9 @@ export class Routes extends React.Component<RoutesProps, State> {
 						/>
 						<PrivateRoute path="/classes/new" exact component={CreateOrUpdateClass} />
 						<PrivateRoute path="/classes" exact component={ClassList} />
-						<PrivateRoute
-							path="/school/attendance"
-							exact
-							component={SchoolAttendance}
-						/>
-						<PrivateRoute path="/school/fees" exact component={SchoolFees} />
-						<PrivateRoute path="/school/fees/:page" exact component={SchoolFees} />
+						<PrivateRoute path="/attendance" exact component={SchoolAttendance} />
+						<PrivateRoute path="/fees" exact component={SchoolFees} />
+						<PrivateRoute path="/fees/:page" exact component={SchoolFees} />
 
 						<PrivateRoute path="/sms" component={SMS} />
 
@@ -163,7 +146,7 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<PrivateRoute path="/reports/:class_id/:section_id" component={ExamList} />
 						<PrivateRoute path="/reports" component={Marks} />
 						<PrivateRoute path="/settings" component={Settings} />
-						<PrivateRoute path="/school/diary" component={Diary} />
+						<PrivateRoute path="/diary" component={Diary} />
 						<PrivateRoute path="/analytics/daily-stats" component={DailyStats} />
 						<PrivateRoute path="/analytics" component={Analytics} />
 						<PrivateRoute path="/diary" component={Diary} />
