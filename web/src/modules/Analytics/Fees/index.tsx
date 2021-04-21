@@ -14,7 +14,6 @@ import { OutstandingFeePrintableList } from 'components/Printable/Fee/outstandin
 
 import { ResponsiveContainer, XAxis, YAxis, Tooltip, LineChart, Line } from 'recharts'
 
-
 interface Filters {
 	total: boolean
 	paid: boolean
@@ -39,26 +38,39 @@ interface ChartProps {
 
 const FeesChart = (props: ChartProps) => {
 	const filter = props.filter
-	return <ResponsiveContainer width="100%" height={200}>
-		<LineChart
-			data={
-				Object.entries(props.payments)
-					.sort(([d1,], [d2,]) => moment(d1, props.date_format).diff(moment(d2, props.date_format)))
+	return (
+		<ResponsiveContainer width="100%" height={200}>
+			<LineChart
+				data={Object.entries(props.payments)
+					.sort(([d1], [d2]) =>
+						moment(d1, props.date_format).diff(moment(d2, props.date_format))
+					)
 					.map(([month, { OWED, SUBMITTED, FORGIVEN, SCHOLARSHIP }]) => ({
-						month, OWED, SUBMITTED, FORGIVEN: FORGIVEN + SCHOLARSHIP, net: Math.abs(OWED - (SUBMITTED + FORGIVEN + SCHOLARSHIP))
+						month,
+						OWED,
+						SUBMITTED,
+						FORGIVEN: FORGIVEN + SCHOLARSHIP,
+						net: Math.abs(OWED - (SUBMITTED + FORGIVEN + SCHOLARSHIP)),
 					}))}>
+				<XAxis dataKey="month" />
+				<YAxis />
+				<Tooltip />
 
-			<XAxis dataKey="month" />
-			<YAxis />
-			<Tooltip />
-
-			{filter.total && <Line dataKey='OWED' name="Total" stroke="#74aced" strokeWidth={3} />}
-			{filter.paid && <Line dataKey="SUBMITTED" stroke="#93d0c5" name="Paid" strokeWidth={3} />}
-			{filter.forgiven && <Line dataKey="FORGIVEN" stroke="#939292" name="Forgiven" strokeWidth={3} />}
-			{filter.pending && <Line dataKey='net' name="Pending" strokeWidth={3} stroke="#ff6b68" />}
-
-		</LineChart>
-	</ResponsiveContainer>
+				{filter.total && (
+					<Line dataKey="OWED" name="Total" stroke="#74aced" strokeWidth={3} />
+				)}
+				{filter.paid && (
+					<Line dataKey="SUBMITTED" stroke="#93d0c5" name="Paid" strokeWidth={3} />
+				)}
+				{filter.forgiven && (
+					<Line dataKey="FORGIVEN" stroke="#939292" name="Forgiven" strokeWidth={3} />
+				)}
+				{filter.pending && (
+					<Line dataKey="net" name="Pending" strokeWidth={3} stroke="#ff6b68" />
+				)}
+			</LineChart>
+		</ResponsiveContainer>
+	)
 }
 
 interface TableProps {
@@ -75,44 +87,92 @@ interface TableProps {
 }
 
 const FeesTable = (props: TableProps) => {
+	const total = props.total_debts
+	const payments = props.payments
 
-	const total = props.total_debts;
-	const payments = props.payments;
-
-	return <div className="section no-print table" style={{ margin: "20px 0", backgroundColor: "#c2bbbb21", overflowX: "scroll" }}>
-		<div className="table row heading">
-			<label style={{ backgroundColor: "#efecec", textAlign: "center" }}> <b> Date     </b></label>
-			<label style={{ backgroundColor: "#bedcff", textAlign: "center" }}> <b> Total    </b> </label>
-			<label style={{ backgroundColor: "#93d0c5", textAlign: "center" }}> <b> Paid     </b> </label>
-			<label style={{ backgroundColor: "#e0e0e0", textAlign: "center" }}> <b> Forgiven </b> </label>
-			<label style={{ backgroundColor: "#fc6171", textAlign: "center" }}> <b> Pending  </b> </label>
-		</div>
-		{
-			[...Object.entries(payments)
-				.sort(([d1,], [d2,]) => moment(d1, props.date_format).diff(moment(d2, props.date_format)))
-				.map(([month, { OWED, SUBMITTED, FORGIVEN, SCHOLARSHIP }]) => {
-
-					const red = "#fc6171"
-					return <div className="table row" key={month}>
-						<div style={{ backgroundColor: "#efecec", textAlign: "center" }}>{month}</div>
-						<div style={{ backgroundColor: "#bedcff", textAlign: "center" }}>{numberWithCommas(OWED)}</div>
-						<div style={{ backgroundColor: "#93d0c5", textAlign: "center" }}>{numberWithCommas(SUBMITTED)}</div>
-						<div style={{ backgroundColor: "#e0e0e0", textAlign: "center" }}>{numberWithCommas(FORGIVEN + SCHOLARSHIP)}</div>
-						<div style={{ backgroundColor: red, textAlign: "center" }}>{numberWithCommas(OWED - (SUBMITTED + FORGIVEN + SCHOLARSHIP))}</div>
-					</div>
-				}),
-			<div className="table row footing" style={{ borderTop: '1.5px solid #333' }} key={Math.random()}>
-				<br />
-				<label style={{ backgroundColor: "#efecec", textAlign: "center" }}><b>Total</b></label>
-				<label style={{ backgroundColor: "#bedcff", textAlign: "center" }}><b>{numberWithCommas(total.OWED)}</b></label>
-				<label style={{ backgroundColor: "#93d0c5", textAlign: "center" }}><b>{numberWithCommas(total.PAID)}</b></label>
-				<label style={{ backgroundColor: "#e0e0e0", textAlign: "center" }}><b>{numberWithCommas(total.FORGIVEN + total.SCHOLARSHIP)}</b></label>
-				<label style={{ backgroundColor: "#fc6171", textAlign: "center" }}><b>{numberWithCommas(Math.abs(total.OWED - (total.SCHOLARSHIP + total.PAID + total.FORGIVEN)))}</b></label>
+	return (
+		<div
+			className="section no-print mis-table"
+			style={{ margin: '20px 0', backgroundColor: '#c2bbbb21', overflowX: 'scroll' }}>
+			<div className="mis-table row heading">
+				<label style={{ backgroundColor: '#efecec', textAlign: 'center' }}>
+					{' '}
+					<b> Date </b>
+				</label>
+				<label style={{ backgroundColor: '#bedcff', textAlign: 'center' }}>
+					{' '}
+					<b> Total </b>{' '}
+				</label>
+				<label style={{ backgroundColor: '#93d0c5', textAlign: 'center' }}>
+					{' '}
+					<b> Paid </b>{' '}
+				</label>
+				<label style={{ backgroundColor: '#e0e0e0', textAlign: 'center' }}>
+					{' '}
+					<b> Forgiven </b>{' '}
+				</label>
+				<label style={{ backgroundColor: '#fc6171', textAlign: 'center' }}>
+					{' '}
+					<b> Pending </b>{' '}
+				</label>
 			</div>
-			]
-		}
-	</div>
-
+			{[
+				...Object.entries(payments)
+					.sort(([d1], [d2]) =>
+						moment(d1, props.date_format).diff(moment(d2, props.date_format))
+					)
+					.map(([month, { OWED, SUBMITTED, FORGIVEN, SCHOLARSHIP }]) => {
+						const red = '#fc6171'
+						return (
+							<div className="mis-table row" key={month}>
+								<div style={{ backgroundColor: '#efecec', textAlign: 'center' }}>
+									{month}
+								</div>
+								<div style={{ backgroundColor: '#bedcff', textAlign: 'center' }}>
+									{numberWithCommas(OWED)}
+								</div>
+								<div style={{ backgroundColor: '#93d0c5', textAlign: 'center' }}>
+									{numberWithCommas(SUBMITTED)}
+								</div>
+								<div style={{ backgroundColor: '#e0e0e0', textAlign: 'center' }}>
+									{numberWithCommas(FORGIVEN + SCHOLARSHIP)}
+								</div>
+								<div style={{ backgroundColor: red, textAlign: 'center' }}>
+									{numberWithCommas(OWED - (SUBMITTED + FORGIVEN + SCHOLARSHIP))}
+								</div>
+							</div>
+						)
+					}),
+				<div
+					className="mis-table row footing"
+					style={{ borderTop: '1.5px solid #333' }}
+					key={Math.random()}>
+					<br />
+					<label style={{ backgroundColor: '#efecec', textAlign: 'center' }}>
+						<b>Total</b>
+					</label>
+					<label style={{ backgroundColor: '#bedcff', textAlign: 'center' }}>
+						<b>{numberWithCommas(total.OWED)}</b>
+					</label>
+					<label style={{ backgroundColor: '#93d0c5', textAlign: 'center' }}>
+						<b>{numberWithCommas(total.PAID)}</b>
+					</label>
+					<label style={{ backgroundColor: '#e0e0e0', textAlign: 'center' }}>
+						<b>{numberWithCommas(total.FORGIVEN + total.SCHOLARSHIP)}</b>
+					</label>
+					<label style={{ backgroundColor: '#fc6171', textAlign: 'center' }}>
+						<b>
+							{numberWithCommas(
+								Math.abs(
+									total.OWED - (total.SCHOLARSHIP + total.PAID + total.FORGIVEN)
+								)
+							)}
+						</b>
+					</label>
+				</div>,
+			]}
+		</div>
+	)
 }
 
 type PaymentAddItem = {
@@ -121,10 +181,10 @@ type PaymentAddItem = {
 } & MISStudentPayment
 
 interface P {
-	students: RootDBState["students"]
-	classes: RootDBState["classes"]
-	settings: RootDBState["settings"]
-	schoolLogo: RootDBState["assets"]["schoolLogo"]
+	students: RootDBState['students']
+	classes: RootDBState['classes']
+	settings: RootDBState['settings']
+	schoolLogo: RootDBState['assets']['schoolLogo']
 	addPayments: (payments: PaymentAddItem[]) => void
 }
 
@@ -139,7 +199,7 @@ interface S {
 
 	loading: boolean
 	percentage: number
-	payments: ChartProps["payments"]
+	payments: ChartProps['payments']
 	total_student_debts: StudentDebtMap
 	total_debts: {
 		PAID: number
@@ -147,12 +207,9 @@ interface S {
 		FORGIVEN: number
 		SCHOLARSHIP: number
 	}
-
 }
 
-interface routeInfo {
-
-}
+interface routeInfo {}
 
 type StudentDebtMap = {
 	[id: string]: {
@@ -169,33 +226,36 @@ type PaymentSingleMap = {
 type propTypes = RouteComponentProps<routeInfo> & P
 
 class FeeAnalytics extends Component<propTypes, S> {
-
 	former: Former
 	background_calculation: NodeJS.Timeout
 
 	constructor(props: propTypes) {
 		super(props)
 
-		const parsed_query = queryString.parse(this.props.location.search);
+		const parsed_query = queryString.parse(this.props.location.search)
 
-		const sd_param = parsed_query.start_date || ""
-		const ed_param = parsed_query.end_date || ""
-		const period = parsed_query.period || ""
+		const sd_param = parsed_query.start_date || ''
+		const ed_param = parsed_query.end_date || ''
+		const period = parsed_query.period || ''
 
-		const start_date = sd_param !== "" ? moment(sd_param, "MM-DD-YYYY").unix() * 1000 : moment().subtract(1, 'year').unix() * 1000
-		const end_date = ed_param !== "" ? moment(ed_param, "MM-DD-YYYY").unix() * 1000 : moment().unix() * 1000
+		const start_date =
+			sd_param !== ''
+				? moment(sd_param, 'MM-DD-YYYY').unix() * 1000
+				: moment().subtract(1, 'year').unix() * 1000
+		const end_date =
+			ed_param !== '' ? moment(ed_param, 'MM-DD-YYYY').unix() * 1000 : moment().unix() * 1000
 
 		this.state = {
-			filterText: "",
+			filterText: '',
 			chartFilter: {
 				paid: true,
 				forgiven: true,
 				pending: true,
-				total: true
+				total: true,
 			},
-			classFilter: "",
+			classFilter: '',
 			is_fee_filter: false,
-			selected_period: period !== "" ? period.toString() : "Monthly",
+			selected_period: period !== '' ? period.toString() : 'Monthly',
 			start_date,
 			end_date,
 
@@ -207,15 +267,15 @@ class FeeAnalytics extends Component<propTypes, S> {
 				PAID: 0,
 				OWED: 0,
 				FORGIVEN: 0,
-				SCHOLARSHIP: 0
-			}
+				SCHOLARSHIP: 0,
+			},
 		}
 
 		this.former = new Former(this, [])
 	}
 
-
-	calculateDebt = ({ SUBMITTED, FORGIVEN, OWED, SCHOLARSHIP }: Payment) => SUBMITTED + FORGIVEN + SCHOLARSHIP - OWED;
+	calculateDebt = ({ SUBMITTED, FORGIVEN, OWED, SCHOLARSHIP }: Payment) =>
+		SUBMITTED + FORGIVEN + SCHOLARSHIP - OWED
 
 	componentDidMount() {
 		// first update fees
@@ -226,97 +286,98 @@ class FeeAnalytics extends Component<propTypes, S> {
 
 		const filtered_students = this.filterPropsStudents()
 
-		checkDuesAsync(filtered_students)
-			.then(nextPayments => {
-				console.log('done computing dues', (new Date().getTime()) - s1)
-				if (nextPayments.length > 0) {
-					addPayments(nextPayments)
-				}
-			})
+		checkDuesAsync(filtered_students).then((nextPayments) => {
+			console.log('done computing dues', new Date().getTime() - s1)
+			if (nextPayments.length > 0) {
+				addPayments(nextPayments)
+			}
+		})
 
 		this.calculate()
-
 	}
 
 	onStateChange = () => {
-
-		const start_date = moment(this.state.start_date).format("MM-DD-YYYY")
-		const end_date = moment(this.state.end_date).format("MM-DD-YYYY")
+		const start_date = moment(this.state.start_date).format('MM-DD-YYYY')
+		const end_date = moment(this.state.end_date).format('MM-DD-YYYY')
 		const period = this.state.selected_period
 
 		const url = '/analytics/fees'
 		const params = `start_date=${start_date}&end_date=${end_date}&period=${period}`
 
-		window.history.replaceState(this.state, "Fee Analytics", `${url}?${params}`)
+		window.history.replaceState(this.state, 'Fee Analytics', `${url}?${params}`)
 		this.calculate()
 	}
 
 	UNSAFE_componentWillReceiveProps(nextProps: propTypes) {
+		const parsed_query = queryString.parse(nextProps.location.search)
 
-		const parsed_query = queryString.parse(nextProps.location.search);
-
-		const sd_param = parsed_query.start_date || ""
-		const ed_param = parsed_query.end_date || ""
-		const period = parsed_query.period || ""
+		const sd_param = parsed_query.start_date || ''
+		const ed_param = parsed_query.end_date || ''
+		const period = parsed_query.period || ''
 
 		// set defaults if params are not passed
-		const start_date = sd_param !== "" ? moment(sd_param, "MM-DD-YYYY").unix() * 1000 : moment().subtract(1, 'year').unix() * 1000
-		const end_date = ed_param !== "" ? moment(ed_param, "MM-DD-YYYY").unix() * 1000 : moment().unix() * 1000
-		const selected_period = period !== "" ? period.toString() : ""
+		const start_date =
+			sd_param !== ''
+				? moment(sd_param, 'MM-DD-YYYY').unix() * 1000
+				: moment().subtract(1, 'year').unix() * 1000
+		const end_date =
+			ed_param !== '' ? moment(ed_param, 'MM-DD-YYYY').unix() * 1000 : moment().unix() * 1000
+		const selected_period = period !== '' ? period.toString() : ''
 
 		this.setState({
 			start_date,
 			end_date,
-			selected_period
+			selected_period,
 		})
 
 		const { addPayments } = nextProps
 
 		const filtered_students = this.filterPropsStudents()
 
-		checkDuesAsync(filtered_students)
-			.then(nextPayments => {
-				if (nextPayments.length > 0) {
-					addPayments(nextPayments)
-				}
-			})
+		checkDuesAsync(filtered_students).then((nextPayments) => {
+			if (nextPayments.length > 0) {
+				addPayments(nextPayments)
+			}
+		})
 
 		this.calculate()
-
 	}
 
 	calculate = () => {
+		const s1 = new Date().getTime()
+		console.log('calculating...')
 
-		const s1 = new Date().getTime();
-		console.log("calculating...")
-
-		let i = 0;
+		let i = 0
 
 		clearTimeout(this.background_calculation)
 		this.setState({
-			loading: true
+			loading: true,
 		})
 
-		let total_paid = 0;
-		let total_owed = 0;
-		let total_forgiven = 0;
-		let total_scholarship = 0;
-		const payments = {} as ChartProps["payments"];
-		const total_student_debts = {} as StudentDebtMap;
-		let total_debts = { PAID: total_paid, OWED: total_owed, FORGIVEN: total_forgiven, SCHOLARSHIP: total_scholarship }; //Need a default otherwise throws an error when logged in for the first time
+		let total_paid = 0
+		let total_owed = 0
+		let total_forgiven = 0
+		let total_scholarship = 0
+		const payments = {} as ChartProps['payments']
+		const total_student_debts = {} as StudentDebtMap
+		let total_debts = {
+			PAID: total_paid,
+			OWED: total_owed,
+			FORGIVEN: total_forgiven,
+			SCHOLARSHIP: total_scholarship,
+		} //Need a default otherwise throws an error when logged in for the first time
 
 		const temp_sd = moment(this.state.start_date)
 		const temp_ed = moment(this.state.end_date)
-		const period_format = this.state.selected_period === "Daily" ? "DD/MM/YYYY" : "MM/YYYY"
+		const period_format = this.state.selected_period === 'Daily' ? 'DD/MM/YYYY' : 'MM/YYYY'
 
 		const student_list = this.filterPropsStudents()
 
 		const reducify = () => {
-
 			const interval = Math.floor(student_list.length / 10)
 			if (i % interval === 0) {
 				this.setState({
-					percentage: (i / student_list.length) * 100
+					percentage: (i / student_list.length) * 100,
 				})
 			}
 
@@ -324,59 +385,70 @@ class FeeAnalytics extends Component<propTypes, S> {
 			if (i >= student_list.length) {
 				// we're done
 				const s2 = new Date().getTime()
-				console.log("DONE CALCULATING", s2 - s1)
+				console.log('DONE CALCULATING', s2 - s1)
 				return this.setState({
 					loading: false,
 					payments,
 					total_student_debts,
 					total_debts,
-					percentage: 0
+					percentage: 0,
 				})
 			}
 
-			const student = student_list[i];
-			const sid = student.id;
+			const student = student_list[i]
+			const sid = student.id
 
-			i += 1;
+			i += 1
 
 			const debt = { OWED: 0, SUBMITTED: 0, FORGIVEN: 0, SCHOLARSHIP: 0 }
 
 			for (const pid in student.payments || {}) {
-				const payment = student.payments[pid];
+				const payment = student.payments[pid]
 
-				if (!(moment(payment.date).isSameOrAfter(temp_sd, "day") && moment(payment.date).isSameOrBefore(temp_ed, "day"))) {
+				if (
+					!(
+						moment(payment.date).isSameOrAfter(temp_sd, 'day') &&
+						moment(payment.date).isSameOrBefore(temp_ed, 'day')
+					)
+				) {
 					continue
 				}
 
 				// some payment.amount has type string
-				// @ts-ignore 
-				const amount = typeof (payment.amount) === "string" ? parseFloat(payment.amount) : payment.amount
+				// @ts-ignore
+				const amount =
+					typeof payment.amount === 'string' ? parseFloat(payment.amount) : payment.amount
 
-				const period_key = moment(payment.date).format(period_format);
-				const period_debt = payments[period_key] || { OWED: 0, SUBMITTED: 0, FORGIVEN: 0, SCHOLARSHIP: 0 }
+				const period_key = moment(payment.date).format(period_format)
+				const period_debt = payments[period_key] || {
+					OWED: 0,
+					SUBMITTED: 0,
+					FORGIVEN: 0,
+					SCHOLARSHIP: 0,
+				}
 
-				// some schools, intentionly added some null payments' amounts through student ledger 
+				// some schools, intentionly added some null payments' amounts through student ledger
 				// which causing null values in amount having type owed, mostly were scholarships
 				// check is added in the student ledger page, so this check for past payments
 				if (!isNaN(amount)) {
 					// for 'scholarship', payment has also type OWED and negative amount
 					if (amount < 0) {
 						const new_amount = Math.abs(amount)
-						debt["SCHOLARSHIP"] += new_amount
-						period_debt["SCHOLARSHIP"] += new_amount
+						debt['SCHOLARSHIP'] += new_amount
+						period_debt['SCHOLARSHIP'] += new_amount
 					} else {
 						debt[payment.type] += amount
 						period_debt[payment.type] += amount
 					}
 
-					payments[period_key] = period_debt;
+					payments[period_key] = period_debt
 				}
 			}
 
-			total_paid += debt.SUBMITTED;
-			total_owed += debt.OWED;
-			total_forgiven += debt.FORGIVEN;
-			total_scholarship += debt.SCHOLARSHIP;
+			total_paid += debt.SUBMITTED
+			total_owed += debt.OWED
+			total_forgiven += debt.FORGIVEN
+			total_scholarship += debt.SCHOLARSHIP
 
 			if (student.FamilyID) {
 				const existing = total_student_debts[student.FamilyID]
@@ -387,34 +459,42 @@ class FeeAnalytics extends Component<propTypes, S> {
 							OWED: existing.debt.OWED + debt.OWED,
 							SUBMITTED: existing.debt.SUBMITTED + debt.SUBMITTED,
 							FORGIVEN: existing.debt.FORGIVEN + debt.FORGIVEN,
-							SCHOLARSHIP: existing.debt.SCHOLARSHIP + debt.SCHOLARSHIP
+							SCHOLARSHIP: existing.debt.SCHOLARSHIP + debt.SCHOLARSHIP,
 						},
-						familyId: student.FamilyID
+						familyId: student.FamilyID,
 					}
 				} else {
-					total_student_debts[student.FamilyID] = { student, debt, familyId: student.FamilyID }
+					total_student_debts[student.FamilyID] = {
+						student,
+						debt,
+						familyId: student.FamilyID,
+					}
 				}
 			} else {
-				total_student_debts[sid] = { student, debt };
+				total_student_debts[sid] = { student, debt }
 			}
 
-			total_debts = { PAID: total_paid, OWED: total_owed, FORGIVEN: total_forgiven, SCHOLARSHIP: total_scholarship }
+			total_debts = {
+				PAID: total_paid,
+				OWED: total_owed,
+				FORGIVEN: total_forgiven,
+				SCHOLARSHIP: total_scholarship,
+			}
 
-			this.background_calculation = setTimeout(reducify, 0);
-
+			this.background_calculation = setTimeout(reducify, 0)
 		}
 
 		this.background_calculation = setTimeout(reducify, 0)
-
 	}
 
 	filterPropsStudents = () => {
-		return Object.values(this.props.students)
-			.filter(student => student && student.id && student.Name && student.Active && student.section_id)
+		return Object.values(this.props.students).filter(
+			(student) =>
+				student && student.id && student.Name && student.Active && student.section_id
+		)
 	}
 
 	render() {
-
 		const chunkSize = 22
 
 		// first make sure all students payments have been calculated... (this is for dues)
@@ -423,154 +503,219 @@ class FeeAnalytics extends Component<propTypes, S> {
 		// who owes it, and how much
 		// graph of paid vs due per month.
 
-		const period_format = this.state.selected_period === "Daily" ? "DD/MM/YYYY" : "MM/YYYY"
+		const period_format = this.state.selected_period === 'Daily' ? 'DD/MM/YYYY' : 'MM/YYYY'
 
 		const items = Object.values(this.state.total_student_debts)
-			.filter(({ student, debt }) => student.id !== undefined && student.Phone !== undefined && (student.tags === undefined || !student.tags["PROSPECTIVE"]) &&
-				(this.state.classFilter === "" || student.section_id === this.state.classFilter) &&
-				student.Name.toUpperCase().includes(this.state.filterText.toUpperCase()) && this.calculateDebt(debt) < 0
+			.filter(
+				({ student, debt }) =>
+					student.id !== undefined &&
+					student.Phone !== undefined &&
+					(student.tags === undefined || !student.tags['PROSPECTIVE']) &&
+					(this.state.classFilter === '' ||
+						student.section_id === this.state.classFilter) &&
+					student.Name.toUpperCase().includes(this.state.filterText.toUpperCase()) &&
+					this.calculateDebt(debt) < 0
 			)
 			.sort((a, b) => this.calculateDebt(a.debt) - this.calculateDebt(b.debt))
 
 		const sections = Object.values(getSectionsFromClasses(this.props.classes))
 
-		return this.state.loading ? <ProgressBar percentage={this.state.percentage} /> : <div className="fees-analytics">
+		return this.state.loading ? (
+			<ProgressBar percentage={this.state.percentage} />
+		) : (
+			<div className="fees-analytics">
+				<div className="no-print" style={{ marginRight: '10px' }}>
+					<div className="divider">Payments over Time</div>
 
-			<div className="no-print" style={{ marginRight: "10px" }}>
-				<div className="divider">Payments over Time</div>
+					<div className="btn-filter-toggle row">
+						<div
+							className="button green"
+							onClick={() =>
+								this.setState({ is_fee_filter: !this.state.is_fee_filter })
+							}>
+							Show Filters
+						</div>
+					</div>
+					{this.state.is_fee_filter && (
+						<div className="section form">
+							<div className="row">
+								<label> Start Date </label>
+								<input
+									type="date"
+									onChange={this.former.handle(
+										['start_date'],
+										() => true,
+										this.onStateChange
+									)}
+									value={moment(this.state.start_date).format('YYYY-MM-DD')}
+									max={moment().format('YYYY-MM-DD')}
+								/>
+							</div>
+							<div className="row">
+								<label> End Date </label>
+								<input
+									type="date"
+									onChange={this.former.handle(
+										['end_date'],
+										() => true,
+										this.onStateChange
+									)}
+									value={moment(this.state.end_date).format('YYYY-MM-DD')}
+									max={moment().format('YYYY-MM-DD')}
+								/>
+							</div>
 
-				<div className="btn-filter-toggle row">
-					<div className="button green" onClick={() => this.setState({ is_fee_filter: !this.state.is_fee_filter })}>Show Filters</div>
+							<div className="row">
+								<label> Fee Period </label>
+								<select
+									{...this.former.super_handle(
+										['selected_period'],
+										() => true,
+										this.onStateChange
+									)}>
+									<option value="Daily">Daily</option>
+									<option value="Monthly" selected>
+										Monthly
+									</option>
+								</select>
+							</div>
+						</div>
+					)}
+
+					<FeesChart
+						payments={this.state.payments}
+						filter={this.state.chartFilter}
+						date_format={period_format}
+					/>
 				</div>
-				{this.state.is_fee_filter && <div className="section form">
-					<div className="row">
-						<label> Start Date </label>
-						<input type="date"
-							onChange={this.former.handle(["start_date"], () => true, this.onStateChange)}
-							value={moment(this.state.start_date).format("YYYY-MM-DD")}
-							max={moment().format("YYYY-MM-DD")} />
-					</div>
-					<div className="row">
-						<label> End Date </label>
-						<input type="date"
-							onChange={this.former.handle(["end_date"], () => true, this.onStateChange)}
-							value={moment(this.state.end_date).format("YYYY-MM-DD")}
-							max={moment().format("YYYY-MM-DD")} />
+
+				<div className="no-print checkbox-container">
+					<div className="chart-checkbox" style={{ color: '#93d0c5' }}>
+						<input
+							type="checkbox"
+							{...this.former.super_handle(['chartFilter', 'paid'])}
+						/>
+						Paid
 					</div>
 
-					<div className="row">
-						<label> Fee Period </label>
-						<select {...this.former.super_handle(["selected_period"], () => true, this.onStateChange)}>
-							<option value="Daily">Daily</option>
-							<option value="Monthly" selected>Monthly</option>
+					<div className="chart-checkbox" style={{ color: '#939292' }}>
+						<input
+							type="checkbox"
+							{...this.former.super_handle(['chartFilter', 'forgiven'])}
+						/>
+						Forgiven
+					</div>
+
+					<div className="chart-checkbox" style={{ color: '#ff6b68' }}>
+						<input
+							type="checkbox"
+							{...this.former.super_handle(['chartFilter', 'pending'])}
+						/>
+						Pending
+					</div>
+
+					<div className="chart-checkbox" style={{ color: '#74aced' }}>
+						<input
+							type="checkbox"
+							{...this.former.super_handle(['chartFilter', 'total'])}
+						/>
+						Total
+					</div>
+				</div>
+
+				<FeesTable
+					payments={this.state.payments}
+					total_debts={this.state.total_debts}
+					date_format={period_format}
+				/>
+
+				<div className="divider no-print">Students with Payments Outstanding</div>
+				<div className="section no-print">
+					<div className="no-print row">
+						<input
+							className="search-bar"
+							type="text"
+							{...this.former.super_handle(['filterText'])}
+							placeholder="search"
+						/>
+						<select
+							{...this.former.super_handle(['classFilter'])}
+							style={{ marginBottom: '10px' }}>
+							<option value=""> Select Class </option>
+							{sections.map((s) => {
+								return (
+									<option value={s.id} key={s.id}>
+										{' '}
+										{s.namespaced_name}
+									</option>
+								)
+							})}
 						</select>
 					</div>
-				</div>}
-
-				<FeesChart
-					payments={this.state.payments}
-					filter={this.state.chartFilter}
-					date_format={period_format} />
-			</div>
-
-			<div className="no-print checkbox-container">
-
-				<div className="chart-checkbox" style={{ color: "#93d0c5" }}>
-					<input
-						type="checkbox"
-						{...this.former.super_handle(["chartFilter", "paid"])}
-					/>
-				Paid
-			</div>
-
-				<div className="chart-checkbox" style={{ color: "#939292" }}>
-					<input
-						type="checkbox"
-						{...this.former.super_handle(["chartFilter", "forgiven"])}
-					/>
-				Forgiven
-			</div>
-
-				<div className="chart-checkbox" style={{ color: "#ff6b68" }}>
-					<input
-						type="checkbox"
-						{...this.former.super_handle(["chartFilter", "pending"])}
-					/>
-				Pending
-			</div>
-
-				<div className="chart-checkbox" style={{ color: "#74aced" }}>
-					<input
-						type="checkbox"
-						{...this.former.super_handle(["chartFilter", "total"])}
-					/>
-				Total
-			</div>
-
-			</div>
-
-			<FeesTable
-				payments={this.state.payments}
-				total_debts={this.state.total_debts}
-				date_format={period_format} />
-
-			<div className="divider no-print">Students with Payments Outstanding</div>
-			<div className="section no-print">
-
-				<div className="no-print row">
-					<input
-						className="search-bar"
-						type="text"
-						{...this.former.super_handle(["filterText"])}
-						placeholder="search"
-					/>
-					<select {...this.former.super_handle(["classFilter"])} style={{ marginBottom: "10px" }}>
-						<option value=""> Select Class </option>
-						{
-							sections
-								.map(s => {
-									return <option value={s.id} key={s.id}> {s.namespaced_name}</option>
-								})
-						}
-					</select>
-				</div>
-				<div className="table row">
-					<label><b>Name</b></label>
-					<label><b>Phone</b></label>
-					<label><b>Amount</b></label>
-				</div>
-				{
-					items.map(({ student, debt, familyId }) => <div className="table row" key={student.id}>
-						{
-							familyId ? <Link to={`/student/${student.id}/payment`}>{familyId}(F)</Link> :
+					<div className="mis-table row">
+						<label>
+							<b>Name</b>
+						</label>
+						<label>
+							<b>Phone</b>
+						</label>
+						<label>
+							<b>Amount</b>
+						</label>
+					</div>
+					{items.map(({ student, debt, familyId }) => (
+						<div className="mis-table row" key={student.id}>
+							{familyId ? (
+								<Link to={`/student/${student.id}/payment`}>{familyId}(F)</Link>
+							) : (
 								<Link to={`/student/${student.id}/payment`}>{student.Name}</Link>
-						}
-						<div>{student.Phone ? student.Phone : "-"}</div>
-						<div style={this.calculateDebt(debt) >= 1 ? { color: "#5ecdb9" } : { color: "#fc6171" }} > {numberWithCommas(-1 * this.calculateDebt(debt))}</div>
-					</div>)
+							)}
+							<div>{student.Phone ? student.Phone : '-'}</div>
+							<div
+								style={
+									this.calculateDebt(debt) >= 1
+										? { color: '#5ecdb9' }
+										: { color: '#fc6171' }
+								}>
+								{' '}
+								{numberWithCommas(-1 * this.calculateDebt(debt))}
+							</div>
+						</div>
+					))}
+					<div
+						className="print button"
+						onClick={() => window.print()}
+						style={{ marginTop: '10px' }}>
+						Print
+					</div>
+				</div>
+
+				{
+					// for first table, Sr. no will start from 1,
+					// for other tables, Sr. no will start from chunkSize * index
+					// here's "index" representing table (chunk) no.
+					chunkify(items, chunkSize).map((itemsChunk: any, index: number) => (
+						<OutstandingFeePrintableList
+							key={index}
+							items={itemsChunk}
+							chunkSize={index === 0 ? 0 : chunkSize * index}
+							schoolName={this.props.settings.schoolName}
+							sections={sections}
+						/>
+					))
 				}
-				<div className="print button" onClick={() => window.print()} style={{ marginTop: "10px" }}>Print</div>
 			</div>
-
-			{	// for first table, Sr. no will start from 1,
-				// for other tables, Sr. no will start from chunkSize * index
-				// here's "index" representing table (chunk) no.
-				chunkify(items, chunkSize)
-					.map((itemsChunk: any, index: number) => <OutstandingFeePrintableList key={index}
-						items={itemsChunk}
-						chunkSize={index === 0 ? 0 : chunkSize * index}
-						schoolName={this.props.settings.schoolName}
-						sections={sections} />)
-			}
-
-		</div>
+		)
 	}
 }
-export default connect((state: RootReducerState) => ({
-	students: state.db.students,
-	settings: state.db.settings,
-	classes: state.db.classes,
-	schoolLogo: state.db.assets ? state.db.assets.schoolLogo || "" : ""
-}), (dispatch: Function) => ({
-	addPayments: (payments: PaymentAddItem[]) => dispatch(addMultiplePayments(payments))
-}))(FeeAnalytics)
+export default connect(
+	(state: RootReducerState) => ({
+		students: state.db.students,
+		settings: state.db.settings,
+		classes: state.db.classes,
+		schoolLogo: state.db.assets ? state.db.assets.schoolLogo || '' : '',
+	}),
+	(dispatch: Function) => ({
+		addPayments: (payments: PaymentAddItem[]) => dispatch(addMultiplePayments(payments)),
+	})
+)(FeeAnalytics)

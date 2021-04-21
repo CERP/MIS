@@ -1,4 +1,4 @@
-.expense-page{
+.expense-page {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -24,7 +24,7 @@
 	max-height: 50vh;
 }
 
-.expenses .payment-history.section .table.row {
+.expenses .payment-history.section .mis-table.row {
 	min-width: 600px;
 }
 

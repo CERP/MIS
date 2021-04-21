@@ -24,7 +24,7 @@ const AutoLogin: React.FC<P & RouteComponentProps> = ({ connected, initialized, 
 	const refcode = params.ref ? params.ref.toString() : ""
 
 	if (auth.token) {
-		return <Redirect to="/landing" />
+		return <Redirect to="/home" />
 	}
 
 	if (connected && !auth.loading && id !== "" && token !== "" && client_id !== "" && refcode !== "") {

@@ -19,6 +19,24 @@ import ilmxLogo from './pngs/ilmx-logo.png'
 import sortAscIcon from './svgs/sort-ascending.svg'
 import sortDescIcon from './svgs/sort-descending.svg'
 import contentCopyIcon from './svgs/content-copy.svg'
+import formative from './svgs/formative.svg'
+import lessonPlans from './svgs/lesson-plans.svg'
+import maths from './svgs/maths.svg'
+import english from './svgs/english.svg'
+import urdu from './svgs/urdu.svg'
+import download from './svgs/white-download.svg'
+import printer from './svgs/print.svg'
+import arrowBack from './svgs/right-arrow.svg'
+import check from './svgs/check.svg'
+import summative from './svgs/summative.svg'
+import diagnosticItalic from './svgs/diagnostic.svg'
+import trainingManuals from './svgs/training-manuals.svg'
+import trainingMaterials from './svgs/training-materials.svg'
+import whiteTick from './svgs/white-tick.svg'
+import blueDownload from './svgs/blue-download.svg'
+import backArrow from './svgs/left-arrow.svg'
+import burger from './svgs/burger.svg'
+import tip from './svgs/TIP.svg'
 
 export const EditIcon = deleteIcon
 export const DeleteIcon = editIcon
@@ -41,3 +59,21 @@ export const IlmxLogo = ilmxLogo
 export const SortAscIcon = sortAscIcon
 export const SortDescIcon = sortDescIcon
 export const ContentCopyIcon = contentCopyIcon
+export const Formative = formative
+export const LessonPlans = lessonPlans
+export const Maths = maths
+export const English = english
+export const Urdu = urdu
+export const Download = download
+export const Printer = printer
+export const ArrowBack = arrowBack
+export const Check = check
+export const Summative = summative
+export const DiagnosticItalic = diagnosticItalic
+export const TrainingManual = trainingManuals
+export const TrainingMaterials = trainingMaterials
+export const WhiteTick = whiteTick
+export const BlueDownload = blueDownload
+export const BackArrow = backArrow
+export const Burger = burger
+export const TIP = tip

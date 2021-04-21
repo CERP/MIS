@@ -84,7 +84,7 @@ class PromotePage extends Component {
 				</select>
 
 				<div className="list">
-					<div className="table row" style={{ fontWeight: "bold" }}>
+					<div className="mis-table row" style={{ fontWeight: "bold" }}>
 						<div>Student</div>
 						<div>Current Class</div>
 						<div>Future Class</div>
@@ -96,7 +96,7 @@ class PromotePage extends Component {
 						.map(student => {
 							const s = sortedSections.find(x => x.id === student.section_id);
 
-							return <div className="table row" key={student.id}>
+							return <div className="mis-table row" key={student.id}>
 								<Link to={`/student/${student.id}/profile`}>{student.Name}</Link>
 								<div>{s ? s.namespaced_name : "No Class"}</div>
 								<select {...this.Former.super_handle(["promotions", student.id])}>

@@ -48,6 +48,9 @@ const blankTeacher = (isFirst = false): MISTeacher => ({
 		expense: false,
 		prospective: false,
 		family: false
+	},
+	targeted_instruction: {
+		curriculum: {} as TIPTeacherCurriculum
 	}
 })
 
@@ -92,7 +95,7 @@ class CreateTeacher extends Component<propTypes, S> {
 			profile: {
 				...faculty || blankTeacher(this.isFirst()),
 				HasLogin: this.isFirst() || this.isNew() ? true : faculty && faculty.HasLogin,
-				permissions: this.isFirst() || this.isNew() ? blankTeacher().permissions : faculty && faculty.permissions
+				permissions: (this.isFirst() || this.isNew() || !faculty.permissions) ? blankTeacher().permissions : faculty && faculty.permissions
 			},
 			redirect: false,
 			banner: {
@@ -211,7 +214,7 @@ class CreateTeacher extends Component<propTypes, S> {
 			setTimeout(() => {
 				this.setState({
 					...this.state,
-					redirect: '/landing'
+					redirect: '/home'
 				})
 			}, 2000)
 		}
@@ -280,7 +283,7 @@ class CreateTeacher extends Component<propTypes, S> {
 	changeTeacherPermissions = () => {
 
 		return <>
-			{<div className="table">
+			{<div className="mis-table">
 				<div className="row">
 					<label> Allow teacher to view Setup Page ? </label>
 					<select {...this.former.super_handle(["permissions", "setupPage"])}>

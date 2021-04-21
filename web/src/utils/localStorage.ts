@@ -48,7 +48,8 @@ const initState: RootReducerState = {
 		ilmx: {
 			events: {},
 			lessons: {}
-		}
+		},
+		onboarding: {} as MISOnboarding
 	},
 	// this part of the tree i want to obscure.
 	// but will get to that later
@@ -75,7 +76,7 @@ const initState: RootReducerState = {
 	targeted_instruction: {
 		tests: {},
 		slo_mapping: {},
-		curriculum: {}
+		curriculum: {} as TIPCurriculum
 	}
 }
 

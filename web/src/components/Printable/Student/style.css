@@ -1,166 +1,167 @@
 /* standard credit card size */
 /* https://helpdesk.rs2tech.com/kb/article/317-id-card-sizes/ */
 .student-card {
-    background-color: white;
-    border-radius: 5px;
-    border: 2px solid;
-    width: 85.6mm;
-    height: 54mm;
+	background-color: white;
+	border-radius: 5px;
+	border: 2px solid;
+	width: 85.6mm;
+	height: 54mm;
 }
 .card-school-title {
-    padding: 5px;
-    margin: 0px;
-    font-weight: bold;
-    font-size: 1.2rem;
-    white-space: normal;
-    word-break: normal;
+	padding: 5px;
+	margin: 0px;
+	font-weight: bold;
+	font-size: 1.2rem;
+	white-space: normal;
+	word-break: normal;
 }
 .card-school-logo {
-    border-radius: 2px;
-    width: 54px;
-    height: 54px;
+	border-radius: 2px;
+	width: 54px;
+	height: 54px;
 }
 .card-school-info {
-    padding: 5px 5px;
-    padding-bottom: 0px;
+	padding: 5px 5px;
+	padding-bottom: 0px;
 }
 .card-student-profile {
-    width: 100px;
-    height: 100px;
-    border: 0.5px solid;
+	width: 100px;
+	height: 100px;
+	border: 0.5px solid;
 }
 .card-student-info {
-    padding: 0 5px;
-    padding-top: 0px;
-    white-space: normal;
-    word-break: normal;
+	padding: 0 5px;
+	padding-top: 0px;
+	white-space: normal;
+	word-break: normal;
 }
 .card-student-info div {
-    font-weight: bold;
-    margin: 0px;
+	font-weight: bold;
+	margin: 0px;
 }
 .card-student-info span {
-    font-weight: normal;
+	font-weight: normal;
 }
 .card-signature {
-    border-top: 1px solid;
-    font-size: 0.7rem;
-    width: fit-content;
+	border-top: 1px solid;
+	font-size: 0.7rem;
+	width: fit-content;
 }
 .card-valid-date {
-    font-size: 0.8rem;
-    text-align: right;
-    font-weight: bold;
+	font-size: 0.8rem;
+	text-align: right;
+	font-weight: bold;
 }
 .card-row {
-    display: flex;
+	display: flex;
 }
 .student-card .card-row.first {
 	margin-top: 4px;
-    padding: 0px 5px;
+	padding: 0px 5px;
 }
 .student-card .card-row.last {
-    padding: 0px 5px;
+	padding: 0px 5px;
 }
 .card-column {
-    flex: 1;
+	flex: 1;
 }
 .card-grid {
-    display: grid;
-    grid-template-columns: repeat(2,1fr);
-    grid-gap: 50px;
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	grid-gap: 50px;
 }
 .student-id-card.print-table table {
-    /* margin-bottom: 0.372cm; */
-    margin-top: 15mm;
-    margin-bottom: 16.7585mm;
+	/* margin-bottom: 0.372cm; */
+	margin-top: 15mm;
+	margin-bottom: 16.7585mm;
 }
 .student-info-list.print-table table {
-    margin-bottom: 6.10mm;
+	margin-bottom: 6.1mm;
 }
 .student-info-list.print-table table tbody {
-    font-size: 0.85rem;
+	font-size: 0.85rem;
 }
 .student-info-list.print-table .row-sr {
-    width: 4%;
+	width: 4%;
 }
 
 .admission-form {
-    width: 95%;
+	width: 95%;
 }
 .admission-form .header-section {
-    font-weight: bold;
-    text-align: center;
-    margin-top: 30px;
+	font-weight: bold;
+	text-align: center;
+	margin-top: 30px;
 }
 .admission-form .header-body {
-    display: flex;
-    border: 1px solid black;
+	display: flex;
+	border: 1px solid black;
 }
 .admission-form .logo-container {
-    width: 20%;
+	width: 20%;
 }
 .admission-form .header-style {
-    font-family: Georgia, 'Times New Roman', Times, serif;
-    padding-bottom: 20px;
+	font-family: Georgia, 'Times New Roman', Times, serif;
+	padding-bottom: 20px;
 }
 .admission-form .header-style .school-title {
-    margin-bottom: 10px;
-    font-size: 1.4rem;
-    text-transform: uppercase;
+	margin-bottom: 10px;
+	font-size: 1.4rem;
+	text-transform: uppercase;
 }
 .admission-form .header-style .address {
-    margin-bottom: 4px;
+	margin-bottom: 4px;
 }
 .admission-form .admission-title {
-    font-weight: bold;
-    font-size: 1.4rem;
-    text-decoration: underline;
+	font-weight: bold;
+	font-size: 1.4rem;
+	text-decoration: underline;
 }
 .admission-form fieldset {
-    border-radius: 0;
-    border: 1px solid black;
+	border-radius: 0;
+	border: 1px solid black;
 }
 .admission-form fieldset .row {
-    justify-content: space-between;
-    margin-bottom: 4mm;
+	justify-content: space-between;
+	margin-bottom: 4mm;
 }
 .admission-form fieldset .row .gender {
-  display: flex;
-  border-bottom: none;   
+	display: flex;
+	border-bottom: none;
 }
 .admission-form fieldset .row .gender input {
-    margin-top: 5px;
+	margin-top: 5px;
 }
 .admission-form fieldset .row div {
-    width: 50%;
-    border-bottom: 1px dotted black;
+	width: 50%;
+	border-bottom: 1px dotted black;
 }
-.admission-form input[type="checkbox"] {
-    width: 30px;
-    height: 15px;
+.admission-form input[type='checkbox'] {
+	width: 30px;
+	height: 15px;
 }
 .admission-form .row.signature-section {
-    justify-content: space-between;
-    margin-top: 8mm;
+	justify-content: space-between;
+	margin-top: 8mm;
 }
-.admission-form .row.signature-section .left, .right {
-    border-top: 1px solid #bebebe;
-    padding: 10px 0px;
+.admission-form .row.signature-section .left,
+.right {
+	border-top: 1px solid #bebebe;
+	padding: 10px 0px;
 }
 .admission-form .student-info-card {
-    display: flex;
-    flex-direction: row ;
+	display: flex;
+	flex-direction: row;
 }
 .admission-form .student-info-card .student-info {
-    flex-direction: column;
-    width: 80%;
-    padding-right: 10px;
+	flex-direction: column;
+	width: 80%;
+	padding-right: 10px;
 }
 .admission-form .student-info-card .profile-picture {
-    flex-direction: column;
-    margin-top: 32px;
-    margin-left: 15px;
-    height: 100px;
-    width: 100px;
+	flex-direction: column;
+	margin-top: 32px;
+	margin-left: 15px;
+	height: 100px;
+	width: 100px;
 }

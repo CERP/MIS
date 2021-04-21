@@ -6,7 +6,7 @@ interface P {
 	height: number
 	width: number
 	onImageAccepted: (image_string: string) => any
-	format: "jpeg" | "png"
+	format: 'jpeg' | 'png'
 	onClose: () => void
 }
 
@@ -15,19 +15,17 @@ interface S {
 }
 
 export default class Camera extends React.Component<P, S> {
-
 	stream: Promise<MediaStream>
 	video: HTMLVideoElement
 
 	constructor(props: P) {
-		super(props);
+		super(props)
 
 		this.stream = navigator.mediaDevices.getUserMedia({
 			video: {
-				facingMode: "environment",
+				facingMode: 'environment',
 				width: { max: props.width, ideal: props.width },
-				height: { max: props.height, ideal: props.height },
-
+				height: { max: props.height, ideal: props.height }
 			}
 		})
 
@@ -37,13 +35,13 @@ export default class Camera extends React.Component<P, S> {
 	}
 
 	componentDidMount() {
-		this.stream.then(stream => this.video.srcObject = stream)
+		this.stream.then(stream => (this.video.srcObject = stream))
 	}
 
 	onCameraClick = () => {
 		const canvas = document.createElement('canvas')
-		canvas.width = this.props.width;
-		canvas.height = this.props.height;
+		canvas.width = this.props.width
+		canvas.height = this.props.height
 
 		const ctx = canvas.getContext('2d')
 		ctx.drawImage(this.video, 0, 0, canvas.width, canvas.height)
@@ -58,11 +56,14 @@ export default class Camera extends React.Component<P, S> {
 	}
 
 	onImageReject = () => {
-		this.setState({
-			image_string: undefined
-		}, () => {
-			this.stream.then(stream => this.video.srcObject = stream)
-		})
+		this.setState(
+			{
+				image_string: undefined
+			},
+			() => {
+				this.stream.then(stream => (this.video.srcObject = stream))
+			}
+		)
 	}
 
 	onImageAccept = () => {
@@ -78,25 +79,44 @@ export default class Camera extends React.Component<P, S> {
 	}
 
 	render() {
-
 		if (this.state.image_string) {
-			return <div className="camera">
-				<div className="title">Camera</div>
-				<img src={this.state.image_string} alt="camera-result" />
-				<div className="row">
-					<div className="button red" onClick={this.onImageReject}>✕</div>
-					<div className="button green" onClick={this.onImageAccept}>✓</div>
+			return (
+				<div className="camera">
+					<div className="title">Camera</div>
+					<img src={this.state.image_string} alt="camera-result" />
+					<div className="row">
+						<div className="button red" onClick={this.onImageReject}>
+							✕
+						</div>
+						<div className="button green" onClick={this.onImageAccept}>
+							✓
+						</div>
+					</div>
 				</div>
-			</div >
+			)
 		}
 
-		return <div className="camera">
-			<div className="close button red" onClick={this.props.onClose}>✕</div>
+		return (
+			<div className="camera">
+				<div className="flex flex-row justify-end">
+					<button className="tw-btn-red" onClick={this.props.onClose}>
+						✕
+					</button>
+				</div>
 
-			<div className="title">Camera</div>
-			<video id="viewfinder" ref={x => this.video = x} autoPlay={true} height={this.props.height} width={this.props.width} />
+				<div className="title">Camera</div>
+				<video
+					id="viewfinder"
+					ref={x => (this.video = x)}
+					autoPlay={true}
+					height={this.props.height}
+					width={this.props.width}
+				/>
 
-			<div className="button blue" onClick={this.onCameraClick}>Take Picture</div>
-		</div>
+				<button className="tw-btn-blue w-full" onClick={this.onCameraClick}>
+					Take Picture
+				</button>
+			</div>
+		)
 	}
 }

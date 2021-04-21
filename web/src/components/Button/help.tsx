@@ -13,13 +13,12 @@ type PropsType = {
 }
 
 const HelpButton: React.FC<PropsType> = (props) => {
-
 	const { pathname } = window.location
 	const [toggleTutorialModal, setToggleTutorialModal] = useState(false)
 	const [ilmxUser, setIlmxUser] = useState('')
 
 	useEffect(() => {
-		const user = localStorage.getItem("user")
+		const user = localStorage.getItem('user')
 		setIlmxUser(user)
 	}, [])
 
@@ -33,20 +32,29 @@ const HelpButton: React.FC<PropsType> = (props) => {
 		showScroll()
 	}
 
-	const { title, link } = props.title && props.link ? props : ilmxUser ? getIlmxLinkForPath(pathname) : getLinkForPath(pathname)
+	const { title, link } =
+		props.title && props.link
+			? props
+			: ilmxUser
+			? getIlmxLinkForPath(pathname)
+			: getLinkForPath(pathname)
 
-	return <>
-		<img src={HelpIcon} className="help-button" onClick={toggleTutorialWindow} title={"MISchool Help"} alt="help" />
-		{
-			toggleTutorialModal && <Modal>
-				<TutorialWindow
-					title={title}
-					link={link}
-					onClose={onCloseTutorialWindow} />
-			</Modal>
-		}
-	</>
-
+	return (
+		<>
+			<img
+				src={HelpIcon}
+				className="help-button"
+				onClick={toggleTutorialWindow}
+				title={'MISchool Help'}
+				alt="help"
+			/>
+			{toggleTutorialModal && (
+				<Modal>
+					<TutorialWindow title={title} link={link} onClose={onCloseTutorialWindow} />
+				</Modal>
+			)}
+		</>
+	)
 }
 
 export default HelpButton

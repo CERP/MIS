@@ -30,6 +30,8 @@ import {
 	SIGN_UP_LOADING
 } from 'actions'
 
+import { initState } from 'utils/indexedDb'
+
 import { AnyAction } from 'redux'
 import { ActionTypes } from 'constants/index'
 
@@ -447,31 +449,35 @@ const rootReducer = (state: RootReducerState, action: AnyAction): RootReducerSta
 			ilmxLessons: { isLoading: false, hasError: false }
 		}
 
-		case "GET_TARGETED_INSTRUCTIONS": return {
-			...state,
-			targeted_instruction: {
-				tests: {},
-				slo_mapping: {},
-				curriculum: {}
-			}
-		}
-		case "GET_TARGETED_INSTRUCTION_FAILURE": return {
-			...state,
-			targeted_instruction: {
-				tests: {},
-				slo_mapping: {},
-				curriculum: {}
-			}
-		}
 		case "GET_TARGETED_INSTRUCTION_SUCCESS": return {
 			...state,
 			targeted_instruction: action.payload
 		}
+
 		case ActionTypes.ALERT_BANNER_TEXT:
 			{
 				return {
 					...state,
 					alert_banner: action.data
+				}
+			}
+		case ActionTypes.SWITCH_SCHOOL:
+
+			return {
+				...initState,
+				initialized: state.initialized,
+				connected: state.connected
+			}
+
+		case ActionTypes.UPDATE_ONBOARDING_STAGE:
+			return {
+				...state,
+				db: {
+					...state.db,
+					onboarding: {
+						...state.db.onboarding,
+						stage: action.data as MISOnboarding["stage"]
+					}
 				}
 			}
 

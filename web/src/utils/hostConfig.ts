@@ -1,5 +1,5 @@
 //@ts-ignore
-export const hostOrigin = window.api_url || "e0699303f63e.ngrok.io"
+export const hostOrigin = window.api_url || '73ad9fcc4162.ngrok.io'
 
-export const hostWSS = "wss://" + hostOrigin + "/ws"
-export const hostHTTPS = "https://" + hostOrigin
+export const hostWSS = 'wss://' + hostOrigin + '/ws'
+export const hostHTTPS = 'https://' + hostOrigin

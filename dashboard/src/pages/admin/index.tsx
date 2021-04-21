@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { getSchoolList, updateSchoolInfo, getSchoolInfo, giveTipAccess } from 'actions'
+import { getSchoolList, updateSchoolInfo, getSchoolInfo, giveTipAccess, giveTipPilotAccess } from 'actions'
 import { RouteComponentProps } from 'react-router'
 import Former from 'former'
 import { hash } from 'utils'
@@ -13,8 +13,10 @@ interface P {
 	student_info: RootReducerState["school_Info"]["student_info"]
 	meta: RootReducerState["school_Info"]["meta"]
 	targeted_instruction_access: RootReducerState["school_Info"]["targeted_instruction_access"]
+	tip_pilot: RootReducerState["school_Info"]["tip_pilot"]
 
 	giveTipAccess: (school_id: string, TIP_access: boolean) => any
+	giveTipPilotAccess: (school_id: string, tip_pilot: boolean) => any
 	getSchoolList: () => any
 	updateSchoolInfo: (school_id: string, student_limit: number, paid: boolean, trial_period: number, date: number) => any
 	getSchoolInfo: (school_id: string) => any
@@ -32,6 +34,7 @@ interface S {
 	updateMenu: boolean
 	infoMenu: boolean
 	TIP_access: boolean
+	tip_pilot: boolean
 }
 
 interface routeInfo {
@@ -57,7 +60,8 @@ class AdminActions extends Component<propTypes, S> {
 			student_limit: 0,
 			updateMenu: false,
 			infoMenu: false,
-			TIP_access: false
+			TIP_access: false,
+			tip_pilot: false
 		}
 
 		this.former = new Former(this, [])
@@ -117,7 +121,8 @@ class AdminActions extends Component<propTypes, S> {
 		if (nextProps.meta) {
 			this.setState({
 				infoMenu: true,
-				TIP_access: nextProps.targeted_instruction_access
+				TIP_access: nextProps.targeted_instruction_access,
+				tip_pilot: nextProps.tip_pilot
 			})
 		}
 	}
@@ -138,6 +143,11 @@ class AdminActions extends Component<propTypes, S> {
 
 		const { selectedSchool, TIP_access } = this.state
 		this.props.giveTipAccess(selectedSchool, TIP_access)
+	}
+
+	onSaveTipPilotInfo = () => {
+		const { selectedSchool, tip_pilot } = this.state
+		this.props.giveTipPilotAccess(selectedSchool, tip_pilot)
 	}
 
 	render() {
@@ -264,6 +274,19 @@ class AdminActions extends Component<propTypes, S> {
 				</div>
 				<div className="button save" onClick={() => this.onSaveTipInfo()}> Save </div>
 			</div>}
+			{selectedSchool && this.state.updateMenu && <div className="section form" style={{ width: "75%" }}>
+				<div className="divider"> TIP Pilot </div>
+				<div className="row">
+					<label>Access:</label>
+					<div>
+						<label className="switch">
+							<input type="checkbox" checked={this.state.tip_pilot} onChange={() => this.setState({ tip_pilot: !this.state.tip_pilot })} />
+							<span className="toggleSlider round"></span>
+						</label>
+					</div>
+				</div>
+				<div className="button save" onClick={() => this.onSaveTipPilotInfo()}> Save </div>
+			</div>}
 		</div>
 	}
 }
@@ -272,10 +295,12 @@ export default connect((state: RootReducerState) => ({
 	trial_info: state.school_Info.trial_info,
 	student_info: state.school_Info.student_info,
 	meta: state.school_Info.meta,
-	targeted_instruction_access: state.school_Info.targeted_instruction_access
+	targeted_instruction_access: state.school_Info.targeted_instruction_access,
+	tip_pilot: state.school_Info.tip_pilot
 }), (dispatch: Function) => ({
 	getSchoolList: () => dispatch(getSchoolList()),
 	giveTipAccess: (school_id: string, TIP_access: boolean) => dispatch(giveTipAccess(school_id, TIP_access)),
+	giveTipPilotAccess: (school_id: string, tip_pilot: boolean) => dispatch(giveTipPilotAccess(school_id, tip_pilot)),
 	getSchoolInfo: (school_id: string) => dispatch(getSchoolInfo(school_id)),
 	updateSchoolInfo: (school_id: string, student_limit: number, paid: boolean, trial_period: number, date: number) => dispatch(updateSchoolInfo(school_id, student_limit, paid, trial_period, date))
 }))(AdminActions)

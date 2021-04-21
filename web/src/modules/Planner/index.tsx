@@ -327,7 +327,7 @@ class Planner extends Component<propTypes, S> {
 					</div>
 				</div>
 
-				<div className="section table">
+				<div className="section mis-table">
 					<div className="row">
 						<div className="item"><b> Date </b></div>
 						<div className="item"><b> Time </b></div>

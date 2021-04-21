@@ -46,17 +46,17 @@
 }
 
 .button.PRESENT {
-	background-color: #95B8D1;
+	background-color: #95b8d1;
 	background-color: #4ec9b3;
 }
 
 .button.ABSENT {
-	background-color: #EDAFB8;
+	background-color: #edafb8;
 	background-color: #fc6171;
 }
 
 .button.LEAVE {
-	background-color: #E8DDB5;
+	background-color: #e8ddb5;
 	background-color: #aaaaaa;
 }
 
@@ -100,7 +100,6 @@
 }
 
 @media only screen and (max-width: 1024px) {
-
 	.scan-modal-div.modal-container.inner {
 		width: 40%;
 		padding: 45px 15px 25px 15px;
@@ -109,12 +108,11 @@
 	.stdName {
 		font-size: 14px;
 		font-weight: bold;
-		margin-top: 10px;		
+		margin-top: 10px;
 	}
 }
 
 @media only screen and (max-width: 768px) {
-
 	.attendance .selectors .row {
 		width: 100%;
 	}
@@ -153,7 +151,7 @@
 		width: 88%;
 		padding: 45px 15px 25px 15px;
 	}
-	
+
 	.stdName {
 		font-size: 14px;
 		font-weight: bold;

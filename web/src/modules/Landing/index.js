@@ -37,6 +37,8 @@ import IlmxRedirectModal from 'components/Ilmx/redirectModal'
 import { checkStudentDuesReturning } from 'utils/checkStudentDues'
 import IlmxLanding from './ilmxLanding'
 
+import { TIP } from 'assets/icons'
+
 /**
  * line for adding new badge just copy / paste it
  * 
@@ -45,7 +47,7 @@ import IlmxLanding from './ilmxLanding'
 
 import './style.css'
 
-class Landing extends Component {
+class Home extends Component {
 
 	constructor(props) {
 		super(props);
@@ -62,7 +64,10 @@ class Landing extends Component {
 	//They will still be able to access other components if they typed their Url e.g /attendance.
 	//Need to do something about that ..
 	componentDidMount() {
-
+			
+		// set document title to home
+		document.title = 'Home | MISchool'
+		
 		// for redirect to ilmx
 		const phone = localStorage.getItem("ilmx")
 
@@ -243,7 +248,7 @@ class Landing extends Component {
 
 	render() {
 
-		const { logout, user, students, faculty, lastSnapshot, unsyncd, package_info, alert_banner, ti_visible, targeted_instruction } = this.props;
+		const { logout, user, students, faculty, lastSnapshot, unsyncd, package_info, alert_banner, tip_visible, targeted_instruction, tip_pilot } = this.props;
 
 		const current_page = Math.floor(this.state.scroll / window.innerWidth)
 
@@ -385,69 +390,71 @@ class Landing extends Component {
 
 							<div className="page">
 								<div className="title">Actions</div>
-								<div className="row">
-									<Link to="/attendance" className="button green-shadow" style={{ backgroundImage: `url(${attendanceIcon})` }}>Attendance</Link>
-									{user.Admin ? <Link to="/teacher-attendance" className="button red-shadow" style={{ backgroundImage: `url(${teacherAttendanceIcon})` }}>Teacher Attendance</Link> : false}
-								</div>
+								{ !tip_pilot && <div>
+									<div className="row">
+										<Link to="/attendance" className="button green-shadow" style={{ backgroundImage: `url(${attendanceIcon})` }}>Attendance</Link>
+										{user.Admin ? <Link to="/teacher-attendance" className="button red-shadow" style={{ backgroundImage: `url(${teacherAttendanceIcon})` }}>Teacher Attendance</Link> : false}
+									</div>
 
-								<div className="row">
+									<div className="row">
 
-									<div className="badge-container">
+										<div className="badge-container">
+											<Link
+												to="/diary"
+												className="button purple-shadow"
+												style={{ backgroundImage: `url(${diary})` }}>
+												Diary
+									</Link>
+										</div>
+
 										<Link
-											to="/diary"
-											className="button purple-shadow"
-											style={{ backgroundImage: `url(${diary})` }}>
-											Diary
+											to="/sms" className="button red-shadow"
+											style={{ backgroundImage: `url(${smsIcon})` }}>
+											SMS
 								</Link>
 									</div>
 
-									<Link
-										to="/sms" className="button red-shadow"
-										style={{ backgroundImage: `url(${smsIcon})` }}>
-										SMS
-							</Link>
-								</div>
+									<div className="row">
+										{
+											user.Admin || teacher_fee_permission ?
+												<Link
+													to="/fee-menu"
+													className="button blue-shadow"
+													style={{ backgroundImage: `url(${feesIcon})` }}>Fees</Link>
 
-								<div className="row">
-									{
-										user.Admin || teacher_fee_permission ?
-											<Link
-												to="/fee-menu"
-												className="button blue-shadow"
-												style={{ backgroundImage: `url(${feesIcon})` }}>Fees</Link>
+												: false
+										}
+										{
+											(user.Admin) &&
+											<div
+												onClick={() => this.redirectToIlmx()}
+												className="button green-shadow"
+												style={{ backgroundImage: `url(${IlmxLogo})` }}>
+												IlmExchange
+											</div>
+										}
+									</div>
 
-											: false
-									}
-									{
-										(user.Admin) &&
-										<div
-											onClick={() => this.redirectToIlmx()}
+									<div className="row">
+
+										<Link
+											to="/reports"
+											className="button yellow-shadow"
+											style={{ backgroundImage: `url(${marksIcon})` }}>
+											Marks
+										</Link>
+
+
+										<Link
+											to="/reports-menu"
 											className="button green-shadow"
-											style={{ backgroundImage: `url(${IlmxLogo})` }}>
-											IlmExchange
-										</div>
-									}
-								</div>
+											style={{ backgroundImage: `url(${resultIcon})` }}>
+											Result Card
+										</Link>
 
-								<div className="row">
-
-									<Link
-										to="/reports"
-										className="button yellow-shadow"
-										style={{ backgroundImage: `url(${marksIcon})` }}>
-										Marks
-									</Link>
-
-
-									<Link
-										to="/reports-menu"
-										className="button green-shadow"
-										style={{ backgroundImage: `url(${resultIcon})` }}>
-										Result Card
-									</Link>
-
-								</div>
-								<div className="row">
+									</div>
+		
+									<div className="row">
 									{
 										user.Admin || teacher_fee_permission ?
 											<Link to="/analytics/fees" className="button purple-shadow" style={{ backgroundImage: `url(${analyticsIcon})` }}>Analytics</Link>
@@ -464,17 +471,17 @@ class Landing extends Component {
 											</Link>
 										</div>
 									}
-								</div>
+									</div>
+								</div>}
 								{
-									(targeted_instruction && ti_visible) &&
+									(targeted_instruction && (tip_visible || tip_pilot)) && 
 									<div className="row">
 										<Link
 											className="button yellow-shadow"
-											to="/targeted-instruction/test"
-											style={{ backgroundImage: `url(${test})` }}>
-											Tests
+											to="/targeted-instruction/"
+											style={{ backgroundImage: `url(${TIP})` }}>
+												TIP
 										</Link>
-
 									</div>
 								}
 							</div>
@@ -587,11 +594,12 @@ export default connect(state => ({
 	auth: state.auth,
 	client_id: state.client_id,
 	ilmxUser: getIlmxUser(),
-	ti_visible: state.db.targeted_instruction_access,
-	targeted_instruction: state.db.targeted_instruction
+	tip_visible: state.db.targeted_instruction_access,
+	tip_pilot: state.db.tip_pilot,
+	targeted_instruction: state.targeted_instruction
 }), dispatch => ({
 	resetTrial: () => dispatch(resetTrial()),
 	markPurchased: () => dispatch(markPurchased()),
 	logout: () => dispatch(createLogout()),
 	addMultiplePayments: (payments) => dispatch(addMultiplePayments(payments)),
-}))(Landing)
+}))(Home)

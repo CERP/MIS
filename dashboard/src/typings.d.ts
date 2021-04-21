@@ -37,6 +37,7 @@ interface RootReducerState {
 		}
 		meta?: TrialsDataRow["value"]
 		targeted_instruction_access: boolean
+		tip_pilot: boolean
 	}
 	mis_faculty: MISFaculty
 	trials: TrialsDataRow[]
@@ -78,6 +79,7 @@ interface SchoolInfoAction {
 	student_info: RootReducerState["school_Info"]["student_info"]
 	meta: TrialsDataRow["value"]
 	targeted_instruction_access: RootReducerState["school_Info"]["targeted_instruction_access"]
+	tip_pilot: RootReducerState["school_Info"]["tip_pilot"]
 }
 
 interface StudentAttendanceAction {

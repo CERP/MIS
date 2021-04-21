@@ -87,7 +87,7 @@ class SchoolLogin extends Component<PropsType, S> {
 	render() {
 
 		if (this.props.auth.faculty_id) {
-			return <Redirect to="/landing" />
+			return <Redirect to="/home" />
 		}
 
 		if (!this.props.connected) {
@@ -102,6 +102,7 @@ class SchoolLogin extends Component<PropsType, S> {
 		}
 
 		return <Layout history={this.props.history}>
+
 			<div className="login school-login">
 				<div className="title">Verify your School</div>
 				<div className="form">
@@ -131,6 +132,7 @@ class SchoolLogin extends Component<PropsType, S> {
 
 				</div>
 			</div>
+
 		</Layout>
 	}
 }

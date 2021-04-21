@@ -1,117 +1,119 @@
-@media print { 
-    
-    .print-table {
-        width: 100%;
-        margin: auto;
-    }
-    .print-table table {
-        width: 100%;
-        border-collapse: collapse;
-        table-layout: fixed;
-        border-radius: 2%;
-        white-space: nowrap;
-        margin-bottom: 2cm;
-    }
-    .print-table table caption {
-        font-size: 1.5em;
-        margin: .5em 0 .75em;
-    }
-    .print-table table tr {
-        background-color: white;
-        border: 1px solid black;
-        padding: .35em;
-        line-height: 0.5;
-    }
-    .print-table table th,
-    .print-table table td {
-        padding: .625em;
-        text-align: left;
-        border: 1px solid black;
-        white-space: nowrap;
-        overflow: hidden;
-    }
-    .print-table table th {
-        font-size: .85em;
-        text-transform: uppercase;
-        text-align: center;
-    }
-    /* outstanding fee css rules*/
-    .row-sr {
-        width: 4%;
-    }
-    .row-roll {
-        width: 5%;
-    }
-    .row-adm {
-        width: 5%;
-    }
-    .row-adm-date, .row-dob {
-        width: 6%
-    }
-    .row-amount {
-        width: 12%;
-    }
-    .row-class {
-        width: 12%;
-    }
-    .row-phone {
-        width: 8%
-    }
-    .row-name, .row-fname {
-        width: 12%;
-    }
-    /* expense module css rules*/
-    .row-quantity {
-        width: 10%;
-    }
-    .row-date {
-        width: 10%;
-    }
-    .row-deduction {
-        width: 20%;
-    }
-    .row-category {
-        width: 20%;
-    }
-    .row-label {
-        width: 20%;
-    }
-    
-    /* result sheet rules*/
-    .row-marks {
-        width: 10%;
-    }
-    .row-grade {
-        width: 5%;
-    }
-    .outer-space {
-        width: 98% !important;
-        margin: auto;
-    }
-    /* paid student list*/
-    .row-famid {
-        width: 10%;
-    }
-    .row-amount-paid, .row-amount-balance {
-        width: 8%;
-    }
+@media print {
+	.print-table {
+		width: 100%;
+		margin: auto;
+	}
+	.print-table table {
+		width: 100%;
+		border-collapse: collapse;
+		table-layout: fixed;
+		border-radius: 2%;
+		white-space: nowrap;
+		margin-bottom: 2cm;
+	}
+	.print-table table caption {
+		font-size: 1.5em;
+		margin: 0.5em 0 0.75em;
+	}
+	.print-table table tr {
+		background-color: white;
+		border: 1px solid black;
+		padding: 0.35em;
+		line-height: 0.5;
+	}
+	.print-table table th,
+	.print-table table td {
+		padding: 0.625em;
+		text-align: left;
+		border: 1px solid black;
+		white-space: nowrap;
+		overflow: hidden;
+	}
+	.print-table table th {
+		font-size: 0.85em;
+		text-transform: uppercase;
+		text-align: center;
+	}
+	/* outstanding fee css rules*/
+	.row-sr {
+		width: 4%;
+	}
+	.row-roll {
+		width: 5%;
+	}
+	.row-adm {
+		width: 5%;
+	}
+	.row-adm-date,
+	.row-dob {
+		width: 6%;
+	}
+	.row-amount {
+		width: 12%;
+	}
+	.row-class {
+		width: 12%;
+	}
+	.row-phone {
+		width: 8%;
+	}
+	.row-name,
+	.row-fname {
+		width: 12%;
+	}
+	/* expense module css rules*/
+	.row-quantity {
+		width: 10%;
+	}
+	.row-date {
+		width: 10%;
+	}
+	.row-deduction {
+		width: 20%;
+	}
+	.row-category {
+		width: 20%;
+	}
+	.row-label {
+		width: 20%;
+	}
+
+	/* result sheet rules*/
+	.row-marks {
+		width: 10%;
+	}
+	.row-grade {
+		width: 5%;
+	}
+	.outer-space {
+		width: 98% !important;
+		margin: auto;
+	}
+	/* paid student list*/
+	.row-famid {
+		width: 10%;
+	}
+	.row-amount-paid,
+	.row-amount-balance {
+		width: 8%;
+	}
 }
 
 /* print preview result sheet rules*/
 .row-marks {
-    width: 7%;
+	width: 7%;
 }
 .row-grade {
-    width: 4%;
+	width: 4%;
 }
 .outer-space .result-sheet {
-    font-size: .65em;
-    text-transform: capitalize;
+	font-size: 0.65em;
+	text-transform: capitalize;
 }
 table td.cell-center {
-    text-align: center;
+	text-align: center;
 }
 .outer-space {
-    width: 90%;
-    margin: auto;
+	width: 90%;
+	margin: auto;
 }

@@ -82,7 +82,7 @@ class ReportList extends Component<propsType, S> {
 			<div className="reports-list">
 				<div className="title">{`Exams - ${curr_class_name} (${curr_section_name})`}</div>
 
-				<div className="table row" style={{ margin: "10px 0px" }}>
+				<div className="mis-table row" style={{ margin: "10px 0px" }}>
 					<Link className="button blue" to={`/reports/${class_id}/${section_id}/new`}>Create New Exam</Link>
 				</div>
 
@@ -111,7 +111,7 @@ class ReportList extends Component<propsType, S> {
 				<div className="list" style={{ padding: "12px" }}>
 					{
 						curr_section_exams
-							.map(exam => <div key={exam.id} className="table row">
+							.map(exam => <div key={exam.id} className="mis-table row">
 								<div>{new Date(exam.date).toLocaleDateString()}</div>
 								<Link key={exam.id} to={`/reports/${exam.class_id}/${exam.section_id}/exam/${exam.id}`}>
 									{exam.subject}
