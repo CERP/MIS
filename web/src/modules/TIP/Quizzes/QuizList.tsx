@@ -96,12 +96,12 @@ const QuizList: React.FC<PropsType> = ({
 							{teacher_record.taken ? (
 								<img
 									src={Check}
-									className="h-6 w-6 bg-white rounded-full flex items-center justify-center print:hidden cursor-pointer"
+									className="h-8 w-8 bg-white rounded-full flex items-center justify-center print:hidden cursor-pointer"
 									onClick={e => done(e, quiz_id, false)}
 								/>
 							) : (
 								<div
-									className="h-6 w-6 bg-white rounded-full flex items-center justify-center print:hidden cursor-pointer"
+									className="h-8 w-9 bg-white rounded-full flex items-center justify-center print:hidden cursor-pointer"
 									onClick={e => done(e, quiz_id, true)}>
 									<img className="h-3 w-3" src={WhiteTick} />
 								</div>

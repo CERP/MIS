@@ -621,13 +621,13 @@ export const getSingleStdQuizResult = (
 
 	const SLOs = getQuizSLOs(targeted_instruction.quizzes)
 	return SLOs.reduce((agg, slo) => {
-		const quiz_id = getQuizId(targeted_instruction, slo)
+		const quiz_id = getQuizId(targeted_instruction, [slo])
 		const quiz_obtain_marks =
 			student?.targeted_instruction?.quiz_result?.[quiz_id]?.obtain_marks
 		const quiz_total_marks = targeted_instruction?.quizzes?.[quiz_id]?.total_marks
 		const [midpoint_obtain_marks, midpoint_total_marks] = getMidpointSloBaseResult(
 			targeted_instruction,
-			slo,
+			[slo],
 			student,
 			midpoint_test_id
 		)

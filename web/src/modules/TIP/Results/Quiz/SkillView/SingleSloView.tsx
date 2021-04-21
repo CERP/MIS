@@ -14,7 +14,7 @@ const SingleSloView: React.FC<P> = ({ slo, singleSloQuizResult }) => {
 			<div className="flex justify-center w-full font-bold">
 				<Headings heading={`SLO : ${slo}`} sub_heading="" />
 			</div>
-			<div className="mt-5 flex flex-row justify-between w-full bg-blue-tip-brand p-2 items-center text-white font-bold">
+			<div className="mt-5 flex flex-row justify-between w-full bg-blue-tip-brand items-center py-2 text-white font-bold">
 				<div className="w-1/2 flex justify-center">Names</div>
 				<div className="w-1/2 flex flex-row justify-around">
 					<div>Quiz</div>
@@ -24,7 +24,7 @@ const SingleSloView: React.FC<P> = ({ slo, singleSloQuizResult }) => {
 			{Object.values(singleSloQuizResult).map((obj, index) => (
 				<div
 					key={index}
-					className={`mb-1 flex flex-row justify-between w-full px-2 items-center ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'
+					className={`mb-1 flex flex-row justify-between w-full items-center ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'
 						}`}>
 					<div className="w-1/2 flex justify-center">
 						<div className="flex flex-row w-3/4 md:w-3/5 lg:w-1/4">
