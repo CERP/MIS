@@ -684,7 +684,7 @@ export const saveTIPQuizResult = (
 	quiz_id: string,
 	total_marks: number
 ) => (dispatch: Function) => {
-	for (let [student_id, obtain_marks] of Object.entries(quiz_result)) {
+	for (let [student_id, obtained_marks] of Object.entries(quiz_result)) {
 		dispatch(
 			createMerges([
 				{
@@ -695,9 +695,9 @@ export const saveTIPQuizResult = (
 						'targeted_instruction',
 						'quiz_result',
 						quiz_id,
-						'obtain_marks'
+						'obtained_marks'
 					],
-					value: obtain_marks
+					value: obtained_marks
 				},
 				{
 					path: [
@@ -730,7 +730,7 @@ export const resetTIPQuizResult = (quiz_result: QuizResult, quiz_id: string) => 
 						'targeted_instruction',
 						'quiz_result',
 						quiz_id,
-						'obtain_marks'
+						'obtained_marks'
 					],
 					value: 0
 				}

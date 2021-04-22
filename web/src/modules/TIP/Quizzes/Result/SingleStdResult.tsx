@@ -9,8 +9,8 @@ interface P {
 
 type PropsType = P & RouteComponentProps
 
-const getProgress = (obtain_marks: number) => {
-	const percentage = (obtain_marks / 10) * 100
+const getProgress = (obtained_marks: number) => {
+	const percentage = (obtained_marks / 10) * 100
 	if (percentage > 60) {
 		return 'Mastered'
 	} else if (percentage >= 40) {
@@ -24,8 +24,9 @@ const SingleStdResult: React.FC<PropsType> = ({ match, student }) => {
 	const { quiz_id } = match.params as Params
 
 	const quiz_result = student?.targeted_instruction?.quiz_result
-	const obtain_marks = quiz_result && quiz_result[quiz_id] && quiz_result[quiz_id].obtain_marks
-	const progress = getProgress(obtain_marks)
+	const obtained_marks =
+		quiz_result && quiz_result[quiz_id] && quiz_result[quiz_id].obtained_marks
+	const progress = getProgress(obtained_marks)
 
 	return (
 		<div className="mb-3 bg-white w-ful text-sm md:text-base lg:text-lg flex flex-row justify-around md:justify-around lg:justify-around">
@@ -35,7 +36,7 @@ const SingleStdResult: React.FC<PropsType> = ({ match, student }) => {
 					<div>{student.Name}</div>
 				</div>
 			</div>
-			<div className="flex items-center w-1/3 justify-center">{obtain_marks}</div>
+			<div className="flex items-center w-1/3 justify-center">{obtained_marks}</div>
 			<div className="flex items-center w-1/3 justify-center">
 				<div className="w-full md:w-1/2 lg:w-1/3 flex flex-row justify-start items-cente">
 					<div

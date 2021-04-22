@@ -222,7 +222,7 @@ type TIPDiagnosticReport = {
 }
 
 type TIPQuizReport = {
-	obtain_marks: number
+	obtained_marks: number
 	total_marks: number
 }
 
