@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import toast from 'react-hot-toast'
+import { BackArrowIcon, CirclePlayIcon, CopyIcon } from '../assets/svgs'
 
 interface PropsType {
 	lessons: IlmxLessonVideos
@@ -40,17 +41,7 @@ const LessonModal: React.FC<PropsType> = ({ lessons, onClose }) => {
 				<div
 					className="focus:shadow-outline text-red-brand rounded-full shadow-sm p-2 border border-gray-200 bg-white cursor-pointer"
 					onClick={onClose}>
-					<svg
-						className="w-6"
-						xmlns="http://www.w3.org/2000/svg"
-						viewBox="0 0 20 20"
-						fill="currentColor">
-						<path
-							fillRule="evenodd"
-							d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-							clipRule="evenodd"
-						/>
-					</svg>
+					<BackArrowIcon className="w-6" />
 				</div>
 				<div className="text-l bold ml-4 justify-start">Add Video Lectures to Diary</div>
 			</div>
@@ -98,25 +89,7 @@ const LessonModal: React.FC<PropsType> = ({ lessons, onClose }) => {
 							<div
 								className="flex items-center bg-gray-700 text-white rounded-md p-2 my-1 w-full"
 								key={lesson_id}>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									className="w-10"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor">
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth="2"
-										d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-									/>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth="2"
-										d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-									/>
-								</svg>
+								<CirclePlayIcon clasName="w-10" />
 								<div className="flex flex-col w-full ml-2">
 									<div className="text-sm">{lesson_meta.name}</div>
 									<div
@@ -138,19 +111,7 @@ const LessonModal: React.FC<PropsType> = ({ lessons, onClose }) => {
 											}`
 										)
 									}>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										className="h-4 w-4"
-										fill="none"
-										viewBox="0 0 24 24"
-										stroke="currentColor">
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth="2"
-											d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"
-										/>
-									</svg>
+									<CopyIcon className="h-4 w-4" />
 								</div>
 							</div>
 						)
