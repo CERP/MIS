@@ -247,7 +247,7 @@ const Diary: React.FC = () => {
 					Enter detail of Diary
 				</div>
 
-				<div className="flex flex-col w-full lg:flex-row lg:h-3/4">
+				<div className="flex flex-col w-full justify-center lg:flex-row lg:h-3/4">
 					<div className="flex flex-col w-full print:hidden lg:bg-gray-700 lg:p-5 lg:rounded-2xl lg:m-5 lg:w-1/2">
 						<div className="flex flex-row w-full justify-between">
 							<div className="flex flex-col w-1/2 mr-2">
@@ -330,7 +330,7 @@ const Diary: React.FC = () => {
 					</div>
 
 					{isSectionSelected() && (
-						<div className="flex flex-col w-full print:hidden md:bg-gray-700 lg:p-5 lg:rounded-2xl lg:m-5 lg:w-1 /2 lg:overflow-y-auto">
+						<div className="flex flex-col w-full print:hidden md:bg-gray-700 lg:p-5 lg:rounded-2xl lg:m-5 lg:w-1/2 lg:overflow-y-auto">
 							<div className="text-xl my-2">Subject</div>
 							{Object.keys(classes[state.classId].subjects || {}).map(s => (
 								<div
