@@ -45,10 +45,11 @@ const Grading: React.FC<PropsType> = ({
 			return
 		}
 		const reports: QuizResult = filtered_students.reduce((agg, student) => {
-			const obtain_marks = student.targeted_instruction?.quiz_result?.[quiz_id]?.obtain_marks
+			const obtained_marks =
+				student.targeted_instruction?.quiz_result?.[quiz_id]?.obtained_marks
 			return {
 				...agg,
-				[student.id]: obtain_marks ? obtain_marks : 0
+				[student.id]: obtained_marks ? obtained_marks : 0
 			}
 		}, {})
 		setStdResult(reports)
@@ -87,7 +88,7 @@ const Grading: React.FC<PropsType> = ({
 					<SingleStdGrading
 						key={std.id}
 						student={std}
-						obtain_marks={std_result[std.id]}
+						obtained_marks={std_result[std.id]}
 						handleChange={handleChange}
 					/>
 				))}
@@ -115,8 +116,8 @@ export default connect(
 		targeted_instruction: state.targeted_instruction
 	}),
 	(dispatch: Function) => ({
-		saveTIPQuizResult: (quiz_result: QuizResult, quiz_id: string, obtain_marks: number) =>
-			dispatch(saveTIPQuizResult(quiz_result, quiz_id, obtain_marks)),
+		saveTIPQuizResult: (quiz_result: QuizResult, quiz_id: string, obtained_marks: number) =>
+			dispatch(saveTIPQuizResult(quiz_result, quiz_id, obtained_marks)),
 		resetTIPQuizResult: (quiz_result: QuizResult, quiz_id: string) =>
 			dispatch(resetTIPQuizResult(quiz_result, quiz_id)),
 		quizTaken: (faculty_id: string, quiz_id: string, value: boolean) =>

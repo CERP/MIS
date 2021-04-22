@@ -562,7 +562,7 @@ export const getSingleSloQuizResult = (
 			std,
 			midpoint_test_id
 		)
-		const quiz_obtain_marks = std.targeted_instruction?.quiz_result?.[quiz_id]?.obtain_marks
+		const quiz_obtain_marks = std.targeted_instruction?.quiz_result?.[quiz_id]?.obtained_marks
 		const quiz_total_marks = targeted_instruction?.quizzes?.[quiz_id]?.total_marks
 		return {
 			...agg,
@@ -590,7 +590,7 @@ export const getMidpointSloBaseResult = (
 	std: MISStudent,
 	midpoint_test_id: string
 ) => {
-	let obtain_marks = 0
+	let obtained_marks = 0
 	const question_ids = Object.entries(
 		targeted_instruction?.tests?.[midpoint_test_id]?.questions || {}
 	)
@@ -599,10 +599,10 @@ export const getMidpointSloBaseResult = (
 
 	question_ids.map(id => {
 		if (std?.targeted_instruction?.results?.[midpoint_test_id]?.questions[id]?.is_correct) {
-			obtain_marks = obtain_marks + 1
+			obtained_marks = obtained_marks + 1
 		}
 	})
-	return [obtain_marks, question_ids.length]
+	return [obtained_marks, question_ids.length]
 }
 /**
  *
@@ -622,10 +622,10 @@ export const getSingleStdQuizResult = (
 	const SLOs = getQuizSLOs(targeted_instruction.quizzes)
 	return SLOs.reduce((agg, slo) => {
 		const quiz_id = getQuizId(targeted_instruction, [slo])
-		const quiz_obtain_marks =
-			student?.targeted_instruction?.quiz_result?.[quiz_id]?.obtain_marks
+		const quiz_obtained_marks =
+			student?.targeted_instruction?.quiz_result?.[quiz_id]?.obtained_marks
 		const quiz_total_marks = targeted_instruction?.quizzes?.[quiz_id]?.total_marks
-		const [midpoint_obtain_marks, midpoint_total_marks] = getMidpointSloBaseResult(
+		const [midpoint_obtained_marks, midpoint_total_marks] = getMidpointSloBaseResult(
 			targeted_instruction,
 			[slo],
 			student,
@@ -634,8 +634,8 @@ export const getSingleStdQuizResult = (
 		return {
 			...agg,
 			[slo]: {
-				quiz_marks: (quiz_obtain_marks / quiz_total_marks) * 100,
-				midpoint_test_marks: (midpoint_obtain_marks / midpoint_total_marks) * 100
+				quiz_marks: (quiz_obtained_marks / quiz_total_marks) * 100,
+				midpoint_test_marks: (midpoint_obtained_marks / midpoint_total_marks) * 100
 			}
 		}
 	}, {})
@@ -670,17 +670,17 @@ export const getSkillViewQuizResult = (
 			Object.values(students).reduce((agg2, std) => {
 				const quiz_id = getQuizId(targeted_instruction, [slo])
 				const quiz = std?.targeted_instruction?.quiz_result?.[quiz_id]
-				const percentage = (quiz?.obtain_marks / quiz?.total_marks) * 100
+				const percentage = (quiz?.obtained_marks / quiz?.total_marks) * 100
 				below_average = below_average + percentage < 40 ? 1 : 0
 				average = average + percentage >= 40 && percentage <= 70 ? 1 : 0
 				above_average = above_average + percentage > 70 ? 1 : 0
-				const [midpoint_obtain_marks, midpoint_total_marks] = getMidpointSloBaseResult(
+				const [midpoint_obtained_marks, midpoint_total_marks] = getMidpointSloBaseResult(
 					targeted_instruction,
 					[slo],
 					std,
 					midpoint_test_id
 				)
-				const midpoint_percentage = (midpoint_obtain_marks / midpoint_total_marks) * 100
+				const midpoint_percentage = (midpoint_obtained_marks / midpoint_total_marks) * 100
 				midpoint_below = midpoint_below + midpoint_percentage < 40 ? 1 : 0
 				midpoint_average =
 					midpoint_average + midpoint_percentage >= 40 && midpoint_percentage <= 70

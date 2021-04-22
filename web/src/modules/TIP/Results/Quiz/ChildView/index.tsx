@@ -57,10 +57,10 @@ const ChildView: React.FC<P> = ({
 						</div>
 					</div>
 					<div className="w-2/3 flex flex-row justify-start ml-1">
-						{Object.entries(std.targeted_instruction.quiz_result)
+						{Object.entries(std.targeted_instruction.quiz_result || {})
 							.slice(0, 3)
 							.map(([quiz_id, quiz]) => {
-								const percentage = (quiz.obtain_marks / quiz.total_marks) * 100
+								const percentage = (quiz.obtained_marks / quiz.total_marks) * 100
 								return (
 									<div
 										key={quiz_id}

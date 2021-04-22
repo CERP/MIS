@@ -3,13 +3,13 @@ import { User } from 'assets/icons'
 
 interface P {
 	student: MISStudent
-	obtain_marks: number
+	obtained_marks: number
 
 	handleChange: (std_id: string, marks: number) => void
 }
 
-const SingleStdGrading: React.FC<P> = ({ student, obtain_marks, handleChange }) => {
-	const [range, setRange] = useState(obtain_marks ?? 0)
+const SingleStdGrading: React.FC<P> = ({ student, obtained_marks, handleChange }) => {
+	const [range, setRange] = useState(obtained_marks ?? 0)
 
 	const onMark = (value: number, std_id: string) => {
 		setRange(value)
@@ -26,9 +26,9 @@ const SingleStdGrading: React.FC<P> = ({ student, obtain_marks, handleChange }) 
 			<div className="flex items-center w-1/2 justify-center">
 				<div className="rounded-full bg-white py-2 px-4 md:px-5 lg:px-8 h-4 shadow-lg flex items-center">
 					<div
-						className={`bg-white rounded-full bg-white w-7 h-7 flex justify-center items-center absolute shadow-lg transform -translate-y-6 translate-x-${obtain_marks * 2
+						className={`bg-white rounded-full bg-white w-7 h-7 flex justify-center items-center absolute shadow-lg transform -translate-y-6 translate-x-${obtained_marks * 2
 							}`}>
-						{obtain_marks}
+						{obtained_marks}
 					</div>
 					<input
 						className="rounded-lg appearance-none bg-gray-400 h-1 w-128 outline-none cursor-pointer"
@@ -36,7 +36,7 @@ const SingleStdGrading: React.FC<P> = ({ student, obtain_marks, handleChange }) 
 						min={0}
 						max={10}
 						step={1}
-						value={obtain_marks}
+						value={obtained_marks}
 						onChange={e => onMark(parseInt(e.target.value), student.id)}
 					/>
 				</div>
