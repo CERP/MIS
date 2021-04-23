@@ -23,7 +23,6 @@ import HistoricalFee from '../modules/Settings/HistoricalFees/historical-fee'
 import ManageFees from 'modules/Student/ManageFees'
 import ResetPassword from 'modules/Password/index'
 import PrintPreview from 'modules/Student/Single/Fees/printPreview'
-import ExpensePage from '../modules/Expenses'
 import MISActivation from 'modules/Activation'
 import BulkExam from 'modules/Marks/BulkExam'
 
@@ -56,6 +55,8 @@ import { SMS } from 'pages/sms'
 import { Settings } from 'pages/school/settings'
 
 import { PrivateRoute, SchoolRoute, PublicRoute } from 'components/routing'
+import { Expense } from 'pages/expense'
+import ExpenseForm from 'pages/expense/expenseForm'
 
 interface RoutesProps {
 	store: Store<RootReducerState>
@@ -151,7 +152,6 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<PrivateRoute path="/analytics" component={Analytics} />
 						<PrivateRoute path="/diary" component={Diary} />
 						<PrivateRoute path="/reports-menu" component={ReportsMenu} />
-						<PrivateRoute path="/expenses" component={ExpensePage} />
 						<PrivateRoute
 							exact
 							path="/families/:famId/fee-print-preview"
@@ -188,6 +188,8 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<Route exact path="/about-us" component={AboutUs} />
 						<Route exact path="/features" component={Feature} />
 						<Route exact path="/contact-us" component={ContactUs} />
+						<Route path="/expenses" exact component={Expense} />
+						<Route path="/expenses/:id" exact component={ExpenseForm} />
 					</Switch>
 				</BrowserRouter>
 			</Provider>
