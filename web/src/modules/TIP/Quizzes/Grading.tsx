@@ -39,6 +39,7 @@ const Grading: React.FC<PropsType> = ({
 	const group = convertLearningLevelToGrade(class_name ? (class_name as TIPLevels) : 'Oral')
 
 	const filtered_students = useMemo(() => getStudentsByGroup(students, group, subject), [subject])
+	const total_marks = targeted_instruction?.quizzes?.[quiz_id].total_marks
 
 	useEffect(() => {
 		if (filtered_students.length === 0) {
@@ -60,7 +61,7 @@ const Grading: React.FC<PropsType> = ({
 	}
 
 	const onSave = () => {
-		saveTIPQuizResult(std_result, quiz_id, targeted_instruction?.quizzes?.[quiz_id].total_marks)
+		saveTIPQuizResult(std_result, quiz_id, total_marks)
 		quizTaken(faculty_id, quiz_id, true)
 		history.push(`/${url[1]}/${url[2]}/${class_name}/${subject}/${quiz_id}/result`)
 	}
@@ -84,14 +85,17 @@ const Grading: React.FC<PropsType> = ({
 					<div>Students</div>
 					<div>Marks Obtained</div>
 				</div>
-				{Object.values(filtered_students).map(std => (
-					<SingleStdGrading
-						key={std.id}
-						student={std}
-						obtained_marks={std_result[std.id]}
-						handleChange={handleChange}
-					/>
-				))}
+				<div className="mb-10">
+					{Object.values(filtered_students).map(std => (
+						<SingleStdGrading
+							key={std.id}
+							student={std}
+							obtained_marks={std_result[std.id]}
+							total_marks={total_marks}
+							handleChange={handleChange}
+						/>
+					))}
+				</div>
 			</div>
 			<div className="w-full fixed bottom-0 flex flex-row justify-between">
 				<button

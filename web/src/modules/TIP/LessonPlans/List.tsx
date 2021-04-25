@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router-dom'
 import { connect } from 'react-redux'
 import Card from '../Card'
 import { Check, WhiteTick } from 'assets/icons'
-import { lessonPlanTaken, clearLessonPlans } from 'actions'
+import { lessonPlanTaken, clearLessonPlans, quizTaken } from 'actions'
 import { getQuizId } from 'utils/TIP'
 import Dynamic from '@cerp/dynamic'
 import Headings from '../Headings'
@@ -22,6 +22,7 @@ interface P {
 		value: boolean
 	) => void
 	clearLessonPlans: (faculty_id: string, learning_level_id: string, subject: string) => void
+	quizTaken: (faculty_id: string, quiz_id: string, value: boolean) => void
 }
 
 type AugmentedTIPQuiz = TIPQuiz & {
@@ -56,6 +57,7 @@ const List: React.FC<PropsType> = ({
 	faculty_id,
 	history,
 	curriculum,
+	quizTaken,
 	targeted_instruction,
 	lessonPlanTaken,
 	clearLessonPlans
@@ -128,7 +130,7 @@ const List: React.FC<PropsType> = ({
 	const teacher_quiz_record =
 		existing_teacher_quiz_record || blankQuizzes(targeted_instruction.quizzes)
 
-	const done = (
+	const markLessonPlan = (
 		e: any,
 		level: string,
 		subject: string,
@@ -148,10 +150,10 @@ const List: React.FC<PropsType> = ({
 		clearLessonPlans(faculty_id, class_name, subject)
 	}
 
-	// const done = (e: any, quiz_id: string, value: boolean) => {
-	// 	e.stopPropagation()
-	// 	quizTaken(faculty_id, quiz_id, value)
-	// }
+	const markQuiz = (e: any, quiz_id: string, value: boolean) => {
+		e.stopPropagation()
+		quizTaken(faculty_id, quiz_id, value)
+	}
 
 	const getTakenLessonPlansCount = (lesson_numbers: TIPLessonPlans) => {
 		return Object.values(lesson_numbers).reduce((agg, lesson_plan) => {
@@ -167,6 +169,11 @@ const List: React.FC<PropsType> = ({
 			}
 			return agg
 		}, 0)
+	}
+
+	const redirectToQuiz = (e: any, quiz_id: string) => {
+		e.stopPropagation()
+		history.push(`/${url[1]}/quizzes/${class_name}/${subject}/${quiz_id}/pdf`)
 	}
 
 	return (
@@ -213,9 +220,9 @@ const List: React.FC<PropsType> = ({
 												{teacher_record.taken ? (
 													<img
 														src={Check}
-														className="h-6 w-6 bg-white rounded-full flex items-center justify-center print:hidden cursor-pointer"
+														className="h-8 w-8 bg-white rounded-full flex items-center justify-center print:hidden cursor-pointer"
 														onClick={e =>
-															done(
+															markLessonPlan(
 																e,
 																class_name,
 																lessonPlan.subject,
@@ -226,9 +233,9 @@ const List: React.FC<PropsType> = ({
 													/>
 												) : (
 													<div
-														className="h-6 w-6 bg-white rounded-full flex items-center justify-center print:hidden cursor-pointer"
+														className="h-8 w-8 bg-white rounded-full flex items-center justify-center print:hidden cursor-pointer"
 														onClick={e =>
-															done(
+															markLessonPlan(
 																e,
 																class_name,
 																lessonPlan.subject,
@@ -243,8 +250,10 @@ const List: React.FC<PropsType> = ({
 										</>
 									)
 								})}
-							{quiz && count === Object.keys(lessonPlans).length && (
-								<div className="no-underline bg-gray-50 h-20 w-full mx-3 rounded-md mb-3 flex flex-row justify-between items-center px-2">
+							{quiz && quiz.quiz_id && count === Object.keys(lessonPlans).length && (
+								<div
+									className="no-underline bg-gray-50 h-20 w-full mx-3 rounded-md mb-3 flex flex-row justify-between items-center px-2"
+									onClick={e => redirectToQuiz(e, quiz.quiz_id)}>
 									<div className="flex flex-col justify-between items-center w-full h-15 pl-4">
 										<div className="text-white text-lg font-bold mb-1">
 											{quiz.quiz_title}
@@ -256,30 +265,13 @@ const List: React.FC<PropsType> = ({
 									{teacher_quizzes_record.taken ? (
 										<img
 											src={Check}
-											className="h-6 w-6 bg-white rounded-full flex items-center justify-center print:hidden cursor-pointer"
-										// onClick={e =>
-										// 	done(
-										// 		e,
-										// 		class_name,
-										// 		quiz.subject,
-										// 		quiz.quiz_order,
-										// 		false
-										// 	)
-										// }
+											className="h-8 w-8 bg-white rounded-full flex items-center justify-center print:hidden cursor-pointer"
+											onClick={e => markQuiz(e, quiz.quiz_id, false)}
 										/>
 									) : (
 										<div
-											className="h-6 w-6 bg-white rounded-full flex items-center justify-center print:hidden cursor-pointer"
-										// onClick={e =>
-										// 	done(
-										// 		e,
-										// 		class_name,
-										// 		quiz.subject,
-										// 		quiz.quiz_order,
-										// 		true
-										// 	)
-										// }
-										>
+											className="h-8 w-8 bg-white rounded-full flex items-center justify-center print:hidden cursor-pointer"
+											onClick={e => markQuiz(e, quiz.quiz_id, true)}>
 											<img className="h-3 w-3" src={WhiteTick} />
 										</div>
 									)}
@@ -321,6 +313,8 @@ export default connect(
 		) =>
 			dispatch(lessonPlanTaken(faculty_id, learning_level_id, subject, lesson_number, value)),
 		clearLessonPlans: (faculty_id: string, learning_level_id: string, subject: string) =>
-			dispatch(clearLessonPlans(faculty_id, learning_level_id, subject))
+			dispatch(clearLessonPlans(faculty_id, learning_level_id, subject)),
+		quizTaken: (faculty_id: string, quiz_id: string, value: boolean) =>
+			dispatch(quizTaken(faculty_id, quiz_id, value))
 	})
 )(List)
