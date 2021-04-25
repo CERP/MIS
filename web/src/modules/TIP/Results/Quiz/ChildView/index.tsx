@@ -56,7 +56,7 @@ const ChildView: React.FC<P> = ({
 							</div>
 						</div>
 					</div>
-					<div className="w-2/3 flex flex-row justify-start ml-1">
+					<div className="w-2/3 flex flex-row justify-between ml-1">
 						{Object.entries(std.targeted_instruction.quiz_result || {})
 							.slice(0, 3)
 							.map(([quiz_id, quiz]) => {
@@ -65,7 +65,7 @@ const ChildView: React.FC<P> = ({
 									<div
 										key={quiz_id}
 										className={clsx(
-											'flex flex-row justify-center items-center py-4 h-10 ml-1 w-1/3',
+											'flex flex-row justify-center items-center py-4 px-1 h-10 w-1/4',
 											{
 												'bg-green-250': percentage >= 75,
 												'bg-yellow-250': percentage < 75 && percentage >= 40

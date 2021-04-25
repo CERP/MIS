@@ -4,11 +4,12 @@ import { User } from 'assets/icons'
 interface P {
 	student: MISStudent
 	obtained_marks: number
+	total_marks: number
 
 	handleChange: (std_id: string, marks: number) => void
 }
 
-const SingleStdGrading: React.FC<P> = ({ student, obtained_marks, handleChange }) => {
+const SingleStdGrading: React.FC<P> = ({ student, obtained_marks, total_marks, handleChange }) => {
 	const [range, setRange] = useState(obtained_marks ?? 0)
 
 	const onMark = (value: number, std_id: string) => {
@@ -34,7 +35,7 @@ const SingleStdGrading: React.FC<P> = ({ student, obtained_marks, handleChange }
 						className="rounded-lg appearance-none bg-gray-400 h-1 w-128 outline-none cursor-pointer"
 						type="range"
 						min={0}
-						max={10}
+						max={total_marks}
 						step={1}
 						value={obtained_marks}
 						onChange={e => onMark(parseInt(e.target.value), student.id)}
