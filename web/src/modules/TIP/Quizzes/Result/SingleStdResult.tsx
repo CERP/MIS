@@ -21,11 +21,10 @@ const getProgress = (obtained_marks: number) => {
 }
 
 const SingleStdResult: React.FC<PropsType> = ({ match, student }) => {
-	const { quiz_id } = match.params as Params
+	const { quiz_id, class_name, subject } = match.params as Params
 
 	const quiz_result = student?.targeted_instruction?.quiz_result
-	const obtained_marks =
-		quiz_result && quiz_result[quiz_id] && quiz_result[quiz_id].obtained_marks
+	const obtained_marks = quiz_result[class_name][subject][quiz_id].obtained_marks
 	const progress = getProgress(obtained_marks)
 
 	return (

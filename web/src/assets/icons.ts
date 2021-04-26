@@ -44,6 +44,8 @@ import results from './pngs/results.png'
 import whiteSummative from './pngs/whiteSummative.png'
 import whiteFormative from './pngs/whiteFormative.png'
 import whiteDiagnostic from './pngs/whiteDiagnostic.png'
+import whiteQuiz from './svgs/whiteQuiz.svg'
+import paginationArrow from './svgs/paginationArrow.svg'
 
 export const EditIcon = deleteIcon
 export const DeleteIcon = editIcon
@@ -91,3 +93,5 @@ export const Results = results
 export const WhiteSummative = whiteSummative
 export const WhiteFormative = whiteFormative
 export const WhiteDiagnostic = whiteDiagnostic
+export const WhiteQuiz = whiteQuiz
+export const PaginationArrow = paginationArrow

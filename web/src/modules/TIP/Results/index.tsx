@@ -2,7 +2,7 @@ import React from 'react'
 import Card from '../Card'
 import Headings from '../Headings'
 import { RouteComponentProps, Link } from 'react-router-dom'
-import { WhiteDiagnostic, WhiteFormative, WhiteSummative, Quiz } from 'assets/icons'
+import { WhiteDiagnostic, WhiteFormative, WhiteSummative, WhiteQuiz } from 'assets/icons'
 
 interface P {
 	students: RootDBState['students']
@@ -39,7 +39,7 @@ const Results: React.FC<PropsType> = () => {
 				<Link
 					className="bg-gray-50 rounded-lg flex flex-row justify-around items-center w-full no-underline shadow-lg"
 					to={'/targeted-instruction/quiz-result'}>
-					<img className="py-3 h-12 w-12" src={Quiz} />
+					<img className="py-3 h-12 w-12" src={WhiteQuiz} />
 					<div className="text-white text-lg">Quizzes</div>
 					<div className="bg-white rounded-full h-7 w-7"></div>
 				</Link>

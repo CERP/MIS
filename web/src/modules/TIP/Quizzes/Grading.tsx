@@ -12,7 +12,13 @@ interface P {
 	faculty_id: RootReducerState['auth']['faculty_id']
 	targeted_instruction: RootReducerState['targeted_instruction']
 
-	saveTIPQuizResult: (result: QuizResult, quiz_id: string, total_marks: number) => void
+	saveTIPQuizResult: (
+		result: QuizResult,
+		quiz_id: string,
+		total_marks: number,
+		class_name: TIPLevels,
+		subject: TIPSubjects
+	) => void
 	resetTIPQuizResult: (result: QuizResult, quiz_id: string) => void
 	quizTaken: (faculty_id: string, quiz_id: string, value: boolean) => void
 }
@@ -47,7 +53,8 @@ const Grading: React.FC<PropsType> = ({
 		}
 		const reports: QuizResult = filtered_students.reduce((agg, student) => {
 			const obtained_marks =
-				student.targeted_instruction?.quiz_result?.[quiz_id]?.obtained_marks
+				student.targeted_instruction?.quiz_result?.[class_name]?.[subject]?.[quiz_id]
+					?.obtained_marks
 			return {
 				...agg,
 				[student.id]: obtained_marks ? obtained_marks : 0
@@ -61,7 +68,7 @@ const Grading: React.FC<PropsType> = ({
 	}
 
 	const onSave = () => {
-		saveTIPQuizResult(std_result, quiz_id, total_marks)
+		saveTIPQuizResult(std_result, quiz_id, total_marks, class_name, subject)
 		quizTaken(faculty_id, quiz_id, true)
 		history.push(`/${url[1]}/${url[2]}/${class_name}/${subject}/${quiz_id}/result`)
 	}
@@ -120,8 +127,13 @@ export default connect(
 		targeted_instruction: state.targeted_instruction
 	}),
 	(dispatch: Function) => ({
-		saveTIPQuizResult: (quiz_result: QuizResult, quiz_id: string, obtained_marks: number) =>
-			dispatch(saveTIPQuizResult(quiz_result, quiz_id, obtained_marks)),
+		saveTIPQuizResult: (
+			quiz_result: QuizResult,
+			quiz_id: string,
+			obtained_marks: number,
+			class_name: TIPLevels,
+			subject: TIPSubjects
+		) => dispatch(saveTIPQuizResult(quiz_result, quiz_id, obtained_marks, class_name, subject)),
 		resetTIPQuizResult: (quiz_result: QuizResult, quiz_id: string) =>
 			dispatch(resetTIPQuizResult(quiz_result, quiz_id)),
 		quizTaken: (faculty_id: string, quiz_id: string, value: boolean) =>
