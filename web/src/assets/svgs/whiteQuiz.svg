@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="44.982" height="46.705" viewBox="0 0 44.982 46.705">
+  <g id="Group_2050" data-name="Group 2050" transform="translate(-243.878 -627)">
+    <g id="Group_1807" data-name="Group 1807" transform="translate(243.878 627)">
+      <g id="Rectangle_779" data-name="Rectangle 779" transform="translate(0 0)" fill="none" stroke="#fff" stroke-width="1">
+        <rect width="35.522" height="43.601" rx="4" stroke="none"/>
+        <rect x="0.5" y="0.5" width="34.522" height="42.601" rx="3.5" fill="none"/>
+      </g>
+      <line id="Line_2" data-name="Line 2" x2="15.955" transform="translate(13.682 10.226)" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="1"/>
+      <line id="Line_3" data-name="Line 3" x2="7.797" transform="translate(13.682 13.934)" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="1"/>
+      <g id="Group_1802" data-name="Group 1802" transform="translate(13.682 19.868)">
+        <line id="Line_4" data-name="Line 4" x2="15.955" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="1"/>
+        <line id="Line_5" data-name="Line 5" x2="7.797" transform="translate(0 3.708)" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="1"/>
+      </g>
+      <g id="Group_1801" data-name="Group 1801" transform="translate(13.682 29.51)">
+        <line id="Line_7" data-name="Line 7" x2="15.955" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="1"/>
+        <line id="Line_6" data-name="Line 6" x2="7.797" transform="translate(0 3.708)" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="1"/>
+      </g>
+      <path id="Path_3711" data-name="Path 3711" d="M303.157,414.9a.6.6,0,0,1-.436-.185l-2.3-2.367a.608.608,0,1,1,.873-.848l1.776,1.83,1.948-2.894a.608.608,0,1,1,1.009.68l-2.367,3.516a.609.609,0,0,1-.451.266Z" transform="translate(-295.84 -400.453)" fill="#fff" stroke="#fff" stroke-width="0.1"/>
+      <path id="Path_3712" data-name="Path 3712" d="M303.157,414.9a.6.6,0,0,1-.436-.185l-2.3-2.367a.608.608,0,1,1,.873-.848l1.776,1.83,1.948-2.894a.608.608,0,1,1,1.009.68l-2.367,3.516a.609.609,0,0,1-.451.266Z" transform="translate(-295.84 -381.169)" fill="#fff" stroke="#fff" stroke-width="0.1"/>
+      <g id="Ellipse_194" data-name="Ellipse 194" transform="translate(4.411 19.126)" fill="#fff" stroke="#fff" stroke-width="1.5">
+        <circle cx="2.967" cy="2.967" r="2.967" stroke="none"/>
+        <circle cx="2.967" cy="2.967" r="2.217" fill="none"/>
+      </g>
+    </g>
+    <g id="Group_2049" data-name="Group 2049" transform="translate(269.398 651.083)">
+      <ellipse id="Ellipse_212" data-name="Ellipse 212" cx="8.161" cy="9.85" rx="8.161" ry="9.85" transform="translate(1.003 1.976)" fill="#9b9b9b"/>
+      <path id="Icon_material-timer" data-name="Icon material-timer" d="M17.141,1.5H10.821V3.607h6.321ZM12.927,15.195h2.107V8.874H12.927Zm8.459-6.963,1.5-1.5A11.639,11.639,0,0,0,21.4,5.25l-1.5,1.5a9.48,9.48,0,1,0,1.485,1.485ZM13.981,21.515a7.374,7.374,0,1,1,7.374-7.374A7.369,7.369,0,0,1,13.981,21.515Z" transform="translate(-4.5 -1.5)" fill="#fff" stroke="#9b9b9b" stroke-width="1"/>
+    </g>
+  </g>
+</svg>

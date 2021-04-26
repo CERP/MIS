@@ -682,7 +682,9 @@ type QuizResult = {
 export const saveTIPQuizResult = (
 	quiz_result: QuizResult,
 	quiz_id: string,
-	total_marks: number
+	total_marks: number,
+	grade: TIPLevels,
+	subject: TIPSubjects
 ) => (dispatch: Function) => {
 	for (let [student_id, obtained_marks] of Object.entries(quiz_result)) {
 		dispatch(
@@ -694,6 +696,8 @@ export const saveTIPQuizResult = (
 						student_id,
 						'targeted_instruction',
 						'quiz_result',
+						grade,
+						subject,
 						quiz_id,
 						'obtained_marks'
 					],
@@ -706,6 +710,8 @@ export const saveTIPQuizResult = (
 						student_id,
 						'targeted_instruction',
 						'quiz_result',
+						grade,
+						subject,
 						quiz_id,
 						'total_marks'
 					],
