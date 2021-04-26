@@ -21,7 +21,7 @@ const Result: React.FC<PropsType> = ({ match, students }) => {
 		<div className="bg-white flex flex-wrap content-between mt-20">
 			<Card class_name={class_name} subject={subject} lesson_name="" lesson_no="" />
 			<div className="p-4 w-full">
-				<div className="bg-blue-tip-brand flex flex-row justify-around text-sm md:text-base lg:text-lg text-white rounded py-2 font-bold">
+				<div className="pr-2 bg-blue-tip-brand flex flex-row justify-around text-sm md:text-base lg:text-lg text-white rounded py-2 font-bold">
 					<div>Students</div>
 					<div>Marks Obtained</div>
 					<div>Progress</div>
