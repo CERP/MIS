@@ -672,7 +672,7 @@ export const getSkillViewQuizResult = (
 				const quiz = std?.targeted_instruction?.quiz_result?.[quiz_id]
 				const percentage = (quiz?.obtained_marks / quiz?.total_marks) * 100
 				below_average = below_average + (percentage < 40 ? 1 : 0)
-				average = average + percentage >= 40 && (percentage <= 70 ? 1 : 0)
+				average = average + (percentage >= 40 && percentage <= 70 ? 1 : 0)
 				above_average = above_average + (percentage > 70 ? 1 : 0)
 				const [midpoint_obtained_marks, midpoint_total_marks] = getMidpointSloBaseResult(
 					targeted_instruction,
@@ -683,8 +683,8 @@ export const getSkillViewQuizResult = (
 				const midpoint_percentage = (midpoint_obtained_marks / midpoint_total_marks) * 100
 				midpoint_below = midpoint_below + (midpoint_percentage < 40 ? 1 : 0)
 				midpoint_average =
-					midpoint_average + midpoint_percentage >= 40 &&
-					(midpoint_percentage <= 70 ? 1 : 0)
+					midpoint_average +
+					(midpoint_percentage >= 40 && midpoint_percentage <= 70 ? 1 : 0)
 				midpoint_above = midpoint_above + (midpoint_percentage > 70 ? 1 : 0)
 				return {
 					...agg2,
