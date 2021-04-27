@@ -686,9 +686,9 @@ export const saveTIPQuizResult = (
 	grade: TIPLevels,
 	subject: TIPSubjects
 ) => (dispatch: Function) => {
-	let merges = []
-	for (let [student_id, obtained_marks] of Object.entries(quiz_result)) {
-		merges.push(
+	const merges = Object.entries(quiz_result).reduce((agg, [student_id, obtained_marks]) => {
+		return [
+			...agg,
 			{
 				path: [
 					'db',
@@ -717,32 +717,37 @@ export const saveTIPQuizResult = (
 				],
 				value: total_marks
 			}
-		)
-	}
+		]
+	}, [])
 	dispatch(createMerges(merges))
 }
 
-export const resetTIPQuizResult = (quiz_result: QuizResult, quiz_id: string) => (
-	dispatch: Function
-) => {
-	for (let student_id of Object.keys(quiz_result)) {
-		dispatch(
-			createMerges([
-				{
-					path: [
-						'db',
-						'students',
-						student_id,
-						'targeted_instruction',
-						'quiz_result',
-						quiz_id,
-						'obtained_marks'
-					],
-					value: 0
-				}
-			])
-		)
-	}
+export const resetTIPQuizResult = (
+	quiz_result: QuizResult,
+	quiz_id: string,
+	grade: TIPLevels,
+	subject: TIPSubjects
+) => (dispatch: Function) => {
+	const merges = Object.keys(quiz_result).reduce((agg, student_id) => {
+		return [
+			...agg,
+			{
+				path: [
+					'db',
+					'students',
+					student_id,
+					'targeted_instruction',
+					'quiz_result',
+					grade,
+					subject,
+					quiz_id,
+					'obtained_marks'
+				],
+				value: 0
+			}
+		]
+	}, [])
+	dispatch(createMerges(merges))
 }
 
 export const resetStudentLearningLevel = (student_id: string, subject: TIPSubjects) => (

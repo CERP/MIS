@@ -1,19 +1,17 @@
 import React, { useMemo } from 'react'
-import { connect } from 'react-redux'
-import { RouteComponentProps, withRouter, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { getSubjectsFromTests } from 'utils/TIP'
 import { English, Urdu, Maths } from 'assets/icons'
 
 interface P {
-	class_name: string
-	section_id: string
+	class_name?: string
+	section_id?: string
+	url: string[]
+
 	targeted_instruction: RootReducerState['targeted_instruction']
 }
 
-type PropsType = P & RouteComponentProps
-
-const Subjects: React.FC<PropsType> = ({ match, targeted_instruction, class_name, section_id }) => {
-	const url = match.url.split('/')
+const Subjects: React.FC<P> = ({ url, targeted_instruction, class_name, section_id }) => {
 	const subjects: string[] = useMemo(() => getSubjectsFromTests(targeted_instruction), [])
 
 	const getRoute = (url: string[], sub: string) => {
@@ -54,6 +52,4 @@ const Subjects: React.FC<PropsType> = ({ match, targeted_instruction, class_name
 	)
 }
 
-export default connect((state: RootReducerState) => ({
-	targeted_instruction: state.targeted_instruction
-}))(withRouter(Subjects))
+export default Subjects

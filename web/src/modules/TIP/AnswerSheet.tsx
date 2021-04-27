@@ -38,15 +38,15 @@ const AnswerSheet: React.FC<PropsType> = ({ match, targeted_instruction, history
 		test_type = 'Quiz'
 	}
 
-	const test_ids = Object.entries(targeted_instruction.tests)
+	const test_ids = Object.entries(targeted_instruction.tests || {})
 		.filter(([, t]) => t.type === test_type && t.subject === subject && t.grade === class_name)
 		.map(([t_id]) => t_id)
 
-	const oral_test_ids = Object.entries(targeted_instruction.tests)
+	const oral_test_ids = Object.entries(targeted_instruction.tests || {})
 		.filter(([, t]) => t.type === test_type && t.subject === subject && t.grade === 'Oral Test')
 		.map(([t_id]) => t_id)
 
-	const quiz_ids = Object.entries(targeted_instruction.quizzes)
+	const quiz_ids = Object.entries(targeted_instruction.quizzes || {})
 		.filter(([, t]) => t.type === test_type && t.subject === subject && t.grade === class_name)
 		.map(([t_id]) => t_id)
 

@@ -19,7 +19,12 @@ interface P {
 		class_name: TIPLevels,
 		subject: TIPSubjects
 	) => void
-	resetTIPQuizResult: (result: QuizResult, quiz_id: string) => void
+	resetTIPQuizResult: (
+		result: QuizResult,
+		quiz_id: string,
+		class_name: TIPLevels,
+		subject: TIPSubjects
+	) => void
 	quizTaken: (faculty_id: string, quiz_id: string, value: boolean) => void
 }
 
@@ -54,10 +59,10 @@ const Grading: React.FC<PropsType> = ({
 		const reports: QuizResult = filtered_students.reduce((agg, student) => {
 			const obtained_marks =
 				student.targeted_instruction?.quiz_result?.[class_name]?.[subject]?.[quiz_id]
-					?.obtained_marks
+					?.obtained_marks ?? 0
 			return {
 				...agg,
-				[student.id]: obtained_marks ? obtained_marks : 0
+				[student.id]: obtained_marks
 			}
 		}, {})
 		setStdResult(reports)
@@ -77,11 +82,11 @@ const Grading: React.FC<PropsType> = ({
 		const reports: QuizResult = filtered_students.reduce((agg, student) => {
 			return {
 				...agg,
-				[student.id]: 0
+				[student.id]: 0 // reseting obtained marks to zero
 			}
 		}, {})
 		setStdResult(reports)
-		resetTIPQuizResult(std_result, quiz_id)
+		resetTIPQuizResult(std_result, quiz_id, class_name, subject)
 	}
 
 	return (
@@ -93,7 +98,7 @@ const Grading: React.FC<PropsType> = ({
 					<div>Marks Obtained</div>
 				</div>
 				<div className="mb-10">
-					{Object.values(filtered_students).map(std => (
+					{Object.values(filtered_students ?? {}).map(std => (
 						<SingleStdGrading
 							key={std.id}
 							student={std}
@@ -134,8 +139,12 @@ export default connect(
 			class_name: TIPLevels,
 			subject: TIPSubjects
 		) => dispatch(saveTIPQuizResult(quiz_result, quiz_id, obtained_marks, class_name, subject)),
-		resetTIPQuizResult: (quiz_result: QuizResult, quiz_id: string) =>
-			dispatch(resetTIPQuizResult(quiz_result, quiz_id)),
+		resetTIPQuizResult: (
+			quiz_result: QuizResult,
+			quiz_id: string,
+			class_name: TIPLevels,
+			subject: TIPSubjects
+		) => dispatch(resetTIPQuizResult(quiz_result, quiz_id, class_name, subject)),
 		quizTaken: (faculty_id: string, quiz_id: string, value: boolean) =>
 			dispatch(quizTaken(faculty_id, quiz_id, value))
 	})

@@ -12,7 +12,7 @@ interface P {
 type PropsType = P & RouteComponentProps
 
 const Result: React.FC<PropsType> = ({ match, students }) => {
-	const { subject, class_name } = match.params as Params
+	const { subject, class_name, quiz_id } = match.params as Params
 	const group = convertLearningLevelToGrade(class_name ? (class_name as TIPLevels) : 'Oral')
 
 	const filtered_students = useMemo(() => getStudentsByGroup(students, group, subject), [subject])
@@ -27,7 +27,13 @@ const Result: React.FC<PropsType> = ({ match, students }) => {
 					<div>Progress</div>
 				</div>
 				{Object.values(filtered_students).map(std => (
-					<SingleStdResult key={std.id} student={std} />
+					<SingleStdResult
+						key={std.id}
+						student={std}
+						class_name={class_name}
+						subject={subject}
+						quiz_id={quiz_id}
+					/>
 				))}
 			</div>
 		</div>

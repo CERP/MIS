@@ -463,7 +463,7 @@ interface MISStudent {
 	certificates: {
 		[id: string]: MISCertificate
 	}
-	targeted_instruction: {
+	targeted_instruction?: {
 		results: {
 			[test_id: string]: TIPDiagnosticReport
 		}
@@ -622,7 +622,7 @@ interface MISTeacher {
 		family: boolean
 		prospective: boolean
 	}
-	targeted_instruction: {
+	targeted_instruction?: {
 		curriculum: TIPTeacherCurriculum
 		quizzes: TIPTeacherQuizzes
 	}
