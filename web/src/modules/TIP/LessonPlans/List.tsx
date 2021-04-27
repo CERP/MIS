@@ -178,7 +178,7 @@ const List: React.FC<PropsType> = ({
 
 	return (
 		<div className="flex flex-wrap content-between mt-20">
-			<Card class_name={class_name} subject={subject} lesson_name="" lesson_no="" />
+			<Card class_name={class_name} subject={subject} />
 
 			<Headings heading={'Lesson Plan Library'} sub_heading={'Click on a plan to view'} />
 

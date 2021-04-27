@@ -11,7 +11,7 @@ const FormativeTestResult: React.FC<P> = () => {
 
 	return (
 		<div className="flex flex-wrap content-between mt-20">
-			<Card class_name={class_name} subject="" lesson_name="" lesson_no="" />
+			<Card class_name={class_name} />
 			<Headings
 				heading="Midpoint Test Result"
 				sub_heading={
