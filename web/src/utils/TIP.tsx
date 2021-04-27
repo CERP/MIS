@@ -269,7 +269,7 @@ type SubjectLessonProgress = {
  */
 export const getLessonProgress = (teacher: MISTeacher) => {
 	// When a teacher has no progress
-	if (!teacher.targeted_instruction || !teacher.targeted_instruction.curriculum) {
+	if (!teacher.targeted_instruction ?? !teacher.targeted_instruction.curriculum) {
 		return 0
 	}
 
@@ -419,7 +419,7 @@ export const getResult = (students: MISStudent[], test_id: string) => {
  * @param result
  */
 export const getClassResult = (result: SLOBasedResult) => {
-	return Object.values(result || {}).reduce<SloObj>((agg, std_obj) => {
+	return Object.values(result ?? {}).reduce<SloObj>((agg, std_obj) => {
 		for (let [slo, slo_obj] of Object.entries(std_obj.slo_obj)) {
 			if (agg[slo]) {
 				agg = {
@@ -486,7 +486,7 @@ export const getTestType = (value: string) => {
  * @returns TIP Quizzes
  */
 export const getQuizzes = (quizzes: TIPQuizzes, subject: TIPSubjects, level: TIPLevels) => {
-	return Object.entries(quizzes || {}).reduce((agg, [quiz_id, quiz]) => {
+	return Object.entries(quizzes ?? {}).reduce((agg, [quiz_id, quiz]) => {
 		if (quiz.grade === level && quiz.subject === subject) {
 			return {
 				...agg,
@@ -503,7 +503,7 @@ export const getQuizzes = (quizzes: TIPQuizzes, subject: TIPSubjects, level: TIP
  * @returns all SLOs in TIP Quizzes
  */
 export const getQuizSLOs = (quizzes: TIPQuizzes) => {
-	const sloArray = Object.values(quizzes || {}).reduce((agg, quiz) => {
+	const sloArray = Object.values(quizzes ?? {}).reduce((agg, quiz) => {
 		return [...agg, quiz.slo[0]]
 	}, [])
 	return [...new Set(sloArray)]
@@ -519,7 +519,7 @@ export const getQuizId = (
 	targeted_instruction: RootReducerState['targeted_instruction'],
 	slo: string[]
 ) => {
-	return Object.entries(targeted_instruction.quizzes || {})
+	return Object.entries(targeted_instruction.quizzes ?? {})
 		.filter(([, t]) => t.slo[0] === slo[0])
 		.map(([t_id]) => t_id)[0]
 }
@@ -536,7 +536,7 @@ export const getMidpointTestId = (
 	subject: TIPSubjects,
 	grade: TIPLevels
 ) => {
-	return Object.entries(targeted_instruction.tests || {})
+	return Object.entries(targeted_instruction.tests ?? {})
 		.filter(([, t]) => t.type === 'Formative' && t.subject === subject && t.grade === grade)
 		.map(([t_id]) => t_id)[0]
 }
@@ -564,8 +564,9 @@ export const getSingleSloQuizResult = (
 			midpoint_test_id
 		)
 		const quiz_obtain_marks =
-			std.targeted_instruction?.quiz_result?.[grade]?.[subject]?.[quiz_id]?.obtained_marks
-		const quiz_total_marks = targeted_instruction?.quizzes?.[quiz_id]?.total_marks
+			std.targeted_instruction?.quiz_result?.[grade]?.[subject]?.[quiz_id]?.obtained_marks ??
+			0
+		const quiz_total_marks = targeted_instruction?.quizzes?.[quiz_id]?.total_marks ?? 0
 		return {
 			...agg,
 			[std.id]: {
@@ -594,7 +595,7 @@ export const getMidpointSloBaseResult = (
 ) => {
 	let obtained_marks = 0
 	const question_ids = Object.entries(
-		targeted_instruction?.tests?.[midpoint_test_id]?.questions || {}
+		targeted_instruction?.tests?.[midpoint_test_id]?.questions ?? {}
 	)
 		.filter(([, t]) => t.slo[0] === slo[0])
 		.map(([t_id]) => t_id)
@@ -626,8 +627,8 @@ export const getSingleStdQuizResult = (
 		const quiz_id = getQuizId(targeted_instruction, [slo])
 		const quiz_obtained_marks =
 			student?.targeted_instruction?.quiz_result?.[grade]?.[subject]?.[quiz_id]
-				?.obtained_marks
-		const quiz_total_marks = targeted_instruction?.quizzes?.[quiz_id]?.total_marks
+				?.obtained_marks ?? 0
+		const quiz_total_marks = targeted_instruction?.quizzes?.[quiz_id]?.total_marks ?? 0
 		const [midpoint_obtained_marks, midpoint_total_marks] = getMidpointSloBaseResult(
 			targeted_instruction,
 			[slo],
