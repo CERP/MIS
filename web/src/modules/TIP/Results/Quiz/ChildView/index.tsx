@@ -36,7 +36,7 @@ const ChildView: React.FC<PropsType> = ({
 	let array_length = Math.ceil(Object.keys(quiz_result || {}).length / 3)
 	let no_of_pages = Array(array_length)
 		.fill(null)
-		.map((_, i) => i + 1)
+		.map((_, i) => i)
 
 	return (
 		<div className="w-full">
@@ -64,49 +64,59 @@ const ChildView: React.FC<PropsType> = ({
 					})}
 				</div>
 			</div>
-			{filtered_students.map(std => {
-				const quiz_result = std.targeted_instruction.quiz_result[class_name][subject]
-				array_length = Math.ceil(Object.keys(quiz_result || {}).length / 3)
-				return (
-					<div
-						key={std.id}
-						className="flex flex-row justify-between w-full items-center bg-gray-100 mb-1"
-						onClick={() => (setType(Types.SINGLE_STD_VIEW), setSelectedStd(std))}>
-						<div className="w-1/3 flex justify-center items-center">
-							<div className="flex flex-row w-full md:w-3/5 lg:w-1/2 items-center">
-								<img className="h-10 w-10 mr-2" src={User} />
-								<div className="flex flex-col justify-between">
-									<div className="font-bold">{std.Name}</div>
-									<div className="">{std.RollNumber}</div>
+			<div className="mb-16">
+				{filtered_students.map(std => {
+					const quiz_result = std.targeted_instruction.quiz_result[class_name][subject]
+					array_length = Math.ceil(Object.keys(quiz_result || {}).length / 3)
+					return (
+						<div
+							key={std.id}
+							className="flex flex-row justify-between w-full items-center bg-gray-100 mb-1"
+							onClick={() => (setType(Types.SINGLE_STD_VIEW), setSelectedStd(std))}>
+							<div className="w-1/3 flex justify-center items-center">
+								<div className="flex flex-row w-full md:w-3/5 lg:w-1/2 items-center">
+									<img className="h-10 w-10 mr-2" src={User} />
+									<div className="flex flex-col justify-between">
+										<div className="font-bold">{std.Name}</div>
+										<div className="">{std.RollNumber}</div>
+									</div>
 								</div>
 							</div>
-						</div>
-						<div className="w-2/3 flex flex-row justify-between ml-1">
-							{Object.entries(quiz_result || {})
-								.slice(0, 3)
-								.map(([quiz_id, quiz]) => {
-									const percentage =
-										(quiz.obtained_marks / quiz.total_marks) * 100
-									return (
-										<div
-											key={quiz_id}
-											className={clsx(
-												'flex flex-row justify-center items-center py-4 px-1 h-10 w-1/4',
-												{
-													'bg-green-250': percentage >= 75,
-													'bg-yellow-250':
-														percentage < 75 && percentage >= 40
-												},
-												'bg-red-250'
-											)}>
-											{percentage}%
-										</div>
+							<div className="w-2/3 flex flex-row justify-between ml-1">
+								{Object.entries(quiz_result || {})
+									.slice(
+										page_num === 0 ? 0 : 3 * (page_num + 1) + 1,
+										3 * (page_num + 1)
 									)
-								})}
+									.map(([quiz_id, quiz]) => {
+										console.log(
+											page_num,
+											page_num === 0 ? 0 : 3 * (page_num + 1) + 1,
+											3 * (page_num + 1)
+										)
+										const percentage =
+											(quiz.obtained_marks / quiz.total_marks) * 100
+										return (
+											<div
+												key={quiz_id}
+												className={clsx(
+													'flex flex-row justify-center items-center py-4 px-1 h-10 w-1/4',
+													{
+														'bg-green-250': percentage >= 75,
+														'bg-yellow-250':
+															percentage < 75 && percentage >= 40
+													},
+													'bg-red-250'
+												)}>
+												{percentage}%
+											</div>
+										)
+									})}
+							</div>
 						</div>
-					</div>
-				)
-			})}
+					)
+				})}
+			</div>
 			<div className="bg-gray-100 h-16 px-2 fixed w-full flex items-center bottom-0 justify-between">
 				<div className="flex flex-row justify-start items-center">
 					<div className="font-bold text-sea-green-tip-brand text-lg md:text-base lg:text-lg">
@@ -120,7 +130,7 @@ const ChildView: React.FC<PropsType> = ({
 									: 'text-sea-green-tip-brand bg-white'
 								} cursor-pointer shadow-lg ml-5 rounded-md bg-white py-2 px-4 border-solid border-sea-green-tip-brand`}
 							onClick={() => setPageNum(no)}>
-							{no}
+							{no + 1}
 						</div>
 					))}
 				</div>
