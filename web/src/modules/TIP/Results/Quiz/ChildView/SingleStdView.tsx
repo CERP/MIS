@@ -26,7 +26,7 @@ const ChildView: React.FC<P> = ({ singleStdQuizResult, setType }) => {
 			</div>
 			{Object.entries(singleStdQuizResult || {}).map(([slo, res], index) => (
 				<div
-					key={index}
+					key={index} // need different colors in alternate rows
 					className={`flex flex-row justify-between w-full mb-1 items-center ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'
 						}`}
 					onClick={() => setType(Types.SINGLE_STD_VIEW)}>

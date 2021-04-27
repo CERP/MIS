@@ -34,9 +34,8 @@ const ChildView: React.FC<PropsType> = ({
 		quiz_result = std.targeted_instruction.quiz_result[class_name][subject]
 	})
 	let array_length = Math.ceil(Object.keys(quiz_result || {}).length / 3)
-	let no_of_pages = Array(array_length)
-		.fill(null)
-		.map((_, i) => i)
+
+	let no_of_pages = [...new Array(array_length).keys()]
 
 	const getQuizTitles = () => {
 		let quiz_ids = filtered_students.reduce((agg, std) => {

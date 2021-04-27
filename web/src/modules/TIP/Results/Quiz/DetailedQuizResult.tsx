@@ -37,10 +37,7 @@ const DetailedQuizResult: React.FC<PropsType> = ({ match, targeted_instruction, 
 	const [selected_std, setSelectedStd] = useState<MISStudent>()
 
 	const group = convertLearningLevelToGrade(class_name ? (class_name as TIPLevels) : 'Oral')
-	const filtered_students = useMemo(() => getStudentsByGroup(students, group, subject), [
-		subject,
-		group
-	])
+	const filtered_students = getStudentsByGroup(students, group, subject)
 	const singleSloQuizResult: SingleSloQuizResult = useMemo(
 		() =>
 			getSingleSloQuizResult(
