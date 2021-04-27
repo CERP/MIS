@@ -109,14 +109,14 @@ const Grading: React.FC<PropsType> = ({
 					))}
 				</div>
 			</div>
-			<div className="w-full fixed bottom-0 flex flex-row justify-between">
+			<div className="w-full fixed bottom-0 flex flex-row justify-between space-x-2">
 				<button
-					className="w-11/13 bg-blue-tip-brand text-white border-none p-3 font-bold text-sm md:text-base lg:text-lg"
+					className="w-1/2 bg-blue-tip-brand text-white border-none p-3 font-bold text-sm md:text-base lg:text-lg"
 					onClick={onReset}>
 					Reset
 				</button>
 				<button
-					className="w-11/13 bg-blue-tip-brand text-white border-none p-3 font-bold text-sm md:text-base lg:text-lg"
+					className="w-1/2 bg-blue-tip-brand text-white border-none p-3 font-bold text-sm md:text-base lg:text-lg"
 					onClick={onSave}>
 					Save and Continue
 				</button>
