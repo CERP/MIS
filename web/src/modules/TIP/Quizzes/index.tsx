@@ -11,7 +11,7 @@ const Quizzes: React.FC<P> = () => {
 
 	return (
 		<div className="flex flex-wrap content-between mt-20">
-			<Card class_name={class_name} subject="" lesson_name="" lesson_no="" />
+			<Card class_name={class_name} />
 			<Headings
 				heading="Quiz Library"
 				sub_heading={

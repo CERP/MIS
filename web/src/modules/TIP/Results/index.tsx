@@ -13,7 +13,7 @@ type PropsType = P & RouteComponentProps
 const Results: React.FC<PropsType> = () => {
 	return (
 		<div className="bg-white flex flex-wrap content-between mt-20">
-			<Card class_name="" subject="" lesson_name="" lesson_no="" />
+			<Card />
 			<Headings heading="Results" sub_heading="Select the result you wanna see" />
 			<div className="flex flex-row justify-around w-full mt-5 p-3">
 				<Link

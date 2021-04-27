@@ -70,7 +70,7 @@ const QuizList: React.FC<PropsType> = ({
 
 	return (
 		<div className="flex flex-wrap content-between mt-20">
-			<Card class_name={class_name} subject={subject} lesson_name="" lesson_no="" />
+			<Card class_name={class_name} subject={subject} />
 			<div className="mb-5 flex justify-center w-full">
 				<Headings heading={'Quiz Library'} sub_heading={''} />
 			</div>

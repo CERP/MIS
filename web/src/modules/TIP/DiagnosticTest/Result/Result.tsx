@@ -18,7 +18,7 @@ const Result: React.FC<PropsType> = props => {
 
 	return (
 		<div className="flex flex-wrap content-between mt-20">
-			<Card class_name={class_name} subject={subject} lesson_name="" lesson_no="" />
+			<Card class_name={class_name} />
 			<div className="w-full">
 				{Object.entries(result).map(([key, value]) => {
 					const group = convertLearningGradeToGroupName(key as TIPGrades)
