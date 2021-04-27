@@ -27,7 +27,7 @@ const SingleStdGrading: React.FC<P> = ({ student, obtained_marks, total_marks, h
 			<div className="flex items-center w-1/2 justify-center">
 				<div className="rounded-full bg-white py-2 px-4 md:px-5 lg:px-8 h-4 shadow-lg flex items-center">
 					<div
-						className={`bg-white rounded-full bg-white w-7 h-7 flex justify-center items-center absolute shadow-lg transform -translate-y-6 translate-x-${obtained_marks * 2
+						className={`bg-white rounded-full bg-white w-7 h-7 flex justify-center items-center absolute shadow-lg transform -translate-y-6 translate-x-${obtained_marks === 9 ? 'transform translate-x-24' : obtained_marks * 2
 							}`}>
 						{obtained_marks}
 					</div>

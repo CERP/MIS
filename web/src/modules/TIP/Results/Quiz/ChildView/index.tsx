@@ -86,7 +86,7 @@ const ChildView: React.FC<PropsType> = ({
 									</div>
 								</div>
 							</div>
-							<div className="w-2/3 flex flex-row justify-between ml-1">
+							<div className="w-2/3 flex flex-row justify-start ml-1 space-x-5 md:space-x-20">
 								{Object.entries(quiz_result || {})
 									.slice(page_num * 3, (page_num + 1) * 3)
 									.sort(([a], [b]) => a.localeCompare(b))
