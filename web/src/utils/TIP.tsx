@@ -471,6 +471,7 @@ export const getTestType = (value: string) => {
 		case 'formative-result':
 			return 'Formative'
 		case 'summative-test':
+		case 'summative-result':
 			return 'Summative'
 		default:
 			return 'Diagnostic'

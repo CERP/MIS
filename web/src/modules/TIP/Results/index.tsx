@@ -30,7 +30,7 @@ const Results: React.FC<PropsType> = () => {
 				</Link>
 				<Link
 					className="bg-sea-green-tip-brand px-2 rounded-lg h-48 flex flex-col justify-center items-center shadow-lg"
-					to={'/targeted-instruction/formative-result'}>
+					to={'/targeted-instruction/summative-result'}>
 					<img className="py-11 pr-2" src={WhiteSummative} />
 					<div className="text-white">Final Test</div>
 				</Link>

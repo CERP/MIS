@@ -19,7 +19,7 @@ const Subjects: React.FC<PropsType> = ({ match, targeted_instruction, class_name
 	const getRoute = (url: string[], sub: string) => {
 		if (url[2] === 'diagnostic-result') {
 			return `/${url[1]}/${url[2]}/${section_id}/${class_name}/${sub}/result`
-		} else if (url[2] === 'formative-result') {
+		} else if (url[2] === 'formative-result' || url[2] === 'summative-result') {
 			return `/${url[1]}/${url[2]}/${class_name}/${sub}/result`
 		} else if (url[2] === 'lesson-plans') {
 			return `/${url[1]}/${url[2]}/${class_name}/${sub}/list`

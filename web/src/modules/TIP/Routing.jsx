@@ -6,6 +6,7 @@ import DiagnosticTestResult from './DiagnosticTest/Result/index'
 import FormativeTestResult from './FormativeTest/Result/index'
 import Grading from './FormativeTest/Grading'
 import FormativeResult from './FormativeTest/Result/ResultCards/Result'
+import SummativeTestResult from './SummativeTest/Result'
 import TrainingVideos from './TrainingVideos'
 import FormativeTest from './FormativeTest'
 import SummativeTest from './SummativeTest'
@@ -164,6 +165,14 @@ const Routing = props => {
 				/>
 
 				<Route exact path={`${path}/summative-test`} component={SummativeTest} />
+
+				<Route
+					exact
+					path={`${path}/summative-result/:class_name/:subject/result`}
+					component={FormativeResult}
+				/>
+
+				<Route exact path={`${path}/summative-result`} component={SummativeTestResult} />
 
 				<Route
 					exact
