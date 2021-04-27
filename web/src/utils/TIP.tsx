@@ -1,7 +1,7 @@
 export const getSubjectsFromTests = (
 	targeted_instruction: RootReducerState['targeted_instruction']
 ): string[] => {
-	const subjects = Object.values(targeted_instruction.tests).reduce((agg, test) => {
+	const subjects = Object.values(targeted_instruction?.tests ?? {}).reduce((agg, test) => {
 		if (test.subject !== '') {
 			return [...agg, test.subject]
 		}

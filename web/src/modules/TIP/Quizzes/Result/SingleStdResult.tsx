@@ -1,13 +1,13 @@
 import React from 'react'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { User } from 'assets/icons'
 import clsx from 'clsx'
 
 interface P {
 	student: MISStudent
+	class_name: TIPLevels
+	subject: TIPSubjects
+	quiz_id: string
 }
-
-type PropsType = P & RouteComponentProps
 
 const getProgress = (obtained_marks: number) => {
 	const percentage = (obtained_marks / 10) * 100
@@ -20,11 +20,9 @@ const getProgress = (obtained_marks: number) => {
 	}
 }
 
-const SingleStdResult: React.FC<PropsType> = ({ match, student }) => {
-	const { quiz_id, class_name, subject } = match.params as Params
-
+const SingleStdResult: React.FC<P> = ({ student, class_name, subject, quiz_id }) => {
 	const quiz_result = student?.targeted_instruction?.quiz_result
-	const obtained_marks = quiz_result?.[class_name]?.[subject]?.[quiz_id]?.obtained_marks
+	const obtained_marks = quiz_result?.[class_name]?.[subject]?.[quiz_id]?.obtained_marks ?? 0
 	const progress = getProgress(obtained_marks)
 
 	return (
@@ -64,4 +62,4 @@ const SingleStdResult: React.FC<PropsType> = ({ match, student }) => {
 	)
 }
 
-export default withRouter(SingleStdResult)
+export default SingleStdResult

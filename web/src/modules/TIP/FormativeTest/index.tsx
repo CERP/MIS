@@ -1,13 +1,20 @@
 import React, { useState } from 'react'
+import { connect } from 'react-redux'
+import { RouteComponentProps } from 'react-router-dom'
 import Headings from '../Headings'
 import Levels from '../Levels'
 import Card from '../Card'
 import Subjects from '../Subjects'
 
-interface P { }
+interface P {
+	targeted_instruction: RootReducerState['targeted_instruction']
+}
 
-const FormativeTest: React.FC<P> = () => {
+type PropsType = P & RouteComponentProps
+
+const FormativeTest: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 	const [class_name, setClassName] = useState('')
+	const url = match.url.split('/')
 
 	return (
 		<div className="flex flex-wrap content-between mt-20">
@@ -21,7 +28,11 @@ const FormativeTest: React.FC<P> = () => {
 				}
 			/>
 			{class_name ? (
-				<Subjects class_name={class_name} section_id="" />
+				<Subjects
+					class_name={class_name}
+					url={url}
+					targeted_instruction={targeted_instruction}
+				/>
 			) : (
 				<Levels setSectionId={setClassName} />
 			)}
@@ -29,4 +40,6 @@ const FormativeTest: React.FC<P> = () => {
 	)
 }
 
-export default FormativeTest
+export default connect((state: RootReducerState) => ({
+	targeted_instruction: state.targeted_instruction
+}))(FormativeTest)

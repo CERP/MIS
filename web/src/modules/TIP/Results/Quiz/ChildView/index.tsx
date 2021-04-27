@@ -28,7 +28,7 @@ const ChildView: React.FC<PropsType> = ({
 	setSelectedStd
 }) => {
 	const { class_name, subject } = match.params as Params
-	const [page_num, setPageNum] = useState(1)
+	const [page_num, setPageNum] = useState(0)
 	let quiz_result = {}
 	filtered_students.slice(0, 1).map(std => {
 		quiz_result = std.targeted_instruction.quiz_result[class_name][subject]
@@ -38,30 +38,35 @@ const ChildView: React.FC<PropsType> = ({
 		.fill(null)
 		.map((_, i) => i)
 
+	const getQuizTitles = () => {
+		let quiz_ids = filtered_students.reduce((agg, std) => {
+			return [
+				...agg,
+				...Object.keys(std?.targeted_instruction?.quiz_result[class_name][subject] ?? {})
+			]
+		}, [])
+		return [...new Set(quiz_ids)].sort((a, b) => a.localeCompare(b))
+	}
+
 	return (
 		<div className="w-full">
 			<div className="bg-blue-tip-brand text-white flex flex-row justify-between items-center w-full py-2">
 				<div className="w-1/3 flex justify-center font-bold">Names</div>
 				<div className="w-2/3 flex flex-row justify-start">
-					{filtered_students.slice(0, 1).map(std => {
-						quiz_result = std.targeted_instruction.quiz_result[class_name][subject]
-						Object.keys(quiz_result)
-							.slice(0, 3)
-							.map(quiz_id => {
-								const quiz_title =
-									targeted_instruction?.quizzes?.[quiz_id]?.quiz_title
-								const quiz_order =
-									targeted_instruction?.quizzes?.[quiz_id]?.quiz_order
-								return (
-									<div
-										key={quiz_id}
-										className="flex flex-col justify-start text-center text-xs md:text-sm lg:text-base w-1/3">
-										<div>Quiz {quiz_order}</div>
-										<div>{quiz_title} kjehd</div>
-									</div>
-								)
-							})
-					})}
+					{getQuizTitles()
+						.slice(page_num * 3, (page_num + 1) * 3)
+						.map(quiz_id => {
+							const quiz_title = targeted_instruction?.quizzes?.[quiz_id]?.quiz_title
+							const quiz_order = targeted_instruction?.quizzes?.[quiz_id]?.quiz_order
+							return (
+								<div
+									key={quiz_id}
+									className="text-white flex flex-col justify-start text-center text-xs md:text-sm lg:text-base w-1/3">
+									<div>Quiz {quiz_order}</div>
+									<div>{quiz_title}</div>
+								</div>
+							)
+						})}
 				</div>
 			</div>
 			<div className="mb-16">
@@ -84,16 +89,9 @@ const ChildView: React.FC<PropsType> = ({
 							</div>
 							<div className="w-2/3 flex flex-row justify-between ml-1">
 								{Object.entries(quiz_result || {})
-									.slice(
-										page_num === 0 ? 0 : 3 * (page_num + 1) + 1,
-										3 * (page_num + 1)
-									)
+									.slice(page_num * 3, (page_num + 1) * 3)
+									.sort(([a], [b]) => a.localeCompare(b))
 									.map(([quiz_id, quiz]) => {
-										console.log(
-											page_num,
-											page_num === 0 ? 0 : 3 * (page_num + 1) + 1,
-											3 * (page_num + 1)
-										)
 										const percentage =
 											(quiz.obtained_marks / quiz.total_marks) * 100
 										return (

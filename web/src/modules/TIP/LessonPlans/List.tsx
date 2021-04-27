@@ -122,27 +122,27 @@ const List: React.FC<PropsType> = ({
 		class_name,
 		subject
 	])
-	const teacher_lesson_record = existing_teacher_record || blankLessonPlan(lesson_plans)
+	const teacher_lesson_record = existing_teacher_record ?? blankLessonPlan(lesson_plans)
 	const existing_teacher_quiz_record = Dynamic.get<TIPTeacherLessonPlans>(teacher, [
 		'targeted_instruction',
 		'quizzes'
 	])
 	const teacher_quiz_record =
-		existing_teacher_quiz_record || blankQuizzes(targeted_instruction.quizzes)
+		existing_teacher_quiz_record ?? blankQuizzes(targeted_instruction.quizzes)
 
 	const markLessonPlan = (
-		e: any,
+		event: any,
 		level: string,
 		subject: string,
 		lesson_number: string,
 		value: boolean
 	) => {
-		e.stopPropagation()
+		event.stopPropagation()
 		lessonPlanTaken(faculty_id, level, subject, lesson_number, value)
 	}
 
-	const redirect = (e: any, lesson_number: string) => {
-		e.stopPropagation()
+	const redirect = (event: any, lesson_number: string) => {
+		event.stopPropagation()
 		history.push(`/${url[1]}/${url[2]}/${class_name}/${subject}/${lesson_number}/list/pdf`)
 	}
 
@@ -150,9 +150,14 @@ const List: React.FC<PropsType> = ({
 		clearLessonPlans(faculty_id, class_name, subject)
 	}
 
-	const markQuiz = (e: any, quiz_id: string, value: boolean) => {
-		e.stopPropagation()
+	const markQuiz = (event: any, quiz_id: string, value: boolean) => {
+		event.stopPropagation()
 		quizTaken(faculty_id, quiz_id, value)
+	}
+
+	const redirectToQuiz = (event: any, quiz_id: string) => {
+		event.stopPropagation()
+		history.push(`/${url[1]}/quizzes/${class_name}/${subject}/${quiz_id}/pdf`)
 	}
 
 	const getTakenLessonPlansCount = (lesson_numbers: TIPLessonPlans) => {
@@ -171,11 +176,6 @@ const List: React.FC<PropsType> = ({
 		}, 0)
 	}
 
-	const redirectToQuiz = (e: any, quiz_id: string) => {
-		e.stopPropagation()
-		history.push(`/${url[1]}/quizzes/${class_name}/${subject}/${quiz_id}/pdf`)
-	}
-
 	return (
 		<div className="flex flex-wrap content-between mt-20">
 			<Card class_name={class_name} subject={subject} />
@@ -186,7 +186,7 @@ const List: React.FC<PropsType> = ({
 				.sort(([, a], [, b]) => a.quiz_order - b.quiz_order)
 				.map(([lessonPlans, quiz]) => {
 					const count = getTakenLessonPlansCount(lessonPlans)
-					const teacher_quizzes_record = teacher_quiz_record[quiz.quiz_id] || {
+					const teacher_quizzes_record = teacher_quiz_record[quiz.quiz_id] ?? {
 						taken: false
 					}
 					return (
@@ -199,7 +199,7 @@ const List: React.FC<PropsType> = ({
 								.map(([lpId, lessonPlan]) => {
 									const teacher_record = teacher_lesson_record[
 										lessonPlan.lesson_number
-									] || {
+									] ?? {
 										taken: false
 									}
 
