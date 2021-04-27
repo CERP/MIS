@@ -686,40 +686,40 @@ export const saveTIPQuizResult = (
 	grade: TIPLevels,
 	subject: TIPSubjects
 ) => (dispatch: Function) => {
+	let merges = []
 	for (let [student_id, obtained_marks] of Object.entries(quiz_result)) {
-		dispatch(
-			createMerges([
-				{
-					path: [
-						'db',
-						'students',
-						student_id,
-						'targeted_instruction',
-						'quiz_result',
-						grade,
-						subject,
-						quiz_id,
-						'obtained_marks'
-					],
-					value: obtained_marks
-				},
-				{
-					path: [
-						'db',
-						'students',
-						student_id,
-						'targeted_instruction',
-						'quiz_result',
-						grade,
-						subject,
-						quiz_id,
-						'total_marks'
-					],
-					value: total_marks
-				}
-			])
+		merges.push(
+			{
+				path: [
+					'db',
+					'students',
+					student_id,
+					'targeted_instruction',
+					'quiz_result',
+					grade,
+					subject,
+					quiz_id,
+					'obtained_marks'
+				],
+				value: obtained_marks
+			},
+			{
+				path: [
+					'db',
+					'students',
+					student_id,
+					'targeted_instruction',
+					'quiz_result',
+					grade,
+					subject,
+					quiz_id,
+					'total_marks'
+				],
+				value: total_marks
+			}
 		)
 	}
+	dispatch(createMerges(merges))
 }
 
 export const resetTIPQuizResult = (quiz_result: QuizResult, quiz_id: string) => (
