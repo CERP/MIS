@@ -15,6 +15,7 @@ import { fetchLessons, sendBatchSMS } from 'actions/core'
 import { replaceSpecialCharsWithUTFChars } from 'utils/stringHelper'
 import { AppLayout } from 'components/Layout/appLayout'
 import { isMobile } from 'utils/helpers'
+import { isValidStudent } from 'utils'
 
 interface S {
 	selectedDate: string
@@ -80,7 +81,7 @@ const Diary: React.FC = () => {
 		// Only Saving modified section subjects for selected date rather then the whole section's diary
 		const currDiary = Object.entries(state.diary)
 			.filter(([subject, { homework }]) => {
-				return diary[currentDate] && diary[currentDate][state.sectionId]
+				return diary[currentDate]?.[state.sectionId]
 					? diary[currentDate][state.sectionId][subject]
 						? diary[currentDate][state.sectionId][subject].homework !== homework
 						: true
@@ -126,13 +127,11 @@ const Diary: React.FC = () => {
 	const getSelectedSectionStudents = () => {
 		return Object.values(students).filter(
 			s =>
-				s.Name &&
+				isValidStudent(s) &&
 				s.Active &&
-				s.section_id &&
 				s.section_id === state.sectionId &&
 				(s.tags === undefined || !s.tags['PROSPECTIVE']) &&
-				s.Phone !== undefined &&
-				s.Phone !== ''
+				s.Phone
 		)
 	}
 
@@ -200,7 +199,7 @@ const Diary: React.FC = () => {
 	}
 
 	const getSelectedSectionDiary = () => {
-		return Object.entries(state.diary || {}).reduce((agg, [subject, { homework }]) => {
+		return Object.entries(state.diary ?? {}).reduce((agg, [subject, { homework }]) => {
 			return {
 				...agg,
 				[subject]: homework
