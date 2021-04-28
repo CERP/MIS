@@ -65,7 +65,7 @@ const Diary: React.FC = () => {
 
 	useEffect(() => {
 		if (state.classId !== '' && state.sectionId !== '') {
-			const currDiary = diary[currentDate]?.[state.sectionId] || {}
+			const currDiary = diary[currentDate]?.[state.sectionId] ?? {}
 
 			setState({
 				...state,
@@ -284,7 +284,7 @@ const Diary: React.FC = () => {
 										setState({ ...state, sectionId: e.target.value })
 									}>
 									<option value="">Select</option>
-									{Object.entries(classes[state.classId].sections || {}).map(
+									{Object.entries(classes[state.classId].sections ?? {}).map(
 										([id, s]) => (
 											<option key={id} value={id}>
 												{s.name}
@@ -308,7 +308,7 @@ const Diary: React.FC = () => {
 									}
 									value={duplicateDiary.from}>
 									<option value="">Select Section</option>
-									{Object.entries(classes[state.classId].sections || {})
+									{Object.entries(classes[state.classId].sections ?? {})
 										.filter(([id, s]) => state.sectionId !== id)
 										.map(([id, s]) => (
 											<option key={`copy-${id}`} value={id}>
@@ -328,7 +328,7 @@ const Diary: React.FC = () => {
 					{isSectionSelected && (
 						<div className="flex flex-col w-full print:hidden md:bg-gray-700 md:p-5 md:rounded-2xl md:w-1/2 md:overflow-y-auto space-y-2">
 							<div className="font-semibold">Subjects</div>
-							{Object.keys(classes[state.classId].subjects || {}).map(s => (
+							{Object.keys(classes[state.classId].subjects ?? {}).map(s => (
 								<div
 									key={s}
 									className="flex flex-wrap w-full justify-between flex-row items-center space-y-2 md:flex-nowrap">
@@ -348,7 +348,7 @@ const Diary: React.FC = () => {
 												}
 											})
 										}
-										value={state.diary[s]?.homework || ''}
+										value={state.diary[s]?.homework ?? ''}
 									/>
 									<div
 										className="focus:shadow-outline text-white rounded-full shadow-sm p-2 bg-blue cursor-pointer order-2 md:order-none"
