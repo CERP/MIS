@@ -1,17 +1,15 @@
 import React, { useState, useMemo } from 'react'
 import toast from 'react-hot-toast'
 
-interface PropsType {
+import { ArrowLeftIcon, ClipboardCopyIcon, PlayIcon } from '@heroicons/react/outline'
+
+interface LessonModalProps {
 	lessons: IlmxLessonVideos
 	isLoading: boolean
 	onClose: () => void
 }
 
-interface S {
-	lessonId: string
-}
-
-const LessonModal: React.FC<PropsType> = ({ lessons, onClose }) => {
+const LessonModal: React.FC<LessonModalProps> = ({ lessons, onClose }) => {
 	const [classFilter, setClassFilter] = useState('1')
 	const [subjectFilter, setSubjectFilter] = useState('')
 
@@ -35,27 +33,19 @@ const LessonModal: React.FC<PropsType> = ({ lessons, onClose }) => {
 	}
 
 	return (
-		<div className="bg-white p-4 w-full rounded-2xl h-screen">
-			<div className="flex items-center my-4">
-				<div
-					className="focus:shadow-outline text-red-brand rounded-full shadow-sm p-2 border border-gray-200 bg-white cursor-pointer"
-					onClick={onClose}>
-					<svg
-						className="w-6"
-						xmlns="http://www.w3.org/2000/svg"
-						viewBox="0 0 20 20"
-						fill="currentColor">
-						<path
-							fillRule="evenodd"
-							d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-							clipRule="evenodd"
-						/>
-					</svg>
+		<div className="bg-white p-4 w-full rounded-2xl">
+			<div className="flex items-center justify-between flex-row my-4">
+				<ArrowLeftIcon
+					onClick={onClose}
+					className="text-red-brand bg-white w-8 h-8 p-1 border-2 border-red-brand shadow-sm rounded-full cursor-pointer"
+				/>
+				<div className="text-lg font-semibold ml-4 text-center">
+					Add Video Lectures to Diary
 				</div>
-				<div className="text-l bold ml-4 justify-start">Add Video Lectures to Diary</div>
+				<div />
 			</div>
 			<div className="form scrollbar">
-				<div className="flex w-full video-filter w-full">
+				<div className="flex w-full video-filter">
 					<div className="flex flex-col mr-2 w-1/2">
 						<div className="text-xl my-2">Class</div>
 						<select
@@ -92,31 +82,13 @@ const LessonModal: React.FC<PropsType> = ({ lessons, onClose }) => {
 					</div>
 				</div>
 
-				<div className="flex flex-col w-full overflow-y-auto my-2 h-screen">
+				<div className="flex flex-col w-full overflow-y-auto my-2">
 					{Object.entries(lessons_data || ({} as IlmxLessonVideos)).map(
 						([lesson_id, lesson_meta]) => (
 							<div
 								className="flex items-center bg-gray-700 text-white rounded-md p-2 my-1 w-full"
 								key={lesson_id}>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									className="w-10"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor">
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth="2"
-										d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-									/>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth="2"
-										d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-									/>
-								</svg>
+								<PlayIcon className="w-10" />
 								<div className="flex flex-col w-full ml-2">
 									<div className="text-sm">{lesson_meta.name}</div>
 									<div
@@ -138,19 +110,7 @@ const LessonModal: React.FC<PropsType> = ({ lessons, onClose }) => {
 											}`
 										)
 									}>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										className="h-4 w-4"
-										fill="none"
-										viewBox="0 0 24 24"
-										stroke="currentColor">
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth="2"
-											d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"
-										/>
-									</svg>
+									<ClipboardCopyIcon className="h-4 w-4" />
 								</div>
 							</div>
 						)
