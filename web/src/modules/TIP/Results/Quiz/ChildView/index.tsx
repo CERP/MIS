@@ -31,7 +31,7 @@ const ChildView: React.FC<PropsType> = ({
 	const [page_num, setPageNum] = useState(0)
 	let quiz_result = {}
 	filtered_students.slice(0, 1).map(std => {
-		quiz_result = std.targeted_instruction.quiz_result[class_name][subject]
+		quiz_result = std?.targeted_instruction.quiz_result?.[class_name]?.[subject]
 	})
 	let array_length = Math.ceil(Object.keys(quiz_result || {}).length / 3)
 
@@ -41,7 +41,9 @@ const ChildView: React.FC<PropsType> = ({
 		let quiz_ids = filtered_students.reduce((agg, std) => {
 			return [
 				...agg,
-				...Object.keys(std?.targeted_instruction?.quiz_result[class_name][subject] ?? {})
+				...Object.keys(
+					std?.targeted_instruction?.quiz_result?.[class_name]?.[subject] ?? {}
+				)
 			]
 		}, [])
 		return [...new Set(quiz_ids)].sort((a, b) => a.localeCompare(b))
@@ -70,7 +72,8 @@ const ChildView: React.FC<PropsType> = ({
 			</div>
 			<div className="mb-16">
 				{filtered_students.map(std => {
-					const quiz_result = std.targeted_instruction.quiz_result[class_name][subject]
+					const quiz_result =
+						std.targeted_instruction.quiz_result?.[class_name]?.[subject]
 					array_length = Math.ceil(Object.keys(quiz_result || {}).length / 3)
 					return (
 						<div

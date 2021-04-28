@@ -103,7 +103,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 					<Link
 						className="no-underline"
 						to={
-							test_type === 'Diagnostic'
+							url[2] === 'diagnostic-test'
 								? `/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/answer-pdf`
 								: url[2] === 'oral-test'
 									? `/${url[1]}/${url[2]}/${subject}/answer-pdf`
@@ -118,7 +118,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 					<Link
 						className="no-underline"
 						to={
-							test_type === 'Diagnostic'
+							url[2] === 'diagnostic-test'
 								? `/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades`
 								: url[2] === 'oral-test'
 									? `/${url[1]}/${url[2]}/${subject}/${test_id}/insert-grades`

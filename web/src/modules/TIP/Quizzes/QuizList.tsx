@@ -24,7 +24,7 @@ type PropsType = P & RouteComponentProps
  * @param quizzes
  */
 const blankQuizzes = (quizzes: TIPQuizzes): TIPTeacherQuizzes => {
-	const res = Object.entries(quizzes).reduce<TIPTeacherQuizzes>(
+	const res = Object.entries(quizzes ?? {}).reduce<TIPTeacherQuizzes>(
 		(agg, [quiz_id, quiz]) => ({
 			...agg,
 			[quiz_id]: {
