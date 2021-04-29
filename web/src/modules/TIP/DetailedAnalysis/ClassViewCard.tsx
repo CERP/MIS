@@ -69,7 +69,7 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 				</div>
 				<div className="flex flex-row justify-between w-8/12 md:w-6/12 text-xs m-4">
 					{['Urdu', 'Maths', 'English'].map(sub => {
-						const subject = std.targeted_instruction.learning_level[sub]
+						const subject = std?.targeted_instruction?.learning_level?.[sub]
 						const grade = convertLearningGradeToGroupName(subject?.grade)
 						return (
 							<div
