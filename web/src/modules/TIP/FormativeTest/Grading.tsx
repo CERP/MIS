@@ -129,15 +129,35 @@ const Grading: React.FC<PropsType> = ({
 		}
 
 		//display modal => to see assigned group
-		complete
-			? test_type === 'Diagnostic' &&
-			(setIsComponentVisible(true), setModaltype('assign_group_modal'))
-			: (setIsComponentVisible(true), setModaltype('warning_modal'))
+		if (test_type === 'Diagnostic' || test_type === 'Oral') {
+			if (complete) {
+				setIsComponentVisible(true)
+				setModaltype('assign_group_modal')
+			} else {
+				setIsComponentVisible(true)
+				setModaltype('warning_modal')
+			}
+		}
 
 		// assign level to student
-		test_type === 'Diagnostic' && complete && setLearningLevel(std_id, subject, level)
-		complete && saveReport(std_id, result, test_id)
-		test_type !== 'Diagnostic' && redirect()
+		if (test_type === 'Diagnostic' || test_type === 'Oral') {
+			if (complete) {
+				setLearningLevel(std_id, subject, level)
+			}
+		}
+
+		if (complete) {
+			saveReport(std_id, result, test_id)
+		} else {
+			setIsComponentVisible(true)
+			setModaltype('warning_modal')
+		}
+
+		if (test_type !== 'Diagnostic' && test_type !== 'Oral') {
+			if (complete) {
+				redirect()
+			}
+		}
 	}
 
 	const onResetStudentGrades = () => {
