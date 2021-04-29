@@ -55,7 +55,7 @@ const InsertGrades: React.FC<PropsType> = props => {
 							return (
 								<Link
 									key={std.id}
-									className="relative no-underline h-24 flex flex-col items-center justify-center mb-1"
+									className="relative no-underline flex flex-col items-center justify-between mb-1"
 									to={
 										url[2] === 'diagnostic-test'
 											? `/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades/${std.id}/grading`
@@ -76,7 +76,7 @@ const InsertGrades: React.FC<PropsType> = props => {
 											/>
 										</div>
 									)}
-									<div className="text-xs flex items-center justify-center w-24 md:w-28 overflow-ellipsis mt-2">
+									<div className="text-xs flex items-center justify-center w-24 md:w-28 overflow-ellipsis">
 										{std.Name}
 									</div>
 									<div className="text-xs flex items-center justify-center">
