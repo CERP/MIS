@@ -35,7 +35,7 @@ const ClassView: React.FC<P> = ({ students, sorted_sections }) => {
 					))}
 				</div>
 			</div>
-			<div className="flex flex-col print:hidden">
+			<div className="flex flex-col print:hidden overflow-y-scroll h-80">
 				{Object.values(students || {})
 					.filter(t => t.section_id === section_id)
 					.map(std => (

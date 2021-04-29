@@ -68,31 +68,30 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 					<div className="font-bold text-center">{std.Name}</div>
 				</div>
 				<div className="flex flex-row justify-between w-8/12 md:w-6/12 text-xs m-4">
-					{Object.entries(std.targeted_instruction.learning_level || {})
-						.sort(([sub]) => sub.localeCompare(sub))
-						.map(([, grade_obj]) => {
-							const grade = convertLearningGradeToGroupName(grade_obj.grade)
-							return (
+					{['Urdu', 'Maths', 'English'].map(sub => {
+						const subject = std?.targeted_instruction?.learning_level?.[sub]
+						const grade = convertLearningGradeToGroupName(subject?.grade)
+						return (
+							<div
+								key={std.id}
+								className="w-2/6 flex justify-center items-center cursor-pointer">
 								<div
-									key={grade}
-									className="w-2/6 flex justify-center items-center cursor-pointer">
-									<div
-										className={clsx('px-2 py-1 rounded-md text-white', {
-											'bg-blue-tip-brand': grade === 'Blue',
-											'bg-yellow-tip-brand': grade === 'Yellow',
-											'bg-green-tip-brand': grade === 'Green',
-											'bg-orange-tip-brand': grade === 'Orange',
-											'bg-gray-400': grade === 'Oral',
-											'bg-gray-600': grade === 'Remediation Not Needed'
-										})}
-										onClick={() => {
-											setIsComponentVisible(true), setModalType('test_info')
-										}}>
-										{grade === 'Remediation Not Needed' ? 'none' : grade}
-									</div>
+									className={clsx('px-2 py-1 rounded-md text-white', {
+										'bg-blue-tip-brand': grade === 'Blue',
+										'bg-yellow-tip-brand': grade === 'Yellow',
+										'bg-green-tip-brand': grade === 'Green',
+										'bg-orange-tip-brand': grade === 'Orange',
+										'bg-gray-400': grade === 'Oral',
+										'bg-gray-600': grade === 'Remediation Not Needed'
+									})}
+									onClick={() => {
+										setIsComponentVisible(true), setModalType('test_info')
+									}}>
+									{grade === 'Remediation Not Needed' ? 'none' : grade}
 								</div>
-							)
-						})}
+							</div>
+						)
+					})}
 				</div>
 			</div>
 		</>

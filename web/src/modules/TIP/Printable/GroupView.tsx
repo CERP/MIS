@@ -27,7 +27,7 @@ const GroupViewPrintable: React.FC<P> = ({ students, sorted_sections }) => {
 					</thead>
 					<tbody>
 						<tr>
-							{Object.values(students || {}).map(std => {
+							{Object.values(students ?? {}).map(std => {
 								const class_name = getClassnameFromSectionId(
 									sorted_sections,
 									std.section_id

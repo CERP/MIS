@@ -111,8 +111,7 @@ const Grading: React.FC<PropsType> = ({
 	}
 
 	const onSave = () => {
-		let complete = false
-		if (!result.questions || Object.values(result.questions).length == 0) {
+		if (Object.values(result?.questions ?? {}).length == 0) {
 			alert('Please mark questions')
 			return
 		}
@@ -124,20 +123,23 @@ const Grading: React.FC<PropsType> = ({
 
 		setGroup(convertLearningGradeToGroupName(level))
 
-		if (Object.keys(result.questions).length === Object.keys(questionsObj).length) {
-			complete = true
+		if (
+			Object.keys(result?.questions ?? {}).length === Object.keys(questionsObj ?? {}).length
+		) {
+			// if user has gradded all questions => a Modal will open to display assigned Group else it will display warning
+			if (test_type === 'Diagnostic' || test_type === 'Oral') {
+				setLearningLevel(std_id, subject, level)
+				setIsComponentVisible(true)
+				setModaltype('assign_group_modal')
+			} else {
+				//if test type is not diagnostic and oral then it will not assign any group and rediect to student list
+				redirect()
+			}
+			saveReport(std_id, result, test_id)
+		} else {
+			setIsComponentVisible(true)
+			setModaltype('warning_modal')
 		}
-
-		//display modal => to see assigned group
-		complete
-			? test_type === 'Diagnostic' &&
-			(setIsComponentVisible(true), setModaltype('assign_group_modal'))
-			: (setIsComponentVisible(true), setModaltype('warning_modal'))
-
-		// assign level to student
-		test_type === 'Diagnostic' && complete && setLearningLevel(std_id, subject, level)
-		complete && saveReport(std_id, result, test_id)
-		test_type !== 'Diagnostic' && redirect()
 	}
 
 	const onResetStudentGrades = () => {
@@ -200,7 +202,7 @@ const Grading: React.FC<PropsType> = ({
 					.sort((a, b) => a.localeCompare(b, 'en', { numeric: true }))
 					.map(function (q_id, index) {
 						const question = questionsObj[q_id]
-						const is_correct = result.questions[q_id]?.is_correct
+						const is_correct = result.questions?.[q_id]?.is_correct
 
 						return (
 							<div
