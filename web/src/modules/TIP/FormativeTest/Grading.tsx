@@ -111,7 +111,7 @@ const Grading: React.FC<PropsType> = ({
 	}
 
 	const onSave = () => {
-		if (!result.questions || Object.values(result.questions).length == 0) {
+		if (Object.values(result?.questions ?? {}).length == 0) {
 			alert('Please mark questions')
 			return
 		}
@@ -123,7 +123,9 @@ const Grading: React.FC<PropsType> = ({
 
 		setGroup(convertLearningGradeToGroupName(level))
 
-		if (Object.keys(result.questions).length === Object.keys(questionsObj).length) {
+		if (
+			Object.keys(result?.questions ?? {}).length === Object.keys(questionsObj ?? {}).length
+		) {
 			// if user has gradded all questions => a Modal will open to display assigned Group else it will display warning
 			if (test_type === 'Diagnostic' || test_type === 'Oral') {
 				setLearningLevel(std_id, subject, level)
@@ -200,7 +202,7 @@ const Grading: React.FC<PropsType> = ({
 					.sort((a, b) => a.localeCompare(b, 'en', { numeric: true }))
 					.map(function (q_id, index) {
 						const question = questionsObj[q_id]
-						const is_correct = result.questions[q_id]?.is_correct
+						const is_correct = result.questions?.[q_id]?.is_correct
 
 						return (
 							<div
