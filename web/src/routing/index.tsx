@@ -54,6 +54,7 @@ import { SingleFamily } from 'pages/family/single'
 import { SingleFamilyPayments } from 'pages/family/single/payments'
 import { SMS } from 'pages/sms'
 import { Settings } from 'pages/school/settings'
+import { ResetSchoolPassword } from 'pages/auth/reset-password/school'
 
 import { PrivateRoute, SchoolRoute, PublicRoute } from 'components/routing'
 
@@ -176,6 +177,10 @@ export class Routes extends React.Component<RoutesProps, State> {
 
 						<PublicRoute exact path="/signup" component={SchoolSignup} />
 						<PublicRoute path="/school-login" component={SchoolLogin} />
+						<PublicRoute
+							path="/school/reset-password"
+							component={ResetSchoolPassword}
+						/>
 						<SchoolRoute path="/staff-login" component={StaffLogin} />
 						<SchoolRoute exact path="/setup" component={SchoolSetup} />
 
