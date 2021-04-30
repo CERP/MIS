@@ -17,6 +17,23 @@ const SingleStdGrading: React.FC<P> = ({ student, obtained_marks, total_marks, h
 		handleChange(std_id, range)
 	}
 
+	const getTranslateValue = (marks: number) => {
+		switch (marks) {
+			case 6:
+				return 14
+			case 7:
+				return 16
+			case 8:
+				return 20
+			case 9:
+				return 24
+			case 10:
+				return 28
+			default:
+				return 0
+		}
+	}
+
 	return (
 		<div className="mb-1 bg-gray-200 w-ful text-sm md:text-base lg:text-lg flex flex-row justify-around">
 			<div className="flex flex-col justify-between items-center text-center w-1/2">
@@ -27,7 +44,9 @@ const SingleStdGrading: React.FC<P> = ({ student, obtained_marks, total_marks, h
 			<div className="flex items-center w-1/2 justify-center">
 				<div className="rounded-full bg-white py-2 px-4 md:px-5 lg:px-8 h-4 shadow-lg flex items-center">
 					<div
-						className={`bg-white rounded-full bg-white w-7 h-7 flex justify-center items-center absolute shadow-lg transform -translate-y-6 translate-x-${obtained_marks === 9 ? 'transform translate-x-24' : obtained_marks * 2
+						className={`bg-white rounded-full bg-white w-7 h-7 flex justify-center items-center absolute shadow-lg transform -translate-y-6 translate-x-${obtained_marks > 5
+								? getTranslateValue(obtained_marks)
+								: obtained_marks * 2
 							}`}>
 						{obtained_marks}
 					</div>
