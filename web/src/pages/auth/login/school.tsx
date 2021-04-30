@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { Link, Redirect } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import { ArrowRightIcon } from '@heroicons/react/outline'
 
 import { createSchoolLogin } from 'actions'
 import { AppLayout } from 'components/Layout/appLayout'
 import { ShowHidePassword } from 'components/password'
 import { Spinner } from 'components/animation/spinner'
-import { OnboardingStage } from 'constants/index'
-import { DownloadIcon } from 'assets/icons'
 
 type State = {
 	school: string
@@ -28,12 +27,7 @@ export const SchoolLogin = () => {
 	const [isSubmitted, setIsSubmitted] = useState(false)
 	const [hasError, setHasError] = useState('')
 
-	const {
-		auth,
-		connected,
-		initialized,
-		db: { onboarding, users }
-	} = useSelector((state: RootReducerState) => state)
+	const { auth } = useSelector((state: RootReducerState) => state)
 
 	useEffect(() => {
 		if (auth.attempt_failed && isSubmitted && !auth.loading) {
@@ -62,66 +56,6 @@ export const SchoolLogin = () => {
 		const { name, value } = event.target
 		setState({ ...state, [name]: value })
 	}
-
-	// // TODO: remove this logic
-	// // add more robust way of auth redirection
-
-	// // here handling two cases:
-	// // - user logged in and onboarding state is completed (new schools), redirect to home page
-	// // - user logged in and there's no onboarding state (old schools), redirect to home page
-	// if (
-	// 	auth?.faculty_id &&
-	// 	auth?.token &&
-	// 	(onboarding?.stage ? onboarding?.stage === OnboardingStage.COMPLETED : true)
-	// ) {
-	// 	return <Redirect to="/home" />
-	// }
-
-	// // user logged in and there's onboarding state
-	// // onboarding component will handle further
-	// // desired state component renders
-	// if (auth?.faculty_id && auth?.token && onboarding?.stage) {
-	// 	return <Redirect to="/onboarding" />
-	// }
-
-	// // school logged in and there's no user, start the onboarding process
-	// // by creating a new user
-	// if (auth?.token && Object.keys(users || {}).length === 0) {
-	// 	return <Redirect to="/setup" />
-	// }
-
-	// if (auth?.token) {
-	// 	return <Redirect to="/staff-login" />
-	// }
-
-	// if (!connected) {
-	// 	return (
-	// 		<AppLayout title={'School Login'}>
-	// 			<div className="p-5 pb-0 md:p-10 md:pb-0 text-gray-700">
-	// 				<div className="text-center animate-pulse">Connecting, Please wait...</div>
-	// 			</div>
-	// 		</AppLayout>
-	// 	)
-	// }
-
-	// if (!initialized) {
-	// 	return (
-	// 		<AppLayout title={'School Login'}>
-	// 			<div className="p-5 pb-0 md:p-10 md:pb-0 text-gray-700">
-	// 				<div className="flex flex-col items-center mt-20">
-	// 					<img
-	// 						className="animate-bounce w-8 md:w-12"
-	// 						src={DownloadIcon}
-	// 						alt="d-icon"
-	// 					/>
-	// 					<div className="text-sm animate-pulse">
-	// 						Downloading Database, Please wait...
-	// 					</div>
-	// 				</div>
-	// 			</div>
-	// 		</AppLayout>
-	// 	)
-	// }
 
 	return (
 		<AppLayout title={'School Login'}>
@@ -187,7 +121,10 @@ export const SchoolLogin = () => {
 											</span>
 										</>
 									) : (
-										<span className={'mx-auto'}>Login into your School</span>
+										<>
+											<span className={'mx-auto'}>Login into School</span>
+											<ArrowRightIcon className="w-6" />
+										</>
 									)}
 								</button>
 								<Link
