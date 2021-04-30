@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { Link, Redirect } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { connect, useDispatch } from 'react-redux'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
+import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/outline'
 
 import chunkify from 'utils/chunkify'
 import { toTitleCase } from 'utils/toTitleCase'
@@ -97,23 +98,10 @@ const Login: React.FC<LoginProps> = ({ auth, users, school, connected, unsyncd_c
 										<LoginForm user={user} auth={auth} />
 									</div>
 									<div className="absolute left-0 top-0">
-										<div
+										<ArrowLeftIcon
 											onClick={() => setUser(undefined)}
-											className="w-10 h-8 flex items-center justify-center rounded-md shadow-md bg-white text-blue-brand cursor-pointer">
-											<svg
-												className="w-4 h-4"
-												xmlns="http://www.w3.org/2000/svg"
-												fill="none"
-												viewBox="0 0 24 24"
-												stroke="currentColor">
-												<path
-													strokeLinecap="round"
-													strokeLinejoin="round"
-													strokeWidth={2}
-													d="M10 19l-7-7m0 0l7-7m-7 7h18"
-												/>
-											</svg>
-										</div>
+											className="w-10 h-8 p-2 flex items-center justify-center rounded-md shadow-md bg-white text-blue-brand cursor-pointer"
+										/>
 									</div>
 								</div>
 							) : (
@@ -255,11 +243,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ user, auth }) => {
 						autoCorrect="off"
 						autoComplete="off"
 						placeholder="Enter password"
-						className="tw-input w-full"
+						className="tw-input w-full tw-is-form-bg-black"
 					/>
 					<div
 						onClick={() => setShowHidePassword(!showHidePassword)}
-						className="absolute inset-y-0 right-0 pr-2 flex items-center cursor-pointer">
+						className="absolute inset-y-0 right-0 pr-2 flex items-center cursor-pointer text-white">
 						{<ShowHidePassword open={showHidePassword} />}
 					</div>
 				</div>
@@ -274,7 +262,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ user, auth }) => {
 							<span className={'mx-auto animate-pulse'}>Logging In</span>
 						</>
 					) : (
-						<span className={'mx-auto'}>Login</span>
+						<>
+							<span className={'mx-auto'}>Login as {user.name.split(' ')[0]}</span>
+							<ArrowRightIcon className="w-6" />
+						</>
 					)}
 				</button>
 				<div className="h-1 py-1 text-xs text-red-brand">{hasError}</div>

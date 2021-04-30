@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import { ArrowRightIcon } from '@heroicons/react/outline'
 
 import { createSchoolLogin } from 'actions'
 import { AppLayout } from 'components/Layout/appLayout'
@@ -120,7 +121,10 @@ export const SchoolLogin = () => {
 											</span>
 										</>
 									) : (
-										<span className={'mx-auto'}>Login into your School</span>
+										<>
+											<span className={'mx-auto'}>Login into School</span>
+											<ArrowRightIcon className="w-6" />
+										</>
 									)}
 								</button>
 								<Link
