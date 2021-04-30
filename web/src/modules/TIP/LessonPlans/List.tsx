@@ -87,18 +87,18 @@ const List: React.FC<PropsType> = ({
 	const lessonPlansQuizzes = () => {
 		const categorizedLessonPlan = Object.entries(lesson_plans).reduce(
 			(agg, [lesson_no, lesson_plan]) => {
-				let slo = Dynamic.get<string>(targeted_instruction, [
+				let quiz_id = Dynamic.get<string>(targeted_instruction, [
 					'curriculum',
 					class_name,
 					subject,
 					lesson_plan.lesson_number,
-					'slo'
-				])[0]
+					'quiz_id'
+				])
 
 				return {
 					...agg,
-					[slo]: {
-						...agg[slo],
+					[quiz_id]: {
+						...agg[quiz_id],
 						[lesson_no]: lesson_plan
 					}
 				}
@@ -108,8 +108,7 @@ const List: React.FC<PropsType> = ({
 
 		return Object.entries(categorizedLessonPlan).reduce<
 			Array<[TIPLessonPlans, AugmentedTIPQuiz]>
-		>((agg, [slo, lessonPlans]) => {
-			const quiz_id = getQuizId(targeted_instruction, [slo])
+		>((agg, [quiz_id, lessonPlans]) => {
 			const quiz = targeted_instruction.quizzes[quiz_id]
 
 			return [...agg, [lessonPlans, { quiz_id, ...quiz }]]
