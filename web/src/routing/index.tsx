@@ -57,6 +57,12 @@ import { Settings } from 'pages/school/settings'
 import { ResetSchoolPassword } from 'pages/auth/reset-password/school'
 
 import { PrivateRoute, SchoolRoute, PublicRoute } from 'components/routing'
+import { ExamsMenu } from 'pages/exams/menu'
+import { GradeSettings } from 'pages/exams/grades'
+import { PromoteStudents } from 'pages/exams/promote-students'
+import { Datesheet } from 'pages/exams/datesheet'
+import { ExamsMarks } from 'pages/exams/marks'
+import { ExamsResults } from 'pages/exams/results'
 
 interface RoutesProps {
 	store: Store<RootReducerState>
@@ -144,6 +150,13 @@ export class Routes extends React.Component<RoutesProps, State> {
 							path="/reports/:class_id/:section_id/exam/:exam_id"
 							component={SingleExam}
 						/>
+						<PrivateRoute path="/exams/grades" component={GradeSettings} />
+						<PrivateRoute path="/exams/promote-students" component={PromoteStudents} />
+						<PrivateRoute path="/exams/datesheet" component={Datesheet} />
+						<PrivateRoute path="/exams/marks" component={ExamsMarks} />
+						<PrivateRoute path="/exams/results" component={ExamsResults} />
+						<PrivateRoute path="/exams" component={ExamsMenu} />
+
 						<PrivateRoute path="/reports/:class_id/:section_id" component={ExamList} />
 						<PrivateRoute path="/reports" component={Marks} />
 						<PrivateRoute path="/settings" component={Settings} />
