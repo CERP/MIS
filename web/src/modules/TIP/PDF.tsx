@@ -18,11 +18,11 @@ interface P {
 type PropsType = P & RouteComponentProps<Params>
 
 enum TestType {
-	'Diagnostic' = 'diagnostic-test',
-	'Formative' = 'formative-test',
-	'Summative' = 'summative-test',
-	'Oral' = 'oral-test',
-	'Quiz' = 'Quiz'
+	DIAGNOSTIC = 'diagnostic-test',
+	FORMATIVE = 'formative-test',
+	SUMMATIVE = 'summative-test',
+	ORAL = 'oral-test',
+	QUIZ = 'Quiz'
 }
 
 const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
@@ -79,7 +79,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 	return (
 		<div className="flex flex-wrap flex-col content-between w-full items-center justify-items-center mt-20">
 			<Card class_name={class_name ? class_name : 'Oral Test'} subject={subject} />
-			{test_type === TestType.Quiz && (
+			{test_type === TestType.QUIZ && (
 				<div className="mb-5">
 					<Headings heading={quiz_title} />
 				</div>
@@ -113,9 +113,9 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 					<Link
 						className="no-underline"
 						to={
-							url[2] === TestType.Diagnostic
+							url[2] === TestType.DIAGNOSTIC
 								? `/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/answer-pdf`
-								: url[2] === TestType.Oral
+								: url[2] === TestType.ORAL
 									? `/${url[1]}/${url[2]}/${subject}/answer-pdf`
 									: `/${url[1]}/${url[2]}/${class_name}/${subject}/answer-pdf`
 						}>
@@ -128,11 +128,11 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 					<Link
 						className="no-underline"
 						to={
-							url[2] === TestType.Diagnostic
+							url[2] === TestType.DIAGNOSTIC
 								? `/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades`
-								: url[2] === TestType.Oral
+								: url[2] === TestType.ORAL
 									? `/${url[1]}/${url[2]}/${subject}/${test_id}/insert-grades`
-									: test_type === TestType.Quiz
+									: test_type === TestType.QUIZ
 										? `/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/grading`
 										: `/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades`
 						}>

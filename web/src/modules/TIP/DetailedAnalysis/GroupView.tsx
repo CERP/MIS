@@ -64,7 +64,7 @@ const GroupView: React.FC<P> = ({ students, sorted_sections }) => {
 					<div className="font-bold">Class</div>
 				</div>
 			</div>
-			<div className="flex flex-col print:hidden overflow-y-scroll h-80">
+			<div className="flex flex-col print:hidden overflow-y-auto h-80">
 				{Object.values(filtered_students || {}).map(std => {
 					const class_name = getClassnameFromSectionId(sorted_sections, std.section_id)
 					return (

@@ -479,25 +479,6 @@ export const getTestType = (value: string) => {
 /**
  *
  * @param quizzes
- * @param subject
- * @param level
- * @returns TIP Quizzes
- */
-// export const getQuizzes = (quizzes: TIPQuizzes, subject: TIPSubjects, level: TIPLevels) => {
-// 	return Object.entries(quizzes ?? {}).reduce((agg, [quiz_id, quiz]) => {
-// 		if (quiz.grade === level && quiz.subject === subject) {
-// 			return {
-// 				...agg,
-// 				[quiz_id]: quiz
-// 			}
-// 		}
-// 		return { ...agg }
-// 	}, {})
-// }
-
-/**
- *
- * @param quizzes
  * @returns all SLOs in TIP Quizzes
  */
 export const getQuizSLOs = (quizzes: TIPQuizz) => {
@@ -517,13 +498,12 @@ export const getQuizSLOs = (quizzes: TIPQuizz) => {
  * @returns quiz id
  */
 export const getQuizId = (quizzes: TIPQuizz, slo: string) => {
-	return Object.entries(quizzes ?? {}).reduce((agg, [quiz_id, quiz]) => {
+	for (const [quiz_id, quiz] of Object.entries(quizzes ?? {})) {
 		const slos: string[] = quiz.slo[0].split('$')
 		if (slos.includes(slo)) {
 			return quiz_id
 		}
-		return agg
-	}, '')
+	}
 }
 
 /**
@@ -555,7 +535,7 @@ export const getSingleSloQuizResult = (
 	grade: TIPLevels
 ) => {
 	const quizzes: TIPQuizz = targeted_instruction.quizzes[grade][subject]
-	const quiz_id = getQuizId(quizzes, slo[0])
+	const quiz_id = getQuizId(quizzes, slo[0]) // required slo will be in first index of slo array
 
 	const midpoint_test_id = getMidpointTestId(targeted_instruction, subject, grade)
 

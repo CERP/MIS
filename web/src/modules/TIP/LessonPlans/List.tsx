@@ -181,7 +181,11 @@ const List: React.FC<PropsType> = ({
 			<Headings heading="Lesson Plan Library" sub_heading="Click on a plan to view" />
 
 			{lessonPlansQuizzes()
-				.sort(([, a], [, b]) => a.quiz_order - b.quiz_order)
+				.sort(
+					([, a], [, b]) =>
+						(a.quiz_order ?? Number.MAX_SAFE_INTEGER) -
+						(b.quiz_order ?? Number.MAX_SAFE_INTEGER)
+				)
 				.map(([lessonPlans, quiz]) => {
 					const count = getTakenLessonPlansCount(lessonPlans)
 					const teacher_quizzes_record = teacher_quiz_record[quiz.quiz_id] ?? {
