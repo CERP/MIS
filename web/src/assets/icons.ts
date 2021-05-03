@@ -38,7 +38,8 @@ import backArrow from './svgs/left-arrow.svg'
 import burger from './svgs/burger.svg'
 import tip from './svgs/TIP.svg'
 import down from './svgs/down.svg'
-import user from './svgs/user.svg'
+import whiteUser from './svgs/whiteUser.svg'
+import blackUser from './svgs/blackUser.svg'
 import quiz from './pngs/quiz.png'
 import results from './pngs/results.png'
 import whiteSummative from './pngs/whiteSummative.png'
@@ -87,7 +88,8 @@ export const BackArrow = backArrow
 export const Burger = burger
 export const TIP = tip
 export const DownArrow = down
-export const User = user
+export const WhiteUser = whiteUser
+export const BlackUser = blackUser
 export const Quiz = quiz
 export const Results = results
 export const WhiteSummative = whiteSummative

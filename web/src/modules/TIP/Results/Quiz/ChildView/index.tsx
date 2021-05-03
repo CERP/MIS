@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import clsx from 'clsx'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
-import { User, PaginationArrow } from 'assets/icons'
+import { WhiteUser, PaginationArrow } from 'assets/icons'
 
 interface P {
 	filtered_students: MISStudent[]
@@ -74,7 +74,7 @@ const ChildView: React.FC<PropsType> = ({
 						})}
 				</div>
 			</div>
-			<div className="mb-16">
+			<div className="mb-16 overflow-y-scroll h-96">
 				{filtered_students.map(std => {
 					const quiz_result =
 						std.targeted_instruction.quiz_result?.[class_name]?.[subject]
@@ -86,14 +86,14 @@ const ChildView: React.FC<PropsType> = ({
 							onClick={() => (setType(Types.SINGLE_STD_VIEW), setSelectedStd(std))}>
 							<div className="w-1/3 flex justify-center items-center">
 								<div className="flex flex-row w-full md:w-3/5 lg:w-1/2 items-center">
-									<img className="h-10 w-10 mr-2" src={User} />
+									<img className="h-10 w-10 mr-2" src={WhiteUser} />
 									<div className="flex flex-col justify-between">
 										<div className="font-bold">{std.Name}</div>
 										<div className="">{std.RollNumber}</div>
 									</div>
 								</div>
 							</div>
-							<div className="w-2/3 flex flex-row justify-start ml-1 space-x-5 md:space-x-20">
+							<div className="w-2/3 flex flex-row justify-start ml-2 md:ml-4 space-x-4 md:space-x-10">
 								{Object.entries(quiz_result || {})
 									.slice(page_num * 3, (page_num + 1) * 3)
 									.sort(([a], [b]) => a.localeCompare(b))

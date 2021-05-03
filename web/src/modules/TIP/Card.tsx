@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { User } from 'assets/icons'
+import { WhiteUser } from 'assets/icons'
 import { convertLearningGradeToGroupName, convertLearningLevelToGrade } from 'utils/TIP'
 
 interface P {
@@ -44,7 +44,7 @@ const Card: React.FC<P> = ({
 						: `bg-sea-green-tip-brand`
 					} container sm:px-8 rounded-md h-20 mb-6 mt-0 w-11/12 md:w-13/12`}>
 				<div className="flex flex-row justify-start">
-					<img className="w-12 h-12 rounded-full p-4" src={User} alt="img" />
+					<img className="w-12 h-12 rounded-full p-4" src={WhiteUser} alt="img" />
 					<div className="flex flex-row justify-between w-full">
 						<div className="flex flex-col justify-center">
 							<div className="text-white text-lg">{teacher_name}</div>

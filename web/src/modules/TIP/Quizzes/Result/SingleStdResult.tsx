@@ -1,5 +1,5 @@
 import React from 'react'
-import { User } from 'assets/icons'
+import { BlackUser } from 'assets/icons'
 import clsx from 'clsx'
 
 interface P {
@@ -29,7 +29,7 @@ const SingleStdResult: React.FC<P> = ({ student, class_name, subject, quiz_id })
 		<div className="mb-3 bg-white w-ful text-sm md:text-base lg:text-lg flex flex-row justify-around md:justify-around lg:justify-around">
 			<div className="w-1/3 flex justify-center">
 				<div className="w-full md:w-1/2 lg:w-1/2 flex flex-row justify-start items-center">
-					<img className="h-8 w-8" src={User} />
+					<img className="h-8 w-8" src={BlackUser} />
 					<div>{student.Name}</div>
 				</div>
 			</div>

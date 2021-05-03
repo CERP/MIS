@@ -1,6 +1,6 @@
 import React from 'react'
 import clsx from 'clsx'
-import { ArrowBack, User } from 'assets/icons'
+import { ArrowBack, WhiteUser } from 'assets/icons'
 
 interface P {
 	name: string
@@ -52,7 +52,7 @@ const ChildView: React.FC<P> = ({
 			onClick={redirect}>
 			<div className="flex flex-row justify-between items-center w-full">
 				<div className="w-2/4 flex flex-row justify-start content-center items-center">
-					<img className="h-6 rounded-full p-3" src={User} alt="img" />
+					<img className="h-6 rounded-full p-3" src={WhiteUser} alt="img" />
 					<div className="font-bold">{name}</div>
 				</div>
 				<div className="flex flex-row justify-around w-2/4 text-sm md:text-md lg:text-lg">

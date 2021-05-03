@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import Card from '../../Card'
-import { User } from 'assets/icons'
+import { BlackUser } from 'assets/icons'
 import { connect } from 'react-redux'
 import { RouteComponentProps } from 'react-router-dom'
 import Headings from '../../Headings'
@@ -76,7 +76,7 @@ const DetailedQuizResult: React.FC<PropsType> = ({ match, targeted_instruction, 
 					onClick={() => setType(Types.CHILD_VIEW)}>
 					<div className="border border-black h-6 my-4 w-3/4 rounded-3xl py-1 pt-2 flex justify-center items-center cursor-pointer">
 						<div className="absolute rounded-full w-3/4">
-							<img className="h-9 w-9 rounded-full" src={User} alt="img" />
+							<img className="h-9 w-9 rounded-full" src={BlackUser} alt="img" />
 						</div>
 						<div className="flex justify-center">Child View - {selected_std.Name}</div>
 					</div>

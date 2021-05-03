@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { User } from 'assets/icons'
+import { WhiteUser } from 'assets/icons'
 
 interface P {
 	student: MISStudent
@@ -36,8 +36,8 @@ const SingleStdGrading: React.FC<P> = ({ student, obtained_marks, total_marks, h
 
 	return (
 		<div className="mb-1 bg-gray-200 w-ful text-sm md:text-base lg:text-lg flex flex-row justify-around">
-			<div className="flex flex-col justify-between items-center text-center w-1/2">
-				<img className="h-8 w-8" src={User} />
+			<div className="flex flex-col justify-center items-center w-1/2">
+				<img className="h-8 w-8" src={WhiteUser} />
 				<div>{student.Name}</div>
 				<div>{student.RollNumber}</div>
 			</div>

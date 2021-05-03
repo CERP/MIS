@@ -57,7 +57,7 @@ const QuizList: React.FC<PropsType> = ({
 	])
 	const teacher_lesson_record = existing_teacher_record || blankQuizzes(quizzes)
 
-	const done = (e: any, quiz_id: string, value: boolean) => {
+	const markQuiz = (e: any, quiz_id: string, value: boolean) => {
 		e.stopPropagation()
 		quizTaken(faculty_id, quiz_id, value)
 	}
@@ -92,18 +92,12 @@ const QuizList: React.FC<PropsType> = ({
 								<div className="text-xs text-white">{`Quiz ${quiz.quiz_order}`}</div>
 							</div>
 
-							{teacher_record.taken ? (
+							{teacher_record.taken && (
 								<img
 									src={Check}
 									className="h-8 w-8 bg-white rounded-full flex items-center justify-center print:hidden cursor-pointer"
-									onClick={e => done(e, quiz_id, false)}
+									onClick={e => markQuiz(e, quiz_id, false)}
 								/>
-							) : (
-								<div
-									className="h-8 w-9 bg-white rounded-full flex items-center justify-center print:hidden cursor-pointer"
-									onClick={e => done(e, quiz_id, true)}>
-									<img className="h-3 w-3" src={WhiteTick} />
-								</div>
 							)}
 						</div>
 					)
