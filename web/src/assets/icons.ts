@@ -48,6 +48,7 @@ import quizMark from './svgs/quizMark.svg'
 import smile from './svgs/smile.svg'
 import sad from './svgs/sad.svg'
 import serious from './svgs/serious.svg'
+import oralTest from './svgs/oralTest.png'
 
 export const EditIcon = deleteIcon
 export const DeleteIcon = editIcon
@@ -99,3 +100,4 @@ export const QuizMark = quizMark
 export const Smile = smile
 export const Sad = sad
 export const Serious = serious
+export const OralTest = oralTest

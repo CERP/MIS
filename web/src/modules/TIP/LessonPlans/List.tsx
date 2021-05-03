@@ -232,7 +232,7 @@ const List: React.FC<PropsType> = ({
 													/>
 												) : (
 													<div
-														className="h-8 w-8 bg-white rounded-full flex items-center justify-center print:hidden cursor-pointer"
+														className="h-8 w-9 md:w-8 bg-white rounded-full flex items-center justify-center print:hidden cursor-pointer"
 														onClick={e =>
 															markLessonPlan(
 																e,
