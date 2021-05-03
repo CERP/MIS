@@ -73,7 +73,7 @@ const initState: RootReducerState = {
 		hasError: false
 	},
 	targeted_instruction: {
-		quizzes: {},
+		quizzes: {} as TIPQuizzes,
 		tests: {},
 		slo_mapping: {},
 		curriculum: {} as TIPCurriculum

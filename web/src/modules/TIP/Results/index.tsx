@@ -17,19 +17,19 @@ const Results: React.FC<PropsType> = () => {
 			<Headings heading="Results" sub_heading="Select the result you wanna see" />
 			<div className="flex flex-row justify-around w-full mt-5 p-3">
 				<Link
-					className="bg-sea-green-tip-brand px-2 rounded-lg h-48 flex flex-col justify-center items-center shadow-lg"
+					className="bg-sea-green-tip-brand px-2 rounded-lg h-48 flex flex-col justify-center items-center shadow-lg no-underline"
 					to={'/targeted-instruction/diagnostic-result'}>
 					<img className="py-11 pl-2" src={WhiteDiagnostic} />
 					<div className="text-white">Starting Test</div>
 				</Link>
 				<Link
-					className="bg-sea-green-tip-brand px-2 rounded-lg h-48 flex flex-col justify-center items-center shadow-lg"
+					className="bg-sea-green-tip-brand px-2 rounded-lg h-48 flex flex-col justify-center items-center shadow-lg no-underline"
 					to={'/targeted-instruction/formative-result'}>
 					<img className="py-11 pl-2" src={WhiteFormative} />
 					<div className="text-white">Midpoint Test</div>
 				</Link>
 				<Link
-					className="bg-sea-green-tip-brand px-2 rounded-lg h-48 flex flex-col justify-center items-center shadow-lg"
+					className="bg-sea-green-tip-brand px-2 rounded-lg h-48 flex flex-col justify-center items-center shadow-lg no-underline"
 					to={'/targeted-instruction/summative-result'}>
 					<img className="py-11 pr-2" src={WhiteSummative} />
 					<div className="text-white">Final Test</div>

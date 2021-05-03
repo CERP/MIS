@@ -47,7 +47,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 
 	// if we have a test, we need to chagne pdf_url to load from the test_id
 	if (test_type === 'Quiz') {
-		pdf_url = targeted_instruction?.quizzes[test_id]?.pdf_url
+		pdf_url = targeted_instruction?.quizzes?.[class_name]?.[subject]?.[test_id]?.pdf_url
 	}
 
 	if (url[2].indexOf('test') >= 0) {

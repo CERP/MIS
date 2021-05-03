@@ -1,7 +1,6 @@
 import React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import { Check, WhiteTick } from 'assets/icons'
-import { getQuizzes } from 'utils/TIP'
 import { connect } from 'react-redux'
 import Headings from '../Headings'
 import Card from '../Card'
@@ -49,7 +48,7 @@ const QuizList: React.FC<PropsType> = ({
 	const { class_name, subject } = match.params as Params
 	const url = match.url.split('/')
 
-	const filterredQuizzes: TIPQuizzes = getQuizzes(quizzes, subject, class_name)
+	const filterredQuizzes: TIPQuizz = quizzes?.[class_name]?.[subject]
 
 	const teacher = faculty[faculty_id]
 	const existing_teacher_record = Dynamic.get<TIPTeacherLessonPlans>(teacher, [

@@ -116,7 +116,13 @@ interface TIPTests {
 	[id: string]: TIPTest
 }
 
-interface TIPQuizzes {
+type TIPQuizzes = {
+	[learning_level in TIPLevels]: {
+		[subject: string]: TIPQuizz
+	}
+}
+
+type TIPQuizz = {
 	[id: string]: TIPQuiz
 }
 

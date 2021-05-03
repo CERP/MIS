@@ -46,7 +46,7 @@ const AnswerSheet: React.FC<PropsType> = ({ match, targeted_instruction, history
 		.filter(([, t]) => t.type === test_type && t.subject === subject && t.grade === 'Oral Test')
 		.map(([t_id]) => t_id)
 
-	const quiz_ids = Object.entries(targeted_instruction.quizzes || {})
+	const quiz_ids = Object.entries(targeted_instruction.quizzes?.[class_name]?.[subject] || {})
 		.filter(([, t]) => t.type === test_type && t.subject === subject && t.grade === class_name)
 		.map(([t_id]) => t_id)
 
@@ -57,7 +57,7 @@ const AnswerSheet: React.FC<PropsType> = ({ match, targeted_instruction, history
 
 	// if we have a test, we need to chagne pdf_url to load from the test_id
 	if (url[2] === 'quizzes') {
-		pdf_url = targeted_instruction?.quizzes[test_id]?.pdf_url
+		pdf_url = targeted_instruction?.quizzes?.[class_name]?.[subject]?.[test_id]?.pdf_url
 	}
 
 	if (url[2].indexOf('test') >= 0) {

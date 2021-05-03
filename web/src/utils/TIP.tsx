@@ -44,8 +44,6 @@ export const getStudentsByGroup = (
 	group: TIPGrades,
 	subject: string
 ) => {
-	console.log(students, subject, group)
-
 	return Object.values(students)
 		.filter(s => s.targeted_instruction)
 		.filter(s => s.targeted_instruction.learning_level)
@@ -485,26 +483,29 @@ export const getTestType = (value: string) => {
  * @param level
  * @returns TIP Quizzes
  */
-export const getQuizzes = (quizzes: TIPQuizzes, subject: TIPSubjects, level: TIPLevels) => {
-	return Object.entries(quizzes ?? {}).reduce((agg, [quiz_id, quiz]) => {
-		if (quiz.grade === level && quiz.subject === subject) {
-			return {
-				...agg,
-				[quiz_id]: quiz
-			}
-		}
-		return { ...agg }
-	}, {})
-}
+// export const getQuizzes = (quizzes: TIPQuizzes, subject: TIPSubjects, level: TIPLevels) => {
+// 	return Object.entries(quizzes ?? {}).reduce((agg, [quiz_id, quiz]) => {
+// 		if (quiz.grade === level && quiz.subject === subject) {
+// 			return {
+// 				...agg,
+// 				[quiz_id]: quiz
+// 			}
+// 		}
+// 		return { ...agg }
+// 	}, {})
+// }
 
 /**
  *
  * @param quizzes
  * @returns all SLOs in TIP Quizzes
  */
-export const getQuizSLOs = (quizzes: TIPQuizzes) => {
+export const getQuizSLOs = (quizzes: TIPQuizz) => {
 	const sloArray = Object.values(quizzes ?? {}).reduce((agg, quiz) => {
-		return [...agg, quiz.slo[0]]
+		const slo = quiz.slo.reduce((agg2, slo) => {
+			return [...agg2, ...slo.split('$')]
+		}, [])
+		return [...agg, ...slo]
 	}, [])
 	return [...new Set(sloArray)]
 }
@@ -515,11 +516,8 @@ export const getQuizSLOs = (quizzes: TIPQuizzes) => {
  * @param slo
  * @returns quiz id
  */
-export const getQuizId = (
-	targeted_instruction: RootReducerState['targeted_instruction'],
-	slo: string[]
-) => {
-	return Object.entries(targeted_instruction.quizzes ?? {})
+export const getQuizId = (quizzes: TIPQuizz, slo: string[]) => {
+	return Object.entries(quizzes ?? {})
 		.filter(([, t]) => t.slo[0] === slo[0])
 		.map(([t_id]) => t_id)[0]
 }
@@ -552,7 +550,8 @@ export const getSingleSloQuizResult = (
 	subject: TIPSubjects,
 	grade: TIPLevels
 ) => {
-	const quiz_id = getQuizId(targeted_instruction, slo)
+	const quizzes: TIPQuizz = targeted_instruction.quizzes[grade][subject]
+	const quiz_id = getQuizId(quizzes, slo)
 
 	const midpoint_test_id = getMidpointTestId(targeted_instruction, subject, grade)
 
@@ -566,7 +565,8 @@ export const getSingleSloQuizResult = (
 		const quiz_obtain_marks =
 			std.targeted_instruction?.quiz_result?.[grade]?.[subject]?.[quiz_id]?.obtained_marks ??
 			0
-		const quiz_total_marks = targeted_instruction?.quizzes?.[quiz_id]?.total_marks ?? 0
+		const quiz_total_marks =
+			targeted_instruction?.quizzes?.[grade]?.[subject]?.[quiz_id]?.total_marks ?? 0
 		return {
 			...agg,
 			[std.id]: {
@@ -597,7 +597,7 @@ export const getMidpointSloBaseResult = (
 	const question_ids = Object.entries(
 		targeted_instruction?.tests?.[midpoint_test_id]?.questions ?? {}
 	)
-		.filter(([, t]) => t.slo[0] === slo[0])
+		.filter(([, t]) => JSON.stringify(t.slo) === JSON.stringify(slo))
 		.map(([t_id]) => t_id)
 
 	question_ids.map(id => {
@@ -622,13 +622,14 @@ export const getSingleStdQuizResult = (
 ) => {
 	const midpoint_test_id = getMidpointTestId(targeted_instruction, subject, grade)
 
-	const SLOs = getQuizSLOs(targeted_instruction.quizzes)
+	const SLOs = getQuizSLOs(targeted_instruction?.quizzes?.[grade]?.[subject])
 	return SLOs.reduce((agg, slo) => {
-		const quiz_id = getQuizId(targeted_instruction, [slo])
+		const quiz_id = getQuizId(targeted_instruction?.quizzes?.[grade]?.[subject], [slo])
 		const quiz_obtained_marks =
 			student?.targeted_instruction?.quiz_result?.[grade]?.[subject]?.[quiz_id]
 				?.obtained_marks ?? 0
-		const quiz_total_marks = targeted_instruction?.quizzes?.[quiz_id]?.total_marks ?? 0
+		const quiz_total_marks =
+			targeted_instruction?.quizzes?.[grade]?.[subject]?.[quiz_id]?.total_marks ?? 0
 		const [midpoint_obtained_marks, midpoint_total_marks] = getMidpointSloBaseResult(
 			targeted_instruction,
 			[slo],
@@ -661,7 +662,7 @@ export const getSkillViewQuizResult = (
 	grade: TIPLevels
 ) => {
 	const midpoint_test_id = getMidpointTestId(targeted_instruction, subject, grade)
-	const SLOs = getQuizSLOs(targeted_instruction.quizzes)
+	const SLOs = getQuizSLOs(targeted_instruction?.quizzes?.[grade]?.[subject])
 	return SLOs.reduce((agg, slo) => {
 		let below_average = 0,
 			average = 0,
@@ -672,7 +673,7 @@ export const getSkillViewQuizResult = (
 		return [
 			...agg,
 			Object.values(students).reduce((agg2, std) => {
-				const quiz_id = getQuizId(targeted_instruction, [slo])
+				const quiz_id = getQuizId(targeted_instruction?.quizzes?.[grade]?.[subject], [slo])
 				const quiz = std?.targeted_instruction?.quiz_result?.[grade]?.[subject]?.[quiz_id]
 				const percentage = (quiz?.obtained_marks / quiz?.total_marks) * 100
 				below_average = below_average + (percentage < 40 ? 1 : 0)

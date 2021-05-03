@@ -109,7 +109,7 @@ const List: React.FC<PropsType> = ({
 		return Object.entries(categorizedLessonPlan).reduce<
 			Array<[TIPLessonPlans, AugmentedTIPQuiz]>
 		>((agg, [quiz_id, lessonPlans]) => {
-			const quiz = targeted_instruction.quizzes[quiz_id]
+			const quiz = targeted_instruction?.quizzes?.[class_name]?.[subject]?.[quiz_id]
 
 			return [...agg, [lessonPlans, { quiz_id, ...quiz }]]
 		}, [])

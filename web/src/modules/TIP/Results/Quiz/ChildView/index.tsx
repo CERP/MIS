@@ -57,8 +57,12 @@ const ChildView: React.FC<PropsType> = ({
 					{getQuizTitles()
 						.slice(page_num * 3, (page_num + 1) * 3)
 						.map(quiz_id => {
-							const quiz_title = targeted_instruction?.quizzes?.[quiz_id]?.quiz_title
-							const quiz_order = targeted_instruction?.quizzes?.[quiz_id]?.quiz_order
+							const quiz_title =
+								targeted_instruction?.quizzes?.[class_name]?.[subject][quiz_id]
+									?.quiz_title
+							const quiz_order =
+								targeted_instruction?.quizzes?.[class_name]?.[subject]?.[quiz_id]
+									?.quiz_order
 							return (
 								<div
 									key={quiz_id}
