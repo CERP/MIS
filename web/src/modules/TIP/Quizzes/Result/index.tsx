@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
 import Card from '../../Card'
+import Headings from '../../Headings'
 import { connect } from 'react-redux'
 import { getStudentsByGroup, convertLearningLevelToGrade } from 'utils/TIP'
 import SingleStdResult from './SingleStdResult'
@@ -19,10 +20,15 @@ const Result: React.FC<PropsType> = ({ match, students, targeted_instruction }) 
 	const filtered_students = useMemo(() => getStudentsByGroup(students, group, subject), [subject])
 	const total_marks =
 		targeted_instruction?.quizzes?.[class_name]?.[subject]?.[quiz_id].total_marks
+	const { slo, quiz_title } = targeted_instruction?.quizzes?.[class_name]?.[subject]?.[quiz_id]
 
 	return (
 		<div className="bg-white flex flex-wrap content-between mt-20">
 			<Card class_name={class_name} subject={subject} />
+			<div className="w-full">
+				<Headings heading={quiz_title} />
+			</div>
+
 			<div className="p-4 w-full">
 				<div className="pr-2 bg-blue-tip-brand flex flex-row justify-around text-sm md:text-base lg:text-lg text-white rounded py-2 font-bold">
 					<div>Students</div>

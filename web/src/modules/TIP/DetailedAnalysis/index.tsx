@@ -39,10 +39,7 @@ const DetailedAnalysis: React.FC<P> = ({ classes, students, targeted_instruction
 			<Card />
 			{view_type === '' && (
 				<div className="py-10">
-					<Headings
-						heading=""
-						sub_heading="Do you want to see Class view or Group view"
-					/>
+					<Headings sub_heading="Do you want to see Class view or Group view" />
 				</div>
 			)}
 			<div className="flex flex-row justify-around px-3 print:hidden">
@@ -65,12 +62,12 @@ const DetailedAnalysis: React.FC<P> = ({ classes, students, targeted_instruction
 			</div>
 			{view_type === 'class_view' && (
 				<div className="py-10">
-					<Headings heading="" sub_heading="Select your Class" />
+					<Headings sub_heading="Select your Class" />
 				</div>
 			)}
 			{view_type === 'group_view' && (
 				<div className="py-10">
-					<Headings heading="" sub_heading="Select your Group and Subject" />
+					<Headings sub_heading="Select your Group and Subject" />
 				</div>
 			)}
 			{view_type === 'class_view' && (

@@ -69,7 +69,7 @@ const DetailedQuizResult: React.FC<PropsType> = ({ match, targeted_instruction, 
 	return (
 		<div className="flex flex-wrap content-between mt-20">
 			<Card class_name={class_name} subject={subject} />
-			<Headings heading="Results" sub_heading="" />
+			<Headings heading="Results" />
 			{type === Types.SINGLE_STD_VIEW && (
 				<div
 					className="flex flex-row justify-center w-full"

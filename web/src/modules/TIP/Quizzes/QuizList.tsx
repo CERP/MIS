@@ -71,7 +71,7 @@ const QuizList: React.FC<PropsType> = ({
 		<div className="flex flex-wrap content-between mt-20">
 			<Card class_name={class_name} subject={subject} />
 			<div className="mb-5 flex justify-center w-full">
-				<Headings heading={'Quiz Library'} sub_heading={''} />
+				<Headings heading={'Quiz Library'} />
 			</div>
 			{Object.entries(filterredQuizzes)
 				.sort(([, a], [, b]) => a.quiz_order - b.quiz_order)

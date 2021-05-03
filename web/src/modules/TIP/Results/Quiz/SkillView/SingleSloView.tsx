@@ -12,7 +12,7 @@ const SingleSloView: React.FC<P> = ({ slo, singleSloQuizResult }) => {
 	return (
 		<div className="w-full">
 			<div className="flex justify-center w-full font-bold">
-				<Headings heading={`SLO : ${slo}`} sub_heading="" />
+				<Headings heading={`SLO : ${slo}`} />
 			</div>
 			<div className="mt-5 flex flex-row justify-between w-full bg-blue-tip-brand items-center py-2 text-white font-bold">
 				<div className="ml-4 md:ml-4 lg:ml-1 md:ml-6 w-1/2 md:w-1/3 lg:w-1/2 flex justify-center">

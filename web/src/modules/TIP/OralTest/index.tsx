@@ -17,7 +17,7 @@ const OralTest: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 	return (
 		<div className="flex flex-wrap content-between mt-20">
 			<Card />
-			<Headings heading="Oral Test" sub_heading={'Select the subject you want to evaluate'} />
+			<Headings heading="Oral Test" sub_heading="Select the subject you want to evaluate" />
 			<Subjects url={url} targeted_instruction={targeted_instruction} />
 		</div>
 	)

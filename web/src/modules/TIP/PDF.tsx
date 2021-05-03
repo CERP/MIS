@@ -10,6 +10,7 @@ import { scrollModePlugin } from '@react-pdf-viewer/scroll-mode'
 // Import styles
 import '@react-pdf-viewer/core/lib/styles/index.css'
 import '@react-pdf-viewer/default-layout/lib/styles/index.css'
+import Headings from './Headings'
 interface P {
 	targeted_instruction: RootReducerState['targeted_instruction']
 }
@@ -21,12 +22,13 @@ enum TestType {
 	'Formative' = 'formative-test',
 	'Summative' = 'summative-test',
 	'Oral' = 'oral-test',
-	'Quiz' = 'quizzes'
+	'Quiz' = 'Quiz'
 }
 
 const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 	const url = match.url.split('/')
 	const { class_name, subject, section_id, quiz_id } = match.params
+	const { slo, quiz_title } = targeted_instruction?.quizzes?.[class_name]?.[subject]?.[quiz_id]
 
 	// if test, this will find the test_id
 	let test_type: TIPTestType = 'Diagnostic'
@@ -76,12 +78,12 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 
 	return (
 		<div className="flex flex-wrap flex-col content-between w-full items-center justify-items-center mt-20">
-			<Card
-				class_name={class_name ? class_name : 'Oral Test'}
-				subject={subject}
-				lesson_name=""
-				lesson_no=""
-			/>
+			<Card class_name={class_name ? class_name : 'Oral Test'} subject={subject} />
+			{test_type === TestType.Quiz && (
+				<div className="mb-5">
+					<Headings heading={quiz_title} />
+				</div>
+			)}
 			<div className="border border-thin border-black rounded-md">
 				<div className="rounded-lg h-96">
 					<Worker workerUrl="https://unpkg.com/pdfjs-dist@2.6.347/build/pdf.worker.min.js">
@@ -130,7 +132,7 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 								? `/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades`
 								: url[2] === TestType.Oral
 									? `/${url[1]}/${url[2]}/${subject}/${test_id}/insert-grades`
-									: test_type === 'Quiz'
+									: test_type === TestType.Quiz
 										? `/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/grading`
 										: `/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades`
 						}>

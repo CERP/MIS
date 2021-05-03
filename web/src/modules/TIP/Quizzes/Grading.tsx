@@ -1,6 +1,7 @@
 import React, { useMemo, useEffect, useState } from 'react'
 import Card from '../Card'
 import { connect } from 'react-redux'
+import Headings from '../Headings'
 import { getStudentsByGroup, convertLearningLevelToGrade } from 'utils/TIP'
 import SingleStdGrading from './SingleStdGrading'
 import { RouteComponentProps } from 'react-router-dom'
@@ -51,6 +52,7 @@ const Grading: React.FC<PropsType> = ({
 
 	const filtered_students = useMemo(() => getStudentsByGroup(students, group, subject), [subject])
 	const total_marks = targeted_instruction?.quizzes?.[class_name]?.[subject][quiz_id].total_marks
+	const { slo, quiz_title } = targeted_instruction?.quizzes?.[class_name]?.[subject]?.[quiz_id]
 
 	useEffect(() => {
 		if (filtered_students.length === 0) {
@@ -92,6 +94,11 @@ const Grading: React.FC<PropsType> = ({
 	return (
 		<div className="flex flex-wrap content-between mt-20">
 			<Card class_name={class_name} subject={subject} />
+
+			<div className="w-full">
+				<Headings heading={quiz_title} />
+			</div>
+
 			<div className="p-4 w-full">
 				<div className="bg-blue-tip-brand flex flex-row justify-around text-sm md:text-base lg:text-lg text-white rounded py-2 pl-4 font-bold">
 					<div>Students</div>

@@ -67,7 +67,6 @@ const Result: React.FC<PropsType> = props => {
 		<div className="flex flex-wrap content-between mt-20">
 			<Headings
 				heading={test_type === 'Formative' ? 'Midpoint Test Result' : 'Final Test Result'}
-				sub_heading=""
 			/>
 			{type === Types.SINGLE_STD_VIEW ? (
 				test_type === 'Summative' ? (

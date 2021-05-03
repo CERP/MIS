@@ -14,7 +14,7 @@ const Results: React.FC<PropsType> = () => {
 	return (
 		<div className="bg-white flex flex-wrap content-between mt-20">
 			<Card />
-			<Headings heading="Results" sub_heading="Select the result you wanna see" />
+			<Headings heading="Test Results" sub_heading="Select the result you wanna see" />
 			<div className="flex flex-row justify-around w-full mt-5 p-3">
 				<Link
 					className="bg-white px-2 rounded-lg h-48 flex flex-col justify-center items-center shadow-lg no-underline"
