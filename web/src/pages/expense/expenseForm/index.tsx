@@ -1,19 +1,12 @@
 import { CameraIcon } from '@heroicons/react/outline'
 import { addExpense, editExpense } from 'actions'
+import clsx from 'clsx'
 import { AppLayout } from 'components/Layout/appLayout'
 import { ExpenseCategories } from 'constants/expense'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
+import toast from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux'
-
-interface addExpense {
-	label: string
-	amount: number
-	date: number
-	category: string
-	type: 'PAYMENT_GIVEN'
-	quantity: number
-}
 
 function CustomInput(props: {
 	title: string
@@ -22,16 +15,20 @@ function CustomInput(props: {
 	onChange: any
 	disabled: boolean
 	type?: string
+	editable?: boolean
 }) {
 	return (
 		<div>
 			<h1 className="text-xl text-gray-100 font-normal ">{props.title}*</h1>
 			<div className="w-full rounded  focus:outline-none focus-within:outline-none mt-2">
 				<input
-					type="text"
+					type={props.type}
 					disabled={props.disabled}
 					placeholder={props.placeHolder}
-					className="w-full bg-transparent rounded border-2 border-blue-300 outline-none text-white placeholder-gray-400"
+					className={clsx(
+						'w-full bg-transparent rounded border-2 border-blue-300 outline-none  placeholder-gray-400',
+						props.editable ? 'text-white' : 'text-gray-400'
+					)}
 					defaultValue={props.defaultValue}
 					onChange={props.onChange}
 				/>
@@ -40,17 +37,24 @@ function CustomInput(props: {
 	)
 }
 
-const index = (props: { match: { params: { id: any } } }) => {
+const ExpenseForm = (props: { match: { params: { id: any } } }) => {
 	let key: string = props.match.params.id
-	const expense: any = useSelector((state: RootReducerState) => state.db.expenses[key])
-	const [state, setState] = useState<addExpense>()
+	const expense: any = useSelector((state: RootReducerState) => state.db.expenses)
+
+	const initExpense = expense[key] ?? {
+		date: new Date().getTime(),
+		type: 'PAYMENT_GIVEN',
+		expense: 'MIS_EXPENSE'
+	}
+
+	const [state, setState] = useState<Partial<MISExpense>>(initExpense)
 	const dispatch = useDispatch()
 
 	const isNew = () => key === 'new'
 
 	const handleAddorChange = () => {
-		if (state.label === undefined || state.label == '') {
-			alert('Label can not be empty')
+		if (!state.label) {
+			toast.error('Label can not be empty')
 			return
 		}
 		if (
@@ -59,15 +63,15 @@ const index = (props: { match: { params: { id: any } } }) => {
 			state.quantity === undefined ||
 			state.amount === undefined
 		) {
-			alert('Quantity and Amount cannot be zero')
+			toast.error('Quantity and Amount cannot be zero')
 			return
 		}
-		{
-			if (state.category === undefined) {
-				alert('Please select a Category')
-				return
-			}
+
+		if (!state.category) {
+			toast.error('Please select a Category')
+			return
 		}
+
 		if (isNew()) {
 			dispatch(
 				addExpense(
@@ -79,12 +83,14 @@ const index = (props: { match: { params: { id: any } } }) => {
 					state.date
 				)
 			)
+			toast.success('Added New Expense')
 		} else {
 			dispatch(
 				editExpense({
 					[key]: { amount: state.amount }
 				})
 			)
+			toast.success('Edited the Expense')
 		}
 	}
 
@@ -96,28 +102,11 @@ const index = (props: { match: { params: { id: any } } }) => {
 		})
 	}
 
-	//useDispatch(addExpense())
 	useEffect(() => {
-		if (key === 'new') {
-			setState({
-				amount: undefined,
-				quantity: undefined,
-				category: undefined,
-				date: new Date().getTime(),
-				label: undefined,
-				type: 'PAYMENT_GIVEN'
-			})
-		} else {
-			setState({
-				amount: expense.amount,
-				category: expense.category,
-				date: expense.date,
-				label: expense.label,
-				quantity: expense.quantity,
-				type: 'PAYMENT_GIVEN'
-			})
+		if (key !== 'new' && expense) {
+			setState(expense[key])
 		}
-	}, [])
+	}, [expense])
 	return (
 		<AppLayout>
 			<div className="bg-gray-600 mt-4 ml-3 mr-3 rounded-2xl flex flex-1 flex-col ">
@@ -127,6 +116,8 @@ const index = (props: { match: { params: { id: any } } }) => {
 				{state && (
 					<div className="m-5">
 						<CustomInput
+							editable={isNew()}
+							type="text"
 							disabled={!isNew()}
 							title="Label"
 							defaultValue={state.label}
@@ -141,6 +132,8 @@ const index = (props: { match: { params: { id: any } } }) => {
 						<div className="w-full flex flex-1 flex-row mt-3">
 							<div className="w-1/2 mr-2">
 								<CustomInput
+									editable={isNew()}
+									type="number"
 									disabled={!isNew()}
 									title="Quantity"
 									defaultValue={state.quantity}
@@ -155,6 +148,8 @@ const index = (props: { match: { params: { id: any } } }) => {
 							</div>
 							<div className="w-1/2 ml-2">
 								<CustomInput
+									editable={true}
+									type="number"
 									disabled={false}
 									title="Amount"
 									defaultValue={state.amount}
@@ -173,13 +168,25 @@ const index = (props: { match: { params: { id: any } } }) => {
 							{categories.map(cat => {
 								return (
 									<div
-										className="rounded-full p-1 mt-1 text-gray-200 text-xs border-gray-200 border-2"
-										style={
+										className={clsx(
+											'rounded-full p-1 mt-1 text-gray-200 text-xs border-gray-200 border-2',
 											state.category === cat
-												? { backgroundColor: '#1bb4bb' }
-												: { backgroundColor: 'transparent' }
-										}>
-										<h1 onClick={e => selectCategory(e)}>{cat}</h1>
+												? 'bg-teal-brand'
+												: 'bg-transparent',
+											key === 'new'
+												? 'text-gray-200'
+												: 'text-gray-400 border-gray-400'
+										)}>
+										<h1
+											onClick={e => {
+												if (key === 'new') {
+													selectCategory(e)
+												} else {
+													return
+												}
+											}}>
+											{cat}
+										</h1>
 									</div>
 								)
 							})}
@@ -189,12 +196,15 @@ const index = (props: { match: { params: { id: any } } }) => {
 							<input
 								disabled={!isNew()}
 								defaultValue={moment(state.date).format('YYYY-MM-DD')}
-								className="w-full bg-transparent rounded border-2 border-blue-300 outline-none text-white placeholder-gray-400"
+								className={clsx(
+									'w-full bg-transparent rounded border-2 border-blue-300 outline-none  placeholder-gray-400',
+									key === 'new' ? 'text-white' : 'text-gray-400'
+								)}
 								type="date"
-								onChange={(e: { target: { value: any } }) =>
+								onChange={e =>
 									setState({
 										...state,
-										date: new Date(e.target.value).getTime()
+										date: e.target.valueAsNumber
 									})
 								}
 							/>
@@ -207,8 +217,7 @@ const index = (props: { match: { params: { id: any } } }) => {
 						</div>
 						<div
 							onClick={() => handleAddorChange()}
-							className="flex flex-1 flex-row justify-between mt-6 pl-4 pr-4 pt-2 pb-2 ml-1 mr-1 rounded-md"
-							style={{ backgroundColor: '#1BB4BB' }}>
+							className="flex flex-1 flex-row justify-between mt-6 pl-4 pr-4 pt-2 pb-2 ml-1 mr-1 rounded-md bg-teal-brand">
 							<h1 className="text-xl text-gray-100 font-semibold">
 								{key === 'new' ? 'Add Expense' : 'Edit Expense'}
 							</h1>
@@ -226,4 +235,4 @@ const index = (props: { match: { params: { id: any } } }) => {
 	)
 }
 
-export default index
+export default ExpenseForm

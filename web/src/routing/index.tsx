@@ -57,6 +57,8 @@ import { Settings } from 'pages/school/settings'
 import { PrivateRoute, SchoolRoute, PublicRoute } from 'components/routing'
 import { Expense } from 'pages/expense'
 import ExpenseForm from 'pages/expense/expenseForm'
+import Salary from 'pages/expense/salary'
+import SalaryForm from 'pages/expense/salary/SalaryForm'
 
 interface RoutesProps {
 	store: Store<RootReducerState>
@@ -173,6 +175,10 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<PrivateRoute path="/fees/add-historical-fee" component={HistoricalFee} />
 						<PrivateRoute path="/fee-menu" component={FeeMenu} />
 						<PrivateRoute path="/reset-password" component={ResetPassword} />
+						<PrivateRoute path="/expenses" exact component={Expense} />
+						<PrivateRoute path="/expenses/:id" exact component={ExpenseForm} />
+						<PrivateRoute path="/salary" exact component={Salary} />
+						<PrivateRoute path="/salary/:id" exact component={SalaryForm} />
 
 						<PublicRoute exact path="/signup" component={SchoolSignup} />
 						<PublicRoute path="/school-login" component={SchoolLogin} />
@@ -188,8 +194,6 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<Route exact path="/about-us" component={AboutUs} />
 						<Route exact path="/features" component={Feature} />
 						<Route exact path="/contact-us" component={ContactUs} />
-						<Route path="/expenses" exact component={Expense} />
-						<Route path="/expenses/:id" exact component={ExpenseForm} />
 					</Switch>
 				</BrowserRouter>
 			</Provider>
