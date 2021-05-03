@@ -9,6 +9,7 @@ import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 
 import UserIconSvg from 'assets/svgs/user.svg'
 import { SearchInput } from 'components/input/search'
+import { AddStickyButton } from 'components/Button/add-sticky'
 
 type Filter = {
 	search: string
@@ -40,10 +41,7 @@ export const StudentList = () => {
 		<AppLayout title="Students">
 			<div className="relative p-5 mb-20 md:p-10">
 				<Link to="/students/new/menu">
-					<div className="flex items-center justify-between fixed z-50 bottom-4 right-4 rounded-full bg-teal-brand text-white lg:hidden py-3 px-6 w-11/12 text-lg mr-0.5">
-						<div>Add new Student</div>
-						<div className="text-xl">+</div>
-					</div>
+					<AddStickyButton label="Add new Student" />
 				</Link>
 
 				<div className="my-4 text-2xl font-bold text-center">School Students</div>

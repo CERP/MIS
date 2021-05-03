@@ -2,7 +2,13 @@ import React, { useMemo, useState } from 'react'
 import clsx from 'clsx'
 import moment from 'moment'
 import { useSelector } from 'react-redux'
-import { CashIcon, CloudUploadIcon, RefreshIcon, UsersIcon } from '@heroicons/react/outline'
+import {
+	CashIcon,
+	CloudUploadIcon,
+	RefreshIcon,
+	UsersIcon,
+	ExclamationIcon
+} from '@heroicons/react/outline'
 import { PieChart, Pie, Sector, ResponsiveContainer } from 'recharts'
 
 import { isMobile } from 'utils/helpers'
@@ -106,6 +112,9 @@ export const StatsTab = () => {
 		]
 	}, [])
 
+	const attendanceMarkCount =
+		attendanceStats.PRESENT + attendanceStats.ABSENT + attendanceStats.LEAVE
+
 	return (
 		<div className="p-5 mx-auto md:p-10 md:w-2/5">
 			<div className="mb-6 text-2xl text-center md:hidden">School Daily Statistics</div>
@@ -136,7 +145,14 @@ export const StatsTab = () => {
 				</div>
 
 				<div className="w-full h-80">
-					<AttendanceChart graphData={graphData} />
+					{attendanceMarkCount === 0 ? (
+						<div className="flex flex-col space-y-2 justify-center items-center pt-24">
+							<ExclamationIcon className="text-orange-brand w-14" />
+							<div>Attendance not marked yet.</div>
+						</div>
+					) : (
+						<AttendanceChart graphData={graphData} />
+					)}
 				</div>
 				<div className="flex flex-row justify-between">
 					<div className="flex flex-col items-center text-teal-brand">

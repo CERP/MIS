@@ -6,6 +6,7 @@ import { toTitleCase } from 'utils/toTitleCase'
 import { AppLayout } from 'components/Layout/appLayout'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { SearchInput } from 'components/input/search'
+import { AddStickyButton } from 'components/Button/add-sticky'
 
 export const ClassList = () => {
 	const { classes, students } = useSelector((state: RootReducerState) => state.db)
@@ -18,10 +19,7 @@ export const ClassList = () => {
 		<AppLayout title="Classes">
 			<div className="p-5 md:p-10 relative mb-20">
 				<Link to="classes/new">
-					<div className="flex items-center justify-between fixed z-50 bottom-4 right-4 rounded-full bg-teal-brand text-white lg:hidden py-3 px-6 w-11/12 text-lg mr-0.5">
-						<div>Add new Class</div>
-						<div className="text-xl">+</div>
-					</div>
+					<AddStickyButton label="Create new Class" />
 				</Link>
 
 				<div className="text-center font-bold text-2xl my-4">School Classes</div>

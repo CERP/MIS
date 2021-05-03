@@ -9,6 +9,7 @@ import { createMerges } from 'actions/core'
 import { OnboardingStage } from 'constants/index'
 
 import UserIconSvg from 'assets/svgs/user.svg'
+import { PlusButton } from 'components/Button/plus'
 
 interface CreateClassProps {
 	onBack?: (close: boolean) => void
@@ -144,7 +145,7 @@ export const CreateClass: React.FC<CreateClassProps> = ({ skipStage }) => {
 						required
 						onChange={handleInput}
 						placeholder="Type section name"
-						className="w-full tw-input bg-transparent border-blue-brand ring-1"
+						className="w-full tw-input tw-is-form-bg-black"
 					/>
 				</div>
 
@@ -170,13 +171,9 @@ export const CreateClass: React.FC<CreateClassProps> = ({ skipStage }) => {
 						value={newSubject}
 						placeholder="Type new subject name"
 						autoComplete="off"
-						className="tw-input bg-transparent border-blue-brand ring-1"
+						className="tw-input tw-is-form-bg-black"
 					/>
-					<div
-						onClick={addNewSubject}
-						className="ml-4 w-8 h-8 flex items-center justify-center rounded-full border cursor-pointer bg-blue-brand hover:bg-blue-400">
-						+
-					</div>
+					<PlusButton handleClick={addNewSubject} className="ml-4" />
 				</div>
 
 				<div>Assign Class Teacher*</div>

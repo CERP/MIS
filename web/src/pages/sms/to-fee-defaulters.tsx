@@ -47,7 +47,7 @@ export const ToFeeDefaulters = ({
 						<div className="flex flex-row items-center">
 							<input
 								onChange={() => setNotPaidDuration(NotPaidMonthDuration.ONE)}
-								className="form-radio text-teal-brand mr-2"
+								className="mr-2 form-radio tw-radio"
 								type="radio"
 								name="duration"
 							/>
@@ -56,7 +56,7 @@ export const ToFeeDefaulters = ({
 						<div className="flex flex-row items-center">
 							<input
 								onChange={() => setNotPaidDuration(NotPaidMonthDuration.THREE)}
-								className="form-radio text-teal-brand mr-2"
+								className="mr-2 form-radio tw-radio"
 								type="radio"
 								name="duration"
 							/>
@@ -65,7 +65,7 @@ export const ToFeeDefaulters = ({
 						<div className="flex flex-row items-center">
 							<input
 								onChange={() => setNotPaidDuration(NotPaidMonthDuration.SIX)}
-								className="form-radio text-teal-brand mr-2"
+								className="mr-2 form-radio tw-radio"
 								type="radio"
 								name="duration"
 							/>

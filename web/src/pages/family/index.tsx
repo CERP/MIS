@@ -8,6 +8,7 @@ import { SearchInput } from 'components/input/search'
 import toTitleCase from 'utils/toTitleCase'
 
 import UserIconSvg from 'assets/svgs/user.svg'
+import { AddStickyButton } from 'components/Button/add-sticky'
 
 type State = {
 	search: string
@@ -23,12 +24,8 @@ export const Family = () => {
 	return (
 		<AppLayout title="Families">
 			<div className="p-5 md:p-10 relative mb-20">
-				{/* Can be extracted to a resuable component */}
 				<Link to="/families/new">
-					<div className="flex items-center justify-between fixed z-50 bottom-4 right-4 rounded-full bg-teal-brand text-white lg:hidden py-3 px-6 w-11/12 text-lg mr-0.5">
-						<div>Create new Family</div>
-						<div className="text-xl">+</div>
-					</div>
+					<AddStickyButton label="Create new Family" />
 				</Link>
 
 				<div className="text-center font-bold text-2xl my-4">Families</div>

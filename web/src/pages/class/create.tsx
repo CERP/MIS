@@ -8,6 +8,7 @@ import clsx from 'clsx'
 
 import { createEditClass, deleteSection, deleteSubject } from 'actions'
 import { AppLayout } from 'components/Layout/appLayout'
+import { PlusButton } from 'components/Button/plus'
 
 const blankClass: MISClass = {
 	id: v4(),
@@ -184,7 +185,7 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 				<div className="text-2xl font-bold mt-4 mb-8 text-center">
 					{isNewClass ? 'Add New Class' : 'Update Class'}
 				</div>
-				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 my-4 md:mt-8">
+				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 py-5 my-4 md:mt-8">
 					<div className="text-white text-center text-base my-5">
 						Fill Class Information
 					</div>
@@ -206,7 +207,7 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 								required
 								value={state.class.name}
 								onChange={handleInput}
-								className="tw-input w-full bg-transparent border-blue-brand ring-1"
+								className="tw-input w-full tw-is-form-bg-black"
 								placeholder="Select or type class name"
 							/>
 						</div>
@@ -216,7 +217,7 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 							type="number"
 							name="classYear"
 							required
-							className="tw-input w-full  bg-transparent border-blue-brand ring-1"
+							className="tw-input w-full  tw-is-form-bg-black"
 							value={state.class.classYear}
 							onChange={handleInput}
 						/>
@@ -243,13 +244,9 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 								value={state.newSubject}
 								placeholder="Type new subject name"
 								autoComplete="off"
-								className="tw-input w-full bg-transparent border-blue-brand ring-1"
+								className="tw-input w-full tw-is-form-bg-black"
 							/>
-							<div
-								onClick={addNewSubject}
-								className="ml-4 w-8 h-8 flex items-center justify-center rounded-full border cursor-pointer bg-blue-brand hover:bg-blue-400">
-								+
-							</div>
+							<PlusButton handleClick={addNewSubject} className="ml-4" />
 						</div>
 
 						<div>Sections</div>
@@ -268,16 +265,16 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 													}
 													placeholder={'Type section name'}
 													value={section.name}
-													className="tw-input w-full bg-transparent border-blue-brand ring-1"
+													className="tw-input w-full tw-is-form-bg-black"
 												/>
 											</div>
 										}
 
 										{
-											<div className="flex flex-row justify-between items-center">
-												<div>Assign Teacher</div>
+											<div className="flex flex-row justify-between items-center w-full">
+												<div className="w-1/2">Assign Teacher</div>
 												<select
-													className="tw-select"
+													className="tw-select w-1/2"
 													value={state.class.sections[id].faculty_id}
 													onChange={e =>
 														handleInputByPath(
@@ -315,11 +312,7 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 						)}
 
 						<div className="flex flex-row items-center">
-							<div
-								onClick={addNewSection}
-								className="mr-4 w-8 h-8 flex items-center justify-center rounded-full border cursor-pointer bg-blue-brand hover:bg-blue-400">
-								+
-							</div>
+							<PlusButton handleClick={addNewSection} className="mr-4" />
 							<div>Add Another Class Section</div>
 						</div>
 

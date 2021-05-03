@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
+import moment from 'moment'
 import { useDispatch, useSelector } from 'react-redux'
 import { ExclamationIcon } from '@heroicons/react/solid'
-import { SelectorIcon, UserIcon, XCircleIcon } from '@heroicons/react/outline'
+import { UserIcon, XCircleIcon } from '@heroicons/react/outline'
 
 import { CustomSelect } from 'components/select'
 import { AppLayout } from 'components/Layout/appLayout'
@@ -16,7 +17,6 @@ import { smsIntentLink } from 'utils/intent'
 import toTitleCase from 'utils/toTitleCase'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { NotPaidMonthDuration, ToFeeDefaulters } from './to-fee-defaulters'
-import moment from 'moment'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
 
@@ -350,7 +350,7 @@ export const SMS = () => {
 	return (
 		<AppLayout title="SMS" showHeaderTitle>
 			<div className="p-5 md:p-10 md:pb-0 relative print:hidden">
-				<div className="md:w-4/5 md:mx-auto flex flex-col space-y-4 rounded-2xl bg-gray-700 p-5 my-4 mt-4 w-full">
+				<div className="md:w-4/5 md:mx-auto flex flex-col space-y-4 rounded-2xl bg-gray-700 p-5 my-5 w-full">
 					<div className="text-white text-lg text-center">Select to send SMS</div>
 
 					<div className="text-white">Send To:</div>
@@ -363,9 +363,8 @@ export const SMS = () => {
 								sendTo: parseInt(sendTo),
 								defaulterOptions: false
 							})
-						}>
-						<SelectorIcon className="w-5 h-5 text-gray-500" />
-					</CustomSelect>
+						}
+					/>
 
 					{state.sendTo === SendSmsOptions.TO_SINGLE_STUDENT &&
 						(state.studentId ? (
@@ -403,9 +402,8 @@ export const SMS = () => {
 								{}
 							)}
 							selectedItem={state.sectionId || sections?.[0]?.id}
-							onChange={sectionId => setState({ ...state, sectionId })}>
-							<SelectorIcon className="w-5 h-5 text-gray-500" />
-						</CustomSelect>
+							onChange={sectionId => setState({ ...state, sectionId })}
+						/>
 					)}
 
 					{state.sendTo === SendSmsOptions.TO_FEE_DEFAULTERS && (
@@ -573,9 +571,10 @@ const Recipient = ({ recipient, removeRecipient }: RecipientProps) => {
 			</div>
 			<div className="flex flex-row items-center justify-between w-2/5">
 				<div className="text-sm">{recipient.Phone}</div>
-				<div className="ml-2 cursor-pointer" onClick={removeRecipient}>
-					<XCircleIcon className="text-red-brand w-6 h-6" />
-				</div>
+				<XCircleIcon
+					onClick={removeRecipient}
+					className="text-red-brand w-12 p-px cursor-pointer"
+				/>
 			</div>
 		</div>
 	)
