@@ -206,8 +206,8 @@ export const Settings = () => {
 	return (
 		<AppLayout title="School Profile">
 			<div className="p-5 md:p-10 md:pb-0">
-				<div className="text-2xl font-bold mt-4 mb-8 text-center">School Profile</div>
-				<div className="text-white md:w-4/5 md:mx-auto space-y-4 rounded-2xl bg-gray-700 pb-6 my-4 md:mt-8">
+				<div className="text-2xl font-bold mb-8 text-center">School Profile</div>
+				<div className="text-white md:w-4/5 md:mx-auto space-y-4 rounded-2xl bg-gray-700 p-5 my-5 md:mt-8">
 					<div className="pt-2 flex flex-row mx-auto items-baseline justify-between w-3/5 md:w-1/4">
 						<UploadImage
 							src={db?.assets?.schoolLogo}

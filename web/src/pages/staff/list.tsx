@@ -9,6 +9,7 @@ import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 
 import UserIconSvg from 'assets/svgs/user.svg'
 import { SearchInput } from 'components/input/search'
+import { AddStickyButton } from 'components/Button/add-sticky'
 
 export const StaffList = () => {
 	const { faculty, classes } = useSelector((state: RootReducerState) => state.db)
@@ -31,10 +32,7 @@ export const StaffList = () => {
 		<AppLayout title="Staff">
 			<div className="p-5 md:p-10 relative mb-20">
 				<Link to="staff/new">
-					<div className="flex items-center justify-between fixed z-50 bottom-4 right-4 rounded-full bg-teal-brand text-white lg:hidden py-3 px-6 w-11/12 text-lg mr-0.5">
-						<div>Add new Staff</div>
-						<div className="text-xl">+</div>
-					</div>
+					<AddStickyButton label="Add new Staff" />
 				</Link>
 
 				<div className="text-center font-bold text-2xl my-4">School Staff</div>

@@ -189,11 +189,9 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 	return (
 		<AppLayout title={pageTitle}>
 			<div className="p-5 md:p-10 md:pb-0 text-gray-700 relative">
-				<div className="text-2xl font-bold mt-4 mb-8 text-center">{pageTitle}</div>
-				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 pb-6 my-4 md:mt-8">
-					<form
-						id="staff-form"
-						className="text-white space-y-4 px-4 w-full md:w-3/5 mt-4">
+				<div className="text-2xl font-bold mb-8 text-center">{pageTitle}</div>
+				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 p-5 md:py-10 my-5">
+					<form id="staff-form" className="text-white space-y-4 px-4 w-full md:w-3/5">
 						<div>Family Name/ID</div>
 						<input
 							name="FamilyID"
