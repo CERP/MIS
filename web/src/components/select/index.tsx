@@ -1,4 +1,5 @@
 import React from 'react'
+import clsx from 'clsx'
 import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, SelectorIcon } from '@heroicons/react/outline'
 
@@ -27,7 +28,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
 	}
 
 	const handleChange = (option: string) => {
-		const [k, v] = Object.entries(listData).find(([k, v]) => v === option)
+		const [k, v] = Object.entries(listData ?? {}).find(([k, v]) => v === option)
 		// set parent state
 		onChange(k)
 	}
@@ -51,7 +52,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
 								<Listbox.Button className="cursor-default relative w-full rounded-md border border-gray-300 bg-white pl-3 pr-10 py-2 text-left focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition ease-in-out duration-150 sm:text-sm sm:leading-5">
 									<span className="block truncate">{listData[selectedItem]}</span>
 									<span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-										{children || <SelectorIcon className="text-gray-500 w-5" />}
+										{children ?? <SelectorIcon className="text-gray-500 w-5" />}
 									</span>
 								</Listbox.Button>
 							</span>
@@ -69,23 +70,28 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
 										<Listbox.Option key={k} value={v}>
 											{({ selected, active }) => (
 												<div
-													className={`${active
-															? 'text-white bg-blue-600'
+													className={clsx(
+														'cursor-default select-none relative py-2 pl-8 pr-4',
+														active
+															? 'text-white bg-teal-brand'
 															: 'text-gray-900'
-														} cursor-default select-none relative py-2 pl-8 pr-4`}>
+													)}>
 													<span
-														className={`${selected
+														className={clsx(
+															selected
 																? 'font-semibold'
 																: 'font-normal'
-															} block truncate`}>
+														)}>
 														{v}
 													</span>
 													{selected && (
 														<span
-															className={`${active
+															className={clsx(
+																'absolute inset-y-0 left-0 flex items-center pl-1.5',
+																active
 																	? 'text-white'
-																	: 'text-blue-600'
-																} absolute inset-y-0 left-0 flex items-center pl-1.5`}>
+																	: 'text-teal-brand'
+															)}>
 															<CheckIcon className="w-5" />
 														</span>
 													)}
