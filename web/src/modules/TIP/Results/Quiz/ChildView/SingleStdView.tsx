@@ -24,7 +24,7 @@ const ChildView: React.FC<P> = ({ singleStdQuizResult, setType }) => {
 					<div>Midpoint</div>
 				</div>
 			</div>
-			<div className="h-80 overflow-y-scroll">
+			<div className="h-80 overflow-y-auto">
 				{Object.entries(singleStdQuizResult || {}).map(([slo, res], index) => (
 					<div
 						key={index} // need different colors in alternate rows

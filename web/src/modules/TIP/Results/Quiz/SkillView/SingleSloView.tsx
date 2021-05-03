@@ -15,7 +15,7 @@ const SingleSloView: React.FC<P> = ({ slo, singleSloQuizResult }) => {
 				<Headings heading={`SLO : ${slo}`} sub_heading="" />
 			</div>
 			<div className="mt-5 flex flex-row justify-between w-full bg-blue-tip-brand items-center py-2 text-white font-bold">
-				<div className="ml-4 md:ml-6 w-1/2 md:w-1/3 lg:w-1/2 flex justify-center">
+				<div className="ml-4 md:ml-4 lg:ml-1 md:ml-6 w-1/2 md:w-1/3 lg:w-1/2 flex justify-center">
 					Names
 				</div>
 				<div className="w-1/2 flex flex-row justify-around">
@@ -23,7 +23,7 @@ const SingleSloView: React.FC<P> = ({ slo, singleSloQuizResult }) => {
 					<div>Midpoint</div>
 				</div>
 			</div>
-			<div className="overflow-y-scroll h-96">
+			<div className="overflow-y-auto h-96">
 				{Object.values(singleSloQuizResult).map((obj, index) => {
 					const quiz =
 						!obj?.quiz_marks && isNaN(obj.quiz_marks) ? 0 : obj?.quiz_marks.toFixed(0)

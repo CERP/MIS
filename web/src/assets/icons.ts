@@ -40,13 +40,14 @@ import tip from './svgs/TIP.svg'
 import down from './svgs/down.svg'
 import whiteUser from './svgs/whiteUser.svg'
 import blackUser from './svgs/blackUser.svg'
-import quiz from './pngs/quiz.png'
-import results from './pngs/results.png'
-import whiteSummative from './pngs/whiteSummative.png'
-import whiteFormative from './pngs/whiteFormative.png'
-import whiteDiagnostic from './pngs/whiteDiagnostic.png'
 import whiteQuiz from './svgs/whiteQuiz.svg'
+import blueQuiz from './svgs/blueQuiz.svg'
+import results from './svgs/results.svg'
 import paginationArrow from './svgs/paginationArrow.svg'
+import quizMark from './svgs/quizMark.svg'
+import smile from './svgs/smile.svg'
+import sad from './svgs/sad.svg'
+import serious from './svgs/serious.svg'
 
 export const EditIcon = deleteIcon
 export const DeleteIcon = editIcon
@@ -90,10 +91,11 @@ export const TIP = tip
 export const DownArrow = down
 export const WhiteUser = whiteUser
 export const BlackUser = blackUser
-export const Quiz = quiz
+export const BlueQuiz = blueQuiz
 export const Results = results
-export const WhiteSummative = whiteSummative
-export const WhiteFormative = whiteFormative
-export const WhiteDiagnostic = whiteDiagnostic
 export const WhiteQuiz = whiteQuiz
 export const PaginationArrow = paginationArrow
+export const QuizMark = quizMark
+export const Smile = smile
+export const Sad = sad
+export const Serious = serious

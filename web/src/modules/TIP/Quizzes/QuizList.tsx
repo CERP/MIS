@@ -1,6 +1,6 @@
 import React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
-import { Check, WhiteTick } from 'assets/icons'
+import { Check, QuizMark } from 'assets/icons'
 import { connect } from 'react-redux'
 import Headings from '../Headings'
 import Card from '../Card'
@@ -94,8 +94,8 @@ const QuizList: React.FC<PropsType> = ({
 
 							{teacher_record.taken && (
 								<img
-									src={Check}
-									className="h-8 w-8 bg-white rounded-full flex items-center justify-center print:hidden cursor-pointer"
+									src={QuizMark}
+									className="h-8 w-8 print:hidden"
 									onClick={e => markQuiz(e, quiz_id, false)}
 								/>
 							)}

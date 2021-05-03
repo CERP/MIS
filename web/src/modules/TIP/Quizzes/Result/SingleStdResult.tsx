@@ -1,5 +1,5 @@
 import React from 'react'
-import { BlackUser } from 'assets/icons'
+import { BlackUser, Smile, Sad, Serious } from 'assets/icons'
 import clsx from 'clsx'
 
 interface P {
@@ -7,6 +7,7 @@ interface P {
 	class_name: TIPLevels
 	subject: TIPSubjects
 	quiz_id: string
+	total_marks: number
 }
 
 const getProgress = (obtained_marks: number) => {
@@ -20,7 +21,7 @@ const getProgress = (obtained_marks: number) => {
 	}
 }
 
-const SingleStdResult: React.FC<P> = ({ student, class_name, subject, quiz_id }) => {
+const SingleStdResult: React.FC<P> = ({ student, class_name, subject, quiz_id, total_marks }) => {
 	const quiz_result = student?.targeted_instruction?.quiz_result
 	const obtained_marks = quiz_result?.[class_name]?.[subject]?.[quiz_id]?.obtained_marks ?? 0
 	const progress = getProgress(obtained_marks)
@@ -33,7 +34,9 @@ const SingleStdResult: React.FC<P> = ({ student, class_name, subject, quiz_id })
 					<div>{student.Name}</div>
 				</div>
 			</div>
-			<div className="flex items-center w-1/3 justify-center">{obtained_marks}</div>
+			<div className="flex items-center w-1/3 justify-center font-bold">
+				{obtained_marks}/{total_marks}
+			</div>
 			<div className="flex items-center w-1/3 justify-center">
 				<div className="w-full md:w-1/2 lg:w-1/3 flex flex-row justify-start items-cente">
 					<div
@@ -45,6 +48,12 @@ const SingleStdResult: React.FC<P> = ({ student, class_name, subject, quiz_id })
 							},
 							'bg-red-tip-brand'
 						)}></div>
+					{/* <img
+						className="w-5 h-5 mr-2"
+						src={
+							progress === 'Mastered' ? Smile : progress === 'Working' ? Serious : Sad
+						}
+					/> */}
 					<div
 						className={clsx(
 							'font-bold',

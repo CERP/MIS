@@ -206,12 +206,12 @@ const List: React.FC<PropsType> = ({
 										<>
 											<div
 												key={lpId}
-												className="no-underline bg-blue-50 h-20 w-full mx-3 rounded-md mb-3 flex flex-row justify-between items-center px-2"
+												className="no-underline bg-blue-50 pb-1 h-20 w-full mx-3 rounded-md mb-3 flex flex-row justify-between items-center px-2"
 												onClick={e =>
 													redirect(e, lessonPlan.lesson_number)
 												}>
 												<div className="flex flex-col justify-between items-center w-full h-15 pl-4">
-													<div className="text-white text-lg font-bold mb-1">
+													<div className="text-white text-center text-lg font-bold mb-1">
 														{lessonPlan.lesson_title}
 													</div>
 													<div className="text-xs text-white">{`Lesson number ${lessonPlan.lesson_number}`}</div>

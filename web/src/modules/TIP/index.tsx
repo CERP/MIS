@@ -7,7 +7,7 @@ import {
 	TrainingMaterials,
 	DiagnosticItalic,
 	Summative,
-	Quiz,
+	BlueQuiz,
 	Results
 } from 'assets/icons'
 import { getLessonProgress } from 'utils/TIP'
@@ -88,7 +88,7 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id }) => {
 					<Link
 						className="container sm:px-8 bg-white rounded-xl m-3 h-36 flex flex-col content-center items-center shadow-lg no-underline"
 						to={'/targeted-instruction/quizzes'}>
-						<img className="h-20 py-4" src={Quiz} alt="img" />
+						<img className="h-20 py-4" src={BlueQuiz} alt="img" />
 						<div className="text-xs text-blue-900 font-bold">Quizzes</div>
 					</Link>
 					<Link

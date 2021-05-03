@@ -53,7 +53,7 @@ const ChildView: React.FC<PropsType> = ({
 		<div className="w-full">
 			<div className="bg-blue-tip-brand text-white flex flex-row justify-between items-center w-full py-2">
 				<div className="w-1/3 flex justify-center font-bold">Names</div>
-				<div className="w-2/3 flex flex-row justify-start">
+				<div className="w-2/3 flex flex-row justify-start md:mr-5">
 					{getQuizTitles()
 						.slice(page_num * 3, (page_num + 1) * 3)
 						.map(quiz_id => {
@@ -74,7 +74,7 @@ const ChildView: React.FC<PropsType> = ({
 						})}
 				</div>
 			</div>
-			<div className="mb-16 overflow-y-scroll h-96">
+			<div className="mb-16 overflow-y-auto h-96">
 				{filtered_students.map(std => {
 					const quiz_result =
 						std.targeted_instruction.quiz_result?.[class_name]?.[subject]

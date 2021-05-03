@@ -2,7 +2,7 @@ import React from 'react'
 import Card from '../Card'
 import Headings from '../Headings'
 import { RouteComponentProps, Link } from 'react-router-dom'
-import { WhiteDiagnostic, WhiteFormative, WhiteSummative, WhiteQuiz } from 'assets/icons'
+import { DiagnosticItalic, Formative, Summative, WhiteQuiz } from 'assets/icons'
 
 interface P {
 	students: RootDBState['students']
@@ -17,22 +17,22 @@ const Results: React.FC<PropsType> = () => {
 			<Headings heading="Results" sub_heading="Select the result you wanna see" />
 			<div className="flex flex-row justify-around w-full mt-5 p-3">
 				<Link
-					className="bg-sea-green-tip-brand px-2 rounded-lg h-48 flex flex-col justify-center items-center shadow-lg no-underline"
+					className="bg-white px-2 rounded-lg h-48 flex flex-col justify-center items-center shadow-lg no-underline"
 					to={'/targeted-instruction/diagnostic-result'}>
-					<img className="py-11 pl-2" src={WhiteDiagnostic} />
-					<div className="text-white">Starting Test</div>
+					<img className="py-11 h-14" src={DiagnosticItalic} />
+					<div className="text-blue-tip-brand">Starting Test</div>
 				</Link>
 				<Link
-					className="bg-sea-green-tip-brand px-2 rounded-lg h-48 flex flex-col justify-center items-center shadow-lg no-underline"
+					className="bg-white px-2 rounded-lg h-48 flex flex-col justify-center items-center shadow-lg no-underline"
 					to={'/targeted-instruction/formative-result'}>
-					<img className="py-11 pl-2" src={WhiteFormative} />
-					<div className="text-white">Midpoint Test</div>
+					<img className="py-11 pl-2 h-14" src={Formative} />
+					<div className="text-blue-tip-brand">Midpoint Test</div>
 				</Link>
 				<Link
-					className="bg-sea-green-tip-brand px-2 rounded-lg h-48 flex flex-col justify-center items-center shadow-lg no-underline"
+					className="bg-white px-2 rounded-lg h-48 flex flex-col justify-center items-center shadow-lg no-underline"
 					to={'/targeted-instruction/summative-result'}>
-					<img className="py-11 pr-2" src={WhiteSummative} />
-					<div className="text-white">Final Test</div>
+					<img className="py-11 h-14 px-3" src={Summative} />
+					<div className="text-blue-tip-brand">Final Test</div>
 				</Link>
 			</div>
 			<div className="w-full px-4 py-5">
