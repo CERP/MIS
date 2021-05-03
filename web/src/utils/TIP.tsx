@@ -516,10 +516,14 @@ export const getQuizSLOs = (quizzes: TIPQuizz) => {
  * @param slo
  * @returns quiz id
  */
-export const getQuizId = (quizzes: TIPQuizz, slo: string[]) => {
-	return Object.entries(quizzes ?? {})
-		.filter(([, t]) => t.slo[0] === slo[0])
-		.map(([t_id]) => t_id)[0]
+export const getQuizId = (quizzes: TIPQuizz, slo: string) => {
+	return Object.entries(quizzes ?? {}).reduce((agg, [quiz_id, quiz]) => {
+		const slos: string[] = quiz.slo[0].split('$')
+		if (slos.includes(slo)) {
+			return quiz_id
+		}
+		return agg
+	}, '')
 }
 
 /**
@@ -551,7 +555,7 @@ export const getSingleSloQuizResult = (
 	grade: TIPLevels
 ) => {
 	const quizzes: TIPQuizz = targeted_instruction.quizzes[grade][subject]
-	const quiz_id = getQuizId(quizzes, slo)
+	const quiz_id = getQuizId(quizzes, slo[0])
 
 	const midpoint_test_id = getMidpointTestId(targeted_instruction, subject, grade)
 
@@ -624,7 +628,7 @@ export const getSingleStdQuizResult = (
 
 	const SLOs = getQuizSLOs(targeted_instruction?.quizzes?.[grade]?.[subject])
 	return SLOs.reduce((agg, slo) => {
-		const quiz_id = getQuizId(targeted_instruction?.quizzes?.[grade]?.[subject], [slo])
+		const quiz_id = getQuizId(targeted_instruction?.quizzes?.[grade]?.[subject], slo)
 		const quiz_obtained_marks =
 			student?.targeted_instruction?.quiz_result?.[grade]?.[subject]?.[quiz_id]
 				?.obtained_marks ?? 0
@@ -673,7 +677,7 @@ export const getSkillViewQuizResult = (
 		return [
 			...agg,
 			Object.values(students).reduce((agg2, std) => {
-				const quiz_id = getQuizId(targeted_instruction?.quizzes?.[grade]?.[subject], [slo])
+				const quiz_id = getQuizId(targeted_instruction?.quizzes?.[grade]?.[subject], slo)
 				const quiz = std?.targeted_instruction?.quiz_result?.[grade]?.[subject]?.[quiz_id]
 				const percentage = (quiz?.obtained_marks / quiz?.total_marks) * 100
 				below_average = below_average + (percentage < 40 ? 1 : 0)

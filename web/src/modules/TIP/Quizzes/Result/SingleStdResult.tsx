@@ -38,7 +38,7 @@ const SingleStdResult: React.FC<P> = ({ student, class_name, subject, quiz_id, t
 				{obtained_marks}/{total_marks}
 			</div>
 			<div className="flex items-center w-1/3 justify-center">
-				<div className="w-full md:w-1/2 lg:w-1/3 flex flex-row justify-start items-cente">
+				<div className="w-full md:w-1/2 lg:w-1/3 flex flex-row justify-start items-center">
 					<div
 						className={clsx(
 							'bg-blue-900 rounded-full h-5 w-5 mr-3',

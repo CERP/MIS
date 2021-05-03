@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 import Card from '../Card'
 import { Check, WhiteTick } from 'assets/icons'
 import { lessonPlanTaken, clearLessonPlans, quizTaken } from 'actions'
-import { getQuizId } from 'utils/TIP'
 import Dynamic from '@cerp/dynamic'
 import Headings from '../Headings'
 

@@ -16,6 +16,14 @@ interface P {
 
 type PropsType = P & RouteComponentProps<Params>
 
+enum TestType {
+	'Diagnostic' = 'diagnostic-test',
+	'Formative' = 'formative-test',
+	'Summative' = 'summative-test',
+	'Oral' = 'oral-test',
+	'Quiz' = 'quizzes'
+}
+
 const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 	const url = match.url.split('/')
 	const { class_name, subject, section_id, quiz_id } = match.params
@@ -103,9 +111,9 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 					<Link
 						className="no-underline"
 						to={
-							url[2] === 'diagnostic-test'
+							url[2] === TestType.Diagnostic
 								? `/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/answer-pdf`
-								: url[2] === 'oral-test'
+								: url[2] === TestType.Oral
 									? `/${url[1]}/${url[2]}/${subject}/answer-pdf`
 									: `/${url[1]}/${url[2]}/${class_name}/${subject}/answer-pdf`
 						}>
@@ -118,9 +126,9 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 					<Link
 						className="no-underline"
 						to={
-							url[2] === 'diagnostic-test'
+							url[2] === TestType.Diagnostic
 								? `/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades`
-								: url[2] === 'oral-test'
+								: url[2] === TestType.Oral
 									? `/${url[1]}/${url[2]}/${subject}/${test_id}/insert-grades`
 									: test_type === 'Quiz'
 										? `/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/grading`
