@@ -216,7 +216,7 @@ export const AdditionalFee = () => {
 									})
 								}
 								checked={state.addFeeTo === AddFeeOptions.STUDENT}
-								className="form-radio text-teal-brand mr-2 w-4 h-4 cursor-pointer"
+								className="mr-2 form-radio tw-radio"
 							/>
 							<div className="text-sm">Student</div>
 						</div>
@@ -233,7 +233,7 @@ export const AdditionalFee = () => {
 									})
 								}
 								checked={state.addFeeTo === AddFeeOptions.CLASS}
-								className="form-radio text-teal-brand mr-2 w-4 h-4 cursor-pointer"
+								className="mr-2 form-radio tw-radio"
 							/>
 							<div className="text-sm">Class</div>
 						</div>
@@ -251,7 +251,7 @@ export const AdditionalFee = () => {
 										})
 									}
 									checked={state.addFeeTo === AddFeeOptions.ALL}
-									className="form-radio text-teal-brand mr-2 w-4 h-4 cursor-pointer"
+									className="mr-2 form-radio tw-radio"
 								/>
 								<div className="text-sm">All Students</div>
 							</div>
@@ -350,7 +350,7 @@ export const AdditionalFee = () => {
 										})
 									}
 									checked={state.fee.period === MISFeePeriods.SINGLE}
-									className="form-radio text-teal-brand mr-2 w-4 h-4 cursor-pointer"
+									className="mr-2 form-radio tw-radio"
 								/>
 								<div className="text-sm">One Time</div>
 							</div>
@@ -368,7 +368,7 @@ export const AdditionalFee = () => {
 										})
 									}
 									checked={state.fee.period === MISFeePeriods.MONTHLY}
-									className="form-radio text-teal-brand mr-2 w-4 h-4 cursor-pointer"
+									className="mr-2 form-radio tw-radio"
 								/>
 								<div className="sm:text-sm text-base">Every Month</div>
 							</div>

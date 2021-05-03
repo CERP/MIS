@@ -97,7 +97,7 @@ export const ResetFee = () => {
 							onChange={e =>
 								setState({ ...state, resetFor: parseInt(e.target.value) })
 							}
-							className="tw-input w-full bg-transparent border-blue-brand ring-1 text-gray-400">
+							className="tw-input w-full tw-is-form-bg-black text-gray-400">
 							<option value={0}>Select from here</option>
 							<option value={1}>All Students</option>
 							<option value={2}>Single Class</option>
@@ -136,7 +136,7 @@ export const ResetFee = () => {
 										onChange={e =>
 											setState({ ...state, sectionId: e.target.value })
 										}
-										className="tw-input w-full bg-transparent border-blue-brand ring-1 text-gray-400">
+										className="tw-input w-full tw-is-form-bg-black text-gray-400">
 										<option>Select Class</option>
 										{sections
 											.filter(s => s.id && s.className)
@@ -155,7 +155,7 @@ export const ResetFee = () => {
 									onChange={e =>
 										setState({ ...state, studentId: e.target.value })
 									}
-									className="tw-input w-full bg-transparent border-blue-brand ring-1 text-gray-400">
+									className="tw-input w-full tw-is-form-bg-black text-gray-400">
 									<option value="">Select Student</option>
 									{Object.values(students)
 										.filter(

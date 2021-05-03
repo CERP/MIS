@@ -17,6 +17,7 @@ import { isValidPhone } from 'utils/helpers'
 import { getImageString, getDownsizedImage } from 'utils/image'
 
 import { UploadImage } from 'components/image'
+import { PlusButton } from 'components/Button/plus'
 
 const blankStudent = (): MISStudent => ({
 	id: v4(),
@@ -69,7 +70,6 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 
 	const dispatch = useDispatch()
 	const {
-		auth,
 		db: { students, classes, settings, assets }
 	} = useSelector((state: RootReducerState) => state)
 
@@ -244,7 +244,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 									type="radio"
 									value={'male'}
 									checked={state.profile.Gender === 'male'}
-									className="w-4 h-4 mr-2 form-radio text-teal-brand"
+									className="mr-2 form-radio tw-radio"
 								/>
 								<div className="text-sm">Male</div>
 							</div>
@@ -255,7 +255,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 									type="radio"
 									value={'female'}
 									checked={state.profile.Gender === 'female'}
-									className="w-4 h-4 mr-2 form-radio text-teal-brand"
+									className="mr-2 form-radio tw-radio"
 								/>
 								<div className="text-sm">Female</div>
 							</div>
@@ -266,7 +266,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 									type="radio"
 									value={'other'}
 									checked={state.profile.Gender === 'other'}
-									className="w-4 h-4 mr-2 form-radio text-teal-brand"
+									className="mr-2 form-radio tw-radio"
 								/>
 								<div className="text-sm">Other</div>
 							</div>
@@ -465,17 +465,14 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 								autoComplete="off"
 								className="w-full bg-transparent tw-input border-blue-brand ring-1"
 							/>
-							<div
-								onClick={addTag}
-								className="flex items-center justify-center w-8 h-8 ml-2 border rounded-full cursor-pointer bg-blue-brand hover:bg-blue-400">
-								+
-							</div>
+							<PlusButton handleClick={addTag} className="ml-4" />
 						</div>
 
 						<div className="flex flex-row items-center">
-							<div className="flex items-center justify-center w-8 h-8 mr-4 border rounded-full cursor-pointer bg-blue-brand hover:bg-blue-400">
-								+
-							</div>
+							<PlusButton
+								handleClick={() => console.log('Not Implemented Yet')}
+								className="mr-4"
+							/>
 							<div>Show Payment Section</div>
 						</div>
 

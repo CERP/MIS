@@ -87,7 +87,7 @@ export const CreateAdmin = ({ onBack }: CreateAdminProps) => {
 					required
 					onChange={handleInput}
 					placeholder="e.g. John Doe"
-					className="tw-input w-full bg-transparent border-blue-brand ring-1"
+					className="tw-input w-full tw-is-form-bg-black"
 				/>
 				<div className="">Personal Number*</div>
 				<input
@@ -95,7 +95,7 @@ export const CreateAdmin = ({ onBack }: CreateAdminProps) => {
 					required
 					onChange={handleInput}
 					placeholder="e.g. 03xxxxxxxx"
-					className="tw-input w-full bg-transparent border-blue-brand ring-1"
+					className="tw-input w-full tw-is-form-bg-black"
 				/>
 				<div className="">Password*</div>
 				<div className="w-full relative">
@@ -108,7 +108,7 @@ export const CreateAdmin = ({ onBack }: CreateAdminProps) => {
 						autoCorrect="off"
 						autoComplete="off"
 						placeholder="Enter password"
-						className="tw-input w-full bg-transparent border-blue-brand ring-1"
+						className="tw-input w-full tw-is-form-bg-black"
 					/>
 					<div
 						onClick={() => setOpenEye(!openEye)}

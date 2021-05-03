@@ -163,7 +163,7 @@ export const AddStaff: React.FC<AddStaffProps> = ({ skipStage }) => {
 					onChange={handleInput}
 					required
 					placeholder="Type name here"
-					className="tw-input w-full bg-transparent border-blue-brand ring-1"
+					className="tw-input w-full tw-is-form-bg-black"
 				/>
 				<div className="">Personal Number*</div>
 				<input
@@ -171,7 +171,7 @@ export const AddStaff: React.FC<AddStaffProps> = ({ skipStage }) => {
 					onChange={handleInput}
 					required
 					placeholder="e.g. 03xxxxxxxx"
-					className="tw-input w-full bg-transparent border-blue-brand ring-1"
+					className="tw-input w-full tw-is-form-bg-black"
 				/>
 				<div className="">Password*</div>
 				<div className="w-full relative">
@@ -184,7 +184,7 @@ export const AddStaff: React.FC<AddStaffProps> = ({ skipStage }) => {
 						autoCorrect="off"
 						autoComplete="off"
 						placeholder="Enter password"
-						className="tw-input w-full bg-transparent border-blue-brand ring-1"
+						className="tw-input w-full tw-is-form-bg-black"
 					/>
 					<div
 						onClick={() => setState({ ...state, showHidePassword: !showHidePassword })}
@@ -201,7 +201,7 @@ export const AddStaff: React.FC<AddStaffProps> = ({ skipStage }) => {
 						type="radio"
 						value={StaffType.TEACHING}
 						checked={profile.Type === StaffType.TEACHING}
-						className="mr-2 w-4 h-4 form-radio text-teal-brand"
+						className="mr-2 form-radio tw-radio"
 					/>
 					<div className="text-sm">Teaching Staff</div>
 				</div>
@@ -229,7 +229,7 @@ export const AddStaff: React.FC<AddStaffProps> = ({ skipStage }) => {
 									type="radio"
 									value={'male'}
 									checked={profile.Gender === 'male'}
-									className="mr-2 w-4 h-4 form-radio text-teal-brand"
+									className="mr-2 form-radio tw-radio"
 								/>
 								<div className="text-sm">Male</div>
 							</div>
@@ -240,7 +240,7 @@ export const AddStaff: React.FC<AddStaffProps> = ({ skipStage }) => {
 									type="radio"
 									value={'female'}
 									checked={profile.Gender === 'female'}
-									className="mr-2 w-4 h-4 form-radio text-teal-brand"
+									className="mr-2 form-radio tw-radio"
 								/>
 								<div className="text-sm">Female</div>
 							</div>
@@ -251,7 +251,7 @@ export const AddStaff: React.FC<AddStaffProps> = ({ skipStage }) => {
 									type="radio"
 									value={'other'}
 									checked={profile.Gender === 'other'}
-									className="mr-2 w-4 h-4 form-radio text-teal-brand"
+									className="mr-2 form-radio tw-radio"
 								/>
 								<div className="text-sm">Other</div>
 							</div>
@@ -262,7 +262,7 @@ export const AddStaff: React.FC<AddStaffProps> = ({ skipStage }) => {
 							name="CNIC"
 							onChange={handleInput}
 							placeholder="xxxxx-xxxxxxx-x"
-							className="tw-input w-full bg-transparent border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div>Qualification</div>

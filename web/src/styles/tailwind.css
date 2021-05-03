@@ -50,6 +50,10 @@
 		@apply text-gray-200 bg-transparent border-blue-brand ring-1;
 	}
 	.tw-checkbox {
-		@apply w-5 h-5 rounded text-teal-brand;
+		@apply w-5 h-5 rounded text-teal-brand cursor-pointer;
+	}
+
+	.tw-radio {
+		@apply w-5 h-5 text-teal-brand cursor-pointer;
 	}
 }

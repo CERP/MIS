@@ -189,9 +189,10 @@ const Card: React.FC<CardProps> = ({ member, attendanceDate, markAttendance }) =
 				</div>
 				<div className="flex flex-row items-center space-x-2">
 					<button
-						onClick={() =>
+						onClick={() => {
 							setState({ togglePresent: !state.togglePresent, toggleLeave: false })
-						}
+							markAttendance(member, AttendanceStatus.CHECK_IN)
+						}}
 						name="present"
 						className={clsx(
 							'flex items-center justify-center w-8 h-8 rounded-full shadow-md',
@@ -237,7 +238,7 @@ const Card: React.FC<CardProps> = ({ member, attendanceDate, markAttendance }) =
 				<div className="flex flex-row justify-between mt-2 space-x-2 text-xs">
 					<button
 						onClick={() => markAttendance(member, AttendanceStatus.CHECK_IN)}
-						className={clsx('px-2 py-1 rounded bg-blue-brand', {
+						className={clsx('px-2 py-1 rounded bg-blue-brand text-white', {
 							'bg-teal-brand text-white': attendance.check_in
 						})}>
 						<span>Check In</span>
@@ -251,7 +252,7 @@ const Card: React.FC<CardProps> = ({ member, attendanceDate, markAttendance }) =
 					<button
 						disabled={!attendance.check_in}
 						onClick={() => markAttendance(member, AttendanceStatus.CHECK_OUT)}
-						className={clsx('px-2 py-1 rounded bg-blue-brand', {
+						className={clsx('px-2 py-1 rounded bg-blue-brand text-white', {
 							'tw-btn bg-teal-brand text-white': attendance.check_out
 						})}>
 						<span>Check Out</span>

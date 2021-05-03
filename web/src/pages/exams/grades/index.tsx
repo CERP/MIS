@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import toast from 'react-hot-toast'
 import { TrashIcon } from '@heroicons/react/solid'
-import { PlusIcon } from '@heroicons/react/outline'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { createDeletes, createMerges } from 'actions/core'
 import { TModal } from 'components/Modal'
+import { PlusButton } from 'components/Button/plus'
 
 type State = {
 	grade?: {
@@ -159,9 +159,9 @@ export const GradeSettings = () => {
 				)}
 
 				<div className="flex flex-row items-center space-x-2 mt-4">
-					<PlusIcon
-						onClick={() => setState({ ...state, addGrade: !state.addGrade })}
-						className="w-10 p-2 bg-blue-brand text-white hover:bg-white hover:text-teal-brand border border-transparent hover:border-teal-brand rounded-full cursor-pointer"
+					<PlusButton
+						handleClick={() => setState({ ...state, addGrade: !state.addGrade })}
+						className="mr-4 text-white hover:text-teal-brand border border-transparent hover:border-teal-brand"
 					/>
 					<div>Add Grades and Remarks</div>
 				</div>

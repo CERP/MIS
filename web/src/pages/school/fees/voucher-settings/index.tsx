@@ -34,12 +34,13 @@ export const VoucherSettings = () => {
 	const dispatch = useDispatch()
 	const { settings } = useSelector((state: RootReducerState) => state.db)
 
-	const feeVoucher = settings?.classes?.feeVoucher || getBlankFeeVoucherSetings()
+	const feeVoucher = settings?.classes?.feeVoucher ?? getBlankFeeVoucherSetings()
 	const { vouchersPerPage } = settings
 
 	// TODO: change string to number
 	const [state, setState] = useState<State>({
-		vouchersPerPage: vouchersPerPage || '1',
+		vouchersPerPage: vouchersPerPage ?? '1',
+		...getBlankFeeVoucherSetings(),
 		...feeVoucher
 	})
 
@@ -111,7 +112,7 @@ export const VoucherSettings = () => {
 							onChange={e => handleInputByPath(['vouchersPerPage'], e.target.value)}
 							type="number"
 							placeholder="e.g. 1"
-							className="tw-input w-full bg-transparent border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div className="font-bold">Bank Account Details</div>
@@ -125,7 +126,7 @@ export const VoucherSettings = () => {
 								}
 								type="text"
 								placeholder="e.g. The Punjab of Bank"
-								className="tw-input w-full bg-transparent border-blue-brand ring-1"
+								className="tw-input w-full tw-is-form-bg-black"
 							/>
 							<div>Account Title</div>
 							<input
@@ -136,7 +137,7 @@ export const VoucherSettings = () => {
 								}
 								type="text"
 								placeholder="e.g. MISchool"
-								className="tw-input w-full bg-transparent border-blue-brand ring-1"
+								className="tw-input w-full tw-is-form-bg-black"
 							/>
 							<div>Account Title</div>
 							<input
@@ -147,7 +148,7 @@ export const VoucherSettings = () => {
 								}
 								type="text"
 								placeholder="IBAN or other"
-								className="tw-input w-full bg-transparent border-blue-brand ring-1"
+								className="tw-input w-full tw-is-form-bg-black"
 							/>
 						</div>
 
@@ -160,7 +161,7 @@ export const VoucherSettings = () => {
 									onChange={e => handleInputByPath(['dueDays'], e.target.value)}
 									type="number"
 									placeholder="e.g. 2 (days after first of each month)"
-									className="tw-input w-full bg-transparent border-blue-brand ring-1"
+									className="tw-input w-full tw-is-form-bg-black"
 								/>
 							</div>
 							<div className="flex flex-col space-y-2">
@@ -171,7 +172,7 @@ export const VoucherSettings = () => {
 									onChange={e => handleInputByPath(['feeFine'], e.target.value)}
 									type="number"
 									placeholder="amount per day"
-									className="tw-input w-full bg-transparent border-blue-brand ring-1"
+									className="tw-input w-full tw-is-form-bg-black"
 								/>
 							</div>
 						</div>
@@ -183,7 +184,7 @@ export const VoucherSettings = () => {
 							onChange={e => handleInputByPath(['notice'], e.target.value)}
 							rows={2}
 							placeholder="Fee Notice"
-							className="tw-input w-full bg-transparent border-blue-brand ring-1 focus-within:bg-transparent"
+							className="tw-input w-full tw-is-form-bg-black focus-within:bg-transparent"
 						/>
 
 						<div className="font-bold">Include on Voucher?</div>
