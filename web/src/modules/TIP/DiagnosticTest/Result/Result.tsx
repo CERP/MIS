@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { connect } from 'react-redux'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { RouteComponentProps } from 'react-router-dom'
 import { getStudentsBySectionId, calculateResult, convertLearningGradeToGroupName } from 'utils/TIP'
 import Groups from './Groups'
 import Card from '../../Card'
@@ -18,7 +18,7 @@ const Result: React.FC<PropsType> = props => {
 
 	return (
 		<div className="flex flex-wrap content-between mt-20">
-			<Card class_name={class_name} subject={subject} lesson_name="" lesson_no="" />
+			<Card class_name={class_name} />
 			<div className="w-full">
 				{Object.entries(result).map(([key, value]) => {
 					const group = convertLearningGradeToGroupName(key as TIPGrades)
@@ -31,4 +31,4 @@ const Result: React.FC<PropsType> = props => {
 
 export default connect((state: RootReducerState) => ({
 	students: state.db.students
-}))(withRouter(Result))
+}))(Result)

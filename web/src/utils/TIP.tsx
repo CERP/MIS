@@ -1,7 +1,7 @@
 export const getSubjectsFromTests = (
 	targeted_instruction: RootReducerState['targeted_instruction']
 ): string[] => {
-	const subjects = Object.values(targeted_instruction.tests).reduce((agg, test) => {
+	const subjects = Object.values(targeted_instruction?.tests ?? {}).reduce((agg, test) => {
 		if (test.subject !== '') {
 			return [...agg, test.subject]
 		}
@@ -44,8 +44,6 @@ export const getStudentsByGroup = (
 	group: TIPGrades,
 	subject: string
 ) => {
-	console.log(students, subject, group)
-
 	return Object.values(students)
 		.filter(s => s.targeted_instruction)
 		.filter(s => s.targeted_instruction.learning_level)
@@ -269,7 +267,7 @@ type SubjectLessonProgress = {
  */
 export const getLessonProgress = (teacher: MISTeacher) => {
 	// When a teacher has no progress
-	if (!teacher.targeted_instruction || !teacher.targeted_instruction.curriculum) {
+	if (!teacher.targeted_instruction ?? !teacher.targeted_instruction.curriculum) {
 		return 0
 	}
 
@@ -350,7 +348,7 @@ export const getLessonProgress = (teacher: MISTeacher) => {
 }
 
 /**
- * TODO: what does this do
+ * this function return result of specific TIP test => slo based
  * @param students
  * @param test_id
  * @param type
@@ -418,9 +416,8 @@ export const getResult = (students: MISStudent[], test_id: string) => {
  *
  * @param result
  */
-
 export const getClassResult = (result: SLOBasedResult) => {
-	return Object.values(result || {}).reduce<SloObj>((agg, std_obj) => {
+	return Object.values(result ?? {}).reduce<SloObj>((agg, std_obj) => {
 		for (let [slo, slo_obj] of Object.entries(std_obj.slo_obj)) {
 			if (agg[slo]) {
 				agg = {
@@ -444,6 +441,11 @@ export const getClassResult = (result: SLOBasedResult) => {
 	}, {})
 }
 
+/**
+ *
+ * @param name
+ * @param pdf_url
+ */
 export const downloadPdf = (name: string, pdf_url: string) => {
 	const e = document.createElement('a')
 	e.setAttribute('href', decodeURIComponent(pdf_url))
@@ -454,6 +456,11 @@ export const downloadPdf = (name: string, pdf_url: string) => {
 	document.body.removeChild(e)
 }
 
+/**
+ *
+ * @param value
+ * @returns current test type
+ */
 export const getTestType = (value: string) => {
 	switch (value) {
 		case 'oral-test':
@@ -462,8 +469,228 @@ export const getTestType = (value: string) => {
 		case 'formative-result':
 			return 'Formative'
 		case 'summative-test':
+		case 'summative-result':
 			return 'Summative'
 		default:
 			return 'Diagnostic'
 	}
+}
+
+/**
+ *
+ * @param quizzes
+ * @returns all SLOs in TIP Quizzes
+ */
+export const getQuizSLOs = (quizzes: TIPQuizz) => {
+	const sloArray = Object.values(quizzes ?? {}).reduce((agg, quiz) => {
+		const slo = quiz.slo.reduce((agg2, slo) => {
+			return [...agg2, ...slo.split('$')]
+		}, [])
+		return [...agg, ...slo]
+	}, [])
+	return [...new Set(sloArray)]
+}
+
+/**
+ *
+ * @param targeted_instruction
+ * @param slo
+ * @returns quiz id
+ */
+export const getQuizId = (quizzes: TIPQuizz, slo: string) => {
+	for (const [quiz_id, quiz] of Object.entries(quizzes ?? {})) {
+		const slos: string[] = quiz.slo[0].split('$')
+		if (slos.includes(slo)) {
+			return quiz_id
+		}
+	}
+}
+
+/**
+ *
+ * @param targeted_instruction
+ * @param subject
+ * @param grade
+ * @returns midpoint test id
+ */
+export const getMidpointTestId = (
+	targeted_instruction: RootReducerState['targeted_instruction'],
+	subject: TIPSubjects,
+	grade: TIPLevels
+) => {
+	return Object.entries(targeted_instruction.tests ?? {})
+		.filter(([, t]) => t.type === 'Formative' && t.subject === subject && t.grade === grade)
+		.map(([t_id]) => t_id)[0]
+}
+/**
+ *
+ * @param slo
+ * @returns single slo quiz result
+ */
+export const getSingleSloQuizResult = (
+	targeted_instruction: RootReducerState['targeted_instruction'],
+	students: MISStudent[],
+	slo: string[],
+	subject: TIPSubjects,
+	grade: TIPLevels
+) => {
+	const quizzes: TIPQuizz = targeted_instruction.quizzes[grade][subject]
+	const quiz_id = getQuizId(quizzes, slo[0]) // required slo will be in first index of slo array
+
+	const midpoint_test_id = getMidpointTestId(targeted_instruction, subject, grade)
+
+	return students.reduce<SingleSloQuizResult>((agg, std) => {
+		const [midpoint_obtain_marks, midpoint_total_marks] = getMidpointSloBaseResult(
+			targeted_instruction,
+			slo,
+			std,
+			midpoint_test_id
+		)
+		const quiz_obtain_marks =
+			std.targeted_instruction?.quiz_result?.[grade]?.[subject]?.[quiz_id]?.obtained_marks ??
+			0
+		const quiz_total_marks =
+			targeted_instruction?.quizzes?.[grade]?.[subject]?.[quiz_id]?.total_marks ?? 0
+		return {
+			...agg,
+			[std.id]: {
+				std_name: std.Name,
+				std_roll_num: std.RollNumber,
+				quiz_marks: (quiz_obtain_marks / quiz_total_marks) * 100,
+				midpoint_test_marks: (midpoint_obtain_marks / midpoint_total_marks) * 100
+			}
+		}
+	}, {})
+}
+
+/**
+ *
+ * @param targeted_instruction
+ * @param slo
+ * @param std
+ * @param midpoint_test_id
+ * @returns obtain and total marks of midpoint test
+ */
+export const getMidpointSloBaseResult = (
+	targeted_instruction: RootReducerState['targeted_instruction'],
+	slo: string[],
+	std: MISStudent,
+	midpoint_test_id: string
+) => {
+	let obtained_marks = 0
+	const question_ids = Object.entries(
+		targeted_instruction?.tests?.[midpoint_test_id]?.questions ?? {}
+	)
+		.filter(([, t]) => JSON.stringify(t.slo) === JSON.stringify(slo))
+		.map(([t_id]) => t_id)
+
+	question_ids.map(id => {
+		if (std?.targeted_instruction?.results?.[midpoint_test_id]?.questions[id]?.is_correct) {
+			obtained_marks = obtained_marks + 1
+		}
+	})
+	return [obtained_marks, question_ids.length]
+}
+/**
+ *
+ * @param student
+ * @param targeted_instruction
+ * @param subject
+ * @param grade
+ */
+export const getSingleStdQuizResult = (
+	student: MISStudent,
+	targeted_instruction: RootReducerState['targeted_instruction'],
+	subject: TIPSubjects,
+	grade: TIPLevels
+) => {
+	const midpoint_test_id = getMidpointTestId(targeted_instruction, subject, grade)
+
+	const SLOs = getQuizSLOs(targeted_instruction?.quizzes?.[grade]?.[subject])
+	return SLOs.reduce((agg, slo) => {
+		const quiz_id = getQuizId(targeted_instruction?.quizzes?.[grade]?.[subject], slo)
+		const quiz_obtained_marks =
+			student?.targeted_instruction?.quiz_result?.[grade]?.[subject]?.[quiz_id]
+				?.obtained_marks ?? 0
+		const quiz_total_marks =
+			targeted_instruction?.quizzes?.[grade]?.[subject]?.[quiz_id]?.total_marks ?? 0
+		const [midpoint_obtained_marks, midpoint_total_marks] = getMidpointSloBaseResult(
+			targeted_instruction,
+			[slo],
+			student,
+			midpoint_test_id
+		)
+		return {
+			...agg,
+			[slo]: {
+				quiz_marks: (quiz_obtained_marks / quiz_total_marks) * 100,
+				midpoint_test_marks: (midpoint_obtained_marks / midpoint_total_marks) * 100
+			}
+		}
+	}, {})
+}
+
+/**
+ *
+ * @param targeted_instruction
+ * @param students
+ * @param subject
+ * @param grade
+ * @returns skill base quiz result
+ */
+
+export const getSkillViewQuizResult = (
+	targeted_instruction: RootReducerState['targeted_instruction'],
+	students: MISStudent[],
+	subject: TIPSubjects,
+	grade: TIPLevels
+) => {
+	const midpoint_test_id = getMidpointTestId(targeted_instruction, subject, grade)
+	const SLOs = getQuizSLOs(targeted_instruction?.quizzes?.[grade]?.[subject])
+	return SLOs.reduce((agg, slo) => {
+		let below_average = 0,
+			average = 0,
+			above_average = 0,
+			midpoint_below = 0,
+			midpoint_average = 0,
+			midpoint_above = 0
+		return [
+			...agg,
+			Object.values(students).reduce((agg2, std) => {
+				const quiz_id = getQuizId(targeted_instruction?.quizzes?.[grade]?.[subject], slo)
+				const quiz = std?.targeted_instruction?.quiz_result?.[grade]?.[subject]?.[quiz_id]
+				const percentage = (quiz?.obtained_marks / quiz?.total_marks) * 100
+				below_average = below_average + (percentage < 40 ? 1 : 0)
+				average = average + (percentage >= 40 && percentage <= 70 ? 1 : 0)
+				above_average = above_average + (percentage > 70 ? 1 : 0)
+				const [midpoint_obtained_marks, midpoint_total_marks] = getMidpointSloBaseResult(
+					targeted_instruction,
+					[slo],
+					std,
+					midpoint_test_id
+				)
+				const midpoint_percentage = (midpoint_obtained_marks / midpoint_total_marks) * 100
+				midpoint_below = midpoint_below + (midpoint_percentage < 40 ? 1 : 0)
+				midpoint_average =
+					midpoint_average +
+					(midpoint_percentage >= 40 && midpoint_percentage <= 70 ? 1 : 0)
+				midpoint_above = midpoint_above + (midpoint_percentage > 70 ? 1 : 0)
+				return {
+					...agg2,
+					[slo]: {
+						quiz: {
+							below_average,
+							average,
+							above_average
+						},
+						midpoint: {
+							below_average: midpoint_below,
+							average: midpoint_average,
+							above_average: midpoint_above
+						}
+					}
+				}
+			}, {})
+		]
+	}, [])
 }

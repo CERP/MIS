@@ -90,6 +90,9 @@ interface TIPTeacherLessonPlans {
 	[lesson_id: string]: TIPTeacherLesson
 }
 
+interface TIPTeacherQuizzes {
+	[quiz_id: string]: TIPTeacherQuiz
+}
 interface TIPLessonPlans {
 	[lesson_id: string]: TIPLesson
 }
@@ -108,13 +111,24 @@ interface TIPLesson {
 
 type TIPTeacherLesson = { taken: boolean }
 
+type TIPTeacherQuiz = { taken: boolean }
 interface TIPTests {
 	[id: string]: TIPTest
 }
 
-type TIPTestType = 'Diagnostic' | 'Formative' | 'Summative' | 'Oral'
+type TIPQuizzes = {
+	[learning_level in TIPLevels]: {
+		[subject: string]: TIPQuizz
+	}
+}
 
-interface TIPTest {
+type TIPQuizz = {
+	[id: string]: TIPQuiz
+}
+
+type TIPTestType = 'Diagnostic' | 'Formative' | 'Summative' | 'Oral' | 'Quiz'
+
+interface BaseTest {
 	name: string
 	subject: string
 	grade: string
@@ -122,11 +136,50 @@ interface TIPTest {
 	label: string
 	pdf_url: string
 	answer_pdf_url: string
+}
+interface TIPTest extends BaseTest {
 	questions: {
 		[question_id: string]: TIPQuestion
 	}
 }
 
+interface TIPQuiz extends BaseTest {
+	quiz_title: string
+	quiz_order: number
+	total_marks: number
+	slo_category: string
+	slo: string[]
+}
+
+interface SingleSloQuizResult {
+	[std_id: string]: {
+		std_name: string
+		std_roll_num: string
+		quiz_marks: number
+		midpoint_test_marks: number
+	}
+}
+
+interface SingleStdQuizResult {
+	[slo: string]: {
+		quiz_marks: number
+		midpoint_test_marks: number
+	}
+}
+interface SkillViewQuizResult {
+	[slo: string]: {
+		quiz: {
+			below_average: number
+			average: number
+			above_average: number
+		}
+		midpoint: {
+			below_average: number
+			average: number
+			above_average: number
+		}
+	}
+}
 interface TIPQuestion {
 	question_text: string
 	answer: string
@@ -174,6 +227,19 @@ type TIPDiagnosticReport = {
 	}
 }
 
+type TIPQuizReport = {
+	[learning_level in TIPLevels]: {
+		[subject: string]: {
+			[quiz_id: string]: QuizReport
+		}
+	}
+}
+
+type QuizReport = {
+	obtained_marks: number
+	total_marks: number
+}
+
 type Levels = {
 	[level: string]: number
 }
@@ -192,7 +258,8 @@ interface Params {
 	subject: TIPSubjects
 	section_id: string
 	std_id: string
-	test_id: string
+	test_id?: string
+	quiz_id?: string
 	lesson_number: string
 }
 /**
@@ -265,6 +332,7 @@ interface RootReducerState {
 		hasError: boolean
 	}
 	targeted_instruction: {
+		quizzes: TIPQuizzes
 		tests: TIPTests
 		slo_mapping: SLOMapping
 		curriculum: TIPCurriculum
@@ -401,10 +469,11 @@ interface MISStudent {
 	certificates: {
 		[id: string]: MISCertificate
 	}
-	targeted_instruction: {
+	targeted_instruction?: {
 		results: {
 			[test_id: string]: TIPDiagnosticReport
 		}
+		quiz_result: TIPQuizReport
 		learning_level: {
 			[subject: string]: {
 				grade: TIPGrades
@@ -559,8 +628,9 @@ interface MISTeacher {
 		family: boolean
 		prospective: boolean
 	}
-	targeted_instruction: {
+	targeted_instruction?: {
 		curriculum: TIPTeacherCurriculum
+		quizzes: TIPTeacherQuizzes
 	}
 }
 

@@ -21,7 +21,6 @@ const ChangeTIPGroup: React.FC<P> = ({ subject, selected_grade, current_grade, r
 			</div>
 			<div className="p-2">
 				<Headings
-					heading=""
 					sub_heading={`Are you sure you want to change ${subject} sorting from 
             ${current_group} to ${new_group}`}
 				/>

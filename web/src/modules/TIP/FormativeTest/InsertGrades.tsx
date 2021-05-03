@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import { connect } from 'react-redux'
-import { RouteComponentProps, Link, withRouter } from 'react-router-dom'
-import { getStudentsBySectionId, getStudentsByGroup } from 'utils/TIP'
+import { RouteComponentProps, Link } from 'react-router-dom'
+import { getStudentsBySectionId, getStudentsByGroup, convertLearningLevelToGrade } from 'utils/TIP'
 import Card from '../Card'
 import { Check } from 'assets/icons'
 interface P {
@@ -10,21 +10,11 @@ interface P {
 
 type PropsType = P & RouteComponentProps
 
-//TODO: This is definitely not right.
-const class_map: Record<TIPLevels, TIPGrades> = {
-	'Level KG': 'KG',
-	'Level 1': '1',
-	'Level 2': '2',
-	'Level 3': '3',
-	Oral: 'Oral Test',
-	'Remediation Not Needed': 'Not Needed'
-}
-
 const InsertGrades: React.FC<PropsType> = props => {
 	const url = props.match.url.split('/')
 	const { class_name, subject, section_id, test_id } = props.match.params as Params
 
-	const group = class_map[class_name ? (class_name as TIPLevels) : 'Oral']
+	const group = convertLearningLevelToGrade(class_name ? (class_name as TIPLevels) : 'Oral')
 
 	const mode = url[2] === 'diagnostic-test' ? 'DIAGNOSTIC' : 'OTHER'
 
@@ -32,8 +22,6 @@ const InsertGrades: React.FC<PropsType> = props => {
 		mode === 'DIAGNOSTIC'
 			? useMemo(() => getStudentsBySectionId(section_id, props.students), [section_id])
 			: useMemo(() => getStudentsByGroup(props.students, group, subject), [subject])
-
-	console.log(students)
 
 	return (
 		<div className="flex flex-wrap content-between mt-20">
@@ -106,4 +94,4 @@ const InsertGrades: React.FC<PropsType> = props => {
 
 export default connect((state: RootReducerState) => ({
 	students: state.db.students
-}))(withRouter(InsertGrades))
+}))(InsertGrades)

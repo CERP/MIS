@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom'
-import { LessonPlans } from 'assets/icons'
+import { OralTest } from 'assets/icons'
 
 interface P {
 	setSectionId: (sectionId: string) => any
@@ -43,7 +43,7 @@ const Classes: React.FC<PropsType> = ({ setSectionId, sortedSections, match }) =
 				<Link
 					className="container sm:px-8 bg-white rounded-2xl m-3 h-44 flex flex-col content-center items-center shadow-lg no-underline"
 					to={'/targeted-instruction/oral-test'}>
-					<img className="h-24 py-4 w-24" src={LessonPlans} alt="img" />
+					<img className="h-24 py-4 w-24" src={OralTest} alt="img" />
 					<div className="text-blue-900 text-lg font-bold">Oral Test</div>
 				</Link>
 			)}

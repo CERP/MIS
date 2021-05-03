@@ -1,15 +1,15 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { User } from 'assets/icons'
+import { WhiteUser } from 'assets/icons'
 import { convertLearningGradeToGroupName, convertLearningLevelToGrade } from 'utils/TIP'
 
 interface P {
-	class_name: string
-	subject: string
-	teacher_name: string
-	school_name: string
-	lesson_name: string
-	lesson_no: string
+	class_name?: string
+	subject?: string
+	teacher_name?: string
+	school_name?: string
+	lesson_name?: string
+	lesson_no?: string
 }
 
 const Card: React.FC<P> = ({
@@ -20,7 +20,7 @@ const Card: React.FC<P> = ({
 	lesson_name,
 	lesson_no
 }) => {
-	const class_num = class_name.substring(class_name.length - 2).trim()
+	const class_num = class_name?.substring(class_name.length - 2).trim()
 	const color =
 		class_num === 'KG'
 			? 'light-blue'
@@ -39,17 +39,17 @@ const Card: React.FC<P> = ({
 	return (
 		<div className="w-full flex justify-center print:hidden">
 			<div
-				className={`${class_name.substring(0, 5) === 'Level'
+				className={`${class_name?.substring(0, 5) === 'Level'
 						? `bg-${color}-tip-brand`
 						: `bg-sea-green-tip-brand`
 					} container sm:px-8 rounded-md h-20 mb-6 mt-0 w-11/12 md:w-13/12`}>
 				<div className="flex flex-row justify-start">
-					<img className="w-12 h-12 rounded-full p-4" src={User} alt="img" />
+					<img className="w-12 h-12 rounded-full p-4" src={WhiteUser} alt="img" />
 					<div className="flex flex-row justify-between w-full">
 						<div className="flex flex-col justify-center">
 							<div className="text-white text-lg">{teacher_name}</div>
 							<div className="text-white text-base capitalize">
-								{class_name.substring(0, 5) === 'Level'
+								{class_name?.substring(0, 5) === 'Level'
 									? `${group_name} Group`
 									: class_name
 										? class_name
@@ -57,7 +57,7 @@ const Card: React.FC<P> = ({
 								{subject && ` | ${subject}`}
 								{lesson_name &&
 									lesson_no &&
-									` | ${lesson_name.replace(/['"]+/g, '')} | ${lesson_no.replace(
+									` | ${lesson_name?.replace(/['"]+/g, '')} | ${lesson_no.replace(
 										/['"]+/g,
 										''
 									)}`}

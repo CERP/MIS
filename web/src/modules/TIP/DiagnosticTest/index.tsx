@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { connect } from 'react-redux'
+import { RouteComponentProps } from 'react-router-dom'
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
 import { getClassnameFromSectionId } from 'utils/TIP'
 import Classes from '../Classes'
@@ -12,11 +13,14 @@ interface P {
 	targeted_instruction: RootReducerState['targeted_instruction']
 }
 
-// We can only do diagnostic tests for Classes which match the string they are assigned to
-const DiagnosticTest: React.FC<P> = props => {
-	const [sectionId, setSectionId] = useState('')
+type PropsType = P & RouteComponentProps
 
-	const valid_classes = Object.values(props.targeted_instruction.tests)
+// We can only do diagnostic tests for Classes which match the string they are assigned to
+const DiagnosticTest: React.FC<PropsType> = ({ match, targeted_instruction, classes }) => {
+	const [sectionId, setSectionId] = useState('')
+	const url = match.url.split('/')
+
+	const valid_classes = Object.values(targeted_instruction.tests)
 		.filter(t => t.type === 'Diagnostic')
 		.map(x => x.grade)
 		.reduce<Record<string, boolean>>(
@@ -30,7 +34,7 @@ const DiagnosticTest: React.FC<P> = props => {
 	// for all the sections in the school, we will only show ones which have
 	// a diagnostic test for it. the name has to be close enough to one of the valid_classes
 	// which we extract from the diagnostic tests
-	const sorted_sections = useMemo(() => getSectionsFromClasses(props.classes), [])
+	const sorted_sections = useMemo(() => getSectionsFromClasses(classes), [])
 		.sort((a, b) => (a.classYear || 0) - (b.classYear || 0))
 		.filter(s => {
 			return valid_classes[s.className.toLowerCase()]
@@ -42,7 +46,7 @@ const DiagnosticTest: React.FC<P> = props => {
 
 	return (
 		<div className="flex flex-wrap content-between mt-20">
-			<Card class_name={class_name} subject="" lesson_name="" lesson_no="" />
+			<Card class_name={class_name} />
 			<Headings
 				heading="Starting Test"
 				sub_heading={
@@ -52,7 +56,12 @@ const DiagnosticTest: React.FC<P> = props => {
 				}
 			/>
 			{class_name ? (
-				<Subjects class_name={class_name} section_id={sectionId} />
+				<Subjects
+					class_name={class_name}
+					section_id={sectionId}
+					url={url}
+					targeted_instruction={targeted_instruction}
+				/>
 			) : (
 				<Classes setSectionId={setSectionId} sortedSections={sorted_sections} />
 			)}

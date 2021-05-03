@@ -20,7 +20,7 @@ const Groups: React.FC<P> = ({ students, color, level }) => {
 				className={clsx('flex flex-row justify-between py-1 items-center text-white px-3', {
 					'bg-gray-400': color === 'Oral',
 					'bg-gray-600': color === 'Remediation Not Needed',
-					'bg-red-tip-brand': color === 'Not Graded',
+					'bg-red-50': color === 'Not Graded',
 					'bg-blue-tip-brand': color === 'Blue',
 					'bg-yellow-tip-brand': color === 'Yellow',
 					'bg-green-tip-brand': color === 'Green',

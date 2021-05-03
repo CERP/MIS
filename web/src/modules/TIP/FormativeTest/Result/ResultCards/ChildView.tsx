@@ -1,6 +1,6 @@
 import React from 'react'
 import clsx from 'clsx'
-import { ArrowBack, User } from 'assets/icons'
+import { ArrowBack, WhiteUser } from 'assets/icons'
 
 interface P {
 	name: string
@@ -11,7 +11,14 @@ interface P {
 
 	setName: (name: string) => void
 	setId: (id: string) => void
-	setType: (type: string) => void
+	setType: (type: Types) => void
+}
+
+enum Types {
+	SKILL_VIEW,
+	CHILD_VIEW,
+	SINGLE_STD_VIEW,
+	SINGLE_SLO_VIEW
 }
 
 const ChildView: React.FC<P> = ({
@@ -25,7 +32,7 @@ const ChildView: React.FC<P> = ({
 	setType
 }) => {
 	const redirect = () => {
-		setType('single_std_view')
+		setType(Types.SINGLE_STD_VIEW)
 		setId(std_id)
 		setName(name)
 	}
@@ -45,7 +52,7 @@ const ChildView: React.FC<P> = ({
 			onClick={redirect}>
 			<div className="flex flex-row justify-between items-center w-full">
 				<div className="w-2/4 flex flex-row justify-start content-center items-center">
-					<img className="h-6 rounded-full p-3" src={User} alt="img" />
+					<img className="h-6 rounded-full p-3" src={WhiteUser} alt="img" />
 					<div className="font-bold">{name}</div>
 				</div>
 				<div className="flex flex-row justify-around w-2/4 text-sm md:text-md lg:text-lg">

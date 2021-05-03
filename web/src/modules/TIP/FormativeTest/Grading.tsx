@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { connect } from 'react-redux'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { RouteComponentProps } from 'react-router-dom'
 import { convertLearningGradeToGroupName, getTestType } from 'utils/TIP'
 import { useComponentVisible } from 'utils/customHooks'
 import AssignedGroupModal from './AssignedGroupModal'
@@ -96,7 +96,6 @@ const Grading: React.FC<PropsType> = ({
 		}),
 		{}
 	)
-	console.log(questionsObj)
 	const markQuestion = (q_id: string, question: TIPQuestion, is_correct: boolean) => {
 		setResult({
 			...result,
@@ -243,13 +242,13 @@ const Grading: React.FC<PropsType> = ({
 			<div className="w-full mt-5 flex justify-around">
 				<button
 					className="bg-blue-tip-brand font-bold text-sm md:text-base lg:text-lg border-none rounded-md text-white py-2 w-5/12 mb-4"
-					onClick={onSave}>
-					Save and Continue
+					onClick={onResetStudentGrades}>
+					Reset Student Grades
 				</button>
 				<button
 					className="bg-blue-tip-brand font-bold text-sm md:text-base lg:text-lg border-none rounded-md text-white py-2 w-5/12 mb-4"
-					onClick={onResetStudentGrades}>
-					Reset Student Grades
+					onClick={onSave}>
+					Save and Continue
 				</button>
 			</div>
 		</div>
@@ -272,4 +271,4 @@ export default connect(
 		setLearningLevel: (student_id: string, subject: TIPSubjects, level: TIPGrades) =>
 			dispatch(assignLearningLevel(student_id, subject, level))
 	})
-)(withRouter(Grading))
+)(Grading)
