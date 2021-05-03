@@ -78,6 +78,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
 													)}>
 													<span
 														className={clsx(
+															'block truncate',
 															selected
 																? 'font-semibold'
 																: 'font-normal'
