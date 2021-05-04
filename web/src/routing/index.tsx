@@ -63,6 +63,7 @@ import { PromoteStudents } from 'pages/exams/promote-students'
 import { Datesheet } from 'pages/exams/datesheet'
 import { ExamsMarks } from 'pages/exams/marks'
 import { ExamsResults } from 'pages/exams/results'
+import { Events } from 'pages/about-us/events'
 
 interface RoutesProps {
 	store: Store<RootReducerState>
@@ -204,6 +205,7 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<Route path="/auto-login" component={AutoLogin} />
 						<Route exact path="/pricing" component={Pricing} />
 						<Route exact path="/about-us" component={AboutUs} />
+						<Route exact path="/events" component={Events} />
 						<Route exact path="/features" component={Feature} />
 						<Route exact path="/contact-us" component={ContactUs} />
 					</Switch>
