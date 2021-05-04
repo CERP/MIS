@@ -28,10 +28,10 @@ const ClassView: React.FC<P> = ({ students, sorted_sections }) => {
 			</div>
 			<Headings sub_heading={`Total Students = ${total_students}`} />
 			<div className="h-10 items-center text-white text-xs bg-blue-tip-brand w-full mt-4 flex flex-row justify-around print:hidden">
-				<div className="w-4/12 md:w-6/12 flex flex-row justify-between px-3 items-center m-2">
+				<div className="w-4/12 md:w-6/12 flex flex-row justify-between px-3 items-center m-2 text-sm md:text-base lg:text-lg">
 					<div className="font-bold text-center">Name</div>
 				</div>
-				<div className="flex flex-row justify-between w-8/12 md:w-6/12 text-xs m-4">
+				<div className="flex flex-row justify-between w-8/12 md:w-6/12 m-4 text-sm md:text-base lg:text-lg">
 					{['Urdu', 'Maths', 'Eng'].map(sub => (
 						<div key={sub} className="font-bold w-2/6 flex justify-center items-center">
 							{sub}

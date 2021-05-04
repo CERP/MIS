@@ -476,11 +476,18 @@ interface MISStudent {
 		quiz_result: TIPQuizReport
 		learning_level: {
 			[subject: string]: {
-				previous_grade: TIPGrades
-				current_grade: TIPGrades
+				history: TIPGradesHistory
+				grade: TIPGrades
 				is_oral: boolean
 			}
 		}
+	}
+}
+
+type TIPGradesHistory = {
+	[timestamp: string]: {
+		type: 'Manual' | 'Graduation'
+		grade: TIPGrades
 	}
 }
 

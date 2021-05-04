@@ -49,29 +49,29 @@ const DetailedAnalysis: React.FC<P> = ({ classes, students, targeted_instruction
 			)}
 			<div className="flex flex-row justify-around px-3 print:hidden">
 				<button
-					className={`border-none shadow-lg rounded-md p-3 outline-none ${view_type === ViewType.CLASS_VIEW
+					className={`border border-sea-green-tip-brand shadow-lg rounded-full py-2 px-5 outline-none ${view_type === ViewType.CLASS_VIEW
 							? 'bg-sea-green-tip-brand text-white'
-							: 'bg-white text-blue-900'
+							: 'bg-white text-sea-green-tip-brand'
 						}`}
 					onClick={() => setViewType(ViewType.CLASS_VIEW)}>
 					Class View
 				</button>
 				<button
-					className={`border-none shadow-lg rounded-md p-3 outline-none ${view_type === ViewType.GROUP_VIEW
+					className={`border border-sea-green-tip-brand shadow-lg rounded-full py-2 px-5 outline-none ${view_type === ViewType.GROUP_VIEW
 							? 'bg-sea-green-tip-brand text-white'
-							: 'bg-white text-blue-900'
+							: 'bg-white text-sea-green-tip-brand'
 						}`}
 					onClick={() => setViewType(ViewType.GROUP_VIEW)}>
 					Group View
 				</button>
 			</div>
 			{view_type === ViewType.CLASS_VIEW && (
-				<div className="py-10">
+				<div className="py-5">
 					<Headings sub_heading="Select your Class" />
 				</div>
 			)}
 			{view_type === ViewType.GROUP_VIEW && (
-				<div className="py-10">
+				<div className="py-5">
 					<Headings sub_heading="Select your Group and Subject" />
 				</div>
 			)}

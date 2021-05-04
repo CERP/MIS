@@ -56,12 +56,12 @@ const GroupView: React.FC<P> = ({ students, sorted_sections }) => {
 				</select>
 			</div>
 			<div className="h-10 items-center text-white text-xs bg-blue-tip-brand w-full mt-4 flex flex-row justify-around print:hidden">
-				<div className="w-6/12 flex flex-row justify-between px-3 items-center m-2">
+				<div className="w-6/12 flex flex-row justify-between px-3 items-center m-2 text-sm md:text-base lg:text-lg">
 					<div className="font-bold text-center">Name</div>
 				</div>
-				<div className="flex flex-row justify-between w-6/12 text-xs m-4">
-					<div className="font-bold">Roll no</div>
-					<div className="font-bold">Class</div>
+				<div className="flex flex-row justify-between w-6/12 m-4 text-sm md:text-base lg:text-lg font-bold">
+					<div>Roll no</div>
+					<div>Class</div>
 				</div>
 			</div>
 			<div className="flex flex-col print:hidden overflow-y-auto h-80">
