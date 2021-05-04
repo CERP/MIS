@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { QuestionMarkCircleIcon } from '@heroicons/react/outline'
 
-import { getTeamMembersInfo } from 'constants/aboutTeam'
 import { PackageList } from 'components/package'
 import { AppLayout } from 'components/Layout/appLayout'
 import { CustomerFeedback } from 'components/feedback'
@@ -17,21 +17,20 @@ import iconParent from './assets/parent.svg'
 import iconPlug from './assets/plug.svg'
 import iconSchool from './assets/school.svg'
 import iconTeacher from './assets/teacher.svg'
-import { QuestionMarkCircleIcon } from '@heroicons/react/outline'
 
 export const Landing = () => {
 	// TODO: show modal for help button
 
 	return (
 		<AppLayout>
-			<div className="w-full mt-10 md:mt-20">
+			<div className="w-full mt-10 md:mt-16">
 				<div className="flex flex-row flex-wrap h-full md:h-96">
 					<div className="w-full h-full md:w-1/3">
 						<div className="px-10 md:px-20">
-							<div className="text-6xl font-bold 2xl:text-7xl">
-								We Help Schools thrive.
+							<div className="text-5xl font-bold">
+								The Best Management Software for schools.
 							</div>
-							<div className="mt-4 text-lg 2xl:text-2xl">
+							<div className="mt-4 text-lg">
 								With <span className="font-bold text-red-brand">MISchool</span>{' '}
 								which is a single solution for all your school management issues.
 							</div>
@@ -46,7 +45,7 @@ export const Landing = () => {
 								title="MISchool Intro"
 							/>
 						</div>
-						<div className="px-10 my-10 2xl:mt-8 md:pl-20 md:pr-0">
+						<div className="px-10 my-10 md:mt-8 md:pl-20 md:pr-0">
 							<div className="flex flex-row space-x-2">
 								<Link
 									to="/school-login"
@@ -123,9 +122,9 @@ export const Landing = () => {
 
 					<div className="flex flex-row flex-wrap items-center justify-center px-20 mt-10 space-y-4 md:space-x-16 md:space-y-0">
 						<ReachCard icon={iconGlobe} title="Cities" reach="50+" />
-						<ReachCard icon={iconSchool} title="Schools" reach="120+" />
-						<ReachCard icon={iconTeacher} title="Teachers" reach="3500+" />
-						<ReachCard icon={iconGraduationCap} title="Students" reach="120,000+" />
+						<ReachCard icon={iconSchool} title="Schools" reach="800+" />
+						<ReachCard icon={iconTeacher} title="Teachers" reach="4000+" />
+						<ReachCard icon={iconGraduationCap} title="Students" reach="90,000+" />
 						<div className="flex flex-col items-center space-y-2">
 							<div className="w-24 h-24 m-8 rounded-full shadow-md md:w-28 md:h-28 bg-orange-brand">
 								<img
@@ -220,16 +219,6 @@ export const Landing = () => {
 					<PackageList />
 				</div>
 
-				<div className="my-20 ">
-					<div className="text-3xl font-semibold text-center">Our Team</div>
-					<div className="grid px-10 mt-10 md:px-40">
-						<div className="grid grid-cols-2 gap-12 mx-auto md:grid-cols-5">
-							{getTeamMembersInfo().map((tm, index) => (
-								<TeamMemberCard key={tm.name + index} member={tm} />
-							))}
-						</div>
-					</div>
-				</div>
 				<div className="fixed z-50 p-2 text-white border border-white rounded-full shadow-md bottom-10 right-5 bg-teal-brand">
 					<QuestionMarkCircleIcon className="w-8 h-8" />
 				</div>
