@@ -476,7 +476,9 @@ interface MISStudent {
 		quiz_result: TIPQuizReport
 		learning_level: {
 			[subject: string]: {
-				grade: TIPGrades
+				previous_grade: TIPGrades
+				current_grade: TIPGrades
+				is_oral: boolean
 			}
 		}
 	}

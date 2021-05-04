@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import ClassViewCard from './ClassViewCard'
 import ClassViewPrintable from '../Printable/ClassView'
+import Headings from '../Headings'
 interface P {
 	students: RootDBState['students']
 	sorted_sections: AugmentedSection[]
@@ -8,10 +9,12 @@ interface P {
 
 const ClassView: React.FC<P> = ({ students, sorted_sections }) => {
 	const [section_id, setSectionId] = useState('')
+	const total_students = Object.values(students || {}).filter(t => t.section_id === section_id)
+		.length
 
 	return (
 		<>
-			<div className="flex flex-row justify-around w-full print:hidden">
+			<div className="flex flex-row justify-around w-full print:hidden mb-5">
 				<select className="tw-select" onChange={e => setSectionId(e.target.value)}>
 					<option value="">Select Class</option>
 					{sorted_sections.map(class_obj => {
@@ -23,6 +26,7 @@ const ClassView: React.FC<P> = ({ students, sorted_sections }) => {
 					})}
 				</select>
 			</div>
+			<Headings sub_heading={`Total Students = ${total_students}`} />
 			<div className="h-10 items-center text-white text-xs bg-blue-tip-brand w-full mt-4 flex flex-row justify-around print:hidden">
 				<div className="w-4/12 md:w-6/12 flex flex-row justify-between px-3 items-center m-2">
 					<div className="font-bold text-center">Name</div>
