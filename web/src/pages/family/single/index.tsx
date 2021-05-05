@@ -33,13 +33,16 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 
 	const siblings = getSiblings(famId, students)
 
+	// we need this information to merge and updated
+	// for all siblings
 	const [state, setState] = useState<State>({
 		Phone: (siblings.find(s => s.Phone !== '') ?? { Phone: '' }).Phone,
 		AlternatePhone: (siblings.find(s => s.AlternatePhone !== '') ?? { AlternatePhone: '' })
 			.AlternatePhone,
 		ManName: (siblings.find(s => s.ManName !== '') ?? { ManName: '' }).ManName,
 		ManCNIC: (siblings.find(s => s.ManCNIC !== '') ?? { ManCNIC: '' }).ManCNIC,
-		Address: (siblings.find(s => s.Address !== '') ?? { Address: '' }).Address
+		Address: (siblings.find(s => s.Address !== '') ?? { Address: '' }).Address,
+		FamilyID: famId
 	})
 
 	const sections = useMemo(() => {
@@ -47,22 +50,21 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 	}, [classes])
 
 	// make sure if all students removed from family, redirect to families module
+	// to avoid redirect when famId = new, add isNewFam check
 	useEffect(() => {
-		// to avoid redirect when famId = new, add isNewFam check
 		if (!isNewFam && famId && siblings.length === 0) {
 			setState(prevState => ({ ...prevState, redirectTo: '/families' }))
 		}
 	}, [siblings, famId, isNewFam])
 
+	// get all unique families
 	const families = useMemo(() => {
-		const famIds = Object.values(students)
-			.filter(student => student && student.id)
-			.reduce<string[]>((agg, curr) => {
-				if (curr.FamilyID) {
-					return [...agg, curr.FamilyID]
-				}
-				return agg
-			}, [])
+		const famIds = Object.values(students).reduce<string[]>((agg, curr) => {
+			if (curr && curr.id && curr.FamilyID && curr.FamilyID !== famId) {
+				return [...agg, curr.FamilyID]
+			}
+			return agg
+		}, [])
 
 		return [...new Set(famIds)]
 	}, [students])
@@ -108,24 +110,27 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 	}
 
 	const handleSave = () => {
+		if (!state.FamilyID || state.FamilyID.trim().length === 0) {
+			return toast.error('Please enter family Name or Id')
+		}
+
+		if (state.FamilyID.trim().length < 4) {
+			return toast.error('Family Name or Id must be at least 4 character long')
+		}
+
+		// make sure, newly created ID doesn't exist before
+		// when we store family ID, we replace spaces with hyphens
+		if (
+			families.find(
+				fam =>
+					fam.toLocaleLowerCase() ===
+					state.FamilyID.toLocaleLowerCase().replaceAll(' ', '-')
+			)
+		) {
+			return toast.error(`This '${state.FamilyID}' family Name or Id already exist`)
+		}
+
 		if (isNewFam) {
-			if (!state.FamilyID) {
-				return toast.success('Please enter family Name or Id')
-			}
-
-			// make sure, newly created ID doesn't exist before
-			// when we store family ID, we replace spaces with hyphens
-			// todo: see saveFamilyInfo
-			if (
-				families.find(
-					fam =>
-						fam.toLocaleLowerCase() ===
-						state.FamilyID.toLocaleLowerCase().replaceAll(' ', '-')
-				)
-			) {
-				return toast.error(`This '${state.FamilyID}' family Id already exist`)
-			}
-
 			const siblingStudents = Object.values(state.siblings).map(s => s)
 
 			// dispatch an action to save students with new fam id
@@ -137,7 +142,10 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 				AlternatePhone: state.AlternatePhone
 			}
 
-			dispatch(saveFamilyInfo(siblingStudents, family, state.FamilyID))
+			dispatch(
+				saveFamilyInfo(siblingStudents, family, state.FamilyID.trim().replaceAll(' ', '-'))
+			)
+
 			toast.success('New family has been created')
 
 			// redirect to '/families'
@@ -147,7 +155,13 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 		}
 
 		// Remove extra props here (state.siblings)
-		// dispatch(saveFamilyInfo(siblings, state as MISFamilyInfo))
+		dispatch(
+			saveFamilyInfo(
+				siblings,
+				state as MISFamilyInfo,
+				state.FamilyID.trim().replaceAll(' ', '-')
+			)
+		)
 		toast.success('Family information has been updated')
 	}
 
@@ -200,11 +214,7 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 		return <Redirect to={state.redirectTo} />
 	}
 
-	const pageTitle = isNewFam ? 'Create Family' : 'Edit Family'
-
-	// TODO: think of better way to create first family and add ability
-	// to multiple siblings (have to check if already student has been added or not)
-	// TODO: think about better family ids, change space to hyphen
+	const pageTitle = isNewFam ? 'Create New Family' : 'Edit Family'
 
 	return (
 		<AppLayout title={pageTitle} showHeaderTitle>
@@ -215,12 +225,11 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 						<input
 							name="FamilyID"
 							required
-							disabled={isNewFam ? false : !!famId} // don't update the if
-							value={isNewFam ? state.FamilyID : famId}
+							value={state.FamilyID === 'new' ? '' : state.FamilyID}
 							onChange={handleInputChange}
 							placeholder="Type name or id"
 							className={clsx('tw-input w-full tw-is-form-bg-black', {
-								'pointer-events-none bg-gray-500': isNewFam ? false : !!famId
+								'bg-gray-500': !state.FamilyID
 							})}
 						/>
 						{(isNewFam ? state.siblings : true) && (
