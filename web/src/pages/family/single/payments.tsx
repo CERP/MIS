@@ -105,8 +105,6 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 		const sections = getSectionsFromClasses(classes)
 		const siblings = sections?.length > 0 ? getSiblings(students, sections) : []
 
-		console.log(siblings, sections, famId)
-
 		return {
 			sections,
 			siblings
@@ -144,9 +142,9 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 			const merged_payments = siblings.reduce(
 				(agg, curr) => ({
 					...agg,
-					...Object.entries(curr.payments || {}).reduce((agg, [pid, p]) => {
+					...Object.entries(curr.payments ?? {}).reduce((agg2, [pid, p]) => {
 						return {
-							...agg,
+							...agg2,
 							[pid]: {
 								...p,
 								fee_name:
@@ -179,7 +177,9 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 	// 	0
 	// )
 
-	const totalPendingAmount = Object.entries(siblingPayments || {}).reduce(
+	console.log('Payments', siblingPayments)
+
+	const totalPendingAmount = Object.entries(siblingPayments ?? {}).reduce(
 		(agg, [, curr]) =>
 			agg - (curr.type === 'SUBMITTED' || curr.type === 'FORGIVEN' ? 1 : -1) * curr.amount,
 		0
@@ -193,14 +193,11 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 		)
 	].sort((a, b) => parseInt(a) - parseInt(b))
 
-	// TODO: investigate issues
-	// TODO: refactor
-	// TODO: desktop version
+	// TODO: fix family payment calculations
 
 	return (
-		<AppLayout title="Student Payments" showHeaderTitle>
+		<AppLayout title="Family Payments" showHeaderTitle>
 			<div className="p-5 md:p-10 md:pb-0 text-gray-700 relative print:hidden">
-				{/* <div className="text-2xl font-bold mb-4 text-center">Student Payments</div> */}
 				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-4 rounded-2xl bg-gray-700 p-5 my-4 mt-8">
 					<div className="relative text-white text-center text-base md:hidden w-full">
 						<div className="mt-4">{toTitleCase(famId, '-')}</div>
@@ -359,8 +356,8 @@ const FeeBreakdownCard = ({ student }: FeeBreakdownCardProps) => {
 					name: 'Class Fee'
 				}
 			],
-			...Object.entries(student.classAdditionalFees || {}),
-			...(Object.entries(student.fees || {}).map(([feeId, fee]) => {
+			...Object.entries(student.classAdditionalFees ?? {}),
+			...(Object.entries(student.fees ?? {}).map(([feeId, fee]) => {
 				return [
 					feeId,
 					{
@@ -379,7 +376,7 @@ const FeeBreakdownCard = ({ student }: FeeBreakdownCardProps) => {
 		]
 	}, [student])
 
-	const totalPendingAmount = Object.entries(student.payments || {}).reduce(
+	const totalPendingAmount = Object.entries(student.payments ?? {}).reduce(
 		(agg, [, curr]) =>
 			agg - (curr.type === 'SUBMITTED' || curr.type === 'FORGIVEN' ? 1 : -1) * curr.amount,
 		0
@@ -546,7 +543,7 @@ const AddPayment = ({ siblings, auth, settings, smsTemplates, pendingAmount }: A
 	}
 
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		let { name, value, valueAsNumber, checked, type } = event.target
+		let { name, value, valueAsNumber, type } = event.target
 		if (name === 'type') {
 			value = value === 'on' ? 'FORGIVEN' : 'SUBMITTED'
 		}
@@ -582,14 +579,14 @@ const AddPayment = ({ siblings, auth, settings, smsTemplates, pendingAmount }: A
 			const message = smsTemplates.fee
 				.replace(/\$BALANCE/g, `${balance}`)
 				.replace(/\$AMOUNT/g, `${state.payment.amount}`)
-			// .replace(/\$NAME/g, student.Name)
-			// .replace(/\$FNAME/g, student.ManName)
+				// .replace(/\$NAME/g, student.Name)
+				.replace(/\$FNAME/g, student.ManName)
 
 			if (settings.sendSMSOption !== 'SIM') {
 				toast.error('Can only send messages from local SIM')
 			} else {
 				const url = smsIntentLink({
-					messages: [{ text: message, number: 'student.Phone' }],
+					messages: [{ text: message, number: student.Phone }],
 					return_link: window.location.href
 				})
 

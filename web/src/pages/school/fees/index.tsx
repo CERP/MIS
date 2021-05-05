@@ -4,7 +4,7 @@ import { Link, RouteComponentProps } from 'react-router-dom'
 
 import { FeeSettings } from './settings'
 import { VoucherSettings } from './voucher-settings'
-import { FamilyPayments } from './payments/family'
+import { Family } from 'pages/family/list'
 import { StudentPayments } from './payments/student'
 import { ResetFee } from './reset'
 import { PrintVoucher } from './print-voucher'
@@ -64,7 +64,10 @@ export const SchoolFees: React.FC<Props> = ({ match }) => {
 			[page === Pages.FEE_SETTINGS, <FeeSettings key={Pages.FEE_SETTINGS} />],
 			[page === Pages.VOUCHER_SETTINGS, <VoucherSettings key={Pages.VOUCHER_SETTINGS} />],
 			[page === Pages.PRINT_VOUCHER, <PrintVoucher key={Pages.PRINT_VOUCHER} />],
-			[page === Pages.FAMILY_PAYMENTS, <FamilyPayments key={Pages.FAMILY_PAYMENTS} />],
+			[
+				page === Pages.FAMILY_PAYMENTS,
+				<Family key={Pages.FAMILY_PAYMENTS} forwardTo="payments" pageTitle="Families" />
+			],
 			[page === Pages.STUDENT_PAYMENTS, <StudentPayments key={Pages.STUDENT_PAYMENTS} />],
 
 			[page === Pages.FEE_RESET, <ResetFee key={Pages.FEE_RESET} />]
