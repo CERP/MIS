@@ -5,11 +5,17 @@ import { QuestionMarkCircleIcon } from '@heroicons/react/outline'
 import { PackageList } from 'components/package'
 import { AppLayout } from 'components/Layout/appLayout'
 import { CustomerFeedback } from 'components/feedback'
-import { FeatureCard, ReachCard, TeamMemberCard } from 'components/cards/landing'
+import { SolutionCard, ReachItemCard, FeatureItemCard } from 'components/cards/landing'
+
+import iconFee from 'assets/svgs/fee.svg'
+import iconSms from 'assets/svgs/sms.svg'
+import iconExams from 'assets/svgs/exams.svg'
+import iconAttendance from 'assets/svgs/attendance.svg'
+import iconDiary from 'assets/svgs/diary.svg'
+import iconExpense from 'assets/svgs/expense.svg'
 
 import iconCall from './assets/call.svg'
 import iconCloud from './assets/cloud.svg'
-import iconCoin from './assets/coin.svg'
 import iconDesktop from './assets/desktop.svg'
 import iconGlobe from './assets/globe.svg'
 import iconGraduationCap from './assets/graduation-cap.svg'
@@ -19,8 +25,6 @@ import iconSchool from './assets/school.svg'
 import iconTeacher from './assets/teacher.svg'
 
 export const Landing = () => {
-	// TODO: show modal for help button
-
 	return (
 		<AppLayout>
 			<div className="w-full mt-10 md:mt-16">
@@ -77,54 +81,52 @@ export const Landing = () => {
 						/>
 					</div>
 				</div>
-				<div className="py-10 mt-10 md:mt-20 bg-teal-50 md:min-h-screen">
-					<div className="text-3xl font-semibold text-center ">Why Us?</div>
-					<div className="flex flex-row flex-wrap mt-10 md:mt-20">
-						<div className="w-full h-full md:w-1/3">
-							<div className="px-10 md:pl-20 md:pr-0">
-								<div className="text-xl font-bold md:text-2xl ">
-									School Problems
-								</div>
-								<div className="mt-5 ml-5">
-									<ul className="space-y-2 text-sm list-decimal md:text-base md:space-y-4">
-										<li>
-											<div>
-												Keep track of Students and Teachers attendance and
-												sending messsages.
-											</div>
-										</li>
-										<li>
-											<div>
-												Fee challan generation and keeping track of all
-												expenses.
-											</div>
-										</li>
-										<li>
-											<div>
-												Daily and Monthly test result generation and
-												distribution.
-											</div>
-										</li>
-										<li>
-											<div>Communication with parents.</div>
-										</li>
-										<li>
-											<div>Data analytics to make informed decisions.</div>
-										</li>
-									</ul>
-								</div>
-							</div>
-						</div>
-						<CustomerFeedback />
-					</div>
 
-					<div className="mt-20 text-3xl font-semibold text-center ">MISchool Reach</div>
+				<div className="px-20 mt-20">
+					<div className="text-3xl font-semibold text-center">Our Solutions</div>
+					<div className="mt-10">
+						<div className="grid grid-cols-1 mx-auto space-y-4 md:gap-12 md:grid-cols-4 md:space-y-0">
+							<SolutionCard
+								icon={iconPlug}
+								title="Offline + Online"
+								className="bg-yellow-300"
+							/>
+							<SolutionCard
+								icon={iconDesktop}
+								title="Responsive"
+								className="bg-blue-300"
+							/>
+							<SolutionCard
+								icon={iconCloud}
+								title="Cloud Backup"
+								className="bg-gray-300"
+							/>
+							<SolutionCard
+								icon={iconCall}
+								title="Excellent Service"
+								className="bg-blue-300"
+							/>
+						</div>
+					</div>
+				</div>
+
+				<div className="mt-10 md:mt-20 bg-teal-50 py-10">
+					<div className="text-3xl font-semibold text-center">Features</div>
+					<div className="grid grid-col-1 md:grid-cols-2 gap-16 px-10 md:px-20 mt-10">
+						{Features.map(feat => (
+							<FeatureItemCard key={feat.title} {...feat} />
+						))}
+					</div>
+				</div>
+
+				<div className="mt-10 md:mt-20">
+					<div className="text-3xl font-semibold text-center">MISchool Reach</div>
 
 					<div className="flex flex-row flex-wrap items-center justify-center px-20 mt-10 space-y-4 md:space-x-16 md:space-y-0">
-						<ReachCard icon={iconGlobe} title="Cities" reach="50+" />
-						<ReachCard icon={iconSchool} title="Schools" reach="800+" />
-						<ReachCard icon={iconTeacher} title="Teachers" reach="4000+" />
-						<ReachCard icon={iconGraduationCap} title="Students" reach="90,000+" />
+						<ReachItemCard icon={iconGlobe} title="Cities" reach="50+" />
+						<ReachItemCard icon={iconSchool} title="Schools" reach="800+" />
+						<ReachItemCard icon={iconTeacher} title="Teachers" reach="4000+" />
+						<ReachItemCard icon={iconGraduationCap} title="Students" reach="90,000+" />
 						<div className="flex flex-col items-center space-y-2">
 							<div className="w-24 h-24 m-8 rounded-full shadow-md md:w-28 md:h-28 bg-orange-brand">
 								<img
@@ -136,6 +138,11 @@ export const Landing = () => {
 							<div className="text-2xl font-bold">50,000+</div>
 							<div className="text-gray-600">Parents</div>
 						</div>
+					</div>
+
+					<div className="mt-16 text-3xl font-semibold text-center">Testimonials</div>
+					<div className="flex items-center justify-center mt-10 md:mt-24">
+						<CustomerFeedback />
 					</div>
 				</div>
 
@@ -181,40 +188,7 @@ export const Landing = () => {
 					</div>
 				</div>
 
-				<div className="px-20 mt-20">
-					<div className="text-3xl font-semibold text-center ">Features</div>
-					<div className="mt-10">
-						<div className="grid grid-cols-1 mx-auto space-y-4 md:gap-12 md:grid-cols-5 md:space-y-0">
-							<FeatureCard
-								icon={iconPlug}
-								title="Offline + Online"
-								className="bg-yellow-300"
-							/>
-							<FeatureCard
-								icon={iconDesktop}
-								title="Responsive"
-								className="bg-blue-300"
-							/>
-							<FeatureCard
-								icon={iconCloud}
-								title="Cloud Backup"
-								className="bg-gray-300"
-							/>
-							<FeatureCard
-								icon={iconCall}
-								title="Excellent Service"
-								className="bg-blue-300"
-							/>
-							<FeatureCard
-								icon={iconCoin}
-								title="Best Price"
-								className="bg-yellow-300"
-							/>
-						</div>
-					</div>
-				</div>
-
-				<div className="py-10 mt-20 bg-teal-50 ">
+				<div className="py-10 mt-20 bg-teal-50">
 					<div className="text-3xl font-semibold text-center">Our Packages</div>
 					<PackageList />
 				</div>
@@ -226,3 +200,50 @@ export const Landing = () => {
 		</AppLayout>
 	)
 }
+
+const Features = [
+	{
+		title: 'Attendance',
+		body: 'Manual or Card scanning process for staff and student attendance',
+		icon: iconAttendance
+	},
+	{
+		title: 'Fee Management',
+		body: 'Computerized vouchers, Automatic calculations, Safe record keeping and SMS receipts',
+		icon: iconFee
+	},
+	{
+		title: 'Exams',
+		body:
+			'Automatic grade calculations, Print result card of all your students in one click, or send via SMS to parents',
+		icon: iconExams
+	},
+	{
+		title: 'Expenses',
+		body: 'Now manage all of your school expenses with Mischools expense module',
+		icon: iconExpense
+	},
+	{
+		title: 'Daily Diary',
+		body:
+			'Allows multiple users to write the daily diary and easily send to parents every day.',
+		icon: iconDiary
+	},
+	{
+		title: 'SMS Announcements',
+		body:
+			'Easily communicate with students and parents by sending SMS using your own SMS package - no need to buy separately.',
+		icon: iconSms
+	},
+	{
+		title: 'Analytics',
+		body:
+			'Graphical representation of your data, Make informed decisions by comparing data month by month',
+		icon: '/favicon.ico'
+	},
+	{
+		title: 'Datesheet',
+		body: 'You can easily create a date-sheet, and even more easily send as SMS or print.',
+		icon: '/favicon.ico'
+	}
+]
