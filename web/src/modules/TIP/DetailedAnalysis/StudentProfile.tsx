@@ -3,12 +3,13 @@ import clsx from 'clsx'
 import { BackArrow, BlackUser } from 'assets/icons'
 import { convertLearningGradeToGroupName } from 'utils/TIP'
 interface P {
+	std: MISStudent
 	learning_levels: MISStudent['targeted_instruction']['learning_level']
 
 	setIsComponentVisible: (value: boolean) => void
 }
 
-const StudentProfileModal: React.FC<P> = ({ learning_levels, setIsComponentVisible }) => {
+const StudentProfileModal: React.FC<P> = ({ std, learning_levels, setIsComponentVisible }) => {
 	return (
 		<div className="flex flex-col rounded-t-xl padding-3 bg-white">
 			<div className="p-2 shadow-lg text-center rounded-t-lg bg-light-blue-tip-brand text-white flex flex-col justify-between items-center text-sm md:text-lg lg:text-lg">
@@ -21,16 +22,16 @@ const StudentProfileModal: React.FC<P> = ({ learning_levels, setIsComponentVisib
 					<div className="flex justify-between flex-col mr-5">
 						<img
 							className="-top-10 left-36 absolute flex justify-center rounded-full h-16 w-16"
-							src={BlackUser}
+							src={std?.ProfilePicture?.url ?? BlackUser}
 							alt="img"
 						/>
-						<div className="text-xs md:text-base lg:text-lg">Name</div>
-						<div className="text-xs md:text-base lg:text-lg">Roll Num</div>
+						<div className="text-xs md:text-base lg:text-lg">{std?.Name}</div>
+						<div className="text-xs md:text-base lg:text-lg">{std?.RollNumber}</div>
 					</div>
 					<div></div>
 				</div>
 				<div className="text-xs md:text-xs lg:text-lg flex flex-row justify-between w-full pt-2 font-bold">
-					<div>Subjects</div>
+					<div className="pl-3">Subjects</div>
 					<div>Oral Test</div>
 					<div>Sorting Result</div>
 					<div>Reassigned to</div>
@@ -45,7 +46,9 @@ const StudentProfileModal: React.FC<P> = ({ learning_levels, setIsComponentVisib
 							<div
 								key={grade}
 								className="p-2 flex flex-row justify-between items-center">
-								<div className="w-1/4 font-bold">{sub}</div>
+								<div className="w-1/4 font-bold flex justify-center items-center">
+									{sub}
+								</div>
 								<div
 									className={clsx(
 										'w-1/4 font-bold flex justify-center items-center',

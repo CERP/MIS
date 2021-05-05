@@ -74,6 +74,7 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 							<StudentProfile
 								setIsComponentVisible={setIsComponentVisible}
 								learning_levels={std.targeted_instruction.learning_level}
+								std={std}
 							/>
 						</div>
 					)}
