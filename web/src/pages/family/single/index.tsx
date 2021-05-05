@@ -1,18 +1,18 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
 import Dynamic from '@cerp/dynamic'
+import { useDispatch, useSelector } from 'react-redux'
+import { Redirect, RouteComponentProps } from 'react-router-dom'
 import { UserIcon, TrashIcon, PhoneIcon } from '@heroicons/react/solid'
 
-import { AppLayout } from 'components/Layout/appLayout'
-import { Redirect, RouteComponentProps } from 'react-router-dom'
-import { isValidStudent } from 'utils'
-import { StudentDropdownSearch } from 'components/input/search'
-import { addStudentToFamily, saveFamilyInfo } from 'actions'
 import Hyphenator from 'utils/Hyphenator'
 import toTitleCase from 'utils/toTitleCase'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
+import { isValidStudent } from 'utils'
+import { AppLayout } from 'components/Layout/appLayout'
+import { StudentDropdownSearch } from 'components/input/search'
+import { addStudentToFamily, saveFamilyInfo } from 'actions'
 import { createMerges } from 'actions/core'
 
 type SingleFamilyProps = RouteComponentProps<{ id: string }>
@@ -26,20 +26,23 @@ type State = Partial<MISStudent> & {
 
 export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 	const dispatch = useDispatch()
-	const { students, classes, settings } = useSelector((state: RootReducerState) => state.db)
+	const { students, classes } = useSelector((state: RootReducerState) => state.db)
 
 	const famId = match.params.id
 	const isNewFam = location.pathname.indexOf('new') >= 0
 
 	const siblings = getSiblings(famId, students)
 
+	// we need this information to merge and updated
+	// for all siblings
 	const [state, setState] = useState<State>({
-		Phone: (siblings.find(s => s.Phone !== '') || { Phone: '' }).Phone,
-		AlternatePhone: (siblings.find(s => s.AlternatePhone !== '') || { AlternatePhone: '' })
+		Phone: (siblings.find(s => s.Phone !== '') ?? { Phone: '' }).Phone,
+		AlternatePhone: (siblings.find(s => s.AlternatePhone !== '') ?? { AlternatePhone: '' })
 			.AlternatePhone,
-		ManName: (siblings.find(s => s.ManName !== '') || { ManName: '' }).ManName,
-		ManCNIC: (siblings.find(s => s.ManCNIC !== '') || { ManCNIC: '' }).ManCNIC,
-		Address: (siblings.find(s => s.Address !== '') || { Address: '' }).Address
+		ManName: (siblings.find(s => s.ManName !== '') ?? { ManName: '' }).ManName,
+		ManCNIC: (siblings.find(s => s.ManCNIC !== '') ?? { ManCNIC: '' }).ManCNIC,
+		Address: (siblings.find(s => s.Address !== '') ?? { Address: '' }).Address,
+		FamilyID: famId
 	})
 
 	const sections = useMemo(() => {
@@ -47,12 +50,24 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 	}, [classes])
 
 	// make sure if all students removed from family, redirect to families module
+	// to avoid redirect when famId = new, add isNewFam check
 	useEffect(() => {
-		// to avoid redirect when famId = new, add isNewFam check
 		if (!isNewFam && famId && siblings.length === 0) {
 			setState(prevState => ({ ...prevState, redirectTo: '/families' }))
 		}
 	}, [siblings, famId, isNewFam])
+
+	// get all unique families
+	const families = useMemo(() => {
+		const famIds = Object.values(students).reduce<string[]>((agg, curr) => {
+			if (curr && curr.id && curr.FamilyID && curr.FamilyID !== famId) {
+				return [...agg, curr.FamilyID]
+			}
+			return agg
+		}, [])
+
+		return [...new Set(famIds)]
+	}, [students])
 
 	// to show warning msg to override sibling information, if it's different
 	const siblingsUnMatchingInfo = () => {
@@ -80,7 +95,7 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 				ManCNIC: student.ManCNIC,
 				Address: student.Address,
 				siblings: {
-					...(state.siblings || {}),
+					...(state.siblings ?? {}),
 					[studentId]: {
 						...student,
 						FamilyID: state.FamilyID?.replaceAll(' ', '-')
@@ -95,13 +110,27 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 	}
 
 	const handleSave = () => {
-		if (isNewFam) {
-			if (!state.FamilyID) {
-				toast.success('Please enter family name or id')
-				return
-			}
+		if (!state.FamilyID || state.FamilyID.trim().length === 0) {
+			return toast.error('Please enter family Name or Id')
+		}
 
-			// new addition of hyphen '-' in family name or id, if there's space
+		if (state.FamilyID.trim().length < 4) {
+			return toast.error('Family Name or Id must be at least 4 character long')
+		}
+
+		// make sure, newly created ID doesn't exist before
+		// when we store family ID, we replace spaces with hyphens
+		if (
+			families.find(
+				fam =>
+					fam.toLocaleLowerCase() ===
+					state.FamilyID.toLocaleLowerCase().replaceAll(' ', '-')
+			)
+		) {
+			return toast.error(`This '${state.FamilyID}' family Name or Id already exist`)
+		}
+
+		if (isNewFam) {
 			const siblingStudents = Object.values(state.siblings).map(s => s)
 
 			// dispatch an action to save students with new fam id
@@ -113,21 +142,26 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 				AlternatePhone: state.AlternatePhone
 			}
 
-			console.log(siblingStudents, family)
+			dispatch(
+				saveFamilyInfo(siblingStudents, family, state.FamilyID.trim().replaceAll(' ', '-'))
+			)
 
-			dispatch(saveFamilyInfo(siblingStudents, family, state.FamilyID))
 			toast.success('New family has been created')
 
 			// redirect to '/families'
-			setTimeout(() => {
+			return setTimeout(() => {
 				setState({ ...state, redirectTo: '/families' })
 			}, 1000)
-
-			return
 		}
 
 		// Remove extra props here (state.siblings)
-		dispatch(saveFamilyInfo(siblings, state as MISFamilyInfo))
+		dispatch(
+			saveFamilyInfo(
+				siblings,
+				state as MISFamilyInfo,
+				state.FamilyID.trim().replaceAll(' ', '-')
+			)
+		)
 		toast.success('Family information has been updated')
 	}
 
@@ -150,7 +184,7 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 
 			// check if there's no sibling, remove family info as well
 			// from previously added student
-			if (Object.keys(updated.siblings || {}).length === 0) {
+			if (Object.keys(updated.siblings ?? {}).length === 0) {
 				setState({
 					FamilyID: state.FamilyID
 				})
@@ -180,28 +214,22 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 		return <Redirect to={state.redirectTo} />
 	}
 
-	const pageTitle = isNewFam ? 'Create Family' : 'Edit Family'
-
-	// TODO: think of better way to create first family and add ability
-	// to multiple siblings (have to check if already student has been added or not)
-	// TODO: think about better family ids, change space to hyphen
+	const pageTitle = isNewFam ? 'Create New Family' : 'Edit Family'
 
 	return (
-		<AppLayout title={pageTitle}>
+		<AppLayout title={pageTitle} showHeaderTitle>
 			<div className="p-5 md:p-10 md:pb-0 text-gray-700 relative">
-				<div className="text-2xl font-bold mb-8 text-center">{pageTitle}</div>
-				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 p-5 md:py-10 my-5">
+				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 py-5 md:py-10 my-5">
 					<form id="staff-form" className="text-white space-y-4 px-4 w-full md:w-3/5">
-						<div>Family Name/ID</div>
+						<div>Family ID</div>
 						<input
 							name="FamilyID"
 							required
-							disabled={isNewFam ? false : !!famId} // don't update the if
-							value={isNewFam ? state.FamilyID : famId}
+							value={state.FamilyID === 'new' ? '' : state.FamilyID}
 							onChange={handleInputChange}
 							placeholder="Type name or id"
 							className={clsx('tw-input w-full tw-is-form-bg-black', {
-								'pointer-events-none bg-gray-500': isNewFam ? false : !!famId
+								'bg-gray-500': !state.FamilyID
 							})}
 						/>
 						{(isNewFam ? state.siblings : true) && (
@@ -260,13 +288,13 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 
 						{siblingsUnMatchingInfo() && (
 							<div className="text-red-brand">
-								Warning: Some siblings do not have matching information. Press Save
-								to overwrite
+								Warning: Some siblings do not have matching information. Press
+								Update to overwrite
 							</div>
 						)}
 
 						<div className="flex flex-col space-y-2">
-							{(isNewFam ? Object.values(state.siblings || {}) : siblings).map(s => (
+							{(isNewFam ? Object.values(state.siblings ?? {}) : siblings).map(s => (
 								<ListCard
 									key={s.id}
 									student={s}
@@ -276,7 +304,7 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 							))}
 						</div>
 
-						{(isNewFam ? Object.keys(state.siblings || {}).length === 0 : true) && (
+						{(isNewFam ? Object.keys(state.siblings ?? {}).length === 0 : true) && (
 							<>
 								<div>Add Siblings</div>
 								<StudentDropdownSearch
@@ -295,7 +323,7 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 								// make sure if there's no student selected to be added in family, disable button
 								isNewFam &&
 									(!state.FamilyID ||
-										Object.keys(state.siblings || {}).length === 0)
+										Object.keys(state.siblings ?? {}).length === 0)
 									? 'bg-gray-400 pointer-events-none'
 									: 'bg-blue-brand'
 							)}>
@@ -326,10 +354,10 @@ const ListCard = ({ student, sections, removeStudent }: ListCardProps) => {
 	return (
 		<div className="flex flex-row items-center p-2 bg-white w-full justify-between rounded-md text-gray-900">
 			<div className="flex flex-row items-center">
-				{student.ProfilePicture?.url || student.ProfilePicture?.image_string ? (
+				{student.ProfilePicture?.url ?? student.ProfilePicture?.image_string ? (
 					<img
 						className="w-8 h-8 mr-2 rounded-full"
-						src={student.ProfilePicture?.url || student.ProfilePicture?.image_string}
+						src={student.ProfilePicture?.url ?? student.ProfilePicture?.image_string}
 						alt={student.Name}
 					/>
 				) : (

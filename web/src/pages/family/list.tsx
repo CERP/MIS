@@ -14,7 +14,12 @@ type State = {
 	search: string
 }
 
-export const Family = () => {
+interface FamilyProps {
+	forwardTo?: string
+	pageTitle?: string
+}
+
+export const Family = ({ forwardTo, pageTitle }: FamilyProps) => {
 	const [state, setState] = useState<State>({
 		search: ''
 	})
@@ -22,13 +27,13 @@ export const Family = () => {
 	const { families } = useFamily()
 
 	return (
-		<AppLayout title="Families">
+		<AppLayout title={pageTitle ?? 'Families'} showHeaderTitle={!!pageTitle}>
 			<div className="p-5 md:p-10 relative mb-20">
 				<Link to="/families/new">
 					<AddStickyButton label="Create new Family" />
 				</Link>
 
-				<div className="text-center font-bold text-2xl my-4">Families</div>
+				{!pageTitle && <div className="text-center font-bold text-2xl my-4">Families</div>}
 				<div className="flex flex-row mt-4 mb-12 md:mb-20 space-x-4 md:space-y-0 md:space-x-60">
 					<SearchInput
 						onChange={e => setState({ ...state, search: e.target.value })}
@@ -36,7 +41,7 @@ export const Family = () => {
 					/>
 				</div>
 
-				<div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-12 gap-y-12 md:gap-y-20">
+				<div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-12 gap-y-12 md:gap-y-20">
 					{Object.values(families)
 						.filter(fam => {
 							const searchString = `${fam.id} ${fam.name} ${fam.phone}`.toLowerCase()
@@ -46,9 +51,15 @@ export const Family = () => {
 							)
 						})
 						.sort((a, b) => a.id.localeCompare(b.id))
-						.map(f => (
-							<Link key={f.id} to={`families/${f.id}`}>
-								<Card family={f} />
+						.map(fam => (
+							<Link
+								key={fam.id}
+								to={
+									forwardTo
+										? `/families/${fam.id}/${forwardTo}`
+										: `/families/${fam.id}`
+								}>
+								<Card family={fam} />
 							</Link>
 						))}
 				</div>
@@ -75,7 +86,7 @@ const Card = ({ family }: CardProps) => {
 				</div>
 			</div>
 			<div className="absolute left-0 right-0 -top-6 md:-top-8 flex -space-x-2 overflow-hidden justify-center">
-				{Object.values(family.students || {}).map(
+				{Object.values(family.students ?? {}).map(
 					(s, index) =>
 						index <= 2 && (
 							<img
