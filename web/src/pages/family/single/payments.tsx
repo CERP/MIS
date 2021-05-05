@@ -345,14 +345,14 @@ interface FeeBreakdownCardProps {
 const FeeBreakdownCard = ({ student }: FeeBreakdownCardProps) => {
 	const [showFees, setShowFees] = useState(false)
 
+	//  want to have unique Fee IDs and merging class fees and
+	//  student fees to render them
 	const getFees = useCallback((): AugmentedFees => {
 		return [
-			//  there's no rocket science here,  just want to have unique id and merging class fees and
-			//  student fees to render them
 			[
 				v4(),
 				{
-					...(student.classFee || ({} as MISClassFee)),
+					...(student.classFee ?? ({} as MISClassFee)),
 					name: 'Class Fee'
 				}
 			],
@@ -387,7 +387,7 @@ const FeeBreakdownCard = ({ student }: FeeBreakdownCardProps) => {
 			<div className="flex flex-row justify-between items-center">
 				<div className="flex flex-row w-3/5 flex-start items-center">
 					<img
-						className="w-10 h-10 mr-2"
+						className="w-10 h-10 mr-2 rounded-full"
 						src={
 							student.ProfilePicture?.url ||
 							student.ProfilePicture?.image_string ||
@@ -402,7 +402,7 @@ const FeeBreakdownCard = ({ student }: FeeBreakdownCardProps) => {
 				</div>
 			</div>
 			<div className="flex flex-row justify-between">
-				<div className="flex flex-row">
+				<div className="flex flex-row  text-sm md:text-base">
 					<div>Pending Amount</div>
 					<div
 						className={clsx(
