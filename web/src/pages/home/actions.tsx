@@ -2,13 +2,13 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { isMobile } from 'utils/helpers'
 
-import iconFee from './assets/fee.svg'
-import iconMarks from './assets/marks.svg'
-import iconSms from './assets/sms.svg'
-import iconExams from './assets/exams.svg'
-import iconAttendance from './assets/attendance.svg'
-import iconDiary from './assets/diary.svg'
-import iconExpense from './assets/expense.svg'
+import iconFee from 'assets/svgs/fee.svg'
+import iconMarks from 'assets/svgs/marks.svg'
+import iconSms from 'assets/svgs/sms.svg'
+import iconExams from 'assets/svgs/exams.svg'
+import iconAttendance from 'assets/svgs/attendance.svg'
+import iconDiary from 'assets/svgs/diary.svg'
+import iconExpense from 'assets/svgs/expense.svg'
 
 const links: CardProps[] = [
 	{

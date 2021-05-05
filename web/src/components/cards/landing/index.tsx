@@ -2,12 +2,12 @@ import React from 'react'
 import clsx from 'clsx'
 import { Team } from 'constants/aboutTeam'
 
-interface ReachCardProps {
+interface ReachItemCardProps {
 	icon: string
 	title: string
 	reach: string
 }
-export const ReachCard = ({ icon, title, reach }: ReachCardProps) => (
+export const ReachItemCard = ({ icon, title, reach }: ReachItemCardProps) => (
 	<div className="flex flex-col items-center space-y-2">
 		<img
 			className="w-24 h-24 md:w-28 md:h-28 m-8 shadow-md rounded-full"
@@ -19,16 +19,16 @@ export const ReachCard = ({ icon, title, reach }: ReachCardProps) => (
 	</div>
 )
 
-interface FeatureCardProps {
+interface SolutionCardProps {
 	icon: string
 	title: string
 }
-export const FeatureCard = ({
+export const SolutionCard = ({
 	icon,
 	title,
 	className
 }: React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLDivElement>, HTMLDivElement> &
-	FeatureCardProps) => (
+	SolutionCardProps) => (
 	<div className={clsx('px-6 py-14 rounded-xl', className)}>
 		<img className="w-24 h-24 mx-auto rounded-full shadow-md" src={icon} alt={title} />
 		<div className="text-white text-lg text-center mt-2">{title}</div>
@@ -45,5 +45,21 @@ export const TeamMemberCard = ({ member }: TeamMemberCardProps) => (
 		</div>
 		<div className="font-semibold">{member.name}</div>
 		<div className="text-xs text-gray-500">{member.designation}</div>
+	</div>
+)
+
+interface FeatureItemCardProps {
+	title: string
+	body: string
+	icon: string
+}
+
+export const FeatureItemCard = ({ title, body, icon }: FeatureItemCardProps) => (
+	<div className="flex flex-row items-center md:items-start">
+		<img className="rounded-full w-20 h-20" src={icon} />
+		<div className="flex flex-col ml-4">
+			<div className="text-lg font-semibold">{title}</div>
+			<p>{body}</p>
+		</div>
 	</div>
 )
