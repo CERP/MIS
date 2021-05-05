@@ -5,6 +5,7 @@ import { TModal } from '../Modal'
 import StudentInfoModal from './StudentInfoModal'
 import TIPGroupModal from './TIPGroupModal'
 import ChangeTIPGroup from './ChangeTIPGroup'
+import StudentProfile from './StudentProfile'
 import { convertLearningGradeToGroupName } from 'utils/TIP'
 import { assignLearningLevel } from 'actions'
 import { useComponentVisible } from 'utils/customHooks'
@@ -13,6 +14,13 @@ interface P {
 	std: MISStudent
 
 	setLearningLevel: (student_id: string, subject: TIPSubjects, level: TIPGrades) => void
+}
+
+enum MODAL_TYPE {
+	ASSIGNED_GROUPS_INFO = 'assigned_groups-info',
+	TIP_GROUPS = 'tip_groups',
+	CHANGE_GROUP = 'change_group',
+	STUDENT_PROFILE = 'student_profile'
 }
 
 const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
@@ -32,7 +40,7 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 		<>
 			{isComponentVisible && (
 				<TModal>
-					{modal_type === 'test_info' && (
+					{modal_type === MODAL_TYPE.ASSIGNED_GROUPS_INFO && (
 						<div ref={ref}>
 							<StudentInfoModal
 								learning_levels={std.targeted_instruction.learning_level}
@@ -42,7 +50,7 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 							/>
 						</div>
 					)}
-					{modal_type === 'tip_groups' && (
+					{modal_type === MODAL_TYPE.TIP_GROUPS && (
 						<div ref={ref}>
 							<TIPGroupModal
 								subject={selected_subject}
@@ -51,7 +59,7 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 							/>
 						</div>
 					)}
-					{modal_type === 'change_group' && (
+					{modal_type === MODAL_TYPE.CHANGE_GROUP && (
 						<div ref={ref}>
 							<ChangeTIPGroup
 								subject={selected_subject}
@@ -61,13 +69,25 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 							/>
 						</div>
 					)}
+					{modal_type === MODAL_TYPE.STUDENT_PROFILE && (
+						<div ref={ref}>
+							<StudentProfile setIsComponentVisible={setIsComponentVisible} />
+						</div>
+					)}
 				</TModal>
 			)}
-			<div className="h-10 items-center text-xs w-full mt-4 flex flex-row justify-around shadow-lg">
-				<div className="w-4/12 md:w-6/12 flex flex-row justify-between px-3 items-center m-2">
+			<div className="items-center text-xs w-full mt-4 flex flex-row justify-around shadow-lg">
+				<div className="w-2/5 md:w-6/12 flex flex-row justify-between items-center m-2">
 					<div className="font-bold text-center">{std.Name}</div>
+					<div
+						className="rounded-full bg-white h-7 w-7 shadow-lg ml-1 flex justify-center items-center"
+						onClick={() => (
+							setModalType(MODAL_TYPE.STUDENT_PROFILE), setIsComponentVisible(true)
+						)}>
+						Tag
+					</div>
 				</div>
-				<div className="flex flex-row justify-between w-8/12 md:w-6/12 text-xs m-4">
+				<div className="flex flex-row justify-between w-3/5 md:w-6/12 text-xs my-4 mr-4">
 					{['Urdu', 'Maths', 'English'].map(sub => {
 						const subject = std?.targeted_instruction?.learning_level?.[sub]
 						const grade = convertLearningGradeToGroupName(subject?.grade)
