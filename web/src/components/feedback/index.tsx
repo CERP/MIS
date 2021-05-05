@@ -23,16 +23,16 @@ export const CustomerFeedback = () => {
 			className="w-full md:w-2/3 mt-20 md:mt-0 px-10 md:px-20">
 			<div className="relative">
 				<div className="h-96 bg-red-brand rounded-xl text-center text-white shadow-lg">
-					<div className="pt-28">
+					<div className="pt-20 md:pt-28">
 						<div className="font-bold">{feedback.name}</div>
 						<div>
 							{feedback.type} {feedback.school}
 						</div>
 					</div>
-					<p className="mt-5 px-5 md:mt-10 md:px-20 h-28 md:h-24 text-justify">
+					<p className="mt-4 px-5 md:mt-8 md:px-20 h-32 md:h-24 text-justify leading-5 md:leading-normal text-xs md:text-sm">
 						{feedback.body}
 					</p>
-					<div className="flex justify-center items-center mt-10 space-x-2">
+					<div className="flex justify-center items-center mt-16 md:mt-12 space-x-2">
 						{[...new Array(feedbacks.length).keys()].map(v => (
 							<div
 								key={v + feedback.name}
@@ -48,7 +48,7 @@ export const CustomerFeedback = () => {
 				<div className="absolute -top-10 md:-top-16 left-0 right-0">
 					<img
 						src={feedback.avatar}
-						className="mx-auto h-28 w-28 md:h-40 md:w-40 rounded-full p-1 bg-white border-4 border-red-brand shadow-md"
+						className="mx-auto h-28 w-28 md:h-40 md:w-40 rounded-full p-1 bg-white border-4 border-red-brand shadow-md object-cover"
 						alt={feedback.name}
 					/>
 				</div>
