@@ -30,7 +30,7 @@ export const Landing = () => {
 			<div className="w-full mt-10 md:mt-16">
 				<div className="flex flex-row flex-wrap h-full md:h-96">
 					<div className="w-full h-full md:w-1/3">
-						<div className="px-10 md:px-20">
+						<div className="px-8 md:px-12">
 							<div className="text-5xl font-bold">
 								The Best Management Software for schools.
 							</div>
@@ -39,7 +39,7 @@ export const Landing = () => {
 								which is a single solution for all your school management issues.
 							</div>
 						</div>
-						<div className="block w-full px-10 mt-10 md:hidden md:w-2/3 md:pr-0">
+						<div className="block w-full px-8 mt-10 md:hidden md:w-2/3 md:pr-0">
 							<iframe
 								src="https://youtube.com/embed/cm73XDWTiNQ?controls=0&rel=0"
 								className="w-full bg-gray-500 h-60 md:h-full rounded-3xl md:rounded-tr-none md:rounded-br-none"
@@ -49,31 +49,31 @@ export const Landing = () => {
 								title="MISchool Intro"
 							/>
 						</div>
-						<div className="px-10 my-10 md:mt-8 md:pl-20 md:pr-0">
+						<div className="px-8 my-10 md:mt-16 md:pl-12 md:pr-0">
 							<div className="flex flex-row space-x-2">
 								<Link
 									to="/school-login"
-									className="w-1/2 px-6 py-2 text-lg text-center border-2 rounded-md md:py-3 hover:bg-teal-400 hover:text-white text-teal-brand border-teal-brand">
+									className="w-1/2 px-6 py-2 text-lg text-center border-2 rounded-md md:py-3 hover:bg-teal-brand hover:text-white text-teal-brand border-teal-brand hover:shadow-md">
 									Login
 								</Link>
 								<Link
 									to="/signup"
-									className="w-full px-6 py-2 text-lg text-center text-white rounded-md md:py-3 bg-teal-brand hover:bg-teal-400">
+									className="w-full px-6 py-2 text-lg text-center text-white rounded-md md:py-3 bg-teal-brand hover:shadow-md">
 									Try For Free
 								</Link>
 							</div>
 							<div className="my-2">
 								Not sure? Click here to{' '}
-								<span className="cursor-pointer text-teal-brand">
+								<span className="cursor-pointer text-teal-brand hover:underline hover:text-blue-brand">
 									Schedule a demo
 								</span>
 							</div>
 						</div>
 					</div>
-					<div className="hidden w-full px-10 md:block md:w-2/3 md:pr-0">
+					<div className="hidden w-full px-8 md:block md:w-2/3 md:pr-0 h-96">
 						<iframe
 							src="https://youtube.com/embed/cm73XDWTiNQ?controls=0&rel=0"
-							className="w-full bg-gray-500 h-60 md:h-full rounded-3xl md:rounded-tr-none md:rounded-br-none"
+							className="w-full bg-gray-500 h-96 md:h-full rounded-3xl md:rounded-tr-none md:rounded-br-none"
 							frameBorder="0"
 							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope;"
 							allowFullScreen
@@ -82,7 +82,7 @@ export const Landing = () => {
 					</div>
 				</div>
 
-				<div className="px-20 mt-20">
+				<div className="px-12 mt-10 md:mt-20">
 					<div className="text-3xl font-semibold text-center">Our Solutions</div>
 					<div className="mt-10">
 						<div className="grid grid-cols-1 mx-auto space-y-4 md:gap-12 md:grid-cols-4 md:space-y-0">
@@ -146,7 +146,7 @@ export const Landing = () => {
 					</div>
 				</div>
 
-				<div className="px-20 mt-20">
+				<div className="px-12 mt-20">
 					<div className="text-3xl font-semibold text-center">Our Clients</div>
 					<div className="grid grid-cols-1 gap-6 mt-10 md:grid-cols-5">
 						<div className="mx-auto mb-4 rounded-full h-36 w-36 bg-orange-brand">
@@ -204,7 +204,7 @@ export const Landing = () => {
 const Features = [
 	{
 		title: 'Attendance',
-		body: 'Manual or Card scanning process for staff and student attendance',
+		body: 'Manual or Cards scanning process for staff and student attendance',
 		icon: iconAttendance
 	},
 	{
