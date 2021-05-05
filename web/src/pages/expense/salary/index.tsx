@@ -66,7 +66,7 @@ const Salary = () => {
 					</select>
 				</div>
 				{teacherSalaries && (
-					<div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-12 gap-y-12 md:gap-y-20">
+					<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-12 gap-y-12 md:gap-y-20">
 						{filteredStaff
 							.sort((a, b) => a.Name.localeCompare(b.Name))
 							.map(teacher => {

@@ -117,9 +117,9 @@ export const Expense = () => {
 		groupByCategory(year, month)
 
 		let payments: MISStudentPayment[] = []
-		Object.values(students).forEach((student: MISStudent) => {
-			Object.values(student.payments).forEach(payment => {
-				if (filterData(payment.date, year, month)) {
+		Object.values(students ?? {}).forEach((student: MISStudent) => {
+			Object.values(student.payments ?? {}).forEach(payment => {
+				if (filterData(payment?.date ?? 0, year, month)) {
 					if (payment.type === 'SUBMITTED') {
 						payments.push(payment)
 					}

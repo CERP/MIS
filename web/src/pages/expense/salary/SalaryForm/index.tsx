@@ -10,6 +10,7 @@ import { addSalaryExpense } from 'actions'
 
 import toast from 'react-hot-toast'
 import moment from 'moment'
+import { stat } from 'fs'
 
 const SalaryForm = (props: {
 	location: { state: MISSalaryExpense[] }
@@ -21,6 +22,7 @@ const SalaryForm = (props: {
 	const teacher = useSelector(
 		(state: RootReducerState) => state.db.faculty[props.match.params.id]
 	)
+	const allSalaries = useSelector((state: RootReducerState) => state.db.expenses)
 	const [state, setState] = useState<Partial<MISSalaryExpense>>({
 		amount: parseFloat(teacher.Salary),
 		date: new Date().getTime()
@@ -53,6 +55,9 @@ const SalaryForm = (props: {
 	}, [salaries])
 
 	const paySalary = () => {
+		console.log(teacher.Salary)
+		console.log(type)
+		console.log(Object.keys(allSalaries))
 		if (typeof state.amount === 'string' || typeof state.amount === 'undefined') {
 			toast.error('Amount must be a number')
 			return
@@ -65,74 +70,200 @@ const SalaryForm = (props: {
 			return
 		}
 
-		if (type === 'Full') {
-			const id = `${moment().format('MM-YYYY')}-${teacher.id}`
-			if (salaries !== undefined) {
-				//updates the already paid salary if check not present?????
-				const old_id = `${moment(salaries[0]?.date).format('MM-YYYY')}-${
-					salaries[0]?.faculty_id
-				}`
+		const id = `${moment(state.date).format('MM-YYYY')}-${teacher.id}`
+		if (salaries !== undefined) {
+			//updates the already paid salary if check not present?????
 
-				if (id === old_id) {
+			if (Object.keys(allSalaries).includes(id)) {
+				if (allSalaries[id].amount > 0) {
 					toast.error('Salary Already paid')
 					return
 				}
 			}
+		}
 
-			dispatch(
-				addSalaryExpense(
-					id,
-					state.amount,
-					teacher.Name,
-					'PAYMENT_GIVEN',
-					teacher.id,
-					state.date,
-					0,
-					0,
-					'',
-					'SALARY'
+		switch (type) {
+			case 'Full':
+				dispatch(
+					addSalaryExpense(
+						id,
+						state.amount,
+						teacher.Name,
+						'PAYMENT_GIVEN',
+						teacher.id,
+						state.date,
+						0,
+						0,
+						'',
+						'SALARY'
+					)
 				)
-			)
 
-			if (salaries) {
-				setSalaries([
-					...salaries,
-					{
-						advance: 0,
-						amount: state.amount,
-						category: 'SALARY',
-						date: state.date,
-						expense: 'SALARY_EXPENSE',
-						type: 'PAYMENT_GIVEN',
-						deduction: 0,
-						deduction_reason: '',
-						faculty_id: teacher.id,
-						label: teacher.Name,
-						time: moment.now()
-					}
-				])
-			} else {
-				setSalaries([
-					{
-						advance: 0,
-						amount: state.amount,
-						category: 'SALARY',
-						date: state.date,
-						expense: 'SALARY_EXPENSE',
-						type: 'PAYMENT_GIVEN',
-						deduction: 0,
-						deduction_reason: '',
-						faculty_id: teacher.id,
-						label: teacher.Name,
-						time: moment.now()
-					}
-				])
-			}
+				if (salaries) {
+					setSalaries([
+						...salaries,
+						{
+							advance: 0,
+							amount: state.amount,
+							category: 'SALARY',
+							date: state.date,
+							expense: 'SALARY_EXPENSE',
+							type: 'PAYMENT_GIVEN',
+							deduction: 0,
+							deduction_reason: '',
+							faculty_id: teacher.id,
+							label: teacher.Name,
+							time: moment.now()
+						}
+					])
+				} else {
+					setSalaries([
+						{
+							advance: 0,
+							amount: state.amount,
+							category: 'SALARY',
+							date: state.date,
+							expense: 'SALARY_EXPENSE',
+							type: 'PAYMENT_GIVEN',
+							deduction: 0,
+							deduction_reason: '',
+							faculty_id: teacher.id,
+							label: teacher.Name,
+							time: moment.now()
+						}
+					])
+				}
 
-			toast.success('Payment Made')
+				toast.success('Payment Made')
+				break
+
+			case 'Deducted':
+				if (parseFloat(teacher.Salary) <= 0 || teacher.Salary == '') {
+					toast.error('Can not use this option without setting teacher Salary')
+					break
+				}
+
+				let deducted = parseFloat(teacher.Salary) - state.amount
+				dispatch(
+					addSalaryExpense(
+						id,
+						state.amount,
+						teacher.Name,
+						'PAYMENT_GIVEN',
+						teacher.id,
+						state.date,
+						0,
+						deducted,
+						'',
+						'SALARY'
+					)
+				)
+
+				if (salaries) {
+					setSalaries([
+						...salaries,
+						{
+							advance: 0,
+							amount: state.amount,
+							category: 'SALARY',
+							date: state.date,
+							expense: 'SALARY_EXPENSE',
+							type: 'PAYMENT_GIVEN',
+							deduction: deducted,
+							deduction_reason: '',
+							faculty_id: teacher.id,
+							label: teacher.Name,
+							time: moment.now()
+						}
+					])
+				} else {
+					setSalaries([
+						{
+							advance: 0,
+							amount: state.amount,
+							category: 'SALARY',
+							date: state.date,
+							expense: 'SALARY_EXPENSE',
+							type: 'PAYMENT_GIVEN',
+							deduction: deducted,
+							deduction_reason: '',
+							faculty_id: teacher.id,
+							label: teacher.Name,
+							time: moment.now()
+						}
+					])
+				}
+
+				toast.success('Payment Made')
+				break
+
+			case 'Advance':
+				if (parseFloat(teacher.Salary) <= 0 || teacher.Salary == '') {
+					toast.error('Can not use this option without setting teacher Salary')
+					break
+				}
+				if (moment(state.date).endOf('month') <= moment().endOf('month')) {
+					toast.error('Please give advance for a month other than the current one')
+					break
+				}
+
+				dispatch(
+					addSalaryExpense(
+						id,
+						0,
+						teacher.Name,
+						'PAYMENT_GIVEN',
+						teacher.id,
+						state.date,
+						state.amount,
+						0,
+						'',
+						'SALARY'
+					)
+				)
+
+				if (salaries) {
+					setSalaries([
+						...salaries,
+						{
+							advance: state.amount,
+							amount: 0,
+							category: 'SALARY',
+							date: state.date,
+							expense: 'SALARY_EXPENSE',
+							type: 'PAYMENT_GIVEN',
+							deduction: 0,
+							deduction_reason: '',
+							faculty_id: teacher.id,
+							label: teacher.Name,
+							time: moment.now()
+						}
+					])
+				} else {
+					setSalaries([
+						{
+							advance: 0,
+							amount: state.amount,
+							category: 'SALARY',
+							date: state.date,
+							expense: 'SALARY_EXPENSE',
+							type: 'PAYMENT_GIVEN',
+							deduction: 0,
+							deduction_reason: '',
+							faculty_id: teacher.id,
+							label: teacher.Name,
+							time: moment.now()
+						}
+					])
+				}
+
+				toast.success('Payment Made')
+				break
+
+			default:
+				break
 		}
 	}
-	const [offset, setOffset] = useState(0)
 
 	return (
 		<AppLayout>
@@ -234,11 +365,11 @@ const SalaryForm = (props: {
 						<h1 className="text-xl text-gray-100 font-normal mt-3">Date*</h1>
 						<div className="w-full mt-2">
 							<input
-								disabled={type === 'Full' ? true : false}
+								disabled={type === 'Advance' ? false : true}
 								defaultValue={moment(state.date).format('YYYY-MM-DD')}
 								className={clsx(
 									'w-full bg-transparent rounded border-2 border-blue-300 outline-none  placeholder-gray-400',
-									type === 'Full' ? 'text-gray-400' : 'text-white'
+									type === 'Advance' ? 'text-white' : 'text-gray-400'
 								)}
 								type="date"
 								onChange={e =>
