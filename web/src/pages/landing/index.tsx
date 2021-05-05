@@ -197,6 +197,51 @@ export const Landing = () => {
 					<QuestionMarkCircleIcon className="w-8 h-8" />
 				</div>
 			</div>
+			<footer className="flex justify-center px-4 text-gray-100 bg-gray-800">
+				<div className="container py-6">
+					<h1 className="text-center text-lg font-bold lg:text-2xl">
+						Join 800+ other schools and never miss <br /> out an oppurtunity to digitize
+						your school at affordable cost.
+					</h1>
+
+					<hr className="h-px mt-6 bg-gray-700 border-none" />
+
+					<div className="flex flex-col items-center justify-between mt-6 md:flex-row">
+						<div className="flex flex-col items-center">
+							<Link to="/" className="text-xl font-bold">
+								MISchool{' '}
+								<span className="text-base hidden md:inline-block font-normal">
+									{' '}
+									- A School Management Software
+								</span>
+							</Link>
+							<div className="text-base md:hidden block">
+								{' '}
+								A School Management Software
+							</div>
+						</div>
+						<div className="flex mt-4 md:m-0">
+							<div className="-mx-4">
+								<Link to="/pricing" className="px-4 text-sm">
+									Pricing
+								</Link>
+								<Link to="/customers" className="px-4 text-sm">
+									Customers
+								</Link>
+								<Link to="/about-us" className="px-4 text-sm">
+									About
+								</Link>
+								<Link to="/contact-us" className="px-4 text-sm">
+									Contact
+								</Link>
+								<Link to="/events" className="px-4 text-sm">
+									Events
+								</Link>
+							</div>
+						</div>
+					</div>
+				</div>
+			</footer>
 		</AppLayout>
 	)
 }
