@@ -54,6 +54,19 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 		}
 	}, [siblings, famId, isNewFam])
 
+	const families = useMemo(() => {
+		const famIds = Object.values(students)
+			.filter(student => student && student.id)
+			.reduce<string[]>((agg, curr) => {
+				if (curr.FamilyID) {
+					return [...agg, curr.FamilyID]
+				}
+				return agg
+			}, [])
+
+		return [...new Set(famIds)]
+	}, [students])
+
 	// to show warning msg to override sibling information, if it's different
 	const siblingsUnMatchingInfo = () => {
 		return siblings.some(
@@ -97,11 +110,22 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 	const handleSave = () => {
 		if (isNewFam) {
 			if (!state.FamilyID) {
-				toast.success('Please enter family name or id')
-				return
+				return toast.success('Please enter family Name or Id')
 			}
 
-			// new addition of hyphen '-' in family name or id, if there's space
+			// make sure, newly created ID doesn't exist before
+			// when we store family ID, we replace spaces with hyphens
+			// todo: see saveFamilyInfo
+			if (
+				families.find(
+					fam =>
+						fam.toLocaleLowerCase() ===
+						state.FamilyID.toLocaleLowerCase().replaceAll(' ', '-')
+				)
+			) {
+				return toast.error(`This '${state.FamilyID}' family Id already exist`)
+			}
+
 			const siblingStudents = Object.values(state.siblings).map(s => s)
 
 			// dispatch an action to save students with new fam id
@@ -113,21 +137,17 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 				AlternatePhone: state.AlternatePhone
 			}
 
-			console.log(siblingStudents, family)
-
 			dispatch(saveFamilyInfo(siblingStudents, family, state.FamilyID))
 			toast.success('New family has been created')
 
 			// redirect to '/families'
-			setTimeout(() => {
+			return setTimeout(() => {
 				setState({ ...state, redirectTo: '/families' })
 			}, 1000)
-
-			return
 		}
 
 		// Remove extra props here (state.siblings)
-		dispatch(saveFamilyInfo(siblings, state as MISFamilyInfo))
+		// dispatch(saveFamilyInfo(siblings, state as MISFamilyInfo))
 		toast.success('Family information has been updated')
 	}
 
@@ -189,7 +209,6 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 	return (
 		<AppLayout title={pageTitle} showHeaderTitle>
 			<div className="p-5 md:p-10 md:pb-0 text-gray-700 relative">
-				{/* <div className="text-2xl font-bold mb-8 mt-4 text-center">{pageTitle}</div> */}
 				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 py-5 md:py-10 my-5">
 					<form id="staff-form" className="text-white space-y-4 px-4 w-full md:w-3/5">
 						<div>Family ID</div>
