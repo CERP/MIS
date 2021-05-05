@@ -1,14 +1,14 @@
-//@ts-nocheck
 import React from 'react'
 import clsx from 'clsx'
 import { BackArrow, BlackUser } from 'assets/icons'
-
+import { convertLearningGradeToGroupName } from 'utils/TIP'
 interface P {
+	learning_levels: MISStudent['targeted_instruction']['learning_level']
+
 	setIsComponentVisible: (value: boolean) => void
 }
 
-const StudentProfileModal: React.FC<P> = ({ setIsComponentVisible }) => {
-	const group: TIPLevels = 'Level 1'
+const StudentProfileModal: React.FC<P> = ({ learning_levels, setIsComponentVisible }) => {
 	return (
 		<div className="flex flex-col rounded-t-xl padding-3 bg-white">
 			<div className="p-2 shadow-lg text-center rounded-t-lg bg-light-blue-tip-brand text-white flex flex-col justify-between items-center text-sm md:text-lg lg:text-lg">
@@ -29,7 +29,7 @@ const StudentProfileModal: React.FC<P> = ({ setIsComponentVisible }) => {
 					</div>
 					<div></div>
 				</div>
-				<div className="text-xs md:text-base lg:text-lg flex flex-row justify-between w-full pt-2">
+				<div className="text-xs md:text-xs lg:text-lg flex flex-row justify-between w-full pt-2 font-bold">
 					<div>Subjects</div>
 					<div>Oral Test</div>
 					<div>Sorting Result</div>
@@ -38,38 +38,53 @@ const StudentProfileModal: React.FC<P> = ({ setIsComponentVisible }) => {
 			</div>
 			<div>
 				<div className="text-xs md:text-base lg:text-lg w-full">
-					{[1, 2, 3].map(no => {
+					{Object.entries(learning_levels || {}).map(([sub, grade_obj]) => {
+						const grade = convertLearningGradeToGroupName(grade_obj.grade)
+						const is_oral = grade_obj.is_oral ? 'yes' : 'No'
 						return (
 							<div
-								key={no}
+								key={grade}
 								className="p-2 flex flex-row justify-between items-center">
-								<div className="font-bold">Maths</div>
-								<div className="font-bold">yes</div>
+								<div className="w-1/4 font-bold">{sub}</div>
 								<div
 									className={clsx(
-										'text-white flex flex-wrap rounded-md items-center shadow-lg cursor-pointer text-sm md:text-base lg:text-lg px-3 py-1',
+										'w-1/4 font-bold flex justify-center items-center',
 										{
-											'bg-light-blue-tip-brand': group === 'Level KG',
-											'bg-yellow-tip-brand': group === 'Level 1',
-											'bg-green-tip-brand': group === 'Level 2',
-											'bg-orange-tip-brand': group === 'Level 3',
-											'bg-gray-600': group === 'Remediation Not Needed'
+											'text-red-tip-brand': is_oral === 'yes',
+											'text-gray-600': is_oral === 'No'
 										}
 									)}>
-									yellow
+									{is_oral}
 								</div>
-								<div
-									className={clsx(
-										'text-white flex flex-wrap rounded-md items-center shadow-lg cursor-pointer text-sm md:text-base lg:text-lg px-3 py-1',
-										{
-											'bg-light-blue-tip-brand': group === 'Level KG',
-											'bg-yellow-tip-brand': group === 'Level 1',
-											'bg-green-tip-brand': group === 'Level 2',
-											'bg-orange-tip-brand': group === 'Level 3',
-											'bg-gray-600': group === 'Remediation Not Needed'
-										}
-									)}>
-									yellow
+								<div className="w-1/4 flex flex-wrap justify-center items-center px-3 py-1">
+									<div
+										className={clsx(
+											'w-11/12 text-white flex flex-wrap justify-center rounded-md items-center shadow-lg cursor-pointer text-sm md:text-base lg:text-lg px-3 py-1',
+											{
+												'bg-light-blue-tip-brand': grade === 'Blue',
+												'bg-yellow-tip-brand': grade === 'Yellow',
+												'bg-green-tip-brand': grade === 'Green',
+												'bg-orange-tip-brand': grade === 'Orange',
+												'bg-gray-600': grade === 'Remediation Not Needed'
+											}
+										)}>
+										{grade === 'Remediation Not Needed' ? 'none' : grade}
+									</div>
+								</div>
+								<div className="w-1/4 flex flex-wrap justify-center items-center px-3 py-1">
+									<div
+										className={clsx(
+											'w-11/12 text-white flex flex-wrap justify-center rounded-md items-center shadow-lg cursor-pointer text-sm md:text-base lg:text-lg px-3 py-1',
+											{
+												'bg-light-blue-tip-brand': grade === 'Blue',
+												'bg-yellow-tip-brand': grade === 'Yellow',
+												'bg-green-tip-brand': grade === 'Green',
+												'bg-orange-tip-brand': grade === 'Orange',
+												'bg-gray-600': grade === 'Remediation Not Needed'
+											}
+										)}>
+										{grade === 'Remediation Not Needed' ? 'none' : grade}
+									</div>
 								</div>
 							</div>
 						)
