@@ -1,15 +1,15 @@
+import React, { useEffect, useState } from 'react'
+import clsx from 'clsx'
+import moment from 'moment'
+import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { ChevronDownIcon, CubeTransparentIcon } from '@heroicons/react/solid'
+
 import { AppLayout } from 'components/Layout/appLayout'
 import { CustomSelect } from 'components/select'
-import moment from 'moment'
-import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
 import months from 'constants/months'
-import { ChevronDownIcon, CubeTransparentIcon } from '@heroicons/react/solid'
 import CalendarIcon from 'assets/svgs/react/Calendar'
 import ExpenseCard from 'components/cards/expense'
-import { Link } from 'react-router-dom'
-import { filter } from 'lodash'
-import clsx from 'clsx'
 
 type State = {
 	month: string
@@ -19,8 +19,10 @@ type State = {
 export const Expense = () => {
 	const currentYear = moment().format('YYYY')
 	const currentMonth = moment().format('MMMM')
+
 	const expense = useSelector((state: RootReducerState) => state.db.expenses)
 	const students = useSelector((state: RootReducerState) => state.db.students)
+
 	const [groupedResults, setGroupedResults] = useState<any>(null)
 	const [categoryGroups, setCategoryGroups] = useState<any>(null)
 	const [totalExpense, setTotalExpense] = useState<number>(0)
@@ -234,7 +236,7 @@ export const Expense = () => {
 							</div>
 							{Object.entries(categoryGroups ?? {}).map(([id, data]) => {
 								return (
-									<div>
+									<div key={id}>
 										<div className="flex flex-row justify-between space-y-2 text-gray-300 ">
 											<div className="flex flex-1 justify-between pr-5 flex-row items-center space-x-2">
 												<h1>{id}</h1>
@@ -258,26 +260,25 @@ export const Expense = () => {
 													? 'max-h-screen '
 													: 'max-h-0 opacity-0 scale-0 '
 											)}>
-											{Object.values(data ?? {}).map(
-												(element: MISExpense | MISSalaryExpense) => {
-													return (
-														<div
-															className={clsx(
-																'flex-row flex text-sm text-gray-400 justify-between',
-																selectedCategory === id
-																	? ''
-																	: 'invisible'
-															)}>
-															<li>{`${element.label} - ${moment(
-																element.date
-															).format('ddd')} ${moment(
-																element.date
-															).format('Do')}`}</li>
-															<li>{element.amount}</li>
-														</div>
-													)
-												}
-											)}
+											{Object.entries(data ?? {}).map(([id, epxense]) => {
+												return (
+													<div
+														key={id}
+														className={clsx(
+															'flex-row flex text-sm text-gray-400 justify-between',
+															selectedCategory === id
+																? ''
+																: 'invisible'
+														)}>
+														<li>{`${expense.label} - ${moment(
+															expense.date
+														).format('ddd')} ${moment(
+															expense.date
+														).format('Do')}`}</li>
+														<li>{expense.amount}</li>
+													</div>
+												)
+											})}
 										</ul>
 									</div>
 								)

@@ -1,41 +1,13 @@
-import { CameraIcon } from '@heroicons/react/outline'
-import { addExpense, editExpense } from 'actions'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import clsx from 'clsx'
+import moment from 'moment'
+import toast from 'react-hot-toast'
+import { CameraIcon } from '@heroicons/react/outline'
+
+import { addExpense, editExpense } from 'actions'
 import { AppLayout } from 'components/Layout/appLayout'
 import { ExpenseCategories } from 'constants/expense'
-import moment from 'moment'
-import React, { useEffect, useState } from 'react'
-import toast from 'react-hot-toast'
-import { useDispatch, useSelector } from 'react-redux'
-
-function CustomInput(props: {
-	title: string
-	defaultValue: string | number
-	placeHolder: string
-	onChange: any
-	disabled: boolean
-	type?: string
-	editable?: boolean
-}) {
-	return (
-		<div>
-			<h1 className="text-xl text-gray-100 font-normal ">{props.title}*</h1>
-			<div className="w-full rounded  focus:outline-none focus-within:outline-none mt-2">
-				<input
-					type={props.type}
-					disabled={props.disabled}
-					placeholder={props.placeHolder}
-					className={clsx(
-						'w-full bg-transparent rounded border-2 border-blue-300 outline-none  placeholder-gray-400',
-						props.editable ? 'text-white' : 'text-gray-400'
-					)}
-					defaultValue={props.defaultValue}
-					onChange={props.onChange}
-				/>
-			</div>
-		</div>
-	)
-}
 
 const ExpenseForm = (props: { match: { params: { id: any } } }) => {
 	let key: string = props.match.params.id
@@ -165,9 +137,10 @@ const ExpenseForm = (props: { match: { params: { id: any } } }) => {
 						</div>
 						<h1 className="text-xl text-gray-100 font-normal mt-3">Category</h1>
 						<div className="flex flex-1 flex-row space-x-2  mt-2 flex-wrap">
-							{categories.map(cat => {
+							{categories.map((cat, index) => {
 								return (
 									<div
+										key={cat + index}
 										className={clsx(
 											'rounded-full p-1 mt-1 text-gray-200 text-xs border-gray-200 border-2',
 											state.category === cat
@@ -232,6 +205,35 @@ const ExpenseForm = (props: { match: { params: { id: any } } }) => {
 				)}
 			</div>
 		</AppLayout>
+	)
+}
+
+function CustomInput(props: {
+	title: string
+	defaultValue: string | number
+	placeHolder: string
+	onChange: any
+	disabled: boolean
+	type?: string
+	editable?: boolean
+}) {
+	return (
+		<div>
+			<h1 className="text-xl text-gray-100 font-normal ">{props.title}*</h1>
+			<div className="w-full rounded  focus:outline-none focus-within:outline-none mt-2">
+				<input
+					type={props.type}
+					disabled={props.disabled}
+					placeholder={props.placeHolder}
+					className={clsx(
+						'w-full bg-transparent rounded border-2 border-blue-300 outline-none  placeholder-gray-400',
+						props.editable ? 'text-white' : 'text-gray-400'
+					)}
+					defaultValue={props.defaultValue}
+					onChange={props.onChange}
+				/>
+			</div>
+		</div>
 	)
 }
 

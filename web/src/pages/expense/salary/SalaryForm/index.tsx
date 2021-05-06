@@ -1,32 +1,28 @@
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/outline'
-import clsx from 'clsx'
-import { AppLayout } from 'components/Layout/appLayout'
 import React, { Fragment, useEffect, useState, useRef } from 'react'
-import UserIconSvg from 'assets/svgs/user.svg'
-
-import { useDispatch, useSelector } from 'react-redux'
-import { Transition } from '@headlessui/react'
-import { addSalaryExpense } from 'actions'
-
 import toast from 'react-hot-toast'
 import moment from 'moment'
-import { stat } from 'fs'
+import clsx from 'clsx'
+import { Transition } from '@headlessui/react'
+import { RouteComponentProps } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/outline'
 
-const SalaryForm = (props: {
-	location: { state: MISSalaryExpense[] }
-	match: { params: { id: any } }
-}) => {
-	const [salaries, setSalaries] = useState<MISSalaryExpense[]>(
-		props.location.state === undefined ? [] : props.location.state
-	)
-	const teacher = useSelector(
-		(state: RootReducerState) => state.db.faculty[props.match.params.id]
-	)
+import { AppLayout } from 'components/Layout/appLayout'
+import { addSalaryExpense } from 'actions'
+
+import UserIconSvg from 'assets/svgs/user.svg'
+
+type SalaryFormProps = RouteComponentProps<{ id: string }>
+
+const SalaryForm = ({ match }: SalaryFormProps) => {
+	const [salaries, setSalaries] = useState<MISSalaryExpense[]>()
+	const teacher = useSelector((state: RootReducerState) => state.db.faculty[match.params.id])
 	const allSalaries = useSelector((state: RootReducerState) => state.db.expenses)
 	const [state, setState] = useState<Partial<MISSalaryExpense>>({
 		amount: parseFloat(teacher.Salary),
 		date: new Date().getTime()
 	})
+
 	const [detialsExpanded, setDetailsExpanded] = useState<boolean>(false)
 
 	const [type, setType] = useState<string>('Full')
@@ -55,9 +51,6 @@ const SalaryForm = (props: {
 	}, [salaries])
 
 	const paySalary = () => {
-		console.log(teacher.Salary)
-		console.log(type)
-		console.log(Object.keys(allSalaries))
 		if (typeof state.amount === 'string' || typeof state.amount === 'undefined') {
 			toast.error('Amount must be a number')
 			return
@@ -419,9 +412,11 @@ const SalaryForm = (props: {
 								<div className="flex-1 text-right">Paid</div>
 							</div>
 							{salaries ? (
-								salaries.map(entry => {
+								salaries.map((entry, index) => {
 									return (
-										<div className="flex flex-1 text-left ">
+										<div
+											key={entry.faculty_id + index}
+											className="flex flex-1 text-left ">
 											<div
 												className={clsx(
 													'flex-1',
@@ -493,9 +488,11 @@ const SalaryForm = (props: {
 							<div className="flex-1 font-medium text-right">Paid</div>
 						</div>
 						{salaries ? (
-							salaries.map(entry => {
+							salaries.map((entry, index) => {
 								return (
-									<div className="flex flex-1 text-left ">
+									<div
+										key={entry.faculty_id + index}
+										className="flex flex-1 text-left ">
 										<div
 											className={clsx(
 												'flex-1',

@@ -1,10 +1,12 @@
-import { SearchInput } from 'components/input/search'
-import { AppLayout } from 'components/Layout/appLayout'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import UserIconSvg from 'assets/svgs/user.svg'
-import { toTitleCase } from 'utils/toTitleCase'
 import { Link } from 'react-router-dom'
+
+import { SearchInput } from 'components/input/search'
+import { AppLayout } from 'components/Layout/appLayout'
+import { toTitleCase } from 'utils/toTitleCase'
+
+import UserIconSvg from 'assets/svgs/user.svg'
 
 const Salary = () => {
 	const expenses = useSelector((state: RootReducerState) => state.db.expenses)
@@ -38,10 +40,6 @@ const Salary = () => {
 				}
 			}, {} as { [id: string]: MISSalaryExpense[] })
 
-		console.log('Teachers', faculty)
-		console.log(groupsByFacultyID)
-		console.log('ID is ', groupsByFacultyID[Object.keys(groupsByFacultyID)[0]][0].faculty_id)
-
 		setTeacherSalaries(groupsByFacultyID)
 	}
 
@@ -72,6 +70,7 @@ const Salary = () => {
 							.map(teacher => {
 								return (
 									<Link
+										key={teacher.id}
 										to={{
 											pathname: `/salary/${teacher.id}`,
 											state: sortSalaries(teacherSalaries[teacher.id])
@@ -137,7 +136,7 @@ const Card = ({ teacher, salaries }: CardProps) => {
 						UserIconSvg
 					}
 					className="mx-auto h-20 w-20 rounded-full shadow-lg bg-gray-500 hover:bg-gray-700"
-					alt={teacher.Name || 'faculty'}
+					alt={teacher.Name ?? 'faculty'}
 				/>
 			</div>
 		</div>
