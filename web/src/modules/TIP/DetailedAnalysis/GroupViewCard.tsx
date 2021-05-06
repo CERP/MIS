@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { TModal } from '../Modal'
-import StudentProfile from './StudentProfile'
+import StudentProfileGroupView from './StudentProfileGroupView'
 import { useComponentVisible } from 'utils/customHooks'
 
 interface P {
@@ -23,9 +23,10 @@ const GroupViewCard: React.FC<P> = ({ std, subject, class_name }) => {
 				<TModal>
 					{modal_type === MODAL_TYPE.STUDENT_PROFILE && (
 						<div ref={ref}>
-							<StudentProfile
+							<StudentProfileGroupView
 								setIsComponentVisible={setIsComponentVisible}
-								learning_levels={std.targeted_instruction.learning_level}
+								learning_level={std?.targeted_instruction.learning_level?.[subject]}
+								subject={subject}
 								std={std}
 							/>
 						</div>

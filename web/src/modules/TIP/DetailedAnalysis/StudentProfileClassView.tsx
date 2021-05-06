@@ -1,7 +1,8 @@
 import React from 'react'
 import clsx from 'clsx'
-import { BackArrow, WhiteUser } from 'assets/icons'
+import StudentProfileHeader from './StudentProfileHeader'
 import { convertLearningGradeToGroupName } from 'utils/TIP'
+
 interface P {
 	std: MISStudent
 	learning_levels: MISStudent['targeted_instruction']['learning_level']
@@ -9,36 +10,10 @@ interface P {
 	setIsComponentVisible: (value: boolean) => void
 }
 
-const StudentProfileModal: React.FC<P> = ({ std, learning_levels, setIsComponentVisible }) => {
+const StudentProfileClassView: React.FC<P> = ({ std, learning_levels, setIsComponentVisible }) => {
 	return (
 		<div className="flex flex-col rounded-t-xl padding-3 bg-white">
-			<div className="p-2 shadow-lg text-center rounded-t-lg bg-light-blue-tip-brand text-white flex flex-col justify-between items-center text-sm md:text-lg lg:text-lg">
-				<div className="w-full py-2 pl-4 flex flex-row justify-between">
-					<div
-						className="w-7 h-7 bg-white rounded-full shadow-lg flex justify-center items-center"
-						onClick={() => setIsComponentVisible(false)}>
-						<img className="h-3 w-3" src={BackArrow} />
-					</div>
-					<div className="flex justify-center items-center flex-col">
-						<div className="flex items-center justify-center">
-							<img
-								className="rounded-full h-16 w-16"
-								src={std?.ProfilePicture?.url ?? WhiteUser}
-								alt="img"
-							/>
-						</div>
-						<div className="text-xs md:text-base lg:text-lg">{std?.Name}</div>
-						<div className="text-xs md:text-base lg:text-lg">{std?.RollNumber}</div>
-					</div>
-					<div></div>
-				</div>
-				<div className="text-xs md:text-xs lg:text-lg flex flex-row justify-between w-full pt-2 font-bold">
-					<div className="pl-3">Subjects</div>
-					<div>Oral Test</div>
-					<div>Sorting Result</div>
-					<div>Reassigned to</div>
-				</div>
-			</div>
+			<StudentProfileHeader std={std} setIsComponentVisible={setIsComponentVisible} />
 			<div>
 				<div className="text-xs md:text-base lg:text-lg w-full">
 					{Object.entries(learning_levels || {}).map(([sub, grade_obj], index) => {
@@ -46,7 +21,6 @@ const StudentProfileModal: React.FC<P> = ({ std, learning_levels, setIsComponent
 						const sorted_history = Object.keys(grade_obj?.history || {}).sort((a, b) =>
 							a.localeCompare(b, 'en', { numeric: true })
 						)
-						console.log(sorted_history)
 						const previous_grade = convertLearningGradeToGroupName(
 							grade_obj?.history?.[sorted_history[sorted_history.length - 1]]
 								?.grade ?? grade_obj?.grade
@@ -126,4 +100,4 @@ const StudentProfileModal: React.FC<P> = ({ std, learning_levels, setIsComponent
 	)
 }
 
-export default StudentProfileModal
+export default StudentProfileClassView

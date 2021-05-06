@@ -5,7 +5,7 @@ import { TModal } from '../Modal'
 import StudentInfoModal from './StudentInfoModal'
 import TIPGroupModal from './TIPGroupModal'
 import ChangeTIPGroup from './ChangeTIPGroup'
-import StudentProfile from './StudentProfile'
+import StudentProfileClassView from './StudentProfileClassView'
 import { convertLearningGradeToGroupName } from 'utils/TIP'
 import { assignLearningLevel } from 'actions'
 import { useComponentVisible } from 'utils/customHooks'
@@ -92,7 +92,7 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 					)}
 					{modal_type === MODAL_TYPE.STUDENT_PROFILE && (
 						<div ref={ref}>
-							<StudentProfile
+							<StudentProfileClassView
 								setIsComponentVisible={setIsComponentVisible}
 								learning_levels={std.targeted_instruction.learning_level}
 								std={std}
