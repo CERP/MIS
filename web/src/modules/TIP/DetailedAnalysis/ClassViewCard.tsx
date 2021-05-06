@@ -13,7 +13,13 @@ import { useComponentVisible } from 'utils/customHooks'
 interface P {
 	std: MISStudent
 
-	setLearningLevel: (student_id: string, subject: TIPSubjects, level: TIPGrades) => void
+	setLearningLevel: (
+		student_id: string,
+		subject: TIPSubjects,
+		level: TIPGrades,
+		is_oral: boolean
+		// type: TIPGroupAssignmentType
+	) => void
 }
 
 enum MODAL_TYPE {
@@ -32,7 +38,9 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 	const [selected_subject, setSelectSubject] = useState<TIPSubjects>()
 
 	const reAssignGrade = () => {
-		setLearningLevel(std.id, selected_subject, selected_grade)
+		const current_oral_value = std?.targeted_instruction?.learning_level?.is_oral
+		const is_oral = selected_grade === 'Oral Test' ? true : current_oral_value ? true : false
+		setLearningLevel(std.id, selected_subject, selected_grade, is_oral)
 		setIsComponentVisible(false)
 	}
 
@@ -84,7 +92,7 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 				<div className="w-2/5 md:w-6/12 flex flex-row justify-between items-center m-2">
 					<div className="font-bold text-center">{std.Name}</div>
 					<div
-						className="rounded-full bg-white h-7 w-7 shadow-lg ml-1 flex justify-center items-center"
+						className="rounded-full bg-white h-7 w-7 shadow-lg ml-1 flex justify-center items-center cursor-pointer"
 						onClick={() => (
 							setModalType(MODAL_TYPE.STUDENT_PROFILE), setIsComponentVisible(true)
 						)}>
@@ -126,7 +134,11 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 export default connect(
 	() => ({}),
 	(dispatch: Function) => ({
-		setLearningLevel: (student_id: string, subject: TIPSubjects, level: TIPGrades) =>
-			dispatch(assignLearningLevel(student_id, subject, level))
+		setLearningLevel: (
+			student_id: string,
+			subject: TIPSubjects,
+			level: TIPGrades,
+			is_oral: boolean
+		) => dispatch(assignLearningLevel(student_id, subject, level, is_oral))
 	})
 )(ClassViewCard)

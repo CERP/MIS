@@ -68,6 +68,7 @@ const StudentProfileModal: React.FC<P> = ({ std, learning_levels, setIsComponent
 												'bg-yellow-tip-brand': grade === 'Yellow',
 												'bg-green-tip-brand': grade === 'Green',
 												'bg-orange-tip-brand': grade === 'Orange',
+												'bg-gray-400': grade === 'Oral',
 												'bg-gray-600': grade === 'Remediation Not Needed'
 											}
 										)}>
@@ -83,6 +84,7 @@ const StudentProfileModal: React.FC<P> = ({ std, learning_levels, setIsComponent
 												'bg-yellow-tip-brand': grade === 'Yellow',
 												'bg-green-tip-brand': grade === 'Green',
 												'bg-orange-tip-brand': grade === 'Orange',
+												'bg-gray-400': grade === 'Oral',
 												'bg-gray-600': grade === 'Remediation Not Needed'
 											}
 										)}>

@@ -486,10 +486,12 @@ interface MISStudent {
 
 type TIPGradesHistory = {
 	[timestamp: string]: {
-		type: 'Manual' | 'Graduation'
+		type: TIPGroupAssignmentType
 		grade: TIPGrades
 	}
 }
+
+type TIPGroupAssignmentType = 'Manual' | 'Graduation'
 
 type Report = {
 	[stdId: string]: {
