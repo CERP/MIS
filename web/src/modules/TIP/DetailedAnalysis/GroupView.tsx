@@ -70,9 +70,9 @@ const GroupView: React.FC<P> = ({ students, sorted_sections }) => {
 					return (
 						<GroupViewCard
 							key={std.id}
-							name={std.Name}
-							roll_no={std.RollNumber}
+							std={std}
 							class_name={class_name}
+							subject={subject}
 						/>
 					)
 				})}

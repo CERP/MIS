@@ -1,6 +1,6 @@
 import React from 'react'
 import clsx from 'clsx'
-import { BackArrow, BlackUser } from 'assets/icons'
+import { BackArrow, WhiteUser } from 'assets/icons'
 import { convertLearningGradeToGroupName } from 'utils/TIP'
 interface P {
 	std: MISStudent
@@ -19,12 +19,14 @@ const StudentProfileModal: React.FC<P> = ({ std, learning_levels, setIsComponent
 						onClick={() => setIsComponentVisible(false)}>
 						<img className="h-3 w-3" src={BackArrow} />
 					</div>
-					<div className="flex justify-between flex-col mr-5">
-						<img
-							className="-top-10 left-36 absolute flex justify-center rounded-full h-16 w-16"
-							src={std?.ProfilePicture?.url ?? BlackUser}
-							alt="img"
-						/>
+					<div className="flex justify-center items-center flex-col">
+						<div className="flex items-center justify-center">
+							<img
+								className="rounded-full h-16 w-16"
+								src={std?.ProfilePicture?.url ?? WhiteUser}
+								alt="img"
+							/>
+						</div>
 						<div className="text-xs md:text-base lg:text-lg">{std?.Name}</div>
 						<div className="text-xs md:text-base lg:text-lg">{std?.RollNumber}</div>
 					</div>
@@ -41,20 +43,19 @@ const StudentProfileModal: React.FC<P> = ({ std, learning_levels, setIsComponent
 				<div className="text-xs md:text-base lg:text-lg w-full">
 					{Object.entries(learning_levels || {}).map(([sub, grade_obj], index) => {
 						const is_oral = grade_obj.is_oral ? 'yes' : 'No'
-						const current_grade = convertLearningGradeToGroupName(
-							grade_obj?.history?.[
-								Object.keys(grade_obj?.history)[
-								Object.keys(grade_obj?.history).length - 1
-								]
-							]?.grade ?? 'Not Reassigned'
+						const sorted_history = Object.keys(grade_obj?.history || {}).sort((a, b) =>
+							a.localeCompare(b, 'en', { numeric: true })
 						)
+						console.log(sorted_history)
 						const previous_grade = convertLearningGradeToGroupName(
-							grade_obj?.history?.[
-								Object.keys(grade_obj?.history)[
-								Object.keys(grade_obj?.history).length - 2
-								]
-							]?.grade ?? grade_obj?.grade
+							grade_obj?.history?.[sorted_history[sorted_history.length - 1]]
+								?.grade ?? grade_obj?.grade
 						)
+						const current_grade =
+							Object.keys(grade_obj?.history || {}).length === 0
+								? 'Not Reassigned'
+								: convertLearningGradeToGroupName(grade_obj?.grade)
+
 						return (
 							<div
 								key={index}

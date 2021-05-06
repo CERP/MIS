@@ -33,12 +33,7 @@ const GroupViewPrintable: React.FC<P> = ({ students, sorted_sections }) => {
 									std.section_id
 								)
 								return (
-									<GroupViewCard
-										key={std.id}
-										name={std.Name}
-										roll_no={std.RollNumber}
-										class_name={class_name}
-									/>
+									<GroupViewCard key={std.id} std={std} class_name={class_name} />
 								)
 							})}
 						</tr>

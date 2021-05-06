@@ -9,6 +9,7 @@ import StudentProfile from './StudentProfile'
 import { convertLearningGradeToGroupName } from 'utils/TIP'
 import { assignLearningLevel } from 'actions'
 import { useComponentVisible } from 'utils/customHooks'
+import moment from 'moment'
 
 interface P {
 	std: MISStudent
@@ -40,14 +41,16 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 	const reAssignGrade = () => {
 		const {
 			is_oral: current_oral_value,
-			history: current_history
+			history: current_history,
+			grade
 		} = std?.targeted_instruction?.learning_level?.[selected_subject]
 		const is_oral = selected_grade === 'Oral Test' ? true : current_oral_value ? true : false
-		const history = {
+		const timestamp = moment().format('YYYY-MM-DD')
+		const history: TIPGradesHistory = {
 			...current_history,
-			[Date.now()]: {
+			[timestamp]: {
 				type: 'Manual',
-				grade: selected_grade
+				grade: grade
 			}
 		}
 		setLearningLevel(std.id, selected_subject, selected_grade, is_oral, history)

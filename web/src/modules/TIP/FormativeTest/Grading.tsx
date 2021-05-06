@@ -16,6 +16,7 @@ import {
 	resetStudentLearningLevel,
 	resetStudentGrades
 } from 'actions'
+import moment from 'moment'
 interface P {
 	teacher_name: string
 	students: RootDBState['students']
@@ -133,15 +134,16 @@ const Grading: React.FC<PropsType> = ({
 		) {
 			// if user has gradded all questions => a Modal will open to display assigned Group else it will display warning
 			if (test_type === 'Diagnostic' || test_type === 'Oral') {
-				const { is_oral: current_oral_value, history: current_history } = students?.[
+				const { is_oral: current_oral_value, history: current_history, grade } = students?.[
 					std_id
 				]?.targeted_instruction?.learning_level?.[subject]
 				const is_oral = level === 'Oral Test' ? true : current_oral_value ? true : false
-				const history = {
+				const timestamp = moment().format('YYYY-MM-DD')
+				const history: TIPGradesHistory = {
 					...current_history,
-					[Date.now()]: {
+					[timestamp]: {
 						type: 'Graduation',
-						grade: level
+						grade
 					}
 				}
 				setLearningLevel(std_id, subject, level, is_oral, history)
