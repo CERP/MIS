@@ -17,8 +17,8 @@ interface P {
 		student_id: string,
 		subject: TIPSubjects,
 		level: TIPGrades,
-		is_oral: boolean
-		// type: TIPGroupAssignmentType
+		is_oral: boolean,
+		history: TIPGradesHistory
 	) => void
 }
 
@@ -38,9 +38,19 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 	const [selected_subject, setSelectSubject] = useState<TIPSubjects>()
 
 	const reAssignGrade = () => {
-		const current_oral_value = std?.targeted_instruction?.learning_level?.is_oral
+		const {
+			is_oral: current_oral_value,
+			history: current_history
+		} = std?.targeted_instruction?.learning_level?.[selected_subject]
 		const is_oral = selected_grade === 'Oral Test' ? true : current_oral_value ? true : false
-		setLearningLevel(std.id, selected_subject, selected_grade, is_oral)
+		const history = {
+			...current_history,
+			[Date.now()]: {
+				type: 'Manual',
+				grade: selected_grade
+			}
+		}
+		setLearningLevel(std.id, selected_subject, selected_grade, is_oral, history)
 		setIsComponentVisible(false)
 	}
 
@@ -138,7 +148,8 @@ export default connect(
 			student_id: string,
 			subject: TIPSubjects,
 			level: TIPGrades,
-			is_oral: boolean
-		) => dispatch(assignLearningLevel(student_id, subject, level, is_oral))
+			is_oral: boolean,
+			history: TIPGradesHistory
+		) => dispatch(assignLearningLevel(student_id, subject, level, is_oral, history))
 	})
 )(ClassViewCard)

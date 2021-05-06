@@ -27,7 +27,8 @@ interface P {
 		student_id: string,
 		subject: TIPSubjects,
 		level: TIPGrades,
-		is_oral: boolean
+		is_oral: boolean,
+		history: TIPGradesHistory
 	) => void
 	saveReport: (
 		student_id: string,
@@ -132,10 +133,18 @@ const Grading: React.FC<PropsType> = ({
 		) {
 			// if user has gradded all questions => a Modal will open to display assigned Group else it will display warning
 			if (test_type === 'Diagnostic' || test_type === 'Oral') {
-				const current_oral_value =
-					students?.[std_id]?.targeted_instruction?.learning_level?.is_oral
+				const { is_oral: current_oral_value, history: current_history } = students?.[
+					std_id
+				]?.targeted_instruction?.learning_level?.[subject]
 				const is_oral = level === 'Oral Test' ? true : current_oral_value ? true : false
-				setLearningLevel(std_id, subject, level, is_oral)
+				const history = {
+					...current_history,
+					[Date.now()]: {
+						type: 'Graduation',
+						grade: level
+					}
+				}
+				setLearningLevel(std_id, subject, level, is_oral, history)
 				setIsComponentVisible(true)
 				setModaltype('assign_group_modal')
 			} else {
@@ -280,7 +289,8 @@ export default connect(
 			student_id: string,
 			subject: TIPSubjects,
 			level: TIPGrades,
-			is_oral: boolean
-		) => dispatch(assignLearningLevel(student_id, subject, level, is_oral))
+			is_oral: boolean,
+			history: TIPGradesHistory
+		) => dispatch(assignLearningLevel(student_id, subject, level, is_oral, history))
 	})
 )(Grading)

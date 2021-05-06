@@ -643,7 +643,8 @@ export const assignLearningLevel = (
 	student_id: string,
 	subject: TIPSubjects,
 	level: TIPGrades,
-	is_oral: boolean
+	is_oral: boolean,
+	history: TIPGradesHistory
 ) => (dispatch: Function) => {
 	dispatch(
 		createMerges([
@@ -670,6 +671,18 @@ export const assignLearningLevel = (
 					'is_oral'
 				],
 				value: is_oral
+			},
+			{
+				path: [
+					'db',
+					'students',
+					student_id,
+					'targeted_instruction',
+					'learning_level',
+					subject,
+					'history'
+				],
+				value: history
 			}
 		])
 	)

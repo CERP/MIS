@@ -227,7 +227,8 @@ export const convertLearningGradeToGroupName = (grade: TIPGrades) => {
 		'3': 'Orange',
 		'Oral Test': 'Oral',
 		'Not Needed': 'Remediation Not Needed',
-		'Not Graded': 'Not Graded'
+		'Not Graded': 'Not Graded',
+		'Not Reassigned': 'Not Reassigned'
 	}
 
 	return conversion_map[grade]

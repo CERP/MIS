@@ -39,12 +39,25 @@ const StudentProfileModal: React.FC<P> = ({ std, learning_levels, setIsComponent
 			</div>
 			<div>
 				<div className="text-xs md:text-base lg:text-lg w-full">
-					{Object.entries(learning_levels || {}).map(([sub, grade_obj]) => {
-						const grade = convertLearningGradeToGroupName(grade_obj.grade)
+					{Object.entries(learning_levels || {}).map(([sub, grade_obj], index) => {
+						const current_grade = convertLearningGradeToGroupName(
+							grade_obj?.history?.[
+								Object.keys(grade_obj?.history)[
+								Object.keys(grade_obj?.history).length - 1
+								]
+							]?.grade ?? 'Not Reassigned'
+						)
 						const is_oral = grade_obj.is_oral ? 'yes' : 'No'
+						const previous_grade = convertLearningGradeToGroupName(
+							grade_obj?.history?.[
+								Object.keys(grade_obj?.history)[
+								Object.keys(grade_obj?.history).length - 2
+								]
+							]?.grade ?? grade_obj?.grade
+						)
 						return (
 							<div
-								key={grade}
+								key={index}
 								className="p-2 flex flex-row justify-between items-center">
 								<div className="w-1/4 font-bold flex justify-center items-center">
 									{sub}
@@ -62,33 +75,42 @@ const StudentProfileModal: React.FC<P> = ({ std, learning_levels, setIsComponent
 								<div className="w-1/4 flex flex-wrap justify-center items-center px-3 py-1">
 									<div
 										className={clsx(
-											'w-11/12 text-white flex flex-wrap justify-center rounded-md items-center shadow-lg cursor-pointer text-sm md:text-base lg:text-lg px-3 py-1',
+											'w-11/12 text-white flex flex-wrap justify-center rounded-md items-center shadow-lg cursor-pointer text-xs md:text-base lg:text-lg px-3 py-1',
 											{
-												'bg-light-blue-tip-brand': grade === 'Blue',
-												'bg-yellow-tip-brand': grade === 'Yellow',
-												'bg-green-tip-brand': grade === 'Green',
-												'bg-orange-tip-brand': grade === 'Orange',
-												'bg-gray-400': grade === 'Oral',
-												'bg-gray-600': grade === 'Remediation Not Needed'
+												'bg-light-blue-tip-brand':
+													previous_grade === 'Blue',
+												'bg-yellow-tip-brand': previous_grade === 'Yellow',
+												'bg-green-tip-brand': previous_grade === 'Green',
+												'bg-orange-tip-brand': previous_grade === 'Orange',
+												'bg-gray-400': previous_grade === 'Oral',
+												'bg-gray-600':
+													previous_grade === 'Remediation Not Needed'
 											}
 										)}>
-										{grade === 'Remediation Not Needed' ? 'none' : grade}
+										{previous_grade === 'Remediation Not Needed'
+											? 'none'
+											: previous_grade}
 									</div>
 								</div>
 								<div className="w-1/4 flex flex-wrap justify-center items-center px-3 py-1">
 									<div
 										className={clsx(
-											'w-11/12 text-white flex flex-wrap justify-center rounded-md items-center shadow-lg cursor-pointer text-sm md:text-base lg:text-lg px-3 py-1',
+											'w-11/12 text-white flex flex-wrap justify-center rounded-md items-center shadow-lg cursor-pointer text-xs md:text-base lg:text-lg px-3 py-1',
 											{
-												'bg-light-blue-tip-brand': grade === 'Blue',
-												'bg-yellow-tip-brand': grade === 'Yellow',
-												'bg-green-tip-brand': grade === 'Green',
-												'bg-orange-tip-brand': grade === 'Orange',
-												'bg-gray-400': grade === 'Oral',
-												'bg-gray-600': grade === 'Remediation Not Needed'
+												'bg-light-blue-tip-brand': current_grade === 'Blue',
+												'bg-yellow-tip-brand': current_grade === 'Yellow',
+												'bg-green-tip-brand': current_grade === 'Green',
+												'bg-orange-tip-brand': current_grade === 'Orange',
+												'bg-gray-400': current_grade === 'Oral',
+												'bg-gray-600':
+													current_grade === 'Remediation Not Needed',
+												'bg-gray-300 text-red-tip-brand':
+													current_grade === 'Not Reassigned'
 											}
 										)}>
-										{grade === 'Remediation Not Needed' ? 'none' : grade}
+										{current_grade === 'Remediation Not Needed'
+											? 'none'
+											: current_grade}
 									</div>
 								</div>
 							</div>
