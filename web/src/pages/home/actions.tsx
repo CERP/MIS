@@ -60,9 +60,9 @@ const links: CardProps[] = [
 
 export const ActionTab = () => {
 	return (
-		<div className="p-10 mx-auto mb-10 md:w-4/5">
+		<div className="p-10 mx-auto mb-10 md:w-full">
 			<div className="mb-6 text-lg text-center md:hidden">What would you like to do?</div>
-			<div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+			<div className="grid grid-cols-2 gap-4 ">
 				{links.map((link, index) => (
 					<Card key={link.title + index} {...link} />
 				))}

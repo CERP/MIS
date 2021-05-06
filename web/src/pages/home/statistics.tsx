@@ -116,16 +116,16 @@ export const StatsTab = () => {
 		attendanceStats.PRESENT + attendanceStats.ABSENT + attendanceStats.LEAVE
 
 	return (
-		<div className="p-5 mx-auto md:p-10 md:w-2/5">
+		<div className="p-5 mx-auto ">
 			<div className="mb-6 text-2xl text-center md:hidden">School Daily Statistics</div>
 
-			<div className="p-6 bg-white border shadow-md rounded-2xl">
-				<div className="text-lg font-bold text-center">Attendance</div>
-				<div className="flex flex-row items-center justify-between">
+			<div className="p-6 bg-white border shadow-md rounded-2xl lg:pt-1">
+				<div className="text-lg lg:text-2xl font-bold text-center">Attendance</div>
+				<div className="flex flex-row items-center justify-between lg:justify-evenly lg:mt-1">
 					<div
 						onClick={() => setActiveTab(Tab.STUDENT)}
 						className={clsx(
-							'cursor-pointer hover:bg-teal-brand hover:text-white px-2 py-px rounded-3xl bg-gray-100 shadow-md',
+							'cursor-pointer hover:bg-teal-brand lg:text-xl hover:text-white px-2 py-px rounded-3xl bg-gray-100 shadow-md',
 							{
 								'bg-teal-brand text-white': activeTab === Tab.STUDENT
 							}
@@ -135,7 +135,7 @@ export const StatsTab = () => {
 					<div
 						onClick={() => setActiveTab(Tab.TEACHER)}
 						className={clsx(
-							'cursor-pointer hover:bg-teal-brand hover:text-white px-2 py-px bg-gray-100 rounded-3xl shadow-md',
+							'cursor-pointer hover:bg-teal-brand lg:text-xl hover:text-white px-2 py-px bg-gray-100 rounded-3xl shadow-md',
 							{
 								'bg-teal-brand text-white': activeTab === Tab.TEACHER
 							}
@@ -143,8 +143,7 @@ export const StatsTab = () => {
 						Teachers
 					</div>
 				</div>
-
-				<div className="w-full h-80">
+				<div className="w-full h-80 lg:h-60">
 					{attendanceMarkCount === 0 ? (
 						<div className="flex flex-col space-y-2 justify-center items-center pt-24">
 							<ExclamationIcon className="text-orange-brand w-14" />
@@ -168,15 +167,60 @@ export const StatsTab = () => {
 						<div className="">Leave</div>
 					</div>
 				</div>
-
 				<div className="w-4/5 mx-auto mt-4">
-					<button className="w-full text-sm uppercase rounded-full tw-btn-blue">
+					<button className="w-full text-sm uppercase rounded-full tw-btn-blue lg:hidden">
 						See Details
 					</button>
 				</div>
+				<div className="hidden mt-2 lg:block">
+					<div className="mb-4 text-lg font-bold text-center">Statistics</div>
+					<div className="grid grid-cols-2 space-y-4">
+						<div className="flex flex-row items-center">
+							<CashIcon className="w-10 mr-10 text-teal-brand " />
+							<div className="flex flex-col">
+								<div className="font-semibold text-teal-brand">
+									Rs. {amountCollected}
+								</div>
+								<div className="text-sm text-gray-500">Fee Collected</div>
+							</div>
+						</div>
+
+						<div className="flex flex-row items-center">
+							<UsersIcon className="w-10 mr-10 text-blue-brand" />
+							<div className="flex flex-col">
+								<div className="font-semibold text-blue-brand">
+									{studentsWhoPaid}
+								</div>
+								<div className="text-sm text-gray-500">Students</div>
+							</div>
+						</div>
+
+						<div className="flex flex-row items-center">
+							<CloudUploadIcon className="w-10 mr-10 text-orange-brand" />
+							<div className="flex flex-col">
+								<div className="font-semibold text-orange-brand">
+									{moment(lastSnapshot).format('HH:mm')}
+								</div>
+								<div className="text-sm text-gray-500">
+									{moment(lastSnapshot).format('D-M-YYYY')}
+								</div>
+							</div>
+						</div>
+
+						<div className="flex flex-row items-center">
+							<RefreshIcon className="w-10 mr-10 text-teal-brand " />
+							<div className="flex flex-col">
+								<div className="font-semibold text-teal-brand">
+									{unsyncedChanges} unsynced
+								</div>
+								<div className="text-sm text-gray-500">changes</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 
-			<div className="px-10 py-6 mt-4 bg-white border shadow-md rounded-2xl">
+			<div className="px-10 py-6 mt-4 bg-white border shadow-md rounded-2xl lg:hidden ">
 				<div className="mb-4 text-lg font-bold text-center">Statistics</div>
 				<div className="flex flex-col space-y-4">
 					<div className="flex flex-row items-center">
@@ -326,7 +370,7 @@ const AttendanceChart: React.FC<TAttendanceChartProps> = ({ graphData }) => {
 	const OUTER_RADIUS = mobile ? 55 : 80
 
 	const CX = mobile ? 150 : 200
-	const CY = mobile ? 160 : 150
+	const CY = mobile ? 160 : 120
 
 	return (
 		<div style={{ width: '100%', height: 300 }}>

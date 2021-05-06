@@ -19,7 +19,7 @@ export const SettingsTab = () => {
 	)
 
 	return (
-		<div className="p-6 md:w-2/5 mx-auto">
+		<div className="p-6   mx-auto">
 			<div className="text-center text-lg mb-6 md:hidden">Tap to configure the module</div>
 			<div className="space-y-4">
 				<Card
