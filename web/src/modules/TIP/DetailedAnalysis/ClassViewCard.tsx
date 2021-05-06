@@ -102,10 +102,10 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 				</TModal>
 			)}
 			<div className="items-center text-xs w-full mt-4 flex flex-row justify-around shadow-lg">
-				<div className="w-2/5 md:w-6/12 flex flex-row justify-between items-center m-2">
+				<div className="w-2/5 md:w-6/12 flex flex-row justify-start items-center m-2">
 					<div className="font-bold text-center">{std.Name}</div>
 					<div
-						className="rounded-full bg-white h-7 w-7 shadow-lg ml-1 flex justify-center items-center cursor-pointer"
+						className="ml-2 rounded-full bg-white h-7 w-7 shadow-lg ml-1 flex justify-center items-center cursor-pointer"
 						onClick={() => (
 							setModalType(MODAL_TYPE.STUDENT_PROFILE), setIsComponentVisible(true)
 						)}>

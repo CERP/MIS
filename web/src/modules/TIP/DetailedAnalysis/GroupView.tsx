@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { getStudentsByGroup, getClassnameFromSectionId } from 'utils/TIP'
 import GroupViewPrintable from '../Printable/GroupView'
+import Headings from '../Headings'
 import GroupViewCard from './GroupViewCard'
 
 interface P {
@@ -32,10 +33,11 @@ const GroupView: React.FC<P> = ({ students, sorted_sections }) => {
 		subject,
 		group
 	])
+	const total_students = Object.values(filtered_students || {}).length
 
 	return (
 		<>
-			<div className="flex flex-row justify-around w-full print:hidden">
+			<div className="flex flex-row justify-around w-full print:hidden mb-5">
 				<select className="tw-select" onChange={e => setGroup(e.target.value as TIPGrades)}>
 					<option value="">Group</option>
 					{ordered_groups.map(ordered_group => (
@@ -55,6 +57,7 @@ const GroupView: React.FC<P> = ({ students, sorted_sections }) => {
 					))}
 				</select>
 			</div>
+			<Headings sub_heading={`Total Students = ${total_students}`} />
 			<div className="h-10 items-center text-white text-xs bg-blue-tip-brand w-full mt-4 flex flex-row justify-around print:hidden">
 				<div className="w-6/12 flex flex-row justify-between px-3 items-center m-2 text-sm md:text-base lg:text-lg">
 					<div className="font-bold text-center">Name</div>
