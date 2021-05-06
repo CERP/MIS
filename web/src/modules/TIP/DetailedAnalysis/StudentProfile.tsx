@@ -40,6 +40,7 @@ const StudentProfileModal: React.FC<P> = ({ std, learning_levels, setIsComponent
 			<div>
 				<div className="text-xs md:text-base lg:text-lg w-full">
 					{Object.entries(learning_levels || {}).map(([sub, grade_obj], index) => {
+						const is_oral = grade_obj.is_oral ? 'yes' : 'No'
 						const current_grade = convertLearningGradeToGroupName(
 							grade_obj?.history?.[
 								Object.keys(grade_obj?.history)[
@@ -47,7 +48,6 @@ const StudentProfileModal: React.FC<P> = ({ std, learning_levels, setIsComponent
 								]
 							]?.grade ?? 'Not Reassigned'
 						)
-						const is_oral = grade_obj.is_oral ? 'yes' : 'No'
 						const previous_grade = convertLearningGradeToGroupName(
 							grade_obj?.history?.[
 								Object.keys(grade_obj?.history)[
@@ -75,7 +75,7 @@ const StudentProfileModal: React.FC<P> = ({ std, learning_levels, setIsComponent
 								<div className="w-1/4 flex flex-wrap justify-center items-center px-3 py-1">
 									<div
 										className={clsx(
-											'w-11/12 text-white flex flex-wrap justify-center rounded-md items-center shadow-lg cursor-pointer text-xs md:text-base lg:text-lg px-3 py-1',
+											'w-11/12 text-white flex flex-wrap justify-center rounded-md items-center shadow-lg cursor-pointer text-xs md:text-sm lg:text-base px-3 py-2',
 											{
 												'bg-light-blue-tip-brand':
 													previous_grade === 'Blue',
@@ -95,7 +95,10 @@ const StudentProfileModal: React.FC<P> = ({ std, learning_levels, setIsComponent
 								<div className="w-1/4 flex flex-wrap justify-center items-center px-3 py-1">
 									<div
 										className={clsx(
-											'w-11/12 text-white flex flex-wrap justify-center rounded-md items-center shadow-lg cursor-pointer text-xs md:text-base lg:text-lg px-3 py-1',
+											`w-11/12 text-white flex flex-wrap justify-center rounded-md items-center shadow-lg cursor-pointer text-xs md:text-sm lg:text-base ${current_grade === 'Not Reassigned'
+												? 'py-0 px-1 text-center'
+												: 'py-2 px-3'
+											}`,
 											{
 												'bg-light-blue-tip-brand': current_grade === 'Blue',
 												'bg-yellow-tip-brand': current_grade === 'Yellow',
