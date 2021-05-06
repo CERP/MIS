@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import ClassViewCard from './ClassViewCard'
-import ClassViewPrintable from '../Printable/ClassView'
-import Headings from '../Headings'
+import ClassViewPrintable from '../../Printable/ClassView'
+import Headings from '../../Headings'
 interface P {
 	students: RootDBState['students']
 	sorted_sections: AugmentedSection[]

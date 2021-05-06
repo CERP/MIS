@@ -1,6 +1,6 @@
 import React from 'react'
 import { getClassnameFromSectionId } from 'utils/TIP'
-import GroupViewCard from '../DetailedAnalysis/GroupViewCard'
+import GroupViewCard from '../DetailedAnalysis/GroupView/GroupViewCard'
 
 interface P {
 	students: MISStudent[]

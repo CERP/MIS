@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { getStudentsByGroup, getClassnameFromSectionId } from 'utils/TIP'
-import GroupViewPrintable from '../Printable/GroupView'
-import Headings from '../Headings'
+import GroupViewPrintable from '../../Printable/GroupView'
+import Headings from '../../Headings'
 import GroupViewCard from './GroupViewCard'
 
 interface P {

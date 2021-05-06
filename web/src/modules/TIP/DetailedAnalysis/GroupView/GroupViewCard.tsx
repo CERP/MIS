@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { TModal } from '../Modal'
-import StudentProfileGroupView from './StudentProfileGroupView'
+import { TModal } from '../../Modal'
+import StudentProfileGroupView from '../Modals/StudentProfileGroupView'
 import { useComponentVisible } from 'utils/customHooks'
 
 interface P {
