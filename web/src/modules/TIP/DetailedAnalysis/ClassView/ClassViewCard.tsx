@@ -44,7 +44,12 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 			history: current_history,
 			grade
 		} = std?.targeted_instruction?.learning_level?.[selected_subject]
-		const is_oral = selected_grade === 'Oral Test' ? true : current_oral_value ? true : false
+		// 	 || {
+		// 	is_oral: false,
+		// 	history: {} as TIPGradesHistory,
+		// 	grade: ''
+		// }
+		const is_oral = selected_grade === 'Oral Test' ? true : current_oral_value
 		const timestamp = moment().format('YYYY-MM-DD')
 		const history: TIPGradesHistory = {
 			...current_history,

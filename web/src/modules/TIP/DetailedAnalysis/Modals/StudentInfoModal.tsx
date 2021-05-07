@@ -36,14 +36,14 @@ const StudentInfoModal: React.FC<P> = ({
 						className="mb-3 h-12 md:h-16 text-sm md:text-base bg-white flex flex-row justify-around items-center cursor-pointer font-bold text-blue-900 shadow-lg">
 						<div className="w-4/12 text-center">{sub}</div>
 						<div
-							className={clsx(
-								'w-4/12 text-center',
-								{
-									'text-gray-400': grade === 'Oral',
-									'text-gray-600': grade === 'Remediation Not Needed'
-								},
-								`text-${grade.toLowerCase()}-tip-brand`
-							)}>
+							className={clsx('w-4/12 text-center', {
+								'text-blue-tip-brand': grade === 'Blue',
+								'text-yellow-tip-brand': grade === 'Yellow',
+								'text-green-tip-brand': grade === 'Green',
+								'text-orange-tip-brand': grade === 'Orange',
+								'text-gray-400': grade === 'Oral',
+								'text-gray-600': grade === 'Remediation Not Needed'
+							})}>
 							{grade}
 						</div>
 						<div

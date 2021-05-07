@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import ClassViewCard from './ClassViewCard'
 import ClassViewPrintable from '../../Printable/ClassView'
 import Headings from '../../Headings'
+import { isValidStudent } from 'utils'
 interface P {
 	students: RootDBState['students']
 	sorted_sections: AugmentedSection[]
@@ -9,8 +10,13 @@ interface P {
 
 const ClassView: React.FC<P> = ({ students, sorted_sections }) => {
 	const [section_id, setSectionId] = useState('')
-	const total_students = Object.values(students || {}).filter(t => t.section_id === section_id)
-		.length
+	const total_students = Object.values(students ?? {}).filter(
+		s =>
+			s.section_id === section_id &&
+			isValidStudent(s) &&
+			s.Active &&
+			(s.tags ? !s.tags['prospective'] : true)
+	).length
 
 	return (
 		<>
@@ -40,7 +46,7 @@ const ClassView: React.FC<P> = ({ students, sorted_sections }) => {
 				</div>
 			</div>
 			<div className="flex flex-col print:hidden overflow-y-auto h-80">
-				{Object.values(students || {})
+				{Object.values(students ?? {})
 					.filter(t => t.section_id === section_id)
 					.map(std => (
 						<ClassViewCard key={std.id} std={std} />

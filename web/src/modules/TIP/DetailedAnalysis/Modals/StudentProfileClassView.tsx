@@ -17,14 +17,19 @@ const StudentProfileClassView: React.FC<P> = ({ std, learning_levels, setIsCompo
 			<div>
 				<div className="text-xs md:text-base lg:text-lg w-full">
 					{Object.entries(learning_levels || {}).map(([subject, grade_obj], index) => {
-						const is_oral = grade_obj.is_oral ? 'yes' : 'No'
+						const is_oral = grade_obj.is_oral ? true : false
+						//sort history object ... our recent entry will be at end
 						const sorted_history = Object.keys(grade_obj?.history || {}).sort((a, b) =>
 							a.localeCompare(b, 'en', { numeric: true })
 						)
+						// if we don't have history object we will get our previous grade from grade in learning_level => MISStudent
 						const previous_grade = convertLearningGradeToGroupName(
 							grade_obj?.history?.[sorted_history[sorted_history.length - 1]]
 								?.grade ?? grade_obj?.grade
 						)
+						// if we don't have history object it means we didn't do reassignment
+						// our current grade will be Not Reassigned
+						// else we will get our current grade from grade in learning_level => MISStudent
 						const current_grade =
 							Object.keys(grade_obj?.history || {}).length === 0
 								? 'Not Reassigned'

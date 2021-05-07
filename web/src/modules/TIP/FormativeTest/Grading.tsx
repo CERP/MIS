@@ -137,7 +137,7 @@ const Grading: React.FC<PropsType> = ({
 				const { is_oral: current_oral_value, history: current_history, grade } = students?.[
 					std_id
 				]?.targeted_instruction?.learning_level?.[subject]
-				const is_oral = level === 'Oral Test' ? true : current_oral_value ? true : false
+				const is_oral = level === 'Oral Test' ? true : current_oral_value
 				const timestamp = moment().format('YYYY-MM-DD')
 				const history: TIPGradesHistory = {
 					...current_history,

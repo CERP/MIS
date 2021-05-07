@@ -1,5 +1,5 @@
 import React from 'react'
-import { BackArrow, WhiteUser } from 'assets/icons'
+import { BackArrow, WhiteAvatar } from 'assets/icons'
 interface P {
 	std: MISStudent
 
@@ -20,7 +20,7 @@ const StudentProfileHeader: React.FC<P> = ({ std, setIsComponentVisible }) => {
 						<div className="flex items-center justify-center">
 							<img
 								className="rounded-full h-16 w-16"
-								src={std?.ProfilePicture?.url ?? WhiteUser}
+								src={std?.ProfilePicture?.url ?? WhiteAvatar}
 								alt="img"
 							/>
 						</div>
@@ -33,7 +33,7 @@ const StudentProfileHeader: React.FC<P> = ({ std, setIsComponentVisible }) => {
 					<div className="pl-0 md:pl-3">Subjects</div>
 					<div>Oral Test</div>
 					<div>Sorting Result</div>
-					<div>Reassigned to</div>
+					<div className="mr-3">Reassigned to</div>
 				</div>
 			</div>
 			<div></div>

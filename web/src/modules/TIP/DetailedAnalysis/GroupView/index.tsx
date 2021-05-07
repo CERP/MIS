@@ -3,6 +3,7 @@ import { getStudentsByGroup, getClassnameFromSectionId } from 'utils/TIP'
 import GroupViewPrintable from '../../Printable/GroupView'
 import Headings from '../../Headings'
 import GroupViewCard from './GroupViewCard'
+import { isValidStudent } from 'utils'
 
 interface P {
 	students: RootDBState['students']
@@ -33,7 +34,9 @@ const GroupView: React.FC<P> = ({ students, sorted_sections }) => {
 		subject,
 		group
 	])
-	const total_students = Object.values(filtered_students || {}).length
+	const total_students = Object.values(students ?? {}).filter(
+		s => isValidStudent(s) && s.Active && (s.tags ? !s.tags['prospective'] : true)
+	).length
 
 	return (
 		<>
@@ -68,7 +71,7 @@ const GroupView: React.FC<P> = ({ students, sorted_sections }) => {
 				</div>
 			</div>
 			<div className="flex flex-col print:hidden overflow-y-auto h-80">
-				{Object.values(filtered_students || {}).map(std => {
+				{Object.values(filtered_students ?? {}).map(std => {
 					const class_name = getClassnameFromSectionId(sorted_sections, std.section_id)
 					return (
 						<GroupViewCard

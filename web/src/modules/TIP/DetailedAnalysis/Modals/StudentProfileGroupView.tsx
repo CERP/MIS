@@ -17,14 +17,19 @@ const StudentProfileGroupView: React.FC<P> = ({
 	learning_level,
 	setIsComponentVisible
 }) => {
-	const is_oral = learning_level.is_oral ? 'yes' : 'No'
+	const is_oral = learning_level.is_oral ? true : false
+	//sort history object ... our recent entry will be at end
 	const sorted_history = Object.keys(learning_level?.history || {}).sort((a, b) =>
 		a.localeCompare(b, 'en', { numeric: true })
 	)
+	// if we don't have history object we will get our previous grade from grade in learning_level => MISStudent
 	const previous_grade = convertLearningGradeToGroupName(
 		learning_level?.history?.[sorted_history[sorted_history.length - 1]]?.grade ??
 		learning_level?.grade
 	)
+	// if we don't have history object it means we didn't do reassignment
+	// our current grade will be Not Reassigned
+	// else we will get our current grade from grade in learning_level => MISStudent
 	const current_grade =
 		Object.keys(learning_level?.history || {}).length === 0
 			? 'Not Reassigned'
