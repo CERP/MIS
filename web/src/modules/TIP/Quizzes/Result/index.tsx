@@ -20,7 +20,8 @@ const Result: React.FC<PropsType> = ({ match, students, targeted_instruction }) 
 	const filtered_students = useMemo(() => getStudentsByGroup(students, group, subject), [subject])
 	const total_marks =
 		targeted_instruction?.quizzes?.[class_name]?.[subject]?.[quiz_id].total_marks
-	const { slo, quiz_title } = targeted_instruction?.quizzes?.[class_name]?.[subject]?.[quiz_id]
+	const quiz_title =
+		targeted_instruction?.quizzes?.[class_name]?.[subject]?.[quiz_id]?.quiz_title || ''
 
 	return (
 		<div className="bg-white flex flex-wrap content-between mt-20">

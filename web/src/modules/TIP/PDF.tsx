@@ -28,7 +28,8 @@ enum TestType {
 const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 	const url = match.url.split('/')
 	const { class_name, subject, section_id, quiz_id } = match.params
-	const { slo, quiz_title } = targeted_instruction?.quizzes?.[class_name]?.[subject]?.[quiz_id]
+	const quiz_title =
+		targeted_instruction?.quizzes?.[class_name]?.[subject]?.[quiz_id]?.quiz_title || ''
 
 	// if test, this will find the test_id
 	let test_type: TIPTestType = 'Diagnostic'

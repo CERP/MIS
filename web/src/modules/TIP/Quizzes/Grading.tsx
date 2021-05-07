@@ -52,7 +52,8 @@ const Grading: React.FC<PropsType> = ({
 
 	const filtered_students = useMemo(() => getStudentsByGroup(students, group, subject), [subject])
 	const total_marks = targeted_instruction?.quizzes?.[class_name]?.[subject][quiz_id].total_marks
-	const { slo, quiz_title } = targeted_instruction?.quizzes?.[class_name]?.[subject]?.[quiz_id]
+	const quiz_title =
+		targeted_instruction?.quizzes?.[class_name]?.[subject]?.[quiz_id]?.quiz_title || ''
 
 	useEffect(() => {
 		if (filtered_students.length === 0) {
