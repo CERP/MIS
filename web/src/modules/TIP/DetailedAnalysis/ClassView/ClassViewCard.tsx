@@ -23,7 +23,7 @@ interface P {
 	) => void
 }
 
-enum MODAL_TYPE {
+enum ModalType {
 	ASSIGNED_GROUPS_INFO = 'assigned_groups-info',
 	TIP_GROUPS = 'tip_groups',
 	CHANGE_GROUP = 'change_group',
@@ -61,7 +61,7 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 		<>
 			{isComponentVisible && (
 				<TModal>
-					{modal_type === MODAL_TYPE.ASSIGNED_GROUPS_INFO && (
+					{modal_type === ModalType.ASSIGNED_GROUPS_INFO && (
 						<div ref={ref}>
 							<StudentInfoModal
 								learning_levels={std.targeted_instruction.learning_level}
@@ -71,7 +71,7 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 							/>
 						</div>
 					)}
-					{modal_type === MODAL_TYPE.TIP_GROUPS && (
+					{modal_type === ModalType.TIP_GROUPS && (
 						<div ref={ref}>
 							<TIPGroupModal
 								subject={selected_subject}
@@ -80,7 +80,7 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 							/>
 						</div>
 					)}
-					{modal_type === MODAL_TYPE.CHANGE_GROUP && (
+					{modal_type === ModalType.CHANGE_GROUP && (
 						<div ref={ref}>
 							<ChangeTIPGroup
 								subject={selected_subject}
@@ -90,11 +90,11 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 							/>
 						</div>
 					)}
-					{modal_type === MODAL_TYPE.STUDENT_PROFILE && (
+					{modal_type === ModalType.STUDENT_PROFILE && (
 						<div ref={ref}>
 							<StudentProfileClassView
 								setIsComponentVisible={setIsComponentVisible}
-								learning_levels={std.targeted_instruction.learning_level}
+								learning_levels={std?.targeted_instruction?.learning_level}
 								std={std}
 							/>
 						</div>
@@ -107,7 +107,7 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 					<div
 						className="ml-2 rounded-full bg-white h-7 w-7 shadow-lg ml-1 flex justify-center items-center cursor-pointer"
 						onClick={() => (
-							setModalType(MODAL_TYPE.STUDENT_PROFILE), setIsComponentVisible(true)
+							setModalType(ModalType.STUDENT_PROFILE), setIsComponentVisible(true)
 						)}>
 						Tag
 					</div>
@@ -131,7 +131,7 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 									})}
 									onClick={() => {
 										setIsComponentVisible(true),
-											setModalType(MODAL_TYPE.ASSIGNED_GROUPS_INFO)
+											setModalType(ModalType.ASSIGNED_GROUPS_INFO)
 									}}>
 									{grade === 'Remediation Not Needed' ? 'none' : grade}
 								</div>

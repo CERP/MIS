@@ -9,7 +9,7 @@ interface P {
 	class_name: string
 }
 
-enum MODAL_TYPE {
+enum ModalType {
 	STUDENT_PROFILE = 'student_profile'
 }
 
@@ -21,7 +21,7 @@ const GroupViewCard: React.FC<P> = ({ std, subject, class_name }) => {
 		<>
 			{isComponentVisible && (
 				<TModal>
-					{modal_type === MODAL_TYPE.STUDENT_PROFILE && (
+					{modal_type === ModalType.STUDENT_PROFILE && (
 						<div ref={ref}>
 							<StudentProfileGroupView
 								setIsComponentVisible={setIsComponentVisible}
@@ -39,7 +39,7 @@ const GroupViewCard: React.FC<P> = ({ std, subject, class_name }) => {
 					<div
 						className="rounded-full bg-white h-7 w-7 shadow-lg ml-2 flex justify-center items-center cursor-pointer"
 						onClick={() => (
-							setModalType(MODAL_TYPE.STUDENT_PROFILE), setIsComponentVisible(true)
+							setModalType(ModalType.STUDENT_PROFILE), setIsComponentVisible(true)
 						)}>
 						Tag
 					</div>
