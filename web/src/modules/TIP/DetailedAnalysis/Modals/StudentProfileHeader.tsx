@@ -29,11 +29,15 @@ const StudentProfileHeader: React.FC<P> = ({ std, setIsComponentVisible }) => {
 					</div>
 					<div></div>
 				</div>
-				<div className="text-xs md:text-xs lg:text-lg flex flex-row justify-between w-full pt-2 font-bold">
-					<div className="pl-0 md:pl-3">Subjects</div>
-					<div>Oral Test</div>
-					<div>Sorting Result</div>
-					<div className="mr-3">Reassigned to</div>
+				<div className="w-full text-xs md:text-xs lg:text-lg flex flex-row pt-2 font-bold">
+					<div className="w-1/3 flex flex-row justify-around">
+						<div>Subjects</div>
+						<div>Oral Test</div>
+					</div>
+					<div className="w-2/3 flex flex-row justify-around space-x-2">
+						<div>Sorting Result</div>
+						<div>Reassigned to</div>
+					</div>
 				</div>
 			</div>
 			<div></div>
