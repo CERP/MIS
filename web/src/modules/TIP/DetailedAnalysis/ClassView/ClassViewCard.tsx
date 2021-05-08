@@ -39,26 +39,28 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 	const [selected_subject, setSelectSubject] = useState<TIPSubjects>()
 
 	const reAssignGrade = () => {
-		const {
-			is_oral: current_oral_value,
-			history: current_history,
-			grade
-		} = std?.targeted_instruction?.learning_level?.[selected_subject]
-		// 	 || {
-		// 	is_oral: false,
-		// 	history: {} as TIPGradesHistory,
-		// 	grade: ''
-		// }
+		const { is_oral: current_oral_value, history: current_history, grade } = std
+			?.targeted_instruction?.learning_level?.[selected_subject] || {
+			is_oral: false,
+			history: {},
+			grade: ''
+		}
 		const is_oral = selected_grade === 'Oral Test' ? true : current_oral_value
 		const timestamp = moment().format('YYYY-MM-DD')
-		const history: TIPGradesHistory = {
+		const history = {
 			...current_history,
 			[timestamp]: {
 				type: 'Manual',
 				grade: grade
 			}
 		}
-		setLearningLevel(std.id, selected_subject, selected_grade, is_oral, history)
+		setLearningLevel(
+			std.id,
+			selected_subject,
+			selected_grade,
+			is_oral,
+			history as TIPGradesHistory
+		)
 		setIsComponentVisible(false)
 	}
 

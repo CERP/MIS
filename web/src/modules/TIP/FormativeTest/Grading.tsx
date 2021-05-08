@@ -136,17 +136,21 @@ const Grading: React.FC<PropsType> = ({
 			if (test_type === 'Diagnostic' || test_type === 'Oral') {
 				const { is_oral: current_oral_value, history: current_history, grade } = students?.[
 					std_id
-				]?.targeted_instruction?.learning_level?.[subject]
+				]?.targeted_instruction?.learning_level?.[subject] || {
+					is_oral: false,
+					history: {},
+					grade: ''
+				}
 				const is_oral = level === 'Oral Test' ? true : current_oral_value
 				const timestamp = moment().format('YYYY-MM-DD')
-				const history: TIPGradesHistory = {
+				const history = {
 					...current_history,
 					[timestamp]: {
 						type: 'Graduation',
 						grade
 					}
 				}
-				setLearningLevel(std_id, subject, level, is_oral, history)
+				setLearningLevel(std_id, subject, level, is_oral, history as TIPGradesHistory)
 				setIsComponentVisible(true)
 				setModaltype('assign_group_modal')
 			} else {

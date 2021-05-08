@@ -33,7 +33,10 @@ const StudentProfileClassView: React.FC<P> = ({ std, learning_levels, setIsCompo
 						const current_grade =
 							Object.keys(grade_obj?.history || {}).length === 0
 								? 'Not Reassigned'
-								: convertLearningGradeToGroupName(grade_obj?.grade)
+								: grade_obj?.history[sorted_history?.[sorted_history?.length - 1]]
+									?.type === 'Graduation'
+									? 'Not Reassigned'
+									: convertLearningGradeToGroupName(grade_obj?.grade)
 
 						return (
 							<StudentProfileRow
