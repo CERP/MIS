@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import Dynamic from '@cerp/dynamic'
-import { RouteComponentProps } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { v4 } from 'node-uuid'
 import { useDispatch, useSelector } from 'react-redux'
 import clsx from 'clsx'
@@ -12,7 +12,6 @@ import { SwitchButton } from 'components/input/switch'
 import toTitleCase from 'utils/toTitleCase'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import AdmissionForm from 'components/Printable/Student/admissionform'
-import { AppLayout } from 'components/Layout/appLayout'
 import { isValidPhone } from 'utils/helpers'
 import { getImageString, getDownsizedImage } from 'utils/image'
 
@@ -55,8 +54,6 @@ interface RouteInfo {
 	id: string
 }
 
-type CreateOrUpdateStaffProps = RouteComponentProps<RouteInfo>
-
 type State = {
 	profile: MISStudent
 	redirect: string | boolean
@@ -64,8 +61,8 @@ type State = {
 	classId?: string
 }
 
-export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ match }) => {
-	const { id } = match.params
+export const CreateOrUpdateStudent = () => {
+	const { id } = useParams<RouteInfo>()
 	const isNewStudent = () => location.pathname.indexOf('new') >= 0
 
 	const dispatch = useDispatch()
@@ -93,7 +90,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 			return
 		}
 
-		const nextStudent = students[match.params.id]
+		const nextStudent = students[id]
 
 		if (nextStudent) {
 			setState(prevState => ({ ...prevState, profile: nextStudent }))
@@ -202,8 +199,8 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 	}
 
 	return (
-		<AppLayout title={`${isNewStudent() ? 'New Student' : 'Update Student'}`}>
-			<div className="relative p-5 text-gray-700 md:p-10 md:pb-0 print:hidden">
+		<>
+			<div className="relative px-5 text-gray-700 md:pb-0 print:hidden">
 				<div className="mt-4 mb-8 text-2xl font-bold text-center">
 					{isNewStudent() ? 'Add Student' : 'Update Student'}
 				</div>
@@ -514,6 +511,6 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 				}}
 				classes={classes}
 			/>
-		</AppLayout>
+		</>
 	)
 }
