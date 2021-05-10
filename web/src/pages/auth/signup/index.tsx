@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { Link, Redirect } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
+import { Link } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { ShowHidePassword } from 'components/password'
@@ -10,14 +10,13 @@ import { Spinner } from 'components/animation/spinner'
 import { getDistricts } from 'constants/locations'
 import { isValidPhone, isValidPassword } from 'utils/helpers'
 import { createSignUp } from 'actions'
-import { OnboardingStage } from 'constants/index'
 import toTitleCase from 'utils/toTitleCase'
 import checkCompulsoryFields from 'utils/checkCompulsoryFields'
 
 import iconMarkDone from 'assets/svgs/mark-done.svg'
 
 type State = SchoolSignup & {
-	confirm_password: string
+	confirmPassword: string
 }
 
 const initialState: State = {
@@ -27,17 +26,15 @@ const initialState: State = {
 	city: '',
 	schoolPassword: '',
 	packageName: 'FREE_TRIAL',
-	confirm_password: ''
+	confirmPassword: ''
 }
 
 export const SchoolSignup = () => {
 	const dispatch = useDispatch()
 
 	const {
-		auth,
 		connected,
-		sign_up_form: { loading, succeed, reason },
-		db: { onboarding, users }
+		sign_up_form: { loading, succeed, reason }
 	} = useSelector((state: RootReducerState) => state)
 
 	// form state
@@ -71,7 +68,7 @@ export const SchoolSignup = () => {
 			['school'],
 			['city'],
 			['password'],
-			['confirm_password']
+			['confirmPassword']
 		])
 
 		// TODO: Change all these window.alerts to RHT
@@ -87,7 +84,7 @@ export const SchoolSignup = () => {
 			)
 		}
 
-		if (state.schoolPassword !== state.confirm_password) {
+		if (state.schoolPassword !== state.confirmPassword) {
 			return toast.error('Password mismatch')
 		}
 
@@ -96,7 +93,7 @@ export const SchoolSignup = () => {
 		}
 
 		// get rid of consfirm_password
-		const { confirm_password: _, ...signup } = state
+		const { confirmPassword: _, ...signup } = state
 
 		// dispatch the create Signup action using dispatch hook
 		dispatch(createSignUp(signup))
@@ -107,40 +104,9 @@ export const SchoolSignup = () => {
 		setState({ ...state, [name]: value })
 	}
 
-	// // TODO: remove this logic
-	// // add more robust way of redirection
-
-	// // here handling two cases:
-	// // - user logged in and onboarding state is completed (new schools), redirect to home page
-	// // - user logged in and there's no onboarding state (old schools), redirect to home page
-	// if (
-	// 	auth?.faculty_id &&
-	// 	auth?.token &&
-	// 	(onboarding?.stage ? onboarding?.stage === OnboardingStage.COMPLETED : true)
-	// ) {
-	// 	return <Redirect to="/home" />
-	// }
-
-	// // user logged in and there's onboarding state
-	// // onboarding component will handle further
-	// // desired state component renders
-	// if (auth?.faculty_id && auth?.token && onboarding?.stage) {
-	// 	return <Redirect to="/onboarding" />
-	// }
-
-	// // school logged in and there's no user, start the onboarding process
-	// // by creating a new user
-	// if (auth?.token && Object.keys(users || {}).length === 0) {
-	// 	return <Redirect to="/setup" />
-	// }
-
-	// if (auth?.token) {
-	// 	return <Redirect to="/staff-login" />
-	// }
-
 	return (
 		<AppLayout title={'School Signup'}>
-			<div className="p-6 pb-0 md:p-10 md:pb-0 text-gray-700">
+			<div className="p-6 pb-0 md:p-10 md:pb-0">
 				{
 					// explictly check reason is empty string instead of undefined
 					!loading && succeed && reason === '' ? (
@@ -166,10 +132,11 @@ export const SchoolSignup = () => {
 										onSubmit={createSchoolAccount}
 										className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-2 mx-auto">
 										<div className="space-y-2">
-											<div>Name</div>
+											<label htmlFor="name">Name</label>
 											<input
 												name="name"
 												required
+												type="text"
 												onChange={onInputChange}
 												autoCapitalize="off"
 												autoComplete="off"
@@ -178,10 +145,11 @@ export const SchoolSignup = () => {
 											/>
 										</div>
 										<div className="space-y-2">
-											<div>School Name</div>
+											<label htmlFor="schoolName">School Name</label>
 											<input
 												name="schoolName"
 												required
+												type="text"
 												onChange={onInputChange}
 												autoCapitalize="off"
 												autoComplete="off"
@@ -190,7 +158,7 @@ export const SchoolSignup = () => {
 											/>
 										</div>
 										<div className="space-y-2">
-											<div>Mobile Number (School Id)</div>
+											<label htmlFor="phone">Mobile Number (School Id)</label>
 											<input
 												name="phone"
 												type="text"
@@ -203,30 +171,7 @@ export const SchoolSignup = () => {
 											/>
 										</div>
 										<div className="space-y-2">
-											<div>Password</div>
-											<div className="relative">
-												<input
-													name="schoolPassword"
-													onChange={onInputChange}
-													autoCapitalize="off"
-													autoCorrect="off"
-													autoComplete="off"
-													required
-													type={togglePassword ? 'text' : 'password'}
-													placeholder="Enter password"
-													className="w-full tw-input"
-												/>
-												<div
-													onClick={() =>
-														setTogglePassword(!togglePassword)
-													}
-													className="absolute inset-y-0 right-2 pr-3 flex items-center cursor-pointer">
-													{<ShowHidePassword open={togglePassword} />}
-												</div>
-											</div>
-										</div>
-										<div className="space-y-2">
-											<div>City/District</div>
+											<label htmlFor="city">City/District</label>
 											<select
 												name="city"
 												required
@@ -243,10 +188,35 @@ export const SchoolSignup = () => {
 											</select>
 										</div>
 										<div className="space-y-2">
-											<div>Confirm Password</div>
+											<label htmlFor="schoolPassword">Password</label>
 											<div className="relative">
 												<input
-													name="confirm_password"
+													name="schoolPassword"
+													onChange={onInputChange}
+													autoCapitalize="off"
+													autoCorrect="off"
+													autoComplete="off"
+													required
+													type={togglePassword ? 'text' : 'password'}
+													placeholder="alphanumeric &amp; min 4 characters"
+													className="w-full tw-input"
+												/>
+												<div
+													onClick={() =>
+														setTogglePassword(!togglePassword)
+													}
+													className="absolute inset-y-0 right-2 pr-3 flex items-center cursor-pointer">
+													{<ShowHidePassword open={togglePassword} />}
+												</div>
+											</div>
+										</div>
+										<div className="space-y-2">
+											<label htmlFor="comfirmPassword">
+												Confirm Password
+											</label>
+											<div className="relative">
+												<input
+													name="confirmPassword"
 													onChange={onInputChange}
 													autoCapitalize="off"
 													autoCorrect="off"
