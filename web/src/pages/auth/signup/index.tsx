@@ -99,7 +99,7 @@ export const SchoolSignup = () => {
 		dispatch(createSignUp(signup))
 	}
 
-	const onInputChange = (event: React.ChangeEvent<HTMLInputElement & HTMLSelectElement>) => {
+	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement & HTMLSelectElement>) => {
 		const { name, value } = event.target
 		setState({ ...state, [name]: value })
 	}
@@ -137,7 +137,7 @@ export const SchoolSignup = () => {
 												name="name"
 												required
 												type="text"
-												onChange={onInputChange}
+												onChange={handleInputChange}
 												autoCapitalize="off"
 												autoComplete="off"
 												placeholder="Type your name"
@@ -150,7 +150,7 @@ export const SchoolSignup = () => {
 												name="schoolName"
 												required
 												type="text"
-												onChange={onInputChange}
+												onChange={handleInputChange}
 												autoCapitalize="off"
 												autoComplete="off"
 												placeholder="Type your school name"
@@ -162,7 +162,7 @@ export const SchoolSignup = () => {
 											<input
 												name="phone"
 												type="text"
-												onChange={onInputChange}
+												onChange={handleInputChange}
 												autoCapitalize="off"
 												autoCorrect="off"
 												autoComplete="off"
@@ -172,12 +172,7 @@ export const SchoolSignup = () => {
 										</div>
 										<div className="space-y-2">
 											<label htmlFor="city">City/District</label>
-											<select
-												name="city"
-												required
-												onChange={onInputChange}
-												className="w-full tw-select">
-												<option value="">Choose from list</option>
+											<datalist id="city">
 												{getDistricts()
 													.sort()
 													.map(d => (
@@ -185,14 +180,22 @@ export const SchoolSignup = () => {
 															{toTitleCase(d)}
 														</option>
 													))}
-											</select>
+											</datalist>
+											<input
+												list="city"
+												name="city"
+												required
+												onChange={handleInputChange}
+												className="tw-input w-full"
+												placeholder="Select or type class name"
+											/>
 										</div>
 										<div className="space-y-2">
 											<label htmlFor="schoolPassword">Password</label>
 											<div className="relative">
 												<input
 													name="schoolPassword"
-													onChange={onInputChange}
+													onChange={handleInputChange}
 													autoCapitalize="off"
 													autoCorrect="off"
 													autoComplete="off"
@@ -217,7 +220,7 @@ export const SchoolSignup = () => {
 											<div className="relative">
 												<input
 													name="confirmPassword"
-													onChange={onInputChange}
+													onChange={handleInputChange}
 													autoCapitalize="off"
 													autoCorrect="off"
 													autoComplete="off"
@@ -225,7 +228,7 @@ export const SchoolSignup = () => {
 													type={
 														toggleConfirmPassword ? 'text' : 'password'
 													}
-													placeholder="Enter confirm password"
+													placeholder="Confirm your password"
 													className="w-full tw-input"
 												/>
 												<div
