@@ -121,7 +121,7 @@ class Front extends Component {
 									<div className="icard-image-container">
 										<img alt="" className="icard-image" src={mdsupportIcon} />
 										<div className="image-title">
-											Phone, Tablet and Laptop Support
+											Phone, Tablet and Laptop Support.
 										</div>
 									</div>
 									<div className="icard-para">
