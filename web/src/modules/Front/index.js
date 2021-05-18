@@ -45,14 +45,14 @@ class Front extends Component {
 
 		this.state = {
 			signUp: false,
-			packageName: '',
+			packageName: ''
 		}
 	}
 
-	setPackage = (packageName) => {
+	setPackage = packageName => {
 		this.setState({
 			signUp: !this.state.signUp,
-			packageName,
+			packageName
 		})
 	}
 
@@ -95,8 +95,8 @@ class Front extends Component {
 								<div className="para">
 									MISchool is a management information system for schools.
 									MISchool enables school to collect, organize, and store records
-									giving your school full control of all academic, finance,
-									wellbeing, and administrative information.
+									giving your school full control of all academic, finance, well
+									being, and administrative information.
 								</div>
 							</div>
 						</div>
@@ -599,7 +599,7 @@ class Front extends Component {
 	}
 }
 
-export default connect((state) => ({
+export default connect(state => ({
 	auth: state.auth,
-	initialized: state.initialized,
+	initialized: state.initialized
 }))(Front)
