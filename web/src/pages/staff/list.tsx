@@ -30,13 +30,15 @@ export const StaffList = () => {
 
 	return (
 		<AppLayout title="Staff">
-			<div className="p-5 md:p-10 relative mb-20">
+			<div className="p-5 md:p-10 relative mb-20 mx-10">
 				<Link to="staff/new">
 					<AddStickyButton label="Add new Staff" />
 				</Link>
 
-				<div className="text-center font-bold text-2xl my-4">School Staff</div>
-				<div className="text-gray-700 text-center">Total = {filteredStaff.length}</div>
+				<div className="text-center font-bold text-2xl my-4 lg:hidden">School Staff</div>
+				<div className="text-gray-700 text-center lg:hidden">
+					Total = {filteredStaff.length}
+				</div>
 				<div className="flex flex-row items-center justify-between mt-4 mb-12 md:mb-20 space-x-4 md:space-y-0 md:space-x-60">
 					<SearchInput onChange={e => setSearch(e.target.value)} />
 					<select
@@ -48,7 +50,7 @@ export const StaffList = () => {
 					</select>
 				</div>
 
-				<div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-12 gap-y-12 md:gap-y-20">
+				<div className="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-12 gap-y-12 md:gap-y-20">
 					{filteredStaff
 						.sort((a, b) => a.Name.localeCompare(b.Name))
 						.map(f => (
@@ -72,7 +74,7 @@ const Card = ({ teacher, sections }: CardProps) => {
 
 	return (
 		<div className="relative">
-			<div className="bg-white rounded-xl text-center border border-gray-100 shadow-md px-3 py-4 md:p-5">
+			<div className="bg-white rounded-xl text-center border md:h-60 border-gray-100 shadow-md px-3 py-4 md:p-5">
 				<div className="font-bold pt-8 truncate w-3/5 mx-auto">
 					{toTitleCase(teacher.Name)}
 				</div>
