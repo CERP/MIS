@@ -5,15 +5,15 @@ import { Link } from 'react-router-dom'
 import { SearchInput } from 'components/input/search'
 import { AppLayout } from 'components/Layout/appLayout'
 import { toTitleCase } from 'utils/toTitleCase'
+import { isValidTeacher } from 'utils'
 
 import UserIconSvg from 'assets/svgs/user.svg'
 
 const Salary = () => {
 	const expenses = useSelector((state: RootReducerState) => state.db.expenses)
 	const faculty = useSelector((state: RootReducerState) => state.db.faculty)
-	const [teacherSalaries, setTeacherSalaries] = useState<{ [id: string]: MISSalaryExpense[] }>(
-		null
-	)
+	const [teacherSalaries, setTeacherSalaries] =
+		useState<{ [id: string]: MISSalaryExpense[] }>(null)
 	const [isActive, setIsActive] = useState(true)
 	const [search, setSearch] = useState('')
 
@@ -22,23 +22,27 @@ const Salary = () => {
 	}, [expenses, faculty])
 
 	const loadData = () => {
-		let groupsByFacultyID = Object.values(expenses)
-			.filter(element => element.expense === 'SALARY_EXPENSE')
-			.reduce((agg: { [id: string]: MISSalaryExpense[] }, curr: any) => {
+		let groupsByFacultyID = Object.values(expenses).reduce(
+			(agg: { [id: string]: MISSalaryExpense[] }, curr: any) => {
 				const { faculty_id } = curr
+				if (curr.expense === 'SALARY_EXPENSE') {
+					if (agg[faculty_id]) {
+						return {
+							...agg,
+							[faculty_id]: [...agg[faculty_id], curr]
+						}
+					}
 
-				if (agg[faculty_id]) {
 					return {
 						...agg,
-						[faculty_id]: [...agg[faculty_id], curr]
+						[faculty_id]: [curr]
 					}
+				} else {
+					return { ...agg }
 				}
-
-				return {
-					...agg,
-					[faculty_id]: [curr]
-				}
-			}, {} as { [id: string]: MISSalaryExpense[] })
+			},
+			{} as { [id: string]: MISSalaryExpense[] }
+		)
 
 		setTeacherSalaries(groupsByFacultyID)
 	}
@@ -72,13 +76,12 @@ const Salary = () => {
 									<Link
 										key={teacher.id}
 										to={{
-											pathname: `/salary/${teacher.id}`,
-											state: sortSalaries(teacherSalaries[teacher.id])
+											pathname: `/staff/${teacher.id}/salaries`
 										}}>
 										<Card
 											key={teacher.id}
 											teacher={teacher}
-											salaries={sortSalaries(teacherSalaries[teacher.id])}
+											lastSalary={getLastSalary(teacherSalaries[teacher.id])}
 										/>
 									</Link>
 								)
@@ -92,10 +95,10 @@ const Salary = () => {
 
 type CardProps = {
 	teacher: MISTeacher
-	salaries: MISSalaryExpense[]
+	lastSalary: { paid: number; deducted: number }
 }
 
-const Card = ({ teacher, salaries }: CardProps) => {
+const Card = ({ teacher, lastSalary }: CardProps) => {
 	return (
 		<div className="relative">
 			<div className="bg-white rounded-xl text-center border border-gray-100 shadow-md  py-4 md:p-5">
@@ -111,13 +114,13 @@ const Card = ({ teacher, salaries }: CardProps) => {
 					<div className="flex items-center justify-between flex-row">
 						<div className="text-gray-900 font-semibold">Last Paid</div>
 						<div className="text-gray-500 text-xs md:text-base lg:text-lg">
-							{salaries ? salaries[0].amount : 0}
+							{lastSalary.paid}
 						</div>
 					</div>
 					<div className="flex items-center justify-between flex-row">
 						<div className="text-gray-900 font-semibold">Deducted</div>
 						<div className="text-gray-500 text-xs md:text-base lg:text-lg">
-							{salaries ? salaries[0].deduction : 0}
+							{lastSalary.deducted}
 						</div>
 					</div>
 					<div className="flex items-center justify-between flex-row">
@@ -143,11 +146,17 @@ const Card = ({ teacher, salaries }: CardProps) => {
 	)
 }
 
-export const isValidTeacher = (teacher: MISTeacher): boolean => {
-	return !!(teacher && teacher.id && teacher.Name)
-}
-
-function sortSalaries(salaries: MISSalaryExpense[]): MISSalaryExpense[] {
-	return salaries?.sort((a, b) => (a.date > b.date ? -1 : 1))
+function getLastSalary(salaries: MISSalaryExpense[]) {
+	if (!salaries) {
+		return {
+			paid: 0,
+			deducted: 0
+		}
+	}
+	const localSalary = salaries ?? [].sort((a, b) => (a.date > b.date ? -1 : 1))
+	return {
+		paid: localSalary[0]?.amount ?? 0,
+		deducted: localSalary[0]?.deduction ?? 0
+	}
 }
 export default Salary

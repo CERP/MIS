@@ -15,13 +15,13 @@ type State = {
 }
 
 const calculateExpense = (exp: { [id: string]: MISSalaryExpense | MISExpense }) => {
-	return Object.values(exp).reduce((agg: number, entry: MISExpense | MISSalaryExpense) => {
+	return Object.values(exp ?? {}).reduce((agg: number, entry: MISExpense | MISSalaryExpense) => {
 		return agg + parseFloat(String(entry.amount).toString())
 	}, 0)
 }
 
 const calculateIncome = (payments: MISStudentPayment[], date: number): number => {
-	return payments.reduce((agg: number, payment: MISStudentPayment) => {
+	return (payments ?? []).reduce((agg: number, payment: MISStudentPayment) => {
 		if (moment(date).format('D') === moment(payment.date).format('D')) {
 			return agg + payment.amount
 		} else {
@@ -32,7 +32,6 @@ const calculateIncome = (payments: MISStudentPayment[], date: number): number =>
 
 const ExpenseCard = ({ date, expenseData, payments }: ExpenseCardProps) => {
 	const [state, setState] = useState<State>({ totalDayExpense: 0, totalDayIncome: 0 })
-	const students = useSelector((state: RootReducerState) => state.db.students)
 	useEffect(() => {
 		setState({
 			totalDayExpense: calculateExpense(expenseData),

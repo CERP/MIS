@@ -96,8 +96,8 @@ class Expenses extends Component<propTypes, S> {
 				return {
 					...agg,
 					[id]: {
-						amount: curr.amount,
-					},
+						amount: curr.amount
+					}
 				}
 			}, {} as { [id: string]: { amount: number } })
 
@@ -105,7 +105,7 @@ class Expenses extends Component<propTypes, S> {
 			banner: {
 				active: false,
 				good: true,
-				text: 'Saved!',
+				text: 'Saved!'
 			},
 			payment: {
 				active: false,
@@ -117,12 +117,12 @@ class Expenses extends Component<propTypes, S> {
 				quantity: '1',
 				deduction: '0',
 				deduction_reason: '',
-				date: moment.now(),
+				date: moment.now()
 			},
 			monthFilter: '',
 			yearFilter: '',
 			categoryFilter: '',
-			edits,
+			edits
 		}
 		this.former = new Former(this, [])
 	}
@@ -158,13 +158,13 @@ class Expenses extends Component<propTypes, S> {
 				return {
 					...agg,
 					[id]: {
-						amount: curr.amount,
-					},
+						amount: curr.amount
+					}
 				}
 			}, {} as { [id: string]: { amount: number } })
 
 		this.setState({
-			edits,
+			edits
 		})
 	}
 
@@ -181,8 +181,8 @@ class Expenses extends Component<propTypes, S> {
 				quantity: '1',
 				deduction: '0',
 				deduction_reason: '',
-				date: moment.now(),
-			},
+				date: moment.now()
+			}
 		})
 	}
 
@@ -195,14 +195,14 @@ class Expenses extends Component<propTypes, S> {
 			compulsoryFields = checkCompulsoryFields(this.state.payment, [
 				['amount'],
 				['type'],
-				['faculty_id'],
+				['faculty_id']
 			])
 		} else if (this.state.payment.category) {
 			compulsoryFields = checkCompulsoryFields(this.state.payment, [
 				['amount'],
 				['label'],
 				['type'],
-				['quantity'],
+				['quantity']
 			])
 		} else {
 			compulsoryFields = checkCompulsoryFields(this.state.payment, [['amount'], ['category']])
@@ -210,23 +210,23 @@ class Expenses extends Component<propTypes, S> {
 
 		if (compulsoryFields) {
 			const errorText = `Please Fill ${(compulsoryFields as string[][])
-				.map((x) => (x[0] === 'faculty_id' ? 'Teacher' : x[0]))
+				.map(x => (x[0] === 'faculty_id' ? 'Teacher' : x[0]))
 				.join(', ')} !`
 
 			this.setState({
 				banner: {
 					active: true,
 					good: false,
-					text: errorText,
-				},
+					text: errorText
+				}
 			})
 
 			setTimeout(() => {
 				this.setState({
 					banner: {
 						...this.state.banner,
-						active: false,
-					},
+						active: false
+					}
 				})
 			}, 3000)
 
@@ -254,16 +254,16 @@ class Expenses extends Component<propTypes, S> {
 				banner: {
 					active: true,
 					good: true,
-					text: 'Saved',
-				},
+					text: 'Saved'
+				}
 			})
 
 			setTimeout(() => {
 				this.setState({
 					banner: {
 						...this.state.banner,
-						active: false,
-					},
+						active: false
+					}
 				})
 			}, 1000)
 
@@ -284,16 +284,16 @@ class Expenses extends Component<propTypes, S> {
 			banner: {
 				active: true,
 				good: true,
-				text: 'Saved',
-			},
+				text: 'Saved'
+			}
 		})
 
 		setTimeout(() => {
 			this.setState({
 				banner: {
 					...this.state.banner,
-					active: false,
-				},
+					active: false
+				}
 			})
 		}, 1000)
 
@@ -308,8 +308,8 @@ class Expenses extends Component<propTypes, S> {
 					...agg,
 					[id]: {
 						//@ts-ignore
-						amount: Math.abs(parseFloat(curr.amount)) || 0,
-					},
+						amount: Math.abs(parseFloat(curr.amount)) || 0
+					}
 				}
 			}, {})
 
@@ -319,16 +319,16 @@ class Expenses extends Component<propTypes, S> {
 			banner: {
 				active: true,
 				good: true,
-				text: 'Saved!',
-			},
+				text: 'Saved!'
+			}
 		})
 
 		setTimeout(() => {
 			this.setState({
 				banner: {
 					...this.state.banner,
-					active: false,
-				},
+					active: false
+				}
 			})
 		}, 1000)
 	}
@@ -344,16 +344,16 @@ class Expenses extends Component<propTypes, S> {
 			banner: {
 				active: true,
 				good: false,
-				text: 'Deleted!',
-			},
+				text: 'Deleted!'
+			}
 		})
 
 		setTimeout(() => {
 			this.setState({
 				banner: {
 					...this.state.banner,
-					active: false,
-				},
+					active: false
+				}
 			})
 		}, 1000)
 	}
@@ -386,8 +386,8 @@ class Expenses extends Component<propTypes, S> {
 				payment: {
 					...this.state.payment,
 					faculty_id: e.target.value,
-					amount: this.props.teachers[e.target.value].Salary || '0',
-				},
+					amount: this.props.teachers[e.target.value].Salary || '0'
+				}
 			})
 		}
 	}
@@ -462,7 +462,7 @@ class Expenses extends Component<propTypes, S> {
 					style={{ marginBottom: '10px', flexWrap: 'wrap' }}>
 					<select {...this.former.super_handle(['monthFilter'])}>
 						<option value="">Select Month</option>
-						{months.map((month) => {
+						{months.map(month => {
 							return (
 								<option key={month} value={month}>
 									{month}
@@ -473,7 +473,7 @@ class Expenses extends Component<propTypes, S> {
 
 					<select {...this.former.super_handle(['yearFilter'])}>
 						<option value="">Select Year</option>
-						{[...Years].map((year) => {
+						{[...Years].map(year => {
 							return (
 								<option key={year} value={year}>
 									{' '}
@@ -545,7 +545,7 @@ class Expenses extends Component<propTypes, S> {
 												{...this.former.super_handle([
 													'edits',
 													id,
-													'amount',
+													'amount'
 												])}
 											/>
 											<div
@@ -579,7 +579,7 @@ class Expenses extends Component<propTypes, S> {
 												{...this.former.super_handle([
 													'edits',
 													id,
-													'amount',
+													'amount'
 												])}
 											/>
 											<div
@@ -649,12 +649,12 @@ class Expenses extends Component<propTypes, S> {
 							{this.state.payment.category === 'SALARY' && (
 								<div className="row">
 									<label> Teacher </label>
-									<select onChange={(e) => this.onTeacherSelect(e)}>
+									<select onChange={e => this.onTeacherSelect(e)}>
 										<option value="">SELECT</option>
 										{Object.values(teachers)
-											.filter((f) => f && f.Active && f.Name)
+											.filter(f => f && f.Active && f.Name)
 											.sort((a, b) => a.Name.localeCompare(b.Name))
-											.map((t) => {
+											.map(t => {
 												return (
 													<option key={t.id} value={t.id}>
 														{' '}
@@ -711,7 +711,7 @@ class Expenses extends Component<propTypes, S> {
 										type="text"
 										{...this.former.super_handle([
 											'payment',
-											'deduction_reason',
+											'deduction_reason'
 										])}
 										placeholder="If any"
 									/>
@@ -749,7 +749,7 @@ export default connect(
 		teachers: state.db.faculty,
 		expenses: state.db.expenses,
 		settings: state.db.settings,
-		schoolLogo: state.db.assets ? state.db.assets.schoolLogo || '' : '',
+		schoolLogo: state.db.assets ? state.db.assets.schoolLogo || '' : ''
 	}),
 	(dispatch: Function) => ({
 		addExpense: (
@@ -759,7 +759,7 @@ export default connect(
 			category: MISExpense['category'],
 			quantity: number,
 			date: number
-		) => dispatch(addExpense(amount, label, type, category, quantity, date)),
+		) => dispatch(addExpense({ amount, label, type, category, quantity, date })),
 		addSalaryExpense: (
 			id: string,
 			amount: number,
@@ -772,8 +772,7 @@ export default connect(
 			deduction_reason: string
 		) =>
 			dispatch(
-				addSalaryExpense(
-					id,
+				addSalaryExpense({
 					amount,
 					label,
 					type,
@@ -782,9 +781,9 @@ export default connect(
 					advance,
 					deduction,
 					deduction_reason
-				)
+				})
 			),
 		editExpense: (edits: { [id: string]: { amount: number } }) => dispatch(editExpense(edits)),
-		deleteExpense: (id: string) => dispatch(deleteExpense(id)),
+		deleteExpense: (id: string) => dispatch(deleteExpense(id))
 	})
 )(Expenses)
