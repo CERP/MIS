@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
-import moment from 'moment'
 import clsx from 'clsx'
+import moment from 'moment'
+import { Link } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { AttendanceStatsCard } from 'components/attendance'
 import { markAllFacultyAttendance, markFaculty, undoFacultyAttendance } from 'actions'
@@ -29,7 +29,10 @@ enum AttendanceStatus {
 export const StaffAttendance = () => {
 	const dispatch = useDispatch()
 
-	const { faculty } = useSelector((state: RootReducerState) => state.db)
+	const {
+		auth: { faculty_id },
+		db: { faculty, sms_templates }
+	} = useSelector((state: RootReducerState) => state)
 	const {
 		ref: sendSmsModalRef,
 		isComponentVisible: showSendSmsModal,
@@ -126,7 +129,13 @@ export const StaffAttendance = () => {
 				{showSendSmsModal && (
 					<TModal>
 						<div className="p-6 space-y-2 bg-white sm:p-8" ref={sendSmsModalRef}>
-							<SmsModalContentWrapper />
+							<SmsModalContentWrapper
+								date={attendanceDate}
+								faculty={faculty}
+								// TODO: create staff member separate attendance template
+								smsTemplate={sms_templates.attendance}
+								loggedUserId={faculty_id}
+							/>
 						</div>
 					</TModal>
 				)}
