@@ -5,11 +5,12 @@ import moment from 'moment'
 import clsx from 'clsx'
 
 import { AttendanceStatsCard } from 'components/attendance'
-import { markFaculty, undoFacultyAttendance } from 'actions'
+import { markAllFacultyAttendance, markFaculty, undoFacultyAttendance } from 'actions'
 import { TModal } from 'components/Modal'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import { toTitleCase } from 'utils/toTitleCase'
 import { SmsModalContentWrapper } from './sms-modal-content-wrapper'
+import { isValidTeacher } from 'utils'
 
 type State = {
 	date: number
@@ -102,6 +103,11 @@ export const StaffAttendance = () => {
 		dispatch(markFaculty(member, attendanceDate, status))
 	}
 
+	const handleMarkAllPresent = () => {
+		const activeFaculty = Object.values(faculty).filter(f => isValidTeacher(f))
+		dispatch(markAllFacultyAttendance(activeFaculty, attendanceDate, AttendanceStatus.CHECK_IN))
+	}
+
 	// TODO: add logic to handle modal for sms sending
 	// TODO: add logic to handle log sms history
 
@@ -132,7 +138,9 @@ export const StaffAttendance = () => {
 							className="w-2/5 p-1 text-white shadow-md md:p-2 bg-blue-brand rounded-3xl">
 							Send SMS
 						</button>
-						<button className="w-2/5 p-1 text-white shadow-md md:p-2 bg-teal-brand rounded-3xl">
+						<button
+							onClick={handleMarkAllPresent}
+							className="w-2/5 p-1 text-white shadow-md md:p-2 bg-teal-brand rounded-3xl">
 							Mark All Present
 						</button>
 					</div>
