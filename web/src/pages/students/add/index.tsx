@@ -106,7 +106,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 		Object.values(students)
 			.filter(s => s.id && s.Name)
 			.forEach(s => {
-				Object.keys(s.tags || {}).forEach(tag => tags.add(tag))
+				Object.keys(s.tags ?? {}).forEach(tag => tags.add(tag))
 			})
 
 		return tags
@@ -197,6 +197,13 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 
 	const takeImage = (imgString: string) => {
 		getDownsizedImage(imgString, 600, 'jpeg').then(img => {
+			setState({
+				...state,
+				profile: {
+					...state.profile,
+					ProfilePicture: { ...state.profile.ProfilePicture, image_string: img }
+				}
+			})
 			dispatch(uploadStudentProfilePicture(state.profile, img))
 		})
 	}
@@ -214,7 +221,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 					<div className="flex flex-row items-baseline justify-between w-3/5 md:w-1/4">
 						<UploadImage
 							src={
-								state.profile.ProfilePicture?.url ||
+								state.profile.ProfilePicture?.url ??
 								state.profile.ProfilePicture?.image_string
 							}
 							handleImageChange={uploadProfileImage}

@@ -167,6 +167,13 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 
 	const uploadProfileImageFromCamera = (imgString: string) => {
 		getDownsizedImage(imgString, 600, 'jpeg').then(img => {
+			setState({
+				...state,
+				profile: {
+					...state.profile,
+					ProfilePicture: { ...state.profile.ProfilePicture, image_string: img }
+				}
+			})
 			dispatch(uploadFacultyProfilePicture(state.profile.id, img))
 		})
 	}
@@ -201,16 +208,18 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 					<div className="text-white text-center text-base my-5">
 						Personal Information
 					</div>
-					<div className="flex flex-row items-baseline justify-between w-3/5 md:w-1/4">
-						<UploadImage
-							src={
-								state.profile.ProfilePicture?.url ||
-								state.profile.ProfilePicture?.image_string
-							}
-							handleImageChange={uploadProfileImage}
-							handleCameraImageTaken={uploadProfileImageFromCamera}
-						/>
-					</div>
+					{!isNewStaff() && (
+						<div className="flex flex-row items-baseline justify-between w-3/5 md:w-1/4">
+							<UploadImage
+								src={
+									state.profile.ProfilePicture?.url ??
+									state.profile.ProfilePicture?.image_string
+								}
+								handleImageChange={uploadProfileImage}
+								handleCameraImageTaken={uploadProfileImageFromCamera}
+							/>
+						</div>
+					)}
 					<form
 						id="staff-form"
 						className="text-white space-y-4 px-4 w-full md:w-3/5"
