@@ -187,7 +187,6 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<PrivateRoute path="/fees/manage" component={ManageFees} />
 						<PrivateRoute path="/fees/add-historical-fee" component={HistoricalFee} />
 						<PrivateRoute path="/fee-menu" component={FeeMenu} />
-						<PrivateRoute path="/reset-password" component={ResetPassword} />
 
 						<PublicRoute exact path="/signup" component={SchoolSignup} />
 						<PublicRoute path="/school-login" component={SchoolLogin} />
@@ -195,6 +194,7 @@ export class Routes extends React.Component<RoutesProps, State> {
 							path="/school/reset-password"
 							component={ResetSchoolPassword}
 						/>
+						<Route path="/admin/reset-password" component={ResetPassword} />
 						<SchoolRoute path="/staff-login" component={StaffLogin} />
 						<SchoolRoute exact path="/setup" component={SchoolSetup} />
 
