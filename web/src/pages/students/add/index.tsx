@@ -350,6 +350,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 							name="Phone"
 							onChange={handleInput}
 							value={state.profile.Phone}
+							type="number"
 							placeholder="Type phone #"
 							className="w-full bg-transparent tw-input border-blue-brand ring-1"
 						/>
@@ -388,6 +389,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 						<input
 							name="AlternatePhone"
 							onChange={handleInput}
+							type="number"
 							value={state.profile.AlternatePhone}
 							placeholder="Type phone #"
 							className="w-full bg-transparent tw-input border-blue-brand ring-1"

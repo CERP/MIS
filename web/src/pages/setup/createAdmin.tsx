@@ -93,6 +93,7 @@ export const CreateAdmin = ({ onBack }: CreateAdminProps) => {
 				<input
 					name="Phone"
 					required
+					type="number"
 					onChange={handleInput}
 					placeholder="e.g. 03xxxxxxxx"
 					className="tw-input w-full tw-is-form-bg-black"

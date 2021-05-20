@@ -301,6 +301,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 							name="Phone"
 							onChange={handleInput}
 							required
+							type="number"
 							value={profile.Phone}
 							placeholder="e.g. 03xxxxxxxx"
 							className="tw-input w-full tw-is-form-bg-black"
