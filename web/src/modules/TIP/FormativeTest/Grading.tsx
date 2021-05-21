@@ -16,6 +16,7 @@ import {
 	resetStudentLearningLevel,
 	resetStudentGrades
 } from 'actions'
+import moment from 'moment'
 interface P {
 	teacher_name: string
 	students: RootDBState['students']
@@ -23,7 +24,13 @@ interface P {
 
 	resetStudentLearningLevel: (student_id: string, subject: TIPSubjects) => void
 	resetStudentGrades: (student_id: string, test_id: string) => void
-	setLearningLevel: (student_id: string, subject: TIPSubjects, level: TIPGrades) => void
+	setLearningLevel: (
+		student_id: string,
+		subject: TIPSubjects,
+		level: TIPGrades,
+		is_oral: boolean,
+		history: TIPGradesHistory
+	) => void
 	saveReport: (
 		student_id: string,
 		diagnostic_report: TIPDiagnosticReport,
@@ -127,7 +134,23 @@ const Grading: React.FC<PropsType> = ({
 		) {
 			// if user has gradded all questions => a Modal will open to display assigned Group else it will display warning
 			if (test_type === 'Diagnostic' || test_type === 'Oral') {
-				setLearningLevel(std_id, subject, level)
+				const { is_oral: current_oral_value, history: current_history, grade } = students?.[
+					std_id
+				]?.targeted_instruction?.learning_level?.[subject] || {
+					is_oral: false,
+					history: {},
+					grade: ''
+				}
+				const is_oral = level === 'Oral Test' ? true : current_oral_value
+				const timestamp = moment().format('YYYY-MM-DD')
+				const history = {
+					...current_history,
+					[timestamp]: {
+						type: 'Graduation',
+						grade
+					}
+				}
+				setLearningLevel(std_id, subject, level, is_oral, history as TIPGradesHistory)
 				setIsComponentVisible(true)
 				setModaltype('assign_group_modal')
 			} else {
@@ -268,7 +291,12 @@ export default connect(
 			dispatch(resetStudentLearningLevel(student_id, subject)),
 		saveReport: (student_id: string, diagnostic_report: TIPDiagnosticReport, test_id: string) =>
 			dispatch(mergeTIPResult(student_id, diagnostic_report, test_id)),
-		setLearningLevel: (student_id: string, subject: TIPSubjects, level: TIPGrades) =>
-			dispatch(assignLearningLevel(student_id, subject, level))
+		setLearningLevel: (
+			student_id: string,
+			subject: TIPSubjects,
+			level: TIPGrades,
+			is_oral: boolean,
+			history: TIPGradesHistory
+		) => dispatch(assignLearningLevel(student_id, subject, level, is_oral, history))
 	})
 )(Grading)

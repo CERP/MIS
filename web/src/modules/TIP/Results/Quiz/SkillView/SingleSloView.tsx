@@ -1,7 +1,7 @@
 import React from 'react'
 import clsx from 'clsx'
 import Headings from '../../../Headings'
-import { BlackUser } from 'assets/icons'
+import { BlackAvatar } from 'assets/icons'
 
 interface P {
 	slo: string[]
@@ -38,7 +38,7 @@ const SingleSloView: React.FC<P> = ({ slo, singleSloQuizResult }) => {
 								}`}>
 							<div className="w-1/2 flex justify-center">
 								<div className="flex flex-row w-3/4 md:w-3/5 lg:w-1/4">
-									<img className="h-10 w-10 mr-5" src={BlackUser} />
+									<img className="h-10 w-10 mr-5" src={BlackAvatar} />
 									<div className="flex flex-col justify-between">
 										<div className="font-bold">{obj.std_name}</div>
 										<div>{obj.std_roll_num}</div>

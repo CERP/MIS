@@ -64,7 +64,7 @@ const InsertGrades: React.FC<PropsType> = props => {
 											/>
 										</div>
 									)}
-									<div className="text-xs flex items-center justify-center w-24 md:w-28 overflow-ellipsis">
+									<div className="text-center text-xs flex items-center justify-center w-24 md:w-28 overflow-ellipsis">
 										{std.Name}
 									</div>
 									<div className="text-xs flex items-center justify-center">

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import clsx from 'clsx'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
-import { WhiteUser, PaginationArrow } from 'assets/icons'
+import { WhiteAvatar, PaginationArrow } from 'assets/icons'
 
 interface P {
 	filtered_students: MISStudent[]
@@ -86,7 +86,7 @@ const ChildView: React.FC<PropsType> = ({
 							onClick={() => (setType(Types.SINGLE_STD_VIEW), setSelectedStd(std))}>
 							<div className="w-1/3 flex justify-center items-center">
 								<div className="flex flex-row w-full md:w-3/5 lg:w-1/2 items-center">
-									<img className="h-10 w-10 mr-2" src={WhiteUser} />
+									<img className="h-10 w-10 mr-2" src={WhiteAvatar} />
 									<div className="flex flex-col justify-between">
 										<div className="font-bold">{std.Name}</div>
 										<div className="">{std.RollNumber}</div>

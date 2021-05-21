@@ -1,6 +1,6 @@
 import React from 'react'
 import clsx from 'clsx'
-import Headings from '../Headings'
+import Headings from '../../Headings'
 import { convertLearningGradeToGroupName } from 'utils/TIP'
 
 interface P {
