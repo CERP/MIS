@@ -149,16 +149,26 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 	) => {
 		const { name, value, checked, type } = event.target
 
+		if (name === 'ManCNIC' || name === 'CNIC') {
+			if (numberRegex.test(value)) {
+				setState({
+					...state,
+					profile: {
+						...state.profile,
+						[name]: formatCNIC(value)
+					}
+				})
+				return
+			} else {
+				return
+			}
+		}
+
 		setState({
 			...state,
 			profile: {
 				...profile,
-				[name]:
-					name === 'CNIC' || name === 'ManCNIC'
-						? numberRegex.test(value)
-							? formatCNIC(value)
-							: ''
-						: value
+				[name]: value
 			}
 		})
 	}

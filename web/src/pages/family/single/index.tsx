@@ -170,10 +170,18 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 		event: React.ChangeEvent<HTMLInputElement & HTMLTextAreaElement>
 	) => {
 		const { name, value } = event.target
+		if (name === 'ManCNIC') {
+			if (numberRegex.test(value)) {
+				setState({ ...state, ManCNIC: formatCNIC(value) })
+				return
+			} else {
+				return
+			}
+		}
 
 		setState({
 			...state,
-			[name]: name === 'ManCNIC' ? (numberRegex.test(value) ? formatCNIC(value) : '') : value
+			[name]: value
 		})
 	}
 
