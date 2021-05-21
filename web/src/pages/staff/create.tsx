@@ -16,6 +16,7 @@ import { hash, formatCNIC } from 'utils'
 import { getImageString, getDownsizedImage } from 'utils/image'
 
 import { UploadImage } from 'components/image'
+import { numberRegex } from 'constants/index'
 
 const blankTeacher = (): MISTeacher => ({
 	id: v4(),
@@ -146,7 +147,6 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 	const handleInput = (
 		event: React.ChangeEvent<HTMLInputElement & HTMLSelectElement & HTMLTextAreaElement>
 	) => {
-		const numberRegex = /^[0-9]+$/
 		const { name, value, checked, type } = event.target
 
 		setState({
@@ -155,7 +155,9 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 				...profile,
 				[name]:
 					name === 'CNIC' || name === 'ManCNIC'
-						? numberRegex.test(value) || formatCNIC(value)
+						? numberRegex.test(value)
+							? formatCNIC(value)
+							: ''
 						: value
 			}
 		})

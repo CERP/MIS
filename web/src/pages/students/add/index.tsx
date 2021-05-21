@@ -19,6 +19,7 @@ import { getImageString, getDownsizedImage } from 'utils/image'
 
 import { UploadImage } from 'components/image'
 import { PlusButton } from 'components/Button/plus'
+import { numberRegex } from 'constants/index'
 
 const blankStudent = (): MISStudent => ({
 	id: v4(),
@@ -144,7 +145,11 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 
 		setState({
 			...state,
-			profile: { ...state.profile, [name]: name === 'ManCNIC' ? formatCNIC(value) : value }
+			profile: {
+				...state.profile,
+				[name]:
+					name === 'ManCNIC' ? (numberRegex.test(value) ? formatCNIC(value) : '') : value
+			}
 		})
 	}
 
