@@ -28,7 +28,6 @@ import BulkExam from 'modules/Marks/BulkExam'
 
 import { Home } from 'pages/home'
 import { StaffList } from 'pages/staff/list'
-import { CreateOrUpdateStaff } from 'pages/staff/create'
 import { Landing } from 'pages/landing'
 import { ContactUs } from 'pages/contact-us'
 import { Feature } from 'pages/features'
@@ -42,23 +41,31 @@ import { ClassList } from 'pages/class/list'
 import { CreateOrUpdateClass } from 'pages/class/create'
 
 import { StudentList } from 'pages/students/list'
-import { CreateOrUpdateStudent } from 'pages/students/add'
 import { AddStudentMenu } from 'pages/students/add/menu'
 import { ImportStudentsCSV } from 'pages/students/add/excel-import'
 import { SchoolAttendance } from 'pages/school/attendance'
 import { SchoolFees } from 'pages/school/fees'
-import { StudentPayments } from 'pages/students/fee-payments/payments'
-import { Family } from 'pages/family'
+import { Family } from 'pages/family/list'
 import { SingleFamily } from 'pages/family/single'
 import { SingleFamilyPayments } from 'pages/family/single/payments'
 import { SMS } from 'pages/sms'
 import { Settings } from 'pages/school/settings'
+import { ResetSchoolPassword } from 'pages/auth/reset-password/school'
 
 import { PrivateRoute, SchoolRoute, PublicRoute } from 'components/routing'
 import { Expense } from 'pages/expense'
 import ExpenseForm from 'pages/expense/expenseForm'
 import Salary from 'pages/expense/salary'
 import SalaryForm from 'pages/expense/salary/SalaryForm'
+import { ExamsMenu } from 'pages/exams/menu'
+import { GradeSettings } from 'pages/exams/grades'
+import { PromoteStudents } from 'pages/exams/promote-students'
+import { Datesheet } from 'pages/exams/datesheet'
+import { ExamsMarks } from 'pages/exams/marks'
+import { ExamsResults } from 'pages/exams/results'
+import { Events } from 'pages/about-us/events'
+import StudentPage from 'pages/students'
+import StaffPage from 'pages/staff'
 
 interface RoutesProps {
 	store: Store<RootReducerState>
@@ -95,34 +102,15 @@ export class Routes extends React.Component<RoutesProps, State> {
 				<BrowserRouter>
 					<Switch>
 						<PrivateRoute exact path="/home" component={Home} />
-						<PrivateRoute path="/staff/new" exact component={CreateOrUpdateStaff} />
-						<PrivateRoute
-							path="/staff/:id/profile"
-							exact
-							component={CreateOrUpdateStaff}
-						/>
 						<PrivateRoute path="/staff" exact component={StaffList} />
+						<PrivateRoute path="/staff/:id" component={StaffPage} />
 						<PrivateRoute path="/students/new/menu" exact component={AddStudentMenu} />
 						<PrivateRoute
 							path="/students/excel-import"
 							exact
 							component={ImportStudentsCSV}
 						/>
-						<PrivateRoute
-							path="/students/:id/profile"
-							exact
-							component={CreateOrUpdateStudent}
-						/>
-						<PrivateRoute
-							path="/students/:id/payments"
-							exact
-							component={StudentPayments}
-						/>
-						<PrivateRoute
-							path="/students/new"
-							exact
-							component={CreateOrUpdateStudent}
-						/>
+						<PrivateRoute path="/students/:id" component={StudentPage} />
 						<PrivateRoute path="/students" exact component={StudentList} />
 						<PrivateRoute
 							path="/classes/:id/view"
@@ -146,6 +134,13 @@ export class Routes extends React.Component<RoutesProps, State> {
 							path="/reports/:class_id/:section_id/exam/:exam_id"
 							component={SingleExam}
 						/>
+						<PrivateRoute path="/exams/grades" component={GradeSettings} />
+						<PrivateRoute path="/exams/promote-students" component={PromoteStudents} />
+						<PrivateRoute path="/exams/datesheet" component={Datesheet} />
+						<PrivateRoute path="/exams/marks" component={ExamsMarks} />
+						<PrivateRoute path="/exams/results" component={ExamsResults} />
+						<PrivateRoute path="/exams" component={ExamsMenu} />
+
 						<PrivateRoute path="/reports/:class_id/:section_id" component={ExamList} />
 						<PrivateRoute path="/reports" component={Marks} />
 						<PrivateRoute path="/settings" component={Settings} />
@@ -182,6 +177,11 @@ export class Routes extends React.Component<RoutesProps, State> {
 
 						<PublicRoute exact path="/signup" component={SchoolSignup} />
 						<PublicRoute path="/school-login" component={SchoolLogin} />
+						<PublicRoute
+							path="/school/reset-password"
+							component={ResetSchoolPassword}
+						/>
+						<Route path="/admin/reset-password" component={ResetPassword} />
 						<SchoolRoute path="/staff-login" component={StaffLogin} />
 						<SchoolRoute exact path="/setup" component={SchoolSetup} />
 
@@ -192,6 +192,7 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<Route path="/auto-login" component={AutoLogin} />
 						<Route exact path="/pricing" component={Pricing} />
 						<Route exact path="/about-us" component={AboutUs} />
+						<Route exact path="/events" component={Events} />
 						<Route exact path="/features" component={Feature} />
 						<Route exact path="/contact-us" component={ContactUs} />
 					</Switch>

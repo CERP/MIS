@@ -88,7 +88,7 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({ section }) => {
 				value={state.Name}
 				required
 				placeholder="Type name here"
-				className="tw-input w-full bg-transparent border-blue-brand ring-1"
+				className="tw-input w-full tw-is-form-bg-black"
 			/>
 			<div className="">Father Name*</div>
 			<input
@@ -98,7 +98,7 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({ section }) => {
 				value={state.ManName}
 				required
 				placeholder="Type father name here"
-				className="tw-input w-full bg-transparent border-blue-brand ring-1"
+				className="tw-input w-full tw-is-form-bg-black"
 			/>
 			<div className="">Contact Number*</div>
 			<input
@@ -108,7 +108,7 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({ section }) => {
 				value={state.Phone}
 				required
 				placeholder="e.g. 03xxxxxxxx"
-				className="tw-input w-full bg-transparent border-blue-brand ring-1"
+				className="tw-input w-full tw-is-form-bg-black"
 			/>
 
 			<button type="submit" className="w-full tw-btn-blue py-3 font-semibold">

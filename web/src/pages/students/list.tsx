@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react'
-import { useSelector } from 'react-redux'
+import React, { useEffect, useMemo, useState } from 'react'
+import { shallowEqual, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 import { AppLayout } from 'components/Layout/appLayout'
@@ -9,60 +9,103 @@ import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 
 import UserIconSvg from 'assets/svgs/user.svg'
 import { SearchInput } from 'components/input/search'
+import { AddStickyButton } from 'components/Button/add-sticky'
+import { PrinterIcon } from '@heroicons/react/outline'
+import Paginate from 'components/Paginate'
 
 type Filter = {
 	search: string
 	active: boolean
+	tag: string
+	class: string
 }
 
 export const StudentList = () => {
-	const { students, classes } = useSelector((state: RootReducerState) => state.db)
+	const students = useSelector((state: RootReducerState) => state.db.students, shallowEqual)
+	const classes = useSelector((state: RootReducerState) => state.db.classes, shallowEqual)
 
 	// TODO: create single state variable
 	const [search, setSearch] = useState('')
 	const [filter, setFilter] = useState<Filter>({
 		active: true,
-		search: ''
+		search: '',
+		tag: '',
+		class: ''
 	})
+
+	const getTags = () => {
+		return [
+			...new Set(
+				Object.values(students ?? {})
+					.filter(s => isValidStudent(s) && s.Active === filter.active)
+					.reduce((tags, student) => {
+						return [
+							...tags,
+							Object.keys(student.tags ?? {}).reduce((tag, curr) => {
+								return [...tag, curr]
+							}, [])
+						]
+					}, [])
+					.flat(1)
+			)
+		]
+	}
 
 	const sections = useMemo(() => {
 		return getSectionsFromClasses(classes)
 	}, [classes])
 
-	// TODO: add search options and filters
-	// TODO: add print button
 	// TODO: add options to cards
-	// TODO: add pagination
 	// TODO: add a check here for max_limit: state.db.max_limit
 	// to restrict adding students
+
+	const filteredStudents = Object.values(students)
+		.filter(
+			s =>
+				isValidStudent(s) &&
+				s.Active === filter.active &&
+				(search ? s.Name.includes(search) : true) &&
+				(filter.class ? s.section_id === filter.class : true) &&
+				(filter.tag ? Object.keys(s.tags ?? []).includes(filter.tag) : true)
+		)
+		.sort((a, b) => a.Name.localeCompare(b.Name))
+
+	const listItem = (f: MISStudent) => {
+		return (
+			<Link key={f.id} to={`students/${f.id}/profile`}>
+				<Card student={f} sections={sections} />
+			</Link>
+		)
+	}
 
 	return (
 		<AppLayout title="Students">
 			<div className="relative p-5 mb-20 md:p-10">
 				<Link to="/students/new/menu">
-					<div className="flex items-center justify-between fixed z-50 bottom-4 right-4 rounded-full bg-teal-brand text-white lg:hidden py-3 px-6 w-11/12 text-lg mr-0.5">
-						<div>Add new Student</div>
-						<div className="text-xl">+</div>
-					</div>
+					<AddStickyButton label="Add new Student" />
 				</Link>
 
-				<div className="my-4 text-2xl font-bold text-center">School Students</div>
-				<div className="text-center text-gray-700">
-					Total ={' '}
-					{
-						Object.values(students).filter(
-							s => isValidStudent(s) && s.Active === filter.active
-						).length
-					}
+				<div className="my-4 text-2xl font-bold text-center lg:hidden">School Students</div>
+				<div className="text-center text-gray-700 lg:hidden">
+					Total = {filteredStudents.length}
 				</div>
 				<div className="flex flex-col items-center justify-between mt-4 mb-12 space-y-4 md:flex-row md:mb-20 md:space-y-0 md:space-x-60">
 					<SearchInput onChange={e => setSearch(e.target.value)} />
 					<div className="flex flex-row items-center w-full space-x-2">
-						<select className="w-full rounded shadow tw-select text-teal-brand">
-							<option>Tag</option>
+						<select
+							onChange={e => setFilter({ ...filter, tag: e.target.value })}
+							className="w-full rounded shadow tw-select text-teal-brand">
+							<option value="">Tag</option>
+							{getTags().map(tag => (
+								<option key={tag} value={tag}>
+									{tag}
+								</option>
+							))}
 						</select>
-						<select className="w-full rounded shadow tw-select text-teal-brand">
-							<option>Choose Class</option>
+						<select
+							onChange={e => setFilter({ ...filter, class: e.target.value })}
+							className="w-full rounded shadow tw-select text-teal-brand">
+							<option value="">Choose Class</option>
 							{sections
 								.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
 								.map(s => (
@@ -79,24 +122,29 @@ export const StudentList = () => {
 							<option value={'true'}>Active</option>
 							<option value={'false'}>InActive</option>
 						</select>
+						<div className="hidden lg:flex flex-col space-between  text-white">
+							<div
+								onClick={() => window.print()}
+								className="py-2 px-3 rounded-full flex cursor-pointer bg-blue-brand flex-row justify-between border shadow-md items-center ">
+								<div className="flex flex-row items-center">
+									<div className="flex flex-row">
+										<div className="font-semibold text-lg">
+											<h1>Print</h1>
+										</div>
+									</div>
+									<PrinterIcon className="h-8 w-8 ml-10" />
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 
-				<div className="grid grid-cols-1 gap-4 md:grid-cols-4 md:gap-12 gap-y-12 md:gap-y-20">
-					{Object.values(students)
-						.filter(
-							s =>
-								isValidStudent(s) &&
-								s.Active === filter.active &&
-								(search ? s.Name.includes(search) : true)
-						)
-						.sort((a, b) => a.Name.localeCompare(b.Name))
-						.map(f => (
-							<Link key={f.id} to={`students/${f.id}/profile`}>
-								<Card student={f} sections={sections} />
-							</Link>
-						))}
-				</div>
+				<Paginate
+					items={filteredStudents}
+					itemsPerPage={10}
+					numberOfBottomPages={3}
+					renderComponent={listItem}
+				/>
 			</div>
 		</AppLayout>
 	)
@@ -112,7 +160,7 @@ const Card = ({ student, sections }: CardProps) => {
 
 	return (
 		<div className="relative">
-			<div className="px-3 py-4 text-center bg-white border shadow-md rounded-xl border-gray-50 md:p-5">
+			<div className="px-3 py-4 text-center bg-white border shadow-md rounded-xl lg:h-56 border-gray-50 md:p-5">
 				<div className="w-4/5 pt-8 mx-auto font-bold truncate">
 					{toTitleCase(student.Name)}
 				</div>

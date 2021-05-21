@@ -37,7 +37,7 @@ export const AppHeader = ({ title }: AppHeaderProps) => {
 				})}>
 				<Menu>
 					{({ open: openMenu }: { open: boolean }) => (
-						<div className="flex flex-col mx-auto max-w-screen-3xl md:items-center md:justify-between md:flex-row md:px-6 lg:px-16">
+						<div className="flex flex-col mx-auto max-w-screen-3xl md:items-center md:justify-between md:flex-row px-2 md:px-6 lg:px-10">
 							<div
 								className={clsx('flex flex-row items-center justify-between p-3', {
 									'w-full': isUserLogged
@@ -128,74 +128,12 @@ export const AppHeader = ({ title }: AppHeaderProps) => {
 								</div>
 							) : (
 								<Menu.Items
+									as={'div'}
 									static
 									className={clsx(
 										'flex-col flex-grow pb-4 md:pb-0 md:flex md:justify-end md:flex-row flex',
 										openMenu ? 'flex' : 'hidden'
 									)}>
-									<div className="relative">
-										<Menu>
-											{({ open }: { open: boolean }) => (
-												<>
-													<Menu.Button
-														className={clsx(
-															'hidden md:flex flex-row text-gray-900 bg-gray-100 items-center w-full px-4 py-2 mt-2 text-left bg-transparent rounded-lg  md:w-auto md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:outline-none focus:shadow-outline',
-															{
-																'bg-gray-200': open
-															}
-														)}>
-														<span>Why Us?</span>
-														<svg
-															fill="currentColor"
-															viewBox="0 0 20 20"
-															className={clsx(
-																'inline w-4 h-4 mt-1 ml-1 transition-transform duration-200 transform md:-mt-1',
-																open ? 'rotate-180' : 'rotate-0'
-															)}>
-															<path
-																fillRule="evenodd"
-																d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-																clipRule="evenodd"
-															/>
-														</svg>
-													</Menu.Button>
-													<div
-														className={clsx(
-															'absolute right-0 md:-right-28 w-full md:w-96 mt-3',
-															open ? 'block' : 'hidden'
-														)}>
-														<div className="relative p-2 bg-teal-400 rounded-md shadow-lg">
-															<div className="flex flex-row items-center justify-center space-x-2 text-xs divide-x-2 divide-gray-100">
-																<a
-																	className="flex items-start px-2 py-1 text-white bg-transparent row focus:outline-none focus:shadow-outline"
-																	href="#problems">
-																	Problems
-																</a>
-
-																<a
-																	className="flex items-start px-2 py-1 text-white bg-transparent row focus:outline-none focus:shadow-outline"
-																	href="#testimonials">
-																	Testimonials
-																</a>
-
-																<a
-																	className="flex items-start px-2 py-1 text-white bg-transparent row focus:outline-none focus:shadow-outline"
-																	href="#customers">
-																	Our Customer
-																</a>
-															</div>
-															<div className="absolute md:-top-2.5 md:right-40 arrow-up"></div>
-														</div>
-													</div>
-												</>
-											)}
-										</Menu>
-									</div>
-									<Link
-										className="px-4 py-2 mt-2 bg-transparent rounded-lg md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none focus:shadow-outline"
-										to="/features">
-										Features
-									</Link>
 									<Link
 										className="px-4 py-2 mt-2 bg-transparent rounded-lg md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none focus:shadow-outline"
 										to="/pricing">
@@ -212,9 +150,19 @@ export const AppHeader = ({ title }: AppHeaderProps) => {
 										Contact Us
 									</Link>
 									<Link
-										to="/school-login"
-										className="px-4 py-2 mt-2 bg-transparent rounded-lg md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none focus:shadow-outline">
-										Login
+										to={
+											isUserLogged
+												? '/home'
+												: auth.token
+													? '/staff-login'
+													: '/school-login'
+										}
+										className="px-4 py-2 mt-2 bg-transparent rounded-lg md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 md:bg-gray-100 hover:bg-gray-200 focus:bg-gray-100 focus:outline-none focus:shadow-outline">
+										{isUserLogged
+											? 'Go Home'
+											: auth.token
+												? 'Staff Login'
+												: 'Login'}
 									</Link>
 								</Menu.Items>
 							)}

@@ -1,49 +1,15 @@
 import React, { useState } from 'react'
-import { Redirect, RouteComponentProps } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
-import { v4 } from 'node-uuid'
+import clsx from 'clsx'
 import toast from 'react-hot-toast'
 import Dynamic from '@cerp/dynamic'
-import clsx from 'clsx'
+import { v4 } from 'node-uuid'
+import { Redirect, RouteComponentProps } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { createEditClass, deleteSection, deleteSubject } from 'actions'
 import { AppLayout } from 'components/Layout/appLayout'
-
-const blankClass: MISClass = {
-	id: v4(),
-	name: '',
-	classYear: 0,
-	sections: {
-		[v4()]: {
-			name: 'DEFAULT'
-		}
-	},
-	subjects: {
-		Maths: true,
-		English: true,
-		Urdu: true,
-		Islamiat: true
-	}
-}
-
-const defaultClasses: Record<string, number> = {
-	Preschool: 0,
-	'Play Group': 1,
-	Nursery: 2,
-	Prep: 3,
-	'Class 1': 4,
-	'Class 2': 5,
-	'Class 3': 6,
-	'Class 4': 7,
-	'Class 5': 8,
-	'Class 6': 9,
-	'Class 7': 10,
-	'Class 8': 11,
-	'Class 9': 12,
-	'Class 10': 13,
-	'O Level': 14,
-	'A Level': 15
-}
+import { PlusButton } from 'components/Button/plus'
+import { blankClass, defaultClasses } from 'constants/form-defaults'
 
 type State = {
 	class: MISClass
@@ -184,7 +150,7 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 				<div className="text-2xl font-bold mt-4 mb-8 text-center">
 					{isNewClass ? 'Add New Class' : 'Update Class'}
 				</div>
-				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 my-4 md:mt-8">
+				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 py-5 my-4 md:mt-8">
 					<div className="text-white text-center text-base my-5">
 						Fill Class Information
 					</div>
@@ -206,7 +172,7 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 								required
 								value={state.class.name}
 								onChange={handleInput}
-								className="tw-input w-full bg-transparent border-blue-brand ring-1"
+								className="tw-input w-full tw-is-form-bg-black"
 								placeholder="Select or type class name"
 							/>
 						</div>
@@ -216,7 +182,7 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 							type="number"
 							name="classYear"
 							required
-							className="tw-input w-full  bg-transparent border-blue-brand ring-1"
+							className="tw-input w-full  tw-is-form-bg-black"
 							value={state.class.classYear}
 							onChange={handleInput}
 						/>
@@ -243,13 +209,9 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 								value={state.newSubject}
 								placeholder="Type new subject name"
 								autoComplete="off"
-								className="tw-input w-full bg-transparent border-blue-brand ring-1"
+								className="tw-input w-full tw-is-form-bg-black"
 							/>
-							<div
-								onClick={addNewSubject}
-								className="ml-4 w-8 h-8 flex items-center justify-center rounded-full border cursor-pointer bg-blue-brand hover:bg-blue-400">
-								+
-							</div>
+							<PlusButton handleClick={addNewSubject} className="ml-4" />
 						</div>
 
 						<div>Sections</div>
@@ -268,16 +230,16 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 													}
 													placeholder={'Type section name'}
 													value={section.name}
-													className="tw-input w-full bg-transparent border-blue-brand ring-1"
+													className="tw-input w-full tw-is-form-bg-black"
 												/>
 											</div>
 										}
 
 										{
-											<div className="flex flex-row justify-between items-center">
-												<div>Assign Teacher</div>
+											<div className="flex flex-row justify-between items-center w-full">
+												<div className="w-1/2">Assign Teacher</div>
 												<select
-													className="tw-select"
+													className="tw-select w-1/2"
 													value={state.class.sections[id].faculty_id}
 													onChange={e =>
 														handleInputByPath(
@@ -315,11 +277,7 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 						)}
 
 						<div className="flex flex-row items-center">
-							<div
-								onClick={addNewSection}
-								className="mr-4 w-8 h-8 flex items-center justify-center rounded-full border cursor-pointer bg-blue-brand hover:bg-blue-400">
-								+
-							</div>
+							<PlusButton handleClick={addNewSection} className="mr-4" />
 							<div>Add Another Class Section</div>
 						</div>
 

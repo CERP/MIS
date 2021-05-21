@@ -1,11 +1,12 @@
-import React, { useCallback, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { v4 } from 'node-uuid'
-import { Redirect } from 'react-router-dom'
+import React, { Fragment, useCallback, useState } from 'react'
 import Papa from 'papaparse'
 import moment from 'moment'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
+import { Popover, Transition } from '@headlessui/react'
+import { useDispatch, useSelector } from 'react-redux'
+import { v4 } from 'node-uuid'
+import { Redirect } from 'react-router-dom'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { toTitleCase } from 'utils/toTitleCase'
@@ -13,7 +14,7 @@ import { formatCNIC, formatPhone } from 'utils'
 import { createStudentMerges } from 'actions'
 import downloadCSV from 'utils/downloadCSV'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
-import { DotsVerticalIcon, DownloadIcon, UploadIcon } from '@heroicons/react/outline'
+import { DotsVerticalIcon, DownloadIcon, TrashIcon, UploadIcon } from '@heroicons/react/outline'
 
 type State = {
 	classId: string
@@ -172,7 +173,14 @@ export const ImportStudentsCSV = () => {
 		return <Redirect to={state.redirectTo} />
 	}
 
-	// TODO: add modal to preview student
+	const removeStudent = (studentId: string) => {
+		const remainingStudents = state.importedStudents.filter(student => student.id !== studentId)
+
+		setState({
+			...state,
+			importedStudents: remainingStudents
+		})
+	}
 
 	return (
 		<AppLayout title="Excel Import">
@@ -201,7 +209,7 @@ export const ImportStudentsCSV = () => {
 											classId: e.target.value
 										})
 									}
-									className="bg-transparent tw-select border-blue-brand ring-1">
+									className="tw-input tw-is-form-bg-black">
 									<option value={''}>Select Class</option>
 									{Object.values(classes)
 										.filter(c => c)
@@ -221,7 +229,7 @@ export const ImportStudentsCSV = () => {
 									onChange={e =>
 										setState({ ...state, sectionId: e.target.value })
 									}
-									className="bg-transparent tw-select border-blue-brand ring-1">
+									className="tw-input tw-is-form-bg-black">
 									<option value={''}>Select Section</option>
 									{getSectionsFromClasses(
 										state.classId
@@ -254,16 +262,12 @@ export const ImportStudentsCSV = () => {
 								className="hidden"
 								accept=".csv"
 							/>
-							<span>Upload Excel File</span>
+							<span>{state.uploadedFileName || 'Upload Excel File'}</span>
 						</label>
 					</button>
 					{state.importedStudents.length > 0 && (
 						<div className="mt-4">
-							<div className="text-center">{state.uploadedFileName}</div>
-							<div
-								className={
-									'w-full h-48 overflow-y-scroll text-xs md:text-base rounded-md'
-								}>
+							<div className="w-full h-48 md:h-screen overflow-y-scroll text-xs md:text-base rounded-md">
 								<div className="table w-full">
 									<div className="table-row-group bg-white">
 										{state.importedStudents
@@ -278,9 +282,68 @@ export const ImportStudentsCSV = () => {
 														{s.ManName}
 													</div>
 													<div className="table-cell px-2">{s.Phone}</div>
-													<div className="table-cell p-2">
-														<DotsVerticalIcon className="w-4 mx-auto text-gray-400" />
-													</div>
+													<Popover className="relative table-cell p-2 pt-0">
+														{({ open }) => (
+															<>
+																<Popover.Button
+																	as={'div'}
+																	className={clsx(
+																		'px-3 py-2 rounded-md inline-flex items-center text-gray-400 cursor-pointer',
+																		{
+																			'text-teal-brand': open
+																		}
+																	)}>
+																	<DotsVerticalIcon
+																		className={clsx('w-5')}
+																	/>
+																</Popover.Button>
+																<Transition
+																	show={open}
+																	as={Fragment}
+																	enter="transition ease-out duration-200"
+																	enterFrom="opacity-0 translate-y-1"
+																	enterTo="opacity-100 translate-y-0"
+																	leave="transition ease-in duration-150"
+																	leaveFrom="opacity-100 translate-y-0"
+																	leaveTo="opacity-0 translate-y-1">
+																	<Popover.Panel
+																		static
+																		className="absolute z-10 max-w-sm px-4 mt-2 right-4 sm:px-0 w-60">
+																		<div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
+																			<div className="relative bg-white p-4 w-full">
+																				<button
+																					className="inline-flex items-center p-2 hover:bg-gray-300 group w-full rounded-md"
+																					onClick={() =>
+																						removeStudent(
+																							s.id
+																						)
+																					}>
+																					<TrashIcon className="w-6 md:w-8 text-red-brand mr-2 md:mr-4" />
+																					<span className="group-hover:text-white text-sm md:text-base">
+																						Delete
+																					</span>
+																				</button>
+																			</div>
+																		</div>
+																	</Popover.Panel>
+																</Transition>
+															</>
+														)}
+													</Popover>
+													<Popover className="relative">
+														<Popover.Button></Popover.Button>
+
+														<Popover.Panel className="absolute z-10">
+															<div className="grid grid-cols-2">
+																<a href="/analytics">Analytics</a>
+																<a href="/engagement">Engagement</a>
+																<a href="/security">Security</a>
+																<a href="/integrations">
+																	Integrations
+																</a>
+															</div>
+														</Popover.Panel>
+													</Popover>
 												</div>
 											))}
 									</div>

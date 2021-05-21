@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from 'react'
-import { AppLayout } from 'components/Layout/appLayout'
+import toast from 'react-hot-toast'
 import moment from 'moment'
+import clsx from 'clsx'
 import { useDispatch, useSelector } from 'react-redux'
+import { ArrowLeftIcon, ClipboardCopyIcon, LinkIcon } from '@heroicons/react/outline'
 
+import getSectionFromId from 'utils/getSectionFromId'
+import LessonModal from './lessonModal'
+import DiaryPrintable from 'components/Printable/Diary/diary'
 import { addDiary, logSms } from 'actions'
 import { TModal } from 'components/Modal'
-import { replaceSpecialCharsWithUTFChars } from 'utils/stringHelper'
-import getSectionFromId from 'utils/getSectionFromId'
 import { smsIntentLink } from 'utils/intent'
-// import ShareButton from 'components/ShareButton'
-import LessonModal from './lessonModal'
 import { fetchLessons, sendBatchSMS } from 'actions/core'
-import DiaryPrintable from 'components/Printable/Diary/diary'
-import toast from 'react-hot-toast'
-import { BackArrowIcon, ChainLinkIcon, CopyIcon } from '../assets/svgs'
+import { replaceSpecialCharsWithUTFChars } from 'utils/stringHelper'
+import { AppLayout } from 'components/Layout/appLayout'
+import { isMobile } from 'utils/helpers'
+import { isValidStudent } from 'utils'
 
 interface S {
 	selectedDate: string
@@ -24,9 +26,7 @@ interface S {
 }
 
 const Diary: React.FC = () => {
-	/**
-	 *  Need to Test If real time syncing works correctly
-	 */
+	// Todo:  Need to test If real time syncing works correctly
 
 	const dispatch = useDispatch()
 
@@ -61,12 +61,11 @@ const Diary: React.FC = () => {
 		'Leave Students'
 	]
 
+	const currentDate = moment(state.selectedDate, 'YYYY-MM-DD').format('DD-MM-YYYY')
+
 	useEffect(() => {
 		if (state.classId !== '' && state.sectionId !== '') {
-			const currDiary =
-				diary[moment(state.selectedDate, 'YYYY-MM-DD').format('DD-MM-YYYY')]?.[
-				state.sectionId
-				] || {}
+			const currDiary = diary[currentDate]?.[state.sectionId] ?? {}
 
 			setState({
 				...state,
@@ -76,16 +75,15 @@ const Diary: React.FC = () => {
 				}
 			})
 		}
-	}, [state.selectedDate, state.classId, state.sectionId])
+	}, [currentDate, state.classId, state.sectionId])
 
 	const onSave = () => {
 		// Only Saving modified section subjects for selected date rather then the whole section's diary
-		const currDate = moment(state.selectedDate, 'YYYY-MM-DD').format('DD-MM-YYYY')
 		const currDiary = Object.entries(state.diary)
 			.filter(([subject, { homework }]) => {
-				return diary[currDate] && diary[currDate][state.sectionId]
-					? diary[currDate][state.sectionId][subject]
-						? diary[currDate][state.sectionId][subject].homework !== homework
+				return diary[currentDate]?.[state.sectionId]
+					? diary[currentDate][state.sectionId][subject]
+						? diary[currentDate][state.sectionId][subject].homework !== homework
 						: true
 					: homework !== ''
 			})
@@ -96,7 +94,7 @@ const Diary: React.FC = () => {
 				}
 			}, {})
 
-		dispatch(addDiary(currDate, state.sectionId, currDiary))
+		dispatch(addDiary(currentDate, state.sectionId, currDiary))
 		toast.success('Saved')
 	}
 
@@ -127,21 +125,18 @@ const Diary: React.FC = () => {
 	const getSelectedSectionStudents = () => {
 		return Object.values(students).filter(
 			s =>
-				s.Name &&
+				isValidStudent(s) &&
 				s.Active &&
-				s.section_id &&
 				s.section_id === state.sectionId &&
 				(s.tags === undefined || !s.tags['PROSPECTIVE']) &&
-				s.Phone !== undefined &&
-				s.Phone !== ''
+				s.Phone
 		)
 	}
 
 	const getFilterCondition = (student: MISStudent) => {
 		const { selectedDate, studentsFilter } = state
-		const { status } = (student.attendance && student.attendance[selectedDate]) || {
-			status: ''
-		}
+
+		const { status } = student?.attendance?.[selectedDate] ?? { status: '' }
 
 		switch (studentsFilter) {
 			case 'Absent Students':
@@ -202,7 +197,7 @@ const Diary: React.FC = () => {
 	}
 
 	const getSelectedSectionDiary = () => {
-		return Object.entries(state.diary || {}).reduce((agg, [subject, { homework }]) => {
+		return Object.entries(state.diary ?? {}).reduce((agg, [subject, { homework }]) => {
 			return {
 				...agg,
 				[subject]: homework
@@ -210,7 +205,6 @@ const Diary: React.FC = () => {
 		}, {} as { [id: string]: string })
 	}
 
-	const isSectionSelected = () => state.classId !== '' && state.sectionId !== ''
 	const messages = getMessages()
 
 	const copyDiaryFromSection = () => {
@@ -222,7 +216,7 @@ const Diary: React.FC = () => {
 		const diaryFromId =
 			diary[moment(state.selectedDate, 'YYYY-MM-DD').format('DD-MM-YYYY')]?.[
 			duplicateDiary.from
-			] || {}
+			] ?? {}
 
 		setState({
 			...state,
@@ -240,20 +234,22 @@ const Diary: React.FC = () => {
 		toast.success('Copied Succesfully')
 	}
 
+	const isSectionSelected = state.classId && state.sectionId
+
 	return (
-		<AppLayout title={'Diary'}>
-			<div className="flex flex-col items-center my-10 mx-5 p-5 bg-gray-700 text-white rounded-2xl lg:w-4/5 lg:mx-auto lg:bg-transparent lg:h-screen">
-				<div className="text-l text-center print:hidden lg:text-3xl lg:text-black">
-					Enter detail of Diary
+		<AppLayout title={'Diary'} showHeaderTitle>
+			<div className="flex flex-col items-center my-10 mx-5 p-5 md:p-0 bg-gray-700 text-white rounded-2xl md:w-4/5 md:mx-auto md:bg-transparent md:h-screen">
+				<div className="text-center print:hidden md:text-2xl font-semibold md:text-gray-900 mb-2 md:mb-4">
+					Enter Diary Details
 				</div>
 
-				<div className="flex flex-col w-full justify-center lg:flex-row lg:h-3/4">
-					<div className="flex flex-col w-full print:hidden lg:bg-gray-700 lg:p-5 lg:rounded-2xl lg:m-5 lg:w-1/2">
+				<div className="flex flex-col w-full justify-center md:flex-row md:h-3/4 md:space-x-4">
+					<div className="flex flex-col w-full print:hidden md:bg-gray-700 md:p-5 md:rounded-2xl md:w-1/2 space-y-2 md:space-y-4">
 						<div className="flex flex-row w-full justify-between">
-							<div className="flex flex-col w-1/2 mr-2">
-								<div className="text-xl my-4 w-full">Date</div>
+							<div className="flex flex-col w-1/2 mr-2 space-y-2 md:space-y-4">
+								<div>Date</div>
 								<input
-									className="px-4 py-2 mr-2 bg-gray-700 border rounded-md border-gray-300 focus:border-blue-300 text-sm lg:p-6 w-full"
+									className="px-1 tw-input tw-is-form-bg-black"
 									type="date"
 									value={state.selectedDate}
 									onChange={e =>
@@ -261,10 +257,11 @@ const Diary: React.FC = () => {
 									}
 								/>
 							</div>
-							<div className="flex flex-col w-1/2">
-								<div className="text-xl my-4 w-full">Class</div>
+
+							<div className="flex flex-col w-1/2 space-y-2 md:space-y-4">
+								<div>Class</div>
 								<select
-									className="px-4 py-2 bg-gray-700 border rounded-md border-gray-300 focus:border-blue-300 text-sm lg:p-6 w-full"
+									className="tw-input tw-is-form-bg-black"
 									onChange={e => setState({ ...state, classId: e.target.value })}>
 									<option value=""> Select </option>
 									{Object.values(classes).map(c => (
@@ -275,16 +272,17 @@ const Diary: React.FC = () => {
 								</select>
 							</div>
 						</div>
+
 						{state.classId && (
-							<div className="flex flex-col w-full">
-								<div className="text-xl my-4">Section's</div>
+							<div className="flex flex-col w-full space-y-2 md:space-y-4">
+								<div>Section's</div>
 								<select
-									className="pl-3 pr-10 py-2 bg-gray-700 border rounded-md border-gray-300 focus:border-blue-300 text-sm lg:p-6"
+									className="tw-input tw-is-form-bg-black"
 									onChange={e =>
 										setState({ ...state, sectionId: e.target.value })
 									}>
 									<option value="">Select</option>
-									{Object.entries(classes[state.classId].sections || {}).map(
+									{Object.entries(classes[state.classId].sections ?? {}).map(
 										([id, s]) => (
 											<option key={id} value={id}>
 												{s.name}
@@ -295,54 +293,50 @@ const Diary: React.FC = () => {
 							</div>
 						)}
 
-						{isSectionSelected() && (
-							<div className="flex justify-between w-full p-1 my-2 md:p-2">
-								<div className="text-sm bg-blue rounded-2xl border px-2 text-center">
-									Copy From
-								</div>
-								<div className="flex">
-									<select
-										className="border rounded-md bg-gray-700 focus:border-blue-300 text-sm p-1"
-										onChange={e =>
-											setDuplicateDiary({
-												...duplicateDiary,
-												from: e.target.value
-											})
-										}
-										value={duplicateDiary.from}>
-										<option value="">Select</option>
-										{Object.entries(classes[state.classId].sections || {})
-											.filter(([id, s]) => state.sectionId !== id)
-											.map(([id, s]) => (
-												<option key={`copy-${id}`} value={id}>
-													{s.name}
-												</option>
-											))}
-									</select>
-									<div
-										className="focus:shadow-outline text-white rounded-full shadow-sm p-2 bg-blue cursor-pointer order-2 md:order-none ml-2"
-										onClick={() => copyDiaryFromSection()}>
-										<CopyIcon className="w-4" />
-									</div>
-								</div>
+						{isSectionSelected && (
+							<div className="flex justify-between items-center w-full py-4">
+								<div className="font-semibold">Copy From</div>
+								<select
+									className="tw-select tw-is-form-bg-black"
+									onChange={e =>
+										setDuplicateDiary({
+											...duplicateDiary,
+											from: e.target.value
+										})
+									}
+									value={duplicateDiary.from}>
+									<option value="">Select Section</option>
+									{Object.entries(classes[state.classId].sections ?? {})
+										.filter(([id, s]) => state.sectionId !== id)
+										.map(([id, s]) => (
+											<option key={`copy-${id}`} value={id}>
+												{s.name}
+											</option>
+										))}
+								</select>
+
+								<ClipboardCopyIcon
+									className="text-white h-10 w-10 p-2 bg-blue-brand rounded-full cursor-pointer"
+									onClick={() => copyDiaryFromSection()}
+								/>
 							</div>
 						)}
 					</div>
 
-					{isSectionSelected() && (
-						<div className="flex flex-col w-full print:hidden md:bg-gray-700 lg:p-5 lg:rounded-2xl lg:m-5 lg:w-1/2 lg:overflow-y-auto">
-							<div className="text-xl my-2">Subject</div>
-							{Object.keys(classes[state.classId].subjects || {}).map(s => (
+					{isSectionSelected && (
+						<div className="flex flex-col w-full print:hidden md:bg-gray-700 md:p-5 md:rounded-2xl md:w-1/2 md:overflow-y-auto space-y-2">
+							<div className="font-semibold">Subjects</div>
+							{Object.keys(classes[state.classId].subjects ?? {}).map(s => (
 								<div
 									key={s}
-									className="flex flex-wrap w-full justify-between items-center my-2 lg:flex-nowrap">
-									<div className="p-1 my-2 md:p-2 bg-teal-brand text-white rounded-3xl order-1 w-1/4 min-w-min text-center border border-white md:order-none">
+									className="flex flex-wrap w-full justify-between flex-row items-center space-y-2 md:flex-nowrap">
+									<div className="p-1 md:p-2 bg-teal-brand text-white rounded-3xl order-1 w-1/4 min-w-min text-center border border-white md:order-none">
 										{s}
 									</div>
 									<input
-										className="tw-input bg-gray-700 order-3 w-full lg:order-none lg:mx-2"
+										className="tw-input tw-is-bg-form-black order-3 w-full md:order-none md:mx-2 bg-transparent"
 										type="text"
-										placeholder="Write Diary Here"
+										placeholder="Write diary here"
 										onChange={e =>
 											setState({
 												...state,
@@ -352,12 +346,12 @@ const Diary: React.FC = () => {
 												}
 											})
 										}
-										value={state.diary[s]?.homework || ''}
+										value={state.diary[s]?.homework ?? ''}
 									/>
 									<div
-										className="focus:shadow-outline text-white rounded-full shadow-sm p-2 bg-blue cursor-pointer order-2 lg:order-none"
+										className="focus:shadow-outline text-white rounded-full shadow-sm p-2 bg-blue cursor-pointer order-2 md:order-none"
 										onClick={() => setLessonModalVisible(true)}>
-										<ChainLinkIcon className="w-4 lg:w-6" />
+										<LinkIcon className="w-4 md:w-6 cursor-pointer" />
 									</div>
 								</div>
 							))}
@@ -372,17 +366,16 @@ const Diary: React.FC = () => {
 								<div
 									className="focus:shadow-outline text-red-brand rounded-full shadow-sm p-2 border border-gray-200 bg-white cursor-pointer"
 									onClick={() => setSmsModalVisible(false)}>
-									<BackArrowIcon className="w-6" />
+									<ArrowLeftIcon className="w-6" />
 								</div>
-								<div className="text-xl ml-4 justify-start">
-									Select Diary Options
-								</div>
+								<div className=" ml-4 justify-start">Select Diary Options</div>
 							</div>
-							<div className="text-l">Send To*</div>
+							<div className="text-lg">Send To*</div>
 
 							{smsOptions.map(opt => (
 								<div key={opt} className="flex items-center justify-start my-2">
 									<input
+										className="tw-checkbox form-checkbox"
 										type="checkbox"
 										onChange={() =>
 											setState({
@@ -415,9 +408,6 @@ const Diary: React.FC = () => {
 										Send
 									</div>
 								)}
-								{/* <div className="md:hidden" style={{ marginTop: 10 }}>
-									<ShareButton title={'School Diary'} text={diaryString()} />
-								</div> */}
 							</div>
 						</div>
 					</TModal>
@@ -433,7 +423,7 @@ const Diary: React.FC = () => {
 					</TModal>
 				)}
 
-				{isSectionSelected() && (
+				{isSectionSelected && (
 					<DiaryPrintable
 						schoolName={settings.schoolName}
 						sectionName={getSelectedSectionName()}
@@ -442,24 +432,29 @@ const Diary: React.FC = () => {
 					/>
 				)}
 
-				<div className="flex flex-row w-full py-2 text-center print:hidden">
+				<div className="flex flex-row w-full text-center print:hidden space-x-2 mt-4">
 					<button
-						className={`tw-btn-blue ${!isSectionSelected() && 'bg-gray-300'} flex-grow`}
+						className={clsx('tw-btn-blue flex-grow', {
+							'bg-gray-300': !isSectionSelected
+						})}
 						onClick={() => window.print()}
-						disabled={!isSectionSelected()}>
+						disabled={!isSectionSelected}>
 						Print
 					</button>
 					<button
-						className={`tw-btn-blue ${!isSectionSelected() && 'bg-gray-300'
-							} flex-grow mx-2`}
+						className={clsx('tw-btn-blue flex-grow', {
+							'bg-gray-300': !isSectionSelected
+						})}
 						onClick={onSave}
-						disabled={!isSectionSelected()}>
+						disabled={!isSectionSelected}>
 						Save
 					</button>
 					<button
-						className={`tw-btn-blue ${!isSectionSelected() && 'bg-gray-300'} flex-grow`}
+						className={clsx('tw-btn-blue flex-grow', {
+							'bg-gray-300': !isSectionSelected || !isMobile()
+						})}
 						onClick={() => setSmsModalVisible(true)}
-						disabled={!isSectionSelected()}>
+						disabled={!isSectionSelected || !isMobile()}>
 						Send SMS
 					</button>
 				</div>

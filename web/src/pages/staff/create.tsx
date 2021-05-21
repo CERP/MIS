@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { v4 } from 'node-uuid'
 import { useDispatch, useSelector } from 'react-redux'
-import { Redirect, RouteComponentProps } from 'react-router-dom'
+import { Redirect, RouteComponentProps, useLocation, useParams } from 'react-router-dom'
 import moment from 'moment'
 import Dynamic from '@cerp/dynamic'
 import toast from 'react-hot-toast'
@@ -75,16 +75,15 @@ interface RouteInfo {
 	id: string
 }
 
-type CreateOrUpdateStaffProps = RouteComponentProps<RouteInfo>
-
 type StateProps = {
 	profile: MISTeacher
 	showPassword: boolean
 	redirect: string
 }
 
-export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match, location }) => {
-	const { id } = match.params
+export const CreateOrUpdateStaff = () => {
+	const { id } = useParams<RouteInfo>()
+	const location = useLocation()
 	const isNewStaff = () => location.pathname.indexOf('new') >= 0
 
 	const dispatch = useDispatch()
@@ -112,7 +111,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 			return
 		}
 
-		const nextStaff = faculty[match.params.id]
+		const nextStaff = faculty[id]
 		if (nextStaff) {
 			setState(prevState => ({ ...prevState, profile: nextStaff }))
 		}
@@ -192,8 +191,8 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 	}
 
 	return (
-		<AppLayout title={`${isNewStaff() ? 'New Staff' : 'Update Staff'}`}>
-			<div className="p-5 md:p-10 md:pb-0 text-gray-700 relative">
+		<>
+			<div className="px-5 text-gray-700 relative">
 				<div className="text-2xl font-bold mt-4 mb-8 text-center">
 					{isNewStaff() ? 'Add Staff' : 'Update Staff'}
 				</div>
@@ -222,7 +221,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 							required
 							value={profile.Name}
 							placeholder="Type name"
-							className="tw-input w-full bg-transparent border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div>Gender</div>
@@ -234,7 +233,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 									type="radio"
 									value={'male'}
 									checked={profile.Gender === 'male'}
-									className="mr-2 w-4 h-4 form-radio text-teal-brand"
+									className="mr-2 form-radio tw-radio"
 								/>
 								<div className="text-sm">Male</div>
 							</div>
@@ -245,7 +244,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 									type="radio"
 									value={'female'}
 									checked={profile.Gender === 'female'}
-									className="mr-2 w-4 h-4 form-radio text-teal-brand"
+									className="mr-2 form-radio tw-radio"
 								/>
 								<div className="text-sm">Female</div>
 							</div>
@@ -256,7 +255,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 									type="radio"
 									value={'other'}
 									checked={profile.Gender === 'other'}
-									className="mr-2 w-4 h-4 form-radio text-teal-brand"
+									className="mr-2 form-radio tw-radio"
 								/>
 								<div className="text-sm">Other</div>
 							</div>
@@ -271,7 +270,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 									type="radio"
 									value={StaffType.TEACHING}
 									checked={profile.Type === StaffType.TEACHING}
-									className="mr-2 w-4 h-4 form-radio text-teal-brand"
+									className="mr-2 form-radio tw-radio"
 								/>
 								<div className="text-sm">Teaching Staff</div>
 							</div>
@@ -282,7 +281,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 									type="radio"
 									value={StaffType.NON_TEACHING}
 									checked={profile.Type === StaffType.NON_TEACHING}
-									className="mr-2 w-4 h-4 form-radio text-teal-brand"
+									className="mr-2 form-radio tw-radio"
 								/>
 								<div className="text-sm">Non-Teaching Staff</div>
 							</div>
@@ -293,7 +292,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 							name="CNIC"
 							onChange={handleInput}
 							placeholder="xxxxx-xxxxxxx-x"
-							className="tw-input w-full bg-transparent border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div>Personal Contact*</div>
@@ -303,7 +302,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 							required
 							value={profile.Phone}
 							placeholder="e.g. 03xxxxxxxx"
-							className="tw-input w-full bg-transparent border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div>Password*</div>
@@ -318,7 +317,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 								autoCorrect="off"
 								autoComplete="off"
 								placeholder="Enter password"
-								className="tw-input w-full bg-transparent border-blue-brand ring-1"
+								className="tw-input w-full tw-is-form-bg-black"
 							/>
 							<div
 								onClick={() => setState({ ...state, showPassword: !showPassword })}
@@ -337,7 +336,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 							value={profile.Salary}
 							onChange={handleInput}
 							placeholder="e.g. 10,000 PKR"
-							className="tw-input w-full bg-transparent border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div className="text-lg font-semibold text-center">
@@ -352,7 +351,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 									onChange={() => handleInputByPath(['Married'], false)}
 									type="radio"
 									checked={!profile.Married}
-									className="mr-2 w-4 h-4 form-radio text-teal-brand"
+									className="mr-2 form-radio tw-radio"
 								/>
 								<div className="text-sm">Single</div>
 							</div>
@@ -362,7 +361,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 									onChange={() => handleInputByPath(['Married'], true)}
 									type="radio"
 									checked={profile.Married}
-									className="mr-2 w-4 h-4 form-radio text-teal-brand"
+									className="mr-2 form-radio tw-radio"
 								/>
 								<div className="text-sm">Married</div>
 							</div>
@@ -374,7 +373,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 							onChange={handleInput}
 							value={profile.ManName}
 							placeholder="Type name"
-							className="tw-input w-full bg-transparent border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div>{profile.Married ? 'Spouse CNIC' : 'Father CNIC'}</div>
@@ -383,7 +382,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 							value={profile.ManCNIC}
 							onChange={handleInput}
 							placeholder="xxxxx-xxxxxxx-x"
-							className="tw-input w-full bg-transparent border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div>Address</div>
@@ -393,7 +392,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 							onChange={handleInput}
 							rows={2}
 							placeholder="street address"
-							className="tw-input w-full bg-transparent border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div className="text-lg font-semibold text-center">
@@ -557,6 +556,6 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 					</form>
 				</div>
 			</div>
-		</AppLayout>
+		</>
 	)
 }
