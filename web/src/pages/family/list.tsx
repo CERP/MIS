@@ -9,6 +9,7 @@ import toTitleCase from 'utils/toTitleCase'
 
 import UserIconSvg from 'assets/svgs/user.svg'
 import { AddStickyButton } from 'components/Button/add-sticky'
+import Paginate from 'components/Paginate'
 
 type State = {
 	search: string
@@ -25,7 +26,22 @@ export const Family = ({ forwardTo, pageTitle }: FamilyProps) => {
 	})
 
 	const { families } = useFamily()
+	const filteredFamilies = Object.values(families)
+		.filter(fam => {
+			const searchString = `${fam.id} ${fam.name} ${fam.phone}`.toLowerCase()
+			return fam.id && (state.search ? searchString.includes(state.search) : true)
+		})
+		.sort((a, b) => a.id.localeCompare(b.id))
 
+	const listItem = (fam: AugmentedFamily) => {
+		return (
+			<Link
+				key={fam.id}
+				to={forwardTo ? `/families/${fam.id}/${forwardTo}` : `/families/${fam.id}`}>
+				<Card family={fam} />
+			</Link>
+		)
+	}
 	return (
 		<AppLayout title={pageTitle ?? 'Families'} showHeaderTitle={!!pageTitle}>
 			<div className="p-5 md:p-10 relative mb-20">
@@ -33,7 +49,9 @@ export const Family = ({ forwardTo, pageTitle }: FamilyProps) => {
 					<AddStickyButton label="Create new Family" />
 				</Link>
 
-				{!pageTitle && <div className="text-center font-bold text-2xl my-4">Families</div>}
+				{!pageTitle && (
+					<div className="text-center font-bold text-2xl my-4 lg:hidden">Families</div>
+				)}
 				<div className="flex flex-row mt-4 mb-12 md:mb-20 space-x-4 md:space-y-0 md:space-x-60">
 					<SearchInput
 						onChange={e => setState({ ...state, search: e.target.value })}
@@ -41,28 +59,12 @@ export const Family = ({ forwardTo, pageTitle }: FamilyProps) => {
 					/>
 				</div>
 
-				<div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-12 gap-y-12 md:gap-y-20">
-					{Object.values(families)
-						.filter(fam => {
-							const searchString = `${fam.id} ${fam.name} ${fam.phone}`.toLowerCase()
-							return (
-								fam.id &&
-								(state.search ? searchString.includes(state.search) : true)
-							)
-						})
-						.sort((a, b) => a.id.localeCompare(b.id))
-						.map(fam => (
-							<Link
-								key={fam.id}
-								to={
-									forwardTo
-										? `/families/${fam.id}/${forwardTo}`
-										: `/families/${fam.id}`
-								}>
-								<Card family={fam} />
-							</Link>
-						))}
-				</div>
+				<Paginate
+					items={filteredFamilies}
+					itemsPerPage={10}
+					numberOfBottomPages={3}
+					renderComponent={listItem}
+				/>
 			</div>
 		</AppLayout>
 	)
@@ -75,7 +77,7 @@ type CardProps = {
 const Card = ({ family }: CardProps) => {
 	return (
 		<div className="relative">
-			<div className="bg-white rounded-xl text-center border border-gray-50 shadow-md px-3 py-4 md:p-5">
+			<div className="bg-white rounded-xl lg:h-52  text-center border border-gray-50 shadow-md px-3 py-4 md:p-5">
 				<div className="font-bold pt-4 truncate w-4/5 mx-auto">
 					{toTitleCase(family.id)}
 				</div>

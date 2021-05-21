@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { v4 } from 'node-uuid'
 import { useDispatch, useSelector } from 'react-redux'
-import { Redirect, RouteComponentProps } from 'react-router-dom'
+import { Redirect, RouteComponentProps, useLocation, useParams } from 'react-router-dom'
 import moment from 'moment'
 import Dynamic from '@cerp/dynamic'
 import toast from 'react-hot-toast'
@@ -75,16 +75,15 @@ interface RouteInfo {
 	id: string
 }
 
-type CreateOrUpdateStaffProps = RouteComponentProps<RouteInfo>
-
 type StateProps = {
 	profile: MISTeacher
 	showPassword: boolean
 	redirect: string
 }
 
-export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match, location }) => {
-	const { id } = match.params
+export const CreateOrUpdateStaff = () => {
+	const { id } = useParams<RouteInfo>()
+	const location = useLocation()
 	const isNewStaff = () => location.pathname.indexOf('new') >= 0
 
 	const dispatch = useDispatch()
@@ -112,7 +111,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 			return
 		}
 
-		const nextStaff = faculty[match.params.id]
+		const nextStaff = faculty[id]
 		if (nextStaff) {
 			setState(prevState => ({ ...prevState, profile: nextStaff }))
 		}
@@ -192,8 +191,8 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 	}
 
 	return (
-		<AppLayout title={`${isNewStaff() ? 'New Staff' : 'Update Staff'}`}>
-			<div className="p-5 md:p-10 md:pb-0 text-gray-700 relative">
+		<>
+			<div className="px-5 text-gray-700 relative">
 				<div className="text-2xl font-bold mt-4 mb-8 text-center">
 					{isNewStaff() ? 'Add Staff' : 'Update Staff'}
 				</div>
@@ -557,6 +556,6 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 					</form>
 				</div>
 			</div>
-		</AppLayout>
+		</>
 	)
 }

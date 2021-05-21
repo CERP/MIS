@@ -4,7 +4,7 @@ import clsx from 'clsx'
 import toast from 'react-hot-toast'
 import { v4 } from 'node-uuid'
 import { useDispatch, useSelector } from 'react-redux'
-import { RouteComponentProps } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { Transition } from '@headlessui/react'
 import { ChevronUpIcon, ChevronDownIcon, CalendarIcon } from '@heroicons/react/outline'
 
@@ -12,7 +12,6 @@ import toTitleCase from 'utils/toTitleCase'
 import months from 'constants/months'
 import numberWithCommas from 'utils/numberWithCommas'
 import { useSectionInfo } from 'hooks/useStudentClassInfo'
-import { AppLayout } from 'components/Layout/appLayout'
 import { CustomSelect } from 'components/select'
 import { MISFeeLabels } from 'constants/index'
 import { getFilteredPayments } from 'utils/getFilteredPayments'
@@ -24,6 +23,10 @@ import { TModal } from 'components/Modal'
 
 import UserIconSvg from 'assets/svgs/user.svg'
 
+interface RouteInfo {
+	id: string
+}
+
 type State = {
 	filter: {
 		paymentsView: boolean
@@ -31,15 +34,15 @@ type State = {
 		month: string
 	}
 }
-type StudentPaymentsProps = RouteComponentProps<{ id: string }>
 
-export const StudentPayments = ({ match }: StudentPaymentsProps) => {
+export const StudentPayments = () => {
 	const dispatch = useDispatch()
 	const {
 		auth,
 		db: { students, settings, sms_templates }
 	} = useSelector((state: RootReducerState) => state)
-	const { id: studentId } = match.params
+
+	const { id: studentId } = useParams<RouteInfo>()
 	const student = students?.[studentId]
 
 	const { section } = useSectionInfo(student.section_id)
@@ -138,9 +141,8 @@ export const StudentPayments = ({ match }: StudentPaymentsProps) => {
 	].sort((a, b) => parseInt(a) - parseInt(b))
 
 	return (
-		<AppLayout title="Student Payments" showHeaderTitle>
-			<div className="p-5 md:p-10 md:pb-0 text-gray-700 relative print:hidden">
-				{/* <div className="text-2xl font-bold mb-4 text-center">Student Payments</div> */}
+		<>
+			<div className="px-5 text-gray-700 relative print:hidden">
 				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-4 rounded-2xl bg-gray-700 p-5 my-4 mt-16 md:mt-8">
 					<div className="relative text-white text-center text-base md:hidden">
 						<div className="mt-4">{toTitleCase(student.Name)}</div>
@@ -266,7 +268,7 @@ export const StudentPayments = ({ match }: StudentPaymentsProps) => {
 					)}
 				</div>
 			</div>
-		</AppLayout>
+		</>
 	)
 }
 

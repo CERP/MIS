@@ -1,17 +1,21 @@
-import React from 'react'
-import { AppLayout } from 'components/Layout/appLayout'
 import clsx from 'clsx'
+import { AppLayout } from 'components/Layout/appLayout'
+import { StudentPayments } from 'pages/students/fee-payments/payments'
+import React from 'react'
 import { Route, RouteComponentProps } from 'react-router'
 import { Link } from 'react-router-dom'
-import { CreateOrUpdateStaff } from './create'
+import { CreateOrUpdateStudent } from './add'
 
-const StaffPage = ({ location }: RouteComponentProps) => {
+const StudentPage = ({ location }: RouteComponentProps) => {
 	// To Add new a new path, update the 'Paths' Object & create a route
 
 	const loc = location.pathname.split('/').slice(-1).pop()
 	const Paths = {
 		Profile: 'profile',
-		Attendance: 'attendance'
+		Payments: 'payments',
+		Grades: 'grades',
+		Attendance: 'attendance',
+		Certificates: 'certificates'
 	}
 
 	return (
@@ -34,14 +38,17 @@ const StaffPage = ({ location }: RouteComponentProps) => {
 					))}
 				</div>
 			)}
-			<Route path="/staff/new">
-				<CreateOrUpdateStaff />
+			<Route path="/students/new">
+				<CreateOrUpdateStudent />
 			</Route>
-			<Route path="/staff/:id/profile">
-				<CreateOrUpdateStaff />
+			<Route path="/students/:id/profile">
+				<CreateOrUpdateStudent />
+			</Route>
+			<Route path="/students/:id/payments">
+				<StudentPayments />
 			</Route>
 		</AppLayout>
 	)
 }
 
-export default StaffPage
+export default StudentPage
