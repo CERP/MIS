@@ -40,6 +40,7 @@ export const SettingsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 				<Card
 					title={'Staff'}
 					link={setupPermission ? '/staff' : '#'}
+					disabled={!setupPermission}
 					caption={`Total = ${totalStaff}`}
 					icon={iconTeachers}
 				/>
