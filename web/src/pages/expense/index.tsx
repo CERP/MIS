@@ -229,7 +229,7 @@ export const Expense = () => {
 								'text-gray-100 border-gray-300 border-dashed transition-all duration-500  border-t-2  ',
 								state.detialsExpanded
 									? 'mt-4 pt-3 pb-3 max-h-screen'
-									: ' max-h-0 opacity-0 invisible'
+									: 'max-h-0 opacity-0 invisible'
 							)}>
 							<div className="flex flex-row justify-between text-lg">
 								<h1 className="font-semibold">Category</h1>
@@ -325,7 +325,7 @@ export const Expense = () => {
 						state.detialsExpanded ? 'opacity-0 max-h-0 invisible' : 'max-h-screen'
 					)}>
 					<Link
-						to="/staff/salaries"
+						to="/salaries"
 						className="py-2 z-20 m-5 px-6 flex flex-1 bg-red-500 text-white text-lg font-medium rounded text-center items-center justify-center">
 						<h1>Salaries</h1>
 					</Link>

@@ -8,6 +8,7 @@ import { toTitleCase } from 'utils/toTitleCase'
 import { isValidTeacher } from 'utils'
 
 import UserIconSvg from 'assets/svgs/user.svg'
+import Paginate from 'components/Paginate'
 
 const Salary = () => {
 	const expenses = useSelector((state: RootReducerState) => state.db.expenses)
@@ -47,16 +48,34 @@ const Salary = () => {
 		setTeacherSalaries(groupsByFacultyID)
 	}
 
-	const filteredStaff = Object.values(faculty).filter(
-		f =>
-			isValidTeacher(f) &&
-			f.Active === isActive &&
-			(search ? f.Name.toLowerCase().includes(search.toLowerCase()) : true)
-	)
+	const listItem = (teacher: MISTeacher) => {
+		return (
+			<Link
+				key={teacher.id}
+				to={{
+					pathname: `/salaries/${teacher.id}`
+				}}>
+				<Card
+					key={teacher.id}
+					teacher={teacher}
+					lastSalary={getLastSalary(teacherSalaries[teacher.id])}
+				/>
+			</Link>
+		)
+	}
+
+	const filteredStaff = Object.values(faculty)
+		.filter(
+			f =>
+				isValidTeacher(f) &&
+				f.Active === isActive &&
+				(search ? f.Name.toLowerCase().includes(search.toLowerCase()) : true)
+		)
+		.sort((a, b) => a.Name.localeCompare(b.Name))
 
 	return (
 		<AppLayout title="Salaries" showHeaderTitle>
-			<div className="pt-3 pb-3 pl-3 pr-3">
+			<div className="pt-3 pb-3 pl-3 pr-3 lg:ml-10 lg:mr-10">
 				<div className="flex flex-row items-center justify-between mt-4 mb-12 md:mb-20 space-x-4 md:space-y-0 md:space-x-60">
 					<SearchInput onChange={e => setSearch(e.target.value)} />
 					<select
@@ -68,25 +87,12 @@ const Salary = () => {
 					</select>
 				</div>
 				{teacherSalaries && (
-					<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-12 gap-y-12 md:gap-y-20">
-						{filteredStaff
-							.sort((a, b) => a.Name.localeCompare(b.Name))
-							.map(teacher => {
-								return (
-									<Link
-										key={teacher.id}
-										to={{
-											pathname: `/staff/${teacher.id}/salaries`
-										}}>
-										<Card
-											key={teacher.id}
-											teacher={teacher}
-											lastSalary={getLastSalary(teacherSalaries[teacher.id])}
-										/>
-									</Link>
-								)
-							})}
-					</div>
+					<Paginate
+						items={filteredStaff}
+						itemsPerPage={10}
+						numberOfBottomPages={3}
+						renderComponent={listItem}
+					/>
 				)}
 			</div>
 		</AppLayout>

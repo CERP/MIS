@@ -67,7 +67,7 @@ const ExpenseCard = ({ date, expenseData, payments }: ExpenseCardProps) => {
 
 						<Link
 							to={expense === 'MIS_EXPENSE' ? `/expenses/${id}` : '#'}
-							className="flex flex-1 ml-5 font-medium">
+							className="flex flex-1 ml-5 z-20 font-medium">
 							<h1>{label}</h1>
 						</Link>
 						<div className="flex flex-1 justify-end font-medium">

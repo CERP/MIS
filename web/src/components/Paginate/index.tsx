@@ -102,7 +102,7 @@ const Paginate = ({
 	}
 	return (
 		<>
-			<div className="grid grid-cols-1 gap-4 md:grid-cols-5 md:gap-12 gap-y-12 md:gap-y-20">
+			<div className="grid grid-cols-2 gap-4 md:grid-cols-5 md:gap-12 gap-y-12 md:gap-y-20">
 				{currItems.map(item => renderComponent(item))}
 			</div>
 			{items.length >= itemsPerPage && (
