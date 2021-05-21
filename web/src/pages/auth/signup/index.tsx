@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { Link, Redirect } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
+import { Link } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { ShowHidePassword } from 'components/password'
@@ -10,14 +10,13 @@ import { Spinner } from 'components/animation/spinner'
 import { getDistricts } from 'constants/locations'
 import { isValidPhone, isValidPassword } from 'utils/helpers'
 import { createSignUp } from 'actions'
-import { OnboardingStage } from 'constants/index'
 import toTitleCase from 'utils/toTitleCase'
 import checkCompulsoryFields from 'utils/checkCompulsoryFields'
 
 import iconMarkDone from 'assets/svgs/mark-done.svg'
 
 type State = SchoolSignup & {
-	confirm_password: string
+	confirmPassword: string
 }
 
 const initialState: State = {
@@ -27,17 +26,15 @@ const initialState: State = {
 	city: '',
 	schoolPassword: '',
 	packageName: 'FREE_TRIAL',
-	confirm_password: ''
+	confirmPassword: ''
 }
 
 export const SchoolSignup = () => {
 	const dispatch = useDispatch()
 
 	const {
-		auth,
 		connected,
-		sign_up_form: { loading, succeed, reason },
-		db: { onboarding, users }
+		sign_up_form: { loading, succeed, reason }
 	} = useSelector((state: RootReducerState) => state)
 
 	// form state
@@ -71,7 +68,7 @@ export const SchoolSignup = () => {
 			['school'],
 			['city'],
 			['password'],
-			['confirm_password']
+			['confirmPassword']
 		])
 
 		// TODO: Change all these window.alerts to RHT
@@ -87,7 +84,7 @@ export const SchoolSignup = () => {
 			)
 		}
 
-		if (state.schoolPassword !== state.confirm_password) {
+		if (state.schoolPassword !== state.confirmPassword) {
 			return toast.error('Password mismatch')
 		}
 
@@ -96,51 +93,20 @@ export const SchoolSignup = () => {
 		}
 
 		// get rid of consfirm_password
-		const { confirm_password: _, ...signup } = state
+		const { confirmPassword: _, ...signup } = state
 
 		// dispatch the create Signup action using dispatch hook
 		dispatch(createSignUp(signup))
 	}
 
-	const onInputChange = (event: React.ChangeEvent<HTMLInputElement & HTMLSelectElement>) => {
+	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement & HTMLSelectElement>) => {
 		const { name, value } = event.target
 		setState({ ...state, [name]: value })
 	}
 
-	// // TODO: remove this logic
-	// // add more robust way of redirection
-
-	// // here handling two cases:
-	// // - user logged in and onboarding state is completed (new schools), redirect to home page
-	// // - user logged in and there's no onboarding state (old schools), redirect to home page
-	// if (
-	// 	auth?.faculty_id &&
-	// 	auth?.token &&
-	// 	(onboarding?.stage ? onboarding?.stage === OnboardingStage.COMPLETED : true)
-	// ) {
-	// 	return <Redirect to="/home" />
-	// }
-
-	// // user logged in and there's onboarding state
-	// // onboarding component will handle further
-	// // desired state component renders
-	// if (auth?.faculty_id && auth?.token && onboarding?.stage) {
-	// 	return <Redirect to="/onboarding" />
-	// }
-
-	// // school logged in and there's no user, start the onboarding process
-	// // by creating a new user
-	// if (auth?.token && Object.keys(users || {}).length === 0) {
-	// 	return <Redirect to="/setup" />
-	// }
-
-	// if (auth?.token) {
-	// 	return <Redirect to="/staff-login" />
-	// }
-
 	return (
 		<AppLayout title={'School Signup'}>
-			<div className="p-6 pb-0 md:p-10 md:pb-0 text-gray-700">
+			<div className="p-6 pb-0 md:p-10 md:pb-0">
 				{
 					// explictly check reason is empty string instead of undefined
 					!loading && succeed && reason === '' ? (
@@ -166,11 +132,12 @@ export const SchoolSignup = () => {
 										onSubmit={createSchoolAccount}
 										className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-2 mx-auto">
 										<div className="space-y-2">
-											<div>Name</div>
+											<label htmlFor="name">Name</label>
 											<input
 												name="name"
 												required
-												onChange={onInputChange}
+												type="text"
+												onChange={handleInputChange}
 												autoCapitalize="off"
 												autoComplete="off"
 												placeholder="Type your name"
@@ -178,11 +145,12 @@ export const SchoolSignup = () => {
 											/>
 										</div>
 										<div className="space-y-2">
-											<div>School Name</div>
+											<label htmlFor="schoolName">School Name</label>
 											<input
 												name="schoolName"
 												required
-												onChange={onInputChange}
+												type="text"
+												onChange={handleInputChange}
 												autoCapitalize="off"
 												autoComplete="off"
 												placeholder="Type your school name"
@@ -190,11 +158,11 @@ export const SchoolSignup = () => {
 											/>
 										</div>
 										<div className="space-y-2">
-											<div>Mobile Number (School Id)</div>
+											<label htmlFor="phone">Mobile Number (School Id)</label>
 											<input
 												name="phone"
 												type="text"
-												onChange={onInputChange}
+												onChange={handleInputChange}
 												autoCapitalize="off"
 												autoCorrect="off"
 												autoComplete="off"
@@ -203,17 +171,37 @@ export const SchoolSignup = () => {
 											/>
 										</div>
 										<div className="space-y-2">
-											<div>Password</div>
+											<label htmlFor="city">City/District</label>
+											<datalist id="city">
+												{getDistricts()
+													.sort()
+													.map(d => (
+														<option key={d} value={d}>
+															{toTitleCase(d)}
+														</option>
+													))}
+											</datalist>
+											<input
+												list="city"
+												name="city"
+												required
+												onChange={handleInputChange}
+												className="tw-input w-full"
+												placeholder="Select or type class name"
+											/>
+										</div>
+										<div className="space-y-2">
+											<label htmlFor="schoolPassword">Password</label>
 											<div className="relative">
 												<input
 													name="schoolPassword"
-													onChange={onInputChange}
+													onChange={handleInputChange}
 													autoCapitalize="off"
 													autoCorrect="off"
 													autoComplete="off"
 													required
 													type={togglePassword ? 'text' : 'password'}
-													placeholder="Enter password"
+													placeholder="alphanumeric &amp; min 4 characters"
 													className="w-full tw-input"
 												/>
 												<div
@@ -226,28 +214,13 @@ export const SchoolSignup = () => {
 											</div>
 										</div>
 										<div className="space-y-2">
-											<div>City/District</div>
-											<select
-												name="city"
-												required
-												onChange={onInputChange}
-												className="w-full tw-select">
-												<option value="">Choose from list</option>
-												{getDistricts()
-													.sort()
-													.map(d => (
-														<option key={d} value={d}>
-															{toTitleCase(d)}
-														</option>
-													))}
-											</select>
-										</div>
-										<div className="space-y-2">
-											<div>Confirm Password</div>
+											<label htmlFor="comfirmPassword">
+												Confirm Password
+											</label>
 											<div className="relative">
 												<input
-													name="confirm_password"
-													onChange={onInputChange}
+													name="confirmPassword"
+													onChange={handleInputChange}
 													autoCapitalize="off"
 													autoCorrect="off"
 													autoComplete="off"
@@ -255,7 +228,7 @@ export const SchoolSignup = () => {
 													type={
 														toggleConfirmPassword ? 'text' : 'password'
 													}
-													placeholder="Enter confirm password"
+													placeholder="Confirm your password"
 													className="w-full tw-input"
 												/>
 												<div

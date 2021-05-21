@@ -74,7 +74,9 @@ export const ResetSchoolPassword = () => {
 							<form
 								onSubmit={handleSubmit}
 								className="flex flex-col justify-items-start">
-								<div className="my-2">Mobile Number (School Id)</div>
+								<label htmlFor="school" className="my-2">
+									Mobile Number (School Id)
+								</label>
 								<input
 									name="school"
 									autoFocus={true}
@@ -86,7 +88,7 @@ export const ResetSchoolPassword = () => {
 									autoCapitalize="off"
 									autoCorrect="off"
 									autoComplete="off"
-									placeholder="Enter school id"
+									placeholder="Enter your school id"
 									className="tw-input"
 								/>
 
@@ -101,7 +103,7 @@ export const ResetSchoolPassword = () => {
 										)}>
 										{state.isSending ? (
 											<>
-												<Spinner className={'animate-spin h-5 w-5'} />
+												<Spinner />
 												<span className={'mx-auto animate-pulse'}>
 													Sending Request
 												</span>
