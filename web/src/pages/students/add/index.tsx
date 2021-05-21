@@ -148,7 +148,11 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 			profile: {
 				...state.profile,
 				[name]:
-					name === 'ManCNIC' ? (numberRegex.test(value) ? formatCNIC(value) : '') : value
+					name === 'ManCNIC' || name === 'BForm'
+						? numberRegex.test(value)
+							? formatCNIC(value)
+							: ''
+						: value
 			}
 		})
 	}

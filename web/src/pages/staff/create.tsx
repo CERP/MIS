@@ -121,7 +121,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 
 	const handleSubmit = (event: React.FormEvent) => {
 		event.preventDefault()
-		console.log('cnic', profile)
+
 		if (!isValidPhone(profile.Phone)) {
 			return window.alert('Please provide correct phone number!')
 		}
