@@ -10,6 +10,7 @@ import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import UserIconSvg from 'assets/svgs/user.svg'
 import { SearchInput } from 'components/input/search'
 import { AddStickyButton } from 'components/Button/add-sticky'
+import Paginate from 'components/Paginate'
 
 export const StaffList = () => {
 	const { faculty, classes } = useSelector((state: RootReducerState) => state.db)
@@ -21,13 +22,22 @@ export const StaffList = () => {
 		return getSectionsFromClasses(classes)
 	}, [classes])
 
-	const filteredStaff = Object.values(faculty).filter(
-		f =>
-			isValidTeacher(f) &&
-			f.Active === isActive &&
-			(search ? f.Name.toLowerCase().includes(search.toLowerCase()) : true)
-	)
+	const filteredStaff = Object.values(faculty)
+		.filter(
+			f =>
+				isValidTeacher(f) &&
+				f.Active === isActive &&
+				(search ? f.Name.toLowerCase().includes(search.toLowerCase()) : true)
+		)
+		.sort((a, b) => a.Name.localeCompare(b.Name))
 
+	const listItem = (f: MISTeacher) => {
+		return (
+			<Link key={f.id} to={`staff/${f.id}/profile`}>
+				<Card teacher={f} sections={sections} />
+			</Link>
+		)
+	}
 	return (
 		<AppLayout title="Staff">
 			<div className="p-5 md:p-10 relative mb-20 mx-10">
@@ -50,15 +60,12 @@ export const StaffList = () => {
 					</select>
 				</div>
 
-				<div className="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-12 gap-y-12 md:gap-y-20">
-					{filteredStaff
-						.sort((a, b) => a.Name.localeCompare(b.Name))
-						.map(f => (
-							<Link key={f.id} to={`staff/${f.id}/profile`}>
-								<Card teacher={f} sections={sections} />
-							</Link>
-						))}
-				</div>
+				<Paginate
+					items={filteredStaff}
+					itemsPerPage={10}
+					numberOfBottomPages={3}
+					renderComponent={listItem}
+				/>
 			</div>
 		</AppLayout>
 	)

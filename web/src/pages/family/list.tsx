@@ -9,6 +9,7 @@ import toTitleCase from 'utils/toTitleCase'
 
 import UserIconSvg from 'assets/svgs/user.svg'
 import { AddStickyButton } from 'components/Button/add-sticky'
+import Paginate from 'components/Paginate'
 
 type State = {
 	search: string
@@ -25,7 +26,22 @@ export const Family = ({ forwardTo, pageTitle }: FamilyProps) => {
 	})
 
 	const { families } = useFamily()
+	const filteredFamilies = Object.values(families)
+		.filter(fam => {
+			const searchString = `${fam.id} ${fam.name} ${fam.phone}`.toLowerCase()
+			return fam.id && (state.search ? searchString.includes(state.search) : true)
+		})
+		.sort((a, b) => a.id.localeCompare(b.id))
 
+	const listItem = (fam: AugmentedFamily) => {
+		return (
+			<Link
+				key={fam.id}
+				to={forwardTo ? `/families/${fam.id}/${forwardTo}` : `/families/${fam.id}`}>
+				<Card family={fam} />
+			</Link>
+		)
+	}
 	return (
 		<AppLayout title={pageTitle ?? 'Families'} showHeaderTitle={!!pageTitle}>
 			<div className="p-5 md:p-10 relative mb-20">
@@ -43,28 +59,12 @@ export const Family = ({ forwardTo, pageTitle }: FamilyProps) => {
 					/>
 				</div>
 
-				<div className="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-4 gap-y-12 md:gap-y-20">
-					{Object.values(families)
-						.filter(fam => {
-							const searchString = `${fam.id} ${fam.name} ${fam.phone}`.toLowerCase()
-							return (
-								fam.id &&
-								(state.search ? searchString.includes(state.search) : true)
-							)
-						})
-						.sort((a, b) => a.id.localeCompare(b.id))
-						.map(fam => (
-							<Link
-								key={fam.id}
-								to={
-									forwardTo
-										? `/families/${fam.id}/${forwardTo}`
-										: `/families/${fam.id}`
-								}>
-								<Card family={fam} />
-							</Link>
-						))}
-				</div>
+				<Paginate
+					items={filteredFamilies}
+					itemsPerPage={10}
+					numberOfBottomPages={3}
+					renderComponent={listItem}
+				/>
 			</div>
 		</AppLayout>
 	)
