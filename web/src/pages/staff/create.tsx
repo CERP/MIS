@@ -12,7 +12,7 @@ import { isValidPhone } from 'utils/helpers'
 import { createFacultyMerge, deleteFaculty, uploadFacultyProfilePicture } from 'actions'
 import { StaffType } from 'constants/index'
 import { ShowHidePassword } from 'components/password'
-import { hash } from 'utils'
+import { hash, formatCNIC } from 'utils'
 import { getImageString, getDownsizedImage } from 'utils/image'
 
 import { UploadImage } from 'components/image'
@@ -120,7 +120,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 
 	const handleSubmit = (event: React.FormEvent) => {
 		event.preventDefault()
-
+		console.log('cnic', profile)
 		if (!isValidPhone(profile.Phone)) {
 			return window.alert('Please provide correct phone number!')
 		}
@@ -146,9 +146,19 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 	const handleInput = (
 		event: React.ChangeEvent<HTMLInputElement & HTMLSelectElement & HTMLTextAreaElement>
 	) => {
+		const numberRegex = /^[0-9]+$/
 		const { name, value, checked, type } = event.target
 
-		setState({ ...state, profile: { ...profile, [name]: value } })
+		setState({
+			...state,
+			profile: {
+				...profile,
+				[name]:
+					name === 'CNIC' || name === 'ManCNIC'
+						? numberRegex.test(value) || formatCNIC(value)
+						: value
+			}
+		})
 	}
 
 	// TODO: replace this with generic handler
@@ -301,6 +311,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 						<input
 							name="CNIC"
 							onChange={handleInput}
+							value={profile.CNIC}
 							placeholder="xxxxx-xxxxxxx-x"
 							className="tw-input w-full tw-is-form-bg-black"
 						/>

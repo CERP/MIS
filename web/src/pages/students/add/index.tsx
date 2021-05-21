@@ -14,6 +14,7 @@ import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import AdmissionForm from 'components/Printable/Student/admissionform'
 import { AppLayout } from 'components/Layout/appLayout'
 import { isValidPhone } from 'utils/helpers'
+import { formatCNIC } from 'utils'
 import { getImageString, getDownsizedImage } from 'utils/image'
 
 import { UploadImage } from 'components/image'
@@ -141,7 +142,10 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 	) => {
 		const { name, value, checked, type } = event.target
 
-		setState({ ...state, profile: { ...state.profile, [name]: value } })
+		setState({
+			...state,
+			profile: { ...state.profile, [name]: name === 'ManCNIC' ? formatCNIC(value) : value }
+		})
 	}
 
 	const handleInputByPath = (
