@@ -9,6 +9,7 @@ import { StatsTab } from './statistics'
 import { AppLayout } from 'components/Layout/appLayout'
 import { Tabbar } from 'components/tabs'
 import * as History from 'history'
+import { useHistory } from 'react-router-dom'
 
 enum Tabs {
 	SETTINGS,
@@ -33,6 +34,7 @@ const TabbarContent = [
 
 export const Home = () => {
 	const urlParams = new URLSearchParams(location.search)
+	const h = useHistory()
 
 	const [activeTab, setActiveTab] = useState(
 		parseInt(urlParams.get('activeTab') ?? '1') ?? Tabs.ACTIONS
@@ -49,7 +51,17 @@ export const Home = () => {
 	if (!biggerThan880) {
 		return (
 			<AppLayout title={'Home' + ' - ' + TabbarContent[activeTab].title}>
-				<Tabbar tab={activeTab} setTab={setActiveTab} content={TabbarContent} />
+				<Tabbar
+					setTabParams={tab =>
+						h.push({
+							pathname: location.pathname,
+							search: '?activeTab=' + tab
+						})
+					}
+					tab={activeTab}
+					setTab={setActiveTab}
+					content={TabbarContent}
+				/>
 				{renderComponent()}
 			</AppLayout>
 		)
