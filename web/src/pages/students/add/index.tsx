@@ -13,10 +13,12 @@ import toTitleCase from 'utils/toTitleCase'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import AdmissionForm from 'components/Printable/Student/admissionform'
 import { isValidPhone } from 'utils/helpers'
+import { formatCNIC } from 'utils'
 import { getImageString, getDownsizedImage } from 'utils/image'
 
 import { UploadImage } from 'components/image'
 import { PlusButton } from 'components/Button/plus'
+import { numberRegex } from 'constants/index'
 
 const blankStudent = (): MISStudent => ({
 	id: v4(),
@@ -103,7 +105,7 @@ export const CreateOrUpdateStudent = () => {
 		Object.values(students)
 			.filter(s => s.id && s.Name)
 			.forEach(s => {
-				Object.keys(s.tags || {}).forEach(tag => tags.add(tag))
+				Object.keys(s.tags ?? {}).forEach(tag => tags.add(tag))
 			})
 
 		return tags
@@ -136,9 +138,28 @@ export const CreateOrUpdateStudent = () => {
 	const handleInput = (
 		event: React.ChangeEvent<HTMLInputElement & HTMLSelectElement & HTMLTextAreaElement>
 	) => {
-		const { name, value, checked, type } = event.target
+		const { name, value } = event.target
 
-		setState({ ...state, profile: { ...state.profile, [name]: value } })
+		if (name === 'ManCNIC' || name === 'BForm') {
+			if (numberRegex.test(value)) {
+				return setState({
+					...state,
+					profile: {
+						...state.profile,
+						[name]: formatCNIC(value)
+					}
+				})
+			}
+			return
+		}
+
+		setState({
+			...state,
+			profile: {
+				...state.profile,
+				[name]: value
+			}
+		})
 	}
 
 	const handleInputByPath = (
@@ -194,6 +215,13 @@ export const CreateOrUpdateStudent = () => {
 
 	const takeImage = (imgString: string) => {
 		getDownsizedImage(imgString, 600, 'jpeg').then(img => {
+			setState({
+				...state,
+				profile: {
+					...state.profile,
+					ProfilePicture: { ...state.profile.ProfilePicture, image_string: img }
+				}
+			})
 			dispatch(uploadStudentProfilePicture(state.profile, img))
 		})
 	}
@@ -211,7 +239,7 @@ export const CreateOrUpdateStudent = () => {
 					<div className="flex flex-row items-baseline justify-between w-3/5 md:w-1/4">
 						<UploadImage
 							src={
-								state.profile.ProfilePicture?.url ||
+								state.profile.ProfilePicture?.url ??
 								state.profile.ProfilePicture?.image_string
 							}
 							handleImageChange={uploadProfileImage}
@@ -347,6 +375,7 @@ export const CreateOrUpdateStudent = () => {
 							name="Phone"
 							onChange={handleInput}
 							value={state.profile.Phone}
+							type="number"
 							placeholder="Type phone #"
 							className="w-full bg-transparent tw-input border-blue-brand ring-1"
 						/>
@@ -385,6 +414,7 @@ export const CreateOrUpdateStudent = () => {
 						<input
 							name="AlternatePhone"
 							onChange={handleInput}
+							type="number"
 							value={state.profile.AlternatePhone}
 							placeholder="Type phone #"
 							className="w-full bg-transparent tw-input border-blue-brand ring-1"

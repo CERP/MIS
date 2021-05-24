@@ -170,6 +170,7 @@ export const AddStaff: React.FC<AddStaffProps> = ({ skipStage }) => {
 					name="Phone"
 					onChange={handleInput}
 					required
+					type="number"
 					placeholder="e.g. 03xxxxxxxx"
 					className="tw-input w-full tw-is-form-bg-black"
 				/>

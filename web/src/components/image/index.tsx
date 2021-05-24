@@ -1,4 +1,5 @@
 import React from 'react'
+import toast from 'react-hot-toast'
 import { CameraIcon, UploadIcon } from '@heroicons/react/outline'
 import { XCircleIcon } from '@heroicons/react/solid'
 
@@ -6,6 +7,7 @@ import UserIconSvg from 'assets/svgs/user.svg'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
 import Camera from 'components/Camera'
+import { isMobile } from 'utils/helpers'
 
 interface UploadImageProps {
 	src: string
@@ -31,6 +33,14 @@ export const UploadImage = ({
 		setShowCamera(!showCamera)
 	}
 
+	const startCamera = () => {
+		if (isMobile()) {
+			return setShowCamera(!showCamera)
+		}
+
+		toast.error('Please use mobile device to take picture')
+	}
+
 	return (
 		<>
 			{removeImage ? (
@@ -40,13 +50,13 @@ export const UploadImage = ({
 				/>
 			) : (
 				<CameraIcon
-					onClick={() => setShowCamera(!showCamera)}
-					className="w-8 bg-white p-1 rounded-full text-teal-brand cursor-pointer"
+					onClick={startCamera}
+					className="w-8 bg-white p-1 rounded-full text-teal-brand cursor-pointer lg:text-gray-500"
 				/>
 			)}
 			{showCamera && (
 				<TModal>
-					<div ref={cameraModalRef}>
+					<div ref={cameraModalRef} className="w-full">
 						<Camera
 							onImageAccepted={onCameraImageTaken}
 							height={100}

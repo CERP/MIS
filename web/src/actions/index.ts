@@ -620,6 +620,25 @@ export const markFaculty = (
 	)
 }
 
+export const markAllFacultyAttendance = (
+	faculty: MISTeacher[],
+	date: string,
+	status: MISTeacherAttendanceStatus,
+	time = moment.now()
+) => (dispatch: Function) => {
+	const merges = faculty.reduce((agg, f) => {
+		return [
+			...agg,
+			{
+				path: ['db', 'faculty', f.id, 'attendance', date, status],
+				value: time
+			}
+		]
+	}, [])
+
+	dispatch(createMerges(merges))
+}
+
 export const undoFacultyAttendance = (faculty: MISTeacher, date: string) => (
 	dispatch: Function
 ) => {

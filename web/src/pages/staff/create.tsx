@@ -12,10 +12,11 @@ import { isValidPhone } from 'utils/helpers'
 import { createFacultyMerge, deleteFaculty, uploadFacultyProfilePicture } from 'actions'
 import { StaffType } from 'constants/index'
 import { ShowHidePassword } from 'components/password'
-import { hash } from 'utils'
+import { hash, formatCNIC } from 'utils'
 import { getImageString, getDownsizedImage } from 'utils/image'
 
 import { UploadImage } from 'components/image'
+import { numberRegex } from 'constants/index'
 
 const blankTeacher = (): MISTeacher => ({
 	id: v4(),
@@ -145,9 +146,28 @@ export const CreateOrUpdateStaff = () => {
 	const handleInput = (
 		event: React.ChangeEvent<HTMLInputElement & HTMLSelectElement & HTMLTextAreaElement>
 	) => {
-		const { name, value, checked, type } = event.target
+		const { name, value } = event.target
 
-		setState({ ...state, profile: { ...profile, [name]: value } })
+		if (name === 'ManCNIC' || name === 'CNIC') {
+			if (numberRegex.test(value)) {
+				return setState({
+					...state,
+					profile: {
+						...state.profile,
+						[name]: formatCNIC(value)
+					}
+				})
+			}
+			return
+		}
+
+		setState({
+			...state,
+			profile: {
+				...profile,
+				[name]: value
+			}
+		})
 	}
 
 	// TODO: replace this with generic handler
@@ -166,6 +186,13 @@ export const CreateOrUpdateStaff = () => {
 
 	const uploadProfileImageFromCamera = (imgString: string) => {
 		getDownsizedImage(imgString, 600, 'jpeg').then(img => {
+			setState({
+				...state,
+				profile: {
+					...state.profile,
+					ProfilePicture: { ...state.profile.ProfilePicture, image_string: img }
+				}
+			})
 			dispatch(uploadFacultyProfilePicture(state.profile.id, img))
 		})
 	}
@@ -200,16 +227,18 @@ export const CreateOrUpdateStaff = () => {
 					<div className="text-white text-center text-base my-5">
 						Personal Information
 					</div>
-					<div className="flex flex-row items-baseline justify-between w-3/5 md:w-1/4">
-						<UploadImage
-							src={
-								state.profile.ProfilePicture?.url ||
-								state.profile.ProfilePicture?.image_string
-							}
-							handleImageChange={uploadProfileImage}
-							handleCameraImageTaken={uploadProfileImageFromCamera}
-						/>
-					</div>
+					{!isNewStaff() && (
+						<div className="flex flex-row items-baseline justify-between w-3/5 md:w-1/4">
+							<UploadImage
+								src={
+									state.profile.ProfilePicture?.url ??
+									state.profile.ProfilePicture?.image_string
+								}
+								handleImageChange={uploadProfileImage}
+								handleCameraImageTaken={uploadProfileImageFromCamera}
+							/>
+						</div>
+					)}
 					<form
 						id="staff-form"
 						className="text-white space-y-4 px-4 w-full md:w-3/5"
@@ -291,6 +320,7 @@ export const CreateOrUpdateStaff = () => {
 						<input
 							name="CNIC"
 							onChange={handleInput}
+							value={profile.CNIC}
 							placeholder="xxxxx-xxxxxxx-x"
 							className="tw-input w-full tw-is-form-bg-black"
 						/>
@@ -300,6 +330,7 @@ export const CreateOrUpdateStaff = () => {
 							name="Phone"
 							onChange={handleInput}
 							required
+							type="number"
 							value={profile.Phone}
 							placeholder="e.g. 03xxxxxxxx"
 							className="tw-input w-full tw-is-form-bg-black"
