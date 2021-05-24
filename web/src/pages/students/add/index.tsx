@@ -141,21 +141,19 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 	const handleInput = (
 		event: React.ChangeEvent<HTMLInputElement & HTMLSelectElement & HTMLTextAreaElement>
 	) => {
-		const { name, value, checked, type } = event.target
+		const { name, value } = event.target
 
 		if (name === 'ManCNIC' || name === 'BForm') {
 			if (numberRegex.test(value)) {
-				setState({
+				return setState({
 					...state,
 					profile: {
 						...state.profile,
 						[name]: formatCNIC(value)
 					}
 				})
-				return
-			} else {
-				return
 			}
+			return
 		}
 
 		setState({

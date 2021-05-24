@@ -172,11 +172,10 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 		const { name, value } = event.target
 		if (name === 'ManCNIC') {
 			if (numberRegex.test(value)) {
-				setState({ ...state, ManCNIC: formatCNIC(value) })
-				return
-			} else {
-				return
+				return setState({ ...state, ManCNIC: formatCNIC(value) })
 			}
+
+			return
 		}
 
 		setState({
