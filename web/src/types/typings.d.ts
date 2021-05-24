@@ -740,6 +740,7 @@ type AugmentedSmsHistory = {
 
 interface Package {
 	title: 'Taleem-1' | 'Taleem-2' | 'Taleem-3' | ''
+	code: string
 	popular?: boolean
 	price: string
 	currency: 'PKR'
@@ -755,7 +756,14 @@ type SchoolSignup = {
 	confirm_password?: string
 	schoolName: string
 
-	packageName: 'FREE_TRIAL' | 'TALEEM1' | 'TALEEM2' | 'TALEEM3'
+	packageName:
+	| 'FREE_TRIAL'
+	| 'TALEEM1'
+	| 'TALEEM2'
+	| 'TALEEM2A'
+	| 'TALEEM2B'
+	| 'TALEEM2C'
+	| 'TALEEM3'
 
 	typeOfLogin?: string
 	referralSchoolName?: string
