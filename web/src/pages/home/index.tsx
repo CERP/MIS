@@ -36,7 +36,7 @@ export const Home = () => {
 	const urlParams = new URLSearchParams(location.search)
 	const h = useHistory()
 
-	const [activeTab, setActiveTab] = useState(
+	const [activeTab, setActiveTab] = useState<number>(
 		parseInt(urlParams.get('activeTab') ?? '1') ?? Tabs.ACTIONS
 	)
 	const biggerThan880 = useMediaPredicate('(min-width: 880px)')
