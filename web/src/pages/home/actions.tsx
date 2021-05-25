@@ -10,9 +10,9 @@ import iconExams from 'assets/svgs/exams.svg'
 import iconAttendance from 'assets/svgs/attendance.svg'
 import iconDiary from 'assets/svgs/diary.svg'
 import iconExpense from 'assets/svgs/expense.svg'
-import { useSelector } from 'react-redux'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
+import { checkPermission } from 'utils'
 
 const links: CardProps[] = [
 	{
@@ -128,30 +128,4 @@ const Card = ({ title, icon, link, disabled = false }: CardProps) => {
 			</div>
 		</Link>
 	)
-}
-function checkPermission(
-	permissions: {
-		fee: boolean
-		dailyStats: boolean
-		setupPage: boolean
-		expense: boolean
-		family: boolean
-		prospective: boolean
-	},
-	title: string,
-	subAdmin: boolean,
-	admin: boolean
-): boolean {
-	if (admin) {
-		return true
-	}
-
-	switch (title) {
-		case 'fees':
-			return permissions.fee && subAdmin
-		case 'expense':
-			return permissions.expense && subAdmin
-		default:
-			return true
-	}
 }

@@ -35,9 +35,9 @@ export const Home = () => {
 	const [activeTab, setActiveTab] = useState(Tabs.ACTIONS)
 	const biggerThan880 = useMediaPredicate('(min-width: 880px)')
 
-	const { faculty } = useSelector((state: RootReducerState) => state.db)
+	const faculty = useSelector((state: RootReducerState) => state.db.faculty)
 
-	const { faculty_id } = useSelector((state: RootReducerState) => state.auth)
+	const faculty_id = useSelector((state: RootReducerState) => state.auth.faculty_id)
 	const { permissions, Admin, SubAdmin } = faculty[faculty_id]
 
 	const renderComponent = () =>

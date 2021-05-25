@@ -12,6 +12,7 @@ import {
 	ExclamationIcon
 } from '@heroicons/react/outline'
 import { PieChart, Pie, Sector, ResponsiveContainer } from 'recharts'
+import { checkPermission } from 'utils'
 
 enum Tab {
 	TEACHER,
@@ -133,7 +134,7 @@ export const StatsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 		<div className="p-5">
 			<div className="mb-6 text-lg text-center md:hidden">Daily Statistics</div>
 
-			{admin || (subAdmin && permissions.dailyStats) ? (
+			{checkPermission(permissions, 'dailyStats', subAdmin, admin) ? (
 				<div className="p-6 bg-white border border-gray-100 shadow-md rounded-2xl md:pt-3">
 					<div className="text-lg font-semibold text-center hidden md:block md:mb-4">
 						Daily Statistics
@@ -206,14 +207,13 @@ export const StatsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 				</>
 			)}
 
-			{admin ||
-				(subAdmin && permissions.dailyStats && (
-					<div className="px-10 py-6 mt-4 bg-white border shadow-md rounded-2xl lg:hidden">
-						<MoreStats
-							{...{ amountCollected, studentsWhoPaid, lastSnapshot, unsyncedChanges }}
-						/>
-					</div>
-				))}
+			{checkPermission(permissions, 'dailyStats', subAdmin, admin) && (
+				<div className="px-10 py-6 mt-4 bg-white border shadow-md rounded-2xl lg:hidden">
+					<MoreStats
+						{...{ amountCollected, studentsWhoPaid, lastSnapshot, unsyncedChanges }}
+					/>
+				</div>
+			)}
 		</div>
 	)
 }

@@ -2,7 +2,7 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 
 import Card from 'components/cards/pill-button'
-import { isValidStudent, isValidTeacher } from 'utils'
+import { checkPermission, isValidStudent, isValidTeacher } from 'utils'
 
 import iconClasses from './assets/classes.svg'
 import iconTeachers from './assets/teachers.svg'
@@ -23,7 +23,9 @@ type PropTypes = {
 }
 
 export const SettingsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
-	const { faculty, students, classes } = useSelector((state: RootReducerState) => state.db)
+	const faculty = useSelector((state: RootReducerState) => state.db.faculty)
+	const classes = useSelector((state: RootReducerState) => state.db.classes)
+	const students = useSelector((state: RootReducerState) => state.db.students)
 
 	const totalStaff = Object.values(faculty).filter(f => isValidTeacher(f) && f.Active).length
 
@@ -31,44 +33,48 @@ export const SettingsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 		Object.values(students).filter(s => isValidStudent(s) && s.Active)
 	)
 
-	const setupPermission = admin || (subAdmin && permissions.setupPage)
-
 	return (
 		<div className="p-6 lg:w-full">
 			<div className="text-center text-lg mb-6 md:hidden">Tap to configure the module</div>
 			<div className="space-y-4">
 				<Card
 					title={'Staff'}
-					link={setupPermission ? '/staff' : '#'}
-					disabled={!setupPermission}
+					link={checkPermission(permissions, 'setup', subAdmin, admin) ? '/staff' : '#'}
+					disabled={!checkPermission(permissions, 'setup', subAdmin, admin)}
 					caption={`Total = ${totalStaff}`}
 					icon={iconTeachers}
 				/>
 				<Card
 					title={'Classes'}
-					link={setupPermission ? '/classes' : '#'}
+					link={checkPermission(permissions, 'setup', subAdmin, admin) ? '/classes' : '#'}
 					caption={`Total = ${Object.keys(classes).length}`}
 					icon={iconClasses}
-					disabled={!setupPermission}
+					disabled={!checkPermission(permissions, 'setup', subAdmin, admin)}
 				/>
 				<Card
 					title={'Students'}
-					link={setupPermission ? '/students' : '#'}
+					link={
+						checkPermission(permissions, 'setup', subAdmin, admin) ? '/students' : '#'
+					}
 					caption={`Total = ${totalStudents}`}
-					disabled={!setupPermission}
+					disabled={!checkPermission(permissions, 'setup', subAdmin, admin)}
 					icon={iconStudents}
 				/>
 				<Card
 					title={'Families'}
-					link={admin || (subAdmin && permissions.family) ? '/families' : '#'}
-					disabled={!admin || (subAdmin && permissions.family)}
+					link={
+						checkPermission(permissions, 'family', subAdmin, admin) ? '/families' : '#'
+					}
+					disabled={!checkPermission(permissions, 'family', subAdmin, admin)}
 					caption={`Total = ${totalFamilies}`}
 					icon={iconFamily}
 				/>
 				<Card
 					title={'Profile'}
-					link={setupPermission ? '/settings' : '#'}
-					disabled={!setupPermission}
+					link={
+						checkPermission(permissions, 'setup', subAdmin, admin) ? '/settings' : '#'
+					}
+					disabled={!checkPermission(permissions, 'setup', subAdmin, admin)}
 					caption={'Profile, Grades, Data etc'}
 					icon={iconStudents}
 				/>

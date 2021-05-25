@@ -1,29 +1,26 @@
 import { hostHTTPS } from './hostConfig'
-import Hyphenator from './Hyphenator';
+import Hyphenator from './Hyphenator'
 
-const encoder = new TextEncoder();
+const encoder = new TextEncoder()
 
 export async function hash(str: string): Promise<string> {
 	try {
-		const msgBuffer = encoder.encode(str);
-		const hashBuffer = await crypto.subtle.digest("SHA-512", msgBuffer)
+		const msgBuffer = encoder.encode(str)
+		const hashBuffer = await crypto.subtle.digest('SHA-512', msgBuffer)
 
 		const hashArray = Array.from(new Uint8Array(hashBuffer))
 
 		const hashHex = hashArray.map(b => ('00' + b.toString(16)).slice(-2)).join('')
-		return hashHex;
-	}
-	catch (ex) {
-		console.error(ex);
+		return hashHex
+	} catch (ex) {
+		console.error(ex)
 
 		return 'xxxxx'
 	}
-
 }
 
 export const checkTime = async (): Promise<boolean> => {
 	try {
-
 		const reqOpts: RequestInit = {
 			method: 'GET',
 			headers: {
@@ -31,8 +28,9 @@ export const checkTime = async (): Promise<boolean> => {
 			}
 		}
 
-		const response: ServerResponse = await fetch(`${hostHTTPS}/mis/server-time`, reqOpts)
-			.then((res: Response) => res.json())
+		const response: ServerResponse = await fetch(`${hostHTTPS}/mis/server-time`, reqOpts).then(
+			(res: Response) => res.json()
+		)
 
 		const { os_time } = response
 		const client_time = new Date().getTime()
@@ -43,21 +41,18 @@ export const checkTime = async (): Promise<boolean> => {
 		const threshold = 1 * 60 * 60 * 1000
 
 		return diff < threshold
-
 	} catch (ex) {
 		console.log(ex)
 		return true
 	}
 }
 
-
 type ServerResponse = {
 	os_time: number
 }
 
 export const formatCNIC = (cnic: string): string => {
-
-	if (cnic === "" || cnic.length < 13) {
+	if (cnic === '' || cnic.length < 13) {
 		return cnic
 	}
 
@@ -65,13 +60,12 @@ export const formatCNIC = (cnic: string): string => {
 }
 
 export const formatPhone = (phone: string): string => {
-
-	if (phone === "" || phone.length >= 11) {
+	if (phone === '' || phone.length >= 11) {
 		return phone
 	}
 
 	// append '0' at start if not present due to auto excel conversion text to number
-	return "0".concat(phone)
+	return '0'.concat(phone)
 }
 
 /**
@@ -88,4 +82,37 @@ export const isValidStudent = (student: MISStudent): boolean => {
 
 export const isValidTeacher = (teacher: MISTeacher): boolean => {
 	return !!(teacher && teacher.id && teacher.Name)
+}
+
+export const checkPermission = (
+	permissions: {
+		fee: boolean
+		dailyStats: boolean
+		setupPage: boolean
+		expense: boolean
+		family: boolean
+		prospective: boolean
+	},
+	title: string,
+	subAdmin: boolean,
+	admin: boolean
+): boolean => {
+	if (admin) {
+		return true
+	}
+
+	switch (title) {
+		case 'fees':
+			return permissions.fee && subAdmin
+		case 'expense':
+			return permissions.expense && subAdmin
+		case 'setup':
+			return permissions.setupPage && subAdmin
+		case 'dailyStats':
+			return permissions.dailyStats && subAdmin
+		case 'family':
+			return permissions.family && subAdmin
+		default:
+			return true
+	}
 }
