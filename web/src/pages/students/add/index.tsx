@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import Dynamic from '@cerp/dynamic'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { v4 } from 'node-uuid'
 import { useDispatch, useSelector } from 'react-redux'
 import clsx from 'clsx'
@@ -64,6 +64,7 @@ type State = {
 }
 
 export const CreateOrUpdateStudent = () => {
+	const history = useHistory()
 	const { id } = useParams<RouteInfo>()
 	const isNewStudent = () => location.pathname.indexOf('new') >= 0
 
@@ -76,9 +77,9 @@ export const CreateOrUpdateStudent = () => {
 		? students[id].tags
 			? students[id]
 			: {
-				...students[id],
-				tags: {}
-			}
+					...students[id],
+					tags: {}
+			  }
 		: blankStudent()
 
 	const [state, setState] = useState<State>({
@@ -201,6 +202,7 @@ export const CreateOrUpdateStudent = () => {
 
 			setTimeout(() => {
 				setState({ ...state, redirect: '/students' })
+				history.goBack()
 			}, 1000)
 		}
 	}
