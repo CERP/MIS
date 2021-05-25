@@ -15,6 +15,8 @@ import { StudentDropdownSearch } from 'components/input/search'
 import { addStudentToFamily, saveFamilyInfo } from 'actions'
 import { createMerges } from 'actions/core'
 import { numberRegex } from 'constants/index'
+import { useComponentVisible } from 'hooks/useComponentVisible'
+import { TModal } from 'components/Modal'
 
 type SingleFamilyProps = RouteComponentProps<{ id: string }>
 
@@ -28,6 +30,8 @@ type State = Partial<MISStudent> & {
 export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 	const dispatch = useDispatch()
 	const { students, classes } = useSelector((state: RootReducerState) => state.db)
+	const { ref, setIsComponentVisible, isComponentVisible } = useComponentVisible(false)
+	const [studnetToDelete, setStudentToDelete] = useState<MISStudent>()
 
 	const famId = match.params.id
 	const isNewFam = location.pathname.indexOf('new') >= 0
@@ -72,13 +76,15 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 
 	// to show warning msg to override sibling information, if it's different
 	const siblingsUnMatchingInfo = () => {
-		return siblings.some(
+		const matching = siblings.some(
 			s =>
 				s.Phone !== siblings[0].Phone ||
 				s.ManCNIC !== siblings[0].ManCNIC ||
 				s.ManName !== siblings[0].ManName ||
 				s.Address !== siblings[0].Address
 		)
+		if (matching) toast.error('Sibling Information does not match')
+		return matching
 	}
 
 	const handelAddStudent = (studentId: string) => {
@@ -305,7 +311,10 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 									key={s.id}
 									student={s}
 									sections={sections}
-									removeStudent={() => handleRemoveStudent(s)}
+									removeStudent={() => {
+										setStudentToDelete(s)
+										setIsComponentVisible(true)
+									}}
 								/>
 							))}
 						</div>
@@ -338,6 +347,28 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 					</form>
 				</div>
 			</div>
+			{isComponentVisible && (
+				<TModal>
+					<div className="bg-white md:p-10 p-8 text-center text-sm" ref={ref}>
+						<div className="font-semibold text-lg">
+							Are you sure you want to remove {studnetToDelete.Name} from this family?
+						</div>
+
+						<div className="flex flex-row justify-between space-x-4 mt-4">
+							<button
+								onClick={() => setIsComponentVisible(false)}
+								className="py-1 md:py-2 tw-btn bg-gray-400 hover:bg-gray-500 text-white w-full">
+								Cancel
+							</button>
+							<button
+								onClick={() => handleRemoveStudent(studnetToDelete)}
+								className="py-1 md:py-2 tw-btn-red w-full font-semibold">
+								Confirm
+							</button>
+						</div>
+					</div>
+				</TModal>
+			)}
 		</AppLayout>
 	)
 }
