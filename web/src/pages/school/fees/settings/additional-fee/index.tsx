@@ -70,11 +70,12 @@ export const AdditionalFee = () => {
 		// if there's an updatable fee, get the id from state
 		// if it isn't, generate unique id
 		const feeId = state.feeId || v4()
-
+		let name
 		// For this case, we're keeping template in settings.classes.additionalFees
 		// to generate payments on run time.
 		// Note: make sure it will handle all cases to generate to payments for single or monthly payment
 		if (state.addFeeTo === AddFeeOptions.CLASS) {
+			name = classes[state.classId].name
 			dispatch(
 				createMerges([
 					{
@@ -86,6 +87,7 @@ export const AdditionalFee = () => {
 		}
 
 		if (state.addFeeTo === AddFeeOptions.STUDENT) {
+			name = students[state.studentId].Name
 			dispatch(
 				createMerges([
 					{
@@ -97,6 +99,7 @@ export const AdditionalFee = () => {
 		}
 
 		if (state.addFeeTo === AddFeeOptions.ALL) {
+			name = 'All Students'
 			const merges = Object.values(students)
 				.filter(s => isValidStudent(s) && s.Active)
 				.reduce(
@@ -113,7 +116,7 @@ export const AdditionalFee = () => {
 			dispatch(createMerges(merges))
 		}
 
-		toast.success('Additional fee has been added')
+		toast.success(`Additional fee for ${name} has been added`)
 		setConfirmAddFeeModal(false)
 
 		setState({ ...state, fee: defaultFee, feeId: '' })
@@ -274,8 +277,8 @@ export const AdditionalFee = () => {
 									{state.addFeeTo === AddFeeOptions.CLASS
 										? 'Class'
 										: state.addFeeTo === AddFeeOptions.STUDENT
-											? toTitleCase(students[state.studentId].Name)
-											: 'All Students'}
+										? toTitleCase(students[state.studentId].Name)
+										: 'All Students'}
 								</div>
 								<div className="flex flex-row justify-between space-x-4">
 									<button
