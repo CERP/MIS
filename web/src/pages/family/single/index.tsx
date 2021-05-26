@@ -312,7 +312,7 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 
 						{(isNewFam ? Object.keys(state.siblings ?? {}).length === 0 : true) && (
 							<>
-								<div>Add Siblings</div>
+								<div className="font-semibold">Search and Add Siblings</div>
 								<StudentDropdownSearch
 									classes={classes}
 									students={students}

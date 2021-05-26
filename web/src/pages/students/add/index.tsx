@@ -257,7 +257,7 @@ export const CreateOrUpdateStudent = () => {
 							required
 							value={state.profile.Name}
 							placeholder="Type name"
-							className="w-full bg-transparent tw-input border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div>Gender</div>
@@ -303,7 +303,7 @@ export const CreateOrUpdateStudent = () => {
 							onChange={handleInput}
 							value={state.profile.ManName}
 							placeholder="Type name"
-							className="w-full bg-transparent tw-input border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						{/* <div className="flex flex-row items-center space-x-4"> */}
@@ -355,7 +355,7 @@ export const CreateOrUpdateStudent = () => {
 									onChange={handleInput}
 									value={state.profile.RollNumber}
 									placeholder="Type roll #"
-									className="w-full bg-transparent tw-input border-blue-brand ring-1"
+									className="tw-input w-full tw-is-form-bg-black"
 								/>
 							</div>
 							<div className="flex flex-col space-y-4">
@@ -365,7 +365,7 @@ export const CreateOrUpdateStudent = () => {
 									onChange={handleInput}
 									value={state.profile.AdmissionNumber}
 									placeholder="Type admimission #"
-									className="w-full bg-transparent tw-input border-blue-brand ring-1"
+									className="tw-input w-full tw-is-form-bg-black"
 								/>
 							</div>
 						</div>
@@ -377,7 +377,7 @@ export const CreateOrUpdateStudent = () => {
 							value={state.profile.Phone}
 							type="number"
 							placeholder="Type phone #"
-							className="w-full bg-transparent tw-input border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div className="text-lg font-semibold text-center">
@@ -389,7 +389,7 @@ export const CreateOrUpdateStudent = () => {
 							type="date"
 							value={moment(state.profile.Birthdate).format('YYYY-MM-DD')}
 							onChange={handleInput}
-							className="w-full bg-transparent tw-input border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div>B-Form Number</div>
@@ -398,7 +398,7 @@ export const CreateOrUpdateStudent = () => {
 							onChange={handleInput}
 							value={state.profile.BForm}
 							placeholder="xxxxx-xxxxxxx-x"
-							className="w-full bg-transparent tw-input border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div>Father/Gaurdian CNIC</div>
@@ -407,7 +407,7 @@ export const CreateOrUpdateStudent = () => {
 							onChange={handleInput}
 							value={state.profile.ManCNIC}
 							placeholder="xxxxx-xxxxxxx-x"
-							className="w-full bg-transparent tw-input border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div>Alternative Contact Number</div>
@@ -417,7 +417,7 @@ export const CreateOrUpdateStudent = () => {
 							type="number"
 							value={state.profile.AlternatePhone}
 							placeholder="Type phone #"
-							className="w-full bg-transparent tw-input border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div>Address</div>
@@ -427,7 +427,7 @@ export const CreateOrUpdateStudent = () => {
 							onChange={handleInput}
 							rows={2}
 							placeholder="Type street address"
-							className="w-full bg-transparent tw-input border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div className="flex flex-row items-center justify-between space-x-4">
@@ -445,7 +445,7 @@ export const CreateOrUpdateStudent = () => {
 											e.target.valueAsNumber
 										)
 									}
-									className="w-full bg-transparent tw-input border-blue-brand ring-1"
+									className="tw-input w-full tw-is-form-bg-black"
 								/>
 							</div>
 							<div className="flex flex-col space-y-4">
@@ -490,7 +490,7 @@ export const CreateOrUpdateStudent = () => {
 								onChange={e => handleInputByPath(['newTag'], e.target.value)}
 								placeholder="Select or type new tag"
 								autoComplete="off"
-								className="w-full bg-transparent tw-input border-blue-brand ring-1"
+								className="tw-input w-full tw-is-form-bg-black"
 							/>
 							<PlusButton handleClick={addTag} className="ml-4" />
 						</div>

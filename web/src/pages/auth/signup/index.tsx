@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppLayout } from 'components/Layout/appLayout'
@@ -31,19 +31,23 @@ const initialState: State = {
 
 export const SchoolSignup = () => {
 	const dispatch = useDispatch()
+	const location = useLocation()
+	const searchParams = new URLSearchParams(location.search)
 
 	const {
 		connected,
 		sign_up_form: { loading, succeed, reason }
 	} = useSelector((state: RootReducerState) => state)
 
-	// form state
-	const [state, setState] = useState(initialState)
+	const [state, setState] = useState({
+		...initialState,
+		packageName:
+			(searchParams.get('package') as SchoolSignup['packageName']) || initialState.packageName
+	})
 
 	// move this into one state variable
 	const [togglePassword, setTogglePassword] = useState(false)
 	const [toggleConfirmPassword, setToggleConfirmedPassword] = useState(false)
-	const [hasError, setHasError] = useState('')
 
 	useEffect(() => {
 		// make sure here to check reason not equal to empty string instead of "&& reason" just
@@ -53,7 +57,6 @@ export const SchoolSignup = () => {
 				(reason?.includes(state.phone) ? `${state.phone} already exists` : reason)
 
 			setTimeout(() => {
-				// setHasError('')
 				toast.error(errorMsg)
 			}, 1000)
 		}
@@ -269,9 +272,6 @@ export const SchoolSignup = () => {
 												<span className="mx-auto">Create your Account</span>
 											)}
 										</button>
-									</div>
-									<div className="h-2 py-2 text-sm text-red-brand">
-										{hasError}
 									</div>
 								</div>
 							</div>

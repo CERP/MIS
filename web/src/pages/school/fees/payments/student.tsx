@@ -5,10 +5,9 @@ import { Link } from 'react-router-dom'
 import { AppLayout } from 'components/Layout/appLayout'
 import { toTitleCase } from 'utils/toTitleCase'
 import { isValidStudent } from 'utils'
-import getSectionsFromClasses from 'utils/getSectionsFromClasses'
-
-import UserIconSvg from 'assets/svgs/user.svg'
 import { SearchInput } from 'components/input/search'
+import getSectionsFromClasses from 'utils/getSectionsFromClasses'
+import UserIconSvg from 'assets/svgs/user.svg'
 
 export const StudentPayments = () => {
 	const { students, classes } = useSelector((state: RootReducerState) => state.db)
@@ -93,12 +92,12 @@ const Card = ({ student, sections }: CardProps) => {
 			<div className="absolute -top-10 left-0 right-0">
 				<img
 					src={
-						student.ProfilePicture?.url ||
-						student.ProfilePicture?.image_string ||
+						student.ProfilePicture?.url ??
+						student.ProfilePicture?.image_string ??
 						UserIconSvg
 					}
 					className="mx-auto h-20 w-20  rounded-full shadow-md bg-gray-500 hover:bg-gray-700"
-					alt={student.Name.split(' ')[0] || 'student'}
+					alt={student.Name.split(' ')?.[0] ?? 'student'}
 				/>
 			</div>
 		</div>
