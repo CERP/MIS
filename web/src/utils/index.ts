@@ -86,6 +86,39 @@ export const isValidTeacher = (teacher: MISTeacher): boolean => {
 	return !!(teacher && teacher.id && teacher.Name)
 }
 
+export const checkPermission = (
+	permissions: {
+		fee: boolean
+		dailyStats: boolean
+		setupPage: boolean
+		expense: boolean
+		family: boolean
+		prospective: boolean
+	},
+	title: string,
+	subAdmin: boolean,
+	admin: boolean
+): boolean => {
+	if (admin) {
+		return true
+	}
+
+	switch (title) {
+		case 'fees':
+			return permissions.fee && subAdmin
+		case 'expense':
+			return permissions.expense && subAdmin
+		case 'setup':
+			return permissions.setupPage && subAdmin
+		case 'dailyStats':
+			return permissions.dailyStats && subAdmin
+		case 'family':
+			return permissions.family && subAdmin
+		default:
+			return true
+	}
+}
+
 export const getPaymentLabel = (
 	feeName: string,
 	type: MISStudentPayment['type'] | MISStudentFee['type']

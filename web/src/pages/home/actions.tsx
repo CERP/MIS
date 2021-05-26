@@ -10,6 +10,9 @@ import iconExams from 'assets/svgs/exams.svg'
 import iconAttendance from 'assets/svgs/attendance.svg'
 import iconDiary from 'assets/svgs/diary.svg'
 import iconExpense from 'assets/svgs/expense.svg'
+import clsx from 'clsx'
+import toast from 'react-hot-toast'
+import { checkPermission } from 'utils'
 
 const links: CardProps[] = [
 	{
@@ -59,13 +62,30 @@ const links: CardProps[] = [
 	}
 ]
 
-export const ActionTab = () => {
+type PropTypes = {
+	permissions: {
+		fee: boolean
+		dailyStats: boolean
+		setupPage: boolean
+		expense: boolean
+		family: boolean
+		prospective: boolean
+	}
+	admin: boolean
+	subAdmin: boolean
+}
+
+export const ActionTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 	return (
 		<div className="p-10 pt-6 mx-auto mb-10 md:w-full">
 			<div className="mb-6 text-lg text-center md:hidden">What would you like to do?</div>
 			<div className="grid grid-cols-2 gap-4 ">
 				{links.map((link, index) => (
-					<Card key={link.title + index} {...link} />
+					<Card
+						key={link.title + index}
+						{...link}
+						disabled={!checkPermission(permissions, link.title, subAdmin, admin)}
+					/>
 				))}
 			</div>
 			{isMobile() && (
@@ -87,12 +107,20 @@ type CardProps = {
 	link: string
 	title: string
 	icon: string
+	disabled?: boolean
 }
 
-const Card = ({ title, icon, link }: CardProps) => {
+const Card = ({ title, icon, link, disabled = false }: CardProps) => {
 	return (
-		<Link to={link}>
-			<div className="p-5 bg-white border shadow-md border-gray-50 rounded-2xl hover:shadow-lg">
+		<Link to={disabled ? '#' : link}>
+			<div
+				onClick={() => {
+					disabled ? toast.error("You don't have permission to access this module") : {}
+				}}
+				className={clsx(
+					'p-5 border shadow-md border-gray-50 rounded-2xl hover:shadow-lg',
+					disabled ? 'bg-gray-200 opacity-75 cursor-not-allowed' : 'bg-white'
+				)}>
 				<div className="flex flex-col items-center space-y-4">
 					<img className="w-20 h-20 rounded-full" src={icon} alt="icon" />
 					<div className="text-lg capitalize">{title}</div>
