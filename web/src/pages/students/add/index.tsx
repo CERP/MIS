@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import Dynamic from '@cerp/dynamic'
-import { useHistory, useParams } from 'react-router-dom'
+import { Redirect, useHistory, useParams } from 'react-router-dom'
 import { v4 } from 'node-uuid'
 import { useDispatch, useSelector } from 'react-redux'
 import clsx from 'clsx'
@@ -121,6 +121,25 @@ export const CreateOrUpdateStudent = () => {
 			return toast.error('Please provide correct phone number.')
 		}
 
+		if (isNewStudent()) {
+			for (const student of Object.values(students)) {
+				if (
+					student.RollNumber === state.profile.RollNumber &&
+					state.profile.RollNumber != ''
+				) {
+					toast.error('This Roll Number is already assigned to an existing student')
+					return
+				}
+				if (
+					student.AdmissionNumber === state.profile.AdmissionNumber &&
+					state.profile.AdmissionNumber != ''
+				) {
+					toast.error('This Admission Number is already assigned to an existing student')
+					return
+				}
+			}
+		}
+
 		// TODO: introduce object props trim()
 		dispatch(createStudentMerge(state.profile))
 
@@ -227,7 +246,9 @@ export const CreateOrUpdateStudent = () => {
 			dispatch(uploadStudentProfilePicture(state.profile, img))
 		})
 	}
-
+	if (state.redirect && isNewStudent()) {
+		return <Redirect to="/students" />
+	}
 	return (
 		<>
 			<div className="relative px-5 text-gray-700 md:pb-0 print:hidden">
@@ -258,6 +279,15 @@ export const CreateOrUpdateStudent = () => {
 							onChange={handleInput}
 							required
 							value={state.profile.Name}
+							placeholder="Name is Required"
+							className="w-full bg-transparent tw-input border-blue-brand ring-1"
+						/>
+
+						<div>Father/Gaurdian Name</div>
+						<input
+							name="ManName"
+							onChange={handleInput}
+							value={state.profile.ManName}
 							placeholder="Type name"
 							className="w-full bg-transparent tw-input border-blue-brand ring-1"
 						/>
@@ -299,15 +329,6 @@ export const CreateOrUpdateStudent = () => {
 							</div>
 						</div>
 
-						<div>Father/Gaurdian Name</div>
-						<input
-							name="ManName"
-							onChange={handleInput}
-							value={state.profile.ManName}
-							placeholder="Type name"
-							className="w-full bg-transparent tw-input border-blue-brand ring-1"
-						/>
-
 						{/* <div className="flex flex-row items-center space-x-4"> */}
 						{/* <div className="flex flex-col w-full space-y-4">
 								<div>Class</div>
@@ -326,7 +347,7 @@ export const CreateOrUpdateStudent = () => {
 								</select>
 							</div> */}
 						{/* <div className="flex flex-col w-full space-y-4"> */}
-						<div>Class-Section</div>
+						<div>Class-Section*</div>
 						<select
 							name="section_id"
 							required
@@ -372,13 +393,13 @@ export const CreateOrUpdateStudent = () => {
 							</div>
 						</div>
 
-						<div>Contact Number</div>
+						<div>Contact Number*</div>
 						<input
 							name="Phone"
 							onChange={handleInput}
 							value={state.profile.Phone}
 							type="number"
-							placeholder="Type phone #"
+							placeholder="Contact Number is Required"
 							className="w-full bg-transparent tw-input border-blue-brand ring-1"
 						/>
 
