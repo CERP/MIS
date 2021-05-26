@@ -63,13 +63,13 @@ ReactDOM.render(
 			position={'top-right'}
 			toastOptions={{
 				style: {
-					margin: '20px',
+					margin: '15px',
 					background: '#363636',
 					color: '#fff',
-					width: '280px'
+					width: '300px'
 				},
-				className: 'text-sm',
-				duration: 2000
+				className: 'text-base',
+				duration: 4000
 			}}
 		/>
 		<Routes store={store} />

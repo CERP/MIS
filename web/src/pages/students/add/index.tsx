@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import Dynamic from '@cerp/dynamic'
-import { RouteComponentProps } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { v4 } from 'node-uuid'
 import { useDispatch, useSelector } from 'react-redux'
 import clsx from 'clsx'
@@ -12,11 +12,13 @@ import { SwitchButton } from 'components/input/switch'
 import toTitleCase from 'utils/toTitleCase'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import AdmissionForm from 'components/Printable/Student/admissionform'
-import { AppLayout } from 'components/Layout/appLayout'
 import { isValidPhone } from 'utils/helpers'
+import { formatCNIC } from 'utils'
 import { getImageString, getDownsizedImage } from 'utils/image'
 
 import { UploadImage } from 'components/image'
+import { PlusButton } from 'components/Button/plus'
+import { numberRegex } from 'constants/index'
 
 const blankStudent = (): MISStudent => ({
 	id: v4(),
@@ -54,8 +56,6 @@ interface RouteInfo {
 	id: string
 }
 
-type CreateOrUpdateStaffProps = RouteComponentProps<RouteInfo>
-
 type State = {
 	profile: MISStudent
 	redirect: string | boolean
@@ -63,13 +63,12 @@ type State = {
 	classId?: string
 }
 
-export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ match }) => {
-	const { id } = match.params
+export const CreateOrUpdateStudent = () => {
+	const { id } = useParams<RouteInfo>()
 	const isNewStudent = () => location.pathname.indexOf('new') >= 0
 
 	const dispatch = useDispatch()
 	const {
-		auth,
 		db: { students, classes, settings, assets }
 	} = useSelector((state: RootReducerState) => state)
 
@@ -93,7 +92,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 			return
 		}
 
-		const nextStudent = students[match.params.id]
+		const nextStudent = students[id]
 
 		if (nextStudent) {
 			setState(prevState => ({ ...prevState, profile: nextStudent }))
@@ -106,7 +105,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 		Object.values(students)
 			.filter(s => s.id && s.Name)
 			.forEach(s => {
-				Object.keys(s.tags || {}).forEach(tag => tags.add(tag))
+				Object.keys(s.tags ?? {}).forEach(tag => tags.add(tag))
 			})
 
 		return tags
@@ -139,9 +138,28 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 	const handleInput = (
 		event: React.ChangeEvent<HTMLInputElement & HTMLSelectElement & HTMLTextAreaElement>
 	) => {
-		const { name, value, checked, type } = event.target
+		const { name, value } = event.target
 
-		setState({ ...state, profile: { ...state.profile, [name]: value } })
+		if (name === 'ManCNIC' || name === 'BForm') {
+			if (numberRegex.test(value)) {
+				return setState({
+					...state,
+					profile: {
+						...state.profile,
+						[name]: formatCNIC(value)
+					}
+				})
+			}
+			return
+		}
+
+		setState({
+			...state,
+			profile: {
+				...state.profile,
+				[name]: value
+			}
+		})
 	}
 
 	const handleInputByPath = (
@@ -197,13 +215,20 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 
 	const takeImage = (imgString: string) => {
 		getDownsizedImage(imgString, 600, 'jpeg').then(img => {
+			setState({
+				...state,
+				profile: {
+					...state.profile,
+					ProfilePicture: { ...state.profile.ProfilePicture, image_string: img }
+				}
+			})
 			dispatch(uploadStudentProfilePicture(state.profile, img))
 		})
 	}
 
 	return (
-		<AppLayout title={`${isNewStudent() ? 'New Student' : 'Update Student'}`}>
-			<div className="relative p-5 text-gray-700 md:p-10 md:pb-0 print:hidden">
+		<>
+			<div className="relative px-5 text-gray-700 md:pb-0 print:hidden">
 				<div className="mt-4 mb-8 text-2xl font-bold text-center">
 					{isNewStudent() ? 'Add Student' : 'Update Student'}
 				</div>
@@ -214,7 +239,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 					<div className="flex flex-row items-baseline justify-between w-3/5 md:w-1/4">
 						<UploadImage
 							src={
-								state.profile.ProfilePicture?.url ||
+								state.profile.ProfilePicture?.url ??
 								state.profile.ProfilePicture?.image_string
 							}
 							handleImageChange={uploadProfileImage}
@@ -232,7 +257,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 							required
 							value={state.profile.Name}
 							placeholder="Type name"
-							className="w-full bg-transparent tw-input border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div>Gender</div>
@@ -244,7 +269,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 									type="radio"
 									value={'male'}
 									checked={state.profile.Gender === 'male'}
-									className="w-4 h-4 mr-2 form-radio text-teal-brand"
+									className="mr-2 form-radio tw-radio"
 								/>
 								<div className="text-sm">Male</div>
 							</div>
@@ -255,7 +280,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 									type="radio"
 									value={'female'}
 									checked={state.profile.Gender === 'female'}
-									className="w-4 h-4 mr-2 form-radio text-teal-brand"
+									className="mr-2 form-radio tw-radio"
 								/>
 								<div className="text-sm">Female</div>
 							</div>
@@ -266,7 +291,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 									type="radio"
 									value={'other'}
 									checked={state.profile.Gender === 'other'}
-									className="w-4 h-4 mr-2 form-radio text-teal-brand"
+									className="mr-2 form-radio tw-radio"
 								/>
 								<div className="text-sm">Other</div>
 							</div>
@@ -278,7 +303,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 							onChange={handleInput}
 							value={state.profile.ManName}
 							placeholder="Type name"
-							className="w-full bg-transparent tw-input border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						{/* <div className="flex flex-row items-center space-x-4"> */}
@@ -330,7 +355,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 									onChange={handleInput}
 									value={state.profile.RollNumber}
 									placeholder="Type roll #"
-									className="w-full bg-transparent tw-input border-blue-brand ring-1"
+									className="tw-input w-full tw-is-form-bg-black"
 								/>
 							</div>
 							<div className="flex flex-col space-y-4">
@@ -340,7 +365,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 									onChange={handleInput}
 									value={state.profile.AdmissionNumber}
 									placeholder="Type admimission #"
-									className="w-full bg-transparent tw-input border-blue-brand ring-1"
+									className="tw-input w-full tw-is-form-bg-black"
 								/>
 							</div>
 						</div>
@@ -350,8 +375,9 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 							name="Phone"
 							onChange={handleInput}
 							value={state.profile.Phone}
+							type="number"
 							placeholder="Type phone #"
-							className="w-full bg-transparent tw-input border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div className="text-lg font-semibold text-center">
@@ -363,7 +389,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 							type="date"
 							value={moment(state.profile.Birthdate).format('YYYY-MM-DD')}
 							onChange={handleInput}
-							className="w-full bg-transparent tw-input border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div>B-Form Number</div>
@@ -372,7 +398,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 							onChange={handleInput}
 							value={state.profile.BForm}
 							placeholder="xxxxx-xxxxxxx-x"
-							className="w-full bg-transparent tw-input border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div>Father/Gaurdian CNIC</div>
@@ -381,16 +407,17 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 							onChange={handleInput}
 							value={state.profile.ManCNIC}
 							placeholder="xxxxx-xxxxxxx-x"
-							className="w-full bg-transparent tw-input border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div>Alternative Contact Number</div>
 						<input
 							name="AlternatePhone"
 							onChange={handleInput}
+							type="number"
 							value={state.profile.AlternatePhone}
 							placeholder="Type phone #"
-							className="w-full bg-transparent tw-input border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div>Address</div>
@@ -400,7 +427,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 							onChange={handleInput}
 							rows={2}
 							placeholder="Type street address"
-							className="w-full bg-transparent tw-input border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div className="flex flex-row items-center justify-between space-x-4">
@@ -418,7 +445,7 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 											e.target.valueAsNumber
 										)
 									}
-									className="w-full bg-transparent tw-input border-blue-brand ring-1"
+									className="tw-input w-full tw-is-form-bg-black"
 								/>
 							</div>
 							<div className="flex flex-col space-y-4">
@@ -463,19 +490,16 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 								onChange={e => handleInputByPath(['newTag'], e.target.value)}
 								placeholder="Select or type new tag"
 								autoComplete="off"
-								className="w-full bg-transparent tw-input border-blue-brand ring-1"
+								className="tw-input w-full tw-is-form-bg-black"
 							/>
-							<div
-								onClick={addTag}
-								className="flex items-center justify-center w-8 h-8 ml-2 border rounded-full cursor-pointer bg-blue-brand hover:bg-blue-400">
-								+
-							</div>
+							<PlusButton handleClick={addTag} className="ml-4" />
 						</div>
 
 						<div className="flex flex-row items-center">
-							<div className="flex items-center justify-center w-8 h-8 mr-4 border rounded-full cursor-pointer bg-blue-brand hover:bg-blue-400">
-								+
-							</div>
+							<PlusButton
+								handleClick={() => console.log('Not Implemented Yet')}
+								className="mr-4"
+							/>
 							<div>Show Payment Section</div>
 						</div>
 
@@ -517,6 +541,6 @@ export const CreateOrUpdateStudent: React.FC<CreateOrUpdateStaffProps> = ({ matc
 				}}
 				classes={classes}
 			/>
-		</AppLayout>
+		</>
 	)
 }

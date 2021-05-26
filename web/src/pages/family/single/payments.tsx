@@ -22,7 +22,7 @@ import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
 
 import UserIconSvg from 'assets/svgs/user.svg'
-import { isValidStudent } from 'utils'
+import { isValidStudent, getPaymentLabel } from 'utils'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 
 type State = {
@@ -34,26 +34,6 @@ type State = {
 }
 type SingleFamilyPaymentsProps = RouteComponentProps<{ id: string }>
 type AugmentedFees = Array<[string, MISStudentFee | MISClassFee]>
-
-const getPaymentLabel = (feeName: string, type: MISStudentPayment['type']) => {
-	if (feeName === MISFeeLabels.SPECIAL_SCHOLARSHIP) {
-		return 'Scholarship (M)'
-	}
-	// set fee name in default class fee logic
-	if (feeName === 'Montly') {
-		return 'Class Fee'
-	}
-
-	if (type === 'FORGIVEN') {
-		return 'Scholarship (A)'
-	}
-
-	if (type === 'SUBMITTED') {
-		return 'Paid'
-	}
-
-	return feeName
-}
 
 export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 	const dispatch = useDispatch()
@@ -105,8 +85,6 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 		const sections = getSectionsFromClasses(classes)
 		const siblings = sections?.length > 0 ? getSiblings(students, sections) : []
 
-		console.log(siblings, sections, famId)
-
 		return {
 			sections,
 			siblings
@@ -142,17 +120,17 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 	const mergedPayments = useCallback(() => {
 		if (siblings.length > 0) {
 			const merged_payments = siblings.reduce(
-				(agg, curr) => ({
+				(agg, student) => ({
 					...agg,
-					...Object.entries(curr.payments || {}).reduce((agg, [pid, p]) => {
+					...Object.entries(student.payments ?? {}).reduce((agg2, [pid, p]) => {
 						return {
-							...agg,
+							...agg2,
 							[pid]: {
 								...p,
 								fee_name:
 									p.fee_name &&
-									`${curr.Name}-${getPaymentLabel(p.fee_name, p.type)}`,
-								student_id: curr.id
+									`${student.Name}-${getPaymentLabel(p.fee_name, p.type)}`,
+								student_id: student.id
 							}
 						}
 					}, {})
@@ -179,7 +157,7 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 	// 	0
 	// )
 
-	const totalPendingAmount = Object.entries(siblingPayments || {}).reduce(
+	const totalPendingAmount = Object.entries(siblingPayments ?? {}).reduce(
 		(agg, [, curr]) =>
 			agg - (curr.type === 'SUBMITTED' || curr.type === 'FORGIVEN' ? 1 : -1) * curr.amount,
 		0
@@ -193,27 +171,20 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 		)
 	].sort((a, b) => parseInt(a) - parseInt(b))
 
-	// TODO: investigate issues
-	// TODO: refactor
-	// TODO: desktop version
-
 	return (
-		<AppLayout title="Student Payments" showHeaderTitle>
+		<AppLayout title="Family Payments" showHeaderTitle>
 			<div className="p-5 md:p-10 md:pb-0 text-gray-700 relative print:hidden">
-				{/* <div className="text-2xl font-bold mb-4 text-center">Student Payments</div> */}
 				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-4 rounded-2xl bg-gray-700 p-5 my-4 mt-8">
-					<div className="relative text-white text-center text-base md:hidden w-full">
-						<div className="mt-4">{toTitleCase(famId, '-')}</div>
-						<div className="text-sm">Siblings - {siblings?.length}</div>
-						<div className="absolute left-0 right-0 -top-12 flex -space-x-2 overflow-hidden justify-center w-full h-20">
+					<div className="relative text-white text-center text-base w-full">
+						<div className="absolute left-0 right-0 -top-12 md:-top-16 flex -space-x-4 overflow-hidden justify-center w-full h-24">
 							{siblings.map(
 								(s, index) =>
 									index <= 2 && (
 										<img
 											key={s.id}
 											src={
-												s.ProfilePicture?.url ||
-												s.ProfilePicture?.image_string ||
+												s.ProfilePicture?.url ??
+												s.ProfilePicture?.image_string ??
 												UserIconSvg
 											}
 											className={clsx(
@@ -224,6 +195,8 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 									)
 							)}
 						</div>
+						<div className="mt-4">{toTitleCase(famId, '-')}</div>
+						<div className="text-sm">Siblings - {siblings?.length}</div>
 					</div>
 					<button
 						onClick={() =>
@@ -235,7 +208,7 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 								}
 							})
 						}
-						className="inline-flex items-center tw-btn-blue rounded-3xl md:hidden">
+						className="inline-flex items-center tw-btn-blue rounded-3xl">
 						<span className="mr-2">View Past Payments</span>
 						<span className="w-4 h-4 bg-white rounded-full text-blue-brand">
 							{state.filter.paymentsView ? (
@@ -266,25 +239,6 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 								</CustomSelect>
 							</div>
 							<div className="w-full text-sm md:text-base space-y-1">
-								{/* <div className="flex flex-row justify-between text-white w-full font-semibold">
-									<div>
-										{filteredPendingAmount < 0
-											? 'Advance Amount'
-											: 'Pending Amount'}{' '}
-										(
-										<span
-											className={clsx(
-												'mx-2',
-												filteredPendingAmount <= 0
-													? 'text-teal-brand'
-													: 'text-red-brand'
-											)}>
-											{state.filter.month}
-										</span>
-										)
-									</div>
-									<div>{filteredPendingAmount}</div>
-								</div> */}
 								<div className="space-y-4 text-white max-h-72 overflow-y-auto">
 									{siblings.map(sib => (
 										<FeeBreakdownCard key={sib.id} student={sib} />
@@ -348,19 +302,19 @@ interface FeeBreakdownCardProps {
 const FeeBreakdownCard = ({ student }: FeeBreakdownCardProps) => {
 	const [showFees, setShowFees] = useState(false)
 
+	//  want to have unique Fee IDs and merging class fees and
+	//  student fees to render them
 	const getFees = useCallback((): AugmentedFees => {
 		return [
-			//  there's no rocket science here,  just want to have unique id and merging class fees and
-			//  student fees to render them
 			[
 				v4(),
 				{
-					...(student.classFee || ({} as MISClassFee)),
+					...(student.classFee ?? ({} as MISClassFee)),
 					name: 'Class Fee'
 				}
 			],
-			...Object.entries(student.classAdditionalFees || {}),
-			...(Object.entries(student.fees || {}).map(([feeId, fee]) => {
+			...Object.entries(student.classAdditionalFees ?? {}),
+			...(Object.entries(student.fees ?? {}).map(([feeId, fee]) => {
 				return [
 					feeId,
 					{
@@ -379,7 +333,7 @@ const FeeBreakdownCard = ({ student }: FeeBreakdownCardProps) => {
 		]
 	}, [student])
 
-	const totalPendingAmount = Object.entries(student.payments || {}).reduce(
+	const totalPendingAmount = Object.entries(student.payments ?? {}).reduce(
 		(agg, [, curr]) =>
 			agg - (curr.type === 'SUBMITTED' || curr.type === 'FORGIVEN' ? 1 : -1) * curr.amount,
 		0
@@ -390,7 +344,7 @@ const FeeBreakdownCard = ({ student }: FeeBreakdownCardProps) => {
 			<div className="flex flex-row justify-between items-center">
 				<div className="flex flex-row w-3/5 flex-start items-center">
 					<img
-						className="w-10 h-10 mr-2"
+						className="w-10 h-10 mr-2 rounded-full"
 						src={
 							student.ProfilePicture?.url ||
 							student.ProfilePicture?.image_string ||
@@ -405,7 +359,7 @@ const FeeBreakdownCard = ({ student }: FeeBreakdownCardProps) => {
 				</div>
 			</div>
 			<div className="flex flex-row justify-between">
-				<div className="flex flex-row">
+				<div className="flex flex-row  text-sm md:text-base">
 					<div>Pending Amount</div>
 					<div
 						className={clsx(
@@ -547,12 +501,13 @@ const AddPayment = ({ siblings, auth, settings, smsTemplates, pendingAmount }: A
 
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		let { name, value, valueAsNumber, checked, type } = event.target
+
 		if (name === 'type') {
-			value = value === 'on' ? 'FORGIVEN' : 'SUBMITTED'
+			value = checked ? 'FORGIVEN' : 'SUBMITTED'
 		}
 
 		if (name === 'sendSMS') {
-			setState({ ...state, [name]: value === 'on' ? true : false })
+			setState({ ...state, [name]: checked })
 			return
 		}
 
@@ -582,14 +537,14 @@ const AddPayment = ({ siblings, auth, settings, smsTemplates, pendingAmount }: A
 			const message = smsTemplates.fee
 				.replace(/\$BALANCE/g, `${balance}`)
 				.replace(/\$AMOUNT/g, `${state.payment.amount}`)
-			// .replace(/\$NAME/g, student.Name)
-			// .replace(/\$FNAME/g, student.ManName)
+				// .replace(/\$NAME/g, student.Name)
+				.replace(/\$FNAME/g, student.ManName)
 
 			if (settings.sendSMSOption !== 'SIM') {
 				toast.error('Can only send messages from local SIM')
 			} else {
 				const url = smsIntentLink({
-					messages: [{ text: message, number: 'student.Phone' }],
+					messages: [{ text: message, number: student.Phone }],
 					return_link: window.location.href
 				})
 
@@ -659,7 +614,7 @@ const AddPayment = ({ siblings, auth, settings, smsTemplates, pendingAmount }: A
 			<form
 				className="bg-white rounded-md space-y-1 md:space-y-2 w-full p-2 md:p-4"
 				onSubmit={handleSubmit}>
-				<div>Sibling</div>
+				<div>Select Student to add payment</div>
 				<CustomSelect
 					data={selectItems}
 					selectedItem={state.studentId}
@@ -677,8 +632,8 @@ const AddPayment = ({ siblings, auth, settings, smsTemplates, pendingAmount }: A
 					className="tw-input w-full"
 				/>
 
-				<div className="flex flex-row space-x-4 w-full">
-					<div className="flex flex-col space-y-1 md:space-y-2 w-full">
+				<div className="flex flex-row space-x-4">
+					<div className="flex flex-col space-y-1 md:space-y-2 w-1/2 md:w-full">
 						<div>Date</div>
 						<input
 							type="date"
@@ -695,7 +650,7 @@ const AddPayment = ({ siblings, auth, settings, smsTemplates, pendingAmount }: A
 							type="number"
 							onChange={handleInputChange}
 							value={state.payment.amount === 0 ? '' : state.payment.amount}
-							placeholder="e.g. Rs 500"
+							placeholder="Enter amount"
 							required
 							name="amount"
 							className="tw-input w-full"

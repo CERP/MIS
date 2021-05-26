@@ -1,18 +1,15 @@
 import React, { useState, useMemo } from 'react'
 import toast from 'react-hot-toast'
-import { BackArrowIcon, CirclePlayIcon, CopyIcon } from '../assets/svgs'
 
-interface PropsType {
+import { ArrowLeftIcon, ClipboardCopyIcon, PlayIcon } from '@heroicons/react/outline'
+
+interface LessonModalProps {
 	lessons: IlmxLessonVideos
 	isLoading: boolean
 	onClose: () => void
 }
 
-interface S {
-	lessonId: string
-}
-
-const LessonModal: React.FC<PropsType> = ({ lessons, onClose }) => {
+const LessonModal: React.FC<LessonModalProps> = ({ lessons, onClose }) => {
 	const [classFilter, setClassFilter] = useState('1')
 	const [subjectFilter, setSubjectFilter] = useState('')
 
@@ -36,17 +33,19 @@ const LessonModal: React.FC<PropsType> = ({ lessons, onClose }) => {
 	}
 
 	return (
-		<div className="bg-white p-4 w-full rounded-2xl h-screen">
-			<div className="flex items-center my-4">
-				<div
-					className="focus:shadow-outline text-red-brand rounded-full shadow-sm p-2 border border-gray-200 bg-white cursor-pointer"
-					onClick={onClose}>
-					<BackArrowIcon className="w-6" />
+		<div className="bg-white p-4 w-full rounded-2xl">
+			<div className="flex items-center justify-between flex-row my-4">
+				<ArrowLeftIcon
+					onClick={onClose}
+					className="text-red-brand bg-white w-8 h-8 p-1 border-2 border-red-brand shadow-sm rounded-full cursor-pointer"
+				/>
+				<div className="text-lg font-semibold ml-4 text-center">
+					Add Video Lectures to Diary
 				</div>
-				<div className="text-l bold ml-4 justify-start">Add Video Lectures to Diary</div>
+				<div />
 			</div>
 			<div className="form scrollbar">
-				<div className="flex w-full video-filter w-full">
+				<div className="flex w-full video-filter">
 					<div className="flex flex-col mr-2 w-1/2">
 						<div className="text-xl my-2">Class</div>
 						<select
@@ -83,13 +82,13 @@ const LessonModal: React.FC<PropsType> = ({ lessons, onClose }) => {
 					</div>
 				</div>
 
-				<div className="flex flex-col w-full overflow-y-auto my-2 h-screen">
+				<div className="flex flex-col w-full overflow-y-auto my-2">
 					{Object.entries(lessons_data || ({} as IlmxLessonVideos)).map(
 						([lesson_id, lesson_meta]) => (
 							<div
 								className="flex items-center bg-gray-700 text-white rounded-md p-2 my-1 w-full"
 								key={lesson_id}>
-								<CirclePlayIcon clasName="w-10" />
+								<PlayIcon className="w-10" />
 								<div className="flex flex-col w-full ml-2">
 									<div className="text-sm">{lesson_meta.name}</div>
 									<div
@@ -111,7 +110,7 @@ const LessonModal: React.FC<PropsType> = ({ lessons, onClose }) => {
 											}`
 										)
 									}>
-									<CopyIcon className="h-4 w-4" />
+									<ClipboardCopyIcon className="h-4 w-4" />
 								</div>
 							</div>
 						)

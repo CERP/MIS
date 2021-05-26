@@ -569,41 +569,32 @@ export const saveFamilyInfo = (siblings: MISStudent[], info: MISFamilyInfo, famI
 	dispatch: Function
 ) => {
 	const siblingMerges = siblings
-		.map(s => {
-			// create extra merge for family id
-			const createFamily = famId
-				? [
-					{
-						path: ['db', 'students', s.id, 'FamilyID'],
-						value: famId.replaceAll(' ', '-') // don't add spaces
-					}
-				]
-				: []
-
-			return [
-				...createFamily,
-				{
-					path: ['db', 'students', s.id, 'ManName'],
-					value: info.ManName
-				},
-				{
-					path: ['db', 'students', s.id, 'Phone'],
-					value: info.Phone
-				},
-				{
-					path: ['db', 'students', s.id, 'AlternatePhone'],
-					value: info.AlternatePhone ?? ''
-				},
-				{
-					path: ['db', 'students', s.id, 'ManCNIC'],
-					value: info.ManCNIC
-				},
-				{
-					path: ['db', 'students', s.id, 'Address'],
-					value: info.Address
-				}
-			]
-		})
+		.map(s => [
+			{
+				path: ['db', 'students', s.id, 'FamilyID'],
+				value: famId ?? '' // just to be sure, otherwise famId will not be undefined
+			},
+			{
+				path: ['db', 'students', s.id, 'ManName'],
+				value: info.ManName
+			},
+			{
+				path: ['db', 'students', s.id, 'Phone'],
+				value: info.Phone
+			},
+			{
+				path: ['db', 'students', s.id, 'AlternatePhone'],
+				value: info.AlternatePhone ?? ''
+			},
+			{
+				path: ['db', 'students', s.id, 'ManCNIC'],
+				value: info.ManCNIC
+			},
+			{
+				path: ['db', 'students', s.id, 'Address'],
+				value: info.Address
+			}
+		])
 		.reduce((agg, curr) => {
 			return [...agg, ...curr]
 		}, [])
@@ -627,6 +618,25 @@ export const markFaculty = (
 			}
 		])
 	)
+}
+
+export const markAllFacultyAttendance = (
+	faculty: MISTeacher[],
+	date: string,
+	status: MISTeacherAttendanceStatus,
+	time = moment.now()
+) => (dispatch: Function) => {
+	const merges = faculty.reduce((agg, f) => {
+		return [
+			...agg,
+			{
+				path: ['db', 'faculty', f.id, 'attendance', date, status],
+				value: time
+			}
+		]
+	}, [])
+
+	dispatch(createMerges(merges))
 }
 
 export const undoFacultyAttendance = (faculty: MISTeacher, date: string) => (

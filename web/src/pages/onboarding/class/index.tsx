@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
-import { v4 } from 'node-uuid'
-import { useDispatch, useSelector } from 'react-redux'
-import Dynamic from '@cerp/dynamic'
 import clsx from 'clsx'
+import Dynamic from '@cerp/dynamic'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { createEditClass } from 'actions'
 import { createMerges } from 'actions/core'
 import { OnboardingStage } from 'constants/index'
-
+import { PlusButton } from 'components/Button/plus'
+import { blankClass, defaultClasses } from 'constants/form-defaults'
 import UserIconSvg from 'assets/svgs/user.svg'
 
 interface CreateClassProps {
@@ -15,45 +15,11 @@ interface CreateClassProps {
 	skipStage: (stage?: MISOnboarding['stage']) => void
 }
 
-// TODO: move these defaults to single source of import
-const initialState: MISClass = {
-	id: v4(),
-	name: '',
-	classYear: 0,
-	sections: {
-		[v4()]: {
-			name: 'DEFAULT'
-		}
-	},
-	subjects: {
-		Maths: false,
-		English: false,
-		Urdu: false,
-		Islamiat: false
-	}
-}
-
-const defaultClasses = {
-	Nursery: 0,
-	'Class 1': 1,
-	'Class 2': 2,
-	'Class 3': 3,
-	'Class 4': 4,
-	'Class 5': 5,
-	'Class 6': 6,
-	'Class 7': 7,
-	'Class 8': 8,
-	'Class 9': 9,
-	'Class 10': 10,
-	'O Level': 11,
-	'A Level': 12
-}
-
-export const CreateClass: React.FC<CreateClassProps> = ({ skipStage }) => {
+export const CreateClass = ({ skipStage }: CreateClassProps) => {
 	const dispatch = useDispatch()
 	const { faculty } = useSelector((state: RootReducerState) => state.db)
 
-	const [state, setState] = useState(initialState)
+	const [state, setState] = useState(blankClass)
 	const [newSubject, setNewSubject] = useState('')
 
 	// at this stage we only have on class with default section
@@ -144,7 +110,7 @@ export const CreateClass: React.FC<CreateClassProps> = ({ skipStage }) => {
 						required
 						onChange={handleInput}
 						placeholder="Type section name"
-						className="w-full tw-input bg-transparent border-blue-brand ring-1"
+						className="w-full tw-input tw-is-form-bg-black"
 					/>
 				</div>
 
@@ -170,13 +136,9 @@ export const CreateClass: React.FC<CreateClassProps> = ({ skipStage }) => {
 						value={newSubject}
 						placeholder="Type new subject name"
 						autoComplete="off"
-						className="tw-input bg-transparent border-blue-brand ring-1"
+						className="tw-input tw-is-form-bg-black"
 					/>
-					<div
-						onClick={addNewSubject}
-						className="ml-4 w-8 h-8 flex items-center justify-center rounded-full border cursor-pointer bg-blue-brand hover:bg-blue-400">
-						+
-					</div>
+					<PlusButton handleClick={addNewSubject} className="ml-4" />
 				</div>
 
 				<div>Assign Class Teacher*</div>

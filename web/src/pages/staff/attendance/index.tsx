@@ -1,15 +1,16 @@
 import React, { useMemo, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
-import moment from 'moment'
 import clsx from 'clsx'
+import moment from 'moment'
+import { Link } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { AttendanceStatsCard } from 'components/attendance'
-import { markFaculty, undoFacultyAttendance } from 'actions'
+import { markAllFacultyAttendance, markFaculty, undoFacultyAttendance } from 'actions'
 import { TModal } from 'components/Modal'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import { toTitleCase } from 'utils/toTitleCase'
 import { SmsModalContentWrapper } from './sms-modal-content-wrapper'
+import { isValidTeacher } from 'utils'
 
 type State = {
 	date: number
@@ -28,7 +29,10 @@ enum AttendanceStatus {
 export const StaffAttendance = () => {
 	const dispatch = useDispatch()
 
-	const { faculty } = useSelector((state: RootReducerState) => state.db)
+	const {
+		auth: { faculty_id },
+		db: { faculty, sms_templates }
+	} = useSelector((state: RootReducerState) => state)
 	const {
 		ref: sendSmsModalRef,
 		isComponentVisible: showSendSmsModal,
@@ -102,6 +106,11 @@ export const StaffAttendance = () => {
 		dispatch(markFaculty(member, attendanceDate, status))
 	}
 
+	const handleMarkAllPresent = () => {
+		const activeFaculty = Object.values(faculty).filter(f => isValidTeacher(f))
+		dispatch(markAllFacultyAttendance(activeFaculty, attendanceDate, AttendanceStatus.CHECK_IN))
+	}
+
 	// TODO: add logic to handle modal for sms sending
 	// TODO: add logic to handle log sms history
 
@@ -120,7 +129,13 @@ export const StaffAttendance = () => {
 				{showSendSmsModal && (
 					<TModal>
 						<div className="p-6 space-y-2 bg-white sm:p-8" ref={sendSmsModalRef}>
-							<SmsModalContentWrapper />
+							<SmsModalContentWrapper
+								date={attendanceDate}
+								faculty={faculty}
+								// TODO: create staff member separate attendance template
+								smsTemplate={sms_templates.attendance}
+								loggedUserId={faculty_id}
+							/>
 						</div>
 					</TModal>
 				)}
@@ -132,7 +147,9 @@ export const StaffAttendance = () => {
 							className="w-2/5 p-1 text-white shadow-md md:p-2 bg-blue-brand rounded-3xl">
 							Send SMS
 						</button>
-						<button className="w-2/5 p-1 text-white shadow-md md:p-2 bg-teal-brand rounded-3xl">
+						<button
+							onClick={handleMarkAllPresent}
+							className="w-2/5 p-1 text-white shadow-md md:p-2 bg-teal-brand rounded-3xl">
 							Mark All Present
 						</button>
 					</div>
@@ -189,9 +206,10 @@ const Card: React.FC<CardProps> = ({ member, attendanceDate, markAttendance }) =
 				</div>
 				<div className="flex flex-row items-center space-x-2">
 					<button
-						onClick={() =>
+						onClick={() => {
 							setState({ togglePresent: !state.togglePresent, toggleLeave: false })
-						}
+							markAttendance(member, AttendanceStatus.CHECK_IN)
+						}}
 						name="present"
 						className={clsx(
 							'flex items-center justify-center w-8 h-8 rounded-full shadow-md',
@@ -237,7 +255,7 @@ const Card: React.FC<CardProps> = ({ member, attendanceDate, markAttendance }) =
 				<div className="flex flex-row justify-between mt-2 space-x-2 text-xs">
 					<button
 						onClick={() => markAttendance(member, AttendanceStatus.CHECK_IN)}
-						className={clsx('px-2 py-1 rounded bg-blue-brand', {
+						className={clsx('px-2 py-1 rounded bg-blue-brand text-white', {
 							'bg-teal-brand text-white': attendance.check_in
 						})}>
 						<span>Check In</span>
@@ -251,7 +269,7 @@ const Card: React.FC<CardProps> = ({ member, attendanceDate, markAttendance }) =
 					<button
 						disabled={!attendance.check_in}
 						onClick={() => markAttendance(member, AttendanceStatus.CHECK_OUT)}
-						className={clsx('px-2 py-1 rounded bg-blue-brand', {
+						className={clsx('px-2 py-1 rounded bg-blue-brand text-white', {
 							'tw-btn bg-teal-brand text-white': attendance.check_out
 						})}>
 						<span>Check Out</span>

@@ -98,7 +98,7 @@ export const PrintVoucher = () => {
 									type="radio"
 									onChange={() => setState({ ...state, printFor: 'STUDENT' })}
 									checked={state.printFor === 'STUDENT'}
-									className="form-radio text-teal-brand mr-2 w-4 h-4 cursor-pointer"
+									className="mr-2 form-radio tw-radio"
 								/>
 								<div className="text-sm">Student</div>
 							</div>
@@ -107,7 +107,7 @@ export const PrintVoucher = () => {
 									type="radio"
 									onChange={() => setState({ ...state, printFor: 'CLASS' })}
 									checked={state.printFor === 'CLASS'}
-									className="form-radio text-teal-brand mr-2 w-4 h-4 cursor-pointer"
+									className="mr-2 form-radio tw-radio"
 								/>
 								<div className="text-sm">Class</div>
 							</div>
@@ -116,7 +116,7 @@ export const PrintVoucher = () => {
 									type="radio"
 									onChange={() => setState({ ...state, printFor: 'FAMILY' })}
 									checked={state.printFor === 'FAMILY'}
-									className="form-radio text-teal-brand mr-2 w-4 h-4 cursor-pointer"
+									className="mr-2 form-radio tw-radio"
 								/>
 								<div className="text-sm">Family</div>
 							</div>

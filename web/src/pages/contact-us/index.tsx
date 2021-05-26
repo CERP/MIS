@@ -3,21 +3,13 @@ import clsx from 'clsx'
 import toast from 'react-hot-toast'
 import { PhoneIcon, LocationMarkerIcon, MailIcon } from '@heroicons/react/solid'
 
+import SiteConfig from 'constants/siteConfig.json'
 import { AppLayout } from 'components/Layout/appLayout'
 import { hostHTTPS } from 'utils/hostConfig'
 import { isValidPhone } from 'utils/helpers'
 import { Spinner } from 'components/animation/spinner'
 
-type State = {
-	isSending: boolean
-	form: {
-		name: string
-		phone: string
-		message: string
-	}
-}
-
-const initialState: State = {
+const initialState = {
 	isSending: false,
 	form: {
 		name: '',
@@ -84,10 +76,10 @@ export const ContactUs = () => {
 							Contact Us
 						</div>
 						<div className="flex flex-row items-center">
-							<div>
+							<a href={'tel:' + SiteConfig.helpLineIlmx.phone}>
 								<PhoneIcon className="w-10 h-10 p-2 rounded-full bg-white shadow-md mr-4 text-teal-brand" />
-							</div>
-							<div>+92 348 119 119</div>
+							</a>
+							<div>{SiteConfig.helpLineIlmx.phoneInt}</div>
 						</div>
 						<div className="flex flex-row items-center justify-between">
 							<div>
@@ -112,36 +104,42 @@ export const ContactUs = () => {
 					</div>
 					<div className="w-full md:w-3/5 bg-white rounded-2xl p-6 md:p-8">
 						<form className="space-y-2 w-full" onSubmit={handleFormSubmit}>
-							<div>Your Name</div>
-							<input
-								name="name"
-								required
-								onChange={handleInputChange}
-								value={state.form.name}
-								type="text"
-								className="tw-input w-full"
-								placeholder="Full name (3 characters long)"
-							/>
-							<div>Your Phone</div>
-							<input
-								name="phone"
-								required
-								onChange={handleInputChange}
-								value={state.form.phone}
-								type="number"
-								className="tw-input w-full"
-								placeholder="Mobile number e.g. 03xxxxxxxxx"
-							/>
-							<div>Your Message</div>
-							<textarea
-								name="message"
-								required
-								onChange={handleInputChange}
-								value={state.form.message}
-								className="tw-input w-full"
-								rows={8}
-								placeholder="Type your message here (10 characters long)"
-							/>
+							<div>
+								<label htmlFor="name">Your Name</label>
+								<input
+									name="name"
+									required
+									onChange={handleInputChange}
+									value={state.form.name}
+									type="text"
+									className="tw-input w-full"
+									placeholder="Full name (3 characters long)"
+								/>
+							</div>
+							<div>
+								<label htmlFor="phone">Your Phone</label>
+								<input
+									name="phone"
+									required
+									onChange={handleInputChange}
+									value={state.form.phone}
+									type="text"
+									className="tw-input w-full"
+									placeholder="Mobile number e.g. 03xxxxxxxxx"
+								/>
+							</div>
+							<div>
+								<label htmlFor="message">Your Message</label>
+								<textarea
+									name="message"
+									required
+									onChange={handleInputChange}
+									value={state.form.message}
+									className="tw-input w-full"
+									rows={8}
+									placeholder="Type your message here (10 characters long)"
+								/>
+							</div>
 							<div className="flex justify-end">
 								<button
 									type="submit"

@@ -35,7 +35,7 @@ steps:
               'set',
               'image',
               'deployment/mischool-web-$BRANCH_NAME',
-              'mischool-web=asia.gcr.io/$PROJECT_ID/mischool-web:$SHORT_SHA',
+              'mischool-web=asia.gcr.io/$PROJECT_ID/mischool-web:$SHORT_SHA'
           ]
       env:
           - 'CLOUDSDK_COMPUTE_ZONE=asia-southeast1-c'
@@ -60,3 +60,4 @@ steps:
           - '--data-urlencode'
           - 'payload={"channel": "#mis", "username": "deploybot", "text": "MISchool has been succesfully deployed version $SHORT_SHA to $BRANCH_NAME", "icon_emoji": ":construction_worker:"}'
           - '$_SLACK_URL'
+timeout: 1200s
