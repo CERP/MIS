@@ -4,7 +4,7 @@ import { Transition } from '@headlessui/react'
 import { XCircleIcon } from '@heroicons/react/outline'
 
 import { SearchInput } from 'components/input/search'
-import { isValidStudent } from 'utils'
+import { getPaymentLabel, isValidStudent } from 'utils'
 import { toTitleCase } from 'utils/toTitleCase'
 import { MISFeePeriods } from 'constants/index'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
@@ -155,7 +155,12 @@ const PreviousFees = ({ student, setFee }: PreviousFeeProps) => {
 					onClick={() => handleSelectedFee(selectedFee ? '' : id)}
 					className={clsx(
 						'flex felx-row justify-between items-center p-2 text-sm rounded-lg cursor-pointer hover:bg-teal-brand',
-						id === selectedFee ? 'bg-teal-brand' : 'bg-blue-brand'
+						{
+							'pointer-events-none bg-gray-500': fee.name === 'SPECIAL_SCHOLARSHIP',
+							'bg-teal-brand': id === selectedFee,
+							'bg-blue-brand':
+								fee.name !== 'SPECIAL_SCHOLARSHIP' && id !== selectedFee
+						}
 					)}>
 					<div className="flex flex-col">
 						<div className="font-semibold">Duration</div>
@@ -165,7 +170,7 @@ const PreviousFees = ({ student, setFee }: PreviousFeeProps) => {
 					</div>
 					<div className="flex flex-col">
 						<div className="font-semibold">Label</div>
-						<div>{fee.name}</div>
+						<div>{getPaymentLabel(fee.name, fee.type)}</div>
 					</div>
 					<div className="flex flex-col">
 						<div className="font-semibold">Amount</div>

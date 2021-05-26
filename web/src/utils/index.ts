@@ -1,29 +1,27 @@
 import { hostHTTPS } from './hostConfig'
-import Hyphenator from './Hyphenator';
+import Hyphenator from './Hyphenator'
+import { MISFeeLabels } from 'constants/index'
 
-const encoder = new TextEncoder();
+const encoder = new TextEncoder()
 
 export async function hash(str: string): Promise<string> {
 	try {
-		const msgBuffer = encoder.encode(str);
-		const hashBuffer = await crypto.subtle.digest("SHA-512", msgBuffer)
+		const msgBuffer = encoder.encode(str)
+		const hashBuffer = await crypto.subtle.digest('SHA-512', msgBuffer)
 
 		const hashArray = Array.from(new Uint8Array(hashBuffer))
 
 		const hashHex = hashArray.map(b => ('00' + b.toString(16)).slice(-2)).join('')
-		return hashHex;
-	}
-	catch (ex) {
-		console.error(ex);
+		return hashHex
+	} catch (ex) {
+		console.error(ex)
 
 		return 'xxxxx'
 	}
-
 }
 
 export const checkTime = async (): Promise<boolean> => {
 	try {
-
 		const reqOpts: RequestInit = {
 			method: 'GET',
 			headers: {
@@ -31,8 +29,10 @@ export const checkTime = async (): Promise<boolean> => {
 			}
 		}
 
-		const response: ServerResponse = await fetch(`${hostHTTPS}/mis/server-time`, reqOpts)
-			.then((res: Response) => res.json())
+		const response: ServerResponse = await fetch(
+			`${hostHTTPS}/mis/server-time`,
+			reqOpts
+		).then((res: Response) => res.json())
 
 		const { os_time } = response
 		const client_time = new Date().getTime()
@@ -43,21 +43,18 @@ export const checkTime = async (): Promise<boolean> => {
 		const threshold = 1 * 60 * 60 * 1000
 
 		return diff < threshold
-
 	} catch (ex) {
 		console.log(ex)
 		return true
 	}
 }
 
-
 type ServerResponse = {
 	os_time: number
 }
 
 export const formatCNIC = (cnic: string): string => {
-
-	if (cnic === "" || cnic.length < 13) {
+	if (cnic === '' || cnic.length < 13) {
 		return cnic
 	}
 
@@ -65,13 +62,12 @@ export const formatCNIC = (cnic: string): string => {
 }
 
 export const formatPhone = (phone: string): string => {
-
-	if (phone === "" || phone.length >= 11) {
+	if (phone === '' || phone.length >= 11) {
 		return phone
 	}
 
 	// append '0' at start if not present due to auto excel conversion text to number
-	return "0".concat(phone)
+	return '0'.concat(phone)
 }
 
 /**
@@ -88,4 +84,27 @@ export const isValidStudent = (student: MISStudent): boolean => {
 
 export const isValidTeacher = (teacher: MISTeacher): boolean => {
 	return !!(teacher && teacher.id && teacher.Name)
+}
+
+export const getPaymentLabel = (
+	feeName: string,
+	type: MISStudentPayment['type'] | MISStudentFee['type']
+) => {
+	if (feeName === MISFeeLabels.SPECIAL_SCHOLARSHIP) {
+		return 'Scholarship (M)'
+	}
+	// set fee name in default class fee logic
+	if (feeName === 'Montly') {
+		return 'Class Fee'
+	}
+
+	if (type === 'FORGIVEN') {
+		return 'Scholarship (A)'
+	}
+
+	if (type === 'SUBMITTED') {
+		return feeName + '-' + 'Paid'
+	}
+
+	return feeName
 }

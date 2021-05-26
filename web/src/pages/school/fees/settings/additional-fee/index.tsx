@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
+import clsx from 'clsx'
+import cond from 'cond-construct'
+import toast from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux'
 import { v4 } from 'node-uuid'
-import cond from 'cond-construct'
-import clsx from 'clsx'
-import toast from 'react-hot-toast'
 
 import { createDeletes, createMerges } from 'actions/core'
 
@@ -206,6 +206,46 @@ export const AdditionalFee = () => {
 		(state.addFeeTo === AddFeeOptions.STUDENT ? !state.studentId : false) ||
 		(state.addFeeTo === AddFeeOptions.CLASS ? !state.classId : false)
 
+	const setAddFeeTO = (option: AddFeeOptions) => {
+		if (option === AddFeeOptions.STUDENT) {
+			return setState({
+				...state,
+				addFeeTo: option,
+				fee: defaultFee,
+				feeId: undefined,
+				classId: ''
+			})
+		}
+		if (option === AddFeeOptions.CLASS) {
+			return setState({
+				...state,
+				addFeeTo: option,
+				fee: defaultFee,
+				feeId: undefined,
+				studentId: ''
+			})
+		}
+
+		if (option === AddFeeOptions.ALL) {
+			return setState({
+				...state,
+				addFeeTo: option,
+				fee: defaultFee,
+				feeId: undefined,
+				studentId: '',
+				classId: ''
+			})
+		}
+	}
+
+	const getClassName = () => {
+		const selectedClass = classes[state.classId]
+		return selectedClass.name ?? ''
+	}
+
+	const totalActiveStudents = Object.values(students).filter(s => isValidStudent(s) && s.Active)
+		.length
+
 	return (
 		<div className="p-5 md:p-10 md:pb-0 relative print:hidden">
 			<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-4 rounded-2xl bg-gray-700 py-4 my-4 md:mt-8 text-white min-h-screen">
@@ -217,13 +257,7 @@ export const AdditionalFee = () => {
 							<input
 								name="toStudent"
 								type="radio"
-								onChange={() =>
-									setState({
-										...state,
-										addFeeTo: AddFeeOptions.STUDENT,
-										classId: ''
-									})
-								}
+								onChange={() => setAddFeeTO(AddFeeOptions.STUDENT)}
 								checked={state.addFeeTo === AddFeeOptions.STUDENT}
 								className="mr-2 form-radio tw-radio"
 							/>
@@ -234,13 +268,7 @@ export const AdditionalFee = () => {
 							<input
 								name="toClass"
 								type="radio"
-								onChange={() =>
-									setState({
-										...state,
-										addFeeTo: AddFeeOptions.CLASS,
-										studentId: ''
-									})
-								}
+								onChange={() => setAddFeeTO(AddFeeOptions.CLASS)}
 								checked={state.addFeeTo === AddFeeOptions.CLASS}
 								className="mr-2 form-radio tw-radio"
 							/>
@@ -251,14 +279,7 @@ export const AdditionalFee = () => {
 								<input
 									name="toAll"
 									type="radio"
-									onChange={() =>
-										setState({
-											...state,
-											addFeeTo: AddFeeOptions.ALL,
-											classId: '',
-											studentId: ''
-										})
-									}
+									onChange={() => setAddFeeTO(AddFeeOptions.ALL)}
 									checked={state.addFeeTo === AddFeeOptions.ALL}
 									className="mr-2 form-radio tw-radio"
 								/>
@@ -273,18 +294,24 @@ export const AdditionalFee = () => {
 							<div
 								className="bg-white md:p-10 p-8 space-y-2 text-center"
 								ref={confirmAddFeeModalRef}>
-								<div>Confirm Additional Fee</div>
-								<div className="font-semibold text-lg md:text-xl"></div>
+								<div className="font-semibold text-lg md:text-xl">
+									Confirm Additional Fee
+								</div>
+								<div className="text-sm">
+									{state.fee?.period === 'MONTHLY'
+										? '( Every Month )'
+										: '( One Time )'}
+								</div>
 								<div className="text-teal-brand font-semibold text-lg">
-									{state.fee.name} - Rs. {state.fee.amount}
+									({state.fee.name} - Rs. {state.fee.amount})
 								</div>
 								<div className="">
 									will be added to{' '}
 									{state.addFeeTo === AddFeeOptions.CLASS
-										? 'Class'
+										? `${toTitleCase(getClassName())} Class`
 										: state.addFeeTo === AddFeeOptions.STUDENT
 											? toTitleCase(students[state.studentId].Name)
-											: 'All Students'}
+											: `All Active Students (${totalActiveStudents})`}
 								</div>
 								<div className="flex flex-row justify-between space-x-4">
 									<button
@@ -391,14 +418,14 @@ export const AdditionalFee = () => {
 								'tw-btn w-full font-semibold',
 								isFormDisabled ? 'bg-gray-300 pointer-events-none' : 'bg-teal-brand'
 							)}>
-							{state.feeId ? 'Update Additional Fee' : 'Add Additional Fee'}
+							{state.feeId ? 'Save Edited Fee' : 'Save Fee'}
 						</button>
 						{state.feeId && (
 							<button
 								onClick={deleteFee}
 								type="button"
 								className={'tw-btn bg-red-brand text-white w-full font-semibold'}>
-								Delete Additional Fee
+								Delete Fee
 							</button>
 						)}
 					</form>
