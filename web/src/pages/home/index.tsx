@@ -36,7 +36,7 @@ export const Home = () => {
 	const h = useHistory()
 
 	const [activeTab, setActiveTab] = useState<number>(
-		parseInt(urlParams.get('activeTab') ?? '1') ?? Tabs.ACTIONS
+		parseInt(urlParams.get('active-tab') ?? '1') ?? Tabs.ACTIONS
 	)
 	const biggerThan880 = useMediaPredicate('(min-width: 880px)')
 
@@ -68,7 +68,7 @@ export const Home = () => {
 					setTabParams={tab =>
 						h.push({
 							pathname: location.pathname,
-							search: '?activeTab=' + tab
+							search: '?active-tab=' + tab
 						})
 					}
 					tab={activeTab}
