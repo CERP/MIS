@@ -47,6 +47,7 @@ export const AdditionalFee = () => {
 	} = useComponentVisible(false)
 
 	const [state, setState] = useState<State>({
+		// this to make sure, no radio button show active state
 		addFeeTo: 3, // TODO: use some understandable hack
 		classId: '',
 		studentId: '',
@@ -61,6 +62,10 @@ export const AdditionalFee = () => {
 	}
 
 	const setClassFee = (id: string) => {
+		if (!id) {
+			setState({ ...state, feeId: undefined, fee: {} as MISClassFee | MISStudentFee })
+		}
+
 		const classAdditional = settings?.classes.additionalFees?.[state.classId]
 		const fee = classAdditional?.[id]
 		setState({ ...state, feeId: id, fee })
@@ -113,7 +118,11 @@ export const AdditionalFee = () => {
 			dispatch(createMerges(merges))
 		}
 
-		toast.success('Additional fee has been added')
+		const toastText = state.feeId
+			? 'Additional fee has been added'
+			: 'Additional fee has been updated'
+
+		toast.success(toastText)
 		setConfirmAddFeeModal(false)
 
 		setState({ ...state, fee: defaultFee, feeId: '' })
@@ -295,7 +304,7 @@ export const AdditionalFee = () => {
 					<form className="space-y-4" onSubmit={handleSubmitForm}>
 						<div className="flex flex-row items-center space-x-4">
 							<div className="flex flex-col space-y-4 w-full">
-								<div>Label</div>
+								<label htmlFor="feeName">Label</label>
 								<input
 									name="feeName"
 									type="text"
@@ -306,13 +315,13 @@ export const AdditionalFee = () => {
 											fee: { ...state.fee, name: e.target.value }
 										})
 									}
-									value={state.fee.name}
+									value={state.fee?.name ?? ''}
 									placeholder="Enter label"
 									className="tw-is-form-bg-black tw-input w-full"
 								/>
 							</div>
 							<div className="flex flex-col space-y-4 w-3/5">
-								<div>Amount</div>
+								<label>Amount</label>
 								<input
 									name="amount"
 									type="number"
@@ -327,17 +336,18 @@ export const AdditionalFee = () => {
 											}
 										})
 									}
-									value={state.fee.amount || 0 > 0 ? state.fee.amount : ''}
+									value={state.fee?.amount ?? 0 > 0 ? state.fee?.amount : ''}
 									placeholder="Enter amount"
 									className="tw-is-form-bg-black tw-input w-full"
 								/>
 							</div>
 						</div>
 
-						<div>Duration</div>
+						<p>Duration</p>
 						<div className="flex items-center space-x-8">
 							<div className="flex items-center">
 								<input
+									id="duration"
 									name="periodSingle"
 									type="radio"
 									onChange={() =>
@@ -349,13 +359,14 @@ export const AdditionalFee = () => {
 											}
 										})
 									}
-									checked={state.fee.period === MISFeePeriods.SINGLE}
+									checked={state.fee?.period === MISFeePeriods.SINGLE}
 									className="mr-2 form-radio tw-radio"
 								/>
 								<div className="text-sm">One Time</div>
 							</div>
 							<div className="flex items-center">
 								<input
+									id="duration"
 									name="periodMonthly"
 									type="radio"
 									onChange={() =>
@@ -367,7 +378,7 @@ export const AdditionalFee = () => {
 											}
 										})
 									}
-									checked={state.fee.period === MISFeePeriods.MONTHLY}
+									checked={state.fee?.period === MISFeePeriods.MONTHLY}
 									className="mr-2 form-radio tw-radio"
 								/>
 								<div className="sm:text-sm text-base">Every Month</div>
@@ -386,7 +397,7 @@ export const AdditionalFee = () => {
 							<button
 								onClick={deleteFee}
 								type="button"
-								className={'tw-btn-red w-full font-semibold'}>
+								className={'tw-btn bg-red-brand text-white w-full font-semibold'}>
 								Delete Additional Fee
 							</button>
 						)}

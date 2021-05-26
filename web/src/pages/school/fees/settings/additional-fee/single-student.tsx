@@ -87,8 +87,8 @@ export const AddFeeToStudent = ({
 									<div className="flex flex-row items-center">
 										<img
 											src={
-												s.ProfilePicture?.url ||
-												s.ProfilePicture?.image_string ||
+												s.ProfilePicture?.url ??
+												s.ProfilePicture?.image_string ??
 												UserIconSvg
 											}
 											className="w-6 h-6 mr-2 bg-gray-500 rounded-full"
@@ -112,8 +112,8 @@ export const AddFeeToStudent = ({
 						<div className="flex flex-row items-center">
 							<img
 								src={
-									student?.ProfilePicture?.url ||
-									student?.ProfilePicture?.image_string ||
+									student?.ProfilePicture?.url ??
+									student?.ProfilePicture?.image_string ??
 									UserIconSvg
 								}
 								className="w-6 h-6 mr-2 bg-gray-500 rounded-full"
@@ -142,17 +142,17 @@ type PreviousFeeProps = {
 const PreviousFees = ({ student, setFee }: PreviousFeeProps) => {
 	const [selectedFee, setSelectedFee] = useState('')
 
-	const handleSelectedFee = (id: string, fee: MISStudentFee) => {
+	const handleSelectedFee = (id: string) => {
 		setFee(id)
 		setSelectedFee(id)
 	}
 
 	return (
 		<div className="max-h-40 md:max-h-60 mt-4 space-y-2  pr-2 overflow-y-auto">
-			{Object.entries(student.fees || {}).map(([id, fee]) => (
+			{Object.entries(student.fees ?? {}).map(([id, fee]) => (
 				<div
 					key={id}
-					onClick={() => handleSelectedFee(id, fee)}
+					onClick={() => handleSelectedFee(selectedFee ? '' : id)}
 					className={clsx(
 						'flex felx-row justify-between items-center p-2 text-sm rounded-lg cursor-pointer hover:bg-teal-brand',
 						id === selectedFee ? 'bg-teal-brand' : 'bg-blue-brand'
