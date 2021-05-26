@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { v4 } from 'node-uuid'
 import { useDispatch, useSelector } from 'react-redux'
-import { Redirect, RouteComponentProps } from 'react-router-dom'
+import { Redirect, RouteComponentProps, useLocation, useParams } from 'react-router-dom'
 import moment from 'moment'
 import Dynamic from '@cerp/dynamic'
 import toast from 'react-hot-toast'
@@ -12,10 +12,11 @@ import { isValidPhone } from 'utils/helpers'
 import { createFacultyMerge, deleteFaculty, uploadFacultyProfilePicture } from 'actions'
 import { StaffType } from 'constants/index'
 import { ShowHidePassword } from 'components/password'
-import { hash } from 'utils'
+import { hash, formatCNIC } from 'utils'
 import { getImageString, getDownsizedImage } from 'utils/image'
 
 import { UploadImage } from 'components/image'
+import { numberRegex } from 'constants/index'
 
 const blankTeacher = (): MISTeacher => ({
 	id: v4(),
@@ -75,16 +76,15 @@ interface RouteInfo {
 	id: string
 }
 
-type CreateOrUpdateStaffProps = RouteComponentProps<RouteInfo>
-
 type StateProps = {
 	profile: MISTeacher
 	showPassword: boolean
 	redirect: string
 }
 
-export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match, location }) => {
-	const { id } = match.params
+export const CreateOrUpdateStaff = () => {
+	const { id } = useParams<RouteInfo>()
+	const location = useLocation()
 	const isNewStaff = () => location.pathname.indexOf('new') >= 0
 
 	const dispatch = useDispatch()
@@ -112,7 +112,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 			return
 		}
 
-		const nextStaff = faculty[match.params.id]
+		const nextStaff = faculty[id]
 		if (nextStaff) {
 			setState(prevState => ({ ...prevState, profile: nextStaff }))
 		}
@@ -146,9 +146,28 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 	const handleInput = (
 		event: React.ChangeEvent<HTMLInputElement & HTMLSelectElement & HTMLTextAreaElement>
 	) => {
-		const { name, value, checked, type } = event.target
+		const { name, value } = event.target
 
-		setState({ ...state, profile: { ...profile, [name]: value } })
+		if (name === 'ManCNIC' || name === 'CNIC') {
+			if (numberRegex.test(value)) {
+				return setState({
+					...state,
+					profile: {
+						...state.profile,
+						[name]: formatCNIC(value)
+					}
+				})
+			}
+			return
+		}
+
+		setState({
+			...state,
+			profile: {
+				...profile,
+				[name]: value
+			}
+		})
 	}
 
 	// TODO: replace this with generic handler
@@ -167,6 +186,13 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 
 	const uploadProfileImageFromCamera = (imgString: string) => {
 		getDownsizedImage(imgString, 600, 'jpeg').then(img => {
+			setState({
+				...state,
+				profile: {
+					...state.profile,
+					ProfilePicture: { ...state.profile.ProfilePicture, image_string: img }
+				}
+			})
 			dispatch(uploadFacultyProfilePicture(state.profile.id, img))
 		})
 	}
@@ -192,8 +218,8 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 	}
 
 	return (
-		<AppLayout title={`${isNewStaff() ? 'New Staff' : 'Update Staff'}`}>
-			<div className="p-5 md:p-10 md:pb-0 text-gray-700 relative">
+		<>
+			<div className="px-5 text-gray-700 relative">
 				<div className="text-2xl font-bold mt-4 mb-8 text-center">
 					{isNewStaff() ? 'Add Staff' : 'Update Staff'}
 				</div>
@@ -201,16 +227,18 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 					<div className="text-white text-center text-base my-5">
 						Personal Information
 					</div>
-					<div className="flex flex-row items-baseline justify-between w-3/5 md:w-1/4">
-						<UploadImage
-							src={
-								state.profile.ProfilePicture?.url ||
-								state.profile.ProfilePicture?.image_string
-							}
-							handleImageChange={uploadProfileImage}
-							handleCameraImageTaken={uploadProfileImageFromCamera}
-						/>
-					</div>
+					{!isNewStaff() && (
+						<div className="flex flex-row items-baseline justify-between w-3/5 md:w-1/4">
+							<UploadImage
+								src={
+									state.profile.ProfilePicture?.url ??
+									state.profile.ProfilePicture?.image_string
+								}
+								handleImageChange={uploadProfileImage}
+								handleCameraImageTaken={uploadProfileImageFromCamera}
+							/>
+						</div>
+					)}
 					<form
 						id="staff-form"
 						className="text-white space-y-4 px-4 w-full md:w-3/5"
@@ -292,6 +320,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 						<input
 							name="CNIC"
 							onChange={handleInput}
+							value={profile.CNIC}
 							placeholder="xxxxx-xxxxxxx-x"
 							className="tw-input w-full tw-is-form-bg-black"
 						/>
@@ -301,6 +330,7 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 							name="Phone"
 							onChange={handleInput}
 							required
+							type="number"
 							value={profile.Phone}
 							placeholder="e.g. 03xxxxxxxx"
 							className="tw-input w-full tw-is-form-bg-black"
@@ -557,6 +587,6 @@ export const CreateOrUpdateStaff: React.FC<CreateOrUpdateStaffProps> = ({ match,
 					</form>
 				</div>
 			</div>
-		</AppLayout>
+		</>
 	)
 }

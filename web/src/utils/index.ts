@@ -1,5 +1,6 @@
 import { hostHTTPS } from './hostConfig'
 import Hyphenator from './Hyphenator'
+import { MISFeeLabels } from 'constants/index'
 
 const encoder = new TextEncoder()
 
@@ -28,9 +29,10 @@ export const checkTime = async (): Promise<boolean> => {
 			}
 		}
 
-		const response: ServerResponse = await fetch(`${hostHTTPS}/mis/server-time`, reqOpts).then(
-			(res: Response) => res.json()
-		)
+		const response: ServerResponse = await fetch(
+			`${hostHTTPS}/mis/server-time`,
+			reqOpts
+		).then((res: Response) => res.json())
 
 		const { os_time } = response
 		const client_time = new Date().getTime()
@@ -115,4 +117,27 @@ export const checkPermission = (
 		default:
 			return true
 	}
+}
+
+export const getPaymentLabel = (
+	feeName: string,
+	type: MISStudentPayment['type'] | MISStudentFee['type']
+) => {
+	if (feeName === MISFeeLabels.SPECIAL_SCHOLARSHIP) {
+		return 'Scholarship (M)'
+	}
+	// set fee name in default class fee logic
+	if (feeName === 'Montly') {
+		return 'Class Fee'
+	}
+
+	if (type === 'FORGIVEN') {
+		return 'Scholarship (A)'
+	}
+
+	if (type === 'SUBMITTED') {
+		return feeName + '-' + 'Paid'
+	}
+
+	return feeName
 }

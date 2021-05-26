@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import cond from 'cond-construct'
 import { useMediaPredicate } from 'react-media-hook'
+import { useSelector } from 'react-redux'
+import { useHistory } from 'react-router-dom'
 
 import { SettingsTab } from './settings'
 import { ActionTab } from './actions'
 import { StatsTab } from './statistics'
-
 import { AppLayout } from 'components/Layout/appLayout'
 import { Tabbar } from 'components/tabs'
-import { useSelector } from 'react-redux'
 
 enum Tabs {
 	SETTINGS,
@@ -32,7 +32,12 @@ const TabbarContent = [
 ]
 
 export const Home = () => {
-	const [activeTab, setActiveTab] = useState(Tabs.ACTIONS)
+	const urlParams = new URLSearchParams(location.search)
+	const h = useHistory()
+
+	const [activeTab, setActiveTab] = useState<number>(
+		parseInt(urlParams.get('activeTab') ?? '1') ?? Tabs.ACTIONS
+	)
 	const biggerThan880 = useMediaPredicate('(min-width: 880px)')
 
 	const faculty = useSelector((state: RootReducerState) => state.db.faculty)
@@ -59,7 +64,17 @@ export const Home = () => {
 	if (!biggerThan880) {
 		return (
 			<AppLayout title={'Home' + ' - ' + TabbarContent[activeTab].title}>
-				<Tabbar tab={activeTab} setTab={setActiveTab} content={TabbarContent} />
+				<Tabbar
+					setTabParams={tab =>
+						h.push({
+							pathname: location.pathname,
+							search: '?activeTab=' + tab
+						})
+					}
+					tab={activeTab}
+					setTab={setActiveTab}
+					content={TabbarContent}
+				/>
 				{renderComponent()}
 			</AppLayout>
 		)

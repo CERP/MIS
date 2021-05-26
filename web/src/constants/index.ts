@@ -25,6 +25,8 @@ export enum MISFeeLabels {
 	SPECIAL_SCHOLARSHIP = 'SPECIAL_SCHOLARSHIP'
 }
 
+export const numberRegex = /^[1-9]\d*$/
+
 export const DefaultExamGrades = {
 	grades: {
 		'A+': {

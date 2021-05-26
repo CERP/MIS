@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { connect, useDispatch } from 'react-redux'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
+import { Link } from 'react-router-dom'
+import { connect, useDispatch } from 'react-redux'
+import { useMediaPredicate } from 'react-media-hook'
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/outline'
 
 import chunkify from 'utils/chunkify'
@@ -12,7 +13,6 @@ import { Spinner } from 'components/animation/spinner'
 import { AppLayout } from 'components/Layout/appLayout'
 import { ShowHidePassword } from 'components/password'
 import { ActionTypes } from 'constants/index'
-import { useMediaPredicate } from 'react-media-hook'
 
 import UserIconSvg from 'assets/svgs/user.svg'
 
@@ -25,13 +25,25 @@ type LoginProps = RootReducerState & {
 	}
 	assets: RootDBState['assets']
 	unsyncd_changes: number
+	faculty: RootDBState['faculty']
 }
 
-const Login: React.FC<LoginProps> = ({ auth, users, school, connected, unsyncd_changes }) => {
+type AugmentedMISUser = MISUser & {
+	id: string
+}
+
+const Login: React.FC<LoginProps> = ({
+	auth,
+	users,
+	school,
+	connected,
+	unsyncd_changes,
+	faculty
+}) => {
 	const dispatch = useDispatch()
 
 	const [usersGroupIndex, setUsersGroupIndex] = useState(0)
-	const [user, setUser] = useState<MISUser>()
+	const [user, setUser] = useState<AugmentedMISUser>()
 
 	const filteredUsers = Object.entries(users)
 		.filter(([, f]) => f.hasLogin !== false)
@@ -50,7 +62,7 @@ const Login: React.FC<LoginProps> = ({ auth, users, school, connected, unsyncd_c
 			const msg = `You have ${unsyncd_changes} pending changes. If you switch school without exporting data, data will be lost.
 				Are you sure you want to continue?`
 
-			if (!window.confirm()) {
+			if (!window.confirm(msg)) {
 				return
 			}
 		}
@@ -95,7 +107,7 @@ const Login: React.FC<LoginProps> = ({ auth, users, school, connected, unsyncd_c
 							{user ? (
 								<div className="relative">
 									<div className="w-full md:w-3/5 mx-auto">
-										<LoginForm user={user} auth={auth} />
+										<LoginForm {...{ user, auth, faculty }} />
 									</div>
 									<div className="absolute left-0 top-0">
 										<ArrowLeftIcon
@@ -113,24 +125,35 @@ const Login: React.FC<LoginProps> = ({ auth, users, school, connected, unsyncd_c
 										<div className="grid grid-cols-3 md:grid-cols-5 md:gap-0 md:h-60">
 											{chunkify(filteredUsers || [], USERS_PER_GROUP)[
 												usersGroupIndex
-											].map(([uid, user]: [string, MISUser]) => (
-												<div
-													key={uid}
-													className="group flex flex-col items-center mb-4 space-y-2">
+											].map(([uid, user]: [string, MISUser]) => {
+												const staffMember = faculty[uid]
+												return (
 													<div
-														className="w-20 h-20 cursor-pointer"
-														onClick={() => setUser(user)}>
-														<img
-															className="rounded-full border-2 border-transparent group-hover:border-green-brand focus:border-green-brand"
-															src={UserIconSvg}
-															alt="school-logo"
-														/>
+														key={uid}
+														className="group flex flex-col items-center mb-4 space-y-2">
+														<div
+															className="w-20 h-20 cursor-pointer"
+															onClick={() =>
+																setUser({ id: uid, ...user })
+															}>
+															<img
+																className="rounded-full border-2 border-transparent group-hover:border-green-brand focus:border-green-brand"
+																src={
+																	staffMember?.ProfilePicture
+																		?.url ??
+																	staffMember.ProfilePicture
+																		?.image_string ??
+																	UserIconSvg
+																}
+																alt={staffMember.Name}
+															/>
+														</div>
+														<div className="text-xs text-white group-hover:text-blue-brand text-center">
+															{toTitleCase(user.name)}
+														</div>
 													</div>
-													<div className="text-xs text-white group-hover:text-blue-brand text-center">
-														{toTitleCase(user.name)}
-													</div>
-												</div>
-											))}
+												)
+											})}
 										</div>
 									</div>
 									{userGroups > 1 && (
@@ -178,15 +201,17 @@ export const StaffLogin = connect((state: RootReducerState) => ({
 	users: state.db?.users || {},
 	onboarding: state.db?.onboarding,
 	connected: state.connected,
-	unsyncd_changes: Object.keys(state.queued.mutations || {}).length
+	unsyncd_changes: Object.keys(state.queued.mutations ?? {}).length,
+	faculty: state.db.faculty
 }))(Login)
 
 type LoginFormProps = {
-	user?: MISUser
+	user?: AugmentedMISUser
+	faculty: RootDBState['faculty']
 	auth: RootReducerState['auth']
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ user, auth }) => {
+const LoginForm: React.FC<LoginFormProps> = ({ user, auth, faculty }) => {
 	const dispatch = useDispatch()
 
 	// TODO: create single state variable
@@ -224,11 +249,20 @@ const LoginForm: React.FC<LoginFormProps> = ({ user, auth }) => {
 		dispatch(createLogin(user.name, password))
 	}
 
+	const staffMember = faculty[user.id]
+
 	return (
 		<div className="flex flex-col items-center space-y-2">
 			<div className="w-24 h-24">
-				{/* TODO: use real picture here */}
-				<img className="rounded-full" src={UserIconSvg} alt="school-logo" />
+				<img
+					className="rounded-full"
+					src={
+						staffMember?.ProfilePicture?.url ??
+						staffMember?.ProfilePicture?.image_string ??
+						UserIconSvg
+					}
+					alt={staffMember?.Name}
+				/>
 			</div>
 			<div className="text-sm text-white">{toTitleCase(user.name)}</div>
 			<form id="staff-login" onSubmit={handleSubmit}>
@@ -270,9 +304,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ user, auth }) => {
 				</button>
 				<div className="h-1 py-1 text-xs text-red-brand">{hasError}</div>
 			</form>
-			<Link to="/reset-password" className="mt-2 text-sm text-gray-400 hover:text-blue-brand">
-				Forgot your school passsword?
-			</Link>
+			{user.type === 'admin' && (
+				<Link
+					to="/admin/reset-password"
+					className="mt-2 text-sm text-gray-400 hover:text-blue-brand">
+					Forgot your passsword?
+				</Link>
+			)}
 		</div>
 	)
 }

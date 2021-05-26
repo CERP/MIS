@@ -81,7 +81,7 @@ export default class Camera extends React.Component<P, S> {
 	render() {
 		if (this.state.image_string) {
 			return (
-				<div className="camera">
+				<div className="camera w-72">
 					<div className="title">Camera</div>
 					<img src={this.state.image_string} alt="camera-result" />
 					<div className="row">
@@ -97,7 +97,7 @@ export default class Camera extends React.Component<P, S> {
 		}
 
 		return (
-			<div className="camera">
+			<div className="camera w-72">
 				<div className="flex flex-row justify-end">
 					<button className="tw-btn-red" onClick={this.props.onClose}>
 						✕

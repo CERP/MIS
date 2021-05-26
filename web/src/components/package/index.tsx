@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 import { packages } from 'constants/landing'
+import clsx from 'clsx'
 
 export const PackageList = () => {
 	return (
@@ -33,8 +34,9 @@ export const PackageCard = ({ schoolPackage }: CardProps) => {
 	return (
 		<div className={'rounded-3xl border border-gray-50 bg-white shadow-md hover:shadow-lg'}>
 			<div
-				className={`m-1 py-5 px-3 rounded-3xl flex flex-col items-center ${schoolPackage.popular ? 'bg-gray-700 text-white' : ''
-					}`}>
+				className={clsx('m-1 py-5 px-3 rounded-3xl flex flex-col items-center', {
+					'bg-gray-700 text-white': schoolPackage.popular
+				})}>
 				<div className="font-semibold text-lg">{schoolPackage.title}</div>
 				{schoolPackage.popular ? (
 					<div className="my-2 px-2 text-xs rounded-full uppercase bg-purple-700 text-white">
@@ -49,9 +51,11 @@ export const PackageCard = ({ schoolPackage }: CardProps) => {
 				</div>
 				<div className="text-gray-500">Annual {schoolPackage.annual_charge}</div>
 				<div className="font-lg font-semibold mt-4">{schoolPackage.limit} Students</div>
-				<div className="mt-4 py-3 text-center w-full bg-teal-brand cursor-pointer hover:shadow-md text-white rounded-md">
+				<Link
+					to={'/signup?package=' + schoolPackage.code}
+					className="mt-4 py-3 text-center w-full bg-teal-brand cursor-pointer hover:shadow-md text-white rounded-md">
 					Choose Plan
-				</div>
+				</Link>
 			</div>
 		</div>
 	)

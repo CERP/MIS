@@ -9,11 +9,12 @@ import { UserIcon, TrashIcon, PhoneIcon } from '@heroicons/react/solid'
 import Hyphenator from 'utils/Hyphenator'
 import toTitleCase from 'utils/toTitleCase'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
-import { isValidStudent } from 'utils'
+import { isValidStudent, formatCNIC } from 'utils'
 import { AppLayout } from 'components/Layout/appLayout'
 import { StudentDropdownSearch } from 'components/input/search'
 import { addStudentToFamily, saveFamilyInfo } from 'actions'
 import { createMerges } from 'actions/core'
+import { numberRegex } from 'constants/index'
 
 type SingleFamilyProps = RouteComponentProps<{ id: string }>
 
@@ -169,13 +170,18 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 		event: React.ChangeEvent<HTMLInputElement & HTMLTextAreaElement>
 	) => {
 		const { name, value } = event.target
-
 		if (name === 'ManCNIC') {
-			setState({ ...state, ManCNIC: Hyphenator(value) })
+			if (numberRegex.test(value)) {
+				return setState({ ...state, ManCNIC: formatCNIC(value) })
+			}
+
 			return
 		}
 
-		setState({ ...state, [name]: value })
+		setState({
+			...state,
+			[name]: value
+		})
 	}
 
 	const handleRemoveStudent = (student: MISStudent) => {
@@ -306,7 +312,7 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 
 						{(isNewFam ? Object.keys(state.siblings ?? {}).length === 0 : true) && (
 							<>
-								<div>Add Siblings</div>
+								<div className="font-semibold">Search and Add Siblings</div>
 								<StudentDropdownSearch
 									classes={classes}
 									students={students}
