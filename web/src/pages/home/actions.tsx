@@ -1,5 +1,8 @@
 import React from 'react'
+import clsx from 'clsx'
+import toast from 'react-hot-toast'
 import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import { DownloadIcon } from '@heroicons/react/outline'
 
 import { isMobile } from 'utils/helpers'
@@ -10,10 +13,8 @@ import iconExams from 'assets/svgs/exams.svg'
 import iconAttendance from 'assets/svgs/attendance.svg'
 import iconDiary from 'assets/svgs/diary.svg'
 import iconExpense from 'assets/svgs/expense.svg'
-import clsx from 'clsx'
-import toast from 'react-hot-toast'
+
 import { checkPermission } from 'utils'
-import { useSelector } from 'react-redux'
 
 const links: CardProps[] = [
 	{
