@@ -45,16 +45,7 @@ const ExpenseForm = (props: { match: { params: { id: any } } }) => {
 		}
 
 		if (isNew()) {
-			dispatch(
-				addExpense(
-					state.amount,
-					state.label,
-					state.type,
-					state.category,
-					state.quantity,
-					state.date
-				)
-			)
+			dispatch(addExpense(state))
 			toast.success('Added New Expense')
 		} else {
 			dispatch(
@@ -150,14 +141,7 @@ const ExpenseForm = (props: { match: { params: { id: any } } }) => {
 												? 'text-gray-200'
 												: 'text-gray-400 border-gray-400'
 										)}>
-										<h1
-											onClick={e => {
-												if (key === 'new') {
-													selectCategory(e)
-												} else {
-													return
-												}
-											}}>
+										<h1 onClick={() => setState({ ...state, category: cat })}>
 											{cat}
 										</h1>
 									</div>

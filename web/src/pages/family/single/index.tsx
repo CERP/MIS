@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Redirect, RouteComponentProps } from 'react-router-dom'
 import { UserIcon, TrashIcon, PhoneIcon } from '@heroicons/react/solid'
 
-import Hyphenator from 'utils/Hyphenator'
 import toTitleCase from 'utils/toTitleCase'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { isValidStudent, formatCNIC } from 'utils'

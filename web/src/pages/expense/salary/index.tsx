@@ -5,15 +5,16 @@ import { Link } from 'react-router-dom'
 import { SearchInput } from 'components/input/search'
 import { AppLayout } from 'components/Layout/appLayout'
 import { toTitleCase } from 'utils/toTitleCase'
+import { isValidTeacher } from 'utils'
 
 import UserIconSvg from 'assets/svgs/user.svg'
+import Paginate from 'components/Paginate'
 
 const Salary = () => {
 	const expenses = useSelector((state: RootReducerState) => state.db.expenses)
 	const faculty = useSelector((state: RootReducerState) => state.db.faculty)
-	const [teacherSalaries, setTeacherSalaries] = useState<{ [id: string]: MISSalaryExpense[] }>(
-		null
-	)
+	const [teacherSalaries, setTeacherSalaries] =
+		useState<{ [id: string]: MISSalaryExpense[] }>(null)
 	const [isActive, setIsActive] = useState(true)
 	const [search, setSearch] = useState('')
 
@@ -22,37 +23,59 @@ const Salary = () => {
 	}, [expenses, faculty])
 
 	const loadData = () => {
-		let groupsByFacultyID = Object.values(expenses)
-			.filter(element => element.expense === 'SALARY_EXPENSE')
-			.reduce((agg: { [id: string]: MISSalaryExpense[] }, curr: any) => {
+		let groupsByFacultyID = Object.values(expenses).reduce(
+			(agg: { [id: string]: MISSalaryExpense[] }, curr: any) => {
 				const { faculty_id } = curr
+				if (curr.expense === 'SALARY_EXPENSE') {
+					if (agg[faculty_id]) {
+						return {
+							...agg,
+							[faculty_id]: [...agg[faculty_id], curr]
+						}
+					}
 
-				if (agg[faculty_id]) {
 					return {
 						...agg,
-						[faculty_id]: [...agg[faculty_id], curr]
+						[faculty_id]: [curr]
 					}
+				} else {
+					return { ...agg }
 				}
-
-				return {
-					...agg,
-					[faculty_id]: [curr]
-				}
-			}, {} as { [id: string]: MISSalaryExpense[] })
+			},
+			{} as { [id: string]: MISSalaryExpense[] }
+		)
 
 		setTeacherSalaries(groupsByFacultyID)
 	}
 
-	const filteredStaff = Object.values(faculty).filter(
-		f =>
-			isValidTeacher(f) &&
-			f.Active === isActive &&
-			(search ? f.Name.toLowerCase().includes(search.toLowerCase()) : true)
-	)
+	const listItem = (teacher: MISTeacher) => {
+		return (
+			<Link
+				key={teacher.id}
+				to={{
+					pathname: `/salaries/${teacher.id}`
+				}}>
+				<Card
+					key={teacher.id}
+					teacher={teacher}
+					lastSalary={getLastSalary(teacherSalaries[teacher.id])}
+				/>
+			</Link>
+		)
+	}
+
+	const filteredStaff = Object.values(faculty)
+		.filter(
+			f =>
+				isValidTeacher(f) &&
+				f.Active === isActive &&
+				(search ? f.Name.toLowerCase().includes(search.toLowerCase()) : true)
+		)
+		.sort((a, b) => a.Name.localeCompare(b.Name))
 
 	return (
 		<AppLayout title="Salaries" showHeaderTitle>
-			<div className="pt-3 pb-3 pl-3 pr-3">
+			<div className="pt-3 pb-3 pl-3 pr-3 lg:ml-10 lg:mr-10">
 				<div className="flex flex-row items-center justify-between mt-4 mb-12 md:mb-20 space-x-4 md:space-y-0 md:space-x-60">
 					<SearchInput onChange={e => setSearch(e.target.value)} />
 					<select
@@ -64,26 +87,12 @@ const Salary = () => {
 					</select>
 				</div>
 				{teacherSalaries && (
-					<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-12 gap-y-12 md:gap-y-20">
-						{filteredStaff
-							.sort((a, b) => a.Name.localeCompare(b.Name))
-							.map(teacher => {
-								return (
-									<Link
-										key={teacher.id}
-										to={{
-											pathname: `/salary/${teacher.id}`,
-											state: sortSalaries(teacherSalaries[teacher.id])
-										}}>
-										<Card
-											key={teacher.id}
-											teacher={teacher}
-											salaries={sortSalaries(teacherSalaries[teacher.id])}
-										/>
-									</Link>
-								)
-							})}
-					</div>
+					<Paginate
+						items={filteredStaff}
+						itemsPerPage={10}
+						numberOfBottomPages={3}
+						renderComponent={listItem}
+					/>
 				)}
 			</div>
 		</AppLayout>
@@ -92,10 +101,10 @@ const Salary = () => {
 
 type CardProps = {
 	teacher: MISTeacher
-	salaries: MISSalaryExpense[]
+	lastSalary: { paid: number; deducted: number }
 }
 
-const Card = ({ teacher, salaries }: CardProps) => {
+const Card = ({ teacher, lastSalary }: CardProps) => {
 	return (
 		<div className="relative">
 			<div className="bg-white rounded-xl text-center border border-gray-100 shadow-md  py-4 md:p-5">
@@ -111,13 +120,13 @@ const Card = ({ teacher, salaries }: CardProps) => {
 					<div className="flex items-center justify-between flex-row">
 						<div className="text-gray-900 font-semibold">Last Paid</div>
 						<div className="text-gray-500 text-xs md:text-base lg:text-lg">
-							{salaries ? salaries[0].amount : 0}
+							{lastSalary.paid}
 						</div>
 					</div>
 					<div className="flex items-center justify-between flex-row">
 						<div className="text-gray-900 font-semibold">Deducted</div>
 						<div className="text-gray-500 text-xs md:text-base lg:text-lg">
-							{salaries ? salaries[0].deduction : 0}
+							{lastSalary.deducted}
 						</div>
 					</div>
 					<div className="flex items-center justify-between flex-row">
@@ -143,11 +152,17 @@ const Card = ({ teacher, salaries }: CardProps) => {
 	)
 }
 
-export const isValidTeacher = (teacher: MISTeacher): boolean => {
-	return !!(teacher && teacher.id && teacher.Name)
-}
-
-function sortSalaries(salaries: MISSalaryExpense[]): MISSalaryExpense[] {
-	return salaries?.sort((a, b) => (a.date > b.date ? -1 : 1))
+function getLastSalary(salaries: MISSalaryExpense[]) {
+	if (!salaries) {
+		return {
+			paid: 0,
+			deducted: 0
+		}
+	}
+	const localSalary = salaries ?? [].sort((a, b) => (a.date > b.date ? -1 : 1))
+	return {
+		paid: localSalary[0]?.amount ?? 0,
+		deducted: localSalary[0]?.deduction ?? 0
+	}
 }
 export default Salary

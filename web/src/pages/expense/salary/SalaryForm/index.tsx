@@ -6,6 +6,7 @@ import { Transition } from '@headlessui/react'
 import { RouteComponentProps } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/outline'
+import * as History from 'history'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { addSalaryExpense } from 'actions'
@@ -14,56 +15,89 @@ import UserIconSvg from 'assets/svgs/user.svg'
 
 type SalaryFormProps = RouteComponentProps<{ id: string }>
 
+enum SalaryType {
+	FULL = 'Full',
+	DEDUCTED = 'Deducted',
+	ADVANCE = 'Advance'
+}
+
+interface localState {
+	detailsExpanded: boolean
+	type: string
+	reason: string
+	totalDeductions: number
+	totalPaid: number
+}
+
+const getFacultySalaries = (
+	salaries: (MISExpense | MISSalaryExpense)[],
+	id: string
+): MISSalaryExpense[] => {
+	return salaries.reduce((agg, salary) => {
+		if (salary.expense === 'SALARY_EXPENSE' && salary.faculty_id === id) {
+			return [...agg, salary]
+		}
+		return [...agg]
+	}, [] as MISSalaryExpense[])
+}
+
 const SalaryForm = ({ match }: SalaryFormProps) => {
-	const [salaries, setSalaries] = useState<MISSalaryExpense[]>()
 	const teacher = useSelector((state: RootReducerState) => state.db.faculty[match.params.id])
 	const allSalaries = useSelector((state: RootReducerState) => state.db.expenses)
-	const [state, setState] = useState<Partial<MISSalaryExpense>>({
+
+	const [salaries, setSalaries] = useState<MISSalaryExpense[]>(
+		getFacultySalaries(Object.values(allSalaries), match.params.id)
+	)
+	const [salariesState, setState] = useState<Partial<MISSalaryExpense>>({
 		amount: parseFloat(teacher.Salary),
-		date: new Date().getTime()
+		date: new Date().getTime(),
+		advance: 0,
+		deduction: 0,
+		deduction_reason: '',
+		faculty_id: match.params.id,
+		category: 'SALARY',
+		label: teacher.Name,
+		type: 'PAYMENT_GIVEN'
 	})
 
-	const [detialsExpanded, setDetailsExpanded] = useState<boolean>(false)
+	const [localState, setLocalState] = useState<localState>({
+		detailsExpanded: false,
+		type: 'Full',
+		reason: '',
+		totalDeductions: 0,
+		totalPaid: 0
+	})
 
-	const [type, setType] = useState<string>('Full')
-	const [reason, setReason] = useState<string>('')
-	const [totalDeductions, setTotalDeductions] = useState<number>(0)
-	const [totalPaid, setTotalPaid] = useState<number>(0)
 	const dispatch = useDispatch()
 	const detailsButtonRef = useRef(undefined)
 	const mainFormRef = useRef(undefined)
 
-	const calculateDeductionsAndPaid = () => {
-		let deduction = 0
-		let paid = 0
+	// const calculateDeductionsAndPaid = () => {
 
-		salaries.forEach(entry => {
-			deduction = deduction + entry.deduction
-			paid = paid + entry.amount
-		})
-
-		setTotalDeductions(deduction)
-		setTotalPaid(paid)
-	}
+	// 	setLocalState({ ...localState, totalPaid: paid, totalDeductions: deduction })
+	// }
 
 	useEffect(() => {
-		calculateDeductionsAndPaid()
-	}, [salaries])
+		setSalaries(getFacultySalaries(Object.values(allSalaries), match.params.id))
+	}, [allSalaries])
 
 	const paySalary = () => {
-		if (typeof state.amount === 'string' || typeof state.amount === 'undefined') {
+		if (
+			typeof salariesState.amount === 'string' ||
+			typeof salariesState.amount === 'undefined'
+		) {
 			toast.error('Amount must be a number')
 			return
-		} else if (state.amount < 0) {
+		} else if (salariesState.amount < 0) {
 			toast.error('Ammount cannot be less than 0')
 			return
 		}
-		if (isNaN(state.amount)) {
+		if (isNaN(salariesState.amount)) {
 			toast.error('Please Specify an ammount')
 			return
 		}
 
-		const id = `${moment(state.date).format('MM-YYYY')}-${teacher.id}`
+		const id = `${moment(salariesState.date).format('MM-YYYY')}-${teacher.id}`
 		if (salaries !== undefined) {
 			//updates the already paid salary if check not present?????
 
@@ -75,180 +109,36 @@ const SalaryForm = ({ match }: SalaryFormProps) => {
 			}
 		}
 
-		switch (type) {
-			case 'Full':
-				dispatch(
-					addSalaryExpense(
-						id,
-						state.amount,
-						teacher.Name,
-						'PAYMENT_GIVEN',
-						teacher.id,
-						state.date,
-						0,
-						0,
-						'',
-						'SALARY'
-					)
-				)
-
-				if (salaries) {
-					setSalaries([
-						...salaries,
-						{
-							advance: 0,
-							amount: state.amount,
-							category: 'SALARY',
-							date: state.date,
-							expense: 'SALARY_EXPENSE',
-							type: 'PAYMENT_GIVEN',
-							deduction: 0,
-							deduction_reason: '',
-							faculty_id: teacher.id,
-							label: teacher.Name,
-							time: moment.now()
-						}
-					])
-				} else {
-					setSalaries([
-						{
-							advance: 0,
-							amount: state.amount,
-							category: 'SALARY',
-							date: state.date,
-							expense: 'SALARY_EXPENSE',
-							type: 'PAYMENT_GIVEN',
-							deduction: 0,
-							deduction_reason: '',
-							faculty_id: teacher.id,
-							label: teacher.Name,
-							time: moment.now()
-						}
-					])
-				}
+		switch (localState.type) {
+			case SalaryType.FULL:
+				dispatch(addSalaryExpense(salariesState))
 
 				toast.success('Payment Made')
 				break
 
-			case 'Deducted':
+			case SalaryType.DEDUCTED:
 				if (parseFloat(teacher.Salary) <= 0 || teacher.Salary == '') {
 					toast.error('Can not use this option without setting teacher Salary')
 					break
 				}
 
-				let deducted = parseFloat(teacher.Salary) - state.amount
-				dispatch(
-					addSalaryExpense(
-						id,
-						state.amount,
-						teacher.Name,
-						'PAYMENT_GIVEN',
-						teacher.id,
-						state.date,
-						0,
-						deducted,
-						'',
-						'SALARY'
-					)
-				)
-
-				if (salaries) {
-					setSalaries([
-						...salaries,
-						{
-							advance: 0,
-							amount: state.amount,
-							category: 'SALARY',
-							date: state.date,
-							expense: 'SALARY_EXPENSE',
-							type: 'PAYMENT_GIVEN',
-							deduction: deducted,
-							deduction_reason: '',
-							faculty_id: teacher.id,
-							label: teacher.Name,
-							time: moment.now()
-						}
-					])
-				} else {
-					setSalaries([
-						{
-							advance: 0,
-							amount: state.amount,
-							category: 'SALARY',
-							date: state.date,
-							expense: 'SALARY_EXPENSE',
-							type: 'PAYMENT_GIVEN',
-							deduction: deducted,
-							deduction_reason: '',
-							faculty_id: teacher.id,
-							label: teacher.Name,
-							time: moment.now()
-						}
-					])
-				}
+				let deducted = parseFloat(teacher.Salary) - salariesState.amount
+				dispatch(addSalaryExpense(salariesState))
 
 				toast.success('Payment Made')
 				break
 
-			case 'Advance':
+			case SalaryType.ADVANCE:
 				if (parseFloat(teacher.Salary) <= 0 || teacher.Salary == '') {
 					toast.error('Can not use this option without setting teacher Salary')
 					break
 				}
-				if (moment(state.date).endOf('month') <= moment().endOf('month')) {
+				if (moment(salariesState.date).endOf('month') <= moment().endOf('month')) {
 					toast.error('Please give advance for a month other than the current one')
 					break
 				}
 
-				dispatch(
-					addSalaryExpense(
-						id,
-						0,
-						teacher.Name,
-						'PAYMENT_GIVEN',
-						teacher.id,
-						state.date,
-						state.amount,
-						0,
-						'',
-						'SALARY'
-					)
-				)
-
-				if (salaries) {
-					setSalaries([
-						...salaries,
-						{
-							advance: state.amount,
-							amount: 0,
-							category: 'SALARY',
-							date: state.date,
-							expense: 'SALARY_EXPENSE',
-							type: 'PAYMENT_GIVEN',
-							deduction: 0,
-							deduction_reason: '',
-							faculty_id: teacher.id,
-							label: teacher.Name,
-							time: moment.now()
-						}
-					])
-				} else {
-					setSalaries([
-						{
-							advance: 0,
-							amount: state.amount,
-							category: 'SALARY',
-							date: state.date,
-							expense: 'SALARY_EXPENSE',
-							type: 'PAYMENT_GIVEN',
-							deduction: 0,
-							deduction_reason: '',
-							faculty_id: teacher.id,
-							label: teacher.Name,
-							time: moment.now()
-						}
-					])
-				}
+				dispatch(addSalaryExpense(salariesState))
 
 				toast.success('Payment Made')
 				break
@@ -257,6 +147,14 @@ const SalaryForm = ({ match }: SalaryFormProps) => {
 				break
 		}
 	}
+
+	const { deduction, paid } = (salaries ?? []).reduce(
+		(agg, salary) => ({
+			deduction: agg.deduction + salary.deduction,
+			paid: agg.paid + salary.amount
+		}),
+		{ deduction: 0, paid: 0 }
+	)
 
 	return (
 		<AppLayout>
@@ -267,7 +165,10 @@ const SalaryForm = ({ match }: SalaryFormProps) => {
 					<div className="m-5 text-gray-50 lg:space-y-5">
 						<div
 							onClick={() => {
-								setDetailsExpanded(!detialsExpanded)
+								setLocalState({
+									...localState,
+									detailsExpanded: !localState.detailsExpanded
+								})
 							}}
 							className="w-full flex justify-center items-center">
 							<div
@@ -289,7 +190,8 @@ const SalaryForm = ({ match }: SalaryFormProps) => {
 									name="type"
 									value="Full"
 									onChange={type => {
-										setType(type.target.value)
+										setLocalState({ ...localState, type: type.target.value })
+										setState({ ...salariesState, date: new Date().getTime() })
 									}}
 									className="form-radio bg-transparent text-teal-brand mr-2 w-4 h-4 cursor-pointer"
 								/>
@@ -302,7 +204,7 @@ const SalaryForm = ({ match }: SalaryFormProps) => {
 									type="radio"
 									id="Advance"
 									onChange={type => {
-										setType(type.target.value)
+										setLocalState({ ...localState, type: type.target.value })
 									}}
 									name="type"
 									value="Advance"
@@ -314,7 +216,8 @@ const SalaryForm = ({ match }: SalaryFormProps) => {
 									className="form-radio bg-transparent text-teal-brand mr-2 w-4 h-4 cursor-pointer"
 									type="radio"
 									onChange={type => {
-										setType(type.target.value)
+										setLocalState({ ...localState, type: type.target.value })
+										setState({ ...salariesState, date: new Date().getTime() })
 									}}
 									id="Deducted"
 									name="type"
@@ -330,27 +233,32 @@ const SalaryForm = ({ match }: SalaryFormProps) => {
 								type="number"
 								placeholder={'Salary'}
 								className="w-full bg-transparent rounded border-2 border-blue-300 outline-none  placeholder-gray-400 text-white"
-								value={state.amount}
+								value={salariesState.amount}
 								onChange={text =>
 									setState({
-										...state,
+										...salariesState,
 										amount: text.target.valueAsNumber
 									})
 								}
 							/>
 						</div>
-						{type !== 'Full' && (
+						{localState.type !== 'Full' && (
 							<div>
 								<h1 className="text-xl text-gray-100 font-normal mt-3">
-									{type + ' Reason'}
+									{localState.type + ' Reason'}
 								</h1>
 								<div className="w-full rounded  focus:outline-none focus-within:outline-none mt-2">
 									<input
 										type="text"
 										placeholder={'Salary'}
 										className="w-full bg-transparent rounded border-2 border-blue-300 outline-none  placeholder-gray-400 text-white"
-										value={reason}
-										onChange={text => setReason(text.target.value)}
+										value={localState.reason}
+										onChange={text =>
+											setLocalState({
+												...localState,
+												reason: text.target.value
+											})
+										}
 									/>
 								</div>
 							</div>
@@ -358,16 +266,16 @@ const SalaryForm = ({ match }: SalaryFormProps) => {
 						<h1 className="text-xl text-gray-100 font-normal mt-3">Date*</h1>
 						<div className="w-full mt-2">
 							<input
-								disabled={type === 'Advance' ? false : true}
-								defaultValue={moment(state.date).format('YYYY-MM-DD')}
+								disabled={localState.type === 'Advance' ? false : true}
+								value={moment(salariesState.date).format('YYYY-MM-DD')}
 								className={clsx(
 									'w-full bg-transparent rounded border-2 border-blue-300 outline-none  placeholder-gray-400',
-									type === 'Advance' ? 'text-white' : 'text-gray-400'
+									localState.type === 'Advance' ? 'text-white' : 'text-gray-400'
 								)}
 								type="date"
 								onChange={e =>
 									setState({
-										...state,
+										...salariesState,
 										date: e.target.valueAsNumber
 									})
 								}
@@ -377,7 +285,9 @@ const SalaryForm = ({ match }: SalaryFormProps) => {
 							onClick={() => paySalary()}
 							className="flex flex-1 flex-row justify-center text-center mt-6 pl-4 pr-4 pt-2 pb-2 ml-1 mr-1 rounded-md bg-teal-brand lg:mt-10">
 							<h1 className="text-xl text-gray-100 font-semibold">
-								{type === 'Full' ? 'Pay Salary' : 'Pay ' + type}
+								{localState.type === 'Full'
+									? 'Pay Salary'
+									: 'Pay ' + localState.type}
 							</h1>
 						</div>
 					</div>
@@ -412,28 +322,30 @@ const SalaryForm = ({ match }: SalaryFormProps) => {
 								<div className="flex-1 text-right">Paid</div>
 							</div>
 							{salaries ? (
-								salaries.map((entry, index) => {
+								salaries.map((salary, index) => {
 									return (
 										<div
-											key={entry.faculty_id + index}
+											key={salary.faculty_id + index}
 											className="flex flex-1 text-left ">
 											<div
 												className={clsx(
 													'flex-1',
-													entry.deduction > 0 ? 'text-red-500' : ''
+													salary.deduction > 0 ? 'text-red-500' : ''
 												)}>
-												{moment(entry.date).format('MMMM') +
+												{moment(salary.date).format('MMMM') +
 													' ' +
-													moment(entry.date).format('YYYY')}
+													moment(salary.date).format('YYYY')}
 											</div>
 											<div
 												className={clsx(
 													'flex-1 text-center',
-													entry.deduction > 0 ? 'text-red-500' : ''
+													salary.deduction > 0 ? 'text-red-500' : ''
 												)}>
-												{entry.deduction}
+												{salary.deduction}
 											</div>
-											<div className="flex-1 text-right">{entry.amount}</div>
+											<div className="flex-1 text-right">
+												{salary.amount + salary.advance}
+											</div>
 										</div>
 									)
 								})
@@ -444,16 +356,16 @@ const SalaryForm = ({ match }: SalaryFormProps) => {
 						<div className="flex w-full flex-1 text-left  border-gray-500 mt-4 border-t-2 border-dashed ">
 							<div className="flex-1 font-semibold">Total</div>
 							<div className="flex-1 font-semibold text-center text-red-500">
-								{totalDeductions}
+								{deduction}
 							</div>
-							<div className="flex-1 font-semibold text-right">{totalPaid}</div>
+							<div className="flex-1 font-semibold text-right">{paid}</div>
 						</div>
 					</div>
 				</div>
 			</div>
 			<Transition
 				as={Fragment}
-				show={detialsExpanded}
+				show={localState.detailsExpanded}
 				enter="transform transition duration-[400ms]"
 				enterFrom="opacity-0 rotate-[-120deg] scale-50"
 				enterTo="opacity-100 rotate-0 scale-100"
@@ -470,13 +382,19 @@ const SalaryForm = ({ match }: SalaryFormProps) => {
 					<div className="bg-white text-blue-400 rounded-full py-2 px-2 font-semibold cursor-pointer mb-4 flex flex-row justify-center items-center lg:hidden">
 						<h1
 							onClick={() => {
-								setDetailsExpanded(!detialsExpanded)
+								setLocalState({
+									...localState,
+									detailsExpanded: !localState.detailsExpanded
+								})
 							}}>
 							Hide Past Payments
 						</h1>
 						<ChevronUpIcon
 							onClick={() => {
-								setDetailsExpanded(!detialsExpanded)
+								setLocalState({
+									...localState,
+									detailsExpanded: !localState.detailsExpanded
+								})
 							}}
 							className="w-4 h-4 text-blue-400 ml-3"
 						/>
@@ -488,28 +406,30 @@ const SalaryForm = ({ match }: SalaryFormProps) => {
 							<div className="flex-1 font-medium text-right">Paid</div>
 						</div>
 						{salaries ? (
-							salaries.map((entry, index) => {
+							salaries.map((salary, index) => {
 								return (
 									<div
-										key={entry.faculty_id + index}
+										key={salary.faculty_id + index}
 										className="flex flex-1 text-left ">
 										<div
 											className={clsx(
 												'flex-1',
-												entry.deduction > 0 ? 'text-red-500' : ''
+												salary.deduction > 0 ? 'text-red-500' : ''
 											)}>
-											{moment(entry.date).format('MMMM') +
+											{moment(salary.date).format('MMMM') +
 												' ' +
-												moment(entry.date).format('YYYY')}
+												moment(salary.date).format('YYYY')}
 										</div>
 										<div
 											className={clsx(
 												'flex-1 text-center',
-												entry.deduction > 0 ? 'text-red-500' : ''
+												salary.deduction > 0 ? 'text-red-500' : ''
 											)}>
-											{entry.deduction}
+											{salary.deduction}
 										</div>
-										<div className="flex-1 text-right">{entry.amount}</div>
+										<div className="flex-1 text-right">
+											{salary.amount + salary.advance}
+										</div>
 									</div>
 								)
 							})
@@ -520,12 +440,19 @@ const SalaryForm = ({ match }: SalaryFormProps) => {
 					<div className="flex flex-1 text-left  border-gray-500 mt-4 border-t-2 border-dashed ">
 						<div className="flex-1 font-semibold">Total</div>
 						<div className="flex-1 font-semibold text-center text-red-500">
-							{totalDeductions}
+							{localState.totalDeductions}
 						</div>
-						<div className="flex-1 font-semibold text-right">{totalPaid}</div>
+						<div className="flex-1 font-semibold text-right">
+							{localState.totalPaid}
+						</div>
 					</div>
 					<div
-						onClick={() => setDetailsExpanded(!detialsExpanded)}
+						onClick={() =>
+							setLocalState({
+								...localState,
+								detailsExpanded: !localState.detailsExpanded
+							})
+						}
 						className="flex flex-1 flex-row justify-center text-center mt-6 pl-4 pr-4 pt-2 pb-2 ml-1 mr-1 rounded-md bg-yellow-tip-brand lg:mt-10">
 						<h1 className="text-xl text-gray-100 font-semibold">Go Back</h1>
 					</div>
