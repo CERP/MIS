@@ -13,6 +13,7 @@ import iconExpense from 'assets/svgs/expense.svg'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
 import { checkPermission } from 'utils'
+import { useSelector } from 'react-redux'
 
 const links: CardProps[] = [
 	{
@@ -76,6 +77,8 @@ type PropTypes = {
 }
 
 export const ActionTab = ({ permissions, admin, subAdmin }: PropTypes) => {
+	const isActiveInternetConnection = useSelector((state: RootReducerState) => state.connected)
+
 	return (
 		<div className="p-10 pt-6 mx-auto mb-10 md:w-full">
 			<div className="mb-6 text-lg text-center md:hidden">What would you like to do?</div>
@@ -88,7 +91,7 @@ export const ActionTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 					/>
 				))}
 			</div>
-			{isMobile() && (
+			{isMobile() && isActiveInternetConnection && (
 				<a
 					href="https://github.com/CERP/MIS/raw/master/android/app/release/app-release.apk"
 					target="_blank"
