@@ -552,19 +552,6 @@ export const markAllStudents = (
 	dispatch(createMerges(merges))
 }
 
-export const addStudentToFamily = (student: MISStudent, family_id: string) => (
-	dispatch: Function
-) => {
-	dispatch(
-		createMerges([
-			{
-				path: ['db', 'students', student.id, 'FamilyID'],
-				value: family_id
-			}
-		])
-	)
-}
-
 export const saveFamilyInfo = (siblings: MISStudent[], info: MISFamilyInfo, famId?: string) => (
 	dispatch: Function
 ) => {
@@ -600,6 +587,19 @@ export const saveFamilyInfo = (siblings: MISStudent[], info: MISFamilyInfo, famI
 		}, [])
 
 	dispatch(createMerges(siblingMerges))
+}
+
+export const addStudentToFamily = (student: MISStudent, family_id: string) => (
+	dispatch: Function
+) => {
+	dispatch(
+		createMerges([
+			{
+				path: ['db', 'students', student.id, 'FamilyID'],
+				value: family_id
+			}
+		])
+	)
 }
 
 export const markFaculty = (
@@ -837,18 +837,11 @@ export const addHistoricalPayment = (payment: historicalPayment, student_id: str
 	dispatch(createMerges(merges))
 }
 
-export const addExpense = (
-	amount: number,
-	label: string,
-	type: MISExpense['type'],
-	category: MISExpense['category'],
-	quantity: number,
-	date: number,
-	time = moment.now()
-) => (dispatch: Function) => {
+export const addExpense = (newExpense: Partial<MISExpense>) => (dispatch: Function) => {
 	const expense = 'MIS_EXPENSE'
 	const id = v4()
-
+	const time = moment.now()
+	const { amount, label, type, category, quantity, date } = newExpense
 	dispatch(
 		createMerges([
 			{
@@ -868,21 +861,21 @@ export const addExpense = (
 	)
 }
 
-export const addSalaryExpense = (
-	id: string,
-	amount: number,
-	label: string,
-	type: MISSalaryExpense['type'],
-	faculty_id: string,
-	date: number,
-	advance: number,
-	deduction: number,
-	deduction_reason: string,
-	category = 'SALARY',
-	time = moment.now()
-) => (dispatch: Function) => {
+export const addSalaryExpense = (newSalary: Partial<MISSalaryExpense>) => (dispatch: Function) => {
+	const {
+		faculty_id,
+		date,
+		amount,
+		label,
+		category,
+		type,
+		deduction,
+		deduction_reason,
+		advance
+	} = newSalary
+	const id = `${moment(date).format('MM-YYYY')}-${faculty_id}`
 	const expense = 'SALARY_EXPENSE'
-
+	let time = moment.now()
 	dispatch(
 		createMerges([
 			{
