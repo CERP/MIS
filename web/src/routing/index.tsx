@@ -54,9 +54,9 @@ import { ResetSchoolPassword } from 'pages/auth/reset-password/school'
 
 import { PrivateRoute, SchoolRoute, PublicRoute } from 'components/routing'
 import { Expense } from 'pages/expense'
-import ExpenseForm from 'pages/expense/expenseForm'
-import Salary from 'pages/expense/salary'
-import SalaryForm from 'pages/expense/salary/SalaryForm'
+import { ExpenseForm } from 'pages/expense/form'
+import { StaffSalary } from 'pages/expense/salary'
+import { StaffMemberSalary } from 'pages/expense/salary/member'
 import { ExamsMenu } from 'pages/exams/menu'
 import { GradeSettings } from 'pages/exams/grades'
 import { PromoteStudents } from 'pages/exams/promote-students'
@@ -103,7 +103,13 @@ export class Routes extends React.Component<RoutesProps, State> {
 					<Switch>
 						<PrivateRoute exact path="/home" component={Home} />
 						<PrivateRoute path="/staff" exact component={StaffList} />
-						<PrivateRoute path="/staff/:id" component={StaffPage} />
+						<PrivateRoute path="/staff/salaries" exact component={StaffSalary} />
+						<PrivateRoute
+							path="/staff/:id/salaries"
+							exact
+							component={StaffMemberSalary}
+						/>
+						<PrivateRoute path="/staff/:id" exact component={StaffPage} />
 						<PrivateRoute path="/students/new/menu" exact component={AddStudentMenu} />
 						<PrivateRoute
 							path="/students/excel-import"
@@ -172,8 +178,6 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<PrivateRoute path="/reset-password" component={ResetPassword} />
 						<PrivateRoute path="/expenses" exact component={Expense} />
 						<PrivateRoute path="/expenses/:id" exact component={ExpenseForm} />
-						<PrivateRoute path="/salaries" exact component={Salary} />
-						<PrivateRoute path="/salaries/:id" exact component={SalaryForm} />
 
 						<PublicRoute exact path="/signup" component={SchoolSignup} />
 						<PublicRoute path="/school-login" component={SchoolLogin} />

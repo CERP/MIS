@@ -6,15 +6,19 @@ import { SearchInput } from 'components/input/search'
 import { AppLayout } from 'components/Layout/appLayout'
 import { toTitleCase } from 'utils/toTitleCase'
 import { isValidTeacher } from 'utils'
-
-import UserIconSvg from 'assets/svgs/user.svg'
 import Paginate from 'components/Paginate'
+import UserIconSvg from 'assets/svgs/user.svg'
 
-const Salary = () => {
+type FacultySalaryExpense = {
+	[id: string]: MISSalaryExpense[]
+}
+
+export const StaffSalary = () => {
 	const expenses = useSelector((state: RootReducerState) => state.db.expenses)
 	const faculty = useSelector((state: RootReducerState) => state.db.faculty)
-	const [teacherSalaries, setTeacherSalaries] =
-		useState<{ [id: string]: MISSalaryExpense[] }>(null)
+	const [teacherSalaries, setTeacherSalaries] = useState<{ [id: string]: MISSalaryExpense[] }>(
+		null
+	)
 	const [isActive, setIsActive] = useState(true)
 	const [search, setSearch] = useState('')
 
@@ -23,26 +27,26 @@ const Salary = () => {
 	}, [expenses, faculty])
 
 	const loadData = () => {
-		let groupsByFacultyID = Object.values(expenses).reduce(
-			(agg: { [id: string]: MISSalaryExpense[] }, curr: any) => {
-				const { faculty_id } = curr
-				if (curr.expense === 'SALARY_EXPENSE') {
+		const groupsByFacultyID = Object.values(expenses ?? {}).reduce<FacultySalaryExpense>(
+			(agg, salaryExpense) => {
+				const { faculty_id } = salaryExpense as MISSalaryExpense
+				if (salaryExpense.expense === 'SALARY_EXPENSE') {
 					if (agg[faculty_id]) {
 						return {
 							...agg,
-							[faculty_id]: [...agg[faculty_id], curr]
+							[faculty_id]: [...agg[faculty_id], salaryExpense]
 						}
 					}
 
 					return {
 						...agg,
-						[faculty_id]: [curr]
+						[faculty_id]: [salaryExpense]
 					}
-				} else {
-					return { ...agg }
 				}
+
+				return agg
 			},
-			{} as { [id: string]: MISSalaryExpense[] }
+			{}
 		)
 
 		setTeacherSalaries(groupsByFacultyID)
@@ -53,7 +57,7 @@ const Salary = () => {
 			<Link
 				key={teacher.id}
 				to={{
-					pathname: `/salaries/${teacher.id}`
+					pathname: `/staff/${teacher.id}/salaries`
 				}}>
 				<Card
 					key={teacher.id}
@@ -74,7 +78,7 @@ const Salary = () => {
 		.sort((a, b) => a.Name.localeCompare(b.Name))
 
 	return (
-		<AppLayout title="Salaries" showHeaderTitle>
+		<AppLayout title="Staff Salaries" showHeaderTitle>
 			<div className="pt-3 pb-3 pl-3 pr-3 lg:ml-10 lg:mr-10">
 				<div className="flex flex-row items-center justify-between mt-4 mb-12 md:mb-20 space-x-4 md:space-y-0 md:space-x-60">
 					<SearchInput onChange={e => setSearch(e.target.value)} />
@@ -140,8 +144,8 @@ const Card = ({ teacher, lastSalary }: CardProps) => {
 			<div className="absolute -top-10 left-0 right-0">
 				<img
 					src={
-						teacher.ProfilePicture?.url ||
-						teacher.ProfilePicture?.image_string ||
+						teacher.ProfilePicture?.url ??
+						teacher.ProfilePicture?.image_string ??
 						UserIconSvg
 					}
 					className="mx-auto h-20 w-20 rounded-full shadow-lg bg-gray-500 hover:bg-gray-700"
@@ -153,16 +157,10 @@ const Card = ({ teacher, lastSalary }: CardProps) => {
 }
 
 function getLastSalary(salaries: MISSalaryExpense[]) {
-	if (!salaries) {
-		return {
-			paid: 0,
-			deducted: 0
-		}
-	}
-	const localSalary = salaries ?? [].sort((a, b) => (a.date > b.date ? -1 : 1))
+	const localSalary = (salaries ?? []).sort((a, b) => (a.date > b.date ? -1 : 1))
+
 	return {
-		paid: localSalary[0]?.amount ?? 0,
-		deducted: localSalary[0]?.deduction ?? 0
+		paid: localSalary?.[0]?.amount ?? 0,
+		deducted: localSalary?.[0]?.deduction ?? 0
 	}
 }
-export default Salary

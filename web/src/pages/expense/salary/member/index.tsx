@@ -1,19 +1,17 @@
 import React, { Fragment, useEffect, useState, useRef } from 'react'
-import toast from 'react-hot-toast'
-import moment from 'moment'
 import clsx from 'clsx'
+import moment from 'moment'
+import toast from 'react-hot-toast'
 import { Transition } from '@headlessui/react'
 import { RouteComponentProps } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/outline'
-import * as History from 'history'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { addSalaryExpense } from 'actions'
-
 import UserIconSvg from 'assets/svgs/user.svg'
 
-type SalaryFormProps = RouteComponentProps<{ id: string }>
+type StaffMemberSalaryProps = RouteComponentProps<{ id: string }>
 
 enum SalaryType {
 	FULL = 'Full',
@@ -37,11 +35,11 @@ const getFacultySalaries = (
 		if (salary.expense === 'SALARY_EXPENSE' && salary.faculty_id === id) {
 			return [...agg, salary]
 		}
-		return [...agg]
+		return agg
 	}, [] as MISSalaryExpense[])
 }
 
-const SalaryForm = ({ match }: SalaryFormProps) => {
+export const StaffMemberSalary = ({ match }: StaffMemberSalaryProps) => {
 	const teacher = useSelector((state: RootReducerState) => state.db.faculty[match.params.id])
 	const allSalaries = useSelector((state: RootReducerState) => state.db.expenses)
 
@@ -72,11 +70,6 @@ const SalaryForm = ({ match }: SalaryFormProps) => {
 	const detailsButtonRef = useRef(undefined)
 	const mainFormRef = useRef(undefined)
 
-	// const calculateDeductionsAndPaid = () => {
-
-	// 	setLocalState({ ...localState, totalPaid: paid, totalDeductions: deduction })
-	// }
-
 	useEffect(() => {
 		setSalaries(getFacultySalaries(Object.values(allSalaries), match.params.id))
 	}, [allSalaries])
@@ -99,8 +92,6 @@ const SalaryForm = ({ match }: SalaryFormProps) => {
 
 		const id = `${moment(salariesState.date).format('MM-YYYY')}-${teacher.id}`
 		if (salaries !== undefined) {
-			//updates the already paid salary if check not present?????
-
 			if (Object.keys(allSalaries).includes(id)) {
 				if (allSalaries[id].amount > 0) {
 					toast.error('Salary Already paid')
@@ -292,13 +283,13 @@ const SalaryForm = ({ match }: SalaryFormProps) => {
 						</div>
 					</div>
 				</div>
-				<div className="lg:flex-1   ">
+				<div className="lg:flex-1">
 					<div className="text-white lg:pl-14 font-medium bg-gray-600 mx-3 rounded-t-2xl mt-4 lg:bg-white lg:text-black lg:rounded-2xl lg:flex lg:p-5 lg:items-center lg:flex-1 lg:flex-row lg:shadow-lg lg:border lg:border-gray-300 ">
 						<div>
 							<img
 								src={
-									teacher.ProfilePicture?.url ||
-									teacher.ProfilePicture?.image_string ||
+									teacher.ProfilePicture?.url ??
+									teacher.ProfilePicture?.image_string ??
 									UserIconSvg
 								}
 								className="mx-auto h-20 w-20 rounded-full shadow-lg bg-gray-500 hover:bg-gray-700"
@@ -374,9 +365,9 @@ const SalaryForm = ({ match }: SalaryFormProps) => {
 				leaveTo="opacity-0 scale-95 ">
 				<div
 					style={{
-						top: detailsButtonRef?.current?.offsetTop || 0,
-						height: mainFormRef?.current?.offsetHeight + 100 || '50%',
-						width: mainFormRef?.current?.offsetWidth || '50%'
+						top: detailsButtonRef?.current?.offsetTop ?? 0,
+						height: mainFormRef?.current?.offsetHeight + 100 ?? '50%',
+						width: mainFormRef?.current?.offsetWidth ?? '50%'
 					}}
 					className={` bg-white rounded-md shadow-lg z-50 ml-3 absolute  p-5 lg:hidden`}>
 					<div className="bg-white text-blue-400 rounded-full py-2 px-2 font-semibold cursor-pointer mb-4 flex flex-row justify-center items-center lg:hidden">
@@ -461,5 +452,3 @@ const SalaryForm = ({ match }: SalaryFormProps) => {
 		</AppLayout>
 	)
 }
-
-export default SalaryForm
