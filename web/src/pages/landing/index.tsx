@@ -1,6 +1,12 @@
-import React from 'react'
+import React, { Fragment, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { QuestionMarkCircleIcon } from '@heroicons/react/outline'
+import {
+	LocationMarkerIcon,
+	MailIcon,
+	PhoneIcon,
+	QuestionMarkCircleIcon,
+	XIcon
+} from '@heroicons/react/outline'
 
 import { PackageList } from 'components/package'
 import { AppLayout } from 'components/Layout/appLayout'
@@ -24,7 +30,13 @@ import iconPlug from './assets/plug.svg'
 import iconSchool from './assets/school.svg'
 import iconTeacher from './assets/teacher.svg'
 
+import SiteConfig from 'constants/siteConfig.json'
+import { Transition } from '@headlessui/react'
+import ContactForm from 'components/Forms/ContactForm'
+
 export const Landing = () => {
+	const [formOpened, setFormOpened] = useState<boolean>(false)
+	const formRef = useRef(null)
 	return (
 		<AppLayout>
 			<div className="w-full mt-10 md:mt-16">
@@ -194,7 +206,18 @@ export const Landing = () => {
 				</div>
 
 				<div className="fixed z-50 p-2 text-white border border-white rounded-full shadow-md bottom-10 right-5 bg-teal-brand">
-					<QuestionMarkCircleIcon className="w-8 h-8" />
+					{formOpened ? (
+						<XIcon
+							ref={formRef}
+							onClick={() => setFormOpened(false)}
+							className="w-8 h-8"
+						/>
+					) : (
+						<QuestionMarkCircleIcon
+							onClick={() => setFormOpened(true)}
+							className="w-8 h-8"
+						/>
+					)}
 				</div>
 			</div>
 			<footer className="flex justify-center px-4 text-gray-100 bg-gray-800">
@@ -206,13 +229,18 @@ export const Landing = () => {
 
 					<hr className="h-px mt-6 bg-gray-700 border-none" />
 
-					<div className="flex flex-col items-center justify-between mt-6 md:flex-row">
-						<div className="flex flex-col items-center">
-							<Link to="/" className="text-xl font-bold">
-								MISchool{' '}
+					<div className="flex flex-col items-center justify-between mt-6 md:flex-row lg:flex-1">
+						<div className="flex flex-1 lg:mx-5 flex-col items-center">
+							<Link to="/" className="text-xl items-center flex flex-col font-bold">
+								<img
+									className="w-32	 h-32 image hidden md:block"
+									src="/favicon.ico"
+									alt="brand-logo"
+								/>
 								<span className="text-base hidden md:inline-block font-normal">
-									{' '}
-									- A School Management Software
+									Veniam proident id incididunt enim sint voluptate aute consequat
+									ad tempor dolore. Reprehenderit pariatur qui qui excepteur
+									ullamco occaecat ea nulla ut nostrud.
 								</span>
 							</Link>
 							<div className="text-base md:hidden block">
@@ -220,28 +248,69 @@ export const Landing = () => {
 								A School Management Software
 							</div>
 						</div>
-						<div className="flex mt-4 md:m-0">
-							<div className="-mx-4">
-								<Link to="/pricing" className="px-4 text-sm">
+						<div className="flex mt-4 lg:justify-center md:m-0 lg:flex-1">
+							<div className="-mx-4 lg:flex lg:mx-5  lg:space-y-4 lg:flex-col">
+								<Link to="/pricing" className="px-4 text-base">
 									Pricing
 								</Link>
-								<Link to="/customers" className="px-4 text-sm">
+								<Link to="/customers" className="px-4 text-base">
 									Customers
 								</Link>
-								<Link to="/about-us" className="px-4 text-sm">
+								<Link to="/about-us" className="px-4 text-base">
 									About
 								</Link>
-								<Link to="/contact-us" className="px-4 text-sm">
+								<Link to="/contact-us" className="px-4 text-base">
 									Contact
 								</Link>
-								<Link to="/events" className="px-4 text-sm">
+								<Link to="/events" className="px-4 text-base">
 									Events
 								</Link>
+							</div>
+						</div>
+						<div className="lg:flex mt-4 lg:mx-5 md:m-0 lg:flex-1 hidden">
+							<div className="-mx-4 lg:flex  lg:space-y-4 lg:flex-col">
+								<h1 className="font-semibold">Contact Us</h1>
+								<div className="flex flex-row items-center">
+									<a href={'tel:' + SiteConfig.helpLineIlmx.phone}>
+										<PhoneIcon className="w-10 h-10 p-2 rounded-full bg-white shadow-md mr-4 text-teal-brand" />
+									</a>
+									<div>{SiteConfig.helpLineIlmx.phoneInt}</div>
+								</div>
+								<div className="flex flex-row items-center justify-between">
+									<div>
+										<LocationMarkerIcon className="w-10 h-10 p-2 rounded-full bg-white shadow-md mr-4 text-teal-brand" />
+									</div>
+									<div>
+										29-P Mustaq Ahmed Gurmani Road, Block P, Gulberg III, Lahore
+									</div>
+								</div>
+								<div className="flex flex-row items-center">
+									<div>
+										<MailIcon className="w-10 h-10 p-2 rounded-full bg-white shadow-md mr-4 text-teal-brand" />
+									</div>
+									<div>mischool@cerp.org.pk</div>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</footer>
+			<Transition
+				as={Fragment}
+				show={formOpened}
+				enter="transform transition duration-[400ms]"
+				enterFrom="opacity-0 rotate-[-120deg] scale-50"
+				enterTo="opacity-100 rotate-0 scale-100"
+				leave="transform duration-200 transition ease-in-out"
+				leaveFrom="opacity-100 rotate-0 scale-100 "
+				leaveTo="opacity-0 scale-95 ">
+				<div className="w-10/12 bottom-20 right-5 fixed md:w-3/12 space-y-10 bg-sea-green-tip-brand  rounded-2xl p-6 md:p-8 ">
+					<h1>
+						Send us your Contact Details and we will get in touch as soon as possible
+					</h1>
+					<ContactForm></ContactForm>
+				</div>
+			</Transition>
 		</AppLayout>
 	)
 }
@@ -259,8 +328,7 @@ const Features = [
 	},
 	{
 		title: 'Exams',
-		body:
-			'Automatic grade calculations, Print result card of all your students in one click, or send via SMS to parents',
+		body: 'Automatic grade calculations, Print result card of all your students in one click, or send via SMS to parents',
 		icon: iconExams
 	},
 	{
@@ -270,20 +338,17 @@ const Features = [
 	},
 	{
 		title: 'Daily Diary',
-		body:
-			'Allows multiple users to write the daily diary and easily send to parents every day.',
+		body: 'Allows multiple users to write the daily diary and easily send to parents every day.',
 		icon: iconDiary
 	},
 	{
 		title: 'SMS Announcements',
-		body:
-			'Easily communicate with students and parents by sending SMS using your own SMS package - no need to buy separately.',
+		body: 'Easily communicate with students and parents by sending SMS using your own SMS package - no need to buy separately.',
 		icon: iconSms
 	},
 	{
 		title: 'Analytics',
-		body:
-			'Graphical representation of your data, Make informed decisions by comparing data month by month',
+		body: 'Graphical representation of your data, Make informed decisions by comparing data month by month',
 		icon: '/favicon.ico'
 	},
 	{
