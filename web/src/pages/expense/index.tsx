@@ -11,8 +11,6 @@ import ExpenseCard from 'components/cards/expense'
 import { AppLayout } from 'components/Layout/appLayout'
 import { CustomSelect } from 'components/select'
 
-// TODO: proper type of groupedResults and categoryGroups
-
 type AugmentedExpense = MISExpense | MISSalaryExpense
 type State = {
 	month: string
@@ -37,8 +35,8 @@ export const Expense = () => {
 	const [state, setState] = useState<State>({
 		month: currentMonth,
 		year: currentYear,
-		groupedResults: [], // TODO: initial with proper type data
-		categoryGroups: {}, // TODO: check the usage and initialization
+		groupedResults: [],
+		categoryGroups: {},
 		totalExpense: 0,
 		totalIncome: 0,
 		monthPayments: null,
@@ -88,14 +86,13 @@ export const Expense = () => {
 		}, 0)
 	}
 
-	const getYearsfromExpenses = () => {
-		return Object.values(expenses).reduce((agg, curr) => {
-			if (agg.includes(moment(curr.date).format('YYYY'))) {
-				return [...agg]
-			} else {
-				return [...agg, moment(curr.date).format('YYYY')]
-			}
-		}, [] as string[])
+	const getYearsfromExpenses = (): string[] => {
+		const duplicatedYears = Object.values(expenses).reduce<string[]>((agg, curr) => {
+			const year = moment(curr.date).format('YYYY')
+			return [...agg, year]
+		}, [])
+
+		return [...new Set(duplicatedYears)]
 	}
 
 	const filterData = (time: number, year: string, month: string): boolean => {
@@ -107,7 +104,7 @@ export const Expense = () => {
 
 	useEffect(() => {
 		const loadExpenseData = (month: string, year: string) => {
-			const group = Object.entries(expenses).reduce<{
+			const groupedExpense = Object.entries(expenses).reduce<{
 				[id: string]: { [id: string]: AugmentedExpense }
 			}>((agg, [expenseId, expenseItem]) => {
 				if (!filterData(expenseItem.date, year, month)) {
@@ -115,6 +112,7 @@ export const Expense = () => {
 				}
 
 				const day = moment(expenseItem.date).startOf('day').toString()
+
 				if (agg[day]) {
 					return {
 						...agg,
@@ -133,47 +131,21 @@ export const Expense = () => {
 				}
 			}, {})
 
-			// TODO: Can be replaced with a reduce()
-			// let payments: MISStudentPayment[] = []
-
-			// for (const student of Object.values(students)) {
-			// 	for (const payment of Object.values(student.payments ?? {})) {
-			// 		if (filterData(payment.date, year, month) && payment.type === 'SUBMITTED') {
-			// 			payments.push(payment)
-			// 		}
-			// 	}
-			// }
-
-			const payments = Object.values(students).reduce((agg, curr) => {
+			const payments = Object.values(students).reduce((agg, student) => {
 				return [
 					...agg,
-					...Object.values(curr.payments ?? {}).reduce((agg1, curr1) => {
-						if (filterData(curr1.date, year, month) && curr1.type === 'SUBMITTED') {
-							return [...agg1, curr1]
-						} else {
-							return [...agg1]
+					...Object.values(student.payments ?? {}).reduce((agg2, payment) => {
+						if (filterData(payment.date, year, month) && payment.type === 'SUBMITTED') {
+							return [...agg2, payment]
 						}
+						return agg2
 					}, [] as MISStudentPayment[])
 				]
 			}, [] as MISStudentPayment[])
 
-			// TODO: Write down the purpose of this function
-			// TODO: If there's a change of refactor we should do that.
-			const finalResult = Object.values(group).sort((a, b) => {
-				//The purpose of this function is to sort the data we have in the final result in Descending Order
-				//Because the data is not sorted by default
-				let key_a
-				let key_b
-				for (let k in a) {
-					key_a = k
-					break
-				}
-				for (let k in b) {
-					key_b = k
-					break
-				}
-				return a[key_a].date > b[key_b].date ? -1 : 1
-			})
+			const finalResult = Object.values(groupedExpense ?? {}).sort(
+				(a, b) => Object.values(b)[0].date - Object.values(a)[0].date
+			)
 
 			setState({
 				...state,
@@ -196,7 +168,6 @@ export const Expense = () => {
 		}, 0)
 	}
 
-	// TODO: can be replaced with
 	const calculateTotal = (
 		finalResult: {
 			[id: string]: AugmentedExpense
@@ -252,7 +223,6 @@ export const Expense = () => {
 						</CustomSelect>
 						<CustomSelect
 							onChange={year => setState({ ...state, year })}
-							// TODO: get the years from expenses please
 							data={state.years ?? []}
 							selectedItem={state.year}>
 							<ChevronDownIcon className="w-5 h-5 text-gray-500" />
