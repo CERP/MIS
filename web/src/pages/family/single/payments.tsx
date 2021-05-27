@@ -519,10 +519,10 @@ const AddPayment = ({ siblings, auth, settings, smsTemplates, pendingAmount }: A
 					type === 'text' || type === 'checkbox'
 						? value
 						: isNaN(valueAsNumber)
-							? name === 'date'
-								? Date.now()
-								: 0
-							: valueAsNumber
+						? name === 'date'
+							? Date.now()
+							: 0
+						: valueAsNumber
 			}
 		})
 	}
@@ -570,7 +570,8 @@ const AddPayment = ({ siblings, auth, settings, smsTemplates, pendingAmount }: A
 				)
 
 				toast.success(
-					`Rs. ${state.payment.amount} has been added as ${state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
+					`Rs. ${state.payment.amount} has been added as ${
+						state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
 					} amount.`
 				)
 
@@ -593,7 +594,8 @@ const AddPayment = ({ siblings, auth, settings, smsTemplates, pendingAmount }: A
 			)
 
 			toast.success(
-				`Rs. ${state.payment.amount} has been added as ${state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
+				`Rs. ${state.payment.amount} has been added as ${
+					state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
 				} amount.`
 			)
 			setState({

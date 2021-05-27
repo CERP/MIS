@@ -13,19 +13,19 @@ import { CustomSelect } from 'components/select'
 
 // TODO: proper type of groupedResults and categoryGroups
 
+type AugmentedExpense = MISExpense | MISSalaryExpense
 type State = {
 	month: string
 	year: string
-	groupedResults: any
-	categoryGroups: any
+	groupedResults: { [id: string]: AugmentedExpense }[]
+	categoryGroups: { [id: string]: { [id: string]: AugmentedExpense } }
 	totalExpense: number
 	totalIncome: number
 	monthPayments: MISStudentPayment[]
 	detialsExpanded: boolean
 	selectedCategory: string
+	years: string[]
 }
-
-type AugmentedExpense = MISExpense | MISSalaryExpense
 
 export const Expense = () => {
 	const currentYear = moment().format('YYYY')
@@ -37,13 +37,14 @@ export const Expense = () => {
 	const [state, setState] = useState<State>({
 		month: currentMonth,
 		year: currentYear,
-		groupedResults: null, // TODO: initial with proper type data
-		categoryGroups: 0, // TODO: check the usage and initialization
+		groupedResults: [], // TODO: initial with proper type data
+		categoryGroups: {}, // TODO: check the usage and initialization
 		totalExpense: 0,
 		totalIncome: 0,
 		monthPayments: null,
 		detialsExpanded: false,
-		selectedCategory: ''
+		selectedCategory: '',
+		years: []
 	})
 
 	const selectCategory = (cat: string) => {
@@ -87,6 +88,16 @@ export const Expense = () => {
 		}, 0)
 	}
 
+	const getYearsfromExpenses = () => {
+		return Object.values(expenses).reduce((agg, curr) => {
+			if (agg.includes(moment(curr.date).format('YYYY'))) {
+				return [...agg]
+			} else {
+				return [...agg, moment(curr.date).format('YYYY')]
+			}
+		}, [] as string[])
+	}
+
 	const filterData = (time: number, year: string, month: string): boolean => {
 		const objMonth = months[new Date(time).getMonth()]
 		const objYear = new Date(time).getFullYear().toString()
@@ -123,20 +134,34 @@ export const Expense = () => {
 			}, {})
 
 			// TODO: Can be replaced with a reduce()
-			let payments: MISStudentPayment[] = []
+			// let payments: MISStudentPayment[] = []
 
-			for (const student of Object.values(students)) {
-				for (const payment of Object.values(student.payments ?? {})) {
-					if (filterData(payment.date, year, month) && payment.type === 'SUBMITTED') {
-						payments.push(payment)
-					}
-				}
-			}
+			// for (const student of Object.values(students)) {
+			// 	for (const payment of Object.values(student.payments ?? {})) {
+			// 		if (filterData(payment.date, year, month) && payment.type === 'SUBMITTED') {
+			// 			payments.push(payment)
+			// 		}
+			// 	}
+			// }
+
+			const payments = Object.values(students).reduce((agg, curr) => {
+				return [
+					...agg,
+					...Object.values(curr.payments ?? {}).reduce((agg1, curr1) => {
+						if (filterData(curr1.date, year, month) && curr1.type === 'SUBMITTED') {
+							return [...agg1, curr1]
+						} else {
+							return [...agg1]
+						}
+					}, [] as MISStudentPayment[])
+				]
+			}, [] as MISStudentPayment[])
 
 			// TODO: Write down the purpose of this function
 			// TODO: If there's a change of refactor we should do that.
 			const finalResult = Object.values(group).sort((a, b) => {
-				//This is to sort the final result in Descending Order
+				//The purpose of this function is to sort the data we have in the final result in Descending Order
+				//Because the data is not sorted by default
 				let key_a
 				let key_b
 				for (let k in a) {
@@ -156,7 +181,8 @@ export const Expense = () => {
 				totalExpense: calculateTotal(finalResult),
 				totalIncome: calculateIncome(payments),
 				monthPayments: payments,
-				categoryGroups: groupByCategory(year, month)
+				categoryGroups: groupByCategory(year, month),
+				years: getYearsfromExpenses()
 			})
 		}
 
@@ -227,7 +253,7 @@ export const Expense = () => {
 						<CustomSelect
 							onChange={year => setState({ ...state, year })}
 							// TODO: get the years from expenses please
-							data={['2021', '2020']}
+							data={state.years ?? []}
 							selectedItem={state.year}>
 							<ChevronDownIcon className="w-5 h-5 text-gray-500" />
 						</CustomSelect>
@@ -311,13 +337,14 @@ export const Expense = () => {
 				{state.groupedResults && (
 					<div
 						className={clsx(
-							'flex-1 overflow-y-scroll-auto h-4/6 duration-300 transition-all',
+							'flex-1 overflow-y-auto h-4/6 duration-300 transition-all',
 							state.detialsExpanded ? 'opacity-0 max-h-0 invisible' : 'max-h-screen'
 						)}>
 						{state.groupedResults.map((data: { [x: string]: AugmentedExpense }) => {
 							return (
 								<ExpenseCard
 									// TODO: What we're getting from '0' indexed
+									// '0' index returns the key for the first entry in data
 									key={Object.keys(data)[0]}
 									payments={state.monthPayments}
 									date={data[Object.keys(data)[0]].date}
