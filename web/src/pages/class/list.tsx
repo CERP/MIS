@@ -12,17 +12,14 @@ export const ClassList = () => {
 	const { classes, students } = useSelector((state: RootReducerState) => state.db)
 	const [search, setSearch] = useState('')
 
-	// TODO: add search options and filter
-	// TODO: add options to class card
-
 	return (
-		<AppLayout title="Classes">
+		<AppLayout title="Classes" showHeaderTitle>
 			<div className="p-5 md:p-10 relative mb-20">
 				<Link to="classes/new">
 					<AddStickyButton label="Create new Class" />
 				</Link>
 
-				<div className="text-center font-bold text-2xl my-4">School Classes</div>
+				{/* <div className="text-center font-bold text-2xl my-4">School Classes</div> */}
 				<div className="text-gray-700 text-center">
 					Total = {Object.keys(classes).length}
 				</div>

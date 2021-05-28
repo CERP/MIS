@@ -127,7 +127,8 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 		}
 
 		if (!isNewClass) {
-			// delete from root and server
+			// delete from server
+			deleteByPath(['class', 'sections', sectionId])
 			dispatch(deleteSection(state.class.id, sectionId))
 		}
 	}
@@ -152,13 +153,13 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 	}
 
 	return (
-		<AppLayout title={`${isNewClass ? 'Add New Class' : 'Update Class'}`}>
-			<div className="p-5 md:p-10 md:pb-0 text-gray-700 relative">
-				<div className="text-2xl font-bold mt-4 mb-8 text-center">
+		<AppLayout title={isNewClass ? 'Add New Class' : 'Update Class'} showHeaderTitle>
+			<div className="p-5 md:p-10 md:pb-0 relative">
+				{/* <div className="text-2xl font-bold mt-4 mb-8 text-center">
 					{isNewClass ? 'Add New Class' : 'Update Class'}
-				</div>
-				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 py-5 my-4 md:mt-8">
-					<div className="text-white text-center text-base my-5">
+				</div> */}
+				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 py-5 my-4">
+					<div className="text-white text-center text-base my-5 font-semibold">
 						Fill Class Information
 					</div>
 
@@ -204,7 +205,7 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 									}}
 									key={subject + index}
 									className={clsx(
-										'text-center p-1 border rounded-xl text-white text-sm',
+										'text-center p-1 border rounded-xl text-white text-sm cursor-pointer',
 										{
 											'bg-teal-brand': value
 										}
