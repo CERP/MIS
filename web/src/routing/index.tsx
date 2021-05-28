@@ -22,7 +22,6 @@ import CertificateMenu from 'modules/CertificateMenu'
 import HistoricalFee from '../modules/Settings/HistoricalFees/historical-fee'
 import ManageFees from 'modules/Student/ManageFees'
 import ResetPassword from 'modules/Password/index'
-import PrintPreview from 'modules/Student/Single/Fees/printPreview'
 import MISActivation from 'modules/Activation'
 import BulkExam from 'modules/Marks/BulkExam'
 
@@ -66,6 +65,7 @@ import { ExamsResults } from 'pages/exams/results'
 import { Events } from 'pages/about-us/events'
 import StudentPage from 'pages/students'
 import StaffPage from 'pages/staff'
+import PrintPreview from 'pages/school/fees/print-voucher/preview'
 
 interface RoutesProps {
 	store: Store<RootReducerState>
@@ -157,7 +157,7 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<PrivateRoute path="/reports-menu" component={ReportsMenu} />
 						<PrivateRoute
 							exact
-							path="/families/:famId/fee-print-preview"
+							path="/fees/print-voucher/print-preview"
 							component={PrintPreview}
 						/>
 						<PrivateRoute
