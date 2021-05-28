@@ -252,11 +252,11 @@ export const CreateOrUpdateStudent = () => {
 	return (
 		<>
 			<div className="relative px-5 text-gray-700 md:pb-0 print:hidden">
-				<div className="mt-4 mb-8 text-2xl font-bold text-center">
+				{/* <div className="mt-4 mb-8 text-2xl font-bold text-center">
 					{isNewStudent() ? 'Add Student' : 'Update Student'}
-				</div>
+				</div> */}
 				<div className="flex flex-col items-center pb-6 my-4 space-y-3 bg-gray-700 md:w-4/5 md:mx-auto rounded-2xl md:mt-8">
-					<div className="my-5 text-base text-center text-white">
+					<div className="my-5 text-base text-center text-white font-semibold">
 						Personal Information
 					</div>
 					<div className="flex flex-row items-baseline justify-between w-3/5 md:w-1/4">
