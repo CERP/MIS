@@ -7,6 +7,7 @@ import {
 	QuestionMarkCircleIcon,
 	XIcon
 } from '@heroicons/react/outline'
+import { Transition } from '@headlessui/react'
 
 import { PackageList } from 'components/package'
 import { AppLayout } from 'components/Layout/appLayout'
@@ -31,7 +32,6 @@ import iconSchool from './assets/school.svg'
 import iconTeacher from './assets/teacher.svg'
 
 import SiteConfig from 'constants/siteConfig.json'
-import { Transition } from '@headlessui/react'
 import ContactForm from 'components/Forms/ContactForm'
 
 export const Landing = () => {
@@ -127,8 +127,8 @@ export const Landing = () => {
 				<div className="mt-10 md:mt-20 bg-teal-50 py-10">
 					<div className="text-3xl font-semibold text-center">Features</div>
 					<div className="grid grid-col-1 md:grid-cols-2 gap-16 px-10 md:px-20 mt-10">
-						{Features.map(feat => (
-							<FeatureItemCard key={feat.title} {...feat} />
+						{Features.map(feature => (
+							<FeatureItemCard key={feature.title} {...feature} />
 						))}
 					</div>
 				</div>
@@ -207,17 +207,17 @@ export const Landing = () => {
 					<PackageList />
 				</div>
 
-				<div className="fixed z-50 p-2 text-white border border-white rounded-full shadow-md bottom-10 right-5 bg-teal-brand">
+				<div className="fixed z-50 p-2 text-white rounded-full shadow-md bottom-10 right-5 bg-teal-brand">
 					{formOpened ? (
 						<XIcon
 							ref={formRef}
 							onClick={() => setFormOpened(false)}
-							className="w-8 h-8"
+							className="w-8 h-8 cursor-pointer"
 						/>
 					) : (
 						<QuestionMarkCircleIcon
 							onClick={() => setFormOpened(true)}
-							className="w-8 h-8"
+							className="w-8 h-8 cursor-pointer"
 						/>
 					)}
 				</div>
@@ -233,39 +233,43 @@ export const Landing = () => {
 
 					<div className="flex flex-col items-center justify-between mt-6 md:flex-row lg:flex-1">
 						<div className="flex flex-1 lg:mx-5 flex-col items-center">
-							<Link to="/" className="text-xl items-center flex flex-col font-bold">
+							<div className="text-xl items-center  justify-startflex flex-col font-bold">
 								<img
-									className="w-32	 h-32 image hidden md:block"
+									className="w-20	h-20 image hidden md:block"
 									src="/favicon.ico"
 									alt="brand-logo"
 								/>
-								<span className="text-base hidden md:inline-block font-normal">
-									Veniam proident id incididunt enim sint voluptate aute consequat
-									ad tempor dolore. Reprehenderit pariatur qui qui excepteur
-									ullamco occaecat ea nulla ut nostrud.
-								</span>
-							</Link>
+								<div className="text-base hidden md:inline-block font-normal mt-2">
+									<span className="font-semibold">MISchool</span> is a management
+									information system for schools. MISchool enables school to
+									collect, organize, and store records giving your school full
+									control of all academic, finance, wellbeing, and administrative
+									information.
+								</div>
+							</div>
 							<div className="text-base md:hidden block">
-								{' '}
-								A School Management Software
+								<span className="font-semibold">MISchool </span> - A School
+								Management Software
 							</div>
 						</div>
 						<div className="flex mt-4 lg:justify-center md:m-0 lg:flex-1">
-							<div className="-mx-4 lg:flex lg:mx-5  lg:space-y-4 lg:flex-col">
-								<Link to="/pricing" className="px-4 text-base">
+							<div className="-mx-4 lg:flex lg:mx-4 lg:space-y-4 lg:flex-col">
+								<Link to="/pricing" className="px-2 text-base hover:underline">
 									Pricing
 								</Link>
-								<Link to="/customers" className="px-4 text-base">
-									Customers
-								</Link>
-								<Link to="/about-us" className="px-4 text-base">
+								<Link to="/about-us" className="px-2 text-base hover:underline">
 									About
 								</Link>
-								<Link to="/contact-us" className="px-4 text-base">
+								<Link to="/contact-us" className="px-2 text-base hover:underline">
 									Contact
 								</Link>
-								<Link to="/events" className="px-4 text-base">
+								<Link to="/events" className="px-2 text-base hover:underline">
 									Events
+								</Link>
+								<Link
+									to="/privacy-policy"
+									className="px-2 text-base hover:underline">
+									Privacy Policy
 								</Link>
 							</div>
 						</div>
@@ -273,10 +277,10 @@ export const Landing = () => {
 							<div className="-mx-4 lg:flex  lg:space-y-4 lg:flex-col">
 								<h1 className="font-semibold">Contact Us</h1>
 								<div className="flex flex-row items-center">
-									<a href={'tel:' + SiteConfig.helpLineIlmx.phone}>
+									<a href={'tel:' + SiteConfig.helpLine.phone}>
 										<PhoneIcon className="w-10 h-10 p-2 rounded-full bg-white shadow-md mr-4 text-teal-brand" />
 									</a>
-									<div>{SiteConfig.helpLineIlmx.phoneInt}</div>
+									<div>{SiteConfig.helpLine.phoneInt}</div>
 								</div>
 								<div className="flex flex-row items-center justify-between">
 									<div>
@@ -306,11 +310,9 @@ export const Landing = () => {
 				leave="transform duration-200 transition ease-in-out"
 				leaveFrom="opacity-100 rotate-0 scale-100 "
 				leaveTo="opacity-0 scale-95 ">
-				<div className="w-10/12 bottom-20 right-5 fixed md:w-3/12 space-y-10 bg-sea-green-tip-brand  rounded-2xl p-6 md:p-8 ">
-					<h1>
-						Send us your Contact Details and we will get in touch as soon as possible
-					</h1>
-					<ContactForm></ContactForm>
+				<div className="w-9/12 bottom-24 right-4 fixed md:w-3/12 space-y-4 bg-gray-100 shadow-2xl rounded-2xl p-4 md:p-8 ">
+					<h1 className="font-semibold text-center">Contact Us</h1>
+					<ContactForm />
 				</div>
 			</Transition>
 		</AppLayout>
@@ -330,7 +332,8 @@ const Features = [
 	},
 	{
 		title: 'Exams',
-		body: 'Automatic grade calculations, Print result card of all your students in one click, or send via SMS to parents',
+		body:
+			'Automatic grade calculations, Print result card of all your students in one click, or send via SMS to parents',
 		icon: iconExams
 	},
 	{
@@ -340,17 +343,20 @@ const Features = [
 	},
 	{
 		title: 'Daily Diary',
-		body: 'Allows multiple users to write the daily diary and easily send to parents every day.',
+		body:
+			'Allows multiple users to write the daily diary and easily send to parents every day.',
 		icon: iconDiary
 	},
 	{
 		title: 'SMS Announcements',
-		body: 'Easily communicate with students and parents by sending SMS using your own SMS package - no need to buy separately.',
+		body:
+			'Easily communicate with students and parents by sending SMS using your own SMS package - no need to buy separately.',
 		icon: iconSms
 	},
 	{
 		title: 'Analytics',
-		body: 'Graphical representation of your data, Make informed decisions by comparing data month by month',
+		body:
+			'Graphical representation of your data, Make informed decisions by comparing data month by month',
 		icon: '/favicon.ico'
 	},
 	{
