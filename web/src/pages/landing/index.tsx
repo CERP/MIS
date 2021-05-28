@@ -162,41 +162,48 @@ export const Landing = () => {
 
 				<div className="px-12 mt-20">
 					<div className="text-3xl font-semibold text-center">Our Clients</div>
-					<div className="grid grid-cols-1 gap-6 mt-10 md:grid-cols-5">
-						<div className="mx-auto mb-4 rounded-full h-36 w-36 bg-orange-brand">
+					<div className="grid grid-cols-2 gap-6 mt-10 md:grid-cols-6">
+						<div className="mx-auto mb-4 rounded-full h-32 w-32 bg-orange-brand">
 							<img
-								className="w-20 h-20 m-8 rounded-full shadow-md"
-								src="favicon.ico"
-								alt="a1"
+								className="w-28 h-28 m-2 rounded-full shadow-md"
+								src="https://storage.googleapis.com/mischool/kids-planet.jpeg"
+								alt="kids-planet-school"
 							/>
 						</div>
 
-						<div className="mx-auto mb-4 rounded-full h-36 w-36 bg-teal-brand">
+						<div className="mx-auto mb-4 rounded-full h-32 w-32 bg-teal-brand">
 							<img
-								className="w-20 h-20 m-8 rounded-full shadow-md"
-								src="favicon.ico"
-								alt="a2"
+								className="w-28 h-28 m-2 rounded-full shadow-md"
+								src="https://storage.googleapis.com/mischool/wisdom.jpeg"
+								alt="wisdom-school"
 							/>
 						</div>
-						<div className="mx-auto mb-4 rounded-full h-36 w-36 bg-red-brand">
+						<div className="mx-auto mb-4 rounded-full h-32 w-32 bg-red-brand">
 							<img
-								className="w-20 h-20 m-8 rounded-full shadow-md"
-								src="favicon.ico"
-								alt="a3"
+								className="w-28 h-28 m-2 rounded-full shadow-md"
+								src="https://storage.googleapis.com/mischool/best-grammer.jpeg"
+								alt="best-grammer-school"
 							/>
 						</div>
-						<div className="mx-auto mb-4 rounded-full h-36 w-36 bg-teal-brand">
+						<div className="mx-auto mb-4 rounded-full h-32 w-32 bg-teal-brand">
 							<img
-								className="w-20 h-20 m-8 rounded-full shadow-md"
-								src="favicon.ico"
-								alt="a4"
+								className="w-28 h-28 m-2 rounded-full shadow-md"
+								src="https://storage.googleapis.com/mischool/av.jpeg"
+								alt="av-modern-school"
 							/>
 						</div>
-						<div className="mx-auto mb-4 rounded-full h-36 w-36 bg-orange-brand">
+						<div className="mx-auto mb-4 rounded-full h-32 w-32 bg-red-brand">
 							<img
-								className="w-20 h-20 m-8 rounded-full shadow-md"
-								src="favicon.ico"
-								alt="a5"
+								className="w-28 h-28 m-2 rounded-full shadow-md"
+								src="https://storage.googleapis.com/mischool/seek-knowledge.jpeg"
+								alt="sk-school"
+							/>
+						</div>
+						<div className="mx-auto mb-4 rounded-full h-32 w-32 bg-orange-brand">
+							<img
+								className="w-28 h-28 m-2 rounded-full shadow-md"
+								src="https://storage.googleapis.com/mischool/tks.jpeg"
+								alt="tks-school"
 							/>
 						</div>
 					</div>
