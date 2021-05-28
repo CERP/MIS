@@ -79,13 +79,13 @@ export const StudentList = () => {
 	}
 
 	return (
-		<AppLayout title="Students">
+		<AppLayout title="Students" showHeaderTitle>
 			<div className="relative p-5 mb-20 md:p-10">
 				<Link to="/students/new/menu">
 					<AddStickyButton label="Add new Student" />
 				</Link>
 
-				<div className="my-4 text-2xl font-bold text-center lg:hidden">School Students</div>
+				{/* <div className="my-4 text-2xl font-bold text-center lg:hidden">School Students</div> */}
 				<div className="text-center text-gray-700 lg:hidden">
 					Total = {filteredStudents.length}
 				</div>
@@ -94,7 +94,7 @@ export const StudentList = () => {
 					<div className="flex flex-row items-center w-full space-x-2">
 						<select
 							onChange={e => setFilter({ ...filter, tag: e.target.value })}
-							className="w-full rounded shadow tw-select text-teal-brand">
+							className="rounded shadow tw-select text-teal-brand">
 							<option value="">Tag</option>
 							{getTags().map(tag => (
 								<option key={tag} value={tag}>
@@ -115,7 +115,7 @@ export const StudentList = () => {
 								))}
 						</select>
 						<select
-							className="w-full rounded shadow tw-select text-teal-brand"
+							className="rounded shadow tw-select text-teal-brand"
 							onChange={e =>
 								setFilter({ ...filter, active: e.target.value === 'true' })
 							}>

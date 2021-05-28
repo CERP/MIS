@@ -12,16 +12,31 @@ import {
 	ExclamationIcon
 } from '@heroicons/react/outline'
 import { PieChart, Pie, Sector, ResponsiveContainer } from 'recharts'
+import { checkPermission } from 'utils'
 
 enum Tab {
 	TEACHER,
 	STUDENT
 }
 
-export const StatsTab = () => {
+type PropTypes = {
+	permissions: {
+		fee: boolean
+		dailyStats: boolean
+		setupPage: boolean
+		expense: boolean
+		family: boolean
+		prospective: boolean
+	}
+	admin: boolean
+	subAdmin: boolean
+}
+
+export const StatsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 	const todayDate = moment().format('YYYY-MM-DD')
 	const { lastSnapshot, db, queued } = useSelector((state: RootReducerState) => state)
 	const { students, faculty } = db
+
 	const unsyncedChanges = Object.keys(queued.mutations || {}).length
 
 	const [activeTab, setActiveTab] = useState(Tab.STUDENT)
@@ -119,70 +134,86 @@ export const StatsTab = () => {
 		<div className="p-5">
 			<div className="mb-6 text-lg text-center md:hidden">Daily Statistics</div>
 
-			<div className="p-6 bg-white border border-gray-100 shadow-md rounded-2xl md:pt-3">
-				<div className="text-lg font-semibold text-center hidden md:block md:mb-4">
-					Daily Statistics
-				</div>
+			{checkPermission(permissions, 'dailyStats', subAdmin, admin) ? (
+				<div className="p-6 bg-white border border-gray-100 shadow-md rounded-2xl md:pt-3">
+					<div className="text-lg font-semibold text-center hidden md:block md:mb-4">
+						Daily Statistics
+					</div>
 
-				<div className="flex flex-row items-center justify-between">
-					<div
-						onClick={() => setActiveTab(Tab.STUDENT)}
-						className={clsx(
-							'cursor-pointer hover:bg-teal-brand hover:text-white px-2 md:px-3 py-px rounded-3xl bg-gray-100 shadow-md',
-							{
-								'bg-teal-brand text-white': activeTab === Tab.STUDENT
-							}
-						)}>
-						Students
-					</div>
-					<div
-						onClick={() => setActiveTab(Tab.TEACHER)}
-						className={clsx(
-							'cursor-pointer hover:bg-teal-brand hover:text-white px-2 md:px-3 py-px bg-gray-100 rounded-3xl shadow-md',
-							{
-								'bg-teal-brand text-white': activeTab === Tab.TEACHER
-							}
-						)}>
-						Teachers
-					</div>
-				</div>
-				<div className="w-full h-80 md:h-60">
-					{attendanceMarkCount === 0 ? (
-						<div className="flex flex-col space-y-2 justify-center items-center pt-24 md:pt-20">
-							<ExclamationIcon className="text-orange-brand w-14" />
-							<div>Attendance not marked yet.</div>
+					<div className="flex flex-row items-center justify-between">
+						<div
+							onClick={() => setActiveTab(Tab.STUDENT)}
+							className={clsx(
+								'cursor-pointer hover:bg-teal-brand hover:text-white px-2 md:px-3 py-px rounded-3xl bg-gray-100 shadow-md',
+								{
+									'bg-teal-brand text-white': activeTab === Tab.STUDENT
+								}
+							)}>
+							Students
 						</div>
-					) : (
-						<AttendanceChart graphData={graphData} />
-					)}
-				</div>
+						<div
+							onClick={() => setActiveTab(Tab.TEACHER)}
+							className={clsx(
+								'cursor-pointer hover:bg-teal-brand hover:text-white px-2 md:px-3 py-px bg-gray-100 rounded-3xl shadow-md',
+								{
+									'bg-teal-brand text-white': activeTab === Tab.TEACHER
+								}
+							)}>
+							Teachers
+						</div>
+					</div>
+					<div className="w-full h-80 md:h-60">
+						{attendanceMarkCount === 0 ? (
+							<div className="flex flex-col space-y-2 justify-center items-center pt-24 md:pt-20">
+								<ExclamationIcon className="text-orange-brand w-14" />
+								<div>Attendance not marked yet.</div>
+							</div>
+						) : (
+							<AttendanceChart graphData={graphData} />
+						)}
+					</div>
 
-				<div className="flex flex-row justify-between">
-					<div className="flex flex-col items-center text-teal-brand">
-						<div className="font-semibold">{attendanceStats.PRESENT}</div>
-						<div className="">Present</div>
+					<div className="flex flex-row justify-between">
+						<div className="flex flex-col items-center text-teal-brand">
+							<div className="font-semibold">{attendanceStats.PRESENT}</div>
+							<div className="">Present</div>
+						</div>
+						<div className="flex flex-col items-center text-red-brand">
+							<div className="font-semibold">{attendanceStats.ABSENT}</div>
+							<div className="">Absent</div>
+						</div>
+						<div className="flex flex-col items-center text-orange-brand">
+							<div className="font-semibold">{attendanceStats.LEAVE}</div>
+							<div className="">Leave</div>
+						</div>
 					</div>
-					<div className="flex flex-col items-center text-red-brand">
-						<div className="font-semibold">{attendanceStats.ABSENT}</div>
-						<div className="">Absent</div>
-					</div>
-					<div className="flex flex-col items-center text-orange-brand">
-						<div className="font-semibold">{attendanceStats.LEAVE}</div>
-						<div className="">Leave</div>
+					<div className="hidden lg:block">
+						<MoreStats
+							{...{ amountCollected, studentsWhoPaid, lastSnapshot, unsyncedChanges }}
+						/>
 					</div>
 				</div>
-				<div className="hidden lg:block">
+			) : (
+				<>
+					<div className="text-lg font-semibold text-center hidden md:block md:mb-4">
+						Daily Statistics
+					</div>
+					<div className="p-6 space-y-6  text-center items-center justify-center flex flex-col bg-white border border-gray-100 shadow-md rounded-2xl md:pt-3">
+						<ExclamationIcon className="text-red-brand w-32" />
+						<h1 className="text-xl">
+							You do not have permission to view Daily Statistics
+						</h1>
+					</div>
+				</>
+			)}
+
+			{checkPermission(permissions, 'dailyStats', subAdmin, admin) && (
+				<div className="px-10 py-6 mt-4 bg-white border shadow-md rounded-2xl lg:hidden">
 					<MoreStats
 						{...{ amountCollected, studentsWhoPaid, lastSnapshot, unsyncedChanges }}
 					/>
 				</div>
-			</div>
-
-			<div className="px-10 py-6 mt-4 bg-white border shadow-md rounded-2xl lg:hidden">
-				<MoreStats
-					{...{ amountCollected, studentsWhoPaid, lastSnapshot, unsyncedChanges }}
-				/>
-			</div>
+			)}
 		</div>
 	)
 }

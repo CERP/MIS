@@ -56,6 +56,9 @@ module.exports = {
 			},
 			screens: {
 				print: { raw: 'print' }
+			},
+			transitionProperty: {
+				height: 'max-height'
 			}
 		},
 		spacing: {

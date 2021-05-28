@@ -39,15 +39,15 @@
 	}
 
 	.tw-select {
-		@apply px-4 py-2 text-gray-500 bg-white border rounded-lg outline-none focus:ring-2 focus:ring-blue-brand;
+		@apply py-2 text-gray-500 bg-white border border-gray-500 rounded-lg outline-none focus:ring-2 focus:ring-blue-brand cursor-pointer;
 	}
 
 	.tw-select-tip {
-		@apply block px-4 py-2 text-base leading-tight text-blue-900 bg-white border-none rounded-lg shadow-lg outline-none;
+		@apply px-4 py-2 text-base leading-tight text-blue-900 bg-white border-none rounded-lg shadow-lg outline-none;
 	}
 
 	.tw-is-form-bg-black {
-		@apply text-gray-200 bg-transparent border-blue-brand ring-1;
+		@apply text-gray-200 focus-within:bg-transparent bg-transparent border-blue-brand ring-1;
 	}
 	.tw-checkbox {
 		@apply w-5 h-5 rounded text-teal-brand cursor-pointer;

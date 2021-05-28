@@ -77,9 +77,9 @@ export const CreateOrUpdateStudent = () => {
 		? students[id].tags
 			? students[id]
 			: {
-					...students[id],
-					tags: {}
-			  }
+				...students[id],
+				tags: {}
+			}
 		: blankStudent()
 
 	const [state, setState] = useState<State>({
@@ -260,11 +260,11 @@ export const CreateOrUpdateStudent = () => {
 	return (
 		<>
 			<div className="relative px-5 text-gray-700 md:pb-0 print:hidden">
-				<div className="mt-4 mb-8 text-2xl font-bold text-center">
+				{/* <div className="mt-4 mb-8 text-2xl font-bold text-center">
 					{isNewStudent() ? 'Add Student' : 'Update Student'}
-				</div>
+				</div> */}
 				<div className="flex flex-col items-center pb-6 my-4 space-y-3 bg-gray-700 md:w-4/5 md:mx-auto rounded-2xl md:mt-8">
-					<div className="my-5 text-base text-center text-white">
+					<div className="my-5 text-base text-center text-white font-semibold">
 						Personal Information
 					</div>
 					<div className="flex flex-row items-baseline justify-between w-3/5 md:w-1/4">
@@ -297,7 +297,7 @@ export const CreateOrUpdateStudent = () => {
 							onChange={handleInput}
 							value={state.profile.ManName}
 							placeholder="Type name"
-							className="w-full bg-transparent tw-input border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div>Gender</div>
@@ -337,24 +337,6 @@ export const CreateOrUpdateStudent = () => {
 							</div>
 						</div>
 
-						{/* <div className="flex flex-row items-center space-x-4"> */}
-						{/* <div className="flex flex-col w-full space-y-4">
-								<div>Class</div>
-								<select
-									name="classId"
-									onChange={(e) => handleInputByPath(["classId"], e.target.value, ["profile", "section_id"])}
-									className="tw-select">
-									<option value={""}>Choose</option>
-									{
-										Object.values(classes)
-											.filter(c => c)
-											.map(c => (
-												<option key={c.id} value={c.id}>{toTitleCase(c.name)}</option>
-											))
-									}
-								</select>
-							</div> */}
-						{/* <div className="flex flex-col w-full space-y-4"> */}
 						<div>Class-Section*</div>
 						<select
 							name="section_id"
@@ -363,20 +345,15 @@ export const CreateOrUpdateStudent = () => {
 							onChange={handleInput}
 							className="w-full tw-select">
 							<option value={''}>Choose</option>
-							{
-								// getSectionsFromClasses(state.classId ? { [state.classId]: classes[state.classId] } : {})
-								sections
-									.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
-									.filter(s => s && s.id && s.name)
-									.map(s => (
-										<option key={s.id} value={s.id}>
-											{toTitleCase(s.namespaced_name, '-')}
-										</option>
-									))
-							}
+							{sections
+								.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
+								.filter(s => s && s.id && s.name)
+								.map(s => (
+									<option key={s.id} value={s.id}>
+										{toTitleCase(s.namespaced_name, '-')}
+									</option>
+								))}
 						</select>
-						{/* </div> */}
-						{/* </div> */}
 
 						<div className="flex flex-row items-center justify-between space-x-4">
 							<div className="flex flex-col space-y-4">
@@ -386,7 +363,7 @@ export const CreateOrUpdateStudent = () => {
 									onChange={handleInput}
 									value={state.profile.RollNumber}
 									placeholder="Type roll #"
-									className="w-full bg-transparent tw-input border-blue-brand ring-1"
+									className="tw-input w-full tw-is-form-bg-black"
 								/>
 							</div>
 							<div className="flex flex-col space-y-4">
@@ -396,7 +373,7 @@ export const CreateOrUpdateStudent = () => {
 									onChange={handleInput}
 									value={state.profile.AdmissionNumber}
 									placeholder="Type admimission #"
-									className="w-full bg-transparent tw-input border-blue-brand ring-1"
+									className="tw-input w-full tw-is-form-bg-black"
 								/>
 							</div>
 						</div>
@@ -420,7 +397,7 @@ export const CreateOrUpdateStudent = () => {
 							type="date"
 							value={moment(state.profile.Birthdate).format('YYYY-MM-DD')}
 							onChange={handleInput}
-							className="w-full bg-transparent tw-input border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div>B-Form Number</div>
@@ -429,7 +406,7 @@ export const CreateOrUpdateStudent = () => {
 							onChange={handleInput}
 							value={state.profile.BForm}
 							placeholder="xxxxx-xxxxxxx-x"
-							className="w-full bg-transparent tw-input border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div>Father/Gaurdian CNIC</div>
@@ -438,7 +415,7 @@ export const CreateOrUpdateStudent = () => {
 							onChange={handleInput}
 							value={state.profile.ManCNIC}
 							placeholder="xxxxx-xxxxxxx-x"
-							className="w-full bg-transparent tw-input border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div>Alternative Contact Number</div>
@@ -448,7 +425,7 @@ export const CreateOrUpdateStudent = () => {
 							type="number"
 							value={state.profile.AlternatePhone}
 							placeholder="Type phone #"
-							className="w-full bg-transparent tw-input border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div>Address</div>
@@ -458,7 +435,7 @@ export const CreateOrUpdateStudent = () => {
 							onChange={handleInput}
 							rows={2}
 							placeholder="Type street address"
-							className="w-full bg-transparent tw-input border-blue-brand ring-1"
+							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
 						<div className="flex flex-row items-center justify-between space-x-4">
@@ -476,7 +453,7 @@ export const CreateOrUpdateStudent = () => {
 											e.target.valueAsNumber
 										)
 									}
-									className="w-full bg-transparent tw-input border-blue-brand ring-1"
+									className="tw-input w-full tw-is-form-bg-black"
 								/>
 							</div>
 							<div className="flex flex-col space-y-4">
@@ -521,7 +498,7 @@ export const CreateOrUpdateStudent = () => {
 								onChange={e => handleInputByPath(['newTag'], e.target.value)}
 								placeholder="Select or type new tag"
 								autoComplete="off"
-								className="w-full bg-transparent tw-input border-blue-brand ring-1"
+								className="tw-input w-full tw-is-form-bg-black"
 							/>
 							<PlusButton handleClick={addTag} className="ml-4" />
 						</div>

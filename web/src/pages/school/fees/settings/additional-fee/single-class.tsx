@@ -31,7 +31,7 @@ export const AddFeeToClass = ({ classes, settings, setClass, setFee }: AddFeeToC
 				name="classId"
 				className="tw-is-form-bg-black tw-select py-2 w-full">
 				<option value={''}>Choose from here</option>
-				{Object.values(classes || {})
+				{Object.values(classes ?? {})
 					.filter(c => c)
 					.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
 					.map(c => (
@@ -68,10 +68,10 @@ const PreviousFees = ({ fees, setFee }: PreviousFeeProps) => {
 
 	return (
 		<div className="max-h-40 md:max-h-60 mt-4 space-y-2 pr-2 overflow-y-auto">
-			{Object.entries(fees || {}).map(([id, fee]) => (
+			{Object.entries(fees ?? {}).map(([id, fee]) => (
 				<div
 					key={id}
-					onClick={() => handleSelectedFee(id)}
+					onClick={() => handleSelectedFee(selectedFee ? '' : id)}
 					className={clsx(
 						'flex felx-row justify-between items-center p-2 text-sm rounded-lg cursor-pointer hover:bg-teal-brand',
 						id === selectedFee ? 'bg-teal-brand' : 'bg-blue-brand'

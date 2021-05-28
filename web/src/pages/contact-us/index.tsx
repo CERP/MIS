@@ -1,10 +1,8 @@
-import React, { useState } from 'react'
-
+import React from 'react'
 import { PhoneIcon, LocationMarkerIcon, MailIcon } from '@heroicons/react/solid'
 
 import SiteConfig from 'constants/siteConfig.json'
 import { AppLayout } from 'components/Layout/appLayout'
-
 import ContactForm from 'components/Forms/ContactForm'
 
 export const ContactUs = () => {
@@ -17,10 +15,10 @@ export const ContactUs = () => {
 							Contact Us
 						</div>
 						<div className="flex flex-row items-center">
-							<a href={'tel:' + SiteConfig.helpLineIlmx.phone}>
+							<a href={'tel:' + SiteConfig.helpLine.phone}>
 								<PhoneIcon className="w-10 h-10 p-2 rounded-full bg-white shadow-md mr-4 text-teal-brand" />
 							</a>
-							<div>{SiteConfig.helpLineIlmx.phoneInt}</div>
+							<div>{SiteConfig.helpLine.phoneInt}</div>
 						</div>
 						<div className="flex flex-row items-center justify-between">
 							<div>

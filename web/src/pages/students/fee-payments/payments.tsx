@@ -20,6 +20,7 @@ import { addMultiplePayments, addPayment, logSms } from 'actions'
 import { smsIntentLink } from 'utils/intent'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
+import { getPaymentLabel } from 'utils'
 
 import UserIconSvg from 'assets/svgs/user.svg'
 
@@ -81,12 +82,12 @@ export const StudentPayments = () => {
 			[
 				v4(),
 				{
-					...(classDefaultFee || ({} as MISClassFee)),
+					...(classDefaultFee ?? ({} as MISClassFee)),
 					name: 'Class Fee'
 				}
 			],
-			...Object.entries(classAdditionalFees || {}),
-			...(Object.entries(student.fees || {}).map(([feeId, fee]) => {
+			...Object.entries(classAdditionalFees ?? {}),
+			...(Object.entries(student.fees ?? {}).map(([feeId, fee]) => {
 				return [
 					feeId,
 					{
@@ -111,7 +112,7 @@ export const StudentPayments = () => {
 	// if(!student) {
 	// 	return (
 	//		add component to show invalid state and link to go -> history.goBack()
-	// 	)
+	// 	)500
 	// }
 
 	const filteredPayments = getFilteredPayments(
@@ -144,22 +145,22 @@ export const StudentPayments = () => {
 		<>
 			<div className="px-5 text-gray-700 relative print:hidden">
 				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-4 rounded-2xl bg-gray-700 p-5 my-4 mt-16 md:mt-8">
-					<div className="relative text-white text-center text-base md:hidden">
-						<div className="mt-4">{toTitleCase(student.Name)}</div>
-						<div className="text-sm">Class {section?.namespaced_name}</div>
-
-						<div className="-top-20 absolute right-1 rounded-full bg-gray-500 w-24 h-24">
+					<div className="relative text-white text-center text-base">
+						<div className="-top-14 absolute right-1 rounded-full bg-gray-500 w-20 h-20">
 							<img
-								className="w-24 h-24 rounded-full object-contain"
+								className="w-20 h-20 rounded-full object-contain"
 								src={
-									student.ProfilePicture?.url ||
-									student.ProfilePicture?.image_string ||
+									student.ProfilePicture?.url ??
+									student.ProfilePicture?.image_string ??
 									UserIconSvg
 								}
 								alt="student"
 							/>
 						</div>
+						<div className="mt-8">{toTitleCase(student.Name)}</div>
+						<div className="text-sm">Class {section?.namespaced_name}</div>
 					</div>
+
 					<button
 						onClick={() =>
 							setState({
@@ -170,7 +171,7 @@ export const StudentPayments = () => {
 								}
 							})
 						}
-						className="inline-flex items-center tw-btn-blue rounded-3xl md:hidden">
+						className="inline-flex items-center tw-btn-blue rounded-3xl">
 						<span className="mr-2">View Past Payments</span>
 						<span className="w-4 h-4 bg-white rounded-full text-blue-brand">
 							{state.filter.paymentsView ? (
@@ -180,6 +181,7 @@ export const StudentPayments = () => {
 							)}
 						</span>
 					</button>
+
 					{!state.filter.paymentsView ? (
 						<>
 							<div className="flex flex-row items-center justify-between w-full md:w-3/5 space-x-4">
@@ -325,15 +327,7 @@ const PreviousPayments = ({ years, close, student }: PreviousPaymentsProps) => {
 						<div key={id} className="flex flex-row items-start justify-between">
 							<div className="w-1/4">{moment(payment.date).format('DD-MM')}</div>
 							<div className="w-2/5 md:w-1/3 mx-auto text-xs md:text-sm flex flex-row justify-center">
-								{payment.fee_name === MISFeeLabels.SPECIAL_SCHOLARSHIP
-									? 'Scholarship (M)'
-									: payment.fee_name === 'Monthly'
-										? 'Class Fee'
-										: payment.type === 'FORGIVEN'
-											? 'Scholarship (A)'
-											: payment.type === 'SUBMITTED'
-												? 'Paid'
-												: toTitleCase(payment.fee_name)}
+								{getPaymentLabel(payment.fee_name, payment.type)}
 							</div>
 							<div className="w-1/4 flex flex-row justify-end">
 								{payment.type === 'FORGIVEN'
@@ -397,14 +391,13 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		let { name, value, valueAsNumber, checked, type } = event.target
+
 		if (name === 'type') {
-			value = value === 'on' ? 'FORGIVEN' : 'SUBMITTED'
+			value = checked ? 'FORGIVEN' : 'SUBMITTED'
 		}
 
-		console.log(value)
-
 		if (name === 'sendSMS') {
-			setState({ ...state, [name]: value === 'on' ? true : false })
+			setState({ ...state, [name]: checked })
 			return
 		}
 
@@ -518,7 +511,7 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 				/>
 
 				<div className="flex flex-row space-x-4 w-full">
-					<div className="flex flex-col space-y-1 md:space-y-2 w-full">
+					<div className="flex flex-col space-y-1 md:space-y-2 w-1/2 md:w-full">
 						<div>Date</div>
 						<input
 							type="date"
@@ -535,7 +528,7 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 							type="number"
 							onChange={handleInputChange}
 							value={state.payment.amount === 0 ? '' : state.payment.amount}
-							placeholder="e.g. Rs 500"
+							placeholder="Enter amount"
 							required
 							name="amount"
 							className="tw-input w-full"

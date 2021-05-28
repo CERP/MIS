@@ -27,7 +27,7 @@ export const feedbacks: Feedback[] = [
 		name: 'Muhammad Riaz',
 		avatar: 'https://storage.googleapis.com/mischool/wisdom.jpeg',
 		body:
-			'I have been a customer of MISchool since the last 4 years and have been using it in all our school branches. It is an efficient tool to monitor all activities of your school from anywhere in the world. It has not only greatly helped in tracking student’s performance but also their financial records and fees collection. I am especially grateful for the free updates of the application as it always makes us feel supported and valued by the MISchool team, and helps us in decreasing our costs.',
+			'I have been a customer of MISchool since the last 4 years and have been using it in all our school branches. It is an efficient tool to monitor all activities of your school from anywhere in the world. It has not only greatly helped in tracking student’s performance but also their financial records and fees collection. I am especially grateful for the free updates of the application as it always makes us feel supported and valued by the MISchool team.',
 		school: 'Wisdom School System - Sialkot',
 		type: 'Owner'
 	}

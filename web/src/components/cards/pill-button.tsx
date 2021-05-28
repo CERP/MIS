@@ -1,18 +1,28 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { ChevronRightIcon } from '@heroicons/react/outline'
+import clsx from 'clsx'
+import toast from 'react-hot-toast'
 
 type CardProps = {
 	title: string
 	caption?: string
 	icon: string
 	link: string
+	disabled?: boolean
 }
 
-export const PillCardButton = ({ title, caption, icon, link }: CardProps) => {
+export const PillCardButton = ({ title, caption, icon, link, disabled = false }: CardProps) => {
 	return (
 		<Link to={link} className="flex flex-col space-between">
-			<div className="p-3 rounded-full flex flex-row justify-between border shadow-md items-center border-gray-50 bg-white">
+			<div
+				onClick={() => {
+					disabled ? toast.error("You don't have permission to access this module") : {}
+				}}
+				className={clsx(
+					'p-3 rounded-full flex flex-row justify-between border shadow-md items-center border-gray-50 bg-white',
+					disabled ? 'bg-gray-200 opacity-75 cursor-not-allowed' : 'opacity-100'
+				)}>
 				<div className="flex flex-row items-center">
 					<img className="mr-4 w-12 h-12 rounded-full" src={icon} alt="icon" />
 					<div className="flex flex-col overflow-ellipsis truncate w-10/12">
