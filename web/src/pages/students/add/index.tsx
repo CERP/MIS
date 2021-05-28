@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import Dynamic from '@cerp/dynamic'
-import { useParams } from 'react-router-dom'
+import { Redirect, useHistory, useParams } from 'react-router-dom'
 import { v4 } from 'node-uuid'
 import { useDispatch, useSelector } from 'react-redux'
 import clsx from 'clsx'
@@ -12,7 +12,7 @@ import { SwitchButton } from 'components/input/switch'
 import toTitleCase from 'utils/toTitleCase'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import AdmissionForm from 'components/Printable/Student/admissionform'
-import { isValidPhone } from 'utils/helpers'
+import { isValidCNIC, isValidPhone } from 'utils/helpers'
 import { formatCNIC } from 'utils'
 import { getImageString, getDownsizedImage } from 'utils/image'
 
@@ -64,6 +64,7 @@ type State = {
 }
 
 export const CreateOrUpdateStudent = () => {
+	const history = useHistory()
 	const { id } = useParams<RouteInfo>()
 	const isNewStudent = () => location.pathname.indexOf('new') >= 0
 
@@ -116,8 +117,35 @@ export const CreateOrUpdateStudent = () => {
 	const handleSubmit = (event: React.FormEvent) => {
 		event.preventDefault()
 
+		if (!isValidCNIC(state.profile.BForm)) {
+			return toast.error('B-Form number is not valid')
+		}
+
+		if (!isValidCNIC(state.profile.ManCNIC)) {
+			return toast.error('Father/Gaurdian CNIC is not valid')
+		}
+
 		if (!isValidPhone(state.profile.Phone)) {
 			return toast.error('Please provide correct phone number.')
+		}
+
+		if (isNewStudent()) {
+			for (const student of Object.values(students)) {
+				if (
+					student.RollNumber === state.profile.RollNumber &&
+					state.profile.RollNumber != ''
+				) {
+					toast.error('This Roll Number is already assigned to an existing student')
+					return
+				}
+				if (
+					student.AdmissionNumber === state.profile.AdmissionNumber &&
+					state.profile.AdmissionNumber != ''
+				) {
+					toast.error('This Admission Number is already assigned to an existing student')
+					return
+				}
+			}
 		}
 
 		// TODO: introduce object props trim()
@@ -201,6 +229,7 @@ export const CreateOrUpdateStudent = () => {
 
 			setTimeout(() => {
 				setState({ ...state, redirect: '/students' })
+				history.goBack()
 			}, 1000)
 		}
 	}
@@ -225,15 +254,17 @@ export const CreateOrUpdateStudent = () => {
 			dispatch(uploadStudentProfilePicture(state.profile, img))
 		})
 	}
-
+	if (state.redirect && isNewStudent()) {
+		return <Redirect to="/students" />
+	}
 	return (
 		<>
 			<div className="relative px-5 text-gray-700 md:pb-0 print:hidden">
-				<div className="mt-4 mb-8 text-2xl font-bold text-center">
+				{/* <div className="mt-4 mb-8 text-2xl font-bold text-center">
 					{isNewStudent() ? 'Add Student' : 'Update Student'}
-				</div>
+				</div> */}
 				<div className="flex flex-col items-center pb-6 my-4 space-y-3 bg-gray-700 md:w-4/5 md:mx-auto rounded-2xl md:mt-8">
-					<div className="my-5 text-base text-center text-white">
+					<div className="my-5 text-base text-center text-white font-semibold">
 						Personal Information
 					</div>
 					<div className="flex flex-row items-baseline justify-between w-3/5 md:w-1/4">
@@ -256,6 +287,15 @@ export const CreateOrUpdateStudent = () => {
 							onChange={handleInput}
 							required
 							value={state.profile.Name}
+							placeholder="Name is Required"
+							className="w-full bg-transparent tw-input border-blue-brand ring-1"
+						/>
+
+						<div>Father/Gaurdian Name</div>
+						<input
+							name="ManName"
+							onChange={handleInput}
+							value={state.profile.ManName}
 							placeholder="Type name"
 							className="tw-input w-full tw-is-form-bg-black"
 						/>
@@ -297,34 +337,7 @@ export const CreateOrUpdateStudent = () => {
 							</div>
 						</div>
 
-						<div>Father/Gaurdian Name</div>
-						<input
-							name="ManName"
-							onChange={handleInput}
-							value={state.profile.ManName}
-							placeholder="Type name"
-							className="tw-input w-full tw-is-form-bg-black"
-						/>
-
-						{/* <div className="flex flex-row items-center space-x-4"> */}
-						{/* <div className="flex flex-col w-full space-y-4">
-								<div>Class</div>
-								<select
-									name="classId"
-									onChange={(e) => handleInputByPath(["classId"], e.target.value, ["profile", "section_id"])}
-									className="tw-select">
-									<option value={""}>Choose</option>
-									{
-										Object.values(classes)
-											.filter(c => c)
-											.map(c => (
-												<option key={c.id} value={c.id}>{toTitleCase(c.name)}</option>
-											))
-									}
-								</select>
-							</div> */}
-						{/* <div className="flex flex-col w-full space-y-4"> */}
-						<div>Class-Section</div>
+						<div>Class-Section*</div>
 						<select
 							name="section_id"
 							required
@@ -332,20 +345,15 @@ export const CreateOrUpdateStudent = () => {
 							onChange={handleInput}
 							className="w-full tw-select">
 							<option value={''}>Choose</option>
-							{
-								// getSectionsFromClasses(state.classId ? { [state.classId]: classes[state.classId] } : {})
-								sections
-									.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
-									.filter(s => s && s.id && s.name)
-									.map(s => (
-										<option key={s.id} value={s.id}>
-											{toTitleCase(s.namespaced_name, '-')}
-										</option>
-									))
-							}
+							{sections
+								.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
+								.filter(s => s && s.id && s.name)
+								.map(s => (
+									<option key={s.id} value={s.id}>
+										{toTitleCase(s.namespaced_name, '-')}
+									</option>
+								))}
 						</select>
-						{/* </div> */}
-						{/* </div> */}
 
 						<div className="flex flex-row items-center justify-between space-x-4">
 							<div className="flex flex-col space-y-4">
@@ -370,14 +378,14 @@ export const CreateOrUpdateStudent = () => {
 							</div>
 						</div>
 
-						<div>Contact Number</div>
+						<div>Contact Number*</div>
 						<input
 							name="Phone"
 							onChange={handleInput}
 							value={state.profile.Phone}
 							type="number"
-							placeholder="Type phone #"
-							className="tw-input w-full tw-is-form-bg-black"
+							placeholder="Contact Number is Required"
+							className="w-full bg-transparent tw-input border-blue-brand ring-1"
 						/>
 
 						<div className="text-lg font-semibold text-center">

@@ -43,7 +43,7 @@ export const packages: Package[] = [
 	{
 		title: 'Taleem-3',
 		code: 'TALEEM3',
-		price: '37,000',
+		price: '35,000',
 		currency: 'PKR',
 		annual_charge: '9,000',
 		limit: 'Unlimited'

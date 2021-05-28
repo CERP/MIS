@@ -10,17 +10,21 @@ import { createEditClass, deleteSection, deleteSubject } from 'actions'
 import { AppLayout } from 'components/Layout/appLayout'
 import { PlusButton } from 'components/Button/plus'
 import { blankClass, defaultClasses } from 'constants/form-defaults'
+import { useComponentVisible } from 'hooks/useComponentVisible'
+import { TModal } from 'components/Modal'
 
 type State = {
 	class: MISClass
 	newSection: string
 	newSubject: string
 	redirectTo: string
+	subjectToDelete: string
 }
 
 export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> = ({ match }) => {
 	const classId = match.params.id
 	const isNewClass = location.pathname.indexOf('new') >= 0
+	const { ref, setIsComponentVisible, isComponentVisible } = useComponentVisible(false)
 
 	const dispatch = useDispatch()
 	const { faculty, classes } = useSelector((state: RootReducerState) => state.db)
@@ -29,7 +33,8 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 		class: classId ? classes[classId] : blankClass,
 		newSection: '',
 		newSubject: '',
-		redirectTo: ''
+		redirectTo: '',
+		subjectToDelete: ''
 	})
 
 	const handleSubmit = (event: React.FormEvent) => {
@@ -106,6 +111,8 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 		if (!isNewClass) {
 			dispatch(deleteSubject(state.class.id, subject))
 		}
+
+		setIsComponentVisible(false)
 	}
 
 	const removeSection = (sectionId: string) => {
@@ -120,7 +127,8 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 		}
 
 		if (!isNewClass) {
-			// delete from root and server
+			// delete from server
+			deleteByPath(['class', 'sections', sectionId])
 			dispatch(deleteSection(state.class.id, sectionId))
 		}
 	}
@@ -145,13 +153,13 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 	}
 
 	return (
-		<AppLayout title={`${isNewClass ? 'Add New Class' : 'Update Class'}`}>
-			<div className="p-5 md:p-10 md:pb-0 text-gray-700 relative">
-				<div className="text-2xl font-bold mt-4 mb-8 text-center">
+		<AppLayout title={isNewClass ? 'Add New Class' : 'Update Class'} showHeaderTitle>
+			<div className="p-5 md:p-10 md:pb-0 relative">
+				{/* <div className="text-2xl font-bold mt-4 mb-8 text-center">
 					{isNewClass ? 'Add New Class' : 'Update Class'}
-				</div>
-				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 py-5 my-4 md:mt-8">
-					<div className="text-white text-center text-base my-5">
+				</div> */}
+				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 py-5 my-4">
+					<div className="text-white text-center text-base my-5 font-semibold">
 						Fill Class Information
 					</div>
 
@@ -191,10 +199,13 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 						<div className="grid grid-cols-3 md:grid-cols-5 gap-3">
 							{Object.entries(state.class.subjects).map(([subject, value], index) => (
 								<div
-									onClick={() => removeSubject(subject)}
+									onClick={() => {
+										setState({ ...state, subjectToDelete: subject })
+										setIsComponentVisible(true)
+									}}
 									key={subject + index}
 									className={clsx(
-										'text-center p-1 border rounded-xl text-white text-sm',
+										'text-center p-1 border rounded-xl text-white text-sm cursor-pointer',
 										{
 											'bg-teal-brand': value
 										}
@@ -291,6 +302,28 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 					</form>
 				</div>
 			</div>
+			{isComponentVisible && state.subjectToDelete && (
+				<TModal>
+					<div className="bg-white md:p-10 p-8 text-center text-sm" ref={ref}>
+						<div className="font-semibold text-lg">
+							Are you sure you want to delete {state.subjectToDelete}
+						</div>
+
+						<div className="flex flex-row justify-between space-x-4 mt-4">
+							<button
+								onClick={() => setIsComponentVisible(false)}
+								className="py-1 md:py-2 tw-btn bg-gray-400 hover:bg-gray-500 text-white w-full">
+								Cancel
+							</button>
+							<button
+								onClick={() => removeSubject(state.subjectToDelete)}
+								className="py-1 md:py-2 tw-btn-red w-full font-semibold">
+								Confirm
+							</button>
+						</div>
+					</div>
+				</TModal>
+			)}
 		</AppLayout>
 	)
 }

@@ -8,7 +8,7 @@ import toast from 'react-hot-toast'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { SwitchButton } from 'components/input/switch'
-import { isValidPhone } from 'utils/helpers'
+import { isValidPhone, isValidCNIC } from 'utils/helpers'
 import { createFacultyMerge, deleteFaculty, uploadFacultyProfilePicture } from 'actions'
 import { StaffType } from 'constants/index'
 import { ShowHidePassword } from 'components/password'
@@ -89,6 +89,8 @@ export const CreateOrUpdateStaff = () => {
 
 	const dispatch = useDispatch()
 	const { faculty } = useSelector((state: RootReducerState) => state.db)
+	const { faculty_id } = useSelector((state: RootReducerState) => state.auth)
+	const { Admin, SubAdmin } = faculty[faculty_id]
 
 	const existingStaff = faculty[id]
 
@@ -122,7 +124,13 @@ export const CreateOrUpdateStaff = () => {
 		event.preventDefault()
 
 		if (!isValidPhone(profile.Phone)) {
-			return window.alert('Please provide correct phone number!')
+			return toast.error('Please provide correct phone number!')
+		}
+		if (!isValidCNIC(profile.ManCNIC)) {
+			return toast.error('Please provide correct CNIC')
+		}
+		if (!isValidCNIC(profile.CNIC)) {
+			return toast.error('Please provide correct CNIC')
 		}
 
 		if (profile.Password.length !== 128) {
@@ -158,6 +166,15 @@ export const CreateOrUpdateStaff = () => {
 					}
 				})
 			}
+			if (value == '') {
+				return setState({
+					...state,
+					profile: {
+						...state.profile,
+						[name]: formatCNIC(value)
+					}
+				})
+			}
 			return
 		}
 
@@ -172,6 +189,12 @@ export const CreateOrUpdateStaff = () => {
 
 	// TODO: replace this with generic handler
 	const handleInputByPath = (path: string[], value: boolean) => {
+		//Checks if Current user is admin and then allows editing of permissions
+		if (['permissions', 'SubAdmin', 'Admin'].some(i => path.includes(i))) {
+			if (!Admin) {
+				return toast.error('You are not allowed to set permissions')
+			}
+		}
 		const updatedProfile = Dynamic.put(profile, path, value) as MISTeacher
 		setState({ ...state, profile: updatedProfile })
 	}

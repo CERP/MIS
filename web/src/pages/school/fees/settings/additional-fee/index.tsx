@@ -75,11 +75,13 @@ export const AdditionalFee = () => {
 		// if there's an updatable fee, get the id from state
 		// if it isn't, generate unique id
 		const feeId = state.feeId || v4()
+		let addOrUpdateText = ''
 
 		// For this case, we're keeping template in settings.classes.additionalFees
 		// to generate payments on run time.
 		// Note: make sure it will handle all cases to generate to payments for single or monthly payment
 		if (state.addFeeTo === AddFeeOptions.CLASS) {
+			addOrUpdateText = getClassName()
 			dispatch(
 				createMerges([
 					{
@@ -91,6 +93,7 @@ export const AdditionalFee = () => {
 		}
 
 		if (state.addFeeTo === AddFeeOptions.STUDENT) {
+			addOrUpdateText = toTitleCase(students[state.studentId].Name)
 			dispatch(
 				createMerges([
 					{
@@ -102,25 +105,29 @@ export const AdditionalFee = () => {
 		}
 
 		if (state.addFeeTo === AddFeeOptions.ALL) {
-			const merges = Object.values(students)
-				.filter(s => isValidStudent(s) && s.Active)
-				.reduce(
-					(agg, curr) => [
-						...agg,
-						{
-							path: ['db', 'students', curr.id, 'fees', feeId],
-							value: state.fee
-						}
-					],
-					[]
-				)
-			// TODO: make it handle all possible cases
+			const filteredStudents = Object.values(students).filter(
+				s => isValidStudent(s) && s.Active
+			)
+
+			addOrUpdateText = `All Students (${filteredStudents.length})`
+
+			const merges = filteredStudents.reduce(
+				(agg, curr) => [
+					...agg,
+					{
+						path: ['db', 'students', curr.id, 'fees', feeId],
+						value: state.fee
+					}
+				],
+				[]
+			)
+
 			dispatch(createMerges(merges))
 		}
 
 		const toastText = state.feeId
-			? 'Additional fee has been added'
-			: 'Additional fee has been updated'
+			? `Additional fee has been added to ${addOrUpdateText}`
+			: `Additional fee has been updated for ${addOrUpdateText}`
 
 		toast.success(toastText)
 		setConfirmAddFeeModal(false)
@@ -199,13 +206,6 @@ export const AdditionalFee = () => {
 		setConfirmAddFeeModal(true)
 	}
 
-	const isFormDisabled =
-		!state.fee?.name?.trim() ||
-		state.fee?.name?.trim().length < 3 ||
-		!state.fee?.amount ||
-		(state.addFeeTo === AddFeeOptions.STUDENT ? !state.studentId : false) ||
-		(state.addFeeTo === AddFeeOptions.CLASS ? !state.classId : false)
-
 	const setAddFeeTO = (option: AddFeeOptions) => {
 		if (option === AddFeeOptions.STUDENT) {
 			return setState({
@@ -240,11 +240,18 @@ export const AdditionalFee = () => {
 
 	const getClassName = () => {
 		const selectedClass = classes[state.classId]
-		return selectedClass.name ?? ''
+		return toTitleCase(selectedClass.name ?? '')
 	}
 
 	const totalActiveStudents = Object.values(students).filter(s => isValidStudent(s) && s.Active)
 		.length
+
+	const isFormDisabled =
+		!state.fee?.name?.trim() ||
+		state.fee?.name?.trim().length < 3 ||
+		!state.fee?.amount ||
+		(state.addFeeTo === AddFeeOptions.STUDENT ? !state.studentId : false) ||
+		(state.addFeeTo === AddFeeOptions.CLASS ? !state.classId : false)
 
 	return (
 		<div className="p-5 md:p-10 md:pb-0 relative print:hidden">
@@ -308,7 +315,7 @@ export const AdditionalFee = () => {
 								<div className="">
 									will be added to{' '}
 									{state.addFeeTo === AddFeeOptions.CLASS
-										? `${toTitleCase(getClassName())} Class`
+										? `${getClassName()} Class`
 										: state.addFeeTo === AddFeeOptions.STUDENT
 											? toTitleCase(students[state.studentId].Name)
 											: `All Active Students (${totalActiveStudents})`}

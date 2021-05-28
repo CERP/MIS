@@ -1,6 +1,13 @@
-import React from 'react'
+import React, { Fragment, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { QuestionMarkCircleIcon } from '@heroicons/react/outline'
+import {
+	LocationMarkerIcon,
+	MailIcon,
+	PhoneIcon,
+	QuestionMarkCircleIcon,
+	XIcon
+} from '@heroicons/react/outline'
+import { Transition } from '@headlessui/react'
 
 import { PackageList } from 'components/package'
 import { AppLayout } from 'components/Layout/appLayout'
@@ -24,7 +31,12 @@ import iconPlug from './assets/plug.svg'
 import iconSchool from './assets/school.svg'
 import iconTeacher from './assets/teacher.svg'
 
+import SiteConfig from 'constants/siteConfig.json'
+import ContactForm from 'components/Forms/ContactForm'
+
 export const Landing = () => {
+	const [formOpened, setFormOpened] = useState<boolean>(false)
+	const formRef = useRef(null)
 	return (
 		<AppLayout>
 			<div className="w-full mt-10 md:mt-16">
@@ -115,8 +127,8 @@ export const Landing = () => {
 				<div className="mt-10 md:mt-20 bg-teal-50 py-10">
 					<div className="text-3xl font-semibold text-center">Features</div>
 					<div className="grid grid-col-1 md:grid-cols-2 gap-16 px-10 md:px-20 mt-10">
-						{Features.map(feat => (
-							<FeatureItemCard key={feat.title} {...feat} />
+						{Features.map(feature => (
+							<FeatureItemCard key={feature.title} {...feature} />
 						))}
 					</div>
 				</div>
@@ -150,41 +162,48 @@ export const Landing = () => {
 
 				<div className="px-12 mt-20">
 					<div className="text-3xl font-semibold text-center">Our Clients</div>
-					<div className="grid grid-cols-1 gap-6 mt-10 md:grid-cols-5">
-						<div className="mx-auto mb-4 rounded-full h-36 w-36 bg-orange-brand">
+					<div className="grid grid-cols-2 gap-6 mt-10 md:grid-cols-6">
+						<div className="mx-auto mb-4 rounded-full h-32 w-32 bg-orange-brand">
 							<img
-								className="w-20 h-20 m-8 rounded-full shadow-md"
-								src="favicon.ico"
-								alt="a1"
+								className="w-28 h-28 m-2 rounded-full shadow-md"
+								src="https://storage.googleapis.com/mischool/kids-planet.jpeg"
+								alt="kids-planet-school"
 							/>
 						</div>
 
-						<div className="mx-auto mb-4 rounded-full h-36 w-36 bg-teal-brand">
+						<div className="mx-auto mb-4 rounded-full h-32 w-32 bg-teal-brand">
 							<img
-								className="w-20 h-20 m-8 rounded-full shadow-md"
-								src="favicon.ico"
-								alt="a2"
+								className="w-28 h-28 m-2 rounded-full shadow-md"
+								src="https://storage.googleapis.com/mischool/wisdom.jpeg"
+								alt="wisdom-school"
 							/>
 						</div>
-						<div className="mx-auto mb-4 rounded-full h-36 w-36 bg-red-brand">
+						<div className="mx-auto mb-4 rounded-full h-32 w-32 bg-red-brand">
 							<img
-								className="w-20 h-20 m-8 rounded-full shadow-md"
-								src="favicon.ico"
-								alt="a3"
+								className="w-28 h-28 m-2 rounded-full shadow-md"
+								src="https://storage.googleapis.com/mischool/best-grammer.jpeg"
+								alt="best-grammer-school"
 							/>
 						</div>
-						<div className="mx-auto mb-4 rounded-full h-36 w-36 bg-teal-brand">
+						<div className="mx-auto mb-4 rounded-full h-32 w-32 bg-teal-brand">
 							<img
-								className="w-20 h-20 m-8 rounded-full shadow-md"
-								src="favicon.ico"
-								alt="a4"
+								className="w-28 h-28 m-2 rounded-full shadow-md"
+								src="https://storage.googleapis.com/mischool/av.jpeg"
+								alt="av-modern-school"
 							/>
 						</div>
-						<div className="mx-auto mb-4 rounded-full h-36 w-36 bg-orange-brand">
+						<div className="mx-auto mb-4 rounded-full h-32 w-32 bg-red-brand">
 							<img
-								className="w-20 h-20 m-8 rounded-full shadow-md"
-								src="favicon.ico"
-								alt="a5"
+								className="w-28 h-28 m-2 rounded-full shadow-md"
+								src="https://storage.googleapis.com/mischool/seek-knowledge.jpeg"
+								alt="sk-school"
+							/>
+						</div>
+						<div className="mx-auto mb-4 rounded-full h-32 w-32 bg-orange-brand">
+							<img
+								className="w-28 h-28 m-2 rounded-full shadow-md"
+								src="https://storage.googleapis.com/mischool/tks.jpeg"
+								alt="tks-school"
 							/>
 						</div>
 					</div>
@@ -195,8 +214,19 @@ export const Landing = () => {
 					<PackageList />
 				</div>
 
-				<div className="fixed z-50 p-2 text-white border border-white rounded-full shadow-md bottom-10 right-5 bg-teal-brand">
-					<QuestionMarkCircleIcon className="w-8 h-8" />
+				<div className="fixed z-50 p-2 text-white rounded-full shadow-md bottom-10 right-5 bg-teal-brand">
+					{formOpened ? (
+						<XIcon
+							ref={formRef}
+							onClick={() => setFormOpened(false)}
+							className="w-8 h-8 cursor-pointer"
+						/>
+					) : (
+						<QuestionMarkCircleIcon
+							onClick={() => setFormOpened(true)}
+							className="w-8 h-8 cursor-pointer"
+						/>
+					)}
 				</div>
 			</div>
 			<footer className="flex justify-center px-4 text-gray-100 bg-gray-800">
@@ -208,42 +238,90 @@ export const Landing = () => {
 
 					<hr className="h-px mt-6 bg-gray-700 border-none" />
 
-					<div className="flex flex-col items-center justify-between mt-6 md:flex-row">
-						<div className="flex flex-col items-center">
-							<Link to="/" className="text-xl font-bold">
-								MISchool{' '}
-								<span className="text-base hidden md:inline-block font-normal">
-									{' '}
-									- A School Management Software
-								</span>
-							</Link>
+					<div className="flex flex-col items-center justify-between mt-6 md:flex-row lg:flex-1">
+						<div className="flex flex-1 lg:mx-5 flex-col items-center">
+							<div className="text-xl items-center  justify-startflex flex-col font-bold">
+								<img
+									className="w-20	h-20 image hidden md:block"
+									src="/favicon.ico"
+									alt="brand-logo"
+								/>
+								<div className="text-base hidden md:inline-block font-normal mt-2">
+									<span className="font-semibold">MISchool</span> is a management
+									information system for schools. MISchool enables school to
+									collect, organize, and store records giving your school full
+									control of all academic, finance, wellbeing, and administrative
+									information.
+								</div>
+							</div>
 							<div className="text-base md:hidden block">
-								{' '}
-								A School Management Software
+								<span className="font-semibold">MISchool </span> - A School
+								Management Software
 							</div>
 						</div>
-						<div className="flex mt-4 md:m-0">
-							<div className="-mx-4">
-								<Link to="/pricing" className="px-4 text-sm">
+						<div className="flex mt-4 lg:justify-center md:m-0 lg:flex-1">
+							<div className="-mx-4 lg:flex lg:mx-4 lg:space-y-4 lg:flex-col">
+								<Link to="/pricing" className="px-2 text-base hover:underline">
 									Pricing
 								</Link>
-								<Link to="/customers" className="px-4 text-sm">
-									Customers
-								</Link>
-								<Link to="/about-us" className="px-4 text-sm">
+								<Link to="/about-us" className="px-2 text-base hover:underline">
 									About
 								</Link>
-								<Link to="/contact-us" className="px-4 text-sm">
+								<Link to="/contact-us" className="px-2 text-base hover:underline">
 									Contact
 								</Link>
-								<Link to="/events" className="px-4 text-sm">
+								<Link to="/events" className="px-2 text-base hover:underline">
 									Events
 								</Link>
+								<Link
+									to="/privacy-policy"
+									className="px-2 text-base hover:underline">
+									Privacy Policy
+								</Link>
+							</div>
+						</div>
+						<div className="lg:flex mt-4 lg:mx-5 md:m-0 lg:flex-1 hidden">
+							<div className="-mx-4 lg:flex  lg:space-y-4 lg:flex-col">
+								<h1 className="font-semibold">Contact Us</h1>
+								<div className="flex flex-row items-center">
+									<a href={'tel:' + SiteConfig.helpLine.phone}>
+										<PhoneIcon className="w-10 h-10 p-2 rounded-full bg-white shadow-md mr-4 text-teal-brand" />
+									</a>
+									<div>{SiteConfig.helpLine.phoneInt}</div>
+								</div>
+								<div className="flex flex-row items-center justify-between">
+									<div>
+										<LocationMarkerIcon className="w-10 h-10 p-2 rounded-full bg-white shadow-md mr-4 text-teal-brand" />
+									</div>
+									<div>
+										29-P Mustaq Ahmed Gurmani Road, Block P, Gulberg III, Lahore
+									</div>
+								</div>
+								<div className="flex flex-row items-center">
+									<div>
+										<MailIcon className="w-10 h-10 p-2 rounded-full bg-white shadow-md mr-4 text-teal-brand" />
+									</div>
+									<div>mischool@cerp.org.pk</div>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</footer>
+			<Transition
+				as={Fragment}
+				show={formOpened}
+				enter="transform transition duration-[400ms]"
+				enterFrom="opacity-0 rotate-[-120deg] scale-50"
+				enterTo="opacity-100 rotate-0 scale-100"
+				leave="transform duration-200 transition ease-in-out"
+				leaveFrom="opacity-100 rotate-0 scale-100 "
+				leaveTo="opacity-0 scale-95 ">
+				<div className="w-9/12 bottom-24 right-4 fixed md:w-3/12 space-y-4 bg-gray-100 shadow-2xl rounded-2xl p-4 md:p-8 ">
+					<h1 className="font-semibold text-center">Contact Us</h1>
+					<ContactForm />
+				</div>
+			</Transition>
 		</AppLayout>
 	)
 }
