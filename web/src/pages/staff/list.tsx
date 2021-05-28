@@ -40,11 +40,10 @@ export const StaffList = () => {
 	}
 	return (
 		<AppLayout title="Staff">
-			<div className="p-5 md:p-10 relative mb-20 mx-10">
+			<div className="p-5 md:p-10 relative mb-20 ">
 				<Link to="staff/new">
 					<AddStickyButton label="Add new Staff" />
 				</Link>
-
 				<div className="text-center font-bold text-2xl my-4 lg:hidden">School Staff</div>
 				<div className="text-gray-700 text-center lg:hidden">
 					Total = {filteredStaff.length}
@@ -59,13 +58,13 @@ export const StaffList = () => {
 						<option value={'false'}>InActive</option>
 					</select>
 				</div>
-
 				<Paginate
 					items={filteredStaff}
 					itemsPerPage={10}
 					numberOfBottomPages={3}
 					renderComponent={listItem}
 				/>
+				)
 			</div>
 		</AppLayout>
 	)

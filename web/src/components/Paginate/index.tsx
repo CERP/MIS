@@ -1,5 +1,5 @@
-import clsx from 'clsx'
 import React, { useState, useEffect } from 'react'
+import clsx from 'clsx'
 import { getNumberArrayFromRange } from 'utils/helpers'
 
 interface PaginationProps {
@@ -102,13 +102,13 @@ const Paginate = ({
 	}
 	return (
 		<>
-			<div className="grid grid-cols-1 gap-4 md:grid-cols-5 md:gap-12 gap-y-12 md:gap-y-20">
+			<div className="grid grid-cols-1 gap-4 md:grid-cols-4 md:gap-12 gap-y-12 md:gap-y-20">
 				{currItems.map(item => renderComponent(item))}
 			</div>
 			{items.length >= itemsPerPage && (
 				<div className="flex flex-row my-4 flex-wrap">
 					<button
-						className="border p-2 bg-white shadow-md mr-2 mb-1"
+						className="border p-2 bg-white shadow-md mr-2 mb-1 rounded-md"
 						onClick={onPrevious}>
 						Prev
 					</button>
@@ -123,10 +123,14 @@ const Paginate = ({
 							{page}
 						</button>
 					))}
-					<button className="border p-2 bg-white shadow-md mr-2 mb-1" onClick={onNext}>
+					<button
+						className="border p-2 bg-white shadow-md mr-2 mb-1 rounded-md"
+						onClick={onNext}>
 						Next
 					</button>
-					<button className="border p-2 bg-white shadow-md mr-2 mb-1" onClick={onReset}>
+					<button
+						className="border p-2 bg-white shadow-md mr-2 mb-1 rounded-md"
+						onClick={onReset}>
 						Reset
 					</button>
 				</div>

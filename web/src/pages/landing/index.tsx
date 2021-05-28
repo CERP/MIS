@@ -69,16 +69,18 @@ export const Landing = () => {
 									Login
 								</Link>
 								<Link
-									to="/signup"
+									to="/signup?package=FREE_TRIAL"
 									className="w-full px-6 py-2 text-lg text-center text-white rounded-md md:py-3 bg-teal-brand hover:shadow-md">
 									Try For Free
 								</Link>
 							</div>
 							<div className="my-2">
 								Not sure? Click here to{' '}
-								<span className="cursor-pointer text-teal-brand hover:underline hover:text-blue-brand">
+								<Link
+									to="/contact-us"
+									className="cursor-pointer text-teal-brand hover:underline hover:text-blue-brand">
 									Schedule a demo
-								</span>
+								</Link>
 							</div>
 						</div>
 					</div>

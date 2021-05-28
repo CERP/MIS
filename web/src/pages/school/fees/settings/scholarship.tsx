@@ -179,10 +179,10 @@ export const Scholarship = () => {
 				</div>
 				<div className="md:hidden bg-gray-200 rounded-lg p-2  w-full text-sm md:text-base">
 					<div className="flex flex-row justify-between w-full">
-						<div className="font-semobold">Default Fee</div>
+						<div className="font-semobold">Class Fee</div>
 						<div>Rs. {classDefaultFee?.amount || 'Not Set'}</div>
 					</div>
-					{Object.entries(classAdditionalFees || {}).map(([id, classFee]) => (
+					{Object.entries(classAdditionalFees ?? {}).map(([id, classFee]) => (
 						<div key={id} className="flex flex-row justify-between w-full">
 							<div className="font-semobold">{classFee.name}</div>
 							<div>Rs. {classFee.amount || 'Not Set'}</div>
@@ -193,10 +193,10 @@ export const Scholarship = () => {
 			</div>
 			<div className="hidden md:block bg-gray-200 rounded-lg p-4  w-full">
 				<div className="flex flex-row justify-between w-full">
-					<div className="font-semobold">Default Fee</div>
+					<div className="font-semobold">Class Fee</div>
 					<div>Rs. {classDefaultFee?.amount || 'Not Set'}</div>
 				</div>
-				{Object.entries(classAdditionalFees || {}).map(([id, classFee]) => (
+				{Object.entries(classAdditionalFees ?? {}).map(([id, classFee]) => (
 					<div key={id} className="flex flex-row justify-between w-full">
 						<div className="font-semobold">{classFee.name}</div>
 						<div>Rs. {classFee.amount || 'Not Set'}</div>
@@ -266,7 +266,7 @@ const Card = ({
 	const fees = [
 		{
 			...classFee,
-			name: 'Default Fee'
+			name: 'Class Fee'
 		},
 		...Object.values(additionalFees || {}),
 		...Object.values(student.fees || {})

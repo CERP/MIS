@@ -42,7 +42,7 @@ export const SchoolSetup = () => {
 						<div className="md:w-3/4 mx-auto flex flex-col md:flex-row items-center mt-10 md:t-20">
 							<div className="bg-white border h-48 md:h-72 md:w-2/5 rounded-2xl  shadow-md w-11/12  rounded-b-none border-b-0 md:rounded-bl-2xl md:rounded-r-none md:border-r-0">
 								<div className="flex flex-col items-center p-4 md:p-10 space-y-2">
-									<div className="text-center my-2 flex flex-col items-center">
+									<div className="text-center my-2 flex flex-col items-center space-y-2">
 										<label
 											className={clsx(
 												'flex h-20 items-center border justify-center p-1 rounded-full cursor-pointer w-20',
