@@ -12,7 +12,7 @@ import { SwitchButton } from 'components/input/switch'
 import toTitleCase from 'utils/toTitleCase'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import AdmissionForm from 'components/Printable/Student/admissionform'
-import { isValidPhone } from 'utils/helpers'
+import { isValidCNIC, isValidPhone } from 'utils/helpers'
 import { formatCNIC } from 'utils'
 import { getImageString, getDownsizedImage } from 'utils/image'
 
@@ -116,6 +116,14 @@ export const CreateOrUpdateStudent = () => {
 
 	const handleSubmit = (event: React.FormEvent) => {
 		event.preventDefault()
+
+		if (!isValidCNIC(state.profile.BForm)) {
+			return toast.error('B-Form number is not valid')
+		}
+
+		if (!isValidCNIC(state.profile.ManCNIC)) {
+			return toast.error('Father/Gaurdian CNIC is not valid')
+		}
 
 		if (!isValidPhone(state.profile.Phone)) {
 			return toast.error('Please provide correct phone number.')

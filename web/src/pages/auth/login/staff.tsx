@@ -46,7 +46,7 @@ const Login: React.FC<LoginProps> = ({
 	const [user, setUser] = useState<AugmentedMISUser>()
 
 	const filteredUsers = Object.entries(users)
-		.filter(([, f]) => f.hasLogin !== false)
+		.filter(([, f]) => f && f.name && f.hasLogin !== false)
 		.sort(([, a], [, b]) => a.name.localeCompare(b.name))
 
 	// For desktop screen, there would be 10 users per group
@@ -137,15 +137,15 @@ const Login: React.FC<LoginProps> = ({
 																setUser({ id: uid, ...user })
 															}>
 															<img
-																className="rounded-full border-2 border-transparent group-hover:border-green-brand focus:border-green-brand"
+																className="rounded-full w-20 h-20 border-2 border-transparent group-hover:border-green-brand focus:border-green-brand"
 																src={
 																	staffMember?.ProfilePicture
 																		?.url ??
-																	staffMember.ProfilePicture
+																	staffMember?.ProfilePicture
 																		?.image_string ??
 																	UserIconSvg
 																}
-																alt={staffMember.Name}
+																alt={staffMember?.Name}
 															/>
 														</div>
 														<div className="text-xs text-white group-hover:text-blue-brand text-center">
@@ -253,17 +253,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ user, auth, faculty }) => {
 
 	return (
 		<div className="flex flex-col items-center space-y-2">
-			<div className="w-24 h-24">
-				<img
-					className="rounded-full"
-					src={
-						staffMember?.ProfilePicture?.url ??
-						staffMember?.ProfilePicture?.image_string ??
-						UserIconSvg
-					}
-					alt={staffMember?.Name}
-				/>
-			</div>
+			<img
+				className="rounded-full w-24 h-24"
+				src={
+					staffMember?.ProfilePicture?.url ??
+					staffMember?.ProfilePicture?.image_string ??
+					UserIconSvg
+				}
+				alt={staffMember?.Name}
+			/>
 			<div className="text-sm text-white">{toTitleCase(user.name)}</div>
 			<form id="staff-login" onSubmit={handleSubmit}>
 				<div className="w-full relative my-4">

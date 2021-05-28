@@ -54,6 +54,13 @@ export const isValidPhone = (number: string) => {
 	return /03[0-9]{9}$/.test(number)
 }
 
+export const isValidCNIC = (number: string) => {
+	if (number === '') {
+		return true
+	}
+	return /[0-9]{5}-[0-9]{7}-[0-9]$/.test(number)
+}
+
 /**
  * Returns a number array of 'length' and starting from 'start' or 0 by default
  */
