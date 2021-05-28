@@ -98,3 +98,9 @@ body {
 		font-size: 1.25rem;
 	}
 }
+
+@media print {
+	* {
+		color: #333;
+	}
+}
