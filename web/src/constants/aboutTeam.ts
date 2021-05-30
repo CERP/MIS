@@ -5,7 +5,7 @@ export interface Team {
 	district?: string
 	phone?: string
 }
-// TODO: move all public folder (public/images) to google cloud storage
+
 const TeamMembers: Array<Team> = [
 	{
 		designation: 'Principal Investigator',
@@ -24,17 +24,12 @@ const TeamMembers: Array<Team> = [
 	},
 	{
 		name: 'Taimur Shah',
-		avatar_url: 'images/taimur.jpg',
+		avatar_url: 'https://storage.googleapis.com/mischool/team/taimur.jpg',
 		designation: 'Technology Lead'
 	},
-	// {
-	// 	designation: "Research Assistant",
-	// 	avatar_url: "https://storage.googleapis.com/ilmx-product-images/aboutabsar.jpg",
-	// 	name: "Absar Ali"
-	// },
 	{
 		name: 'Ayesha Ahmed',
-		avatar_url: '/images/ayesha.jpg',
+		avatar_url: 'https://storage.googleapis.com/mischool/team/ayesha.jpg',
 		designation: 'Research Assistant'
 	},
 	{
@@ -42,11 +37,6 @@ const TeamMembers: Array<Team> = [
 		avatar_url: 'https://storage.googleapis.com/ilmx-product-images/aboutfarah.jpeg',
 		name: 'Farah Basit'
 	},
-	// {
-	// 	designation: "Data Research Assistant",
-	// 	avatar_url: "https://storage.googleapis.com/ilmx-product-images/yusuf.jpeg",
-	// 	name: "Yusuf Khwaja"
-	// },
 	{
 		designation: 'Field Manager',
 		avatar_url: 'https://storage.googleapis.com/ilmx-product-images/aboutumer.jpg',
@@ -54,7 +44,7 @@ const TeamMembers: Array<Team> = [
 	},
 	{
 		name: 'Bisma Hafeez',
-		avatar_url: '/images/bisma.jpg',
+		avatar_url: 'https://storage.googleapis.com/mischool/team/bisma.jpg	',
 		designation: 'Call Center Assistant'
 		// phone: "+923481112004"
 	},
@@ -76,32 +66,32 @@ const TeamMembers: Array<Team> = [
 
 	// {
 	// 	name: "Ali Ahmad",
-	// 	avatar_url: "/images/ali_ahmad.jpg",
+	// 	avatar_url: "https://storage.googleapis.com/mischool/team/ali_ahmad.jpg",
 	// 	designation: "Senior Developer"
 	// },
 	// {
 	// 	name: "Mudassar Ali",
-	// 	avatar_url: "/images/mudassar.jpeg",
+	// 	avatar_url: "https://storage.googleapis.com/mischool/team/mudassar.jpeg",
 	// 	designation: "Developer",
 	// },
 
 	{
 		name: 'Farooq Azhar',
-		avatar_url: '/images/farooq_azhar.jpg',
+		avatar_url: 'https://storage.googleapis.com/mischool/team/farooq_azhar.jpg',
 		designation: 'Field Associate'
 		// district: "Sialkot",
 		// phone: "+923410924945"
 	},
 	{
 		name: 'Zahid Riaz',
-		avatar_url: '/images/zahid.jpg',
+		avatar_url: 'https://storage.googleapis.com/mischool/team/zahid.jpg',
 		designation: 'Field Associate'
 		// district: "Gujranwala",
 		// phone: "+923460089862"
 	},
 	{
 		name: 'Ali Zohaib',
-		avatar_url: '/images/ali_zohaib.jpg',
+		avatar_url: 'https://storage.googleapis.com/mischool/team/ali_zohaib.jpg',
 		designation: 'Field Associate'
 		// district: "Lahore, Kasur & Sheikhupura",
 		// phone: "+923410924944"
