@@ -1,21 +1,21 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import moment from 'moment'
+import clsx from 'clsx'
 import cond from 'cond-construct'
-import toast from 'react-hot-toast'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { Transition } from '@headlessui/react'
+import { CalendarIcon, ChevronDownIcon, XCircleIcon } from '@heroicons/react/outline'
 
-import { AppLayout } from 'components/Layout/appLayout'
-import { SearchInput } from 'components/input/search'
+import months from 'constants/months'
 import { isValidStudent } from 'utils'
 import { toTitleCase } from 'utils/toTitleCase'
-import months from 'constants/months'
+import { CustomSelect } from 'components/select'
+import { SearchInput } from 'components/input/search'
+import { AppLayout } from 'components/Layout/appLayout'
+import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
 
 import UserIconSvg from 'assets/svgs/user.svg'
-import { CustomSelect } from 'components/select'
-import { CalendarIcon, ChevronDownIcon, XCircleIcon } from '@heroicons/react/outline'
-import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
 
 type State = {
 	printFor: 'STUDENT' | 'CLASS' | 'FAMILY'
@@ -62,23 +62,23 @@ export const PrintVoucher = () => {
 	}
 
 	const getPreviewRoute = (): string => {
-		if (state.id === '') {
-			toast.error('Please choose from list to continue')
+		if (state.printFor === 'CLASS') {
+			return `/classes/${state.id}/print-voucher/preview?month=${state.month}&year=${currentYear}`
 		}
-		return `${window.location.pathname}/print-preview?type=${state.printFor}&id=${state.id}&month=${state.month}&year=${currentYear}`
+
+		return `/fees/print-voucher/preview?type=${state.printFor}&id=${state.id}&month=${state.month}&year=${currentYear}`
 	}
 
 	return (
-		<AppLayout title={'Print Voucher'}>
+		<AppLayout title={'Print Voucher'} showHeaderTitle>
 			<div className="p-5 md:p-10 md:pb-0 relative">
-				<div className="text-2xl font-bold mt-4 mb-8 text-center">Print Voucher</div>
-				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-4 rounded-2xl bg-gray-700 p-4 my-4 md:mt-8 min-h-screen">
+				<div className="md:w-4/5 md:mx-auto flex flex-col items-center rounded-2xl bg-gray-700 p-5 md:p-10">
 					<div className="flex flex-row items-center justify-between w-full md:w-3/5 space-x-4">
 						<CustomSelect
 							onChange={month => setState({ ...state, month })}
 							data={months}
 							selectedItem={state.month}>
-							<CalendarIcon className="w-5 h-5 text-gray-500" />
+							<CalendarIcon className="w-5 h-5 text-teal-brand" />
 						</CustomSelect>
 						<CustomSelect
 							onChange={year => {
@@ -86,12 +86,12 @@ export const PrintVoucher = () => {
 							}}
 							data={[currentYear]}
 							selectedItem={currentYear}>
-							<ChevronDownIcon className="w-5 h-5 text-gray-500" />
+							<ChevronDownIcon className="w-5 h-5 text-teal-brand" />
 						</CustomSelect>
 					</div>
 
-					<div className="space-y-6 w-full md:w-3/5">
-						<div className="text-white">Print Voucher for</div>
+					<div className="space-y-4 w-full md:w-3/5 mt-4 mb-6">
+						<div className="text-white font-semibold">Print Voucher for</div>
 						<div className="flex items-center flex-wrap justify-between text-white">
 							<div className="flex items-center">
 								<input
@@ -123,13 +123,15 @@ export const PrintVoucher = () => {
 						</div>
 						{renderAddView()}
 					</div>
-					{state.id && (
-						<Link
-							to={getPreviewRoute}
-							className="tw-btn-blue font-semibold text-center m-8 w-full md:w-3/5">
-							Print
-						</Link>
-					)}
+					<Link
+						to={getPreviewRoute}
+						className={clsx('tw-btn-blue font-semibold text-center w-full md:w-3/5', {
+							'bg-gray-400 pointer-events-none text-gray-150': !state.id
+						})}>
+						{state.id
+							? 'Print Preview'
+							: `Please ${toTitleCase(state.printFor)} to preview voucher.`}
+					</Link>
 				</div>
 			</div>
 		</AppLayout>
@@ -144,19 +146,19 @@ interface FamilyDropdownProps {
 export const FamilyDropdown: React.FC<FamilyDropdownProps> = ({ students, setFamilyId }) => {
 	const family = new Set<string>()
 	Object.values(students).forEach(s => {
-		if (s.Name && s.FamilyID) {
+		if (isValidStudent(s) && s.Active && s.FamilyID) {
 			family.add(s.FamilyID)
 		}
 	})
 
 	return (
 		<>
-			<div className="text-white">Select Family</div>
+			<div className="text-white font-semibold">Select Family</div>
 			<select
 				onChange={e => setFamilyId(e.target.value)}
 				className="tw-is-form-bg-black tw-select py-2 w-full">
 				<option value={''}>Choose from here</option>
-				{Array.from(family)
+				{[...family]
 					.filter(s => s)
 					.map(f => (
 						<option key={f} value={f}>
@@ -176,7 +178,7 @@ interface PrintForClassProps {
 export const PrintForClass = ({ classes, setClassId }: PrintForClassProps) => {
 	return (
 		<>
-			<div className="text-white">Select Class</div>
+			<div className="text-white font-semibold">Select Class</div>
 			<select
 				onChange={e => setClassId(e.target.value)}
 				name="classId"
@@ -234,7 +236,7 @@ export const StudentListSearch = ({ students, setStudentId, classes }: StudentLi
 
 	return (
 		<>
-			<div className="text-white">Select Student</div>
+			<div className="text-white font-semibold">Select Student</div>
 			{!student?.id && (
 				<SearchInput
 					value={searchText}
