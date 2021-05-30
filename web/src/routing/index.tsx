@@ -130,10 +130,12 @@ export class Routes extends React.Component<RoutesProps, State> {
 
 						<PrivateRoute exact path="/reports/bulk-exams" component={BulkExam} />
 						<PrivateRoute
+							exact
 							path="/reports/:class_id/:section_id/new"
 							component={SingleExam}
 						/>
 						<PrivateRoute
+							exact
 							path="/reports/:class_id/:section_id/exam/:exam_id"
 							component={SingleExam}
 						/>
@@ -142,7 +144,7 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<PrivateRoute path="/exams/datesheet" component={Datesheet} />
 						<PrivateRoute path="/exams/marks" component={ExamsMarks} />
 						<PrivateRoute path="/exams/results" component={ExamsResults} />
-						<PrivateRoute path="/exams" component={ExamsMenu} />
+						<PrivateRoute path="/exams" component={Marks} />
 
 						<PrivateRoute path="/reports/:class_id/:section_id" component={ExamList} />
 						<PrivateRoute path="/reports" component={Marks} />
