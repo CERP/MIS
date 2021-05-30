@@ -227,7 +227,7 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 									}
 									data={months}
 									selectedItem={state.filter.month}>
-									<CalendarIcon className="w-5 h-5 text-gray-500" />
+									<CalendarIcon className="w-5 h-5 text-teal-brand" />
 								</CustomSelect>
 								<CustomSelect
 									onChange={year => {
@@ -235,7 +235,7 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 									}}
 									data={years}
 									selectedItem={state.filter.year}>
-									<ChevronDownIcon className="w-5 h-5 text-gray-500" />
+									<ChevronDownIcon className="w-5 h-5 text-teal-brand" />
 								</CustomSelect>
 							</div>
 							<div className="w-full text-sm md:text-base space-y-1">
@@ -421,7 +421,7 @@ const PreviousPayments = ({ years, close, payments, pendingAmount }: PreviousPay
 					onChange={month => setState({ ...state, month })}
 					data={months}
 					selectedItem={state.month}>
-					<CalendarIcon className="w-5 h-5 text-gray-500" />
+					<CalendarIcon className="w-5 h-5 text-teal-brand" />
 				</CustomSelect>
 				<CustomSelect
 					onChange={year => {
@@ -429,7 +429,7 @@ const PreviousPayments = ({ years, close, payments, pendingAmount }: PreviousPay
 					}}
 					data={years}
 					selectedItem={state.year}>
-					<ChevronDownIcon className="w-5 h-5 text-gray-500" />
+					<ChevronDownIcon className="w-5 h-5 text-teal-brand" />
 				</CustomSelect>
 			</div>
 			<div className="space-y-2 px-2 text-sm md:text-base">
@@ -519,10 +519,10 @@ const AddPayment = ({ siblings, auth, settings, smsTemplates, pendingAmount }: A
 					type === 'text' || type === 'checkbox'
 						? value
 						: isNaN(valueAsNumber)
-						? name === 'date'
-							? Date.now()
-							: 0
-						: valueAsNumber
+							? name === 'date'
+								? Date.now()
+								: 0
+							: valueAsNumber
 			}
 		})
 	}
@@ -570,8 +570,7 @@ const AddPayment = ({ siblings, auth, settings, smsTemplates, pendingAmount }: A
 				)
 
 				toast.success(
-					`Rs. ${state.payment.amount} has been added as ${
-						state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
+					`Rs. ${state.payment.amount} has been added as ${state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
 					} amount.`
 				)
 
@@ -594,8 +593,7 @@ const AddPayment = ({ siblings, auth, settings, smsTemplates, pendingAmount }: A
 			)
 
 			toast.success(
-				`Rs. ${state.payment.amount} has been added as ${
-					state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
+				`Rs. ${state.payment.amount} has been added as ${state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
 				} amount.`
 			)
 			setState({
@@ -621,7 +619,7 @@ const AddPayment = ({ siblings, auth, settings, smsTemplates, pendingAmount }: A
 					data={selectItems}
 					selectedItem={state.studentId}
 					onChange={studentId => setState({ ...state, studentId })}>
-					<ChevronDownIcon className="w-5 h-5 text-gray-500" />
+					<ChevronDownIcon className="w-5 h-5 text-teal-brand" />
 				</CustomSelect>
 				<div>Label</div>
 				<input

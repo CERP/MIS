@@ -247,7 +247,7 @@ export const CreateOrUpdateStaff = () => {
 					{isNewStaff() ? 'Add Staff' : 'Update Staff'}
 				</div>
 				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 pb-6 my-4 md:mt-8">
-					<div className="text-white text-center text-base my-5">
+					<div className="text-white text-center text-base my-5 font-semibold">
 						Personal Information
 					</div>
 					{!isNewStaff() && (

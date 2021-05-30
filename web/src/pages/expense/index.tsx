@@ -219,13 +219,13 @@ export const Expense = () => {
 							onChange={month => setState({ ...state, month })}
 							data={months}
 							selectedItem={state.month}>
-							<CalendarIcon className="w-5 h-5 text-gray-500" />
+							<CalendarIcon className="w-5 h-5 text-teal-brand" />
 						</CustomSelect>
 						<CustomSelect
 							onChange={year => setState({ ...state, year })}
 							data={state.years ?? []}
 							selectedItem={state.year}>
-							<ChevronDownIcon className="w-5 h-5 text-gray-500" />
+							<ChevronDownIcon className="w-5 h-5 text-teal-brand" />
 						</CustomSelect>
 					</div>
 					{state.categoryGroups && (

@@ -137,7 +137,7 @@ const Login: React.FC<LoginProps> = ({
 																setUser({ id: uid, ...user })
 															}>
 															<img
-																className="rounded-full w-20 h-20 border-2 border-transparent group-hover:border-green-brand focus:border-green-brand"
+																className="rounded-full w-20 h-20 p-2 border-2 border-transparent group-hover:border-green-brand focus:border-green-brand"
 																src={
 																	staffMember?.ProfilePicture
 																		?.url ??
