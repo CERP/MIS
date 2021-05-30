@@ -50,7 +50,7 @@ const FeesChart = (props: ChartProps) => {
 						OWED,
 						SUBMITTED,
 						FORGIVEN: FORGIVEN + SCHOLARSHIP,
-						net: Math.abs(OWED - (SUBMITTED + FORGIVEN + SCHOLARSHIP)),
+						net: Math.abs(OWED - (SUBMITTED + FORGIVEN + SCHOLARSHIP))
 					}))}>
 				<XAxis dataKey="month" />
 				<YAxis />
@@ -96,24 +96,19 @@ const FeesTable = (props: TableProps) => {
 			style={{ margin: '20px 0', backgroundColor: '#c2bbbb21', overflowX: 'scroll' }}>
 			<div className="mis-table row heading">
 				<label style={{ backgroundColor: '#efecec', textAlign: 'center' }}>
-					{' '}
 					<b> Date </b>
 				</label>
 				<label style={{ backgroundColor: '#bedcff', textAlign: 'center' }}>
-					{' '}
-					<b> Total </b>{' '}
+					<b> Total </b>
 				</label>
 				<label style={{ backgroundColor: '#93d0c5', textAlign: 'center' }}>
-					{' '}
-					<b> Paid </b>{' '}
+					<b> Paid </b>
 				</label>
 				<label style={{ backgroundColor: '#e0e0e0', textAlign: 'center' }}>
-					{' '}
-					<b> Forgiven </b>{' '}
+					<b> Forgiven </b>
 				</label>
 				<label style={{ backgroundColor: '#fc6171', textAlign: 'center' }}>
-					{' '}
-					<b> Pending </b>{' '}
+					<b> Pending </b>
 				</label>
 			</div>
 			{[
@@ -169,7 +164,7 @@ const FeesTable = (props: TableProps) => {
 							)}
 						</b>
 					</label>
-				</div>,
+				</div>
 			]}
 		</div>
 	)
@@ -209,8 +204,6 @@ interface S {
 	}
 }
 
-interface routeInfo {}
-
 type StudentDebtMap = {
 	[id: string]: {
 		student: MISStudent
@@ -223,7 +216,7 @@ type PaymentSingleMap = {
 	[id: string]: Payment
 }
 
-type propTypes = RouteComponentProps<routeInfo> & P
+type propTypes = RouteComponentProps & P
 
 class FeeAnalytics extends Component<propTypes, S> {
 	former: Former
@@ -234,9 +227,9 @@ class FeeAnalytics extends Component<propTypes, S> {
 
 		const parsed_query = queryString.parse(this.props.location.search)
 
-		const sd_param = parsed_query.start_date || ''
-		const ed_param = parsed_query.end_date || ''
-		const period = parsed_query.period || ''
+		const sd_param = parsed_query.start_date ?? ''
+		const ed_param = parsed_query.end_date ?? ''
+		const period = parsed_query.period ?? ''
 
 		const start_date =
 			sd_param !== ''
@@ -251,7 +244,7 @@ class FeeAnalytics extends Component<propTypes, S> {
 				paid: true,
 				forgiven: true,
 				pending: true,
-				total: true,
+				total: true
 			},
 			classFilter: '',
 			is_fee_filter: false,
@@ -267,8 +260,8 @@ class FeeAnalytics extends Component<propTypes, S> {
 				PAID: 0,
 				OWED: 0,
 				FORGIVEN: 0,
-				SCHOLARSHIP: 0,
-			},
+				SCHOLARSHIP: 0
+			}
 		}
 
 		this.former = new Former(this, [])
@@ -286,7 +279,7 @@ class FeeAnalytics extends Component<propTypes, S> {
 
 		const filtered_students = this.filterPropsStudents()
 
-		checkDuesAsync(filtered_students).then((nextPayments) => {
+		checkDuesAsync(filtered_students).then(nextPayments => {
 			console.log('done computing dues', new Date().getTime() - s1)
 			if (nextPayments.length > 0) {
 				addPayments(nextPayments)
@@ -327,14 +320,14 @@ class FeeAnalytics extends Component<propTypes, S> {
 		this.setState({
 			start_date,
 			end_date,
-			selected_period,
+			selected_period
 		})
 
 		const { addPayments } = nextProps
 
 		const filtered_students = this.filterPropsStudents()
 
-		checkDuesAsync(filtered_students).then((nextPayments) => {
+		checkDuesAsync(filtered_students).then(nextPayments => {
 			if (nextPayments.length > 0) {
 				addPayments(nextPayments)
 			}
@@ -351,7 +344,7 @@ class FeeAnalytics extends Component<propTypes, S> {
 
 		clearTimeout(this.background_calculation)
 		this.setState({
-			loading: true,
+			loading: true
 		})
 
 		let total_paid = 0
@@ -364,7 +357,7 @@ class FeeAnalytics extends Component<propTypes, S> {
 			PAID: total_paid,
 			OWED: total_owed,
 			FORGIVEN: total_forgiven,
-			SCHOLARSHIP: total_scholarship,
+			SCHOLARSHIP: total_scholarship
 		} //Need a default otherwise throws an error when logged in for the first time
 
 		const temp_sd = moment(this.state.start_date)
@@ -377,7 +370,7 @@ class FeeAnalytics extends Component<propTypes, S> {
 			const interval = Math.floor(student_list.length / 10)
 			if (i % interval === 0) {
 				this.setState({
-					percentage: (i / student_list.length) * 100,
+					percentage: (i / student_list.length) * 100
 				})
 			}
 
@@ -391,7 +384,7 @@ class FeeAnalytics extends Component<propTypes, S> {
 					payments,
 					total_student_debts,
 					total_debts,
-					percentage: 0,
+					percentage: 0
 				})
 			}
 
@@ -420,11 +413,11 @@ class FeeAnalytics extends Component<propTypes, S> {
 					typeof payment.amount === 'string' ? parseFloat(payment.amount) : payment.amount
 
 				const period_key = moment(payment.date).format(period_format)
-				const period_debt = payments[period_key] || {
+				const period_debt = payments[period_key] ?? {
 					OWED: 0,
 					SUBMITTED: 0,
 					FORGIVEN: 0,
-					SCHOLARSHIP: 0,
+					SCHOLARSHIP: 0
 				}
 
 				// some schools, intentionly added some null payments' amounts through student ledger
@@ -459,15 +452,15 @@ class FeeAnalytics extends Component<propTypes, S> {
 							OWED: existing.debt.OWED + debt.OWED,
 							SUBMITTED: existing.debt.SUBMITTED + debt.SUBMITTED,
 							FORGIVEN: existing.debt.FORGIVEN + debt.FORGIVEN,
-							SCHOLARSHIP: existing.debt.SCHOLARSHIP + debt.SCHOLARSHIP,
+							SCHOLARSHIP: existing.debt.SCHOLARSHIP + debt.SCHOLARSHIP
 						},
-						familyId: student.FamilyID,
+						familyId: student.FamilyID
 					}
 				} else {
 					total_student_debts[student.FamilyID] = {
 						student,
 						debt,
-						familyId: student.FamilyID,
+						familyId: student.FamilyID
 					}
 				}
 			} else {
@@ -478,7 +471,7 @@ class FeeAnalytics extends Component<propTypes, S> {
 				PAID: total_paid,
 				OWED: total_owed,
 				FORGIVEN: total_forgiven,
-				SCHOLARSHIP: total_scholarship,
+				SCHOLARSHIP: total_scholarship
 			}
 
 			this.background_calculation = setTimeout(reducify, 0)
@@ -489,8 +482,7 @@ class FeeAnalytics extends Component<propTypes, S> {
 
 	filterPropsStudents = () => {
 		return Object.values(this.props.students).filter(
-			(student) =>
-				student && student.id && student.Name && student.Active && student.section_id
+			student => student && student.id && student.Name && student.Active && student.section_id
 		)
 	}
 
@@ -523,18 +515,18 @@ class FeeAnalytics extends Component<propTypes, S> {
 		return this.state.loading ? (
 			<ProgressBar percentage={this.state.percentage} />
 		) : (
-			<div className="fees-analytics">
+			<div className="fees-analytics mx-auto">
 				<div className="no-print" style={{ marginRight: '10px' }}>
 					<div className="divider">Payments over Time</div>
 
 					<div className="btn-filter-toggle row">
-						<div
-							className="button green"
+						<button
+							className="tw-btn bg-teal-brand text-white"
 							onClick={() =>
 								this.setState({ is_fee_filter: !this.state.is_fee_filter })
 							}>
 							Show Filters
-						</div>
+						</button>
 					</div>
 					{this.state.is_fee_filter && (
 						<div className="section form">
@@ -542,6 +534,7 @@ class FeeAnalytics extends Component<propTypes, S> {
 								<label> Start Date </label>
 								<input
 									type="date"
+									className="tw-input"
 									onChange={this.former.handle(
 										['start_date'],
 										() => true,
@@ -555,6 +548,7 @@ class FeeAnalytics extends Component<propTypes, S> {
 								<label> End Date </label>
 								<input
 									type="date"
+									className="tw-input"
 									onChange={this.former.handle(
 										['end_date'],
 										() => true,
@@ -568,6 +562,7 @@ class FeeAnalytics extends Component<propTypes, S> {
 							<div className="row">
 								<label> Fee Period </label>
 								<select
+									className="tw-select"
 									{...this.former.super_handle(
 										['selected_period'],
 										() => true,
@@ -589,37 +584,41 @@ class FeeAnalytics extends Component<propTypes, S> {
 					/>
 				</div>
 
-				<div className="no-print checkbox-container">
+				<div className="no-print checkbox-container flex flex-row items-center space-x-2">
 					<div className="chart-checkbox" style={{ color: '#93d0c5' }}>
 						<input
 							type="checkbox"
+							className="tw-checkbox form-checkbox"
 							{...this.former.super_handle(['chartFilter', 'paid'])}
 						/>
-						Paid
+						<span className="ml-1">Paid</span>
 					</div>
 
 					<div className="chart-checkbox" style={{ color: '#939292' }}>
 						<input
 							type="checkbox"
+							className="tw-checkbox form-checkbox"
 							{...this.former.super_handle(['chartFilter', 'forgiven'])}
 						/>
-						Forgiven
+						<span className="ml-1">Forgiven</span>
 					</div>
 
 					<div className="chart-checkbox" style={{ color: '#ff6b68' }}>
 						<input
 							type="checkbox"
+							className="tw-checkbox form-checkbox"
 							{...this.former.super_handle(['chartFilter', 'pending'])}
 						/>
-						Pending
+						<span className="ml-1">Pending</span>
 					</div>
 
 					<div className="chart-checkbox" style={{ color: '#74aced' }}>
 						<input
 							type="checkbox"
+							className="tw-checkbox form-checkbox"
 							{...this.former.super_handle(['chartFilter', 'total'])}
 						/>
-						Total
+						<span className="ml-1">Total</span>
 					</div>
 				</div>
 
@@ -629,64 +628,67 @@ class FeeAnalytics extends Component<propTypes, S> {
 					date_format={period_format}
 				/>
 
-				<div className="divider no-print">Students with Payments Outstanding</div>
-				<div className="section no-print">
-					<div className="no-print row">
-						<input
-							className="search-bar"
-							type="text"
-							{...this.former.super_handle(['filterText'])}
-							placeholder="search"
-						/>
-						<select
-							{...this.former.super_handle(['classFilter'])}
-							style={{ marginBottom: '10px' }}>
-							<option value=""> Select Class </option>
-							{sections.map((s) => {
-								return (
-									<option value={s.id} key={s.id}>
-										{' '}
-										{s.namespaced_name}
-									</option>
-								)
-							})}
-						</select>
-					</div>
-					<div className="mis-table row">
-						<label>
-							<b>Name</b>
-						</label>
-						<label>
-							<b>Phone</b>
-						</label>
-						<label>
-							<b>Amount</b>
-						</label>
-					</div>
-					{items.map(({ student, debt, familyId }) => (
-						<div className="mis-table row" key={student.id}>
-							{familyId ? (
-								<Link to={`/student/${student.id}/payment`}>{familyId}(F)</Link>
-							) : (
-								<Link to={`/student/${student.id}/payment`}>{student.Name}</Link>
-							)}
-							<div>{student.Phone ? student.Phone : '-'}</div>
-							<div
-								style={
-									this.calculateDebt(debt) >= 1
-										? { color: '#5ecdb9' }
-										: { color: '#fc6171' }
-								}>
-								{' '}
-								{numberWithCommas(-1 * this.calculateDebt(debt))}
-							</div>
+				<div>
+					<div className="divider no-print">Students with Payments Outstanding</div>
+					<div className="section no-print">
+						<div className="no-print row space-x-2">
+							<input
+								className="w-full tw-input"
+								type="text"
+								{...this.former.super_handle(['filterText'])}
+								placeholder="search"
+							/>
+							<select
+								{...this.former.super_handle(['classFilter'])}
+								className="tw-select">
+								<option value=""> Select Class </option>
+								{sections.map(s => {
+									return (
+										<option value={s.id} key={s.id}>
+											{s.namespaced_name}
+										</option>
+									)
+								})}
+							</select>
 						</div>
-					))}
-					<div
-						className="print button"
-						onClick={() => window.print()}
-						style={{ marginTop: '10px' }}>
-						Print
+						<div className="mis-table row">
+							<label>
+								<b>Name</b>
+							</label>
+							<label>
+								<b>Phone</b>
+							</label>
+							<label>
+								<b>Amount</b>
+							</label>
+						</div>
+						{items.map(({ student, debt, familyId }) => (
+							<div className="mis-table row" key={student.id}>
+								{familyId ? (
+									<Link to={`/student/${student.id}/payment`}>{familyId}(F)</Link>
+								) : (
+									<Link to={`/student/${student.id}/payment`}>
+										{student.Name}
+									</Link>
+								)}
+								<div>{student.Phone ? student.Phone : '-'}</div>
+								<div
+									style={
+										this.calculateDebt(debt) >= 1
+											? { color: '#5ecdb9' }
+											: { color: '#fc6171' }
+									}>
+									{' '}
+									{numberWithCommas(-1 * this.calculateDebt(debt))}
+								</div>
+							</div>
+						))}
+						<div
+							className="print button"
+							onClick={() => window.print()}
+							style={{ marginTop: '10px' }}>
+							Print
+						</div>
 					</div>
 				</div>
 
@@ -713,9 +715,9 @@ export default connect(
 		students: state.db.students,
 		settings: state.db.settings,
 		classes: state.db.classes,
-		schoolLogo: state.db.assets ? state.db.assets.schoolLogo || '' : '',
+		schoolLogo: state.db.assets ? state.db.assets.schoolLogo || '' : ''
 	}),
 	(dispatch: Function) => ({
-		addPayments: (payments: PaymentAddItem[]) => dispatch(addMultiplePayments(payments)),
+		addPayments: (payments: PaymentAddItem[]) => dispatch(addMultiplePayments(payments))
 	})
 )(FeeAnalytics)

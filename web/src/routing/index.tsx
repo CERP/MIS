@@ -149,7 +149,7 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<PrivateRoute path="/settings" component={Settings} />
 						<PrivateRoute path="/diary" component={Diary} />
 						<PrivateRoute path="/analytics/daily-stats" component={DailyStats} />
-						<PrivateRoute path="/analytics" component={Analytics} />
+						<PrivateRoute path="/analytics" component={Analytics as any} />
 						<PrivateRoute path="/diary" component={Diary} />
 						<PrivateRoute path="/reports-menu" component={ReportsMenu} />
 						<PrivateRoute

@@ -42,7 +42,7 @@ class ExamsAnalytics extends Component<P, S> {
 			class_id,
 			subject: '',
 			section_id: '',
-			toggleFilter: false,
+			toggleFilter: false
 		}
 		this.former = new Former(this, [])
 	}
@@ -53,7 +53,7 @@ class ExamsAnalytics extends Component<P, S> {
 
 	getMergeStudentsExams = (students: P['students'], exams: MISExam[]): MergeStudentsExams[] => {
 		return Object.values(students)
-			.filter((student) => student && student.Name && student.exams)
+			.filter(student => student && student.Name && student.exams)
 			.reduce<MergeStudentsExams[]>((agg, curr) => {
 				const merge_exams: AugmentedMISExam[] = []
 
@@ -114,9 +114,11 @@ class ExamsAnalytics extends Component<P, S> {
 		const students_exams = this.getMergeStudentsExams(students, filtered_exams)
 
 		return (
-			<div className="exams-analytics">
-				<div className="row filter-button no-print">
-					<button className="button green" onClick={this.onToggleFilter}>
+			<div className="exams-analytics mx-auto">
+				<div className="flex flex-row no-print justify-end mb-2">
+					<button
+						className="tw-btn bg-teal-brand text-white"
+						onClick={this.onToggleFilter}>
 						{toggleFilter ? 'Hide Filters' : 'Show Filters'}
 					</button>
 				</div>
@@ -125,11 +127,13 @@ class ExamsAnalytics extends Component<P, S> {
 						<div className="section form">
 							<div className="row">
 								<label>Exams for Class</label>
-								<select {...this.former.super_handle(['class_id'])}>
+								<select
+									className="tw-select"
+									{...this.former.super_handle(['class_id'])}>
 									<option value="">Select Class</option>
 									{Object.values(classes)
 										.sort((a, b) => a.classYear - b.classYear)
-										.map((mis_class) => (
+										.map(mis_class => (
 											<option key={mis_class.id} value={mis_class.id}>
 												{mis_class.name}
 											</option>
@@ -138,9 +142,11 @@ class ExamsAnalytics extends Component<P, S> {
 							</div>
 							<div className="row">
 								<label>Exam</label>
-								<select {...this.former.super_handle(['exam_title'])}>
+								<select
+									className="tw-select"
+									{...this.former.super_handle(['exam_title'])}>
 									<option value="">Select Exam</option>
-									{ExamTitles.map((title) => (
+									{ExamTitles.map(title => (
 										<option key={title} value={title}>
 											{title}
 										</option>
@@ -149,9 +155,11 @@ class ExamsAnalytics extends Component<P, S> {
 							</div>
 							<div className="row">
 								<label>Subject</label>
-								<select {...this.former.super_handle(['subject'])}>
+								<select
+									className="tw-select"
+									{...this.former.super_handle(['subject'])}>
 									<option value="">Select Subject</option>
-									{[...subjects].map((subject) => (
+									{[...subjects].map(subject => (
 										<option key={subject} value={subject}>
 											{subject}
 										</option>
@@ -164,12 +172,14 @@ class ExamsAnalytics extends Component<P, S> {
 									<div className="date-range">
 										<input
 											type="date"
+											className="tw-input"
 											{...this.former.super_handle(['min_date'])}
 											value={moment(min_date).format('YYYY-MM-DD')}
 										/>
 										<span style={{ margin: 10 }}>-</span>
 										<input
 											type="date"
+											className="tw-input"
 											{...this.former.super_handle(['max_date'])}
 											value={moment(max_date).format('YYYY-MM-DD')}
 										/>
@@ -201,5 +211,5 @@ export default connect((state: RootReducerState) => ({
 	settins: state.db.settings,
 	grades: state.db.settings.exams.grades,
 	exams: state.db.exams,
-	faculty: state.db.faculty,
+	faculty: state.db.faculty
 }))(ExamsAnalytics)
