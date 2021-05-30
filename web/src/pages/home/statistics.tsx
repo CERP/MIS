@@ -167,7 +167,7 @@ export const StatsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 						{attendanceMarkCount === 0 ? (
 							<div className="flex flex-col space-y-2 justify-center items-center pt-24 md:pt-20">
 								<ExclamationIcon className="text-orange-brand w-14" />
-								<div>Attendance not marked yet.</div>
+								<div>Today&apos;s attendance not marked yet.</div>
 							</div>
 						) : (
 							<AttendanceChart graphData={graphData} />
@@ -236,7 +236,7 @@ const MoreStats = ({
 		<>
 			<div className="flex flex-col space-y-4 lg:grid lg:grid-cols-2 lg:gap-3 lg:space-y-0 lg:mt-8">
 				<div className="flex flex-row items-center">
-					<CashIcon className="w-10 lg:w-8 mr-10 lg:mr-4 text-teal-brand " />
+					<CashIcon className="w-10 lg:w-8 mr-10 lg:mr-4 text-teal-brand" />
 					<div className="flex flex-col">
 						<div className="font-semibold text-teal-brand">Rs. {amountCollected}</div>
 						<div className="text-sm text-gray-500">Fee Collected</div>
