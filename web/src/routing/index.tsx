@@ -183,8 +183,11 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<SchoolRoute path="/staff-login" component={StaffLogin} />
 						<SchoolRoute exact path="/setup" component={SchoolSetup} />
 
-						<Route exact path="/" component={Landing} />
-						<Route path="/targeted-instruction" component={TargetedInstruction} />
+						<PublicRoute exact path="/" component={Landing} />
+						<PrivateRoute
+							path="/targeted-instruction"
+							component={TargetedInstruction as any}
+						/>
 						<Route path="/verify-code" component={MISActivation} />
 						<Route exact path="/onboarding" component={SchoolOnboarding} />
 						<Route path="/auto-login" component={AutoLogin} />
