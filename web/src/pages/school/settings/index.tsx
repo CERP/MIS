@@ -204,10 +204,9 @@ export const Settings = () => {
 	}
 
 	return (
-		<AppLayout title="School Profile">
-			<div className="p-5 md:p-10 md:pb-0">
-				<div className="text-2xl font-bold mb-8 text-center">School Profile</div>
-				<div className="text-white md:w-4/5 md:mx-auto space-y-4 rounded-2xl bg-gray-700 p-5 my-5 md:mt-8">
+		<AppLayout title="School Profile" showHeaderTitle>
+			<div className="p-5 md:p-10 md:pb-0 mb-4">
+				<div className="text-white md:w-4/5 md:mx-auto space-y-4 rounded-2xl bg-gray-700 p-5">
 					<div className="pt-2 flex flex-row mx-auto items-baseline justify-between w-3/5 md:w-1/4">
 						<UploadImage
 							src={db?.assets?.schoolLogo}
@@ -217,7 +216,7 @@ export const Settings = () => {
 					</div>
 					<form
 						id="staff-form"
-						className="space-y-2 px-4 w-full md:w-3/5  mx-auto"
+						className="space-y-2 w-full md:w-3/5  mx-auto"
 						onSubmit={handleFormSubmission}>
 						<div>School Name</div>
 						<input
@@ -246,8 +245,8 @@ export const Settings = () => {
 							className="tw-input w-full text-gray-500 focus-within:text-gray-200 focus-within:bg-transparent"
 							placeholder="Type school address"
 						/>
-						<div className="flex w-full justify-between">
-							<div className="space-y-2 w-1/2">
+						<div className="flex flex-row justify-between space-x-1 md:space-x-2">
+							<div className="w-full space-y-2">
 								<div>Session Start</div>
 								<input
 									name="start_date"
@@ -256,10 +255,10 @@ export const Settings = () => {
 									value={moment(state.settings.schoolSession.start_date).format(
 										'YYYY-MM-DD'
 									)}
-									className="pr-0 tw-input w-11/12 text-gray-500 focus-within:text-gray-200 focus-within:bg-transparent"
+									className="px-0 md:px-4 w-full tw-input text-gray-500 focus-within:text-gray-200 focus-within:bg-transparent"
 								/>
 							</div>
-							<div className="space-y-2 w-1/2">
+							<div className="w-full space-y-2">
 								<div>Session End</div>
 								<input
 									name="end_date"
@@ -268,7 +267,7 @@ export const Settings = () => {
 									value={moment(state.settings.schoolSession.end_date).format(
 										'YYYY-MM-DD'
 									)}
-									className="pr-0  tw-input w-11/12 text-gray-500 focus-within:text-gray-200 focus-within:bg-transparent"
+									className="px-0 md:px-4 tw-input w-full text-gray-500 focus-within:text-gray-200 focus-within:bg-transparent"
 								/>
 							</div>
 						</div>
