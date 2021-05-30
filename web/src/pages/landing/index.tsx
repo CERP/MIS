@@ -162,10 +162,10 @@ export const Landing = () => {
 
 				<div className="px-12 mt-20">
 					<div className="text-3xl font-semibold text-center">Our Clients</div>
-					<div className="grid grid-cols-2 gap-6 mt-10 md:grid-cols-6">
+					<div className="grid grid-cols-2 gap-4 mt-10 md:grid-cols-6">
 						<div className="mx-auto mb-4 rounded-full h-32 w-32 bg-orange-brand">
 							<img
-								className="w-28 h-28 m-2 rounded-full shadow-md"
+								className="w-28 h-28 m-2 rounded-full shadow-md object-fill"
 								src="https://storage.googleapis.com/mischool/kids-planet.jpeg"
 								alt="kids-planet-school"
 							/>
@@ -173,35 +173,35 @@ export const Landing = () => {
 
 						<div className="mx-auto mb-4 rounded-full h-32 w-32 bg-teal-brand">
 							<img
-								className="w-28 h-28 m-2 rounded-full shadow-md"
+								className="w-28 h-28 m-2 rounded-full shadow-md object-fill"
 								src="https://storage.googleapis.com/mischool/wisdom.jpeg"
 								alt="wisdom-school"
 							/>
 						</div>
 						<div className="mx-auto mb-4 rounded-full h-32 w-32 bg-red-brand">
 							<img
-								className="w-28 h-28 m-2 rounded-full shadow-md"
+								className="w-28 h-28 m-2 rounded-full shadow-md object-fill"
 								src="https://storage.googleapis.com/mischool/best-grammer.jpeg"
 								alt="best-grammer-school"
 							/>
 						</div>
 						<div className="mx-auto mb-4 rounded-full h-32 w-32 bg-teal-brand">
 							<img
-								className="w-28 h-28 m-2 rounded-full shadow-md"
+								className="w-28 h-28 m-2 rounded-full shadow-md object-fill"
 								src="https://storage.googleapis.com/mischool/av.jpeg"
 								alt="av-modern-school"
 							/>
 						</div>
 						<div className="mx-auto mb-4 rounded-full h-32 w-32 bg-red-brand">
 							<img
-								className="w-28 h-28 m-2 rounded-full shadow-md"
+								className="w-28 h-28 m-2 rounded-full shadow-md object-fill"
 								src="https://storage.googleapis.com/mischool/seek-knowledge.jpeg"
 								alt="sk-school"
 							/>
 						</div>
 						<div className="mx-auto mb-4 rounded-full h-32 w-32 bg-orange-brand">
 							<img
-								className="w-28 h-28 m-2 rounded-full shadow-md"
+								className="w-28 h-28 m-2 rounded-full shadow-md object-fill"
 								src="https://storage.googleapis.com/mischool/tks.jpeg"
 								alt="tks-school"
 							/>
@@ -214,17 +214,17 @@ export const Landing = () => {
 					<PackageList />
 				</div>
 
-				<div className="fixed z-50 p-2 text-white rounded-full shadow-md bottom-10 right-5 bg-teal-brand">
+				<div className="fixed z-50 p-1 text-white rounded-full shadow-md bottom-10 right-5 bg-teal-brand">
 					{formOpened ? (
 						<XIcon
 							ref={formRef}
 							onClick={() => setFormOpened(false)}
-							className="w-8 h-8 cursor-pointer"
+							className="w-10 h-10 cursor-pointer"
 						/>
 					) : (
 						<QuestionMarkCircleIcon
 							onClick={() => setFormOpened(true)}
-							className="w-8 h-8 cursor-pointer"
+							className="w-10 h-10 cursor-pointer"
 						/>
 					)}
 				</div>
@@ -270,9 +270,9 @@ export const Landing = () => {
 								<Link to="/contact-us" className="px-2 text-base hover:underline">
 									Contact
 								</Link>
-								<Link to="/events" className="px-2 text-base hover:underline">
+								{/* <Link to="/events" className="px-2 text-base hover:underline">
 									Events
-								</Link>
+								</Link> */}
 								<Link
 									to="/privacy-policy"
 									className="px-2 text-base hover:underline">

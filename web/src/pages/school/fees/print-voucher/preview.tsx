@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { useLocation } from 'react-router'
+import { useLocation } from 'react-router-dom'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import chunkify from 'utils/chunkify'

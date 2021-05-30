@@ -48,7 +48,7 @@ const links: CardProps[] = [
 		icon: iconSms
 	},
 	{
-		link: '',
+		link: '/reports-menu',
 		title: 'Results',
 		icon: '/favicon.ico'
 	},

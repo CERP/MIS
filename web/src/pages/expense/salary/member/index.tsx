@@ -148,7 +148,7 @@ export const StaffMemberSalary = ({ match }: StaffMemberSalaryProps) => {
 	)
 
 	return (
-		<AppLayout>
+		<>
 			<div className="flex flex-col-reverse lg:flex-row lg:m-14 lg:mx-32">
 				<div
 					ref={mainFormRef}
@@ -449,6 +449,6 @@ export const StaffMemberSalary = ({ match }: StaffMemberSalaryProps) => {
 					</div>
 				</div>
 			</Transition>
-		</AppLayout>
+		</>
 	)
 }

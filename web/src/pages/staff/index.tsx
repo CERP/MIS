@@ -1,24 +1,25 @@
 import React from 'react'
-import { AppLayout } from 'components/Layout/appLayout'
 import clsx from 'clsx'
-import { Route, RouteComponentProps } from 'react-router'
 import { Link } from 'react-router-dom'
+import { Route, RouteComponentProps } from 'react-router'
+
+import { AppLayout } from 'components/Layout/appLayout'
 import { CreateOrUpdateStaff } from './create'
+import { StaffMemberSalary } from 'pages/expense/salary/member'
 
 const StaffPage = ({ location }: RouteComponentProps) => {
-	// To Add new a new path, update the 'Paths' Object & create a route
-
 	const loc = location.pathname.split('/').slice(-1).pop()
-	const Paths = {
+	const pathMap = {
 		Profile: 'profile',
-		Attendance: 'attendance'
+		Attendance: 'attendance',
+		Salary: 'salaries'
 	}
 
 	return (
 		<AppLayout>
 			{loc !== 'new' && (
 				<div className="flex flex-row items-center my-2 w-full justify-center flex-wrap print:hidden">
-					{Object.entries(Paths).map(([title, path]) => (
+					{Object.entries(pathMap).map(([title, path]) => (
 						<Link
 							key={path}
 							to={path}
@@ -34,12 +35,9 @@ const StaffPage = ({ location }: RouteComponentProps) => {
 					))}
 				</div>
 			)}
-			<Route path="/staff/new">
-				<CreateOrUpdateStaff />
-			</Route>
-			<Route path="/staff/:id/profile">
-				<CreateOrUpdateStaff />
-			</Route>
+			<Route path="/staff/new" component={CreateOrUpdateStaff} />
+			<Route path="/staff/:id/profile" component={CreateOrUpdateStaff} />
+			<Route path="/staff/:id/salaries" component={StaffMemberSalary} />
 		</AppLayout>
 	)
 }

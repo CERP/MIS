@@ -15,12 +15,9 @@ import ReportsMenu from 'modules/ReportsMenu'
 import TargetedInstruction from 'modules/TIP/Routing'
 import Help from 'modules/Help'
 import Diary from 'pages/school/diary'
-import FeeMenu from 'modules/FeeMenu'
 import PlannerList from 'modules/Planner/ClassList'
 import Planner from 'modules/Planner'
 import CertificateMenu from 'modules/CertificateMenu'
-import HistoricalFee from '../modules/Settings/HistoricalFees/historical-fee'
-import ManageFees from 'modules/Student/ManageFees'
 import ResetPassword from 'modules/Password/index'
 import MISActivation from 'modules/Activation'
 import BulkExam from 'modules/Marks/BulkExam'
@@ -55,7 +52,6 @@ import { PrivateRoute, SchoolRoute, PublicRoute } from 'components/routing'
 import { Expense } from 'pages/expense'
 import { ExpenseForm } from 'pages/expense/form'
 import { StaffSalary } from 'pages/expense/salary'
-import { StaffMemberSalary } from 'pages/expense/salary/member'
 import { ExamsMenu } from 'pages/exams/menu'
 import { GradeSettings } from 'pages/exams/grades'
 import { PromoteStudents } from 'pages/exams/promote-students'
@@ -66,6 +62,7 @@ import { Events } from 'pages/about-us/events'
 import StudentPage from 'pages/students'
 import StaffPage from 'pages/staff'
 import PrintPreview from 'pages/school/fees/print-voucher/preview'
+import ClassFeeMenu from 'modules/Class/Single/ClassFeeMenu'
 
 interface RoutesProps {
 	store: Store<RootReducerState>
@@ -104,12 +101,7 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<PrivateRoute exact path="/home" component={Home} />
 						<PrivateRoute path="/staff" exact component={StaffList} />
 						<PrivateRoute path="/staff/salaries" exact component={StaffSalary} />
-						<PrivateRoute
-							path="/staff/:id/salaries"
-							exact
-							component={StaffMemberSalary}
-						/>
-						<PrivateRoute path="/staff/:id" exact component={StaffPage} />
+						<PrivateRoute path="/staff/:id" component={StaffPage} />
 						<PrivateRoute path="/students/new/menu" exact component={AddStudentMenu} />
 						<PrivateRoute
 							path="/students/excel-import"
@@ -118,6 +110,11 @@ export class Routes extends React.Component<RoutesProps, State> {
 						/>
 						<PrivateRoute path="/students/:id" component={StudentPage} />
 						<PrivateRoute path="/students" exact component={StudentList} />
+						<PrivateRoute
+							path="/classes/:id/print-voucher/preview"
+							exact
+							component={ClassFeeMenu}
+						/>
 						<PrivateRoute
 							path="/classes/:id/view"
 							exact
@@ -133,10 +130,12 @@ export class Routes extends React.Component<RoutesProps, State> {
 
 						<PrivateRoute exact path="/reports/bulk-exams" component={BulkExam} />
 						<PrivateRoute
+							exact
 							path="/reports/:class_id/:section_id/new"
 							component={SingleExam}
 						/>
 						<PrivateRoute
+							exact
 							path="/reports/:class_id/:section_id/exam/:exam_id"
 							component={SingleExam}
 						/>
@@ -145,19 +144,19 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<PrivateRoute path="/exams/datesheet" component={Datesheet} />
 						<PrivateRoute path="/exams/marks" component={ExamsMarks} />
 						<PrivateRoute path="/exams/results" component={ExamsResults} />
-						<PrivateRoute path="/exams" component={ExamsMenu} />
+						<PrivateRoute path="/exams" component={Marks} />
 
 						<PrivateRoute path="/reports/:class_id/:section_id" component={ExamList} />
 						<PrivateRoute path="/reports" component={Marks} />
 						<PrivateRoute path="/settings" component={Settings} />
 						<PrivateRoute path="/diary" component={Diary} />
 						<PrivateRoute path="/analytics/daily-stats" component={DailyStats} />
-						<PrivateRoute path="/analytics" component={Analytics} />
+						<PrivateRoute path="/analytics" component={Analytics as any} />
 						<PrivateRoute path="/diary" component={Diary} />
 						<PrivateRoute path="/reports-menu" component={ReportsMenu} />
 						<PrivateRoute
 							exact
-							path="/fees/print-voucher/print-preview"
+							path="/fees/print-voucher/preview"
 							component={PrintPreview}
 						/>
 						<PrivateRoute
@@ -172,9 +171,6 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<PrivateRoute path="/planner/:class_id/:section_id" component={Planner} />
 						<PrivateRoute path="/help" component={Help} />
 						<PrivateRoute path="/certificate-menu" component={CertificateMenu} />
-						<PrivateRoute path="/fees/manage" component={ManageFees} />
-						<PrivateRoute path="/fees/add-historical-fee" component={HistoricalFee} />
-						<PrivateRoute path="/fee-menu" component={FeeMenu} />
 						<PrivateRoute path="/reset-password" component={ResetPassword} />
 						<PrivateRoute path="/expenses" exact component={Expense} />
 						<PrivateRoute path="/expenses/:id" exact component={ExpenseForm} />
@@ -189,8 +185,11 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<SchoolRoute path="/staff-login" component={StaffLogin} />
 						<SchoolRoute exact path="/setup" component={SchoolSetup} />
 
-						<Route exact path="/" component={Landing} />
-						<Route path="/targeted-instruction" component={TargetedInstruction} />
+						<PublicRoute exact path="/" component={Landing} />
+						<PrivateRoute
+							path="/targeted-instruction"
+							component={TargetedInstruction as any}
+						/>
 						<Route path="/verify-code" component={MISActivation} />
 						<Route exact path="/onboarding" component={SchoolOnboarding} />
 						<Route path="/auto-login" component={AutoLogin} />

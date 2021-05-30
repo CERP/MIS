@@ -64,7 +64,6 @@ export const StaffList = () => {
 					numberOfBottomPages={3}
 					renderComponent={listItem}
 				/>
-				)
 			</div>
 		</AppLayout>
 	)
