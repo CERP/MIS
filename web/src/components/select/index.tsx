@@ -52,7 +52,9 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
 								<Listbox.Button className="cursor-default relative w-full rounded-md border border-gray-300 bg-white pl-3 pr-10 py-2 text-left focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition ease-in-out duration-150 sm:text-sm sm:leading-5">
 									<span className="block truncate">{listData[selectedItem]}</span>
 									<span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-										{children ?? <SelectorIcon className="text-gray-500 w-5" />}
+										{children ?? (
+											<SelectorIcon className="text-teal-brand w-5" />
+										)}
 									</span>
 								</Listbox.Button>
 							</span>
