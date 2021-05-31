@@ -166,7 +166,7 @@ export const CreateOrUpdateStaff = () => {
 					}
 				})
 			}
-			if (value == '') {
+			if (value === '' || value.length === 14) {
 				return setState({
 					...state,
 					profile: {
@@ -175,6 +175,7 @@ export const CreateOrUpdateStaff = () => {
 					}
 				})
 			}
+
 			return
 		}
 
