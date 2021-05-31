@@ -12,11 +12,20 @@ import { SearchInput } from 'components/input/search'
 import { AddStickyButton } from 'components/Button/add-sticky'
 import Paginate from 'components/Paginate'
 
+type State = {
+	isActive: boolean
+	searchText: string
+	tag: string
+}
+
 export const StaffList = () => {
 	const { faculty, classes } = useSelector((state: RootReducerState) => state.db)
 
-	const [isActive, setIsAtive] = useState(true)
-	const [search, setSearch] = useState('')
+	const [state, setState] = useState<State>({
+		isActive: true,
+		searchText: '',
+		tag: ''
+	})
 
 	const sections = useMemo(() => {
 		return getSectionsFromClasses(classes)
@@ -26,8 +35,11 @@ export const StaffList = () => {
 		.filter(
 			f =>
 				isValidTeacher(f) &&
-				f.Active === isActive &&
-				(search ? f.Name.toLowerCase().includes(search.toLowerCase()) : true)
+				f.Active === state.isActive &&
+				(state.searchText
+					? f.Name.toLowerCase().includes(state.searchText.toLowerCase())
+					: true) &&
+				(state.tag ? f?.tags[state.tag] : true)
 		)
 		.sort((a, b) => a.Name.localeCompare(b.Name))
 
@@ -38,25 +50,51 @@ export const StaffList = () => {
 			</Link>
 		)
 	}
+
+	const getUniqueTags = (): string[] => {
+		const tags = new Set<string>()
+
+		Object.values(faculty ?? {}).forEach(f => {
+			if (isValidTeacher(f)) {
+				Object.keys(f.tags ?? {}).forEach(tag => tags.add(tag))
+			}
+		})
+
+		return [...tags]
+	}
+
 	return (
-		<AppLayout title="Staff">
-			<div className="p-5 md:p-10 relative mb-20 ">
+		<AppLayout title="School Staff" showHeaderTitle>
+			<div className="p-5 md:p-10 relative mb-20">
 				<Link to="staff/new">
 					<AddStickyButton label="Add new Staff" />
 				</Link>
-				<div className="text-center font-bold text-2xl my-4 lg:hidden">School Staff</div>
-				<div className="text-gray-700 text-center lg:hidden">
-					Total = {filteredStaff.length}
-				</div>
-				<div className="flex flex-row items-center justify-between mt-4 mb-12 md:mb-20 space-x-4 md:space-y-0 md:space-x-60">
-					<SearchInput onChange={e => setSearch(e.target.value)} />
-					<select
-						value={isActive.toString()}
-						onChange={e => setIsAtive(e.target.value === 'true')}
-						className="mt-0 tw-select rounded shadow text-teal-brand w-2/5">
-						<option value={'true'}>Active</option>
-						<option value={'false'}>InActive</option>
-					</select>
+				<div className="flex flex-row items-center mt-4 mb-12 md:mb-20 space-x-4 md:space-y-0 md:space-x-60">
+					<SearchInput
+						className="md:w-2/5"
+						onChange={e => setState({ ...state, searchText: e.target.value })}
+					/>
+					<div className="flex flex-row space-x-2">
+						<select
+							onChange={e => setState({ ...state, tag: e.target.value })}
+							className="tw-select shadow text-teal-brand">
+							<option value={''}>Tags</option>
+							{getUniqueTags().map(tag => (
+								<option key={tag} value={tag}>
+									{tag}
+								</option>
+							))}
+						</select>
+						<select
+							value={state.isActive.toString()}
+							onChange={e =>
+								setState({ ...state, isActive: e.target.value === 'true' })
+							}
+							className="tw-select shadow text-teal-brand">
+							<option value={'true'}>Active</option>
+							<option value={'false'}>InActive</option>
+						</select>
+					</div>
 				</div>
 				<Paginate
 					items={filteredStaff}
@@ -113,8 +151,8 @@ const Card = ({ teacher, sections }: CardProps) => {
 			<div className="absolute -top-10 left-0 right-0">
 				<img
 					src={
-						teacher.ProfilePicture?.url ||
-						teacher.ProfilePicture?.image_string ||
+						teacher.ProfilePicture?.url ??
+						teacher.ProfilePicture?.image_string ??
 						UserIconSvg
 					}
 					className="mx-auto h-20 w-20 rounded-full shadow-lg bg-gray-500 hover:bg-gray-700"
