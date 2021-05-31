@@ -23,7 +23,7 @@
 	}
 
 	.tw-input {
-		@apply px-4 py-2 border border-gray-200 rounded-md outline-none focus:ring-2 focus:ring-blue-brand ring-blue-brand;
+		@apply px-4 py-2 border border-gray-500 rounded-md outline-none focus:ring-2 focus:ring-blue-brand ring-blue-brand;
 	}
 
 	.tw-btn {
@@ -39,7 +39,7 @@
 	}
 
 	.tw-select {
-		@apply py-2 text-gray-500 bg-white border border-gray-500 rounded-lg outline-none focus:ring-2 focus:ring-blue-brand cursor-pointer;
+		@apply py-2 text-gray-700 bg-white border border-gray-500 rounded-lg outline-none focus:ring-2 focus:ring-blue-brand cursor-pointer;
 	}
 
 	.tw-select-tip {
