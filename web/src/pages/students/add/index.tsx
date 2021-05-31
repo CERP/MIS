@@ -77,9 +77,9 @@ export const CreateOrUpdateStudent = () => {
 		? students[id].tags
 			? students[id]
 			: {
-				...students[id],
-				tags: {}
-			}
+					...students[id],
+					tags: {}
+			  }
 		: blankStudent()
 
 	const [state, setState] = useState<State>({
@@ -170,6 +170,15 @@ export const CreateOrUpdateStudent = () => {
 
 		if (name === 'ManCNIC' || name === 'BForm') {
 			if (numberRegex.test(value)) {
+				return setState({
+					...state,
+					profile: {
+						...state.profile,
+						[name]: formatCNIC(value)
+					}
+				})
+			}
+			if (value === '' || value.length === 14) {
 				return setState({
 					...state,
 					profile: {

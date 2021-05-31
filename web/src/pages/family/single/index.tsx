@@ -183,7 +183,12 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 			if (numberRegex.test(value)) {
 				return setState({ ...state, ManCNIC: formatCNIC(value) })
 			}
-
+			if (value === '' || value.length === 14) {
+				return setState({
+					...state,
+					ManCNIC: formatCNIC(value)
+				})
+			}
 			return
 		}
 
