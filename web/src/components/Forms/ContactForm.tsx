@@ -1,7 +1,7 @@
-import clsx from 'clsx'
-import { Spinner } from 'components/animation/spinner'
 import React, { useState } from 'react'
 import toast from 'react-hot-toast'
+import clsx from 'clsx'
+import { Spinner } from 'components/animation/spinner'
 import { isValidPhone } from 'utils/helpers'
 import { hostHTTPS } from 'utils/hostConfig'
 
