@@ -86,11 +86,11 @@ export const StudentList = () => {
 				</Link>
 
 				{/* <div className="my-4 text-2xl font-bold text-center lg:hidden">School Students</div> */}
-				<div className="text-center text-gray-700 lg:hidden">
+				{/* <div className="text-center text-gray-700 lg:hidden">
 					Total = {filteredStudents.length}
-				</div>
+				</div> */}
 				<div className="flex flex-col items-center justify-between mt-4 mb-12 space-y-4 md:flex-row md:mb-20 md:space-y-0 md:space-x-60">
-					<SearchInput onChange={e => setSearch(e.target.value)} />
+					<SearchInput className="md:w-9/12" onChange={e => setSearch(e.target.value)} />
 					<div className="flex flex-row items-center w-full space-x-2">
 						<select
 							onChange={e => setFilter({ ...filter, tag: e.target.value })}
@@ -122,10 +122,10 @@ export const StudentList = () => {
 							<option value={'true'}>Active</option>
 							<option value={'false'}>InActive</option>
 						</select>
-						<div className="hidden lg:flex flex-col space-between  text-white">
+						<div className="hidden lg:flex flex-col items-center space-between  text-white">
 							<div
 								onClick={() => window.print()}
-								className="py-2 px-3 rounded-full flex cursor-pointer bg-blue-brand flex-row justify-between border shadow-md items-center ">
+								className="py-2 px-2 rounded-full flex cursor-pointer bg-blue-brand flex-row justify-between border shadow-md items-center ">
 								<div className="flex flex-row items-center">
 									<div className="flex flex-row">
 										<div className="font-semibold text-lg">

@@ -13,19 +13,16 @@ export const ClassList = () => {
 	const [search, setSearch] = useState('')
 
 	return (
-		<AppLayout title="Classes" showHeaderTitle>
+		<AppLayout title="School Classes" showHeaderTitle>
 			<div className="p-5 md:p-10 relative mb-20">
 				<Link to="classes/new">
 					<AddStickyButton label="Create new Class" />
 				</Link>
 
 				{/* <div className="text-center font-bold text-2xl my-4">School Classes</div> */}
-				<div className="text-gray-700 text-center">
-					Total = {Object.keys(classes).length}
-				</div>
 
-				<div className="flex flex-col md:flex-row items-center justify-between mt-4 mb-12 md:mb-20 space-y-2 md:space-y-0 md:space-x-60">
-					<SearchInput onChange={e => setSearch(e.target.value)} />
+				<div className="flex flex-col md:flex-row items-center mt-4 mb-12 md:mb-20 space-y-2 md:space-y-0 md:space-x-60">
+					<SearchInput className="md:w-4/12" onChange={e => setSearch(e.target.value)} />
 				</div>
 
 				<div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-12 gap-y-12 md:gap-y-20">

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
 import clsx from 'clsx'
+import { Link } from 'react-router-dom'
 
 import { useFamily, AugmentedFamily } from 'hooks/useFamily'
 import { AppLayout } from 'components/Layout/appLayout'
@@ -26,7 +26,7 @@ export const Family = ({ forwardTo, pageTitle }: FamilyProps) => {
 	})
 
 	const { families } = useFamily()
-	const filteredFamilies = Object.values(families)
+	const filteredFamilies = Object.values(families ?? {})
 		.filter(fam => {
 			const searchString = `${fam.id} ${fam.name} ${fam.phone}`.toLowerCase()
 			return fam.id && (state.search ? searchString.includes(state.search) : true)
@@ -43,17 +43,18 @@ export const Family = ({ forwardTo, pageTitle }: FamilyProps) => {
 		)
 	}
 	return (
-		<AppLayout title={pageTitle ?? 'Families'} showHeaderTitle={!!pageTitle}>
+		<AppLayout title={pageTitle ?? 'Families'} showHeaderTitle={!pageTitle}>
 			<div className="p-5 md:p-10 relative mb-20">
 				<Link to="/families/new">
 					<AddStickyButton label="Create new Family" />
 				</Link>
 
-				{!pageTitle && (
+				{/* {!pageTitle && (
 					<div className="text-center font-bold text-2xl my-4 lg:hidden">Families</div>
-				)}
+				)} */}
 				<div className="flex flex-row mt-4 mb-12 md:mb-20 space-x-4 md:space-y-0 md:space-x-60">
 					<SearchInput
+						className="md:w-4/12"
 						onChange={e => setState({ ...state, search: e.target.value })}
 						placeholder="Search by Name or Family Id"
 					/>
