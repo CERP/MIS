@@ -41,6 +41,7 @@ export const Home = () => {
 	const biggerThan880 = useMediaPredicate('(min-width: 880px)')
 
 	const faculty = useSelector((state: RootReducerState) => state.db.faculty)
+	const alertBanner = useSelector((state: RootReducerState) => state.alert_banner)
 
 	const faculty_id = useSelector((state: RootReducerState) => state.auth.faculty_id)
 	const { permissions, Admin, SubAdmin } = faculty[faculty_id]
@@ -76,6 +77,13 @@ export const Home = () => {
 					content={TabbarContent}
 				/>
 				{renderComponent()}
+				{alertBanner === '' ? null : (
+					<div className="flex w-full justify-center fixed top-2 z-50">
+						<div className="flex w-1/2 text-center m-1 justify-center bg-danger-tip-brand p-2 text-sm text-white font-bold rounded-lg">
+							{alertBanner}
+						</div>
+					</div>
+				)}
 			</AppLayout>
 		)
 	}
@@ -99,6 +107,13 @@ export const Home = () => {
 					<StatsTab permissions={permissions} admin={Admin} subAdmin={SubAdmin} />
 				</div>
 			</div>
+			{alertBanner === '' ? null : (
+				<div className="flex w-full justify-center fixed top-2 z-50">
+					<div className="flex w-1/2 justify-center text-white font-bold p-2 text-lg bg-danger-tip-brand rounded-lg">
+						{alertBanner}
+					</div>
+				</div>
+			)}
 		</AppLayout>
 	)
 }
