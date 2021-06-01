@@ -18,6 +18,7 @@ type State = {
 	active: boolean
 	tag: string
 	class: string
+	gender: string
 }
 
 interface StudentListProps {
@@ -33,7 +34,8 @@ export const StudentList = ({ forwardTo, excludeFamilyStudents }: StudentListPro
 		active: true,
 		searchText: '',
 		tag: '',
-		class: ''
+		class: '',
+		gender: ''
 	})
 
 	const getTags = () => {
@@ -72,7 +74,8 @@ export const StudentList = ({ forwardTo, excludeFamilyStudents }: StudentListPro
 				(excludeFamilyStudents ? !s.FamilyID : true) &&
 				(state.searchText ? searchString.includes(state.searchText.toLowerCase()) : true) &&
 				(state.class ? s.section_id === state.class : true) &&
-				(state.tag ? Object.keys(s.tags ?? []).includes(state.tag) : true)
+				(state.tag ? Object.keys(s.tags ?? []).includes(state.tag) : true) &&
+				(state.gender ? state.gender.toLowerCase() === s.Gender.toLowerCase() : true)
 			)
 		})
 		.sort((a, b) => a.Name.localeCompare(b.Name))
@@ -115,6 +118,14 @@ export const StudentList = ({ forwardTo, excludeFamilyStudents }: StudentListPro
 									{tag}
 								</option>
 							))}
+						</select>
+						<select
+							className="w-1/3 rounded shadow tw-select text-teal-brand"
+							onChange={e => setFilter({ ...state, gender: e.target.value })}>
+							<option value="">Gender</option>
+							<option value={'Male'}>Male</option>
+							<option value={'Female'}>Female</option>
+							<option value={'Other'}>Other</option>
 						</select>
 						<select
 							className="w-1/3 rounded shadow tw-select text-teal-brand"
