@@ -285,14 +285,12 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 									<div className="flex w-full flex-col ">
 										<PhoneInput
 											name="Phone"
-											type="number"
 											value={state.Phone}
 											error={
 												numberRegex.test(state.Phone) ||
-												!(state.Phone.length <= 11)
+												!(state.Phone?.length <= 11)
 											}
 											onChange={handleInputChange}
-											placeholder="03xxxxxxxxx"
 											className="tw-input w-full tw-is-form-bg-black"
 										/>
 									</div>
@@ -306,11 +304,9 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 											onChange={handleInputChange}
 											error={
 												numberRegex.test(state.AlternatePhone) ||
-												!(state.AlternatePhone.length <= 11)
+												!(state.AlternatePhone?.length <= 11)
 											}
 											name="AlternatePhone"
-											type="number"
-											placeholder="03xxxxxxxxx"
 											className="tw-input w-full tw-is-form-bg-black"
 										/>
 									</div>

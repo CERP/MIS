@@ -78,9 +78,9 @@ export const CreateOrUpdateStudent = () => {
 		? students[id].tags
 			? students[id]
 			: {
-					...students[id],
-					tags: {}
-			  }
+				...students[id],
+				tags: {}
+			}
 		: blankStudent()
 
 	const [state, setState] = useState<State>({
@@ -400,9 +400,7 @@ export const CreateOrUpdateStudent = () => {
 								numberRegex.test(state.profile.Phone) ||
 								!(state.profile.Phone.length <= 11)
 							}
-							type="number"
-							placeholder="Contact Number is Required"
-							className="w-full bg-transparent tw-input border-blue-brand ring-1"
+							className="w-full tw-input tw-is-form-bg-black"
 						/>
 
 						<div className="text-lg font-semibold text-center">
@@ -439,13 +437,11 @@ export const CreateOrUpdateStudent = () => {
 						<PhoneInput
 							name="AlternatePhone"
 							onChange={handleInput}
-							type="number"
 							error={
 								numberRegex.test(state.profile.AlternatePhone) ||
-								!(state.profile.AlternatePhone.length <= 11)
+								!(state.profile.AlternatePhone?.length <= 11)
 							}
 							value={state.profile.AlternatePhone}
-							placeholder="Type phone #"
 							className="tw-input w-full tw-is-form-bg-black"
 						/>
 

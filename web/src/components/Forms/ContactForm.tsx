@@ -4,6 +4,7 @@ import clsx from 'clsx'
 import { Spinner } from 'components/animation/spinner'
 import { isValidPhone } from 'utils/helpers'
 import { hostHTTPS } from 'utils/hostConfig'
+import { PhoneInput } from 'components/input/PhoneInput'
 
 const initialState = {
 	isSending: false,
@@ -79,14 +80,12 @@ function ContactForm() {
 			</div>
 			<div>
 				<label htmlFor="phone">Your Phone</label>
-				<input
+				<PhoneInput
 					name="phone"
 					required
 					onChange={handleInputChange}
 					value={state.form.phone}
-					type="text"
 					className="tw-input w-full"
-					placeholder="Mobile number e.g. 03xxxxxxxxx"
 				/>
 			</div>
 			<div>
