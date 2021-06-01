@@ -254,7 +254,7 @@ export const AdditionalFee = () => {
 		(state.addFeeTo === AddFeeOptions.CLASS ? !state.classId : false)
 
 	return (
-		<div className="p-5 md:p-10 md:pb-0 relative print:hidden">
+		<div className="p-5 md:p-10 md:pt-5 md:pb-0 relative print:hidden">
 			<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-4 rounded-2xl bg-gray-700 py-4 my-4 md:mt-8 text-white min-h-screen">
 				<div className="text-center text-xl font-semibold">Manage additional Fees</div>
 				<div className="space-y-6 px-4 w-full md:w-3/5">

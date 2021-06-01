@@ -205,7 +205,7 @@ export const Settings = () => {
 
 	return (
 		<AppLayout title="School Profile" showHeaderTitle>
-			<div className="p-5 md:p-10 md:pb-0 mb-4">
+			<div className="p-5 md:p-10 md:pt-5 md:pb-0 mb-4">
 				<div className="text-white md:w-4/5 md:mx-auto space-y-4 rounded-2xl bg-gray-700 p-5">
 					<div className="pt-2 flex flex-row mx-auto items-baseline justify-between w-3/5 md:w-1/4">
 						<UploadImage

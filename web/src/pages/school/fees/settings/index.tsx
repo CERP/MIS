@@ -9,15 +9,15 @@ import { AdditionalFee } from './additional-fee'
 import { Scholarship } from './scholarship'
 
 enum Tabs {
-	DEFAULT,
+	CLASS_FEE,
 	ADDITIONAL,
 	SCHOLARSHIP
 }
 
 const TabbarContent = [
 	{
-		tab: Tabs.DEFAULT,
-		title: 'Default'
+		tab: Tabs.CLASS_FEE,
+		title: 'Class Fee'
 	},
 	{
 		tab: Tabs.ADDITIONAL,
@@ -30,11 +30,11 @@ const TabbarContent = [
 ]
 
 export const FeeSettings = () => {
-	const [activeTab, setActiveTab] = useState(Tabs.DEFAULT)
+	const [activeTab, setActiveTab] = useState(Tabs.CLASS_FEE)
 
 	const renderComponent = () =>
 		cond([
-			[activeTab === Tabs.DEFAULT, () => <DefaultFee />],
+			[activeTab === Tabs.CLASS_FEE, () => <DefaultFee />],
 			[activeTab === Tabs.ADDITIONAL, () => <AdditionalFee />],
 			[activeTab === Tabs.SCHOLARSHIP, () => <Scholarship />]
 		])

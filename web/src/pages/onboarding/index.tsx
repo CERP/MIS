@@ -121,7 +121,7 @@ export const SchoolOnboarding = () => {
 
 	return (
 		<AppLayout title={'Onboarding'}>
-			<div className="p-5 md:p-10 md:pb-0 text-gray-700 relative">
+			<div className="p-5 md:p-10 md:pt-5 md:pb-0 text-gray-700 relative">
 				<div className="text-2xl font-bold mt-4 mb-8 text-center">
 					{getOnboardingHeadings(stage as OnboardingStage)}
 				</div>

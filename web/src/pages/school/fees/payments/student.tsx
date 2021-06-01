@@ -20,7 +20,7 @@ export const StudentPayments = () => {
 
 	return (
 		<AppLayout title="Student Payments" showHeaderTitle>
-			<div className="p-5 md:p-10 relative mb-20">
+			<div className="p-5 md:p-10 md:pt-5 relative mb-20">
 				<div className="mt-4 mb-12 md:mb-20 space-y-4 md:space-x-60">
 					<SearchInput onChange={e => setSearch(e.target.value)} />
 				</div>

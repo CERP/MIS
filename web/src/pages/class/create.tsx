@@ -154,7 +154,7 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 
 	return (
 		<AppLayout title={isNewClass ? 'Add New Class' : 'Update Class'} showHeaderTitle>
-			<div className="p-5 md:p-10 md:pb-0 relative">
+			<div className="p-5 md:p-10 md:pt-5 md:pb-0 relative">
 				{/* <div className="text-2xl font-bold mt-4 mb-8 text-center">
 					{isNewClass ? 'Add New Class' : 'Update Class'}
 				</div> */}

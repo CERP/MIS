@@ -349,7 +349,7 @@ export const SMS = () => {
 
 	return (
 		<AppLayout title="SMS Manager" showHeaderTitle>
-			<div className="p-5 md:p-10 md:pb-0 relative print:hidden">
+			<div className="p-5 md:p-10 md:pt-5 md:pb-0 relative print:hidden">
 				<div className="md:w-4/5 md:mx-auto flex flex-col space-y-4 rounded-2xl bg-gray-700 p-5 w-full">
 					<div className="text-white">Send SMS To:</div>
 					<CustomSelect

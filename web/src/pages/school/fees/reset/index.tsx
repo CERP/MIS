@@ -85,7 +85,7 @@ export const ResetFee = () => {
 
 	return (
 		<AppLayout title={'Reset Fee'}>
-			<div className="p-5 md:p-10 md:pb-0 relative">
+			<div className="p-5 md:p-10 md:pt-5 md:pb-0 relative">
 				<div className="text-2xl font-bold mt-4 mb-8 text-center">Reset Fee</div>
 				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 pb-6 my-4 md:mt-8">
 					<div className="text-white text-center text-base my-5">

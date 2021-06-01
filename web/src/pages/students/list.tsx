@@ -83,7 +83,7 @@ export const StudentList = () => {
 
 	return (
 		<AppLayout title="Students" showHeaderTitle>
-			<div className="relative p-5 mb-20 md:p-10">
+			<div className="relative p-5 md:p-10 md:pt-5 mb-20">
 				<Link to="/students/new/menu">
 					<AddStickyButton label="Add new Student" />
 				</Link>
@@ -110,9 +110,17 @@ export const StudentList = () => {
 							))}
 						</select>
 						<select
+							className="rounded shadow tw-select text-teal-brand"
+							onChange={e =>
+								setFilter({ ...filter, active: e.target.value === 'true' })
+							}>
+							<option value={'true'}>Active</option>
+							<option value={'false'}>InActive</option>
+						</select>
+						<select
 							onChange={e => setFilter({ ...filter, class: e.target.value })}
 							className="w-full rounded shadow tw-select text-teal-brand">
-							<option value="">Choose Class</option>
+							<option value="">Class</option>
 							{sections
 								.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
 								.map(s => (
@@ -120,14 +128,6 @@ export const StudentList = () => {
 										{toTitleCase(s.namespaced_name, '-')}
 									</option>
 								))}
-						</select>
-						<select
-							className="rounded shadow tw-select text-teal-brand"
-							onChange={e =>
-								setFilter({ ...filter, active: e.target.value === 'true' })
-							}>
-							<option value={'true'}>Active</option>
-							<option value={'false'}>InActive</option>
 						</select>
 						<button
 							onClick={() => window.print()}

@@ -5,11 +5,10 @@ import { Link } from 'react-router-dom'
 import { useFamily, AugmentedFamily } from 'hooks/useFamily'
 import { AppLayout } from 'components/Layout/appLayout'
 import { SearchInput } from 'components/input/search'
-import toTitleCase from 'utils/toTitleCase'
-
-import UserIconSvg from 'assets/svgs/user.svg'
+import { toTitleCase } from 'utils/toTitleCase'
 import { AddStickyButton } from 'components/Button/add-sticky'
 import Paginate from 'components/Paginate'
+import UserIconSvg from 'assets/svgs/user.svg'
 
 type State = {
 	search: string
@@ -44,7 +43,7 @@ export const Family = ({ forwardTo, pageTitle }: FamilyProps) => {
 	}
 	return (
 		<AppLayout title={pageTitle ?? 'Families'} showHeaderTitle={!pageTitle}>
-			<div className="p-5 md:p-10 relative mb-20">
+			<div className="p-5 md:p-10 md:pt-5 relative mb-20">
 				<Link to="/families/new">
 					<AddStickyButton label="Create new Family" />
 				</Link>
@@ -78,13 +77,14 @@ type CardProps = {
 const Card = ({ family }: CardProps) => {
 	return (
 		<div className="relative">
-			<div className="bg-white rounded-xl lg:h-52  text-center border border-gray-50 shadow-md px-3 py-4 md:p-5">
+			<div className="bg-white rounded-xl lg:h-48  text-center border border-gray-50 shadow-md px-3 py-4 md:p-5">
 				<div className="font-bold pt-4 truncate w-4/5 mx-auto">
 					{toTitleCase(family.id)}
 				</div>
 				<div className="mt-2 space-y-0 text-sm md:text-base">
 					<CardItem title={'Gaurdian'} val={toTitleCase(family.name)} />
 					<CardItem title={'Phone'} val={toTitleCase(family.phone)} />
+					<CardItem title={'CNIC'} val={toTitleCase(family.ManCNIC)} />
 					<CardItem title={'Siblings'} val={Object.keys(family.students).length} />
 				</div>
 			</div>
@@ -95,8 +95,8 @@ const Card = ({ family }: CardProps) => {
 							<img
 								key={s.id}
 								src={
-									s.ProfilePicture?.url ||
-									s.ProfilePicture?.image_string ||
+									s.ProfilePicture?.url ??
+									s.ProfilePicture?.image_string ??
 									UserIconSvg
 								}
 								className={clsx(
@@ -116,8 +116,8 @@ type CardItemProps = {
 	val: string | number
 }
 const CardItem = ({ title, val }: CardItemProps) => (
-	<div className="flex items-center justify-between flex-row">
-		<div className="text-gray-900 font-semibold">{title}</div>
-		<div className="text-gray-500 text-xs md:text-base lg:text-lg">{val}</div>
+	<div className="flex items-center justify-between flex-row text-sm">
+		<div className="font-semibold">{title}</div>
+		<div className="text-gray-500 text-xs">{val}</div>
 	</div>
 )
