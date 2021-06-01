@@ -59,15 +59,18 @@ export const StudentList = () => {
 	// TODO: add a check here for max_limit: state.db.max_limit
 	// to restrict adding students
 
-	const filteredStudents = Object.values(students)
-		.filter(
-			s =>
+	const filteredStudents = Object.values(students ?? {})
+		.filter(s => {
+			const searchString = `${s.Name} ${s.ManName} ${s.FamilyID} ${s.Phone}`.toLowerCase()
+
+			return (
 				isValidStudent(s) &&
 				s.Active === filter.active &&
-				(search ? s.Name.includes(search) : true) &&
+				(search ? searchString.includes(search.toLowerCase()) : true) &&
 				(filter.class ? s.section_id === filter.class : true) &&
 				(filter.tag ? Object.keys(s.tags ?? []).includes(filter.tag) : true)
-		)
+			)
+		})
 		.sort((a, b) => a.Name.localeCompare(b.Name))
 
 	const listItem = (f: MISStudent) => {
@@ -90,7 +93,11 @@ export const StudentList = () => {
 					Total = {filteredStudents.length}
 				</div> */}
 				<div className="flex flex-col items-center justify-between mt-4 mb-12 space-y-4 md:flex-row md:mb-20 md:space-y-0 md:space-x-60">
-					<SearchInput className="md:w-9/12" onChange={e => setSearch(e.target.value)} />
+					<SearchInput
+						placeholder="Search by name, fname or phone"
+						className="md:w-9/12"
+						onChange={e => setSearch(e.target.value)}
+					/>
 					<div className="flex flex-row items-center w-full space-x-2">
 						<select
 							onChange={e => setFilter({ ...filter, tag: e.target.value })}
@@ -124,7 +131,7 @@ export const StudentList = () => {
 						</select>
 						<button
 							onClick={() => window.print()}
-							className="hidden lg:inline-flex items-center tw-btn-blue rounded-3xl shadow">
+							className="hidden lg:inline-flex items-center tw-btn-blue rounded-3xl shadow-md">
 							<span>Print</span>
 							<PrinterIcon className="h-6 w-6 ml-4" />
 						</button>
@@ -152,46 +159,42 @@ const Card = ({ student, sections }: CardProps) => {
 
 	return (
 		<div className="relative">
-			<div className="px-3 py-4 text-center bg-white border shadow-md rounded-xl lg:h-56 border-gray-50 md:p-5">
+			<div className="px-3 py-4 text-center bg-white border shadow-md rounded-xl lg:h-48 border-gray-50 md:p-5">
 				<div className="w-4/5 pt-8 mx-auto font-bold truncate">
 					{toTitleCase(student.Name)}
 				</div>
-				<div className="mt-2 space-y-0 text-sm md:text-base">
+				<div className="mt-2 space-y-0 text-sm text-gray-900">
 					<div className="flex flex-row items-center justify-between">
-						<div className="font-semibold text-gray-900">Father</div>
-						<div className="text-xs text-gray-500 truncate md:text-base lg:text-lg">
+						<div className="font-semibold">Father</div>
+						<div className="text-xs text-gray-500 truncate">
 							{toTitleCase(student.ManName)}
 						</div>
 					</div>
 					<div className="flex flex-row items-center justify-between">
-						<div className="font-semibold text-gray-900">Class</div>
-						<div className="text-xs text-gray-500 truncate md:text-base lg:text-lg">
+						<div className="font-semibold">Class</div>
+						<div className="text-xs text-gray-500 truncate">
 							{toTitleCase(studentSection?.namespaced_name)}
 						</div>
 					</div>
 					<div className="flex flex-row items-center justify-between">
-						<div className="font-semibold text-gray-900">Roll #</div>
-						<div className="text-xs text-gray-500 md:text-base lg:text-lg">
-							{student.RollNumber}
-						</div>
+						<div className="font-semibold">Roll #</div>
+						<div className="text-xs text-gray-500">{student.RollNumber}</div>
 					</div>
 					<div className="flex flex-row items-center justify-between">
-						<div className="font-semibold text-gray-900">Phone</div>
-						<div className="text-xs text-gray-500 md:text-base lg:text-lg">
-							{student.Phone}
-						</div>
+						<div className="font-semibold">Phone</div>
+						<div className="text-xs text-gray-500">{student.Phone}</div>
 					</div>
 				</div>
 			</div>
 			<div className="absolute left-0 right-0 -top-10">
 				<img
 					src={
-						student.ProfilePicture?.url ||
-						student.ProfilePicture?.image_string ||
+						student.ProfilePicture?.url ??
+						student.ProfilePicture?.image_string ??
 						UserIconSvg
 					}
 					className="w-20 h-20 mx-auto bg-gray-500 rounded-full shadow-md hover:bg-gray-700"
-					alt={student.Name.split(' ')[0] || 'student'}
+					alt={student.Name.split(' ')[0]}
 				/>
 			</div>
 		</div>

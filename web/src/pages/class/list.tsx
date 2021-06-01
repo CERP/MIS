@@ -23,7 +23,11 @@ export const ClassList = () => {
 				{/* <div className="text-center font-bold text-2xl my-4">School Classes</div> */}
 
 				<div className="flex flex-col md:flex-row items-center mt-4 mb-12 md:mb-20 space-y-2 md:space-y-0 md:space-x-60">
-					<SearchInput className="md:w-4/12" onChange={e => setSearch(e.target.value)} />
+					<SearchInput
+						placeholder="Search by class name"
+						className="md:w-4/12"
+						onChange={e => setSearch(e.target.value)}
+					/>
 				</div>
 
 				<div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-12 gap-y-12 md:gap-y-20">
