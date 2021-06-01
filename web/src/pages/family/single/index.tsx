@@ -13,7 +13,7 @@ import { AppLayout } from 'components/Layout/appLayout'
 import { StudentDropdownSearch } from 'components/input/search'
 import { addStudentToFamily, saveFamilyInfo } from 'actions'
 import { createMerges } from 'actions/core'
-import { numberRegex } from 'constants/index'
+import { cnicRegex, numberRegex } from 'constants/index'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
 import { isValidCNIC } from 'utils/helpers'
@@ -181,10 +181,10 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 	) => {
 		const { name, value } = event.target
 		if (name === 'ManCNIC') {
-			if (numberRegex.test(value)) {
+			if (value.length <= 15 && cnicRegex.test(value)) {
 				return setState({ ...state, ManCNIC: formatCNIC(value) })
 			}
-			if (value === '' || value.length === 14) {
+			if (value === '') {
 				return setState({
 					...state,
 					ManCNIC: formatCNIC(value)

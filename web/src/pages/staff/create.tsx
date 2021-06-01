@@ -10,7 +10,7 @@ import toast from 'react-hot-toast'
 import { SwitchButton } from 'components/input/switch'
 import { isValidPhone, isValidCNIC } from 'utils/helpers'
 import { createFacultyMerge, deleteFaculty, uploadFacultyProfilePicture } from 'actions'
-import { StaffType } from 'constants/index'
+import { cnicRegex, StaffType } from 'constants/index'
 import { ShowHidePassword } from 'components/password'
 import { hash, formatCNIC } from 'utils'
 import { getImageString, getDownsizedImage } from 'utils/image'
@@ -158,7 +158,7 @@ export const CreateOrUpdateStaff = () => {
 		const { name, value } = event.target
 
 		if (name === 'ManCNIC' || name === 'CNIC') {
-			if (numberRegex.test(value)) {
+			if (value.length <= 15 && cnicRegex.test(value)) {
 				return setState({
 					...state,
 					profile: {
@@ -167,7 +167,7 @@ export const CreateOrUpdateStaff = () => {
 					}
 				})
 			}
-			if (value === '' || value.length === 14) {
+			if (value === '') {
 				return setState({
 					...state,
 					profile: {

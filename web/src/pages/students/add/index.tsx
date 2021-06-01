@@ -18,7 +18,7 @@ import { getImageString, getDownsizedImage } from 'utils/image'
 
 import { UploadImage } from 'components/image'
 import { PlusButton } from 'components/Button/plus'
-import { numberRegex } from 'constants/index'
+import { cnicRegex, numberRegex } from 'constants/index'
 import { PhoneInput } from 'components/input/PhoneInput'
 
 const blankStudent = (): MISStudent => ({
@@ -170,7 +170,7 @@ export const CreateOrUpdateStudent = () => {
 		const { name, value } = event.target
 
 		if (name === 'ManCNIC' || name === 'BForm') {
-			if (numberRegex.test(value)) {
+			if (value.length <= 15 && cnicRegex.test(value)) {
 				return setState({
 					...state,
 					profile: {
@@ -179,7 +179,7 @@ export const CreateOrUpdateStudent = () => {
 					}
 				})
 			}
-			if (value === '' || value.length === 14) {
+			if (value === '') {
 				return setState({
 					...state,
 					profile: {
