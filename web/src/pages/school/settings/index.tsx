@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
 
 import { AppLayout } from 'components/Layout/appLayout'
-import { DefaultExamGrades } from 'constants/index'
+import { DefaultExamGrades, numberRegex } from 'constants/index'
 import { UploadImage } from 'components/image'
 import { exportToJSON } from 'utils/indexedDb'
 import { TModal } from 'components/Modal'
@@ -11,6 +11,7 @@ import { createMerges } from 'actions/core'
 import StudentExportModal from 'modules/Exports/studenExportModal'
 import toast from 'react-hot-toast'
 import { mergeSettings } from 'actions'
+import { PhoneInput } from 'components/input/PhoneInput'
 
 type State = {
 	templates: RootDBState['sms_templates']
@@ -228,8 +229,12 @@ export const Settings = () => {
 							placeholder="Type school name"
 						/>
 						<div>School Phone</div>
-						<input
+						<PhoneInput
 							type="text"
+							error={
+								numberRegex.test(state.settings.schoolPhoneNumber) ||
+								!(state.settings.schoolPhoneNumber.length <= 11)
+							}
 							onChange={handleInputChange}
 							name="schoolPhoneNumber"
 							value={state.settings.schoolPhoneNumber}

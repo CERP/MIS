@@ -17,6 +17,7 @@ import { numberRegex } from 'constants/index'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
 import { isValidCNIC } from 'utils/helpers'
+import { PhoneInput } from 'components/input/PhoneInput'
 
 type SingleFamilyProps = RouteComponentProps<{ id: string }>
 
@@ -276,26 +277,38 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 								/>
 								<div>Contact</div>
 								<div className="flex items-center flex-row w-full">
-									<input
-										name="Phone"
-										type="number"
-										value={state.Phone}
-										onChange={handleInputChange}
-										placeholder="03xxxxxxxxx"
-										className="tw-input w-full tw-is-form-bg-black"
-									/>
+									<div className="flex w-full flex-col ">
+										<PhoneInput
+											name="Phone"
+											type="number"
+											value={state.Phone}
+											error={
+												numberRegex.test(state.Phone) ||
+												!(state.Phone.length <= 11)
+											}
+											onChange={handleInputChange}
+											placeholder="03xxxxxxxxx"
+											className="tw-input w-full tw-is-form-bg-black"
+										/>
+									</div>
 									<PhoneCall phone={state.Phone} />
 								</div>
 								<div>Contact (Other)</div>
 								<div className="flex items-center flex-row w-full">
-									<input
-										value={state.AlternatePhone}
-										onChange={handleInputChange}
-										name="AlternatePhone"
-										type="number"
-										placeholder="03xxxxxxxxx"
-										className="tw-input w-full tw-is-form-bg-black"
-									/>
+									<div className="flex w-full flex-col ">
+										<PhoneInput
+											value={state.AlternatePhone}
+											onChange={handleInputChange}
+											error={
+												numberRegex.test(state.AlternatePhone) ||
+												!(state.AlternatePhone.length <= 11)
+											}
+											name="AlternatePhone"
+											type="number"
+											placeholder="03xxxxxxxxx"
+											className="tw-input w-full tw-is-form-bg-black"
+										/>
+									</div>
 									<PhoneCall phone={state.AlternatePhone} />
 								</div>
 							</>

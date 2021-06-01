@@ -17,6 +17,7 @@ import { getImageString, getDownsizedImage } from 'utils/image'
 
 import { UploadImage } from 'components/image'
 import { numberRegex } from 'constants/index'
+import { PhoneInput } from 'components/input/PhoneInput'
 
 const blankTeacher = (): MISTeacher => ({
 	id: v4(),
@@ -349,9 +350,10 @@ export const CreateOrUpdateStaff = () => {
 						/>
 
 						<div>Personal Contact*</div>
-						<input
+						<PhoneInput
 							name="Phone"
 							onChange={handleInput}
+							error={numberRegex.test(profile.Phone) || !(profile.Phone.length <= 11)}
 							required
 							type="number"
 							value={profile.Phone}
