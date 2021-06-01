@@ -64,5 +64,11 @@ export const isValidCNIC = (number: string) => {
 /**
  * Returns a number array of 'length' and starting from 'start' or 0 by default
  */
-export const getNumberArrayFromRange = (length: number, start = 0) =>
-	Array.from(Array(length), (x, i) => i + start)
+export const getNumberArrayFromRange = (length: number, start = 0) => {
+	//Note: Length was being passed as a negative number in some cases so just
+	//added a check to set it to zero if it was negative
+	if (length < 0) {
+		length = 0
+	}
+	return Array.from(Array(length), (x, i) => i + start)
+}

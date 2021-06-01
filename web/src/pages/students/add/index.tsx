@@ -19,6 +19,7 @@ import { getImageString, getDownsizedImage } from 'utils/image'
 import { UploadImage } from 'components/image'
 import { PlusButton } from 'components/Button/plus'
 import { numberRegex } from 'constants/index'
+import { PhoneInput } from 'components/input/PhoneInput'
 
 const blankStudent = (): MISStudent => ({
 	id: v4(),
@@ -391,10 +392,14 @@ export const CreateOrUpdateStudent = () => {
 						</div>
 
 						<div>Contact Number*</div>
-						<input
+						<PhoneInput
 							name="Phone"
 							onChange={handleInput}
 							value={state.profile.Phone}
+							error={
+								numberRegex.test(state.profile.Phone) ||
+								!(state.profile.Phone.length <= 11)
+							}
 							type="number"
 							placeholder="Contact Number is Required"
 							className="w-full bg-transparent tw-input border-blue-brand ring-1"
@@ -431,10 +436,14 @@ export const CreateOrUpdateStudent = () => {
 						/>
 
 						<div>Alternative Contact Number</div>
-						<input
+						<PhoneInput
 							name="AlternatePhone"
 							onChange={handleInput}
 							type="number"
+							error={
+								numberRegex.test(state.profile.AlternatePhone) ||
+								!(state.profile.AlternatePhone.length <= 11)
+							}
 							value={state.profile.AlternatePhone}
 							placeholder="Type phone #"
 							className="tw-input w-full tw-is-form-bg-black"
