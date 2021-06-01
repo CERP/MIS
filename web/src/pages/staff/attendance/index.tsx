@@ -115,7 +115,7 @@ export const StaffAttendance = () => {
 	// TODO: add logic to handle log sms history
 
 	return (
-		<div className="p-5 md:p-10 print:hidden">
+		<div className="p-5 md:p-10 md:pt-5 print:hidden">
 			<div className="space-y-6">
 				<div className="flex flex-row items-center space-x-2">
 					<input

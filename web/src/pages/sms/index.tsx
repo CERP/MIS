@@ -85,7 +85,7 @@ export const SMS = () => {
 
 			const totalStudentDebts = {} as State['totalStudentDebts']
 
-			const student_list = (Object.values(students) || []).filter(
+			const student_list = Object.values(students ?? {}).filter(
 				student => isValidStudent(student) && student.Active && student.Phone
 			)
 
@@ -269,7 +269,7 @@ export const SMS = () => {
 		}
 
 		if (state.sendTo === SendSmsOptions.TO_SINGLE_SECTION) {
-			return Object.values(students || {})
+			return Object.values(students ?? {})
 				.filter(
 					s =>
 						isValidStudent(s) &&
@@ -296,7 +296,7 @@ export const SMS = () => {
 		}
 
 		if (state.sendTo === SendSmsOptions.TO_FEE_DEFAULTERS) {
-			return Object.values(state.totalStudentDebts || {}).reduce(
+			return Object.values(state.totalStudentDebts ?? {}).reduce(
 				(agg, { student, debt, familyId }) => {
 					const index = agg.findIndex(s => s.number === student.Phone)
 
@@ -323,7 +323,7 @@ export const SMS = () => {
 							number: student.Phone,
 							text: sms_text
 								.replace(/\$BALANCE/g, `${balance}`)
-								.replace(/\$NAME/g, familyId || student.Name)
+								.replace(/\$NAME/g, familyId ?? student.Name)
 								.replace(/\$FNAME/g, student.ManName)
 						}
 					]
@@ -333,7 +333,7 @@ export const SMS = () => {
 		}
 
 		if (state.sendTo === SendSmsOptions.TO_ALL_STAFF) {
-			return Object.values(faculty || {})
+			return Object.values(faculty ?? {})
 				.filter(f => isValidTeacher(f) && f.Active && f.Phone && isValidPhone(f.Phone))
 				.map(f => ({
 					number: f.Phone,
@@ -348,12 +348,10 @@ export const SMS = () => {
 	// TODO: move fee defaulters logic to to-fee-defaulters components
 
 	return (
-		<AppLayout title="SMS" showHeaderTitle>
-			<div className="p-5 md:p-10 md:pb-0 relative print:hidden">
-				<div className="md:w-4/5 md:mx-auto flex flex-col space-y-4 rounded-2xl bg-gray-700 p-5 my-5 w-full">
-					<div className="text-white text-lg text-center">Select to send SMS</div>
-
-					<div className="text-white">Send To:</div>
+		<AppLayout title="SMS Manager" showHeaderTitle>
+			<div className="p-5 md:p-10 md:pt-5 md:pb-0 relative print:hidden">
+				<div className="md:w-4/5 md:mx-auto flex flex-col space-y-4 rounded-2xl bg-gray-700 p-5 w-full">
+					<div className="text-white">Send SMS To:</div>
 					<CustomSelect
 						data={SmsRecipient}
 						selectedItem={state.sendTo}

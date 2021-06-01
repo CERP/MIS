@@ -6,6 +6,7 @@ export interface AugmentedFamily {
 	id: string
 	name: string
 	phone: string
+	ManCNIC: string
 	students: {
 		[id: string]: MISStudent
 	}
@@ -32,6 +33,7 @@ export const useFamily = () => {
 							id: k,
 							name: curr.ManName,
 							phone: curr.Phone,
+							ManCNIC: curr.ManCNIC,
 							students: {
 								...agg[k].students,
 								[curr.id]: curr
@@ -45,6 +47,7 @@ export const useFamily = () => {
 							id: k,
 							name: curr.ManName,
 							phone: curr.Phone,
+							ManCNIC: curr.ManCNIC,
 							students: {
 								[curr.id]: curr
 							}

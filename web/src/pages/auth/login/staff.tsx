@@ -103,7 +103,7 @@ const Login: React.FC<LoginProps> = ({
 						<div className=""></div>
 					</div>
 					<div className="bg-gray-700 border border-l-0 rounded-2xl shadow-md w-full md:w-2/3 ">
-						<div className="p-5 md:p-10">
+						<div className="p-5 md:p-10 md:pt-5">
 							{user ? (
 								<div className="relative">
 									<div className="w-full md:w-3/5 mx-auto">

@@ -5,7 +5,6 @@ import { Link, RouteComponentProps } from 'react-router-dom'
 import { FeeSettings } from './settings'
 import { VoucherSettings } from './voucher-settings'
 import { Family } from 'pages/family/list'
-import { StudentPayments } from './payments/student'
 import { ResetFee } from './reset'
 import { PrintVoucher } from './print-voucher'
 import { AppLayout } from 'components/Layout/appLayout'
@@ -16,6 +15,7 @@ import iconSinglePayment from './assets/single-payment.svg'
 import iconMultiplePayments from './assets/multiple-payments.svg'
 import iconPrinter from './assets/printer.png'
 import iconVoucherSettings from './assets/voucher-settings.png'
+import { StudentList } from 'pages/students/list'
 
 const MenuItems = [
 	{
@@ -34,13 +34,13 @@ const MenuItems = [
 		icon: iconPrinter
 	},
 	{
-		title: 'Family Payment',
-		link: '/fees/family',
+		title: 'Family Payments',
+		link: '/fees/families',
 		icon: iconMultiplePayments
 	},
 	{
-		title: 'Student Payment',
-		link: '/fees/student',
+		title: 'Student Payments',
+		link: '/fees/students',
 		icon: iconSinglePayment
 	}
 ]
@@ -49,8 +49,8 @@ enum Pages {
 	FEE_SETTINGS = 'settings',
 	VOUCHER_SETTINGS = 'voucher-settings',
 	PRINT_VOUCHER = 'print-voucher',
-	FAMILY_PAYMENTS = 'family',
-	STUDENT_PAYMENTS = 'student',
+	FAMILY_PAYMENTS = 'families',
+	STUDENT_PAYMENTS = 'students',
 	FEE_RESET = 'reset'
 }
 
@@ -68,7 +68,14 @@ export const SchoolFees: React.FC<Props> = ({ match }) => {
 				page === Pages.FAMILY_PAYMENTS,
 				<Family key={Pages.FAMILY_PAYMENTS} forwardTo="payments" pageTitle="Families" />
 			],
-			[page === Pages.STUDENT_PAYMENTS, <StudentPayments key={Pages.STUDENT_PAYMENTS} />],
+			[
+				page === Pages.STUDENT_PAYMENTS,
+				<StudentList
+					forwardTo={'payments'}
+					excludeFamilyStudents={true}
+					key={Pages.STUDENT_PAYMENTS}
+				/>
+			],
 
 			[page === Pages.FEE_RESET, <ResetFee key={Pages.FEE_RESET} />]
 		])

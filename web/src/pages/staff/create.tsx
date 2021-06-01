@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { v4 } from 'node-uuid'
 import { useDispatch, useSelector } from 'react-redux'
-import { Redirect, RouteComponentProps, useLocation, useParams } from 'react-router-dom'
+import { Redirect, useLocation, useParams } from 'react-router-dom'
+import clsx from 'clsx'
 import moment from 'moment'
 import Dynamic from '@cerp/dynamic'
 import toast from 'react-hot-toast'
 
-import { AppLayout } from 'components/Layout/appLayout'
 import { SwitchButton } from 'components/input/switch'
 import { isValidPhone, isValidCNIC } from 'utils/helpers'
 import { createFacultyMerge, deleteFaculty, uploadFacultyProfilePicture } from 'actions'
@@ -90,13 +90,13 @@ export const CreateOrUpdateStaff = () => {
 	const dispatch = useDispatch()
 	const { faculty } = useSelector((state: RootReducerState) => state.db)
 	const { faculty_id } = useSelector((state: RootReducerState) => state.auth)
-	const { Admin, SubAdmin } = faculty[faculty_id]
+	const { Admin } = faculty[faculty_id]
 
 	const existingStaff = faculty[id]
 
 	const [state, setState] = useState<StateProps>({
 		profile: {
-			...(existingStaff || blankTeacher()),
+			...(existingStaff ?? blankTeacher()),
 			HasLogin: isNewStaff() ? true : existingStaff && existingStaff.HasLogin,
 			permissions: isNewStaff()
 				? blankTeacher().permissions
@@ -244,11 +244,14 @@ export const CreateOrUpdateStaff = () => {
 	return (
 		<>
 			<div className="px-5 text-gray-700 relative">
-				<div className="text-2xl font-bold mt-4 mb-8 text-center">
-					{isNewStaff() ? 'Add Staff' : 'Update Staff'}
-				</div>
-				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 pb-6 my-4 md:mt-8">
-					<div className="text-white text-center text-base my-5 font-semibold">
+				<div
+					className={clsx(
+						'md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 py-5 mb-10',
+						{
+							'mt-8': isNewStaff()
+						}
+					)}>
+					<div className="text-white text-center font-semibold my-2">
 						Personal Information
 					</div>
 					{!isNewStaff() && (

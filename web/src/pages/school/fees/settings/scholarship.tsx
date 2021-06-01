@@ -5,7 +5,7 @@ import { v4 } from 'node-uuid'
 import { useDispatch, useSelector } from 'react-redux'
 import { Transition } from '@headlessui/react'
 
-import { isValidStudent } from 'utils'
+import { getPaymentLabel, isValidStudent } from 'utils'
 import { toTitleCase } from 'utils/toTitleCase'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { SearchInput } from 'components/input/search'
@@ -268,8 +268,8 @@ const Card = ({
 			...classFee,
 			name: 'Class Fee'
 		},
-		...Object.values(additionalFees || {}),
-		...Object.values(student.fees || {})
+		...Object.values(additionalFees ?? {}),
+		...Object.values(student.fees ?? {})
 	]
 
 	const totalFeeAmount = fees
@@ -344,7 +344,7 @@ const Card = ({
 						<div
 							key={index}
 							className="flex flex-row justify-between mt-2 text-xs md:text-sm">
-							<div>{fee.name}</div>
+							<div>{getPaymentLabel(fee.name, fee.type)}</div>
 							<div>Rs.{fee.amount}</div>
 						</div>
 					))}

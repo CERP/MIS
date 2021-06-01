@@ -173,7 +173,7 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 
 	return (
 		<AppLayout title="Family Payments" showHeaderTitle>
-			<div className="p-5 md:p-10 md:pb-0 text-gray-700 relative print:hidden">
+			<div className="p-5 md:p-10 md:pt-5 md:pb-0 text-gray-700 relative print:hidden">
 				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-4 rounded-2xl bg-gray-700 p-5 my-4 mt-8">
 					<div className="relative text-white text-center text-base w-full">
 						<div className="absolute left-0 right-0 -top-12 md:-top-16 flex -space-x-4 overflow-hidden justify-center w-full h-24">

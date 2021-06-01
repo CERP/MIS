@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { shallowEqual, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
@@ -13,22 +13,25 @@ import { AddStickyButton } from 'components/Button/add-sticky'
 import { PrinterIcon } from '@heroicons/react/outline'
 import Paginate from 'components/Paginate'
 
-type Filter = {
-	search: string
+type State = {
+	searchText: string
 	active: boolean
 	tag: string
 	class: string
 }
 
-export const StudentList = () => {
+interface StudentListProps {
+	forwardTo?: string
+	excludeFamilyStudents?: boolean
+}
+
+export const StudentList = ({ forwardTo, excludeFamilyStudents }: StudentListProps) => {
 	const students = useSelector((state: RootReducerState) => state.db.students, shallowEqual)
 	const classes = useSelector((state: RootReducerState) => state.db.classes, shallowEqual)
 
-	// TODO: create single state variable
-	const [search, setSearch] = useState('')
-	const [filter, setFilter] = useState<Filter>({
+	const [state, setFilter] = useState<State>({
 		active: true,
-		search: '',
+		searchText: '',
 		tag: '',
 		class: ''
 	})
@@ -37,7 +40,7 @@ export const StudentList = () => {
 		return [
 			...new Set(
 				Object.values(students ?? {})
-					.filter(s => isValidStudent(s) && s.Active === filter.active)
+					.filter(s => isValidStudent(s) && s.Active === state.active)
 					.reduce((tags, student) => {
 						return [
 							...tags,
@@ -59,41 +62,52 @@ export const StudentList = () => {
 	// TODO: add a check here for max_limit: state.db.max_limit
 	// to restrict adding students
 
-	const filteredStudents = Object.values(students)
-		.filter(
-			s =>
+	const filteredStudents = Object.values(students ?? {})
+		.filter(s => {
+			const searchString = `${s.Name} ${s.ManName} ${s.FamilyID} ${s.Phone}`.toLowerCase()
+
+			return (
 				isValidStudent(s) &&
-				s.Active === filter.active &&
-				(search ? s.Name.includes(search) : true) &&
-				(filter.class ? s.section_id === filter.class : true) &&
-				(filter.tag ? Object.keys(s.tags ?? []).includes(filter.tag) : true)
-		)
+				s.Active === state.active &&
+				(excludeFamilyStudents ? !s.FamilyID : true) &&
+				(state.searchText ? searchString.includes(state.searchText.toLowerCase()) : true) &&
+				(state.class ? s.section_id === state.class : true) &&
+				(state.tag ? Object.keys(s.tags ?? []).includes(state.tag) : true)
+			)
+		})
 		.sort((a, b) => a.Name.localeCompare(b.Name))
 
 	const listItem = (f: MISStudent) => {
+		const forwardToLink = forwardTo || 'profile'
 		return (
-			<Link key={f.id} to={`students/${f.id}/profile`}>
+			<Link key={f.id} to={`students/${f.id}/${forwardToLink}`}>
 				<Card student={f} sections={sections} />
 			</Link>
 		)
 	}
 
+	const pageTitle = `Students ${toTitleCase(forwardTo)}`
+
 	return (
-		<AppLayout title="Students" showHeaderTitle>
-			<div className="relative p-5 mb-20 md:p-10">
+		<AppLayout title={pageTitle} showHeaderTitle>
+			<div className="relative p-5 md:p-10 md:pt-5 mb-20">
 				<Link to="/students/new/menu">
 					<AddStickyButton label="Add new Student" />
 				</Link>
 
 				{/* <div className="my-4 text-2xl font-bold text-center lg:hidden">School Students</div> */}
-				<div className="text-center text-gray-700 lg:hidden">
+				{/* <div className="text-center text-gray-700 lg:hidden">
 					Total = {filteredStudents.length}
-				</div>
+				</div> */}
 				<div className="flex flex-col items-center justify-between mt-4 mb-12 space-y-4 md:flex-row md:mb-20 md:space-y-0 md:space-x-60">
-					<SearchInput onChange={e => setSearch(e.target.value)} />
+					<SearchInput
+						placeholder="Search by name, fname or phone"
+						className="md:w-9/12"
+						onChange={e => setFilter({ ...state, searchText: e.target.value })}
+					/>
 					<div className="flex flex-row items-center w-full space-x-2">
 						<select
-							onChange={e => setFilter({ ...filter, tag: e.target.value })}
+							onChange={e => setFilter({ ...state, tag: e.target.value })}
 							className="rounded shadow tw-select text-teal-brand">
 							<option value="">Tag</option>
 							{getTags().map(tag => (
@@ -103,9 +117,17 @@ export const StudentList = () => {
 							))}
 						</select>
 						<select
-							onChange={e => setFilter({ ...filter, class: e.target.value })}
+							className="rounded shadow tw-select text-teal-brand"
+							onChange={e =>
+								setFilter({ ...state, active: e.target.value === 'true' })
+							}>
+							<option value={'true'}>Active</option>
+							<option value={'false'}>InActive</option>
+						</select>
+						<select
+							onChange={e => setFilter({ ...state, class: e.target.value })}
 							className="w-full rounded shadow tw-select text-teal-brand">
-							<option value="">Choose Class</option>
+							<option value="">Class</option>
 							{sections
 								.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
 								.map(s => (
@@ -114,28 +136,12 @@ export const StudentList = () => {
 									</option>
 								))}
 						</select>
-						<select
-							className="rounded shadow tw-select text-teal-brand"
-							onChange={e =>
-								setFilter({ ...filter, active: e.target.value === 'true' })
-							}>
-							<option value={'true'}>Active</option>
-							<option value={'false'}>InActive</option>
-						</select>
-						<div className="hidden lg:flex flex-col space-between  text-white">
-							<div
-								onClick={() => window.print()}
-								className="py-2 px-3 rounded-full flex cursor-pointer bg-blue-brand flex-row justify-between border shadow-md items-center ">
-								<div className="flex flex-row items-center">
-									<div className="flex flex-row">
-										<div className="font-semibold text-lg">
-											<h1>Print</h1>
-										</div>
-									</div>
-									<PrinterIcon className="h-8 w-8 ml-10" />
-								</div>
-							</div>
-						</div>
+						<button
+							onClick={() => window.print()}
+							className="hidden lg:inline-flex items-center tw-btn-blue rounded-3xl shadow-md">
+							<span>Print</span>
+							<PrinterIcon className="h-6 w-6 ml-4" />
+						</button>
 					</div>
 				</div>
 
@@ -160,46 +166,42 @@ const Card = ({ student, sections }: CardProps) => {
 
 	return (
 		<div className="relative">
-			<div className="px-3 py-4 text-center bg-white border shadow-md rounded-xl lg:h-56 border-gray-50 md:p-5">
+			<div className="px-3 py-4 text-center bg-white border shadow-md rounded-xl lg:h-48 border-gray-50 md:p-5">
 				<div className="w-4/5 pt-8 mx-auto font-bold truncate">
 					{toTitleCase(student.Name)}
 				</div>
-				<div className="mt-2 space-y-0 text-sm md:text-base">
+				<div className="mt-2 space-y-0 text-sm text-gray-900">
 					<div className="flex flex-row items-center justify-between">
-						<div className="font-semibold text-gray-900">Father</div>
-						<div className="text-xs text-gray-500 truncate md:text-base lg:text-lg">
+						<div className="font-semibold">Father</div>
+						<div className="text-xs text-gray-500 truncate">
 							{toTitleCase(student.ManName)}
 						</div>
 					</div>
 					<div className="flex flex-row items-center justify-between">
-						<div className="font-semibold text-gray-900">Class</div>
-						<div className="text-xs text-gray-500 truncate md:text-base lg:text-lg">
+						<div className="font-semibold">Class</div>
+						<div className="text-gray-500 truncate">
 							{toTitleCase(studentSection?.namespaced_name)}
 						</div>
 					</div>
 					<div className="flex flex-row items-center justify-between">
-						<div className="font-semibold text-gray-900">Roll #</div>
-						<div className="text-xs text-gray-500 md:text-base lg:text-lg">
-							{student.RollNumber}
-						</div>
+						<div className="font-semibold">Roll #</div>
+						<div className="text-gray-500">{student.RollNumber}</div>
 					</div>
 					<div className="flex flex-row items-center justify-between">
-						<div className="font-semibold text-gray-900">Phone</div>
-						<div className="text-xs text-gray-500 md:text-base lg:text-lg">
-							{student.Phone}
-						</div>
+						<div className="font-semibold">Phone</div>
+						<div className="text-gray-500">{student.Phone}</div>
 					</div>
 				</div>
 			</div>
 			<div className="absolute left-0 right-0 -top-10">
 				<img
 					src={
-						student.ProfilePicture?.url ||
-						student.ProfilePicture?.image_string ||
+						student.ProfilePicture?.url ??
+						student.ProfilePicture?.image_string ??
 						UserIconSvg
 					}
 					className="w-20 h-20 mx-auto bg-gray-500 rounded-full shadow-md hover:bg-gray-700"
-					alt={student.Name.split(' ')[0] || 'student'}
+					alt={student.Name.split(' ')[0]}
 				/>
 			</div>
 		</div>

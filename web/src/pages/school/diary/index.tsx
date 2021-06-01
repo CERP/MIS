@@ -237,18 +237,15 @@ const Diary: React.FC = () => {
 	const isSectionSelected = state.classId && state.sectionId
 
 	return (
-		<AppLayout title={'Diary'} showHeaderTitle>
-			<div className="flex flex-col items-center my-10 mx-5 p-5 md:p-0 bg-gray-700 text-white rounded-2xl md:w-4/5 md:mx-auto md:bg-transparent md:h-screen">
-				<div className="text-center print:hidden md:text-2xl font-semibold md:text-gray-900 mb-2 md:mb-4">
-					Enter Diary Details
-				</div>
-
-				<div className="flex flex-col w-full justify-center md:flex-row md:h-3/4 md:space-x-4">
+		<AppLayout title={'Manage Diary'} showHeaderTitle>
+			<div className="flex flex-col items-center my-10 mx-5 p-5 md:p-0 bg-gray-700 rounded-2xl md:w-4/5 md:mx-auto md:bg-transparent md:h-screen">
+				<div className="flex flex-col w-full justify-center md:flex-row md:h-3/4 md:space-x-4 text-white">
 					<div className="flex flex-col w-full print:hidden md:bg-gray-700 md:p-5 md:rounded-2xl md:w-1/2 space-y-2 md:space-y-4">
 						<div className="flex flex-row w-full justify-between">
 							<div className="flex flex-col w-1/2 mr-2 space-y-2 md:space-y-4">
-								<div>Date</div>
+								<label htmlFor="diary-date">Date</label>
 								<input
+									id="diary-date"
 									className="px-1 tw-input tw-is-form-bg-black"
 									type="date"
 									value={state.selectedDate}
@@ -259,11 +256,12 @@ const Diary: React.FC = () => {
 							</div>
 
 							<div className="flex flex-col w-1/2 space-y-2 md:space-y-4">
-								<div>Class</div>
+								<label htmlFor="class-id">Class</label>
 								<select
-									className="tw-input tw-is-form-bg-black"
+									id="class-id"
+									className="tw-select"
 									onChange={e => setState({ ...state, classId: e.target.value })}>
-									<option value=""> Select </option>
+									<option value=""> Select Class</option>
 									{Object.values(classes).map(c => (
 										<option key={c.id} value={c.id}>
 											{c.name}
@@ -275,13 +273,14 @@ const Diary: React.FC = () => {
 
 						{state.classId && (
 							<div className="flex flex-col w-full space-y-2 md:space-y-4">
-								<div>Section's</div>
+								<label htmlFor="section-id">Sections</label>
 								<select
-									className="tw-input tw-is-form-bg-black"
+									id="section-id"
+									className="tw-select"
 									onChange={e =>
 										setState({ ...state, sectionId: e.target.value })
 									}>
-									<option value="">Select</option>
+									<option value={''}>Select</option>
 									{Object.entries(classes[state.classId].sections ?? {}).map(
 										([id, s]) => (
 											<option key={id} value={id}>
@@ -295,9 +294,10 @@ const Diary: React.FC = () => {
 
 						{isSectionSelected && (
 							<div className="flex justify-between items-center w-full py-4">
-								<div className="font-semibold">Copy From</div>
+								<label htmlFor="duplicate-diary">Copy From</label>
 								<select
-									className="tw-select tw-is-form-bg-black"
+									id="duplicate-diary"
+									className="tw-select text-gray-700"
 									onChange={e =>
 										setDuplicateDiary({
 											...duplicateDiary,
@@ -325,7 +325,7 @@ const Diary: React.FC = () => {
 
 					{isSectionSelected && (
 						<div className="flex flex-col w-full print:hidden md:bg-gray-700 md:p-5 md:rounded-2xl md:w-1/2 md:overflow-y-auto space-y-2">
-							<div className="font-semibold">Subjects</div>
+							<div>Subjects</div>
 							{Object.keys(classes[state.classId].subjects ?? {}).map(s => (
 								<div
 									key={s}

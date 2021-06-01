@@ -71,8 +71,8 @@ export const PrintVoucher = () => {
 
 	return (
 		<AppLayout title={'Print Voucher'} showHeaderTitle>
-			<div className="p-5 md:p-10 md:pb-0 relative">
-				<div className="md:w-4/5 md:mx-auto flex flex-col items-center rounded-2xl bg-gray-700 p-5 md:p-10">
+			<div className="p-5 md:p-10 md:pt-5 md:pb-0 relative">
+				<div className="md:w-4/5 md:mx-auto flex flex-col items-center rounded-2xl bg-gray-700 p-5 md:p-10 md:pt-5">
 					<div className="flex flex-row items-center justify-between w-full md:w-3/5 space-x-4">
 						<CustomSelect
 							onChange={month => setState({ ...state, month })}

@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { isValidStudent } from 'utils'
 import { toTitleCase } from 'utils/toTitleCase'
@@ -9,7 +9,6 @@ import { AppLayout } from 'components/Layout/appLayout'
 import { resetFees } from 'actions'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
-
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 
 enum ResetFeeOptions {
@@ -25,7 +24,7 @@ type State = {
 	studentId: string
 }
 
-const confirmResetForLabels = ['All students', 'Single Class', 'Single Student']
+const confirmResetForLabels = ['', 'All students', 'Single Class', 'Single Student']
 
 export const ResetFee = () => {
 	const dispatch = useDispatch()
@@ -70,38 +69,29 @@ export const ResetFee = () => {
 			) {
 				return true
 			}
-
-			// in case of empty selection
 			return false
 		})
 
 		dispatch(resetFees(filteredStudents))
-
-		toast.success('Fees have been reset.')
-
-		// close the modal
+		toast.success('Fees have been reset!')
 		setShowConfirmResetModal(false)
 	}
 
 	return (
-		<AppLayout title={'Reset Fee'}>
-			<div className="p-5 md:p-10 md:pb-0 relative">
-				<div className="text-2xl font-bold mt-4 mb-8 text-center">Reset Fee</div>
-				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 pb-6 my-4 md:mt-8">
-					<div className="text-white text-center text-base my-5">
-						Please be careful while reseting Fee
-					</div>
+		<AppLayout title={'Reset Fee'} showHeaderTitle>
+			<div className="p-5 md:p-10 md:pt-5 md:pb-0 relative">
+				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 py-5">
 					<div className="text-white space-y-4 px-4 w-full md:w-3/5">
-						<div>Reset Fee For:</div>
+						<h1 className="font-semibold">Reset Fee For:</h1>
 						<select
 							onChange={e =>
 								setState({ ...state, resetFor: parseInt(e.target.value) })
 							}
 							className="tw-input w-full tw-is-form-bg-black text-gray-400">
-							<option value={0}>Select from here</option>
-							<option value={1}>All Students</option>
-							<option value={2}>Single Class</option>
-							<option value={3}>Single Student</option>
+							<option value={ResetFeeOptions.EMPTY_OPTION}>Select Option</option>
+							<option value={ResetFeeOptions.ALL_STUDENTS}>All Students</option>
+							<option value={ResetFeeOptions.SINGLE_CLASS}>Single Class</option>
+							<option value={ResetFeeOptions.SINGLE_STUDENT}>Single Student</option>
 						</select>
 						{showConfirmResetModal && (
 							<TModal>
@@ -112,7 +102,7 @@ export const ResetFee = () => {
 									<div className="font-semibold text-lg md:text-xl">
 										{confirmResetForLabels[state.resetFor]}
 									</div>
-									<div>Are you sure you want to reset?</div>
+									<div>This cannot be undo, Are you sure you want to reset?</div>
 									<div className="flex flex-row justify-between">
 										<button
 											onClick={() => setShowConfirmResetModal(false)}
@@ -177,7 +167,7 @@ export const ResetFee = () => {
 							onClick={() => setShowConfirmResetModal(!showConfirmResetModal)}
 							disabled={ResetFeeOptions.EMPTY_OPTION === state.resetFor}
 							className={clsx('tw-btn-red w-full', {
-								'opacity-75 pointer-events-none':
+								'pointer-events-none bg-gray-500':
 									ResetFeeOptions.EMPTY_OPTION === state.resetFor ||
 									(ResetFeeOptions.SINGLE_CLASS === state.resetFor &&
 										!state.sectionId) ||

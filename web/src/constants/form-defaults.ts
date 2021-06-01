@@ -1,6 +1,6 @@
 import { v4 } from 'node-uuid'
 
-export const blankClass: MISClass = {
+export const blankClass = (): MISClass => ({
 	id: v4(),
 	name: '',
 	classYear: 0,
@@ -15,7 +15,7 @@ export const blankClass: MISClass = {
 		Urdu: true,
 		Islamiat: true
 	}
-}
+})
 
 export const defaultClasses: Record<string, number> = {
 	Preschool: 0,
