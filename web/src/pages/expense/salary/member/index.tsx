@@ -6,10 +6,9 @@ import { Transition } from '@headlessui/react'
 import { RouteComponentProps } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/outline'
-
-import { AppLayout } from 'components/Layout/appLayout'
 import { addSalaryExpense } from 'actions'
 import UserIconSvg from 'assets/svgs/user.svg'
+import toTitleCase from 'utils/toTitleCase'
 
 type StaffMemberSalaryProps = RouteComponentProps<{ id: string }>
 
@@ -82,11 +81,11 @@ export const StaffMemberSalary = ({ match }: StaffMemberSalaryProps) => {
 			toast.error('Amount must be a number')
 			return
 		} else if (salariesState.amount < 0) {
-			toast.error('Ammount cannot be less than 0')
+			toast.error('Amount cannot be less than 0')
 			return
 		}
 		if (isNaN(salariesState.amount)) {
-			toast.error('Please Specify an ammount')
+			toast.error('Please Specify an amount')
 			return
 		}
 
@@ -149,11 +148,11 @@ export const StaffMemberSalary = ({ match }: StaffMemberSalaryProps) => {
 
 	return (
 		<>
-			<div className="flex flex-col-reverse lg:flex-row lg:m-14 lg:mx-32">
+			<div className="flex flex-col-reverse lg:flex-row lg:mx-32">
 				<div
 					ref={mainFormRef}
-					className="bg-gray-600  ml-3 mr-3 rounded-b-2xl flex flex-1 flex-col lg:mt-4 lg:rounded-2xl  lg:px-8">
-					<div className="m-5 text-gray-50 lg:space-y-5">
+					className="bg-gray-700 mx-3 rounded-b-2xl flex flex-1 flex-col lg:mt-4 lg:rounded-2xl  lg:px-8">
+					<div className="m-5 text-gray-50 space-y-2 lg:space-y-4">
 						<div
 							onClick={() => {
 								setLocalState({
@@ -169,12 +168,12 @@ export const StaffMemberSalary = ({ match }: StaffMemberSalaryProps) => {
 								<ChevronDownIcon className="w-4 h-4 text-white ml-3" />
 							</div>
 						</div>
-						<h1 className="text-center text-2xl font-semibold text-white hidden lg:block">
+						<h1 className="text-center text-xl font-semibold text-white hidden lg:block">
 							Pay Salary
 						</h1>
-						<h1 className="text-xl text-gray-100 font-normal mb-1">Salary*</h1>
+						<h1 className="text-xl text-gray-100 font-normal">Salary*</h1>
 						<div className="flex flex-row justify-between items-center">
-							<div>
+							<div className="flex items-center space-x-2">
 								<input
 									type="radio"
 									id="Full"
@@ -184,27 +183,27 @@ export const StaffMemberSalary = ({ match }: StaffMemberSalaryProps) => {
 										setLocalState({ ...localState, type: type.target.value })
 										setState({ ...salariesState, date: new Date().getTime() })
 									}}
-									className="form-radio bg-transparent text-teal-brand mr-2 w-4 h-4 cursor-pointer"
+									className="tw-radio form-radio"
 								/>
-								<label>Full</label>
+								<label htmlFor="Full">Full</label>
 							</div>
 
-							<div>
+							<div className="flex items-center space-x-2">
 								<input
-									className="form-radio bg-transparent text-teal-brand mr-2 w-4 h-4 cursor-pointer"
+									className="tw-radio form-radio"
 									type="radio"
-									id="Advance"
+									id="dvance"
 									onChange={type => {
 										setLocalState({ ...localState, type: type.target.value })
 									}}
 									name="type"
 									value="Advance"
 								/>
-								<label>Advance</label>
+								<label htmlFor="Advance">Advance</label>
 							</div>
-							<div>
+							<div className="flex items-center space-x-2">
 								<input
-									className="form-radio bg-transparent text-teal-brand mr-2 w-4 h-4 cursor-pointer"
+									className="tw-radio form-radio"
 									type="radio"
 									onChange={type => {
 										setLocalState({ ...localState, type: type.target.value })
@@ -214,16 +213,16 @@ export const StaffMemberSalary = ({ match }: StaffMemberSalaryProps) => {
 									name="type"
 									value="Deducted"
 								/>
-								<label>Deducted</label>
+								<label htmlFor="Deducted">Deducted</label>
 							</div>
 						</div>
-						<h1 className="text-xl text-gray-100 font-normal mt-3">Paid Amount*</h1>
+						<h1 className="text-xl text-gray-100 font-normal">Paid Amount*</h1>
 
 						<div className="w-full rounded  focus:outline-none focus-within:outline-none mt-2">
 							<input
 								type="number"
 								placeholder={'Salary'}
-								className="w-full bg-transparent rounded border-2 border-blue-300 outline-none  placeholder-gray-400 text-white"
+								className="tw-input w-full tw-is-form-bg-black"
 								value={salariesState.amount}
 								onChange={text =>
 									setState({
@@ -235,14 +234,14 @@ export const StaffMemberSalary = ({ match }: StaffMemberSalaryProps) => {
 						</div>
 						{localState.type !== 'Full' && (
 							<div>
-								<h1 className="text-xl text-gray-100 font-normal mt-3">
+								<h1 className="text-xl text-gray-100 font-normal">
 									{localState.type + ' Reason'}
 								</h1>
 								<div className="w-full rounded  focus:outline-none focus-within:outline-none mt-2">
 									<input
 										type="text"
 										placeholder={'Salary'}
-										className="w-full bg-transparent rounded border-2 border-blue-300 outline-none  placeholder-gray-400 text-white"
+										className="tw-input w-full tw-is-form-bg-black"
 										value={localState.reason}
 										onChange={text =>
 											setLocalState({
@@ -254,13 +253,13 @@ export const StaffMemberSalary = ({ match }: StaffMemberSalaryProps) => {
 								</div>
 							</div>
 						)}
-						<h1 className="text-xl text-gray-100 font-normal mt-3">Date*</h1>
+						<h1 className="text-xl text-gray-100 font-normal">Date*</h1>
 						<div className="w-full mt-2">
 							<input
 								disabled={localState.type === 'Advance' ? false : true}
 								value={moment(salariesState.date).format('YYYY-MM-DD')}
 								className={clsx(
-									'w-full bg-transparent rounded border-2 border-blue-300 outline-none  placeholder-gray-400',
+									'tw-input w-full tw-is-form-bg-black',
 									localState.type === 'Advance' ? 'text-white' : 'text-gray-400'
 								)}
 								type="date"
@@ -272,15 +271,15 @@ export const StaffMemberSalary = ({ match }: StaffMemberSalaryProps) => {
 								}
 							/>
 						</div>
-						<div
+						<button
 							onClick={() => paySalary()}
-							className="flex flex-1 flex-row justify-center text-center mt-6 pl-4 pr-4 pt-2 pb-2 ml-1 mr-1 rounded-md bg-teal-brand lg:mt-10">
-							<h1 className="text-xl text-gray-100 font-semibold">
+							className="tw-btn bg-teal-brand text-white w-full">
+							<span>
 								{localState.type === 'Full'
 									? 'Pay Salary'
 									: 'Pay ' + localState.type}
-							</h1>
-						</div>
+							</span>
+						</button>
 					</div>
 				</div>
 				<div className="lg:flex-1">
@@ -293,20 +292,20 @@ export const StaffMemberSalary = ({ match }: StaffMemberSalaryProps) => {
 									UserIconSvg
 								}
 								className="mx-auto h-20 w-20 rounded-full shadow-lg bg-gray-500 hover:bg-gray-700"
-								alt={teacher.Name || 'faculty'}
+								alt={teacher.Name}
 							/>
 						</div>
 						<div className="flex flex-col  text-center lg:text-left lg:ml-6 lg:flex-1 lg:flex ">
-							<h1 className="lg:text-3xl">{teacher.Name}</h1>
-							<h1 className="lg:text-2xl">{'Salary: ' + teacher.Salary}</h1>
+							<h1 className="lg:text-xl">{toTitleCase(teacher.Name)}</h1>
+							<h1 className="lg:text-lg">{'Salary: ' + teacher.Salary}</h1>
 						</div>
 					</div>
 					<div
 						className="bg-white hidden font-medium  mx-3 rounded-t-2xl mt-4 lg:bg-white
                      lg:text-black lg:rounded-2xl lg:flex lg:p-5 lg:items-center lg:flex-1 flex-col lg:text-center lg:justify-center
-                      lg:shadow-lg lg:border lg:border-gray-300 ">
+                      lg:shadow-lg lg:border lg:border-gray-300">
 						<h1 className="lg:text-xl lg:font-medium hidden">View Past Payments</h1>
-						<div className="w-full flex flex-1 flex-col space-y-3  mt-2 overflow-y-scroll max-h-96">
+						<div className="w-full flex flex-1 flex-col space-y-3  mt-2 overflow-y-auto max-h-96">
 							<div className="flex flex-1 text-left ">
 								<div className="flex-1">Month</div>
 								<div className="flex-1 text-center">Deductions</div>
@@ -317,7 +316,7 @@ export const StaffMemberSalary = ({ match }: StaffMemberSalaryProps) => {
 									return (
 										<div
 											key={salary.faculty_id + index}
-											className="flex flex-1 text-left ">
+											className="flex flex-1 text-left font-normal text-sm">
 											<div
 												className={clsx(
 													'flex-1',
@@ -369,7 +368,7 @@ export const StaffMemberSalary = ({ match }: StaffMemberSalaryProps) => {
 						height: mainFormRef?.current?.offsetHeight + 100 ?? '50%',
 						width: mainFormRef?.current?.offsetWidth ?? '50%'
 					}}
-					className={` bg-white rounded-md shadow-lg z-50 ml-3 absolute  p-5 lg:hidden`}>
+					className={'bg-white rounded-md shadow-lg z-50 ml-3 absolute  p-5 lg:hidden'}>
 					<div className="bg-white text-blue-400 rounded-full py-2 px-2 font-semibold cursor-pointer mb-4 flex flex-row justify-center items-center lg:hidden">
 						<h1
 							onClick={() => {
