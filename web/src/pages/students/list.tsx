@@ -86,8 +86,10 @@ export const StudentList = ({ forwardTo, excludeFamilyStudents }: StudentListPro
 		)
 	}
 
+	const pageTitle = `Students ${toTitleCase(forwardTo)}`
+
 	return (
-		<AppLayout title={toTitleCase(`Students ${forwardTo}`)} showHeaderTitle>
+		<AppLayout title={pageTitle} showHeaderTitle>
 			<div className="relative p-5 md:p-10 md:pt-5 mb-20">
 				<Link to="/students/new/menu">
 					<AddStickyButton label="Add new Student" />
