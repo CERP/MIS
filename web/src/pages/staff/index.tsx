@@ -6,17 +6,20 @@ import { Route, RouteComponentProps } from 'react-router'
 import { AppLayout } from 'components/Layout/appLayout'
 import { CreateOrUpdateStaff } from './create'
 import { StaffMemberSalary } from 'pages/expense/salary/member'
+import toTitleCase from 'utils/toTitleCase'
+
+const pathMap = {
+	Profile: 'profile',
+	Attendance: 'attendance',
+	Salary: 'salaries'
+}
 
 const StaffPage = ({ location }: RouteComponentProps) => {
-	const loc = location.pathname.split('/').slice(-1).pop()
-	const pathMap = {
-		Profile: 'profile',
-		Attendance: 'attendance',
-		Salary: 'salaries'
-	}
+	const loc = location.pathname.split('/').slice(-1).pop() as any
+	const pageTitle = loc === 'new' ? 'Create new Staff' : 'Staff ' + toTitleCase(loc)
 
 	return (
-		<AppLayout>
+		<AppLayout title={pageTitle} showHeaderTitle>
 			{loc !== 'new' && (
 				<div className="flex flex-row items-center my-2 w-full justify-center flex-wrap print:hidden">
 					{Object.entries(pathMap).map(([title, path]) => (

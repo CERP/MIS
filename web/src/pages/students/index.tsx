@@ -6,6 +6,7 @@ import { Route, RouteComponentProps } from 'react-router'
 import { AppLayout } from 'components/Layout/appLayout'
 import { StudentPayments } from 'pages/students/fee-payments/payments'
 import { CreateOrUpdateStudent } from './add'
+import { toTitleCase } from 'utils/toTitleCase'
 
 const Paths = {
 	Profile: 'profile',
@@ -16,12 +17,12 @@ const Paths = {
 }
 
 const StudentPage = ({ location }: RouteComponentProps) => {
-	// To Add new a new path, update the 'Paths' Object & create a route
-
 	const loc = location.pathname.split('/').slice(-1).pop()
 
+	const pageTitle = loc === 'new' ? 'Create new Student' : 'Student ' + toTitleCase(loc)
+
 	return (
-		<AppLayout>
+		<AppLayout title={pageTitle} showHeaderTitle>
 			{loc !== 'new' && (
 				<div className="flex flex-row items-center my-2 w-full justify-center flex-wrap print:hidden">
 					{Object.entries(Paths).map(([title, path]) => (
