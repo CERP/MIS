@@ -8,7 +8,7 @@ import { isValidPhone } from 'utils/helpers'
 import { hash } from 'utils'
 import { createFacultyMerge } from 'actions'
 import { ShowHidePassword } from 'components/password'
-
+import { PhoneInput } from 'components/input/PhoneInput'
 import UserIconSvg from 'assets/svgs/user.svg'
 
 interface CreateAdminProps {
@@ -90,12 +90,10 @@ export const CreateAdmin = ({ onBack }: CreateAdminProps) => {
 					className="tw-input w-full tw-is-form-bg-black"
 				/>
 				<div className="">Personal Number*</div>
-				<input
+				<PhoneInput
 					name="Phone"
 					required
-					type="number"
 					onChange={handleInput}
-					placeholder="e.g. 03xxxxxxxx"
 					className="tw-input w-full tw-is-form-bg-black"
 				/>
 				<div className="">Password*</div>

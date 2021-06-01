@@ -12,8 +12,8 @@ import { isValidPhone, isValidPassword } from 'utils/helpers'
 import { createSignUp } from 'actions'
 import toTitleCase from 'utils/toTitleCase'
 import checkCompulsoryFields from 'utils/checkCompulsoryFields'
-
 import iconMarkDone from 'assets/svgs/mark-done.svg'
+import { PhoneInput } from 'components/input/PhoneInput'
 
 type State = SchoolSignup & {
 	confirmPassword: string
@@ -162,14 +162,11 @@ export const SchoolSignup = () => {
 										</div>
 										<div className="space-y-2">
 											<label htmlFor="phone">Mobile Number (School Id)</label>
-											<input
+											<PhoneInput
 												name="phone"
-												type="text"
 												onChange={handleInputChange}
 												autoCapitalize="off"
 												autoCorrect="off"
-												autoComplete="off"
-												placeholder="e.g. 0300xxxxxxx"
 												className="w-full tw-input"
 											/>
 										</div>

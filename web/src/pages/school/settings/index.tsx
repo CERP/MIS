@@ -230,16 +230,15 @@ export const Settings = () => {
 						/>
 						<div>School Phone</div>
 						<PhoneInput
-							type="text"
 							error={
 								numberRegex.test(state.settings.schoolPhoneNumber) ||
-								!(state.settings.schoolPhoneNumber.length <= 11)
+								!(state.settings.schoolPhoneNumber?.length <= 11)
 							}
 							onChange={handleInputChange}
 							name="schoolPhoneNumber"
 							value={state.settings.schoolPhoneNumber}
 							className="tw-input w-full text-gray-500 focus-within:text-gray-200 focus-within:bg-transparent"
-							placeholder="Type school phone "
+							placeholder="Type school phone e.g. 03xxxxxxxxx"
 						/>
 						<div>School Address</div>
 						<textarea

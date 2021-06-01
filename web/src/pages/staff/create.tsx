@@ -357,11 +357,11 @@ export const CreateOrUpdateStaff = () => {
 						<PhoneInput
 							name="Phone"
 							onChange={handleInput}
-							error={numberRegex.test(profile.Phone) || !(profile.Phone.length <= 11)}
+							error={
+								numberRegex.test(profile.Phone) || !(profile.Phone?.length <= 11)
+							}
 							required
-							type="number"
 							value={profile.Phone}
-							placeholder="e.g. 03xxxxxxxx"
 							className="tw-input w-full tw-is-form-bg-black"
 						/>
 

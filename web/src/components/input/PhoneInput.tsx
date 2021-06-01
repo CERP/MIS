@@ -7,8 +7,13 @@ interface PhoneInputType extends InputHTMLAttributes<HTMLInputElement> {
 export const PhoneInput = ({ children, error, ...rest }: PhoneInputType) => {
 	const { className, ...restProps } = rest
 	return (
-		<>
-			<input className={className} autoComplete="off" {...restProps}>
+		<div>
+			<input
+				className={className}
+				autoComplete="off"
+				type="text"
+				placeholder="Mobile number e.g. 03xxxxxxxxx"
+				{...restProps}>
 				{children}
 			</input>
 			{error && (
@@ -16,6 +21,6 @@ export const PhoneInput = ({ children, error, ...rest }: PhoneInputType) => {
 					Enter a valid phone number
 				</div>
 			)}
-		</>
+		</div>
 	)
 }
