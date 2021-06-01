@@ -34,13 +34,13 @@ const MenuItems = [
 		icon: iconPrinter
 	},
 	{
-		title: 'Family Payment',
-		link: '/fees/family',
+		title: 'Family Payments',
+		link: '/fees/families',
 		icon: iconMultiplePayments
 	},
 	{
-		title: 'Student Payment',
-		link: '/fees/student',
+		title: 'Student Payments',
+		link: '/fees/students',
 		icon: iconSinglePayment
 	}
 ]
@@ -49,8 +49,8 @@ enum Pages {
 	FEE_SETTINGS = 'settings',
 	VOUCHER_SETTINGS = 'voucher-settings',
 	PRINT_VOUCHER = 'print-voucher',
-	FAMILY_PAYMENTS = 'family',
-	STUDENT_PAYMENTS = 'student',
+	FAMILY_PAYMENTS = 'families',
+	STUDENT_PAYMENTS = 'students',
 	FEE_RESET = 'reset'
 }
 
