@@ -30,7 +30,7 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 	const { faculty, classes } = useSelector((state: RootReducerState) => state.db)
 
 	const [state, setState] = useState<State>({
-		class: classId ? classes[classId] : blankClass,
+		class: classId ? classes[classId] : blankClass(),
 		newSection: '',
 		newSubject: '',
 		redirectTo: '',

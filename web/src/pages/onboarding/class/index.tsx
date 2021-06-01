@@ -19,7 +19,7 @@ export const CreateClass = ({ skipStage }: CreateClassProps) => {
 	const dispatch = useDispatch()
 	const { faculty } = useSelector((state: RootReducerState) => state.db)
 
-	const [state, setState] = useState(blankClass)
+	const [state, setState] = useState(blankClass())
 	const [newSubject, setNewSubject] = useState('')
 
 	// at this stage we only have on class with default section
