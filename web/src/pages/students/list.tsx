@@ -122,20 +122,12 @@ export const StudentList = () => {
 							<option value={'true'}>Active</option>
 							<option value={'false'}>InActive</option>
 						</select>
-						<div className="hidden lg:flex flex-col items-center space-between  text-white">
-							<div
-								onClick={() => window.print()}
-								className="py-2 px-2 rounded-full flex cursor-pointer bg-blue-brand flex-row justify-between border shadow-md items-center ">
-								<div className="flex flex-row items-center">
-									<div className="flex flex-row">
-										<div className="font-semibold text-lg">
-											<h1>Print</h1>
-										</div>
-									</div>
-									<PrinterIcon className="h-8 w-8 ml-10" />
-								</div>
-							</div>
-						</div>
+						<button
+							onClick={() => window.print()}
+							className="hidden lg:inline-flex items-center tw-btn-blue rounded-3xl shadow">
+							<span>Print</span>
+							<PrinterIcon className="h-6 w-6 ml-4" />
+						</button>
 					</div>
 				</div>
 
