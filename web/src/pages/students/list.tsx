@@ -108,8 +108,8 @@ export const StudentList = ({ forwardTo, excludeFamilyStudents }: StudentListPro
 					<div className="flex flex-row items-center w-full space-x-2">
 						<select
 							onChange={e => setFilter({ ...state, tag: e.target.value })}
-							className="rounded shadow tw-select text-teal-brand">
-							<option value="">Tag</option>
+							className="w-1/3 rounded shadow tw-select text-teal-brand">
+							<option value="">Tags</option>
 							{getTags().map(tag => (
 								<option key={tag} value={tag}>
 									{tag}
@@ -117,7 +117,7 @@ export const StudentList = ({ forwardTo, excludeFamilyStudents }: StudentListPro
 							))}
 						</select>
 						<select
-							className="rounded shadow tw-select text-teal-brand"
+							className="w-1/3 rounded shadow tw-select text-teal-brand"
 							onChange={e =>
 								setFilter({ ...state, active: e.target.value === 'true' })
 							}>
@@ -126,7 +126,7 @@ export const StudentList = ({ forwardTo, excludeFamilyStudents }: StudentListPro
 						</select>
 						<select
 							onChange={e => setFilter({ ...state, class: e.target.value })}
-							className="w-full rounded shadow tw-select text-teal-brand">
+							className="w-1/3 rounded shadow tw-select text-teal-brand">
 							<option value="">Class</option>
 							{sections
 								.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
