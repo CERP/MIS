@@ -1,6 +1,7 @@
-import React, { Fragment, useMemo, useRef, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import { shallowEqual, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { PrinterIcon } from '@heroicons/react/outline'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { toTitleCase } from 'utils/toTitleCase'
@@ -10,10 +11,9 @@ import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import UserIconSvg from 'assets/svgs/user.svg'
 import { SearchInput } from 'components/input/search'
 import { AddStickyButton } from 'components/Button/add-sticky'
-import { PrinterIcon } from '@heroicons/react/outline'
 import Paginate from 'components/Paginate'
 import { SwitchButton } from 'components/input/switch'
-import { Transition } from '@headlessui/react'
+import { useComponentVisible } from 'hooks/useComponentVisible'
 
 type State = {
 	searchText: string
@@ -21,8 +21,8 @@ type State = {
 	tag: string
 	class: string
 	gender: string
-	admissionFilter: boolean
-	rollNoFilter: boolean
+	searchByAdmissionNo: boolean
+	searchByRollNo: boolean
 }
 
 interface StudentListProps {
@@ -34,7 +34,12 @@ export const StudentList = ({ forwardTo, excludeFamilyStudents }: StudentListPro
 	const students = useSelector((state: RootReducerState) => state.db.students, shallowEqual)
 	const classes = useSelector((state: RootReducerState) => state.db.classes, shallowEqual)
 	const searchInputRef = useRef(null)
-	const [advancedFiltersOpened, setAdvancedFiltersopened] = useState(false)
+
+	const {
+		ref: searchMenuRef,
+		isComponentVisible: showSearchMenu,
+		setIsComponentVisible: setShowSearchMenu
+	} = useComponentVisible(false)
 
 	const [state, setFilter] = useState<State>({
 		active: true,
@@ -42,8 +47,8 @@ export const StudentList = ({ forwardTo, excludeFamilyStudents }: StudentListPro
 		tag: '',
 		class: '',
 		gender: '',
-		admissionFilter: false,
-		rollNoFilter: false
+		searchByAdmissionNo: false,
+		searchByRollNo: false
 	})
 
 	const getTags = () => {
@@ -77,22 +82,22 @@ export const StudentList = ({ forwardTo, excludeFamilyStudents }: StudentListPro
 			const searchString = `${s.Name} ${s.ManName} ${s.FamilyID} ${s.Phone}`.toLowerCase()
 			const searchAdmission = (s.AdmissionNumber ?? '').toLowerCase()
 			const searchRollNo = (s.RollNumber ?? '').toLowerCase()
-			const advanceFilterActive = state.admissionFilter || state.rollNoFilter
+			const advanceFilterActive = state.searchByAdmissionNo || state.searchByRollNo
 
 			return (
 				isValidStudent(s) &&
 				s.Active === state.active &&
 				(excludeFamilyStudents ? !s.FamilyID : true) &&
-				(state.admissionFilter || state.rollNoFilter
+				(state.searchByAdmissionNo || state.searchByRollNo
 					? true
 					: state.searchText
-					? searchString.includes(state.searchText.toLowerCase())
-					: true) &&
+						? searchString.includes(state.searchText.toLowerCase())
+						: true) &&
 				(state.class ? s.section_id === state.class : true) &&
 				(state.tag ? Object.keys(s.tags ?? []).includes(state.tag) : true) &&
 				(state.gender ? state.gender.toLowerCase() === s.Gender.toLowerCase() : true) &&
 				(advanceFilterActive
-					? state.admissionFilter
+					? state.searchByAdmissionNo
 						? searchAdmission.includes(state.searchText.toLowerCase())
 						: searchRollNo.includes(state.searchText.toLowerCase())
 					: true)
@@ -101,7 +106,7 @@ export const StudentList = ({ forwardTo, excludeFamilyStudents }: StudentListPro
 		.sort((a, b) => a.Name.localeCompare(b.Name))
 
 	const listItem = (f: MISStudent) => {
-		const forwardToLink = forwardTo || 'profile'
+		const forwardToLink = forwardTo ?? 'profile'
 		return (
 			<Link key={f.id} to={`/students/${f.id}/${forwardToLink}`}>
 				<Card student={f} sections={sections} />
@@ -125,30 +130,31 @@ export const StudentList = ({ forwardTo, excludeFamilyStudents }: StudentListPro
 				<div className="flex flex-col items-center justify-between mt-4 mb-12 space-y-4 md:flex-row md:mb-20 md:space-y-0 md:space-x-60">
 					<div ref={searchInputRef} className="md:w-9/12 w-full">
 						<SearchInput
-							advancedFiltersVisible
-							onFiltersPress={() => setAdvancedFiltersopened(val => !val)}
-							placeholder="Search by name, fname or phone"
+							showMenuButton
+							showMenuCallback={() => setShowSearchMenu(true)}
+							placeholder={
+								'Search by ' +
+								(state.searchByAdmissionNo
+									? 'admission no'
+									: state.searchByRollNo
+										? 'roll number'
+										: 'name, fname or phone')
+							}
 							className="md:w-full"
 							type="text"
 							onChange={e => {
 								setFilter({ ...state, searchText: e.target.value })
 							}}
 						/>
-						<Transition
-							as={Fragment}
-							show={advancedFiltersOpened}
-							enter="transform transition duration-[400ms]"
-							enterFrom="opacity-0 rotate-[-120deg] scale-50"
-							enterTo="opacity-100 rotate-0 scale-100"
-							leave="transform duration-200 transition ease-in-out"
-							leaveFrom="opacity-100 rotate-0 scale-100 "
-							leaveTo="opacity-0 scale-95 ">
+						{showSearchMenu && (
 							<div
-								className="absolute  z-50 space-y-3 bg-gray-600 p-2 rounded-2xl text-white"
+								ref={searchMenuRef}
+								className="absolute top-2 z-20 space-y-3 bg-gray-600 p-5 rounded-2xl text-white"
 								style={{
 									top: searchInputRef.current
 										? searchInputRef.current.offsetTop +
-										  searchInputRef.current.offsetHeight
+										searchInputRef.current.offsetHeight +
+										2
 										: 0,
 									left: searchInputRef.current
 										? searchInputRef.current.offsetLeft
@@ -157,38 +163,34 @@ export const StudentList = ({ forwardTo, excludeFamilyStudents }: StudentListPro
 										? searchInputRef.current.offsetWidth
 										: 0
 								}}>
-								<h1 className="text-sm text-gray-300">
-									Note: Enabling these will cause other text search to stop, you
-									can only select one of the below at a time
-								</h1>
 								<div className="flex flex-1  justify-center items-center">
-									<h1 className="flex-1">Search By Admission Number</h1>
+									<h1 className="flex-1 text-sm">Search By Admission Number</h1>
 									<SwitchButton
-										state={state.admissionFilter}
+										state={state.searchByAdmissionNo}
 										callback={() =>
 											setFilter({
 												...state,
-												admissionFilter: !state.admissionFilter,
-												rollNoFilter: false
+												searchByAdmissionNo: !state.searchByAdmissionNo,
+												searchByRollNo: false
 											})
 										}
 									/>
 								</div>
 								<div className="flex flex-1 justify-center items-center">
-									<h1 className="flex-1">Search By Roll Number</h1>
+									<h1 className="flex-1 text-sm">Search By Roll Number</h1>
 									<SwitchButton
-										state={state.rollNoFilter}
+										state={state.searchByRollNo}
 										callback={() =>
 											setFilter({
 												...state,
-												rollNoFilter: !state.rollNoFilter,
-												admissionFilter: false
+												searchByRollNo: !state.searchByRollNo,
+												searchByAdmissionNo: false
 											})
 										}
 									/>
 								</div>
 							</div>
-						</Transition>
+						)}
 					</div>
 					<div className="flex flex-row items-center w-full space-x-2">
 						<select

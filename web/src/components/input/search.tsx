@@ -1,18 +1,17 @@
 import React, { useState, useMemo } from 'react'
 import clsx from 'clsx'
 import { Transition } from '@headlessui/react'
-import { AdjustmentsIcon, FilterIcon, SearchIcon } from '@heroicons/react/outline'
+import { AdjustmentsIcon, SearchIcon } from '@heroicons/react/outline'
 
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { isValidStudent, isValidTeacher } from 'utils'
-
+import { toTitleCase } from 'utils/toTitleCase'
 import UserIconSvg from 'assets/svgs/user.svg'
-import toTitleCase from 'utils/toTitleCase'
 
 interface SearchInputProps
 	extends React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
-	advancedFiltersVisible?: boolean
-	onFiltersPress?: Function
+	showMenuButton?: boolean
+	showMenuCallback?: Function
 }
 
 export const SearchInput = (props: SearchInputProps) => {
@@ -32,11 +31,11 @@ export const SearchInput = (props: SearchInputProps) => {
 			<div className="absolute text-gray-500 left-0 ml-2 mr-4 my-3 top-0">
 				<SearchIcon className="h-5 w-5" />
 			</div>
-			{props.advancedFiltersVisible && (
-				<div className="absolute text-gray-500 right-0 mr-2 ml-4 my-3 top-0">
+			{props.showMenuButton && (
+				<div className="absolute text-gray-500 right-0 mr-2 ml-4 my-3 -top-0.5">
 					<AdjustmentsIcon
-						onClick={props.onFiltersPress ? () => props.onFiltersPress() : null}
-						className="h-5 w-5"
+						onClick={props.showMenuCallback ? () => props.showMenuCallback() : null}
+						className="h-6 w-6 cursor-pointer text-teal-brand"
 					/>
 				</div>
 			)}
