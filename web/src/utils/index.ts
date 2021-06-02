@@ -29,10 +29,9 @@ export const checkTime = async (): Promise<boolean> => {
 			}
 		}
 
-		const response: ServerResponse = await fetch(
-			`${hostHTTPS}/mis/server-time`,
-			reqOpts
-		).then((res: Response) => res.json())
+		const response: ServerResponse = await fetch(`${hostHTTPS}/mis/server-time`, reqOpts).then(
+			(res: Response) => res.json()
+		)
 
 		const { os_time } = response
 		const client_time = new Date().getTime()
@@ -54,7 +53,7 @@ type ServerResponse = {
 }
 
 export const formatCNIC = (cnic: string): string => {
-	if (cnic === '' || cnic.length < 13) {
+	if (!cnic) {
 		return cnic
 	}
 

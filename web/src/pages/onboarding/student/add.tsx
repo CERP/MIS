@@ -5,6 +5,7 @@ import toast from 'react-hot-toast'
 
 import { isValidPhone } from 'utils/helpers'
 import { createStudentMerge } from 'actions'
+import { PhoneInput } from 'components/input/PhoneInput'
 
 // TODO: move this to single single source of default
 const blankStudent = (): MISStudent => ({
@@ -101,13 +102,11 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({ section }) => {
 				className="tw-input w-full tw-is-form-bg-black"
 			/>
 			<div className="">Contact Number*</div>
-			<input
+			<PhoneInput
 				name="Phone"
-				type="number"
 				onChange={handleInput}
 				value={state.Phone}
 				required
-				placeholder="e.g. 03xxxxxxxx"
 				className="tw-input w-full tw-is-form-bg-black"
 			/>
 

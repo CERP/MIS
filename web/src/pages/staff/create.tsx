@@ -10,7 +10,7 @@ import toast from 'react-hot-toast'
 import { SwitchButton } from 'components/input/switch'
 import { isValidPhone, isValidCNIC } from 'utils/helpers'
 import { createFacultyMerge, deleteFaculty, uploadFacultyProfilePicture } from 'actions'
-import { StaffType } from 'constants/index'
+import { cnicRegex, StaffType } from 'constants/index'
 import { ShowHidePassword } from 'components/password'
 import { hash, formatCNIC } from 'utils'
 import { getImageString, getDownsizedImage } from 'utils/image'
@@ -138,8 +138,11 @@ export const CreateOrUpdateStaff = () => {
 			hash(profile.Password).then(hashed => {
 				dispatch(createFacultyMerge({ ...profile, Password: hashed }))
 			})
-
-			toast.success('New staff has been added.')
+			if (isNewStaff()) {
+				toast.success('New staff has been added.')
+			} else {
+				toast.success('Staff profile has been updated.')
+			}
 
 			setTimeout(() => {
 				setState({ ...state, redirect: '/staff' })
@@ -158,7 +161,7 @@ export const CreateOrUpdateStaff = () => {
 		const { name, value } = event.target
 
 		if (name === 'ManCNIC' || name === 'CNIC') {
-			if (numberRegex.test(value)) {
+			if (value.length <= 15 && cnicRegex.test(value)) {
 				return setState({
 					...state,
 					profile: {
@@ -167,7 +170,7 @@ export const CreateOrUpdateStaff = () => {
 					}
 				})
 			}
-			if (value === '' || value.length === 14) {
+			if (value === '') {
 				return setState({
 					...state,
 					profile: {
@@ -357,11 +360,11 @@ export const CreateOrUpdateStaff = () => {
 						<PhoneInput
 							name="Phone"
 							onChange={handleInput}
-							error={numberRegex.test(profile.Phone) || !(profile.Phone.length <= 11)}
+							error={
+								numberRegex.test(profile.Phone) || !(profile.Phone?.length <= 11)
+							}
 							required
-							type="number"
 							value={profile.Phone}
-							placeholder="e.g. 03xxxxxxxx"
 							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
@@ -603,7 +606,7 @@ export const CreateOrUpdateStaff = () => {
 							className={'w-full items-center tw-btn-blue py-3 font-semibold my-4'}>
 							{isNewStaff() ? 'Save' : 'Update'}
 						</button>
-						{!isNewStaff() && (
+						{!isNewStaff() && id !== faculty_id && (
 							<button
 								type="button"
 								onClick={deleteStaff}

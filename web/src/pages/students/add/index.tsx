@@ -18,7 +18,7 @@ import { getImageString, getDownsizedImage } from 'utils/image'
 
 import { UploadImage } from 'components/image'
 import { PlusButton } from 'components/Button/plus'
-import { numberRegex } from 'constants/index'
+import { cnicRegex, numberRegex } from 'constants/index'
 import { PhoneInput } from 'components/input/PhoneInput'
 
 const blankStudent = (): MISStudent => ({
@@ -78,9 +78,9 @@ export const CreateOrUpdateStudent = () => {
 		? students[id].tags
 			? students[id]
 			: {
-					...students[id],
-					tags: {}
-			  }
+				...students[id],
+				tags: {}
+			}
 		: blankStudent()
 
 	const [state, setState] = useState<State>({
@@ -170,7 +170,7 @@ export const CreateOrUpdateStudent = () => {
 		const { name, value } = event.target
 
 		if (name === 'ManCNIC' || name === 'BForm') {
-			if (numberRegex.test(value)) {
+			if (value.length <= 15 && cnicRegex.test(value)) {
 				return setState({
 					...state,
 					profile: {
@@ -179,7 +179,7 @@ export const CreateOrUpdateStudent = () => {
 					}
 				})
 			}
-			if (value === '' || value.length === 14) {
+			if (value === '') {
 				return setState({
 					...state,
 					profile: {
@@ -400,9 +400,7 @@ export const CreateOrUpdateStudent = () => {
 								numberRegex.test(state.profile.Phone) ||
 								!(state.profile.Phone.length <= 11)
 							}
-							type="number"
-							placeholder="Contact Number is Required"
-							className="w-full bg-transparent tw-input border-blue-brand ring-1"
+							className="w-full tw-input tw-is-form-bg-black"
 						/>
 
 						<div className="text-lg font-semibold text-center">
@@ -439,13 +437,11 @@ export const CreateOrUpdateStudent = () => {
 						<PhoneInput
 							name="AlternatePhone"
 							onChange={handleInput}
-							type="number"
 							error={
 								numberRegex.test(state.profile.AlternatePhone) ||
-								!(state.profile.AlternatePhone.length <= 11)
+								!(state.profile.AlternatePhone?.length <= 11)
 							}
 							value={state.profile.AlternatePhone}
-							placeholder="Type phone #"
 							className="tw-input w-full tw-is-form-bg-black"
 						/>
 

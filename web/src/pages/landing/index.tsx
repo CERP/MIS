@@ -37,6 +37,7 @@ import ContactForm from 'components/Forms/ContactForm'
 export const Landing = () => {
 	const [formOpened, setFormOpened] = useState<boolean>(false)
 	const formRef = useRef(null)
+
 	return (
 		<AppLayout>
 			<div className="w-full mt-10 md:mt-16">
@@ -244,7 +245,7 @@ export const Landing = () => {
 								<img
 									className="w-20	h-20 image hidden md:block"
 									src="/favicon.ico"
-									alt="brand-logo"
+									alt="mischool"
 								/>
 								<div className="text-base hidden md:inline-block font-normal mt-2">
 									<span className="font-semibold">MISchool</span> is a management
@@ -273,11 +274,12 @@ export const Landing = () => {
 								{/* <Link to="/events" className="px-2 text-base hover:underline">
 									Events
 								</Link> */}
-								<Link
-									to="/privacy-policy"
+								<a
+									href="/tos.html"
+									target="_blank"
 									className="px-2 text-base hover:underline">
-									Privacy Policy
-								</Link>
+									Terms of Service
+								</a>
 							</div>
 						</div>
 						<div className="lg:flex mt-4 lg:mx-5 md:m-0 lg:flex-1 hidden">

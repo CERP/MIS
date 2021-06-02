@@ -86,7 +86,7 @@ const Login: React.FC<LoginProps> = ({
 						<div className="flex flex-col items-center md:p-10 space-y-2">
 							<img
 								className="w-16 h-16 md:w-20 md:h-20 p-1 border border-gray-300 rounded-full"
-								src={school.logo || 'favicon.ico'}
+								src={school.logo || '/favicon.ico'}
 								alt="school-logo"
 							/>
 							<div className="font-semibold text-center">{school.name}</div>
@@ -94,10 +94,14 @@ const Login: React.FC<LoginProps> = ({
 							<button
 								disabled={!connected}
 								onClick={() => switchSchoolHandler()}
-								className={clsx('w-full md:w-7/12 tw-btn-red', {
-									'bg-gray-500 pointer-events-none': !connected
-								})}>
-								Switch School
+								className={clsx(
+									'inline-flex items-center text-center w-full tw-btn-red',
+									{
+										'bg-gray-500 pointer-events-none': !connected
+									}
+								)}>
+								<ArrowLeftIcon className="w-5" />
+								<span className="mx-auto">Switch School</span>
 							</button>
 						</div>
 						<div className=""></div>
@@ -157,7 +161,7 @@ const Login: React.FC<LoginProps> = ({
 										</div>
 									</div>
 									{userGroups > 1 && (
-										<div className="flex flex-row items-center justify-center space-x-4">
+										<div className="flex flex-row flex-wrap items-center justify-center space-x-4">
 											{
 												// generating buttons for each user group (panel)
 												// value or index can be both used to highlight the current
@@ -167,7 +171,7 @@ const Login: React.FC<LoginProps> = ({
 														key={index}
 														onClick={() => setUsersGroupIndex(index)}
 														className={clsx(
-															'w-8 h-8 md:h-10 md:w-10 rounded-full text-sm md:text-base md:font-semibold flex items-center justify-center cursor-pointer hover:bg-yellow-400 hover:text-white shadow-md',
+															'w-8 h-8 md:h-10 md:w-10 mt-2 rounded-full text-sm md:text-base md:font-semibold flex items-center justify-center cursor-pointer hover:bg-yellow-400 hover:text-white shadow-md',
 															{
 																'bg-yellow-400 text-white':
 																	index === usersGroupIndex,

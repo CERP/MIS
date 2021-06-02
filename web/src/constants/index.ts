@@ -26,6 +26,7 @@ export enum MISFeeLabels {
 }
 
 export const numberRegex = /^[1-9]\d*$/
+export const cnicRegex = /^[0-9-]*$/
 
 export const DefaultExamGrades = {
 	grades: {

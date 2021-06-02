@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import { shallowEqual, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { PrinterIcon } from '@heroicons/react/outline'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { toTitleCase } from 'utils/toTitleCase'
@@ -10,14 +11,18 @@ import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import UserIconSvg from 'assets/svgs/user.svg'
 import { SearchInput } from 'components/input/search'
 import { AddStickyButton } from 'components/Button/add-sticky'
-import { PrinterIcon } from '@heroicons/react/outline'
 import Paginate from 'components/Paginate'
+import { SwitchButton } from 'components/input/switch'
+import { useComponentVisible } from 'hooks/useComponentVisible'
 
 type State = {
 	searchText: string
 	active: boolean
 	tag: string
 	class: string
+	gender: string
+	searchByAdmissionNo: boolean
+	searchByRollNo: boolean
 }
 
 interface StudentListProps {
@@ -28,12 +33,22 @@ interface StudentListProps {
 export const StudentList = ({ forwardTo, excludeFamilyStudents }: StudentListProps) => {
 	const students = useSelector((state: RootReducerState) => state.db.students, shallowEqual)
 	const classes = useSelector((state: RootReducerState) => state.db.classes, shallowEqual)
+	const searchInputRef = useRef(null)
+
+	const {
+		ref: searchMenuRef,
+		isComponentVisible: showSearchMenu,
+		setIsComponentVisible: setShowSearchMenu
+	} = useComponentVisible(false)
 
 	const [state, setFilter] = useState<State>({
 		active: true,
 		searchText: '',
 		tag: '',
-		class: ''
+		class: '',
+		gender: '',
+		searchByAdmissionNo: false,
+		searchByRollNo: false
 	})
 
 	const getTags = () => {
@@ -65,22 +80,35 @@ export const StudentList = ({ forwardTo, excludeFamilyStudents }: StudentListPro
 	const filteredStudents = Object.values(students ?? {})
 		.filter(s => {
 			const searchString = `${s.Name} ${s.ManName} ${s.FamilyID} ${s.Phone}`.toLowerCase()
+			const searchAdmission = (s.AdmissionNumber ?? '').toLowerCase()
+			const searchRollNo = (s.RollNumber ?? '').toLowerCase()
+			const advanceFilterActive = state.searchByAdmissionNo || state.searchByRollNo
 
 			return (
 				isValidStudent(s) &&
 				s.Active === state.active &&
 				(excludeFamilyStudents ? !s.FamilyID : true) &&
-				(state.searchText ? searchString.includes(state.searchText.toLowerCase()) : true) &&
+				(state.searchByAdmissionNo || state.searchByRollNo
+					? true
+					: state.searchText
+						? searchString.includes(state.searchText.toLowerCase())
+						: true) &&
 				(state.class ? s.section_id === state.class : true) &&
-				(state.tag ? Object.keys(s.tags ?? []).includes(state.tag) : true)
+				(state.tag ? Object.keys(s.tags ?? []).includes(state.tag) : true) &&
+				(state.gender ? state.gender.toLowerCase() === s.Gender.toLowerCase() : true) &&
+				(advanceFilterActive
+					? state.searchByAdmissionNo
+						? searchAdmission.includes(state.searchText.toLowerCase())
+						: searchRollNo.includes(state.searchText.toLowerCase())
+					: true)
 			)
 		})
 		.sort((a, b) => a.Name.localeCompare(b.Name))
 
 	const listItem = (f: MISStudent) => {
-		const forwardToLink = forwardTo || 'profile'
+		const forwardToLink = forwardTo ?? 'profile'
 		return (
-			<Link key={f.id} to={`students/${f.id}/${forwardToLink}`}>
+			<Link key={f.id} to={`/students/${f.id}/${forwardToLink}`}>
 				<Card student={f} sections={sections} />
 			</Link>
 		)
@@ -100,16 +128,75 @@ export const StudentList = ({ forwardTo, excludeFamilyStudents }: StudentListPro
 					Total = {filteredStudents.length}
 				</div> */}
 				<div className="flex flex-col items-center justify-between mt-4 mb-12 space-y-4 md:flex-row md:mb-20 md:space-y-0 md:space-x-60">
-					<SearchInput
-						placeholder="Search by name, fname or phone"
-						className="md:w-9/12"
-						onChange={e => setFilter({ ...state, searchText: e.target.value })}
-					/>
+					<div ref={searchInputRef} className="md:w-9/12 w-full">
+						<SearchInput
+							showMenuButton
+							showMenuCallback={() => setShowSearchMenu(true)}
+							placeholder={
+								'Search by ' +
+								(state.searchByAdmissionNo
+									? 'admission no'
+									: state.searchByRollNo
+										? 'roll number'
+										: 'name, fname or phone')
+							}
+							className="md:w-full"
+							type="text"
+							onChange={e => {
+								setFilter({ ...state, searchText: e.target.value })
+							}}
+						/>
+						{showSearchMenu && (
+							<div
+								ref={searchMenuRef}
+								className="absolute top-2 z-20 space-y-3 bg-gray-600 p-5 rounded-2xl text-white"
+								style={{
+									top: searchInputRef.current
+										? searchInputRef.current.offsetTop +
+										searchInputRef.current.offsetHeight +
+										2
+										: 0,
+									left: searchInputRef.current
+										? searchInputRef.current.offsetLeft
+										: 0,
+									width: searchInputRef.current
+										? searchInputRef.current.offsetWidth
+										: 0
+								}}>
+								<div className="flex flex-1  justify-center items-center">
+									<h1 className="flex-1 text-sm">Search By Admission Number</h1>
+									<SwitchButton
+										state={state.searchByAdmissionNo}
+										callback={() =>
+											setFilter({
+												...state,
+												searchByAdmissionNo: !state.searchByAdmissionNo,
+												searchByRollNo: false
+											})
+										}
+									/>
+								</div>
+								<div className="flex flex-1 justify-center items-center">
+									<h1 className="flex-1 text-sm">Search By Roll Number</h1>
+									<SwitchButton
+										state={state.searchByRollNo}
+										callback={() =>
+											setFilter({
+												...state,
+												searchByRollNo: !state.searchByRollNo,
+												searchByAdmissionNo: false
+											})
+										}
+									/>
+								</div>
+							</div>
+						)}
+					</div>
 					<div className="flex flex-row items-center w-full space-x-2">
 						<select
 							onChange={e => setFilter({ ...state, tag: e.target.value })}
-							className="rounded shadow tw-select text-teal-brand">
-							<option value="">Tag</option>
+							className="w-1/3 rounded shadow tw-select text-teal-brand">
+							<option value="">Tags</option>
 							{getTags().map(tag => (
 								<option key={tag} value={tag}>
 									{tag}
@@ -117,7 +204,15 @@ export const StudentList = ({ forwardTo, excludeFamilyStudents }: StudentListPro
 							))}
 						</select>
 						<select
-							className="rounded shadow tw-select text-teal-brand"
+							className="w-1/3 rounded shadow tw-select text-teal-brand"
+							onChange={e => setFilter({ ...state, gender: e.target.value })}>
+							<option value="">Gender</option>
+							<option value={'Male'}>Male</option>
+							<option value={'Female'}>Female</option>
+							<option value={'Other'}>Other</option>
+						</select>
+						<select
+							className="w-1/3 rounded shadow tw-select text-teal-brand"
 							onChange={e =>
 								setFilter({ ...state, active: e.target.value === 'true' })
 							}>
@@ -126,7 +221,7 @@ export const StudentList = ({ forwardTo, excludeFamilyStudents }: StudentListPro
 						</select>
 						<select
 							onChange={e => setFilter({ ...state, class: e.target.value })}
-							className="w-full rounded shadow tw-select text-teal-brand">
+							className="w-1/3 rounded shadow tw-select text-teal-brand">
 							<option value="">Class</option>
 							{sections
 								.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))

@@ -9,7 +9,7 @@ interface AppLayoutProps {
 }
 
 export const AppLayout: React.FC<AppLayoutProps> = ({ children, title, showHeaderTitle }) => {
-	const docTitle = title ? `${title} | MISchool` : 'MISchool'
+	const docTitle = title ? `${title} | MISchool` : 'MISchool - School Management Software'
 	// set the document title
 	useDocumentTitle(docTitle)
 

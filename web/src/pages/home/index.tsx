@@ -33,16 +33,15 @@ const TabbarContent = [
 
 export const Home = () => {
 	const urlParams = new URLSearchParams(location.search)
-	const h = useHistory()
+	const history = useHistory()
+	const faculty = useSelector((state: RootReducerState) => state.db.faculty)
+	const faculty_id = useSelector((state: RootReducerState) => state.auth.faculty_id)
 
 	const [activeTab, setActiveTab] = useState<number>(
 		parseInt(urlParams.get('active-tab') ?? '1') ?? Tabs.ACTIONS
 	)
 	const biggerThan880 = useMediaPredicate('(min-width: 880px)')
 
-	const faculty = useSelector((state: RootReducerState) => state.db.faculty)
-
-	const faculty_id = useSelector((state: RootReducerState) => state.auth.faculty_id)
 	const { permissions, Admin, SubAdmin } = faculty[faculty_id]
 
 	const renderComponent = () =>
@@ -66,7 +65,7 @@ export const Home = () => {
 			<AppLayout title={'Home' + ' - ' + TabbarContent[activeTab].title}>
 				<Tabbar
 					setTabParams={tab =>
-						h.push({
+						history.push({
 							pathname: location.pathname,
 							search: '?active-tab=' + tab
 						})

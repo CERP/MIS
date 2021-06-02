@@ -1,22 +1,25 @@
 import React, { useState, useMemo } from 'react'
 import clsx from 'clsx'
 import { Transition } from '@headlessui/react'
-import { SearchIcon } from '@heroicons/react/outline'
+import { AdjustmentsIcon, SearchIcon } from '@heroicons/react/outline'
 
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { isValidStudent, isValidTeacher } from 'utils'
-
+import { toTitleCase } from 'utils/toTitleCase'
 import UserIconSvg from 'assets/svgs/user.svg'
-import toTitleCase from 'utils/toTitleCase'
 
-export const SearchInput = (
-	props: React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
-) => {
+interface SearchInputProps
+	extends React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
+	showMenuButton?: boolean
+	showMenuCallback?: Function
+}
+
+export const SearchInput = (props: SearchInputProps) => {
 	return (
 		<div className="relative w-full">
 			<input
-				{...props}
 				type="search"
+				{...props}
 				name="search"
 				className={clsx(
 					props.className,
@@ -28,6 +31,14 @@ export const SearchInput = (
 			<div className="absolute text-gray-500 left-0 ml-2 mr-4 my-3 top-0">
 				<SearchIcon className="h-5 w-5" />
 			</div>
+			{props.showMenuButton && (
+				<div className="absolute text-gray-500 right-0 mr-2 ml-4 my-3 -top-0.5">
+					<AdjustmentsIcon
+						onClick={props.showMenuCallback ? () => props.showMenuCallback() : null}
+						className="h-6 w-6 cursor-pointer text-teal-brand"
+					/>
+				</div>
+			)}
 		</div>
 	)
 }

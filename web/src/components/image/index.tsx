@@ -68,7 +68,7 @@ export const UploadImage = ({
 				</TModal>
 			)}
 			<img
-				className="w-24 h-24 rounded-full object-contain ring-1 ring-white"
+				className="w-24 h-24 rounded-full object-contain ring-1 bg-gray-500"
 				src={src || UserIconSvg}
 				alt="image"
 			/>

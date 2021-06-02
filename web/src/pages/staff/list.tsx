@@ -16,6 +16,7 @@ type State = {
 	isActive: boolean
 	searchText: string
 	tag: string
+	gender: string
 }
 
 export const StaffList = () => {
@@ -24,7 +25,8 @@ export const StaffList = () => {
 	const [state, setState] = useState<State>({
 		isActive: true,
 		searchText: '',
-		tag: ''
+		tag: '',
+		gender: ''
 	})
 
 	const sections = useMemo(() => {
@@ -37,6 +39,7 @@ export const StaffList = () => {
 			return (
 				isValidTeacher(f) &&
 				f.Active === state.isActive &&
+				(state.gender ? f.Gender === state.gender : true) &&
 				(state.searchText ? searchString.includes(state.searchText.toLowerCase()) : true) &&
 				(state.tag ? f?.tags[state.tag] : true)
 			)
@@ -69,16 +72,16 @@ export const StaffList = () => {
 				<Link to="staff/new">
 					<AddStickyButton label="Add new Staff" />
 				</Link>
-				<div className="flex flex-row items-center mt-4 mb-12 md:mb-20 space-x-4 md:space-y-0 md:space-x-60">
+				<div className="flex flex-col items-center justify-between mt-4 mb-12 space-y-4 md:flex-row md:mb-20 md:space-y-0 md:space-x-60">
 					<SearchInput
 						placeholder="Search by name or phone"
-						className="md:w-2/5"
+						className="md:w-4/5"
 						onChange={e => setState({ ...state, searchText: e.target.value })}
 					/>
-					<div className="flex flex-row space-x-2">
+					<div className="flex flex-row items-center w-full space-x-2">
 						<select
 							onChange={e => setState({ ...state, tag: e.target.value })}
-							className="rounded  tw-select shadow text-teal-brand">
+							className="w-1/3 rounded  tw-select shadow text-teal-brand">
 							<option value={''}>Tags</option>
 							{getUniqueTags().map(tag => (
 								<option key={tag} value={tag}>
@@ -87,11 +90,20 @@ export const StaffList = () => {
 							))}
 						</select>
 						<select
+							value={state.gender}
+							onChange={e => setState({ ...state, gender: e.target.value })}
+							className="w-1/3 rounded tw-select shadow text-teal-brand">
+							<option value="">Gender</option>
+							<option value={'male'}>Male</option>
+							<option value={'female'}>Female</option>
+							<option value="other">Other</option>
+						</select>
+						<select
 							value={state.isActive.toString()}
 							onChange={e =>
 								setState({ ...state, isActive: e.target.value === 'true' })
 							}
-							className="rounded tw-select shadow text-teal-brand">
+							className="w-1/3 rounded tw-select shadow text-teal-brand">
 							<option value={'true'}>Active</option>
 							<option value={'false'}>InActive</option>
 						</select>
