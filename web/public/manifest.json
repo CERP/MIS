@@ -13,8 +13,8 @@
 	"theme_color": "#222222",
 	"background_color": "#ffffff",
 	"developer": {
-		"name": "Taimur Shah",
-		"url": "http://cerp.org.pk"
+		"name": "CERP Labs",
+		"url": "http://labs.cerp.org.pk"
 	},
 	"offline_enabled": true,
 	"permissions": [
