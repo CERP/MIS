@@ -86,7 +86,7 @@ const Login: React.FC<LoginProps> = ({
 						<div className="flex flex-col items-center md:p-10 space-y-2">
 							<img
 								className="w-16 h-16 md:w-20 md:h-20 p-1 border border-gray-300 rounded-full"
-								src={school.logo || 'favicon.ico'}
+								src={school.logo || '/favicon.ico'}
 								alt="school-logo"
 							/>
 							<div className="font-semibold text-center">{school.name}</div>
@@ -94,10 +94,14 @@ const Login: React.FC<LoginProps> = ({
 							<button
 								disabled={!connected}
 								onClick={() => switchSchoolHandler()}
-								className={clsx('w-full md:w-7/12 tw-btn-red', {
-									'bg-gray-500 pointer-events-none': !connected
-								})}>
-								Switch School
+								className={clsx(
+									'inline-flex items-center text-center w-full tw-btn-red',
+									{
+										'bg-gray-500 pointer-events-none': !connected
+									}
+								)}>
+								<ArrowLeftIcon className="w-5" />
+								<span className="mx-auto">Switch School</span>
 							</button>
 						</div>
 						<div className=""></div>
