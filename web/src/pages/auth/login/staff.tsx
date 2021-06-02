@@ -157,7 +157,7 @@ const Login: React.FC<LoginProps> = ({
 										</div>
 									</div>
 									{userGroups > 1 && (
-										<div className="flex flex-row items-center justify-center space-x-4">
+										<div className="flex flex-row flex-wrap items-center justify-center space-x-4">
 											{
 												// generating buttons for each user group (panel)
 												// value or index can be both used to highlight the current
@@ -167,7 +167,7 @@ const Login: React.FC<LoginProps> = ({
 														key={index}
 														onClick={() => setUsersGroupIndex(index)}
 														className={clsx(
-															'w-8 h-8 md:h-10 md:w-10 rounded-full text-sm md:text-base md:font-semibold flex items-center justify-center cursor-pointer hover:bg-yellow-400 hover:text-white shadow-md',
+															'w-8 h-8 md:h-10 md:w-10 mt-2 rounded-full text-sm md:text-base md:font-semibold flex items-center justify-center cursor-pointer hover:bg-yellow-400 hover:text-white shadow-md',
 															{
 																'bg-yellow-400 text-white':
 																	index === usersGroupIndex,
