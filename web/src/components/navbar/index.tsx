@@ -1,9 +1,15 @@
 import React from 'react'
 import clsx from 'clsx'
+import { useDispatch, useSelector } from 'react-redux'
 import { Menu, Transition } from '@headlessui/react'
 import { Link, useHistory, useLocation } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
-import { ArrowLeftIcon } from '@heroicons/react/outline'
+import {
+	ArrowLeftIcon,
+	ExclamationIcon,
+	LogoutIcon,
+	QuestionMarkCircleIcon,
+	UserCircleIcon
+} from '@heroicons/react/outline'
 
 import { createLogout } from 'actions'
 
@@ -16,9 +22,11 @@ export const AppHeader = ({ title }: AppHeaderProps) => {
 	const location = useLocation()
 	const history = useHistory()
 
-	const { auth } = useSelector((state: RootReducerState) => state)
+	const authToken = useSelector((state: RootReducerState) => state.auth.token)
+	const loggedUserId = useSelector((state: RootReducerState) => state.auth.faculty_id)
+	const alertBanner = useSelector((state: RootReducerState) => state.alert_banner)
 
-	const isUserLogged = auth?.token && auth?.faculty_id
+	const isUserLogged = authToken && loggedUserId
 
 	const handleLogout = () => {
 		dispatch(createLogout())
@@ -55,13 +63,22 @@ export const AppHeader = ({ title }: AppHeaderProps) => {
 										<img
 											className="w-10 h-10 image"
 											src="/favicon.ico"
-											alt="brand-logo"
+											alt="mischool"
 										/>
 									</Link>
 								)}
 
 								{title && (
 									<div className="text-lg font-semibold text-white">{title}</div>
+								)}
+
+								{alertBanner && !title && location.pathname === '/home' && (
+									<Link
+										to="/device-time"
+										className="inline-flex items-center text-white font-semibold p-2 bg-red-brand rounded-full text-xs shadow-md">
+										<ExclamationIcon className="w-5 mr-2 animate-pulse" />
+										<span>{alertBanner}</span>
+									</Link>
 								)}
 
 								<Menu.Button
@@ -91,47 +108,63 @@ export const AppHeader = ({ title }: AppHeaderProps) => {
 								</Menu.Button>
 							</div>
 							{isUserLogged ? (
-								<div className="relative inline-block text-left">
-									<Transition
-										show={openMenu}
-										enter="transition ease-out duration-100"
-										enterFrom="transform opacity-0 scale-95"
-										enterTo="transform opacity-100 scale-100"
-										leave="transition ease-in duration-75"
-										leaveFrom="transform opacity-100 scale-100"
-										leaveTo="transform opacity-0 scale-95">
-										<Menu.Items
-											static
-											className="absolute z-50 origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg outline-none right-2 w-44 -top-2 md:top-6">
-											<div className="py-1">
-												<Menu.Item>
-													<Link
-														to={`/staff/${auth?.faculty_id}/profile`}
-														className={
-															'text-gray-700 flex justify-between w-full px-4 py-2 text-sm leading-5 text-left'
-														}>
-														View Profile
-													</Link>
-												</Menu.Item>
-											</div>
-											<div className="py-1">
-												<Menu.Item>
-													<button
-														onClick={handleLogout}
-														className="flex justify-between w-full px-4 py-2 text-sm leading-5 text-left text-gray-700">
-														Logout
-													</button>
-												</Menu.Item>
-											</div>
-										</Menu.Items>
-									</Transition>
-								</div>
+								<Transition
+									as="div"
+									show={openMenu}
+									enter="transition ease-out duration-100"
+									enterFrom="transform opacity-0 scale-95"
+									enterTo="transform opacity-100 scale-100"
+									leave="transition ease-in duration-75"
+									leaveFrom="transform opacity-100 scale-100"
+									leaveTo="transform opacity-0 scale-95"
+									className="relative inline-block text-left">
+									<Menu.Items
+										static
+										className="absolute z-50 origin-top-right text-gray-700 bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg outline-none right-2 w-44 -top-2 md:top-6">
+										<div className="py-1">
+											<Menu.Item>
+												<Link
+													to={`/staff/${loggedUserId}/profile`}
+													className={
+														'inline-flex items-center w-full px-4 py-2 text-sm leading-5 hover:bg-gray-200'
+													}>
+													<UserCircleIcon className="w-5" />
+													<span className="ml-2">View Profile</span>
+												</Link>
+											</Menu.Item>
+										</div>
+										<div className="py-1">
+											<Menu.Item>
+												<Link
+													to="/help"
+													className={
+														'inline-flex items-center w-full px-4 py-2 text-sm leading-5 hover:bg-gray-200'
+													}>
+													<QuestionMarkCircleIcon className="w-5" />
+													<span className="ml-2">Help</span>
+												</Link>
+											</Menu.Item>
+										</div>
+										<div className="py-1">
+											<Menu.Item>
+												<button
+													onClick={handleLogout}
+													className={
+														'inline-flex items-center w-full px-4 py-2 text-sm leading-5 hover:bg-gray-200'
+													}>
+													<LogoutIcon className="w-5" />
+													<span className="ml-2">Logout</span>
+												</button>
+											</Menu.Item>
+										</div>
+									</Menu.Items>
+								</Transition>
 							) : (
 								<Menu.Items
 									as={'div'}
 									static
 									className={clsx(
-										'flex-col flex-grow pb-4 md:pb-0 md:flex md:justify-end md:flex-row flex',
+										'flex-col flex-grow pb-4 md:pb-0 md:flex md:justify-end md:flex-row flex outline-none',
 										openMenu ? 'flex' : 'hidden'
 									)}>
 									<Link
@@ -153,14 +186,14 @@ export const AppHeader = ({ title }: AppHeaderProps) => {
 										to={
 											isUserLogged
 												? '/home'
-												: auth.token
+												: authToken
 													? '/staff-login'
 													: '/school-login'
 										}
 										className="px-4 py-2 mt-2 bg-transparent rounded-lg md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 md:bg-gray-100 hover:bg-gray-200 focus:bg-gray-100 focus:outline-none focus:shadow-outline">
 										{isUserLogged
 											? 'Go Home'
-											: auth.token
+											: authToken
 												? 'Staff Login'
 												: 'Login'}
 									</Link>
