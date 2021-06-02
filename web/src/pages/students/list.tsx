@@ -75,8 +75,8 @@ export const StudentList = ({ forwardTo, excludeFamilyStudents }: StudentListPro
 	const filteredStudents = Object.values(students ?? {})
 		.filter(s => {
 			const searchString = `${s.Name} ${s.ManName} ${s.FamilyID} ${s.Phone}`.toLowerCase()
-			const searchAdmission = s.AdmissionNumber ?? ''.toLowerCase()
-			const searchRollNo = s.RollNumber ?? ''.toLowerCase()
+			const searchAdmission = (s.AdmissionNumber ?? '').toLowerCase()
+			const searchRollNo = (s.RollNumber ?? '').toLowerCase()
 			const advanceFilterActive = state.admissionFilter || state.rollNoFilter
 
 			return (
@@ -103,7 +103,7 @@ export const StudentList = ({ forwardTo, excludeFamilyStudents }: StudentListPro
 	const listItem = (f: MISStudent) => {
 		const forwardToLink = forwardTo || 'profile'
 		return (
-			<Link key={f.id} to={`students/${f.id}/${forwardToLink}`}>
+			<Link key={f.id} to={`/students/${f.id}/${forwardToLink}`}>
 				<Card student={f} sections={sections} />
 			</Link>
 		)
@@ -129,9 +129,9 @@ export const StudentList = ({ forwardTo, excludeFamilyStudents }: StudentListPro
 							onFiltersPress={() => setAdvancedFiltersopened(val => !val)}
 							placeholder="Search by name, fname or phone"
 							className="md:w-full"
+							type="text"
 							onChange={e => {
 								setFilter({ ...state, searchText: e.target.value })
-								console.log(searchInputRef.current?.offsetWidth)
 							}}
 						/>
 						<Transition
