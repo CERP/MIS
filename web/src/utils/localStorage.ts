@@ -1,12 +1,12 @@
 import { v4 } from 'node-uuid'
 import requestFS from './requestFS'
-import { defaultExams } from '../modules/Settings';
-import moment from "moment"
+import { defaultExams } from '../modules/Settings'
+import moment from 'moment'
 
 const defaultTemplates = () => ({
-	attendance: "$NAME has been marked $STATUS",
-	fee: "$NAME has paid $AMOUNT Rs, Your remaining Balance is $BALANCE Rs",
-	result: "Report is ready for $NAME:\n $REPORT"
+	attendance: '$NAME has been marked $STATUS',
+	fee: '$NAME has paid $AMOUNT Rs, Your remaining Balance is $BALANCE Rs',
+	result: 'Report is ready for $NAME:\n $REPORT'
 })
 
 const initState: RootReducerState = {
@@ -22,7 +22,7 @@ const initState: RootReducerState = {
 	lastSnapshot: 0,
 	db: {
 		faculty: {},
-		users: {}, // username: passwordhash, permissions, etc.  
+		users: {}, // username: passwordhash, permissions, etc.
 		students: {},
 		classes: {}, // id: { name, class, teacher_id, subjects: { name: 1 } },
 		sms_templates: defaultTemplates(),
@@ -33,7 +33,7 @@ const initState: RootReducerState = {
 			sms_history: {}
 		},
 		assets: {
-			schoolLogo: ""
+			schoolLogo: ''
 		},
 		package_info: {
 			date: -1,
@@ -67,13 +67,14 @@ const initState: RootReducerState = {
 	sign_up_form: {
 		loading: false,
 		succeed: false,
-		reason: ""
+		reason: ''
 	},
 	ilmxLessons: {
 		isLoading: false,
 		hasError: false
 	},
 	targeted_instruction: {
+		quizzes: {} as TIPQuizzes,
 		tests: {},
 		slo_mapping: {},
 		curriculum: {} as TIPCurriculum
@@ -82,13 +83,13 @@ const initState: RootReducerState = {
 
 export const loadDB = () => {
 	try {
-		const serialized = localStorage.getItem('db');
+		const serialized = localStorage.getItem('db')
 		if (serialized === null) {
 			console.log('null')
-			return initState;
+			return initState
 		}
 
-		const prev = JSON.parse(serialized);
+		const prev = JSON.parse(serialized)
 		const client_id = localStorage.getItem('client_id') || prev.client_id || v4()
 		// but should we make sure that fields that are no longer in the initState db are deleted?
 		const merged = {
@@ -103,7 +104,7 @@ export const loadDB = () => {
 			sign_up_form: {
 				loading: false,
 				succeed: false,
-				reason: ""
+				reason: ''
 			}
 		}
 
@@ -113,45 +114,39 @@ export const loadDB = () => {
 			try {
 				const next = curr(agg)
 				if (next === undefined) {
-					return agg;
+					return agg
 				}
-				return next;
-			}
-			catch (e) {
+				return next
+			} catch (e) {
 				console.error(e)
-				return agg;
+				return agg
 			}
-		}, merged);
+		}, merged)
 
-		return updatedDB;
-	}
-	catch (err) {
+		return updatedDB
+	} catch (err) {
 		console.error(err)
-		return undefined;
+		return undefined
 	}
 }
 
 export const saveDB = (db: RootReducerState) => {
 	try {
-		const json = JSON.stringify(db);
+		const json = JSON.stringify(db)
 		localStorage.setItem('db', json)
-		localStorage.setItem("client_id", db.client_id)
-	}
-	catch (err) {
+		localStorage.setItem('client_id', db.client_id)
+	} catch (err) {
 		console.error(err)
 	}
 
 	try {
-		saveDbToFilesystem(db);
-	}
-	catch (e) {
+		saveDbToFilesystem(db)
+	} catch (e) {
 		console.error(e)
 	}
-
 }
 
 const saveDbToFilesystem = (db: RootReducerState) => {
-
 	requestFS(20)
 		.then((fs: any) => {
 			//console.log('got fs');
@@ -159,65 +154,65 @@ const saveDbToFilesystem = (db: RootReducerState) => {
 		.catch((err: any) => {
 			//console.error(err)
 		})
-
 }
 
 const checkPersistent = () => {
 	// check and request persistent storage
 	if (navigator.storage && navigator.storage.persist) {
-		navigator.storage.persist()
+		navigator.storage
+			.persist()
 			.then(persist => {
-				console.log("PERSIST!!!!", persist)
+				console.log('PERSIST!!!!', persist)
 			})
 			.catch(err => console.error(err))
 
-		navigator.storage.persisted()
-			.then(persistent => {
-				if (persistent) {
-					console.log('persistent storage activated')
-				}
-				else {
-					console.log('persistent storage denied')
-				}
-			})
+		navigator.storage.persisted().then(persistent => {
+			if (persistent) {
+				console.log('persistent storage activated')
+			} else {
+				console.log('persistent storage denied')
+			}
+		})
 
-		navigator.storage.estimate()
-			.then(estimate => console.log("ESTIMATE!!", estimate))
+		navigator.storage
+			.estimate()
+			.then(estimate => console.log('ESTIMATE!!', estimate))
 			.catch(err => console.error(err))
-	}
-	else {
+	} else {
 		console.log('no navigator.storage or navigator.storage.persist')
 	}
 }
 
-checkPersistent();
+checkPersistent()
 
 // add faculty_id to the auth field if it doesn't exist.
 const addFacultyID = (state: RootReducerState) => {
-
 	if (state.auth.faculty_id !== undefined) {
-		console.log("not running addFacultyID script")
-		return state;
+		console.log('not running addFacultyID script')
+		return state
 	}
-	console.log("running addFacultyID script")
+	console.log('running addFacultyID script')
 
-	const faculty = Object.values(state.db.faculty).find(f => f.Name === state.auth.name);
+	const faculty = Object.values(state.db.faculty).find(f => f.Name === state.auth.name)
 
-	state.auth.faculty_id = faculty.id;
+	state.auth.faculty_id = faculty.id
 
-	return state;
+	return state
 }
 
 const checkPermissions = (state: RootReducerState) => {
-
 	const permission = state.db.faculty[state.auth.faculty_id].permissions
 
-	if (permission.dailyStats !== undefined && permission.fee !== undefined &&
-		permission.setupPage !== undefined && permission.expense !== undefined) {
-		console.log("NOT Running Permission Scripts")
+	if (
+		permission.dailyStats !== undefined &&
+		permission.fee !== undefined &&
+		permission.setupPage !== undefined &&
+		permission.expense !== undefined
+	) {
+		console.log('NOT Running Permission Scripts')
 		return state
 	}
-	console.log("Running Permissions Scripts");
+	console.log('Running Permissions Scripts')
 
 	state.db.faculty[state.auth.faculty_id] = {
 		...state.db.faculty[state.auth.faculty_id],
@@ -231,16 +226,16 @@ const checkPermissions = (state: RootReducerState) => {
 			...state.db.faculty[state.auth.faculty_id].permissions
 		}
 	}
-	return state;
+	return state
 }
 
 const checkGrades = (state: RootReducerState) => {
 	if (state.db.settings.exams) {
-		console.log("Not Running Grades Script")
+		console.log('Not Running Grades Script')
 		return state
 	}
 
-	console.log("Running Grades Script")
+	console.log('Running Grades Script')
 	state.db.settings = {
 		...state.db.settings,
 		exams: defaultExams
@@ -251,8 +246,4 @@ const checkGrades = (state: RootReducerState) => {
 
 // this modifies db in case any schema changes have happened
 // which means i should maybe version the client db formally...
-const onLoadScripts = [
-	addFacultyID,
-	checkPermissions,
-	checkGrades
-];
+const onLoadScripts = [addFacultyID, checkPermissions, checkGrades]

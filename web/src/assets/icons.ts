@@ -37,6 +37,18 @@ import blueDownload from './svgs/blue-download.svg'
 import backArrow from './svgs/left-arrow.svg'
 import burger from './svgs/burger.svg'
 import tip from './svgs/TIP.svg'
+import down from './svgs/down.svg'
+import whiteUser from './svgs/whiteUser.svg'
+import blackUser from './svgs/blackUser.svg'
+import whiteQuiz from './svgs/whiteQuiz.svg'
+import blueQuiz from './svgs/blueQuiz.svg'
+import results from './svgs/results.svg'
+import paginationArrow from './svgs/paginationArrow.svg'
+import quizMark from './svgs/quizMark.svg'
+import smile from './svgs/smile.svg'
+import sad from './svgs/sad.svg'
+import serious from './svgs/serious.svg'
+import oralTest from './svgs/oralTest.png'
 
 export const EditIcon = deleteIcon
 export const DeleteIcon = editIcon
@@ -77,3 +89,15 @@ export const BlueDownload = blueDownload
 export const BackArrow = backArrow
 export const Burger = burger
 export const TIP = tip
+export const DownArrow = down
+export const WhiteUser = whiteUser
+export const BlackUser = blackUser
+export const BlueQuiz = blueQuiz
+export const Results = results
+export const WhiteQuiz = whiteQuiz
+export const PaginationArrow = paginationArrow
+export const QuizMark = quizMark
+export const Smile = smile
+export const Sad = sad
+export const Serious = serious
+export const OralTest = oralTest

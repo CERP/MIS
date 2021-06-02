@@ -489,6 +489,7 @@ const convertCSVToStudents = (studentImportCSV: string) => {
 				certificates: {},
 				targeted_instruction: {
 					results: {},
+					quiz_result: {} as TIPQuizReport,
 					learning_level: {}
 				}
 			}

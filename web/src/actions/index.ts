@@ -715,6 +715,81 @@ export const mergeTIPResult = (
 	)
 }
 
+type QuizResult = {
+	[std_id: string]: number
+}
+
+export const saveTIPQuizResult = (
+	quiz_result: QuizResult,
+	quiz_id: string,
+	total_marks: number,
+	grade: TIPLevels,
+	subject: TIPSubjects
+) => (dispatch: Function) => {
+	const merges = Object.entries(quiz_result).reduce((agg, [student_id, obtained_marks]) => {
+		return [
+			...agg,
+			{
+				path: [
+					'db',
+					'students',
+					student_id,
+					'targeted_instruction',
+					'quiz_result',
+					grade,
+					subject,
+					quiz_id,
+					'obtained_marks'
+				],
+				value: obtained_marks
+			},
+			{
+				path: [
+					'db',
+					'students',
+					student_id,
+					'targeted_instruction',
+					'quiz_result',
+					grade,
+					subject,
+					quiz_id,
+					'total_marks'
+				],
+				value: total_marks
+			}
+		]
+	}, [])
+	dispatch(createMerges(merges))
+}
+
+export const resetTIPQuizResult = (
+	quiz_result: QuizResult,
+	quiz_id: string,
+	grade: TIPLevels,
+	subject: TIPSubjects
+) => (dispatch: Function) => {
+	const merges = Object.keys(quiz_result).reduce((agg, student_id) => {
+		return [
+			...agg,
+			{
+				path: [
+					'db',
+					'students',
+					student_id,
+					'targeted_instruction',
+					'quiz_result',
+					grade,
+					subject,
+					quiz_id,
+					'obtained_marks'
+				],
+				value: 0
+			}
+		]
+	}, [])
+	dispatch(createMerges(merges))
+}
+
 export const resetStudentLearningLevel = (student_id: string, subject: TIPSubjects) => (
 	dispatch: Function
 ) => {
@@ -766,6 +841,49 @@ export const lessonPlanTaken = (
 					'taken'
 				],
 				value: value
+			}
+		])
+	)
+}
+
+export const quizTaken = (faculty_id: string, quiz_id: string, value: boolean) => (
+	dispatch: Function
+) => {
+	dispatch(
+		createMerges([
+			{
+				path: [
+					'db',
+					'faculty',
+					faculty_id,
+					'targeted_instruction',
+					'quizzes',
+					quiz_id,
+					'taken'
+				],
+				value: value
+			}
+		])
+	)
+}
+
+export const clearLessonPlans = (
+	faculty_id: string,
+	learning_level_id: string,
+	subject: string
+) => (dispatch: Function) => {
+	dispatch(
+		createDeletes([
+			{
+				path: [
+					'db',
+					'faculty',
+					faculty_id,
+					'targeted_instruction',
+					'curriculum',
+					learning_level_id,
+					subject
+				]
 			}
 		])
 	)
@@ -1276,24 +1394,53 @@ export const removeSubjectFromDatesheet = (id: string, subj: string, section_id:
 }
 
 export const resetFees = (students: MISStudent[]) => (dispatch: Function) => {
-	let deletes_fees = []
-	let deletes_payments = []
+	const { deletes, merges } = (students || []).reduce(
+		(agg, curr) => {
+			// Make sure create merges for fees and payments
+			// If fees exist to avoid unnecessary dispatch deletes action
+			if (
+				(curr.fees && Object.keys(curr.fees).length > 0) ||
+				(curr.payments && Object.keys(curr.payments).length > 0)
+			) {
+				return {
+					deletes: [
+						...agg.deletes,
+						{
+							path: ['db', 'students', curr.id, 'fees']
+						},
+						{
+							path: ['db', 'students', curr.id, 'payments']
+						}
+					],
+					merges: [
+						...agg.merges,
+						{
+							path: ['db', 'students', curr.id, 'fees'],
+							value: {}
+						},
+						{
+							path: ['db', 'students', curr.id, 'payments'],
+							value: {}
+						}
+					]
+				}
+			}
+			return agg
+		},
+		{ deletes: [], merges: [] }
+	)
 
-	for (const s of Object.values(students)) {
-		for (const fid of Object.keys(s.fees)) {
-			deletes_fees.push({
-				path: ['db', 'students', s.id, 'fees', fid]
-			})
-		}
-
-		for (const pid of Object.keys(s.payments)) {
-			deletes_payments.push({
-				path: ['db', 'students', s.id, 'payments', pid]
-			})
-		}
+	if (deletes.length > 0) {
+		dispatch(createDeletes(deletes))
 	}
 
-	dispatch(createDeletes([...deletes_fees, ...deletes_payments]))
+	// here need to create merge because deleting path, removes fees and payments keys from
+	// student profile. To prevent this, have to create merge action as well.
+	// Recently it causes bugs in single student profile and possible, it will create issues in
+	// other places of app where fees or payment are being processed.
+	if (merges.length > 0) {
+		dispatch(createMerges(merges))
+	}
 }
 
 export const RESET_ADMIN_PASSWORD = 'RESET_ADMIN_PASSWORD'

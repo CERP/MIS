@@ -52,13 +52,19 @@ module.exports = {
 				'blue-50': '#7BACAE',
 				'red-250': '#FF9191',
 				'green-250': '#C6EFCE',
-				'yellow-250': '#FFEB9C'
+				'yellow-250': '#FFEB9C',
+				'yellow-250': '#FFEB9C',
+				'gray-50': '#858585',
+				'red-50': '#D93025'
 			},
 			screens: {
 				print: { raw: 'print' }
 			},
 			transitionProperty: {
 				height: 'max-height'
+			},
+			screens: {
+				print: { raw: 'print' }
 			}
 		},
 		spacing: {

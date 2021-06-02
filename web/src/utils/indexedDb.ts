@@ -75,6 +75,7 @@ export const initState: RootReducerState = {
 		hasError: false
 	},
 	targeted_instruction: {
+		quizzes: {} as TIPQuizzes,
 		tests: {},
 		slo_mapping: {},
 		curriculum: {} as TIPCurriculum

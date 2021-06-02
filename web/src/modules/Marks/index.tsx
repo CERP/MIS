@@ -320,7 +320,7 @@ class Reports extends Component<propsType, S> {
 							<fieldset>
 								<legend>{exam_title.toUpperCase()}</legend>
 								<div className="exams-table">
-									<div className="table-row table-header">
+									<div className="mis-table-row table-header">
 										<div className="thead cell">Subject</div>
 										<div className="thead cell">Max Score</div>
 										<div className="thead cell">Date</div>
@@ -332,7 +332,7 @@ class Reports extends Component<propsType, S> {
 										.filter(exam => exam.name === exam_title)
 										.sort((a, b) => a.subject.localeCompare(b.subject))
 										.map(exam => (
-											<div className="table-row" key={exam.id}>
+											<div className="mis-table-row" key={exam.id}>
 												<div className="cell">
 													<Link
 														to={`/reports/${exam.class_id}/${exam.section_id}/exam/${exam.id}`}>

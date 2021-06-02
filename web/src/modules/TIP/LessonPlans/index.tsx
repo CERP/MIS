@@ -1,24 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
+import { connect } from 'react-redux'
+import { RouteComponentProps } from 'react-router-dom'
 import Headings from '../Headings'
 import Levels from '../Levels'
 import Card from '../Card'
 import Subjects from '../Subjects'
 
 interface P {
+	targeted_instruction: RootReducerState['targeted_instruction']
 }
 
-const LessonPlans: React.FC<P> = () => {
-	const [class_name, setClassName] = useState('');
+type PropsType = P & RouteComponentProps
 
-	return <div className="flex flex-wrap content-between">
-		<Card class_name={class_name} subject='' lesson_name='' lesson_no='' />
-		<Headings heading="Lesson Plans" sub_heading={class_name ? "Select the subject you want to evaluate" : "Select the Group"} />
-		{class_name ?
-			<Subjects class_name={class_name} section_id='' /> :
-			<Levels
-				setSectionId={setClassName}
-			/>}
-	</div>
+const LessonPlans: React.FC<PropsType> = ({ match, targeted_instruction }) => {
+	const [class_name, setClassName] = useState('')
+	const url = match.url.split('/')
+
+	return (
+		<div className="flex flex-wrap content-between mt-20">
+			<Card class_name={class_name} />
+			<Headings
+				heading="Lesson Plans"
+				sub_heading={
+					class_name ? 'Select the subject you want to evaluate' : 'Select the Group'
+				}
+			/>
+			{class_name ? (
+				<Subjects
+					class_name={class_name}
+					url={url}
+					targeted_instruction={targeted_instruction}
+				/>
+			) : (
+				<Levels setSectionId={setClassName} />
+			)}
+		</div>
+	)
 }
 
-export default LessonPlans
+export default connect((state: RootReducerState) => ({
+	targeted_instruction: state.targeted_instruction
+}))(LessonPlans)

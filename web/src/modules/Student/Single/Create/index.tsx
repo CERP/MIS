@@ -60,11 +60,7 @@ const blankStudent = (): MISStudent => ({
 	tags: {},
 	exams: {},
 	certificates: {},
-	prospective_section_id: '',
-	targeted_instruction: {
-		results: {},
-		learning_level: {}
-	}
+	prospective_section_id: ''
 })
 // should be a dropdown of choices. not just teacher or admin.
 
@@ -123,10 +119,12 @@ class SingleStudent extends Component<propTypes, S> {
 					tags: {}
 				}
 
-		console.log('See the students', student)
-
 		this.state = {
-			profile: student,
+			// just making sure fee and payment should be there as {} or any other undefined shouldn't exist
+			profile: {
+				...blankStudent(),
+				...student
+			},
 			redirect: false,
 			show_camera: false,
 			banner: {
@@ -525,9 +523,9 @@ class SingleStudent extends Component<propTypes, S> {
 		const names = new Set<string>()
 
 		Object.values(this.props.students)
-			.filter(s => s.id && s.Name)
+			.filter(s => s?.id && s?.Name)
 			.forEach(s => {
-				Object.values(s.fees).forEach(f => names.add(f.name))
+				Object.values(s.fees || {}).forEach(f => names.add(f.name))
 			})
 
 		return names
@@ -1241,7 +1239,6 @@ class SingleStudent extends Component<propTypes, S> {
 								</div>
 							</div>
 						)}
-						{console.log('INSIDE RENDER', this.state)}
 						{this.state.show_hide_fee &&
 							(admin || (this.props.user && this.props.user.permissions.fee)) &&
 							!prospective ? (

@@ -54,7 +54,7 @@ export const ClassResultSheet = (props: PropsTypes) => {
 										className="result-sheet"
 										style={{
 											width: `${widthForSubjectName}}%`,
-											lineHeight: 1,
+											lineHeight: 1
 										}}>
 										{exam.subject} <br /> ( {exam.total_score} ){' '}
 									</th>
@@ -72,9 +72,9 @@ export const ClassResultSheet = (props: PropsTypes) => {
 								<td>{toTitleCase(student.name)}</td>
 								{props.relevant_exams
 									.sort((a, b) => a.date - b.date)
-									.map((exam) => {
+									.map(exam => {
 										const aug_exam = student.merge_exams.find(
-											(x) => x.id === exam.id
+											x => x.id === exam.id
 										)
 										if (aug_exam === undefined) {
 											return (

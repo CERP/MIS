@@ -1,36 +1,18 @@
-export const getSubjectsFromTests = (targeted_instruction: RootReducerState["targeted_instruction"]): string[] => {
-	const subjects = Object.values(targeted_instruction.tests).reduce((agg, test) => {
+export const getSubjectsFromTests = (
+	targeted_instruction: RootReducerState['targeted_instruction']
+): string[] => {
+	const subjects = Object.values(targeted_instruction?.tests ?? {}).reduce((agg, test) => {
 		if (test.subject !== '') {
-			return [
-				...agg,
-				test.subject
-			]
+			return [...agg, test.subject]
 		}
 	}, [])
 	return [...new Set(subjects)]
 }
 
-/**
- * Gives an array of all the grades (TIPLevels) that are available based on the targeted instruction tests
- * NOT including diagnostic test
- * @param targeted_instruction 
- */
-export const getGradesFromTests = (targeted_instruction: RootReducerState["targeted_instruction"]): TIPLevels[] => {
-
-	// note that unique_levels will have a key which is a TIPLevels type (level 0, level 1, ... etc)
-	const unique_levels = Object.values(targeted_instruction.tests)
-		.filter(t => t.type !== "Diagnostic")
-		.reduce<Record<TIPLevels, number>>((agg, test) => {
-			return {
-				...agg,
-				[test.grade as TIPLevels]: 1
-			}
-		}, {} as Record<TIPLevels, number>)
-
-	return Object.keys(unique_levels) as TIPLevels[]
-}
-
-export const getClassnameFromSectionId = (sortedSections: AugmentedSection[], sectionId: string) => {
+export const getClassnameFromSectionId = (
+	sortedSections: AugmentedSection[],
+	sectionId: string
+) => {
 	return sortedSections.reduce((agg: string, section: AugmentedSection) => {
 		if (section.id === sectionId) {
 			return section.className
@@ -39,29 +21,29 @@ export const getClassnameFromSectionId = (sortedSections: AugmentedSection[], se
 	}, '')
 }
 
-export const getStudentsBySectionId = (sectionId: string, students: RootDBState["students"]) => {
-	return students = Object.values(students)
-		.reduce<RootDBState["students"]>((agg, student) => {
-			if (student.section_id === sectionId) {
-				return {
-					...agg,
-					[student.id]: student
-				}
+export const getStudentsBySectionId = (sectionId: string, students: RootDBState['students']) => {
+	return (students = Object.values(students).reduce<RootDBState['students']>((agg, student) => {
+		if (student.section_id === sectionId) {
+			return {
+				...agg,
+				[student.id]: student
 			}
-			return agg
-		}, {})
+		}
+		return agg
+	}, {}))
 }
 
 /**
  * Gets all students who are part of a TIPGrade (KG, 1, 2, 3)
- * @param students 
- * @param group 
- * @param subject 
+ * @param students
+ * @param group
+ * @param subject
  */
-export const getStudentsByGroup = (students: RootDBState["students"], group: TIPGrades, subject: string) => {
-
-	console.log(students, subject, group)
-
+export const getStudentsByGroup = (
+	students: RootDBState['students'],
+	group: TIPGrades,
+	subject: string
+) => {
 	return Object.values(students)
 		.filter(s => s.targeted_instruction)
 		.filter(s => s.targeted_instruction.learning_level)
@@ -69,36 +51,11 @@ export const getStudentsByGroup = (students: RootDBState["students"], group: TIP
 		.filter(s => s.targeted_instruction.learning_level[subject].grade === group)
 }
 
-export const getPDF = (selectedSubject: string, selectedSection: string, targeted_instruction: RootReducerState["targeted_instruction"], type: string) => {
-	let url, id
-	let misTest = targeted_instruction.tests
-	for (let [test_id, obj] of Object.entries(misTest)) {
-		if (obj.grade.substring(obj.grade.length - 1) === selectedSection.substring(selectedSection.length - 1) &&
-			obj.subject === selectedSubject && obj.type === type) {
-			url = obj.pdf_url
-			id = test_id
-			break
-		} else {
-			url = ''
-			id = ''
-		}
-	}
-	return [id, url]
-}
-
-export const getQuestionList = (diagnostic_result: MISStudent["targeted_instruction"]["results"], test_id: string) => {
-	return Object.entries(diagnostic_result)
-		.reduce((agg, [id, test]) => {
-			if (id === test_id) {
-				return test
-			}
-			return agg
-		}, {})
-}
-
-export const calculateResult = (students: RootDBState["students"], sub: string) => {
+export const calculateResult = (students: RootDBState['students'], sub: string) => {
 	return Object.entries(students).reduce<DiagnosticRes>((agg, [std_id, std_obj]) => {
-		const learning_level = std_obj.targeted_instruction.learning_level && std_obj.targeted_instruction.learning_level[sub]
+		const learning_level =
+			std_obj.targeted_instruction.learning_level &&
+			std_obj.targeted_instruction.learning_level[sub]
 		if (learning_level) {
 			if (agg[learning_level.grade]) {
 				return {
@@ -120,7 +77,25 @@ export const calculateResult = (students: RootDBState["students"], sub: string) 
 				}
 			}
 		}
-		return { ...agg }
+		if (agg['Not Graded']) {
+			return {
+				...agg,
+				'Not Graded': {
+					students: {
+						...agg['Not Graded'].students,
+						[std_id]: std_obj
+					}
+				}
+			}
+		}
+		return {
+			...agg,
+			'Not Graded': {
+				students: {
+					[std_id]: std_obj
+				}
+			}
+		}
 	}, {} as DiagnosticRes)
 }
 
@@ -132,134 +107,140 @@ type DiagnosticResultByGradeLevel = {
 }
 
 /**
- * Takes a diagnostic report and calculates which learning level should be assigned based on the 
- * correct and incorrect answers on the test. 
- * @param result 
+ * Takes a diagnostic report and calculates which learning level should be assigned based on the
+ * correct and incorrect answers on the test.
+ * @param result
  */
 export const calculateLearningLevelFromOralTest = (report: TIPDiagnosticReport): TIPGrades => {
-
 	const result = report.questions
 
-	// We build an object that tells us, for each "grade" level of a question, how many the 
+	// We build an object that tells us, for each "grade" level of a question, how many the
 	// student got correct out of the total amount.
-	const grade_results = Object.values(result).reduce<DiagnosticResultByGradeLevel>((agg, question) => {
-		const c = question.is_correct ? 1 : 0
+	const grade_results = Object.values(result).reduce<DiagnosticResultByGradeLevel>(
+		(agg, question) => {
+			const c = question.is_correct ? 1 : 0
 
-		if (agg[question.grade]) {
+			if (agg[question.grade]) {
+				return {
+					...agg,
+					[question.grade]: {
+						correct: agg[question.grade].correct + c,
+						total: agg[question.grade].total + 1
+					}
+				}
+			}
+
 			return {
 				...agg,
 				[question.grade]: {
-					correct: agg[question.grade].correct + c,
-					total: agg[question.grade].total + 1
+					correct: c,
+					total: 1
 				}
 			}
-		}
-
-		return {
-			...agg,
-			[question.grade]: {
-				correct: c,
-				total: 1
-			}
-		}
-
-	}, {} as DiagnosticResultByGradeLevel)
+		},
+		{} as DiagnosticResultByGradeLevel
+	)
 
 	// next we need to compute the percentage for each grade level.
-	const grade_percentages = Object.entries(grade_results)
-		.reduce<Record<TIPGrades, number>>((agg, [level, { correct, total }]) => {
+	const grade_percentages = Object.entries(grade_results).reduce<Record<TIPGrades, number>>(
+		(agg, [level, { correct, total }]) => {
 			return {
 				...agg,
-				[level]: correct / total * 100
+				[level]: (correct / total) * 100
 			}
-		}, {} as Record<TIPGrades, number>)
+		},
+		{} as Record<TIPGrades, number>
+	)
 
 	// now we check each grade level in order and see if they are below the threshold.
 	const threshold = 70
-	if (grade_percentages["KG"] < threshold) {
-		return "KG"
+	if (grade_percentages['KG'] < threshold) {
+		return 'KG'
 	}
 
-	return "1"
+	return '1'
 }
 
-export const calculateLearningLevelFromDiagnosticTest = (report: TIPDiagnosticReport): TIPGrades => {
-
+export const calculateLearningLevelFromDiagnosticTest = (
+	report: TIPDiagnosticReport
+): TIPGrades => {
 	const result = report.questions
 
-	// We build an object that tells us, for each "grade" level of a question, how many the 
+	// We build an object that tells us, for each "grade" level of a question, how many the
 	// student got correct out of the total amount.
-	const grade_results = Object.values(result).reduce<DiagnosticResultByGradeLevel>((agg, question) => {
-		const c = question.is_correct ? 1 : 0
+	const grade_results = Object.values(result).reduce<DiagnosticResultByGradeLevel>(
+		(agg, question) => {
+			const c = question.is_correct ? 1 : 0
 
-		if (agg[question.grade]) {
+			if (agg[question.grade]) {
+				return {
+					...agg,
+					[question.grade]: {
+						correct: agg[question.grade].correct + c,
+						total: agg[question.grade].total + 1
+					}
+				}
+			}
+
 			return {
 				...agg,
 				[question.grade]: {
-					correct: agg[question.grade].correct + c,
-					total: agg[question.grade].total + 1
+					correct: c,
+					total: 1
 				}
 			}
-		}
-
-		return {
-			...agg,
-			[question.grade]: {
-				correct: c,
-				total: 1
-			}
-		}
-
-	}, {} as DiagnosticResultByGradeLevel)
+		},
+		{} as DiagnosticResultByGradeLevel
+	)
 
 	// next we need to compute the percentage for each grade level.
-	const grade_percentages = Object.entries(grade_results)
-		.reduce<Record<TIPGrades, number>>((agg, [level, { correct, total }]) => {
+	const grade_percentages = Object.entries(grade_results).reduce<Record<TIPGrades, number>>(
+		(agg, [level, { correct, total }]) => {
 			return {
 				...agg,
-				[level]: correct / total * 100
+				[level]: (correct / total) * 100
 			}
-		}, {} as Record<TIPGrades, number>)
+		},
+		{} as Record<TIPGrades, number>
+	)
 
 	// now we check each grade level in order and see if they are below the threshold.
 	const threshold = 70
-	if (grade_percentages["1"] < threshold) {
-		return "Oral Test"
+	if (grade_percentages['1'] < threshold) {
+		return 'Oral Test'
 	}
-	if (grade_percentages["2"] < threshold) {
-		return "2"
+	if (grade_percentages['2'] < threshold) {
+		return '2'
 	}
-	if (grade_percentages["3"] < threshold) {
-		return "3"
+	if (grade_percentages['3'] < threshold) {
+		return '3'
 	}
-	return "Not Needed"
+	return 'Not Needed'
 }
-
 
 // CONVERSIONS
 export const convertLearningGradeToGroupName = (grade: TIPGrades) => {
-
 	const conversion_map: Record<TIPGrades, TIPLearningGroups> = {
-		"KG": "Blue",
-		"1": "Yellow",
-		"2": "Green",
-		"3": "Orange",
-		"Oral Test": "Oral",
-		"Not Needed": "Remediation Not Needed"
+		KG: 'Blue',
+		'1': 'Yellow',
+		'2': 'Green',
+		'3': 'Orange',
+		'Oral Test': 'Oral',
+		'Not Needed': 'Remediation Not Needed',
+		'Not Graded': 'Not Graded'
 	}
 
 	return conversion_map[grade]
 }
 
 export const convertLearningLevelToGrade = (level: TIPLevels): TIPGrades => {
-
 	const conversion_map: Record<TIPLevels, TIPGrades> = {
-		"Level KG": "KG",
-		"Level 1": "1",
-		"Level 2": "2",
-		"Level 3": "3",
-		"Oral": "Oral Test",
-		"Remediation Not Needed": "Not Needed"
+		'Level KG': 'KG',
+		'Level 1': '1',
+		'Level 2': '2',
+		'Level 3': '3',
+		Oral: 'Oral Test',
+		'Remediation Not Needed': 'Not Needed'
 	}
 
 	return conversion_map[level]
@@ -279,50 +260,48 @@ type SubjectLessonProgress = {
 /**
  * Here, we check the lesson progress in order. If a teacher has completed the first 17 lessons for any subject, this will return 17
  * if a teacher has completed all 35 lessons it will return 35
- * otherwise, it returns 0. 
- * 
+ * otherwise, it returns 0.
+ *
  * This function is to be used only to decide which layout to show on the tip landing page.
- * @param teacher 
+ * @param teacher
  */
 export const getLessonProgress = (teacher: MISTeacher) => {
-
 	// When a teacher has no progress
-	if (!teacher.targeted_instruction || !teacher.targeted_instruction.curriculum) {
-		return 0;
+	if (!teacher.targeted_instruction ?? !teacher.targeted_instruction.curriculum) {
+		return 0
 	}
 
-	const teacher_curriculum = teacher.targeted_instruction.curriculum;
+	const teacher_curriculum = teacher.targeted_instruction.curriculum
 
 	for (let [, learning_levels] of Object.entries(teacher_curriculum)) {
 		// go through each subject
 		// in any of these, do we complete the first 17 lessons or not?
 
-		let first_17 = true;
-		let completed_all = true;
+		let first_17 = true
+		let completed_all = true
 
 		for (let subject of Object.values(learning_levels)) {
-
 			const ordered_lessons = Object.entries(subject)
-				.sort(([l1_id,], [l2_id,]) => l1_id.localeCompare(l2_id))
+				.sort(([l1_id], [l2_id]) => l1_id.localeCompare(l2_id))
 				.map(([, l]) => l)
 
 			for (let i = 0; i < 17; i++) {
-				first_17 = first_17 && ordered_lessons[i] && ordered_lessons[i].taken;
+				first_17 = first_17 && ordered_lessons[i] && ordered_lessons[i].taken
 			}
 
-			completed_all = ordered_lessons.filter(lesson => lesson.taken).length == 35;
+			completed_all = ordered_lessons.filter(lesson => lesson.taken).length == 35
 
 			if (completed_all) {
-				return 35;
+				return 35
 			}
 
 			if (first_17) {
-				return 17;
+				return 17
 			}
 		}
 	}
 
-	return 0;
+	return 0
 
 	// create map of {learning_level: {subject: { completed, total } }}
 	// ultimately we want to take the number with the max completion.
@@ -369,55 +348,41 @@ export const getLessonProgress = (teacher: MISTeacher) => {
 }
 
 /**
- * TODO: what does this do
+ * this function return result of specific TIP test => slo based
  * @param students
  * @param test_id
  * @param type
  */
-/*
-export const getResult = (students: MISStudent, test_id: string, type: string) => {
+export const getResult = (students: MISStudent[], test_id: string) => {
 	return Object.entries(students).reduce((agg, [std_id, std_obj]) => {
-		if (std_obj.targeted_instruction[type][test_id].checked) {
+		if (std_obj.targeted_instruction.results[test_id]?.checked) {
 			return {
 				...agg,
-				[std_id]: Object.values(std_obj.targeted_instruction[type][test_id].questions)
-					.reduce((agg2, question) => {
-						const val = question.is_correct ? 1 : 0
-						const slo_category = question.slo_category
-						if (agg2 && agg2.slo_obj && agg2.slo_obj[slo_category]) {
-							return {
-								...agg2,
-								std_name: std_obj.Name,
-								obtain: agg2.obtain + val,
-								total: agg2.total + 1,
-								slo_obj: {
-									...agg2.slo_obj,
-									[slo_category]: {
-										obtain: agg2.slo_obj[slo_category].obtain + val,
-										total: agg2.slo_obj[slo_category].total + 1
-									}
-								}
-							}
-						} else if (agg2.total > 0) {
-							return {
-								...agg2,
-								std_name: std_obj.Name,
-								obtain: agg2.obtain + val,
-								total: agg2.total + 1,
-								slo_obj: {
-									...agg2.slo_obj,
-									[slo_category]: {
-										obtain: val,
-										total: 1
-									}
-								}
-							}
-						}
+				[std_id]: Object.values(
+					std_obj.targeted_instruction.results[test_id].questions
+				).reduce((agg2, question) => {
+					const val = question.is_correct ? 1 : 0
+					const slo_category = question.slo_category
+					if (agg2 && agg2.slo_obj && agg2.slo_obj[slo_category]) {
 						return {
 							...agg2,
 							std_name: std_obj.Name,
-							obtain: val,
-							total: 1,
+							obtain: agg2.obtain + val,
+							total: agg2.total + 1,
+							slo_obj: {
+								...agg2.slo_obj,
+								[slo_category]: {
+									obtain: agg2.slo_obj[slo_category].obtain + val,
+									total: agg2.slo_obj[slo_category].total + 1
+								}
+							}
+						}
+					} else if (agg2.total > 0) {
+						return {
+							...agg2,
+							std_name: std_obj.Name,
+							obtain: agg2.obtain + val,
+							total: agg2.total + 1,
 							slo_obj: {
 								...agg2.slo_obj,
 								[slo_category]: {
@@ -426,22 +391,33 @@ export const getResult = (students: MISStudent, test_id: string, type: string) =
 								}
 							}
 						}
-					}, {})
+					}
+					return {
+						...agg2,
+						std_name: std_obj.Name,
+						obtain: val,
+						total: 1,
+						slo_obj: {
+							...agg2.slo_obj,
+							[slo_category]: {
+								obtain: val,
+								total: 1
+							}
+						}
+					}
+				}, {} as SLOBasedResult['slo_obj'])
 			}
 		}
 		return { ...agg }
 	}, {})
 }
-*/
 
 /**
  *
  * @param result
  */
-/*
-export const getClassResult = (result: Result) => {
-
-	return Object.values(result || {}).reduce((agg, std_obj) => {
+export const getClassResult = (result: SLOBasedResult) => {
+	return Object.values(result ?? {}).reduce<SloObj>((agg, std_obj) => {
 		for (let [slo, slo_obj] of Object.entries(std_obj.slo_obj)) {
 			if (agg[slo]) {
 				agg = {
@@ -464,8 +440,12 @@ export const getClassResult = (result: Result) => {
 		return agg
 	}, {})
 }
-*/
 
+/**
+ *
+ * @param name
+ * @param pdf_url
+ */
 export const downloadPdf = (name: string, pdf_url: string) => {
 	const e = document.createElement('a')
 	e.setAttribute('href', decodeURIComponent(pdf_url))
@@ -474,4 +454,243 @@ export const downloadPdf = (name: string, pdf_url: string) => {
 	document.body.appendChild(e)
 	e.click()
 	document.body.removeChild(e)
+}
+
+/**
+ *
+ * @param value
+ * @returns current test type
+ */
+export const getTestType = (value: string) => {
+	switch (value) {
+		case 'oral-test':
+			return 'Oral'
+		case 'formative-test':
+		case 'formative-result':
+			return 'Formative'
+		case 'summative-test':
+		case 'summative-result':
+			return 'Summative'
+		default:
+			return 'Diagnostic'
+	}
+}
+
+/**
+ *
+ * @param quizzes
+ * @returns all SLOs in TIP Quizzes
+ */
+export const getQuizSLOs = (quizzes: TIPQuizz) => {
+	const sloArray = Object.values(quizzes ?? {}).reduce((agg, quiz) => {
+		const slo = quiz.slo.reduce((agg2, slo) => {
+			return [...agg2, ...slo.split('$')]
+		}, [])
+		return [...agg, ...slo]
+	}, [])
+	return [...new Set(sloArray)]
+}
+
+/**
+ *
+ * @param targeted_instruction
+ * @param slo
+ * @returns quiz id
+ */
+export const getQuizId = (quizzes: TIPQuizz, slo: string) => {
+	for (const [quiz_id, quiz] of Object.entries(quizzes ?? {})) {
+		const slos: string[] = quiz.slo[0].split('$')
+		if (slos.includes(slo)) {
+			return quiz_id
+		}
+	}
+}
+
+/**
+ *
+ * @param targeted_instruction
+ * @param subject
+ * @param grade
+ * @returns midpoint test id
+ */
+export const getMidpointTestId = (
+	targeted_instruction: RootReducerState['targeted_instruction'],
+	subject: TIPSubjects,
+	grade: TIPLevels
+) => {
+	return Object.entries(targeted_instruction.tests ?? {})
+		.filter(([, t]) => t.type === 'Formative' && t.subject === subject && t.grade === grade)
+		.map(([t_id]) => t_id)[0]
+}
+/**
+ *
+ * @param slo
+ * @returns single slo quiz result
+ */
+export const getSingleSloQuizResult = (
+	targeted_instruction: RootReducerState['targeted_instruction'],
+	students: MISStudent[],
+	slo: string[],
+	subject: TIPSubjects,
+	grade: TIPLevels
+) => {
+	const quizzes: TIPQuizz = targeted_instruction.quizzes[grade][subject]
+	const quiz_id = getQuizId(quizzes, slo[0]) // required slo will be in first index of slo array
+
+	const midpoint_test_id = getMidpointTestId(targeted_instruction, subject, grade)
+
+	return students.reduce<SingleSloQuizResult>((agg, std) => {
+		const [midpoint_obtain_marks, midpoint_total_marks] = getMidpointSloBaseResult(
+			targeted_instruction,
+			slo,
+			std,
+			midpoint_test_id
+		)
+		const quiz_obtain_marks =
+			std.targeted_instruction?.quiz_result?.[grade]?.[subject]?.[quiz_id]?.obtained_marks ??
+			0
+		const quiz_total_marks =
+			targeted_instruction?.quizzes?.[grade]?.[subject]?.[quiz_id]?.total_marks ?? 0
+		return {
+			...agg,
+			[std.id]: {
+				std_name: std.Name,
+				std_roll_num: std.RollNumber,
+				quiz_marks: (quiz_obtain_marks / quiz_total_marks) * 100,
+				midpoint_test_marks: (midpoint_obtain_marks / midpoint_total_marks) * 100
+			}
+		}
+	}, {})
+}
+
+/**
+ *
+ * @param targeted_instruction
+ * @param slo
+ * @param std
+ * @param midpoint_test_id
+ * @returns obtain and total marks of midpoint test
+ */
+export const getMidpointSloBaseResult = (
+	targeted_instruction: RootReducerState['targeted_instruction'],
+	slo: string[],
+	std: MISStudent,
+	midpoint_test_id: string
+) => {
+	let obtained_marks = 0
+	const question_ids = Object.entries(
+		targeted_instruction?.tests?.[midpoint_test_id]?.questions ?? {}
+	)
+		.filter(([, t]) => JSON.stringify(t.slo) === JSON.stringify(slo))
+		.map(([t_id]) => t_id)
+
+	question_ids.map(id => {
+		if (std?.targeted_instruction?.results?.[midpoint_test_id]?.questions[id]?.is_correct) {
+			obtained_marks = obtained_marks + 1
+		}
+	})
+	return [obtained_marks, question_ids.length]
+}
+/**
+ *
+ * @param student
+ * @param targeted_instruction
+ * @param subject
+ * @param grade
+ */
+export const getSingleStdQuizResult = (
+	student: MISStudent,
+	targeted_instruction: RootReducerState['targeted_instruction'],
+	subject: TIPSubjects,
+	grade: TIPLevels
+) => {
+	const midpoint_test_id = getMidpointTestId(targeted_instruction, subject, grade)
+
+	const SLOs = getQuizSLOs(targeted_instruction?.quizzes?.[grade]?.[subject])
+	return SLOs.reduce((agg, slo) => {
+		const quiz_id = getQuizId(targeted_instruction?.quizzes?.[grade]?.[subject], slo)
+		const quiz_obtained_marks =
+			student?.targeted_instruction?.quiz_result?.[grade]?.[subject]?.[quiz_id]
+				?.obtained_marks ?? 0
+		const quiz_total_marks =
+			targeted_instruction?.quizzes?.[grade]?.[subject]?.[quiz_id]?.total_marks ?? 0
+		const [midpoint_obtained_marks, midpoint_total_marks] = getMidpointSloBaseResult(
+			targeted_instruction,
+			[slo],
+			student,
+			midpoint_test_id
+		)
+		return {
+			...agg,
+			[slo]: {
+				quiz_marks: (quiz_obtained_marks / quiz_total_marks) * 100,
+				midpoint_test_marks: (midpoint_obtained_marks / midpoint_total_marks) * 100
+			}
+		}
+	}, {})
+}
+
+/**
+ *
+ * @param targeted_instruction
+ * @param students
+ * @param subject
+ * @param grade
+ * @returns skill base quiz result
+ */
+
+export const getSkillViewQuizResult = (
+	targeted_instruction: RootReducerState['targeted_instruction'],
+	students: MISStudent[],
+	subject: TIPSubjects,
+	grade: TIPLevels
+) => {
+	const midpoint_test_id = getMidpointTestId(targeted_instruction, subject, grade)
+	const SLOs = getQuizSLOs(targeted_instruction?.quizzes?.[grade]?.[subject])
+	return SLOs.reduce((agg, slo) => {
+		let below_average = 0,
+			average = 0,
+			above_average = 0,
+			midpoint_below = 0,
+			midpoint_average = 0,
+			midpoint_above = 0
+		return [
+			...agg,
+			Object.values(students).reduce((agg2, std) => {
+				const quiz_id = getQuizId(targeted_instruction?.quizzes?.[grade]?.[subject], slo)
+				const quiz = std?.targeted_instruction?.quiz_result?.[grade]?.[subject]?.[quiz_id]
+				const percentage = (quiz?.obtained_marks / quiz?.total_marks) * 100
+				below_average = below_average + (percentage < 40 ? 1 : 0)
+				average = average + (percentage >= 40 && percentage <= 70 ? 1 : 0)
+				above_average = above_average + (percentage > 70 ? 1 : 0)
+				const [midpoint_obtained_marks, midpoint_total_marks] = getMidpointSloBaseResult(
+					targeted_instruction,
+					[slo],
+					std,
+					midpoint_test_id
+				)
+				const midpoint_percentage = (midpoint_obtained_marks / midpoint_total_marks) * 100
+				midpoint_below = midpoint_below + (midpoint_percentage < 40 ? 1 : 0)
+				midpoint_average =
+					midpoint_average +
+					(midpoint_percentage >= 40 && midpoint_percentage <= 70 ? 1 : 0)
+				midpoint_above = midpoint_above + (midpoint_percentage > 70 ? 1 : 0)
+				return {
+					...agg2,
+					[slo]: {
+						quiz: {
+							below_average,
+							average,
+							above_average
+						},
+						midpoint: {
+							below_average: midpoint_below,
+							average: midpoint_average,
+							above_average: midpoint_above
+						}
+					}
+				}
+			}, {})
+		]
+	}, [])
 }

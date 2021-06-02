@@ -1,35 +1,45 @@
-import React, { useState } from 'react';
-import { getGradesFromTests } from 'utils/TIP'
+import React, { useState } from 'react'
 import { connect } from 'react-redux'
+import { RouteComponentProps } from 'react-router-dom'
 import Headings from '../../Headings'
-// import Levels from '../../Levels'
-// import Card from '../../Card'
-// import Subjects from '../../Subjects'
+import Levels from '../../Levels'
+import Card from '../../Card'
+import Subjects from '../../Subjects'
 
 interface P {
-	targeted_instruction: RootReducerState["targeted_instruction"]
+	targeted_instruction: RootReducerState['targeted_instruction']
 }
 
-const FormativeTestResult: React.FC<P> = (props) => {
-	const [class_name, setClassName] = useState('');
-	const grades = getGradesFromTests(props.targeted_instruction)
+type PropsType = P & RouteComponentProps
 
-	return <div className="flex flex-wrap content-between">
-		<Headings heading="This page is not available right now." sub_heading="" />
-		{/* <Card class_name={class_name} subject='' lesson_name='' lesson_no='' />
-		<Headings heading="Midpoint Test Result" sub_heading={class_name ?
-			"Select the subject you want to evaluate" :
-			"Select the Group you want to evaluate"} />
-		{class_name ?
-			<Subjects class_name={class_name} section_id='' /> :
-			<Levels
-				setSectionId={setClassName}
-				grades={grades}
-			/>} */}
-	</div>
+const FormativeTestResult: React.FC<PropsType> = ({ match, targeted_instruction }) => {
+	const [class_name, setClassName] = useState('')
+	const url = match.url.split('/')
+
+	return (
+		<div className="flex flex-wrap content-between mt-20">
+			<Card class_name={class_name} />
+			<Headings
+				heading="Midpoint Test Result"
+				sub_heading={
+					class_name
+						? 'Select the subject you want to evaluate'
+						: 'Select the Group you want to evaluate'
+				}
+			/>
+			{class_name ? (
+				<Subjects
+					class_name={class_name}
+					url={url}
+					targeted_instruction={targeted_instruction}
+				/>
+			) : (
+				<Levels setSectionId={setClassName} />
+			)}
+		</div>
+	)
 }
 
 export default connect((state: RootReducerState) => ({
 	targeted_instruction: state.targeted_instruction
 }))(FormativeTestResult)
-
