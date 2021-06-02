@@ -5,7 +5,6 @@ import clsx from 'clsx'
 import moment from 'moment'
 
 import { AttendanceStatsCard } from 'components/attendance'
-import { AppLayout } from 'components/Layout/appLayout'
 import { TModal } from 'components/Modal'
 import { markAllStudents, markStudent } from 'actions'
 import { isValidStudent } from 'utils'

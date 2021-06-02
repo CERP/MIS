@@ -244,7 +244,7 @@ export const Landing = () => {
 								<img
 									className="w-20	h-20 image hidden md:block"
 									src="/favicon.ico"
-									alt="brand-logo"
+									alt="mischool"
 								/>
 								<div className="text-base hidden md:inline-block font-normal mt-2">
 									<span className="font-semibold">MISchool</span> is a management
