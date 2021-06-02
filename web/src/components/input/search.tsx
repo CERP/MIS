@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react'
 import clsx from 'clsx'
 import { Transition } from '@headlessui/react'
-import { FilterIcon, SearchIcon } from '@heroicons/react/outline'
+import { AdjustmentsIcon, FilterIcon, SearchIcon } from '@heroicons/react/outline'
 
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { isValidStudent, isValidTeacher } from 'utils'
@@ -19,8 +19,8 @@ export const SearchInput = (props: SearchInputProps) => {
 	return (
 		<div className="relative w-full">
 			<input
-				{...props}
 				type="search"
+				{...props}
 				name="search"
 				className={clsx(
 					props.className,
@@ -34,7 +34,7 @@ export const SearchInput = (props: SearchInputProps) => {
 			</div>
 			{props.advancedFiltersVisible && (
 				<div className="absolute text-gray-500 right-0 mr-2 ml-4 my-3 top-0">
-					<FilterIcon
+					<AdjustmentsIcon
 						onClick={props.onFiltersPress ? () => props.onFiltersPress() : null}
 						className="h-5 w-5"
 					/>
