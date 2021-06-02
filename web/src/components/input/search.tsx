@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react'
 import clsx from 'clsx'
 import { Transition } from '@headlessui/react'
-import { SearchIcon } from '@heroicons/react/outline'
+import { FilterIcon, SearchIcon } from '@heroicons/react/outline'
 
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { isValidStudent, isValidTeacher } from 'utils'
@@ -9,9 +9,13 @@ import { isValidStudent, isValidTeacher } from 'utils'
 import UserIconSvg from 'assets/svgs/user.svg'
 import toTitleCase from 'utils/toTitleCase'
 
-export const SearchInput = (
-	props: React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
-) => {
+interface SearchInputProps
+	extends React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
+	advancedFiltersVisible?: boolean
+	onFiltersPress?: Function
+}
+
+export const SearchInput = (props: SearchInputProps) => {
 	return (
 		<div className="relative w-full">
 			<input
@@ -28,6 +32,14 @@ export const SearchInput = (
 			<div className="absolute text-gray-500 left-0 ml-2 mr-4 my-3 top-0">
 				<SearchIcon className="h-5 w-5" />
 			</div>
+			{props.advancedFiltersVisible && (
+				<div className="absolute text-gray-500 right-0 mr-2 ml-4 my-3 top-0">
+					<FilterIcon
+						onClick={props.onFiltersPress ? () => props.onFiltersPress() : null}
+						className="h-5 w-5"
+					/>
+				</div>
+			)}
 		</div>
 	)
 }
