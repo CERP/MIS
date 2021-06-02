@@ -138,8 +138,11 @@ export const CreateOrUpdateStaff = () => {
 			hash(profile.Password).then(hashed => {
 				dispatch(createFacultyMerge({ ...profile, Password: hashed }))
 			})
-
-			toast.success('New staff has been added.')
+			if (isNewStaff()) {
+				toast.success('New staff has been added.')
+			} else {
+				toast.success('Staff profile has been updated.')
+			}
 
 			setTimeout(() => {
 				setState({ ...state, redirect: '/staff' })
