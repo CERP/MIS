@@ -37,6 +37,7 @@ import ContactForm from 'components/Forms/ContactForm'
 export const Landing = () => {
 	const [formOpened, setFormOpened] = useState<boolean>(false)
 	const formRef = useRef(null)
+
 	return (
 		<AppLayout>
 			<div className="w-full mt-10 md:mt-16">

@@ -30,11 +30,11 @@ export const PublicRoute = ({ component: Component, ...rest }: PrivateRouteProps
 		return <Redirect to="/staff-login" />
 	}
 
-	if (!connected) {
+	if (!connected && rest.location.pathname !== '/') {
 		return <WSConnect />
 	}
 
-	if (!initialized) {
+	if (!initialized && rest.location.pathname !== '/') {
 		return <DBLoader />
 	}
 
