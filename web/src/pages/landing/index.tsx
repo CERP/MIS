@@ -274,11 +274,12 @@ export const Landing = () => {
 								{/* <Link to="/events" className="px-2 text-base hover:underline">
 									Events
 								</Link> */}
-								<Link
-									to="/privacy-policy"
+								<a
+									href="/tos.html"
+									target="_blank"
 									className="px-2 text-base hover:underline">
-									Privacy Policy
-								</Link>
+									Terms of Service
+								</a>
 							</div>
 						</div>
 						<div className="lg:flex mt-4 lg:mx-5 md:m-0 lg:flex-1 hidden">
