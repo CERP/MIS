@@ -382,9 +382,13 @@ const AttendanceChart: React.FC<TAttendanceChartProps> = ({ graphData }) => {
 	const isBiggerThan1024 = useMediaPredicate('(min-width: 1024px)')
 	const isBiggerThan1280 = useMediaPredicate('(min-width: 1280px)')
 	const isBiggerThan1536 = useMediaPredicate('(min-width: 1536px)')
+	const isBiggerThan1980 = useMediaPredicate('(min-width: 1980px)')
+	const isBiggerThan2500 = useMediaPredicate('(min-width: 2500px)')
 
 	const [INNER_RADIUS, OUTER_RADIUS, CX, CY] = cond([
-		[isBiggerThan1536, [65, 85, 220, 120]],
+		[isBiggerThan2500, [65, 85, 340, 120]],
+		[isBiggerThan1980, [65, 85, 280, 120]],
+		[isBiggerThan1536, [65, 85, 260, 120]],
 		[isBiggerThan1280, [55, 75, 190, 120]],
 		[isBiggerThan1024, [45, 60, 140, 120]],
 		[isBiggerThan768, [45, 65, 320, 120]],
