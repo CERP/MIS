@@ -7,11 +7,12 @@ import { AppLayout } from 'components/Layout/appLayout'
 import { StudentPayments } from 'pages/students/fee-payments/payments'
 import { CreateOrUpdateStudent } from './add'
 import { toTitleCase } from 'utils/toTitleCase'
+import StudentMarks from 'modules/Student/Single/Marks'
 
 const Paths = {
 	Profile: 'profile',
 	Payments: 'payments',
-	Grades: 'grades',
+	Marks: 'marks',
 	Attendance: 'attendance',
 	Certificates: 'certificates'
 }
@@ -44,6 +45,7 @@ const StudentPage = ({ location }: RouteComponentProps) => {
 			<Route path="/students/new" component={CreateOrUpdateStudent} />
 			<Route path="/students/:id/profile" component={CreateOrUpdateStudent} />
 			<Route path="/students/:id/payments" component={StudentPayments} />
+			<Route path="/students/:id/marks" component={StudentMarks} />
 		</AppLayout>
 	)
 }

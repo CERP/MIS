@@ -20,6 +20,7 @@ import getFacultyNameFromId from 'utils/getFacultyNameFromId'
 import getReportStringForStudent from 'utils/getReportStringForStudent'
 
 import './style.css'
+import { AppLayout } from 'components/Layout/appLayout'
 
 type PropsType = {
 	curr_class_id: string
@@ -58,7 +59,7 @@ class ClassReportMenu extends Component<PropsType, S> {
 			month: '',
 			subject: '',
 			exams_list_by: 'Sr No.',
-			print_type: 'Cards',
+			print_type: 'Cards'
 		}
 		this.former = new Former(this, [])
 	}
@@ -72,7 +73,7 @@ class ClassReportMenu extends Component<PropsType, S> {
 			faculty: this.props.faculty_id,
 			date: new Date().getTime(),
 			type: 'EXAM',
-			count: messages.length,
+			count: messages.length
 		}
 
 		this.props.logSms(historyObj)
@@ -130,7 +131,7 @@ class ClassReportMenu extends Component<PropsType, S> {
 		}
 
 		const exam_students = Object.values(students)
-			.filter((student) => student && student.Name && student.section_id && student.exams)
+			.filter(student => student && student.Name && student.section_id && student.exams)
 			.reduce<MergeStudentsExams[]>((agg, curr) => {
 				const merge_exams: AugmentedMISExam[] = []
 
@@ -151,121 +152,138 @@ class ClassReportMenu extends Component<PropsType, S> {
 		const marksSheet = getStudentExamMarksSheet(exam_students, grades)
 
 		const messages = exam_students
-			.filter((s) => s.Phone !== '')
-			.map((student) => ({
+			.filter(s => s.Phone !== '')
+			.map(student => ({
 				number: student.Phone,
 				text: sms_templates.result
 					.replace(/\$NAME/g, student.Name)
-					.replace(/\$REPORT/g, getReportStringForStudent(student, exam_title, grades)),
+					.replace(/\$REPORT/g, getReportStringForStudent(student, exam_title, grades))
 			}))
 
 		const url = smsIntentLink({
 			messages,
-			return_link: window.location.href,
+			return_link: window.location.href
 		})
 
 		return (
-			<div className="class-report-menu">
-				<div className="title no-print">Result Cards for {section_name}</div>
-				<div className="section-container section no-print">
-					<div className="form">
-						<div className="row">
-							<label>Exams for Year</label>
-							<select {...this.former.super_handle(['year'])}>
-								<option value="">Select Year</option>
-								{Array.from(years)
-									.sort((a, b) => parseInt(b) - parseInt(a))
-									.map((year) => (
-										<option key={year} value={year}>
-											{year}
-										</option>
-									))}
-							</select>
-						</div>
-						<div className="row">
-							<label>Exam Name</label>
-							<select {...this.former.super_handle(['exam_title'])}>
-								<option value="">Select Exam</option>
-								{ExamTitles.map((title) => {
-									return (
-										<option key={title} value={title}>
-											{title}
-										</option>
-									)
-								})}
-							</select>
-						</div>
-						{exam_title === 'Test' && (
+			<AppLayout>
+				<div className="class-report-menu">
+					<div className="title no-print text-center">
+						Result Cards for {section_name}
+					</div>
+					<div className="section-container section no-print">
+						<div className="form">
 							<div className="row">
-								<label>Test Month</label>
-								<select {...this.former.super_handle(['month'])}>
-									<option value="">Select Month</option>
-									{Months.map((month) => (
-										<option key={month} value={month}>
-											{month}
-										</option>
-									))}
+								<label>Exams for Year</label>
+								<select
+									className="tw-select"
+									{...this.former.super_handle(['year'])}>
+									<option value="">Select Year</option>
+									{Array.from(years)
+										.sort((a, b) => parseInt(b) - parseInt(a))
+										.map(year => (
+											<option key={year} value={year}>
+												{year}
+											</option>
+										))}
 								</select>
 							</div>
-						)}
-						{exam_title === 'Test' && (
 							<div className="row">
-								<label>Test Subject</label>
-								<select {...this.former.super_handle(['subject'])}>
-									<option value="">Select Subject</option>
-									{Array.from(subjects).map((subject) => (
-										<option key={subject} value={subject}>
-											{subject}
-										</option>
-									))}
+								<label>Exam Name</label>
+								<select
+									className="tw-select"
+									{...this.former.super_handle(['exam_title'])}>
+									<option value="">Select Exam</option>
+									{ExamTitles.map(title => {
+										return (
+											<option key={title} value={title}>
+												{title}
+											</option>
+										)
+									})}
 								</select>
 							</div>
-						)}
-						<div className="row">
-							<label>Print</label>
-							<select {...this.former.super_handle(['print_type'])}>
-								<option value="">Select Print</option>
-								<option value="Cards">Class Result Cards</option>
-								<option value="Sheet">Class Result Sheet</option>
-							</select>
+							{exam_title === 'Test' && (
+								<div className="row">
+									<label>Test Month</label>
+									<select
+										className="tw-select"
+										{...this.former.super_handle(['month'])}>
+										<option value="">Select Month</option>
+										{Months.map(month => (
+											<option key={month} value={month}>
+												{month}
+											</option>
+										))}
+									</select>
+								</div>
+							)}
+							{exam_title === 'Test' && (
+								<div className="row">
+									<label>Test Subject</label>
+									<select
+										className="tw-select"
+										{...this.former.super_handle(['subject'])}>
+										<option value="">Select Subject</option>
+										{Array.from(subjects).map(subject => (
+											<option key={subject} value={subject}>
+												{subject}
+											</option>
+										))}
+									</select>
+								</div>
+							)}
+							<div className="row">
+								<label>Print</label>
+								<select
+									className="tw-select"
+									{...this.former.super_handle(['print_type'])}>
+									<option value="">Select Print</option>
+									<option value="Cards">Class Result Cards</option>
+									<option value="Sheet">Class Result Sheet</option>
+								</select>
+							</div>
+							<div className="row">
+								<label>Exam List By</label>
+								<select
+									className="tw-select"
+									{...this.former.super_handle(['exams_list_by'])}>
+									<option value="">Select List By</option>
+									<option value="Date">Date</option>
+									<option value="Sr No.">Serial No</option>
+								</select>
+							</div>
 						</div>
-						<div className="row">
-							<label>Exam List By</label>
-							<select {...this.former.super_handle(['exams_list_by'])}>
-								<option value="">Select List By</option>
-								<option value="Date">Date</option>
-								<option value="Sr No.">Serial No</option>
-							</select>
+						<div className="md-form">
+							{settings.sendSMSOption === 'SIM' ? (
+								<a
+									className="button blue sms btn-sm"
+									onClick={() => this.logSms(messages)}
+									href={url}>
+									Send Reports using SMS
+								</a>
+							) : (
+								false
+							)}
+							<div
+								className="button grey btn-result-card"
+								onClick={() => window.print()}>
+								Print Class Result {this.state.print_type}
+							</div>
+							<Link
+								className="button grey btn-edit-exam"
+								to={`/reports?section_id=${section_id}&exam_title=${exam_title}&year=${year}&month=${month}`}>
+								Edit Exam
+							</Link>
 						</div>
 					</div>
-					<div className="md-form">
-						{settings.sendSMSOption === 'SIM' ? (
-							<a
-								className="button blue sms btn-sm"
-								onClick={() => this.logSms(messages)}
-								href={url}>
-								Send Reports using SMS
-							</a>
-						) : (
-							false
-						)}
-						<div className="button grey btn-result-card" onClick={() => window.print()}>
-							Print Class Result {this.state.print_type}
-						</div>
-						<Link
-							className="button grey btn-edit-exam"
-							to={`/reports?section_id=${section_id}&exam_title=${exam_title}&year=${year}&month=${month}`}>
-							Edit Exam
-						</Link>
-					</div>
-				</div>
 
-				<div className="class-report print-page" style={{ height: '100%' }}>
-					{print_type === 'Sheet' && exam_title !== ''
-						? chunkify(
+					<div className="class-report print-page" style={{ height: '100%' }}>
+						{print_type === 'Sheet' && exam_title !== ''
+							? chunkify(
 								marksSheet,
 								chunkSize
-						  ).map((chunkItems: StudentMarksSheet[], index: number) => (
+							).map((chunkItems: StudentMarksSheet[], index: number) => (
 								<ClassResultSheet
 									key={index}
 									sectionName={section_name}
@@ -275,8 +293,8 @@ class ClassReportMenu extends Component<PropsType, S> {
 									students={chunkItems}
 									chunkSize={index === 0 ? 0 : chunkSize * index}
 								/>
-						  ))
-						: exam_students.map((student: MergeStudentsExams) => (
+							))
+							: exam_students.map((student: MergeStudentsExams) => (
 								<ResultCard
 									key={student.id}
 									student={student}
@@ -288,9 +306,10 @@ class ClassReportMenu extends Component<PropsType, S> {
 									sectionTeacher={section_teacher}
 									listBy={exams_list_by}
 								/>
-						  ))}
+							))}
+					</div>
 				</div>
-			</div>
+			</AppLayout>
 		)
 	}
 }
@@ -305,9 +324,9 @@ export default connect(
 		exams: state.db.exams,
 		grades: state.db.settings.exams.grades,
 		schoolLogo: state.db.assets ? state.db.assets.schoolLogo || '' : '',
-		sms_templates: state.db.sms_templates,
+		sms_templates: state.db.sms_templates
 	}),
 	(dispatch: Function) => ({
-		logSms: (history: MISSMSHistory): void => dispatch(logSms(history)),
+		logSms: (history: MISSMSHistory): void => dispatch(logSms(history))
 	})
 )(ClassReportMenu)

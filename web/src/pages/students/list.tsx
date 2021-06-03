@@ -28,9 +28,14 @@ type State = {
 interface StudentListProps {
 	forwardTo?: string
 	excludeFamilyStudents?: boolean
+	excludeNavHeader?: boolean
 }
 
-export const StudentList = ({ forwardTo, excludeFamilyStudents }: StudentListProps) => {
+export const StudentList = ({
+	forwardTo,
+	excludeFamilyStudents,
+	excludeNavHeader
+}: StudentListProps) => {
 	const students = useSelector((state: RootReducerState) => state.db.students, shallowEqual)
 	const classes = useSelector((state: RootReducerState) => state.db.classes, shallowEqual)
 	const searchInputRef = useRef(null)
@@ -116,17 +121,14 @@ export const StudentList = ({ forwardTo, excludeFamilyStudents }: StudentListPro
 
 	const pageTitle = `Students ${toTitleCase(forwardTo)}`
 
-	return (
-		<AppLayout title={pageTitle} showHeaderTitle>
-			<div className="relative p-5 md:p-10 md:pt-5 mb-20">
-				<Link to="/students/new/menu">
-					<AddStickyButton label="Add new Student" />
-				</Link>
-
-				{/* <div className="my-4 text-2xl font-bold text-center lg:hidden">School Students</div> */}
-				{/* <div className="text-center text-gray-700 lg:hidden">
-					Total = {filteredStudents.length}
-				</div> */}
+	const renderListPage = () => {
+		return (
+			<div className="relative p-5 md:p-10 md:pt-5">
+				{!forwardTo && (
+					<Link to="/students/new/menu">
+						<AddStickyButton label="Add new Student" />
+					</Link>
+				)}
 				<div className="flex flex-col items-center justify-between mt-4 mb-12 space-y-4 md:flex-row md:mb-20 md:space-y-0 md:space-x-60">
 					<div ref={searchInputRef} className="md:w-9/12 w-full">
 						<SearchInput
@@ -231,12 +233,14 @@ export const StudentList = ({ forwardTo, excludeFamilyStudents }: StudentListPro
 									</option>
 								))}
 						</select>
-						<button
-							onClick={() => window.print()}
-							className="hidden lg:inline-flex items-center tw-btn-blue rounded-3xl shadow-md">
-							<span>Print</span>
-							<PrinterIcon className="h-6 w-6 ml-4" />
-						</button>
+						{!forwardTo && (
+							<button
+								onClick={() => window.print()}
+								className="hidden lg:inline-flex items-center tw-btn-blue rounded-3xl shadow-md">
+								<span>Print</span>
+								<PrinterIcon className="h-6 w-6 ml-4" />
+							</button>
+						)}
 					</div>
 				</div>
 
@@ -247,6 +251,16 @@ export const StudentList = ({ forwardTo, excludeFamilyStudents }: StudentListPro
 					renderComponent={listItem}
 				/>
 			</div>
+		)
+	}
+
+	if (excludeNavHeader) {
+		return renderListPage()
+	}
+
+	return (
+		<AppLayout title={pageTitle} showHeaderTitle>
+			{renderListPage()}
 		</AppLayout>
 	)
 }

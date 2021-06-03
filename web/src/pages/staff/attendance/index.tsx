@@ -243,9 +243,11 @@ const Card: React.FC<CardProps> = ({ member, attendanceDate, markAttendance }) =
 						// check if the status of the attendance isn't in check_in, checkout or absent
 						// set bg color to orange
 						className={clsx('rounded-lg shadow-md px-2 py-1', {
-							'bg-orange-brand text-white':
-								status &&
-								!(attendance.absent || attendance.check_in || attendance.check_out)
+							'bg-orange-brand text-white': !(
+								attendance.absent ||
+								attendance.check_in ||
+								attendance.check_out
+							)
 						})}>
 						<span>Leave</span>
 					</button>

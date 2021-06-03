@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { StudentList } from 'modules/Student/List'
+import { StudentList } from 'pages/students/list'
 import { ClassListModule } from 'modules/Class/List'
 
 import former from 'utils/former'
@@ -41,27 +41,21 @@ class ReportsMenu extends Component<propTypes, S> {
 
 	render() {
 		return (
-			<AppLayout title="Manage Results">
-				<div className="reports-menu mx-auto">
-					<div className="title">Result Card Menu</div>
-					<div
-						className="row mx-auto"
-						style={{ justifyContent: 'space-between', width: '90%' }}>
+			<AppLayout title="Result Card Menu" showHeaderTitle>
+				<div className="p-5 pb-0 md:p-10 md:pt-5 md:pb-0 reports-menu">
+					<div className="row justify-between">
 						<label>View Result Cards For</label>
-						<select {...this.Former.super_handle(['report_for'])}>
+						<select className="tw-select" {...this.Former.super_handle(['report_for'])}>
 							<option value="CLASS">Class</option>
 							<option value="STUDENT">Student</option>
 						</select>
 					</div>
-
-					<div className="sub-list" style={{ width: '100%' }}>
-						{this.state.report_for === 'CLASS' ? (
-							<ClassListModule {...this.props} forwardTo="report-menu" />
-						) : (
-							<StudentList {...this.props} forwardTo="marks" />
-						)}
-					</div>
 				</div>
+				{this.state.report_for === 'CLASS' ? (
+					<ClassListModule {...this.props} forwardTo="report-menu" />
+				) : (
+					<StudentList {...this.props} forwardTo="marks" excludeNavHeader />
+				)}
 			</AppLayout>
 		)
 	}
