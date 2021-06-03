@@ -68,15 +68,15 @@ th {
 
 .bulk-exams .score-sheet.table-wrapper tbody tr td input {
 	width: 80px;
-	border-radius: 2px;
-	font-size: 0.95rem;
-	background-color: #fff;
-	border: 1px solid #949191;
-	box-shadow: none;
-	display: inline-block;
-	height: 1em;
+	/* border-radius: 2px; */
+	/* font-size: 0.95rem; */
+	/* background-color: #fff; */
+	/* border: 1px solid #949191; */
+	/* box-shadow: none; */
+	/* display: inline-block; */
+	/* height: 1em; */
 	justify-content: flex-start;
-	line-height: 1;
+	/* line-height: 1; */
 	text-align: center;
 	padding: calc(0.5em - 1px);
 }

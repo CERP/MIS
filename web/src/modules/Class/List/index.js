@@ -7,7 +7,7 @@ import List from 'components/List'
 import qs from 'query-string'
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
 
-const ClassItem = (c) => {
+const ClassItem = c => {
 	return (
 		<Link key={c.id} to={`/class/${c.id}/${c.forwardTo}`}>
 			{c.name}
@@ -15,9 +15,11 @@ const ClassItem = (c) => {
 	)
 }
 
-const SectionItem = (section) => {
+const SectionItem = section => {
 	return (
-		<Link key={section.id} to={`/class/${section.class_id}/${section.id}/${section.forwardTo}`}>
+		<Link
+			key={section.id}
+			to={`/reports/${section.class_id}/${section.id}/${section.forwardTo}`}>
 			{section.namespaced_name}
 		</Link>
 	)
@@ -26,7 +28,7 @@ const SectionItem = (section) => {
 export const ClassListModule = ({ classes, forwardTo }) => {
 	let items = Object.values(classes)
 		.sort((a, b) => (a.classYear || 0) - (b.classYear || 0))
-		.map((c) => ({ ...c, forwardTo }))
+		.map(c => ({ ...c, forwardTo }))
 
 	let create = '/class/new'
 	let createText = 'Add new class'
@@ -40,19 +42,18 @@ export const ClassListModule = ({ classes, forwardTo }) => {
 		create = ''
 		items = getSectionsFromClasses(classes)
 			.sort((a, b) => (a.classYear || 0) - (b.classYear || 0))
-			.map((section) => ({ ...section, forwardTo }))
+			.map(section => ({ ...section, forwardTo }))
 	}
 
 	return (
 		<div className="class-module">
-			<div className="title">Classes</div>
-
+			<div className="title text-center">Classes</div>
 			<List
 				items={items}
 				Component={forwardTo === 'report-menu' ? SectionItem : ClassItem}
 				create={create}
 				createText={createText}
-				toLabel={(c) => {
+				toLabel={c => {
 					return c.name !== undefined ? c.name : c.namespaced_name
 				}}
 			/>
@@ -62,5 +63,5 @@ export const ClassListModule = ({ classes, forwardTo }) => {
 
 export default connect((state, { location }) => ({
 	classes: state.db.classes,
-	forwardTo: qs.parse(location.search, { ignoreQueryPrefix: true }).forwardTo || 'profile',
+	forwardTo: qs.parse(location.search, { ignoreQueryPrefix: true }).forwardTo || 'profile'
 }))(LayoutWrap(ClassListModule))
