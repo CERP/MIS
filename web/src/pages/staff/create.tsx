@@ -124,7 +124,7 @@ export const CreateOrUpdateStaff = () => {
 	const handleSubmit = (event: React.FormEvent) => {
 		event.preventDefault()
 
-		if (!isValidPhone(profile.Phone)) {
+		if (!isValidPhone(profile.Phone) && profile.Phone !== '') {
 			return toast.error('Please provide correct phone number!')
 		}
 		if (!isValidCNIC(profile.ManCNIC)) {
@@ -356,14 +356,13 @@ export const CreateOrUpdateStaff = () => {
 							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
-						<div>Personal Contact*</div>
+						<div>Personal Contact</div>
 						<PhoneInput
 							name="Phone"
 							onChange={handleInput}
 							error={
 								numberRegex.test(profile.Phone) || !(profile.Phone?.length <= 11)
 							}
-							required
 							value={profile.Phone}
 							className="tw-input w-full tw-is-form-bg-black"
 						/>
