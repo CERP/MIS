@@ -140,7 +140,7 @@ class DailyStats extends Component<PropsType, S> {
 		return (
 			<>
 				<div className="section no-print">
-					<div className="title">Students Fee</div>
+					<div className="text-center text-2xl">Students Fee</div>
 					<div className="mis-table row">
 						<label>Total Amount Received: </label>
 						<div className="number">Rs. {totalAmountReceived}</div>
@@ -217,7 +217,7 @@ class DailyStats extends Component<PropsType, S> {
 	renderSection = () => {
 		const type = this.state.statsType
 
-		if (type === 'paidStudents') {
+		if (type === 'paid_students') {
 			return this.getFeeStats()
 		}
 	}
@@ -227,8 +227,8 @@ class DailyStats extends Component<PropsType, S> {
 
 		return (
 			<AppLayout title="Daily Statistics" showHeaderTitle>
-				<div className="daily-stats mt-10">
-					<div className="row date no-print">
+				<div className="daily-stats p-5 md:p-10 md:pt-5">
+					<div className="flex text-center justify-center no-print mb-4">
 						<input
 							className="tw-input"
 							type="date"

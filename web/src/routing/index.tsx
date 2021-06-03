@@ -15,9 +15,6 @@ import ReportsMenu from 'modules/ReportsMenu'
 import TargetedInstruction from 'modules/TIP/Routing'
 import Help from 'modules/Help'
 import Diary from 'pages/school/diary'
-import PlannerList from 'modules/Planner/ClassList'
-import Planner from 'modules/Planner'
-import CertificateMenu from 'modules/CertificateMenu'
 import ResetPassword from 'modules/Password/index'
 import MISActivation from 'modules/Activation'
 import BulkExam from 'modules/Marks/BulkExam'
@@ -160,7 +157,7 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<PrivateRoute path="/reports" component={Marks} />
 						<PrivateRoute path="/settings" component={Settings} />
 						<PrivateRoute path="/diary" component={Diary} />
-						<PrivateRoute path="/analytics/daily-stats" component={DailyStats} />
+						<PrivateRoute path="/analytics/daily-stats" exact component={DailyStats} />
 						<PrivateRoute path="/analytics" component={Analytics as any} />
 						<PrivateRoute path="/diary" component={Diary} />
 						<PrivateRoute path="/reports-menu" component={ReportsMenu} />
@@ -177,10 +174,7 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<PrivateRoute exact path="/families/:id" component={SingleFamily} />
 						<PrivateRoute exact path="/families" component={Family} />
 						<PrivateRoute exact path="/families/new" component={SingleFamily} />
-						{/* <PrivateRoute path="/ClassList" component={PlannerList} /> */}
-						{/* <PrivateRoute path="/planner/:class_id/:section_id" component={Planner} /> */}
 						<PrivateRoute path="/help" component={Help} />
-						{/* <PrivateRoute path="/certificate-menu" component={CertificateMenu} /> */}
 						<PrivateRoute path="/reset-password" component={ResetPassword} />
 						<PrivateRoute path="/expenses" exact component={Expense} />
 						<PrivateRoute path="/expenses/:id" exact component={ExpenseForm} />
