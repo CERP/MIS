@@ -123,7 +123,7 @@ export const StudentList = ({
 
 	const renderListPage = () => {
 		return (
-			<div className="relative p-5 md:p-10 md:pt-5 mb-20">
+			<div className="relative p-5 md:p-10 md:pt-5">
 				{!forwardTo && (
 					<Link to="/students/new/menu">
 						<AddStickyButton label="Add new Student" />

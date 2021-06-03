@@ -233,7 +233,7 @@ class Reports extends Component<propsType, S> {
 
 		return (
 			<AppLayout title="Manage Exams" showHeaderTitle>
-				<div className="reports-page no-print mt-5">
+				<div className="reports-page no-print my-5">
 					<div className="form section exams-filter">
 						<div className="mis-table">
 							<div className="row">

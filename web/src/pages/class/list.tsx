@@ -15,7 +15,7 @@ export const ClassList = () => {
 
 	return (
 		<AppLayout title="Classes" showHeaderTitle>
-			<div className="p-5 md:p-10 md:pt-5 relative mb-20">
+			<div className="p-5 md:p-10 md:pt-5 relative">
 				<Link to="classes/new">
 					<AddStickyButton label="Create new Class" />
 				</Link>
