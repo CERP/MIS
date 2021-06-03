@@ -52,7 +52,6 @@ import { PrivateRoute, SchoolRoute, PublicRoute } from 'components/routing'
 import { Expense } from 'pages/expense'
 import { ExpenseForm } from 'pages/expense/form'
 import { StaffSalary } from 'pages/expense/salary'
-import { ExamsMenu } from 'pages/exams/menu'
 import { GradeSettings } from 'pages/exams/grades'
 import { PromoteStudents } from 'pages/exams/promote-students'
 import { Datesheet } from 'pages/exams/datesheet'
@@ -63,6 +62,7 @@ import StudentPage from 'pages/students'
 import StaffPage from 'pages/staff'
 import PrintPreview from 'pages/school/fees/print-voucher/preview'
 import ClassFeeMenu from 'modules/Class/Single/ClassFeeMenu'
+import SingleClassResults from 'modules/Class/Single/ReportsMenu'
 
 interface RoutesProps {
 	store: Store<RootReducerState>
@@ -139,6 +139,16 @@ export class Routes extends React.Component<RoutesProps, State> {
 							path="/reports/:class_id/:section_id/exam/:exam_id"
 							component={SingleExam}
 						/>
+						<PrivateRoute
+							exact
+							path="/reports/:class_id/:section_id/report-menu"
+							component={SingleClassResults}
+						/>
+						<PrivateRoute
+							exact
+							path="/reports/:class_id/:section_id/exam/:exam_id"
+							component={SingleExam}
+						/>
 						<PrivateRoute path="/exams/grades" component={GradeSettings} />
 						<PrivateRoute path="/exams/promote-students" component={PromoteStudents} />
 						<PrivateRoute path="/exams/datesheet" component={Datesheet} />
@@ -167,10 +177,10 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<PrivateRoute exact path="/families/:id" component={SingleFamily} />
 						<PrivateRoute exact path="/families" component={Family} />
 						<PrivateRoute exact path="/families/new" component={SingleFamily} />
-						<PrivateRoute path="/ClassList" component={PlannerList} />
-						<PrivateRoute path="/planner/:class_id/:section_id" component={Planner} />
+						{/* <PrivateRoute path="/ClassList" component={PlannerList} /> */}
+						{/* <PrivateRoute path="/planner/:class_id/:section_id" component={Planner} /> */}
 						<PrivateRoute path="/help" component={Help} />
-						<PrivateRoute path="/certificate-menu" component={CertificateMenu} />
+						{/* <PrivateRoute path="/certificate-menu" component={CertificateMenu} /> */}
 						<PrivateRoute path="/reset-password" component={ResetPassword} />
 						<PrivateRoute path="/expenses" exact component={Expense} />
 						<PrivateRoute path="/expenses/:id" exact component={ExpenseForm} />
