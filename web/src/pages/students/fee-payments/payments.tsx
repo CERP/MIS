@@ -146,7 +146,7 @@ export const StudentPayments = () => {
 			<div className="px-5 text-gray-700 relative print:hidden">
 				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-4 rounded-2xl bg-gray-700 p-5 my-4 mt-16 md:mt-8">
 					<div className="relative text-white text-center text-base">
-						<div className="-top-14 absolute right-1 rounded-full bg-gray-500 w-20 h-20">
+						<div className="-top-14 absolute right-1/2 transform translate-x-1/2 rounded-full bg-gray-500 w-20 h-20">
 							<img
 								className="w-20 h-20 rounded-full object-contain"
 								src={
@@ -409,10 +409,10 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 					type === 'text' || type === 'checkbox'
 						? value
 						: isNaN(valueAsNumber)
-							? name === 'date'
-								? Date.now()
-								: 0
-							: valueAsNumber
+						? name === 'date'
+							? Date.now()
+							: 0
+						: valueAsNumber
 			}
 		})
 	}
@@ -458,7 +458,8 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 				)
 
 				toast.success(
-					`Rs. ${state.payment.amount} has been added as ${state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
+					`Rs. ${state.payment.amount} has been added as ${
+						state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
 					} amount.`
 				)
 
@@ -481,7 +482,8 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 			)
 
 			toast.success(
-				`Rs. ${state.payment.amount} has been added as ${state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
+				`Rs. ${state.payment.amount} has been added as ${
+					state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
 				} amount.`
 			)
 			setState({
