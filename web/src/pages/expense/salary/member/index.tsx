@@ -113,7 +113,7 @@ export const StaffMemberSalary = ({ match }: StaffMemberSalaryProps) => {
 				}
 
 				let deducted = parseFloat(teacher.Salary) - salariesState.amount
-				dispatch(addSalaryExpense(salariesState))
+				dispatch(addSalaryExpense({ ...salariesState, deduction: deducted }))
 
 				toast.success('Payment Made')
 				break
@@ -128,7 +128,9 @@ export const StaffMemberSalary = ({ match }: StaffMemberSalaryProps) => {
 					break
 				}
 
-				dispatch(addSalaryExpense(salariesState))
+				dispatch(
+					addSalaryExpense({ ...salariesState, advance: salariesState.amount, amount: 0 })
+				)
 
 				toast.success('Payment Made')
 				break
