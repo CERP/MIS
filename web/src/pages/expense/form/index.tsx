@@ -125,25 +125,30 @@ export const ExpenseForm = ({ match }: RouteComponentProps<{ id: string }>) => {
 						</div>
 						<h1 className="text-xl text-gray-100 font-normal mt-3">Category</h1>
 						<div className="flex flex-1 flex-row space-x-2  mt-2 flex-wrap">
-							{categories.map((cat, index) => {
-								return (
-									<div
-										key={cat + index}
-										className={clsx(
-											'rounded-full space-y-2 mt-3 p-2 mr-2 text-gray-200 text-xs border-gray-200 border-2 cursor-pointer hover:bg-teal-brand',
-											state.category === cat
-												? 'bg-teal-brand'
-												: 'bg-transparent',
-											key === 'new'
-												? 'text-gray-200'
-												: 'text-gray-400 border-gray-400'
-										)}>
-										<h1 onClick={() => setState({ ...state, category: cat })}>
-											{cat}
-										</h1>
-									</div>
-								)
-							})}
+							{categories
+								.filter((cat, index) => cat.toLowerCase() !== 'other')
+								.map((cat, index) => {
+									return (
+										<div
+											key={cat + index}
+											className={clsx(
+												'rounded-full space-y-2 mt-3 p-2 mr-2 text-gray-200 text-xs border-gray-200 border-2 cursor-pointer hover:bg-teal-brand',
+												state.category === cat
+													? 'bg-teal-brand'
+													: 'bg-transparent',
+												key === 'new'
+													? 'text-gray-200'
+													: 'text-gray-400 border-gray-400'
+											)}>
+											<h1
+												onClick={() =>
+													setState({ ...state, category: cat })
+												}>
+												{cat}
+											</h1>
+										</div>
+									)
+								})}
 						</div>
 						<h1 className="text-xl text-gray-100 font-normal mt-3">Date*</h1>
 						<div className="w-full mt-2">
