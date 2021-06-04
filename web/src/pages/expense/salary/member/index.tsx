@@ -285,7 +285,7 @@ export const StaffMemberSalary = ({ match }: StaffMemberSalaryProps) => {
 					</div>
 				</div>
 				<div className="lg:flex-1">
-					<div className="text-white lg:pl-14 font-medium bg-gray-600 mx-3 rounded-t-2xl mt-4 lg:bg-white lg:text-black lg:rounded-2xl lg:flex lg:p-5 lg:items-center lg:flex-1 lg:flex-row lg:shadow-lg lg:border lg:border-gray-300 ">
+					<div className="text-white lg:pl-14 font-medium bg-gray-700 mx-3 rounded-t-2xl mt-4 lg:bg-white lg:text-black lg:rounded-2xl lg:flex lg:p-5 lg:items-center lg:flex-1 lg:flex-row lg:shadow-lg lg:border lg:border-gray-300 ">
 						<div>
 							<img
 								src={
