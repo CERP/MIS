@@ -175,12 +175,12 @@ export const ExpenseForm = ({ match }: RouteComponentProps<{ id: string }>) => {
 								}
 							/>
 						</div>
-						<div className="flex flex-1 flex-row justify-between items-center mt-5">
+						{/* <div className="flex flex-1 flex-row justify-between items-center mt-5">
 							<h1 className="text-xl text-gray-100 font-normal">Attach Image</h1>
 							<div className="items-center justify-center flex w-10 h-10 bg-white rounded-full p-1">
 								<CameraIcon className="text-teal-brand"></CameraIcon>
 							</div>
-						</div>
+						</div> */}
 						<div
 							onClick={() => handleAddOrUpdateExpense()}
 							className="flex flex-1 flex-row justify-between mt-6 pl-4 pr-4 pt-2 pb-2 rounded-md bg-teal-brand">
