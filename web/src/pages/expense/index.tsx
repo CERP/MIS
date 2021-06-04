@@ -82,7 +82,11 @@ export const Expense = () => {
 
 	const calculateCategoryExpense = (id: string) => {
 		return Object.values(state.categoryGroups[id]).reduce<number>((agg, expenses: any) => {
-			return agg + parseFloat(expenses.amount.toString())
+			return (
+				agg +
+				parseFloat(expenses.amount.toString()) *
+					parseFloat(expenses.quantity?.toString() ?? '1')
+			)
 		}, 0)
 	}
 
@@ -177,7 +181,14 @@ export const Expense = () => {
 
 		finalResult.forEach(expenseItem => {
 			Object.values(expenseItem).forEach(expenseItem => {
-				total = parseFloat(total.toString()) + parseFloat(expenseItem.amount.toString())
+				if (expenseItem.expense === 'MIS_EXPENSE') {
+					total =
+						parseFloat(total.toString()) +
+						parseFloat(expenseItem.amount.toString()) *
+							parseFloat(expenseItem.quantity.toString())
+				} else {
+					total = parseFloat(total.toString()) + parseFloat(expenseItem.amount.toString())
+				}
 			})
 		})
 
@@ -281,7 +292,7 @@ export const Expense = () => {
 														).format('ddd')} ${moment(
 															expense.date
 														).format('Do')}`}</li>
-														<li>{expense.amount}</li>
+														<li>{getListTotal(expense)}</li>
 													</div>
 												)
 											})}
@@ -343,4 +354,11 @@ export const Expense = () => {
 			</div>
 		</AppLayout>
 	)
+}
+const getListTotal = (expense: MISExpense | MISSalaryExpense) => {
+	if (expense.expense === 'MIS_EXPENSE') {
+		return expense.amount * expense.quantity
+	} else {
+		return expense.amount
+	}
 }
