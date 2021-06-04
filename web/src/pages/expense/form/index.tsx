@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import clsx from 'clsx'
 import moment from 'moment'
 import toast from 'react-hot-toast'
-import { RouteComponentProps } from 'react-router-dom'
+import { RouteComponentProps, useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { CameraIcon } from '@heroicons/react/outline'
 
@@ -20,6 +20,7 @@ export const ExpenseForm = ({ match }: RouteComponentProps<{ id: string }>) => {
 	const dispatch = useDispatch()
 	const key = match.params.id
 	const expense: any = useSelector((state: RootReducerState) => state.db.expenses)
+	const history = useHistory()
 
 	const [state, setState] = useState(expense[key] ?? initialState)
 
@@ -54,6 +55,9 @@ export const ExpenseForm = ({ match }: RouteComponentProps<{ id: string }>) => {
 		if (isNew()) {
 			dispatch(addExpense(state))
 			toast.success('New Expense entry has been added')
+			setTimeout(() => {
+				history.goBack()
+			}, 1200)
 			return
 		}
 
@@ -63,6 +67,9 @@ export const ExpenseForm = ({ match }: RouteComponentProps<{ id: string }>) => {
 			})
 		)
 		toast.success('Expense entry has been updated')
+		setTimeout(() => {
+			history.goBack()
+		}, 1200)
 	}
 
 	const categories = Object.keys(ExpenseCategories).filter(obj => obj.toString() !== 'SALARY')
