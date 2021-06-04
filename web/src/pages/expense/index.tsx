@@ -304,7 +304,7 @@ export const Expense = () => {
 						</div>
 					)}
 				</div>
-				{state.groupedResults && (
+				{state.groupedResults.length > 0 && (
 					<div
 						className={clsx(
 							'flex-1 overflow-y-auto h-4/6 duration-300 transition-all',
