@@ -130,7 +130,7 @@ export const ExpenseForm = ({ match }: RouteComponentProps<{ id: string }>) => {
 									<div
 										key={cat + index}
 										className={clsx(
-											'rounded-full p-1 mt-1 text-gray-200 text-xs border-gray-200 border-2 cursor-pointer hover:bg-teal-brand',
+											'rounded-full space-y-2 mt-3 p-2 mr-2 text-gray-200 text-xs border-gray-200 border-2 cursor-pointer hover:bg-teal-brand',
 											state.category === cat
 												? 'bg-teal-brand'
 												: 'bg-transparent',
