@@ -33,11 +33,15 @@ export const ContactUs = () => {
 							<div>mischool@cerp.org.pk</div>
 						</div>
 						<div className="space-y-2 hidden md:block">
-							<div>Follow us on</div>
+							<div>Follow us on:</div>
 							<div className="flex flex-row space-x-2">
-								<div className="rounded w-6 h-6 bg-white"></div>
-								<div className="rounded w-6 h-6 bg-white"> </div>
-								<div className="rounded w-6 h-6 bg-white" />
+								<a
+									href="https://web.facebook.com/CERPmischool"
+									rel="noreferrer"
+									target="_blank"
+									className="rounded w-6 h-6  bg-blue-600 text-white flex items-center justify-center font-semibold">
+									f
+								</a>
 							</div>
 						</div>
 					</div>
@@ -45,11 +49,11 @@ export const ContactUs = () => {
 						<ContactForm />
 					</div>
 					<div className="space-y-2 block md:hidden">
-						<div className="text-white">Follow us on</div>
+						<div className="text-white">Follow us on:</div>
 						<div className="flex flex-row space-x-2">
-							<div className="rounded w-6 h-6 bg-white"></div>
-							<div className="rounded w-6 h-6 bg-white"> </div>
-							<div className="rounded w-6 h-6 bg-white" />
+							<div className="rounded w-6 h-6  bg-blue-600 text-white flex items-center justify-center font-semibold">
+								f
+							</div>
 						</div>
 					</div>
 				</div>
