@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { Transition } from '@headlessui/react'
 import clsx from 'clsx'
+import { Transition } from '@headlessui/react'
 
 import { toTitleCase } from 'utils/toTitleCase'
 import { MISFeePeriods } from 'constants/index'
@@ -26,13 +26,10 @@ export const AddFeeToClass = ({ classes, settings, setClass, setFee }: AddFeeToC
 	return (
 		<>
 			<div>Select Class</div>
-			<select
-				onChange={hanleChangeClass}
-				name="classId"
-				className="tw-is-form-bg-black tw-select py-2 w-full">
-				<option value={''}>Choose from here</option>
+			<select onChange={hanleChangeClass} name="classId" className="tw-select py-2 w-full">
+				<option value="">Choose from here</option>
 				{Object.values(classes ?? {})
-					.filter(c => c)
+					.filter(c => c && c.name)
 					.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
 					.map(c => (
 						<option key={c.id} value={c.id}>

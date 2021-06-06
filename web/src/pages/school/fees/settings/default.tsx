@@ -55,7 +55,7 @@ export const DefaultFee = () => {
 		}
 
 		dispatch(mergeSettings(modified_settings))
-		toast.success('Default fee has been updated.')
+		toast.success('Class fee has been updated.')
 	}
 
 	// TODO: replace this with generic handler
