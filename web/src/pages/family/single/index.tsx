@@ -16,7 +16,7 @@ import { createMerges } from 'actions/core'
 import { cnicRegex, numberRegex } from 'constants/index'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
-import { isValidCNIC } from 'utils/helpers'
+import { isValidCNIC, isValidPhone } from 'utils/helpers'
 import { PhoneInput } from 'components/input/PhoneInput'
 
 type SingleFamilyProps = RouteComponentProps<{ id: string }>
@@ -128,9 +128,10 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 		if (!isValidCNIC(state.ManCNIC)) {
 			return toast.error('Father/Gaurdian CNIC is not valid')
 		}
+		if (!isValidPhone(state.Phone) && state.Phone !== '') {
+			return toast.error('Please provide a valid Phone Number')
+		}
 
-		// make sure, newly created ID doesn't exist before
-		// when we store family ID, we replace spaces with hyphens
 		if (
 			families.find(
 				fam =>
@@ -138,6 +139,8 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 					state.FamilyID.toLocaleLowerCase().replaceAll(' ', '-')
 			)
 		) {
+			// make sure, newly created ID doesn't exist before
+			// when we store family ID, we replace spaces with hyphens
 			return toast.error(`This '${state.FamilyID}' family Name or Id already exist`)
 		}
 

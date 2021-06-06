@@ -78,9 +78,9 @@ export const CreateOrUpdateStudent = () => {
 		? students[id].tags
 			? students[id]
 			: {
-				...students[id],
-				tags: {}
-			}
+					...students[id],
+					tags: {}
+			  }
 		: blankStudent()
 
 	const [state, setState] = useState<State>({
@@ -126,7 +126,7 @@ export const CreateOrUpdateStudent = () => {
 			return toast.error('Father/Gaurdian CNIC is not valid')
 		}
 
-		if (!isValidPhone(state.profile.Phone)) {
+		if (!isValidPhone(state.profile.Phone) && state.profile.Phone !== '') {
 			return toast.error('Please provide correct phone number.')
 		}
 
@@ -391,7 +391,7 @@ export const CreateOrUpdateStudent = () => {
 							</div>
 						</div>
 
-						<div>Contact Number*</div>
+						<div>Contact Number</div>
 						<PhoneInput
 							name="Phone"
 							onChange={handleInput}
