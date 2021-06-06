@@ -29,9 +29,10 @@ export const checkTime = async (): Promise<boolean> => {
 			}
 		}
 
-		const response: ServerResponse = await fetch(`${hostHTTPS}/mis/server-time`, reqOpts).then(
-			(res: Response) => res.json()
-		)
+		const response: ServerResponse = await fetch(
+			`${hostHTTPS}/mis/server-time`,
+			reqOpts
+		).then((res: Response) => res.json())
 
 		const { os_time } = response
 		const client_time = new Date().getTime()
@@ -86,14 +87,7 @@ export const isValidTeacher = (teacher: MISTeacher): boolean => {
 }
 
 export const checkPermission = (
-	permissions: {
-		fee: boolean
-		dailyStats: boolean
-		setupPage: boolean
-		expense: boolean
-		family: boolean
-		prospective: boolean
-	},
+	permissions: MISTeacher['permissions'],
 	title: string,
 	subAdmin: boolean,
 	admin: boolean

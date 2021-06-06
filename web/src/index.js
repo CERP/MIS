@@ -66,7 +66,7 @@ ReactDOM.render(
 					margin: '15px',
 					background: '#363636',
 					color: '#fff',
-					width: '300px'
+					width: '340px'
 				},
 				className: 'text-base',
 				duration: 4000

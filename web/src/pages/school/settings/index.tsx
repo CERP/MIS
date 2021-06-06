@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
+import { Link } from 'react-router-dom'
+import toast from 'react-hot-toast'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { DefaultExamGrades, numberRegex } from 'constants/index'
@@ -9,7 +11,6 @@ import { exportToJSON } from 'utils/indexedDb'
 import { TModal } from 'components/Modal'
 import { createMerges } from 'actions/core'
 import StudentExportModal from 'modules/Exports/studenExportModal'
-import toast from 'react-hot-toast'
 import { mergeSettings } from 'actions'
 import { PhoneInput } from 'components/input/PhoneInput'
 
@@ -285,7 +286,7 @@ export const Settings = () => {
 						<div className="flex flex-row justify-between">
 							<div>Device Name</div>
 							<div className="text-sm">
-								{state.settings.devices[client_id] || 'not set'}
+								{state.settings.devices[client_id] ?? 'nil'}
 							</div>
 						</div>
 						<div className="flex flex-row justify-between">
@@ -303,7 +304,7 @@ export const Settings = () => {
 						</div>
 						<div className="flex flex-row justify-between">
 							<div>Current Package</div>
-							<div className="text-sm">not set</div>
+							<div className="text-sm">nil</div>
 						</div>
 						<div className="flex flex-row justify-between">
 							<div>Max Students</div>
@@ -311,17 +312,17 @@ export const Settings = () => {
 						</div>
 						<div className="flex flex-row justify-between">
 							<div>Expiring on</div>
-							<div className="text-sm">not set</div>
+							<div className="text-sm">nil</div>
 						</div>
 					</div>
 
 					<div className="px-4 w-full md:w-3/5  mx-auto">
 						<div className="text-lg mt-2 mb-4 font-semibold text-center">
-							Payment History
+							Exams and Grades
 						</div>
-						<div className="text-center text-red-brand">
-							Need to discuss with Ilmx Team
-						</div>
+						<Link to="/exams/grades">
+							<button className="tw-btn-blue w-full">Change Grades</button>
+						</Link>
 					</div>
 
 					<div className="px-4 w-full md:w-3/5  mx-auto">
