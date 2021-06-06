@@ -145,18 +145,16 @@ export const StudentPayments = () => {
 		<>
 			<div className="px-5 text-gray-700 relative print:hidden">
 				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-4 rounded-2xl bg-gray-700 p-5 my-4 mt-16 md:mt-8">
-					<div className="relative text-white text-center text-base">
-						<div className="-top-14 absolute right-1 rounded-full bg-gray-500 w-20 h-20">
-							<img
-								className="w-20 h-20 rounded-full object-contain"
-								src={
-									student.ProfilePicture?.url ??
-									student.ProfilePicture?.image_string ??
-									UserIconSvg
-								}
-								alt="student"
-							/>
-						</div>
+					<div className="flex flex-col items-center justify-center relative text-white">
+						<img
+							className="-top-14 absolute rounded-full bg-gray-500 w-20 h-20 object-contain"
+							src={
+								student.ProfilePicture?.url ??
+								student.ProfilePicture?.image_string ??
+								UserIconSvg
+							}
+							alt="student"
+						/>
 						<div className="mt-8">{toTitleCase(student.Name)}</div>
 						<div className="text-sm">Class {section?.namespaced_name}</div>
 					</div>
