@@ -119,7 +119,7 @@ const Card = ({ title, icon, link, disabled = false }: CardProps) => {
 		<Link to={disabled ? '#' : link}>
 			<div
 				onClick={() => {
-					disabled ? toast.error("You don't have permission to access this module") : {}
+					disabled ? toast.error("You don't have permission to access!") : {}
 				}}
 				className={clsx(
 					'p-5 border shadow-md border-gray-50 rounded-2xl hover:shadow-lg',

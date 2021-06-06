@@ -21,24 +21,20 @@ enum Tab {
 }
 
 type PropTypes = {
-	permissions: {
-		fee: boolean
-		dailyStats: boolean
-		setupPage: boolean
-		expense: boolean
-		family: boolean
-		prospective: boolean
-	}
+	permissions: MISTeacher['permissions']
 	admin: boolean
 	subAdmin: boolean
 }
 
 export const StatsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 	const todayDate = moment().format('YYYY-MM-DD')
-	const { lastSnapshot, db, queued } = useSelector((state: RootReducerState) => state)
-	const { students, faculty } = db
 
-	const unsyncedChanges = Object.keys(queued.mutations || {}).length
+	const lastSnapshot = useSelector((state: RootReducerState) => state.lastSnapshot)
+	const queued = useSelector((state: RootReducerState) => state.queued)
+	const students = useSelector((state: RootReducerState) => state.db.students)
+	const faculty = useSelector((state: RootReducerState) => state.db.faculty)
+
+	const unsyncedChanges = Object.keys(queued.mutations ?? {}).length
 
 	const [activeTab, setActiveTab] = useState(Tab.STUDENT)
 
@@ -48,7 +44,7 @@ export const StatsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 
 		for (const student of Object.values(students)) {
 			if (student && student.Name) {
-				const record = (student.attendance || {})[todayDate]
+				const record = (student.attendance ?? {})[todayDate]
 				if (record) {
 					if (
 						record.status === 'CASUAL_LEAVE' ||
@@ -65,7 +61,7 @@ export const StatsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 		}
 
 		for (const staff of Object.values(faculty)) {
-			const record = (staff.attendance || {})[todayDate]
+			const record = (staff.attendance ?? {})[todayDate]
 
 			console.log(record)
 
@@ -97,7 +93,7 @@ export const StatsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 
 		for (const student of Object.values(students)) {
 			if (student && student.Name) {
-				const additional_payment = Object.values(student.payments || {})
+				const additional_payment = Object.values(student.payments ?? {})
 					.filter(
 						x =>
 							moment(x.date).format('YYYY-MM-DD') === todayDate &&

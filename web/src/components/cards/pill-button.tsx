@@ -17,7 +17,7 @@ export const PillCardButton = ({ title, caption, icon, link, disabled = false }:
 		<Link to={link} className="flex flex-col space-between">
 			<div
 				onClick={() => {
-					disabled ? toast.error("You don't have permission to access this module") : {}
+					disabled && toast.error("You don't have permission to access!")
 				}}
 				className={clsx(
 					'p-3 rounded-full flex flex-row justify-between border shadow-md items-center border-gray-50 bg-white',

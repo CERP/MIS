@@ -10,14 +10,7 @@ import iconStudents from './assets/students.svg'
 import iconFamily from './assets/family.png'
 
 type PropTypes = {
-	permissions: {
-		fee: boolean
-		dailyStats: boolean
-		setupPage: boolean
-		expense: boolean
-		family: boolean
-		prospective: boolean
-	}
+	permissions: MISTeacher['permissions']
 	admin: boolean
 	subAdmin: boolean
 }
