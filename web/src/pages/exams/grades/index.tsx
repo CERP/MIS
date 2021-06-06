@@ -66,7 +66,7 @@ export const GradeSettings = () => {
 
 	return (
 		<AppLayout title="Grade Settings" showHeaderTitle>
-			<div className="p-5 md:p-10 md:pt-5 md:pb-0 text-gray-700 relative">
+			<div className="p-5 md:p-10 md:pt-5 text-gray-700 relative">
 				<div className="text-xl font-bold text-center">
 					Set Grades &amp; Remarks with Percentage
 				</div>
