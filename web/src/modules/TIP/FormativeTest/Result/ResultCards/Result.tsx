@@ -7,7 +7,7 @@ import ChildView from './ChildView'
 import SkillView from './SkillView'
 import SingleStdView from './SingleStdView'
 import SingleSloView from './SingleSloView'
-import { WhiteUser } from 'assets/icons'
+import { WhiteAvatar } from 'assets/icons'
 import {
 	getStudentsByGroup,
 	getResult,
@@ -88,7 +88,7 @@ const Result: React.FC<PropsType> = props => {
 							<div className="absolute rounded-full w-3/4">
 								<img
 									className="h-9 w-9 rounded-full top-32"
-									src={WhiteUser}
+									src={WhiteAvatar}
 									alt="img"
 								/>
 							</div>
@@ -101,7 +101,7 @@ const Result: React.FC<PropsType> = props => {
 						onClick={() => setType(Types.CHILD_VIEW)}>
 						<div className="bg-blue-tip-brand h-6 my-4 w-3/4 rounded-3xl py-1 pt-2 flex justify-center items-center cursor-pointer">
 							<div className="absolute rounded-full w-3/4">
-								<img className="h-9 w-9 rounded-full" src={WhiteUser} alt="img" />
+								<img className="h-9 w-9 rounded-full" src={WhiteAvatar} alt="img" />
 							</div>
 							<div className="text-white flex justify-center">
 								Child View - {name}
@@ -115,7 +115,7 @@ const Result: React.FC<PropsType> = props => {
 					onClick={() => setType(Types.SKILL_VIEW)}>
 					<div className="bg-blue-tip-brand h-6 my-4 w-3/4 rounded-3xl py-1 pt-2 flex justify-center items-center cursor-pointer">
 						<div className="absolute rounded-full w-3/4">
-							<img className="h-9 w-9 rounded-full" src={WhiteUser} alt="img" />
+							<img className="h-9 w-9 rounded-full" src={WhiteAvatar} alt="img" />
 						</div>
 						<div className="text-sm md:text-md lg:text-lg text-white truncate w-full flex justify-center items-center">
 							Skill View - {slo.replaceAll('$', ',')}

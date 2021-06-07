@@ -1,6 +1,6 @@
 import React from 'react'
 import { getClassnameFromSectionId } from 'utils/TIP'
-import GroupViewCard from '../DetailedAnalysis/GroupViewCard'
+import GroupViewCard from '../DetailedAnalysis/GroupView/GroupViewCard'
 
 interface P {
 	students: MISStudent[]
@@ -33,12 +33,7 @@ const GroupViewPrintable: React.FC<P> = ({ students, sorted_sections }) => {
 									std.section_id
 								)
 								return (
-									<GroupViewCard
-										key={std.id}
-										name={std.Name}
-										roll_no={std.RollNumber}
-										class_name={class_name}
-									/>
+									<GroupViewCard key={std.id} std={std} class_name={class_name} />
 								)
 							})}
 						</tr>

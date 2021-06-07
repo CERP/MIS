@@ -1,7 +1,9 @@
 import React, { useMemo, useState } from 'react'
 import { getStudentsByGroup, getClassnameFromSectionId } from 'utils/TIP'
-import GroupViewPrintable from '../Printable/GroupView'
+import GroupViewPrintable from '../../Printable/GroupView'
+import Headings from '../../Headings'
 import GroupViewCard from './GroupViewCard'
+import { isValidStudent } from 'utils'
 
 interface P {
 	students: RootDBState['students']
@@ -32,10 +34,13 @@ const GroupView: React.FC<P> = ({ students, sorted_sections }) => {
 		subject,
 		group
 	])
+	const total_students = Object.values(students ?? {}).filter(
+		s => isValidStudent(s) && s.Active && (s.tags ? !s.tags['prospective'] : true)
+	).length
 
 	return (
 		<>
-			<div className="flex flex-row justify-around w-full print:hidden">
+			<div className="flex flex-row justify-around w-full print:hidden mb-5">
 				<select className="tw-select" onChange={e => setGroup(e.target.value as TIPGrades)}>
 					<option value="">Group</option>
 					{ordered_groups.map(ordered_group => (
@@ -55,24 +60,25 @@ const GroupView: React.FC<P> = ({ students, sorted_sections }) => {
 					))}
 				</select>
 			</div>
+			<Headings sub_heading={`Total Students = ${total_students}`} />
 			<div className="h-10 items-center text-white text-xs bg-blue-tip-brand w-full mt-4 flex flex-row justify-around print:hidden">
-				<div className="w-6/12 flex flex-row justify-between px-3 items-center m-2">
+				<div className="w-6/12 flex flex-row justify-between px-3 items-center m-2 text-sm md:text-base lg:text-lg">
 					<div className="font-bold text-center">Name</div>
 				</div>
-				<div className="flex flex-row justify-between w-6/12 text-xs m-4">
-					<div className="font-bold">Roll no</div>
-					<div className="font-bold">Class</div>
+				<div className="flex flex-row justify-between w-6/12 m-4 text-sm md:text-base lg:text-lg font-bold">
+					<div>Roll no</div>
+					<div>Class</div>
 				</div>
 			</div>
 			<div className="flex flex-col print:hidden overflow-y-auto h-80">
-				{Object.values(filtered_students || {}).map(std => {
+				{Object.values(filtered_students ?? {}).map(std => {
 					const class_name = getClassnameFromSectionId(sorted_sections, std.section_id)
 					return (
 						<GroupViewCard
 							key={std.id}
-							name={std.Name}
-							roll_no={std.RollNumber}
+							std={std}
 							class_name={class_name}
+							subject={subject}
 						/>
 					)
 				})}
