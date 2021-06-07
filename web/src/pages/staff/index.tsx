@@ -2,11 +2,11 @@ import React from 'react'
 import clsx from 'clsx'
 import { Link } from 'react-router-dom'
 import { Route, RouteComponentProps } from 'react-router'
-
 import { AppLayout } from 'components/Layout/appLayout'
 import { CreateOrUpdateStaff } from './create'
 import { StaffMemberSalary } from 'pages/expense/salary/member'
-import toTitleCase from 'utils/toTitleCase'
+import { toTitleCase } from 'utils/toTitleCase'
+import Attendance from 'modules/Teacher/Single/Attendance'
 
 const pathMap = {
 	Profile: 'profile',
@@ -39,8 +39,9 @@ const StaffPage = ({ location }: RouteComponentProps) => {
 				</div>
 			)}
 			<Route path="/staff/new" component={CreateOrUpdateStaff} />
-			<Route path="/staff/:id/profile" component={CreateOrUpdateStaff} />
-			<Route path="/staff/:id/salaries" component={StaffMemberSalary} />
+			<Route path="/staff/:id/profile" exact component={CreateOrUpdateStaff} />
+			<Route path="/staff/:id/salaries" exact component={StaffMemberSalary} />
+			<Route path="/staff/:id/attendance" exact component={Attendance} />
 		</AppLayout>
 	)
 }

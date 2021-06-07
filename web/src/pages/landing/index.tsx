@@ -1,4 +1,4 @@
-import React, { Fragment, useRef, useState } from 'react'
+import React, { Fragment, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
 	LocationMarkerIcon,
@@ -36,7 +36,6 @@ import ContactForm from 'components/Forms/ContactForm'
 
 export const Landing = () => {
 	const [formOpened, setFormOpened] = useState<boolean>(false)
-	const formRef = useRef(null)
 
 	return (
 		<AppLayout>
@@ -218,7 +217,6 @@ export const Landing = () => {
 				<div className="fixed z-50 p-1 text-white rounded-full shadow-md bottom-10 right-5 bg-teal-brand">
 					{formOpened ? (
 						<XIcon
-							ref={formRef}
 							onClick={() => setFormOpened(false)}
 							className="w-10 h-10 cursor-pointer"
 						/>

@@ -282,7 +282,7 @@ export const Settings = () => {
 							</button>
 						</div>
 					</form>
-					<div className="px-4 w-full md:w-3/5  mx-auto">
+					<div className="w-full md:w-3/5  mx-auto">
 						<div className="flex flex-row justify-between">
 							<div>Device Name</div>
 							<div className="text-sm">
@@ -298,7 +298,7 @@ export const Settings = () => {
 							<div className="text-sm">{client_id?.split('-')?.[0]}</div>
 						</div>
 					</div>
-					<div className="px-4 w-full md:w-3/5  mx-auto">
+					<div className="w-full md:w-3/5  mx-auto">
 						<div className="text-lg mt-2 mb-4 font-semibold text-center">
 							Package Information
 						</div>
@@ -316,7 +316,7 @@ export const Settings = () => {
 						</div>
 					</div>
 
-					<div className="px-4 w-full md:w-3/5  mx-auto">
+					<div className="w-full md:w-3/5  mx-auto">
 						<div className="text-lg mt-2 mb-4 font-semibold text-center">
 							Exams and Grades
 						</div>
@@ -325,7 +325,7 @@ export const Settings = () => {
 						</Link>
 					</div>
 
-					<div className="px-4 w-full md:w-3/5  mx-auto">
+					<div className="w-full md:w-3/5  mx-auto">
 						<div className="text-lg mt-2 mb-4 font-semibold text-center">
 							School Data
 						</div>
