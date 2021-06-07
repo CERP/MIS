@@ -14,16 +14,20 @@ type State = {
 	totalDayIncome: number
 }
 
+const Parser = (val: number): number => {
+	const value = Number(val)
+	if (Number.isFinite(value)) {
+		return val
+	}
+	return 0
+}
+
 const calculateExpense = (exp: { [id: string]: MISSalaryExpense | MISExpense }) => {
 	return Object.values(exp ?? {}).reduce((agg: number, entry: MISExpense | MISSalaryExpense) => {
 		if (entry.expense === 'MIS_EXPENSE') {
-			return (
-				agg +
-				parseFloat(String(entry.amount).toString()) *
-					parseFloat(String(entry.quantity).toString())
-			)
+			return agg + Parser(entry.amount) * Parser(entry.quantity)
 		}
-		return agg + parseFloat(String(entry.amount).toString())
+		return agg + Parser(entry.amount)
 	}, 0)
 }
 
@@ -79,11 +83,11 @@ const ExpenseCard = ({ date, expenseData, payments }: ExpenseCardProps) => {
 						</Link>
 						{expense.expense === 'MIS_EXPENSE' ? (
 							<div className="flex flex-1 justify-end font-medium">
-								<h1>Rs {expense.amount * expense.quantity}</h1>
+								<h1>Rs {Number(expense.amount) * Number(expense.quantity)}</h1>
 							</div>
 						) : (
 							<div className="flex flex-1 justify-end font-medium">
-								<h1>Rs {expense.amount}</h1>
+								<h1>Rs {Number(expense.amount)}</h1>
 							</div>
 						)}
 					</div>

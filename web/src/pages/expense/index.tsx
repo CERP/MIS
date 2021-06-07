@@ -25,6 +25,14 @@ type State = {
 	years: string[]
 }
 
+const Parser = (val: number): number => {
+	const value = Number(val)
+	if (Number.isFinite(value)) {
+		return val
+	}
+	return 0
+}
+
 export const Expense = () => {
 	const currentYear = moment().format('YYYY')
 	const currentMonth = moment().format('MMMM')
@@ -82,11 +90,7 @@ export const Expense = () => {
 
 	const calculateCategoryExpense = (id: string) => {
 		return Object.values(state.categoryGroups[id]).reduce<number>((agg, expenses: any) => {
-			return (
-				agg +
-				parseFloat(expenses.amount.toString()) *
-					parseFloat(expenses.quantity?.toString() ?? '1')
-			)
+			return agg + Parser(expenses.amount) * Parser(expenses.quantity ?? 1)
 		}, 0)
 	}
 
@@ -183,11 +187,9 @@ export const Expense = () => {
 			Object.values(expenseItem).forEach(expenseItem => {
 				if (expenseItem.expense === 'MIS_EXPENSE') {
 					total =
-						parseFloat(total.toString()) +
-						parseFloat(expenseItem.amount.toString()) *
-							parseFloat(expenseItem.quantity.toString())
+						Parser(total) + Parser(expenseItem.amount) * Parser(expenseItem.quantity)
 				} else {
-					total = parseFloat(total.toString()) + parseFloat(expenseItem.amount.toString())
+					total = Parser(total) + Parser(expenseItem.amount)
 				}
 			})
 		})

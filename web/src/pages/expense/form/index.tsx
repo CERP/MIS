@@ -67,9 +67,6 @@ export const ExpenseForm = ({ match }: RouteComponentProps<{ id: string }>) => {
 			})
 		)
 		toast.success('Expense entry has been updated')
-		setTimeout(() => {
-			history.goBack()
-		}, 1200)
 	}
 
 	const categories = Object.keys(ExpenseCategories).filter(obj => obj.toString() !== 'SALARY')
@@ -136,10 +133,12 @@ export const ExpenseForm = ({ match }: RouteComponentProps<{ id: string }>) => {
 								.filter((cat, index) => cat.toLowerCase() !== 'other')
 								.map((cat, index) => {
 									return (
-										<div
+										<button
+											onClick={() => setState({ ...state, category: cat })}
+											title={cat}
 											key={cat + index}
 											className={clsx(
-												'rounded-full space-y-2 mt-3 p-2 mr-2 text-gray-200 text-xs border-gray-200 border-2 cursor-pointer hover:bg-teal-brand',
+												'rounded-full outline-none space-y-2 mt-3 p-2 mr-2 text-gray-200 text-xs border-gray-200 border-2 cursor-pointer hover:bg-teal-brand',
 												state.category === cat
 													? 'bg-teal-brand'
 													: 'bg-transparent',
@@ -147,13 +146,8 @@ export const ExpenseForm = ({ match }: RouteComponentProps<{ id: string }>) => {
 													? 'text-gray-200'
 													: 'text-gray-400 border-gray-400'
 											)}>
-											<h1
-												onClick={() =>
-													setState({ ...state, category: cat })
-												}>
-												{cat}
-											</h1>
-										</div>
+											{cat}
+										</button>
 									)
 								})}
 						</div>
