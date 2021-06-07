@@ -17,15 +17,17 @@ export const PrivateRoute = ({ component: Component, ...rest }: PrivateRouteProp
 
 	const dispatch = useDispatch()
 
-	const {
-		auth,
-		db: { faculty, package_info, onboarding, users },
-		initialized
-	} = useSelector((state: RootReducerState) => state)
+	const auth = useSelector((state: RootReducerState) => state.auth)
+	const faculty = useSelector((state: RootReducerState) => state.db.faculty)
+	const onboarding = useSelector((state: RootReducerState) => state.db.onboarding)
+	const users = useSelector((state: RootReducerState) => state.db.users)
+	const package_info = useSelector((state: RootReducerState) => state.db.package_info)
+
+	const initialized = useSelector((state: RootReducerState) => state.initialized)
 
 	// school logged in and there's no user, start the onboarding process
 	// by creating a new user
-	if (auth?.token && Object.keys(users || {}).length === 0) {
+	if (auth?.token && Object.keys(users ?? {}).length === 0) {
 		return <Redirect to="/school/setup" />
 	}
 
@@ -43,8 +45,8 @@ export const PrivateRoute = ({ component: Component, ...rest }: PrivateRouteProp
 	// this check is to make sure to dispatch a logout action
 	// if faculty is deleted from another device, which is logged in
 	// currently in mischool.
-	if (auth.name) {
-		if (faculty[auth.faculty_id] === undefined) {
+	if (auth.name && initialized) {
+		if (faculty?.[auth.faculty_id] === undefined) {
 			// unset the faculty_id and the name
 			// hack: just call existing logout function
 

@@ -13,12 +13,10 @@ interface PrivateRouteProps extends RouteProps {
 export const PublicRoute = ({ component: Component, ...rest }: PrivateRouteProps) => {
 	useScrollTop(rest.location.pathname)
 
-	const {
-		auth,
-		db: { users },
-		connected,
-		initialized
-	} = useSelector((state: RootReducerState) => state)
+	const auth = useSelector((state: RootReducerState) => state.auth)
+	const users = useSelector((state: RootReducerState) => state.db.users)
+	const connected = useSelector((state: RootReducerState) => state.connected)
+	const initialized = useSelector((state: RootReducerState) => state.initialized)
 
 	// school logged in and there's no user, start the onboarding process
 	// by creating a new user
@@ -37,7 +35,7 @@ export const PublicRoute = ({ component: Component, ...rest }: PrivateRouteProps
 	if (!initialized && rest.location.pathname !== '/') {
 		return <DBLoader />
 	}
-
+	initialized
 	return (
 		<Route
 			{...rest}
