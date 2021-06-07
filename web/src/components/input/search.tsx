@@ -14,27 +14,27 @@ interface SearchInputProps
 	showMenuCallback?: Function
 }
 
-export const SearchInput = (props: SearchInputProps) => {
+export const SearchInput = ({ showMenuButton, showMenuCallback, ...rest }: SearchInputProps) => {
 	return (
 		<div className="relative w-full">
 			<input
 				type="search"
-				{...props}
+				{...rest}
 				name="search"
 				className={clsx(
-					props.className,
+					rest.className,
 					'text-gray-500 tw-input pl-8 rounded-3xl shadow-sm w-full'
 				)}
-				placeholder={props.placeholder ?? 'Search here...'}
+				placeholder={rest.placeholder ?? 'Search here...'}
 				autoComplete="off"
 			/>
 			<div className="absolute text-gray-500 left-0 ml-2 mr-4 my-3 top-0">
 				<SearchIcon className="h-5 w-5" />
 			</div>
-			{props.showMenuButton && (
+			{showMenuButton && (
 				<div className="absolute text-gray-500 right-0 mr-2 ml-4 my-3 -top-0.5">
 					<AdjustmentsIcon
-						onClick={props.showMenuCallback ? () => props.showMenuCallback() : null}
+						onClick={showMenuCallback ? () => showMenuCallback() : null}
 						className="h-6 w-6 cursor-pointer text-teal-brand"
 					/>
 				</div>
