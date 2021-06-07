@@ -600,11 +600,15 @@ export const CreateOrUpdateStaff = () => {
 							</>
 						)}
 
-						<button
-							type="submit"
-							className={'w-full items-center tw-btn-blue py-3 font-semibold my-4'}>
-							{isNewStaff() ? 'Save' : 'Update'}
-						</button>
+						{Admin && (
+							<button
+								type="submit"
+								className={
+									'w-full items-center tw-btn-blue py-3 font-semibold my-4'
+								}>
+								{isNewStaff() ? 'Save' : 'Update'}
+							</button>
+						)}
 						{!isNewStaff() && id !== faculty_id && (
 							<button
 								type="button"

@@ -86,6 +86,12 @@ export const isValidTeacher = (teacher: MISTeacher): boolean => {
 	return !!(teacher && teacher.id && teacher.Name)
 }
 
+/**
+ * Takes permissions of currently logged in staff and
+ * checks if they have the permission to perform a particular
+ * action or not
+ */
+
 export const checkPermission = (
 	permissions: MISTeacher['permissions'],
 	title: string,
