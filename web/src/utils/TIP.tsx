@@ -52,17 +52,38 @@ export const getStudentsByGroup = (
 }
 
 export const calculateResult = (students: RootDBState['students'], sub: string) => {
-	return Object.entries(students).reduce<DiagnosticRes>((agg, [std_id, std_obj]) => {
-		const learning_level =
-			std_obj.targeted_instruction.learning_level &&
-			std_obj.targeted_instruction.learning_level[sub]
-		if (learning_level) {
-			if (agg[learning_level.grade]) {
+	return Object.entries(students)
+		.filter(([, std_obj]) => std_obj.id && std_obj.Name)
+		.reduce<DiagnosticRes>((agg, [std_id, std_obj]) => {
+			const learning_level = std_obj?.targeted_instruction?.learning_level?.[sub]
+
+			if (learning_level) {
+				if (agg[learning_level.grade]) {
+					return {
+						...agg,
+						[learning_level.grade]: {
+							students: {
+								...agg[learning_level.grade].students,
+								[std_id]: std_obj
+							}
+						}
+					}
+				}
 				return {
 					...agg,
 					[learning_level.grade]: {
 						students: {
-							...agg[learning_level.grade].students,
+							[std_id]: std_obj
+						}
+					}
+				}
+			}
+			if (agg['Not Graded']) {
+				return {
+					...agg,
+					'Not Graded': {
+						students: {
+							...agg['Not Graded'].students,
 							[std_id]: std_obj
 						}
 					}
@@ -70,33 +91,13 @@ export const calculateResult = (students: RootDBState['students'], sub: string) 
 			}
 			return {
 				...agg,
-				[learning_level.grade]: {
-					students: {
-						[std_id]: std_obj
-					}
-				}
-			}
-		}
-		if (agg['Not Graded']) {
-			return {
-				...agg,
 				'Not Graded': {
 					students: {
-						...agg['Not Graded'].students,
 						[std_id]: std_obj
 					}
 				}
 			}
-		}
-		return {
-			...agg,
-			'Not Graded': {
-				students: {
-					[std_id]: std_obj
-				}
-			}
-		}
-	}, {} as DiagnosticRes)
+		}, {} as DiagnosticRes)
 }
 
 type DiagnosticResultByGradeLevel = {
