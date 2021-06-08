@@ -8,14 +8,9 @@ import { StudentPayments } from 'pages/students/fee-payments/payments'
 import { CreateOrUpdateStudent } from './add'
 import { toTitleCase } from 'utils/toTitleCase'
 import StudentMarks from 'modules/Student/Single/Marks'
+import StudentAttendance from 'modules/Student/Single/Attendance'
 
-const Paths = {
-	Profile: 'profile',
-	Payments: 'payments',
-	Marks: 'marks',
-	Attendance: 'attendance',
-	Certificates: 'certificates'
-}
+const Paths = ['profile', 'payments', 'marks', 'attendance', 'certificates']
 
 const StudentPage = ({ location }: RouteComponentProps) => {
 	const loc = location.pathname.split('/').slice(-1).pop()
@@ -26,7 +21,7 @@ const StudentPage = ({ location }: RouteComponentProps) => {
 		<AppLayout title={pageTitle} showHeaderTitle>
 			{loc !== 'new' && (
 				<div className="flex flex-row items-center my-2 w-full justify-center flex-wrap print:hidden">
-					{Object.entries(Paths).map(([title, path]) => (
+					{Paths.map(path => (
 						<Link
 							key={path}
 							to={path}
@@ -37,13 +32,14 @@ const StudentPage = ({ location }: RouteComponentProps) => {
 									: 'bg-white text-teal-brand'
 							)}
 							replace={true}>
-							{title}
+							{toTitleCase(path)}
 						</Link>
 					))}
 				</div>
 			)}
 			<Route path="/students/new" component={CreateOrUpdateStudent} />
 			<Route path="/students/:id/profile" component={CreateOrUpdateStudent} />
+			<Route path="/students/:id/attendance" component={StudentAttendance} />
 			<Route path="/students/:id/payments" component={StudentPayments} />
 			<Route path="/students/:id/marks" component={StudentMarks} />
 		</AppLayout>
