@@ -429,7 +429,13 @@ export const CreateOrUpdateStaff = () => {
 							</div>
 						</div>
 
-						<div>{profile.Married ? 'Spouse Name' : 'Father Name'}</div>
+						<div>
+							{profile.Married
+								? profile.Gender === 'male'
+									? 'Father Name'
+									: 'Spouse Name'
+								: 'Father Name'}
+						</div>
 						<input
 							name="ManName"
 							onChange={handleInput}
@@ -438,7 +444,13 @@ export const CreateOrUpdateStaff = () => {
 							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
-						<div>{profile.Married ? 'Spouse CNIC' : 'Father CNIC'}</div>
+						<div>
+							{profile.Married
+								? profile.Gender === 'male'
+									? 'Father CNIC'
+									: 'Spouse CNIC'
+								: 'Father CNIC'}
+						</div>
 						<input
 							name="ManCNIC"
 							value={profile.ManCNIC}
