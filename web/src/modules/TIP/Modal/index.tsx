@@ -18,7 +18,7 @@ export const TModal: React.FC<TModalProps> = ({ children }) => {
 					&#8203;
 				</span>
 				<div
-					className="inline-block align-bottom rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle w-full md:w-6/12 lg:w-4/12"
+					className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 inline-block align-bottom rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle w-full md:w-6/12 lg:w-4/12"
 					role="dialog"
 					aria-modal="true"
 					aria-labelledby="modal-headline">
