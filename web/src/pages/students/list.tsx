@@ -123,7 +123,7 @@ export const StudentList = ({
 
 	const renderListPage = () => {
 		return (
-			<div className="relative p-5 md:p-10 md:pt-5">
+			<div className="relative p-5 md:p-10 md:pt-5 mb-10 md:mb-0">
 				{!forwardTo && (
 					<Link to="/students/new/menu">
 						<AddStickyButton label="Add new Student" />
@@ -209,8 +209,8 @@ export const StudentList = ({
 							className="w-1/3 rounded shadow tw-select text-teal-brand"
 							onChange={e => setFilter({ ...state, gender: e.target.value })}>
 							<option value="">Gender</option>
-							<option value={'Male'}>Male</option>
-							<option value={'Female'}>Female</option>
+							<option value={'Male'}>M</option>
+							<option value={'Female'}>F</option>
 							<option value={'Other'}>Other</option>
 						</select>
 						<select

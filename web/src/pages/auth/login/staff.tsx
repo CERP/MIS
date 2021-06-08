@@ -86,7 +86,7 @@ const Login: React.FC<LoginProps> = ({
 						<div className="flex flex-col items-center md:p-10 space-y-2">
 							<img
 								className="w-16 h-16 md:w-20 md:h-20 p-1 border border-gray-300 rounded-full"
-								src={school.logo || '/favicon.ico'}
+								src={school.logo ?? '/favicon.ico'}
 								alt="school-logo"
 							/>
 							<div className="font-semibold text-center">{school.name}</div>
@@ -127,14 +127,14 @@ const Login: React.FC<LoginProps> = ({
 									</div>
 									<div className="md:mt-6">
 										<div className="grid grid-cols-3 md:grid-cols-5 md:gap-0 md:h-60">
-											{chunkify(filteredUsers || [], USERS_PER_GROUP)[
+											{chunkify(filteredUsers ?? [], USERS_PER_GROUP)[
 												usersGroupIndex
 											].map(([uid, user]: [string, MISUser]) => {
 												const staffMember = faculty[uid]
 												return (
 													<div
 														key={uid}
-														className="group flex flex-col items-center mb-4 space-y-2">
+														className="group flex flex-col items-center mb-2 space-y-1">
 														<div
 															className="w-20 h-20 cursor-pointer"
 															onClick={() =>

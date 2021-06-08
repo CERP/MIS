@@ -95,10 +95,9 @@ export const VoucherSettings = () => {
 	}
 
 	return (
-		<AppLayout title={'Voucher Settings'}>
+		<AppLayout title={'Voucher Settings'} showHeaderTitle>
 			<div className="p-5 md:p-10 md:pt-5 md:pb-0 relative">
-				<div className="text-2xl font-bold mt-4 mb-8 text-center">Voucher Settings</div>
-				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 pb-6 my-4 md:mt-8">
+				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 pb-6 mb-4">
 					<div className="text-white text-center text-base my-5">
 						This will appear on student voucher
 					</div>
