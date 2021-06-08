@@ -16,6 +16,7 @@ import { isValidCNIC, isValidPhone } from 'utils/helpers'
 import { formatCNIC } from 'utils'
 import { getImageString, getDownsizedImage } from 'utils/image'
 
+import { PhoneIcon } from '@heroicons/react/solid'
 import { UploadImage } from 'components/image'
 import { PlusButton } from 'components/Button/plus'
 import { cnicRegex, numberRegex } from 'constants/index'
@@ -392,17 +393,21 @@ export const CreateOrUpdateStudent = () => {
 						</div>
 
 						<div>Contact Number</div>
-						<PhoneInput
-							name="Phone"
-							onChange={handleInput}
-							value={state.profile.Phone}
-							error={
-								numberRegex.test(state.profile.Phone) ||
-								!(state.profile.Phone.length <= 11)
-							}
-							className="w-full tw-input tw-is-form-bg-black"
-						/>
-
+						<div className="flex flex-row w-full">
+							<div className="flex w-full flex-col ">
+								<PhoneInput
+									name="Phone"
+									value={state.profile.Phone}
+									error={
+										numberRegex.test(state.profile.Phone) ||
+										!(state.profile.Phone?.length <= 11)
+									}
+									onChange={handleInput}
+									className="tw-input w-full tw-is-form-bg-black"
+								/>
+							</div>
+							<PhoneCall phone={state.profile.Phone} />
+						</div>
 						<div className="text-lg font-semibold text-center">
 							Additional Information
 						</div>
@@ -434,16 +439,21 @@ export const CreateOrUpdateStudent = () => {
 						/>
 
 						<div>Alternative Contact Number</div>
-						<PhoneInput
-							name="AlternatePhone"
-							onChange={handleInput}
-							error={
-								numberRegex.test(state.profile.AlternatePhone) ||
-								!(state.profile.AlternatePhone?.length <= 11)
-							}
-							value={state.profile.AlternatePhone}
-							className="tw-input w-full tw-is-form-bg-black"
-						/>
+						<div className="flex flex-row w-full">
+							<div className="flex w-full flex-col ">
+								<PhoneInput
+									name="AlternatePhone"
+									value={state.profile.AlternatePhone}
+									error={
+										numberRegex.test(state.profile.AlternatePhone) ||
+										!(state.profile.AlternatePhone?.length <= 11)
+									}
+									onChange={handleInput}
+									className="tw-input w-full tw-is-form-bg-black"
+								/>
+							</div>
+							<PhoneCall phone={state.profile.AlternatePhone} />
+						</div>
 
 						<div>Address</div>
 						<textarea
@@ -569,3 +579,17 @@ export const CreateOrUpdateStudent = () => {
 		</>
 	)
 }
+
+type PhoneCallProps = {
+	phone: string
+}
+const PhoneCall = ({ phone }: PhoneCallProps) => (
+	<a
+		className={clsx(
+			'md:hidden ml-2 text-white h-10 w-10 rounded-md flex items-center justify-center',
+			phone ? 'bg-blue-brand' : 'pointer-events-none bg-gray-500 text-gray-300'
+		)}
+		href={`tel:${phone}`}>
+		<PhoneIcon className="w-6 h-6" />
+	</a>
+)

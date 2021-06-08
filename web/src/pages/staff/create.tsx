@@ -14,6 +14,7 @@ import { cnicRegex, StaffType } from 'constants/index'
 import { ShowHidePassword } from 'components/password'
 import { hash, formatCNIC } from 'utils'
 import { getImageString, getDownsizedImage } from 'utils/image'
+import { PhoneIcon } from '@heroicons/react/solid'
 
 import { UploadImage } from 'components/image'
 import { numberRegex } from 'constants/index'
@@ -357,16 +358,21 @@ export const CreateOrUpdateStaff = () => {
 						/>
 
 						<div>Personal Contact</div>
-						<PhoneInput
-							name="Phone"
-							onChange={handleInput}
-							error={
-								numberRegex.test(profile.Phone) || !(profile.Phone?.length <= 11)
-							}
-							value={profile.Phone}
-							className="tw-input w-full tw-is-form-bg-black"
-						/>
-
+						<div className="flex items-center flex-row w-full">
+							<div className="flex w-full flex-col ">
+								<PhoneInput
+									name="Phone"
+									value={profile.Phone}
+									error={
+										numberRegex.test(profile.Phone) ||
+										!(profile.Phone?.length <= 11)
+									}
+									onChange={handleInput}
+									className="tw-input w-full tw-is-form-bg-black"
+								/>
+							</div>
+							<PhoneCall phone={profile.Phone} />
+						</div>
 						<div>Password*</div>
 						<div className="w-full relative">
 							<input
@@ -633,3 +639,18 @@ export const CreateOrUpdateStaff = () => {
 		</>
 	)
 }
+
+type PhoneCallProps = {
+	phone: string
+}
+
+const PhoneCall = ({ phone }: PhoneCallProps) => (
+	<a
+		className={clsx(
+			'md:hidden ml-2 text-white h-10 w-10 rounded-md flex items-center justify-center',
+			phone ? 'bg-blue-brand' : 'pointer-events-none bg-gray-500 text-gray-300'
+		)}
+		href={`tel:${phone}`}>
+		<PhoneIcon className="w-6 h-6" />
+	</a>
+)
