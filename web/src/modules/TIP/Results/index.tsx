@@ -41,7 +41,6 @@ const Results: React.FC<PropsType> = () => {
 					to={'/targeted-instruction/quiz-result'}>
 					<img className="py-3 h-12 w-12" src={WhiteQuiz} />
 					<div className="text-white text-lg">Quizzes</div>
-					<div className="bg-white rounded-full h-7 w-7"></div>
 				</Link>
 			</div>
 		</div>
