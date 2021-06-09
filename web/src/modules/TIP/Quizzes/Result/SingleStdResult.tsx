@@ -16,6 +16,8 @@ const getProgress = (obtained_marks: number) => {
 		return 'Mastered'
 	} else if (percentage >= 40) {
 		return 'Working'
+	} else if (percentage < 0) {
+		return 'Not Attained'
 	} else {
 		return 'Struggling'
 	}
@@ -35,7 +37,7 @@ const SingleStdResult: React.FC<P> = ({ student, class_name, subject, quiz_id, t
 				</div>
 			</div>
 			<div className="flex items-center w-1/3 justify-center font-bold">
-				{obtained_marks}/{total_marks}
+				{`${obtained_marks === -1 ? 'Absent' : `${obtained_marks}/${total_marks}`}`}
 			</div>
 			<div className="flex items-center w-1/3 justify-center">
 				<div className="w-full md:w-1/2 lg:w-1/3 flex flex-row justify-start items-center">
