@@ -283,7 +283,7 @@ export const StaffMemberSalary = ({ match }: StaffMemberSalaryProps) => {
 					</div>
 				</div>
 				<div className="lg:flex-1">
-					<div className="text-white lg:pl-14 font-medium bg-gray-600 mx-3 rounded-t-2xl mt-4 lg:bg-white lg:text-black lg:rounded-2xl lg:flex lg:p-5 lg:items-center lg:flex-1 lg:flex-row lg:shadow-lg lg:border lg:border-gray-300 ">
+					<div className="text-white pt-2 md:pt-0 lg:pl-14 font-medium bg-gray-700 mx-3 rounded-t-2xl mt-4 lg:bg-white lg:text-black lg:rounded-2xl lg:flex lg:p-5 lg:items-center lg:flex-1 lg:flex-row lg:shadow-lg lg:border lg:border-gray-300 ">
 						<div>
 							<img
 								src={
@@ -305,7 +305,7 @@ export const StaffMemberSalary = ({ match }: StaffMemberSalaryProps) => {
                      lg:text-black lg:rounded-2xl lg:flex lg:p-5 lg:items-center lg:flex-1 flex-col lg:text-center lg:justify-center
                       lg:shadow-lg lg:border lg:border-gray-300">
 						<h1 className="lg:text-xl lg:font-medium hidden">View Past Payments</h1>
-						<div className="w-full flex flex-1 flex-col space-y-3  mt-2 overflow-y-auto max-h-96">
+						<div className="w-full flex flex-1 flex-col space-y-2  mt-2 overflow-y-auto max-h-96">
 							<div className="flex flex-1 text-left ">
 								<div className="flex-1">Month</div>
 								<div className="flex-1 text-center">Deductions</div>
@@ -316,7 +316,7 @@ export const StaffMemberSalary = ({ match }: StaffMemberSalaryProps) => {
 									return (
 										<div
 											key={salary.faculty_id + index}
-											className="flex flex-1 text-left font-normal text-sm">
+											className="flex flex-1 text-left text-sm">
 											<div
 												className={clsx(
 													'flex-1',
