@@ -16,7 +16,6 @@ import { loadDB, connected, disconnected, processImageQueue } from './actions/co
 import { hostWSS } from 'utils/hostConfig'
 import { checkTime } from 'utils'
 import { ActionTypes } from 'constants/index'
-import { fetchTargetedInstruction } from 'actions'
 
 import './styles/helper.css'
 import './styles/main.css'
@@ -36,9 +35,6 @@ syncr.on('connect', () =>
 syncr.on('disconnect', () => store.dispatch(disconnected()))
 syncr.on('message', msg => store.dispatch(msg))
 syncr.on('verify', () => store.dispatch(processImageQueue()))
-syncr.on('verify', () => {
-	store.dispatch(fetchTargetedInstruction())
-})
 
 syncr.message_timeout = 90000
 
@@ -69,7 +65,7 @@ ReactDOM.render(
 					width: '340px'
 				},
 				className: 'text-base',
-				duration: 4000
+				duration: 3000
 			}}
 		/>
 		<Routes store={store} />
