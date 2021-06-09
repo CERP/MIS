@@ -8,7 +8,7 @@ import Dynamic from '@cerp/dynamic'
 import toast from 'react-hot-toast'
 
 import { SwitchButton } from 'components/input/switch'
-import { isValidPhone, isValidCNIC } from 'utils/helpers'
+import { isValidPhone } from 'utils/helpers'
 import { createFacultyMerge, deleteFaculty, uploadFacultyProfilePicture } from 'actions'
 import { cnicRegex, StaffType } from 'constants/index'
 import { ShowHidePassword } from 'components/password'
@@ -127,12 +127,6 @@ export const CreateOrUpdateStaff = () => {
 
 		if (!isValidPhone(profile.Phone) && profile.Phone !== '') {
 			return toast.error('Please provide correct phone number!')
-		}
-		if (!isValidCNIC(profile.ManCNIC)) {
-			return toast.error('Please provide correct CNIC')
-		}
-		if (!isValidCNIC(profile.CNIC)) {
-			return toast.error('Please provide correct CNIC')
 		}
 
 		if (profile.Password.length !== 128) {

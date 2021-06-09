@@ -16,7 +16,7 @@ import { createMerges } from 'actions/core'
 import { cnicRegex, numberRegex } from 'constants/index'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
-import { isValidCNIC, isValidPhone } from 'utils/helpers'
+import { isValidPhone } from 'utils/helpers'
 import { PhoneInput } from 'components/input/PhoneInput'
 
 type SingleFamilyProps = RouteComponentProps<{ id: string }>
@@ -125,9 +125,7 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 		if (state.FamilyID.trim().length < 4) {
 			return toast.error('Family Name or Id must be at least 4 character long')
 		}
-		if (!isValidCNIC(state.ManCNIC)) {
-			return toast.error('Father/Gaurdian CNIC is not valid')
-		}
+
 		if (!isValidPhone(state.Phone) && state.Phone !== '') {
 			return toast.error('Please provide a valid Phone Number')
 		}
