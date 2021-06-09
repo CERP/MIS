@@ -95,7 +95,7 @@ const Diary: React.FC = () => {
 			}, {})
 
 		dispatch(addDiary(currentDate, state.sectionId, currDiary))
-		toast.success('Saved')
+		toast.success('Diary has been saved')
 	}
 
 	const getSelectedSectionName = (): string => {
@@ -326,35 +326,37 @@ const Diary: React.FC = () => {
 					{isSectionSelected && (
 						<div className="flex flex-col w-full print:hidden md:bg-gray-700 md:p-5 md:rounded-2xl md:w-1/2 md:overflow-y-auto space-y-2">
 							<div>Subjects</div>
-							{Object.keys(classes[state.classId].subjects ?? {}).map(s => (
-								<div
-									key={s}
-									className="flex flex-wrap w-full justify-between flex-row items-center space-y-2 md:flex-nowrap">
-									<p className="px-2 py-1 md:py-2 bg-teal-brand text-white rounded-3xl order-1 w-40 md:w-60 min-w-min text-sm text-center border border-white md:order-none">
-										{s}
-									</p>
-									<input
-										className="tw-input tw-is-bg-form-black order-3 w-full md:order-none md:mx-2 bg-transparent"
-										type="text"
-										placeholder="Write diary here"
-										onChange={e =>
-											setState({
-												...state,
-												diary: {
-													...state.diary,
-													[s]: { homework: e.target.value }
-												}
-											})
-										}
-										value={state.diary[s]?.homework ?? ''}
-									/>
+							{Object.keys(classes[state.classId].subjects ?? {})
+								.sort()
+								.map(s => (
 									<div
-										className="focus:shadow-outline text-white rounded-full shadow-sm p-2 bg-blue cursor-pointer order-2 md:order-none"
-										onClick={() => setLessonModalVisible(true)}>
-										<LinkIcon className="w-4 md:w-6 cursor-pointer" />
+										key={s}
+										className="flex flex-wrap w-full justify-between flex-row items-center space-y-2 md:flex-nowrap">
+										<p className="px-2 py-1 md:py-2 bg-teal-brand text-white rounded-3xl order-1 w-40 md:w-60 min-w-min text-sm text-center border border-white md:order-none">
+											{s}
+										</p>
+										<input
+											className="tw-input tw-is-bg-form-black order-3 w-full md:order-none md:mx-2 bg-transparent"
+											type="text"
+											placeholder="Write diary here"
+											onChange={e =>
+												setState({
+													...state,
+													diary: {
+														...state.diary,
+														[s]: { homework: e.target.value }
+													}
+												})
+											}
+											value={state.diary[s]?.homework ?? ''}
+										/>
+										<div
+											className="focus:shadow-outline text-white rounded-full shadow-sm p-2 bg-blue cursor-pointer order-2 md:order-none"
+											onClick={() => setLessonModalVisible(true)}>
+											<LinkIcon className="w-4 md:w-6 cursor-pointer" />
+										</div>
 									</div>
-								</div>
-							))}
+								))}
 						</div>
 					)}
 				</div>
