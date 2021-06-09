@@ -25,6 +25,14 @@ type State = {
 	years: string[]
 }
 
+const Parser = (val: number): number => {
+	const value = Number(val)
+	if (Number.isFinite(value)) {
+		return val
+	}
+	return 0
+}
+
 export const Expense = () => {
 	const currentYear = moment().format('YYYY')
 	const currentMonth = moment().format('MMMM')
@@ -82,7 +90,7 @@ export const Expense = () => {
 
 	const calculateCategoryExpense = (id: string) => {
 		return Object.values(state.categoryGroups[id]).reduce<number>((agg, expenses: any) => {
-			return agg + parseFloat(expenses.amount.toString())
+			return agg + Parser(expenses.amount) * Parser(expenses.quantity ?? 1)
 		}, 0)
 	}
 
@@ -177,7 +185,12 @@ export const Expense = () => {
 
 		finalResult.forEach(expenseItem => {
 			Object.values(expenseItem).forEach(expenseItem => {
-				total = parseFloat(total.toString()) + parseFloat(expenseItem.amount.toString())
+				if (expenseItem.expense === 'MIS_EXPENSE') {
+					total =
+						Parser(total) + Parser(expenseItem.amount) * Parser(expenseItem.quantity)
+				} else {
+					total = Parser(total) + Parser(expenseItem.amount)
+				}
 			})
 		})
 
@@ -281,7 +294,7 @@ export const Expense = () => {
 														).format('ddd')} ${moment(
 															expense.date
 														).format('Do')}`}</li>
-														<li>{expense.amount}</li>
+														<li>{getListTotal(expense)}</li>
 													</div>
 												)
 											})}
@@ -304,7 +317,7 @@ export const Expense = () => {
 						</div>
 					)}
 				</div>
-				{state.groupedResults && (
+				{state.groupedResults.length > 0 && (
 					<div
 						className={clsx(
 							'flex-1 overflow-y-auto h-4/6 duration-300 transition-all',
@@ -343,4 +356,11 @@ export const Expense = () => {
 			</div>
 		</AppLayout>
 	)
+}
+const getListTotal = (expense: MISExpense | MISSalaryExpense) => {
+	if (expense.expense === 'MIS_EXPENSE') {
+		return expense.amount * expense.quantity
+	} else {
+		return expense.amount
+	}
 }
