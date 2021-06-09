@@ -1,19 +1,16 @@
 import React from 'react'
 import clsx from 'clsx'
+import toast from 'react-hot-toast'
+import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { Route, RouteComponentProps } from 'react-router'
 import { AppLayout } from 'components/Layout/appLayout'
 import { CreateOrUpdateStaff } from './create'
 import { StaffMemberSalary } from 'pages/expense/salary/member'
-import toTitleCase from 'utils/toTitleCase'
-import { useSelector } from 'react-redux'
-import toast from 'react-hot-toast'
+import { toTitleCase } from 'utils/toTitleCase'
+import Attendance from 'modules/Teacher/Single/Attendance'
 
-const pathMap = {
-	Profile: 'profile',
-	Attendance: 'attendance',
-	Salary: 'salaries'
-}
+const nestedRoutes = ['profile', 'attendance', 'salaries']
 
 const StaffPage = ({ location }: RouteComponentProps) => {
 	const loc = location.pathname.split('/').slice(-1).pop() as any
@@ -28,15 +25,16 @@ const StaffPage = ({ location }: RouteComponentProps) => {
 			toast.error('You do not have permission to access Salary')
 		}
 	}
+
 	return (
 		<AppLayout title={pageTitle} showHeaderTitle>
 			{loc !== 'new' && (
 				<div className="flex flex-row items-center my-2 w-full justify-center flex-wrap print:hidden">
-					{Object.entries(pathMap).map(([title, path]) => (
+					{nestedRoutes.map(path => (
 						<Link
 							key={path}
-							onClick={() => permissionError(title)}
-							to={title === 'Salary' ? (Admin ? path : '#') : path}
+							onClick={() => permissionError(path)}
+							to={path === 'Salary' ? (Admin ? path : '#') : path}
 							className={clsx(
 								'rounded-full px-4 py-2 m-2 text-md border shadow-md md:text-xl',
 								loc === path
@@ -44,7 +42,7 @@ const StaffPage = ({ location }: RouteComponentProps) => {
 									: 'bg-white text-teal-brand'
 							)}
 							replace={true}>
-							{title}
+							{toTitleCase(path)}
 						</Link>
 					))}
 				</div>

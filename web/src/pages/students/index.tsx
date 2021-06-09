@@ -10,7 +10,7 @@ import { toTitleCase } from 'utils/toTitleCase'
 import StudentMarks from 'modules/Student/Single/Marks'
 import StudentAttendance from 'modules/Student/Single/Attendance'
 
-const Paths = ['profile', 'payments', 'marks', 'attendance', 'certificates']
+const nestedRoutes = ['profile', 'payments', 'marks', 'attendance', 'certificates']
 
 const StudentPage = ({ location }: RouteComponentProps) => {
 	const loc = location.pathname.split('/').slice(-1).pop()
@@ -21,7 +21,7 @@ const StudentPage = ({ location }: RouteComponentProps) => {
 		<AppLayout title={pageTitle} showHeaderTitle>
 			{loc !== 'new' && (
 				<div className="flex flex-row items-center my-2 w-full justify-center flex-wrap print:hidden">
-					{Paths.map(path => (
+					{nestedRoutes.map(path => (
 						<Link
 							key={path}
 							to={path}
