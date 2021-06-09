@@ -6,16 +6,22 @@ interface AppLayoutProps {
 	children: React.ReactNode
 	title?: string
 	showHeaderTitle?: boolean
+	total?: number
 }
 
-export const AppLayout: React.FC<AppLayoutProps> = ({ children, title, showHeaderTitle }) => {
+export const AppLayout: React.FC<AppLayoutProps> = ({
+	children,
+	title,
+	showHeaderTitle,
+	total = 0
+}) => {
 	const docTitle = title ? `${title} | MISchool` : 'MISchool - School Management Software'
 	// set the document title
 	useDocumentTitle(docTitle)
 
 	return (
 		<div className="w-full text-gray-700">
-			<AppHeader title={showHeaderTitle ? title : undefined} />
+			<AppHeader total={total} title={showHeaderTitle ? title : undefined} />
 			{children}
 		</div>
 	)

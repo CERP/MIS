@@ -96,8 +96,8 @@ export const StudentList = ({
 				(state.searchByAdmissionNo || state.searchByRollNo
 					? true
 					: state.searchText
-						? searchString.includes(state.searchText.toLowerCase())
-						: true) &&
+					? searchString.includes(state.searchText.toLowerCase())
+					: true) &&
 				(state.class ? s.section_id === state.class : true) &&
 				(state.tag ? Object.keys(s.tags ?? []).includes(state.tag) : true) &&
 				(state.gender ? state.gender.toLowerCase() === s.Gender.toLowerCase() : true) &&
@@ -129,6 +129,7 @@ export const StudentList = ({
 						<AddStickyButton label="Add new Student" />
 					</Link>
 				)}
+
 				<div className="flex flex-col items-center justify-between mt-4 mb-12 space-y-4 md:flex-row md:mb-20 md:space-y-0 md:space-x-60">
 					<div ref={searchInputRef} className="md:w-9/12 w-full">
 						<SearchInput
@@ -139,8 +140,8 @@ export const StudentList = ({
 								(state.searchByAdmissionNo
 									? 'admission no'
 									: state.searchByRollNo
-										? 'roll number'
-										: 'name, fname or phone')
+									? 'roll number'
+									: 'name, fname or phone')
 							}
 							className="md:w-full"
 							type="text"
@@ -155,8 +156,8 @@ export const StudentList = ({
 								style={{
 									top: searchInputRef.current
 										? searchInputRef.current.offsetTop +
-										searchInputRef.current.offsetHeight +
-										2
+										  searchInputRef.current.offsetHeight +
+										  2
 										: 0,
 									left: searchInputRef.current
 										? searchInputRef.current.offsetLeft
@@ -259,7 +260,7 @@ export const StudentList = ({
 	}
 
 	return (
-		<AppLayout title={pageTitle} showHeaderTitle>
+		<AppLayout total={filteredStudents.length ?? 0} title={pageTitle} showHeaderTitle>
 			{renderListPage()}
 		</AppLayout>
 	)
