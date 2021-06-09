@@ -238,7 +238,7 @@ const Diary: React.FC = () => {
 
 	return (
 		<AppLayout title={'Manage Diary'} showHeaderTitle>
-			<div className="flex flex-col items-center my-10 mx-5 p-5 md:p-0 bg-gray-700 rounded-2xl md:w-4/5 md:mx-auto md:bg-transparent md:h-screen">
+			<div className="flex flex-col items-center m-5 md:mb-0 p-5 md:p-10 md:pt-5 bg-gray-700 rounded-2xl md:w-4/5 md:mx-auto md:bg-transparent md:h-screen">
 				<div className="flex flex-col w-full justify-center md:flex-row md:h-3/4 md:space-x-4 text-white">
 					<div className="flex flex-col w-full print:hidden md:bg-gray-700 md:p-5 md:rounded-2xl md:w-1/2 space-y-2 md:space-y-4">
 						<div className="flex flex-row w-full justify-between">
@@ -246,7 +246,7 @@ const Diary: React.FC = () => {
 								<label htmlFor="diary-date">Date</label>
 								<input
 									id="diary-date"
-									className="px-1 tw-input tw-is-form-bg-black"
+									className="px-1 tw-input w-full tw-is-form-bg-black"
 									type="date"
 									value={state.selectedDate}
 									onChange={e =>
@@ -259,7 +259,7 @@ const Diary: React.FC = () => {
 								<label htmlFor="class-id">Class</label>
 								<select
 									id="class-id"
-									className="tw-select"
+									className="tw-select w-full"
 									onChange={e => setState({ ...state, classId: e.target.value })}>
 									<option value=""> Select Class</option>
 									{Object.values(classes).map(c => (
@@ -330,9 +330,9 @@ const Diary: React.FC = () => {
 								<div
 									key={s}
 									className="flex flex-wrap w-full justify-between flex-row items-center space-y-2 md:flex-nowrap">
-									<div className="p-1 md:p-2 bg-teal-brand text-white rounded-3xl order-1 w-1/4 min-w-min text-center border border-white md:order-none">
+									<p className="px-2 py-1 md:py-2 bg-teal-brand text-white rounded-3xl order-1 w-40 md:w-60 min-w-min text-sm text-center border border-white md:order-none">
 										{s}
-									</div>
+									</p>
 									<input
 										className="tw-input tw-is-bg-form-black order-3 w-full md:order-none md:mx-2 bg-transparent"
 										type="text"

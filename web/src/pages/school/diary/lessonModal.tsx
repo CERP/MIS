@@ -1,6 +1,4 @@
 import React, { useState, useMemo } from 'react'
-import toast from 'react-hot-toast'
-
 import { ArrowLeftIcon, ClipboardCopyIcon, PlayIcon } from '@heroicons/react/outline'
 
 interface LessonModalProps {
@@ -12,7 +10,6 @@ interface LessonModalProps {
 const LessonModal: React.FC<LessonModalProps> = ({ lessons, onClose }) => {
 	const [classFilter, setClassFilter] = useState('1')
 	const [subjectFilter, setSubjectFilter] = useState('')
-
 	const { classTitles, subjects } = useMemo(() => getClassSubjectsInfo(lessons), [lessons])
 
 	const lessons_data = useMemo(() => getFilteredData(lessons, classFilter, subjectFilter), [
@@ -23,7 +20,7 @@ const LessonModal: React.FC<LessonModalProps> = ({ lessons, onClose }) => {
 
 	const copyLink = (link: string) => {
 		navigator.clipboard.writeText(link)
-		toast.success('Copied')
+		window.alert('Copied')
 	}
 
 	const getLink = (link: string) => {
@@ -83,7 +80,7 @@ const LessonModal: React.FC<LessonModalProps> = ({ lessons, onClose }) => {
 				</div>
 
 				<div className="flex flex-col w-full overflow-y-auto my-2">
-					{Object.entries(lessons_data || ({} as IlmxLessonVideos)).map(
+					{Object.entries(lessons_data ?? ({} as IlmxLessonVideos)).map(
 						([lesson_id, lesson_meta]) => (
 							<div
 								className="flex items-center bg-gray-700 text-white rounded-md p-2 my-1 w-full"
@@ -100,7 +97,7 @@ const LessonModal: React.FC<LessonModalProps> = ({ lessons, onClose }) => {
 								</div>
 
 								<div
-									className="flex rounded-full bg-blue p-2 max-h-8"
+									className="flex rounded-full bg-blue p-2 max-h-8 cursor-pointer"
 									onClick={() =>
 										copyLink(
 											`https://ilmexchange.com/library/${getLink(
@@ -126,7 +123,7 @@ export default LessonModal
 const getFilteredData = (lessons: IlmxLessonVideos, class_title: string, subject: string) => {
 	let lessonVideos
 
-	for (let [id, lessonObj] of Object.entries(lessons || {})) {
+	for (let [id, lessonObj] of Object.entries(lessons ?? {})) {
 		const s_title = getSubjectTitleFromLessonId(id)
 		const c_title = getClassTitleFromLessonId(id)
 
@@ -146,7 +143,7 @@ const getFilteredData = (lessons: IlmxLessonVideos, class_title: string, subject
 const getClassSubjectsInfo = (lessons: IlmxLessonVideos) => {
 	let class_titles = new Set<string>()
 	let subjects: string[] = []
-	for (let [id, lessonObj] of Object.entries(lessons || {})) {
+	for (let [id, lessonObj] of Object.entries(lessons ?? {})) {
 		if (lessonObj.type === 'Video') {
 			const class_title = getClassTitleFromLessonId(id)
 			const subject = getSubjectTitleFromLessonId(id)
@@ -160,9 +157,9 @@ const getClassSubjectsInfo = (lessons: IlmxLessonVideos) => {
 }
 
 const getClassTitleFromLessonId = (lessonId: string): string => {
-	return lessonId.split('-')[1] || 'nil'
+	return lessonId.split('-')[1] ?? 'nil'
 }
 
 const getSubjectTitleFromLessonId = (lessonId: string): string => {
-	return lessonId.split('-')[2] || 'nil'
+	return lessonId.split('-')[2] ?? 'nil'
 }
