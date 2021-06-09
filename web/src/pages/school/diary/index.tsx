@@ -263,12 +263,7 @@ const Diary: React.FC = () => {
 									onChange={e => setState({ ...state, classId: e.target.value })}>
 									<option value=""> Select Class</option>
 									{Object.values(classes)
-										.sort((a, b) =>
-											a.name.localeCompare(b.name, undefined, {
-												numeric: true,
-												sensitivity: 'base'
-											})
-										)
+										.sort((a, b) => a.classYear - b.classYear)
 										.map(c => (
 											<option key={c.id} value={c.id}>
 												{c.name}
