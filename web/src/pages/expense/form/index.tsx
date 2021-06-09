@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import clsx from 'clsx'
 import moment from 'moment'
 import toast from 'react-hot-toast'
-import { RouteComponentProps } from 'react-router-dom'
+import { RouteComponentProps, useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { CameraIcon } from '@heroicons/react/outline'
 
@@ -20,6 +20,7 @@ export const ExpenseForm = ({ match }: RouteComponentProps<{ id: string }>) => {
 	const dispatch = useDispatch()
 	const key = match.params.id
 	const expense: any = useSelector((state: RootReducerState) => state.db.expenses)
+	const history = useHistory()
 
 	const [state, setState] = useState(expense[key] ?? initialState)
 
@@ -54,6 +55,9 @@ export const ExpenseForm = ({ match }: RouteComponentProps<{ id: string }>) => {
 		if (isNew()) {
 			dispatch(addExpense(state))
 			toast.success('New Expense entry has been added')
+			setTimeout(() => {
+				history.goBack()
+			}, 1200)
 			return
 		}
 
@@ -125,25 +129,27 @@ export const ExpenseForm = ({ match }: RouteComponentProps<{ id: string }>) => {
 						</div>
 						<h1 className="text-xl text-gray-100 font-normal mt-3">Category</h1>
 						<div className="flex flex-1 flex-row space-x-2  mt-2 flex-wrap">
-							{categories.map((cat, index) => {
-								return (
-									<div
-										key={cat + index}
-										className={clsx(
-											'rounded-full p-1 mt-1 text-gray-200 text-xs border-gray-200 border-2 cursor-pointer hover:bg-teal-brand',
-											state.category === cat
-												? 'bg-teal-brand'
-												: 'bg-transparent',
-											key === 'new'
-												? 'text-gray-200'
-												: 'text-gray-400 border-gray-400'
-										)}>
-										<h1 onClick={() => setState({ ...state, category: cat })}>
+							{categories
+								.filter((cat, index) => cat.toLowerCase() !== 'other')
+								.map((cat, index) => {
+									return (
+										<button
+											onClick={() => setState({ ...state, category: cat })}
+											title={cat}
+											key={cat + index}
+											className={clsx(
+												'rounded-full outline-none space-y-2 mt-3 p-2 mr-2 text-gray-200 text-xs border-gray-200 border-2 cursor-pointer hover:bg-teal-brand',
+												state.category === cat
+													? 'bg-teal-brand'
+													: 'bg-transparent',
+												key === 'new'
+													? 'text-gray-200'
+													: 'text-gray-400 border-gray-400'
+											)}>
 											{cat}
-										</h1>
-									</div>
-								)
-							})}
+										</button>
+									)
+								})}
 						</div>
 						<h1 className="text-xl text-gray-100 font-normal mt-3">Date*</h1>
 						<div className="w-full mt-2">
@@ -163,12 +169,12 @@ export const ExpenseForm = ({ match }: RouteComponentProps<{ id: string }>) => {
 								}
 							/>
 						</div>
-						<div className="flex flex-1 flex-row justify-between items-center mt-5">
+						{/* <div className="flex flex-1 flex-row justify-between items-center mt-5">
 							<h1 className="text-xl text-gray-100 font-normal">Attach Image</h1>
 							<div className="items-center justify-center flex w-10 h-10 bg-white rounded-full p-1">
 								<CameraIcon className="text-teal-brand"></CameraIcon>
 							</div>
-						</div>
+						</div> */}
 						<div
 							onClick={() => handleAddOrUpdateExpense()}
 							className="flex flex-1 flex-row justify-between mt-6 pl-4 pr-4 pt-2 pb-2 rounded-md bg-teal-brand">
