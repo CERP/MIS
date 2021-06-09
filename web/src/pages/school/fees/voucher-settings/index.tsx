@@ -124,7 +124,7 @@ export const VoucherSettings = () => {
 									handleInputByPath(['bankInfo', 'name'], e.target.value)
 								}
 								type="text"
-								placeholder="e.g. The Punjab of Bank"
+								placeholder="e.g. The Bank of Punjab"
 								className="tw-input w-full tw-is-form-bg-black"
 							/>
 							<div>Account Title</div>
