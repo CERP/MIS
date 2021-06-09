@@ -1,14 +1,13 @@
 import React from 'react'
 import clsx from 'clsx'
-import toast from 'react-hot-toast'
-import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { Route, RouteComponentProps } from 'react-router'
 import { AppLayout } from 'components/Layout/appLayout'
 import { CreateOrUpdateStaff } from './create'
 import { StaffMemberSalary } from 'pages/expense/salary/member'
-import { toTitleCase } from 'utils/toTitleCase'
-import Attendance from 'modules/Teacher/Single/Attendance'
+import toTitleCase from 'utils/toTitleCase'
+import { useSelector } from 'react-redux'
+import toast from 'react-hot-toast'
 
 const pathMap = {
 	Profile: 'profile',
