@@ -52,8 +52,8 @@ export const AppHeader = ({ title, total = 0 }: AppHeaderProps) => {
 									'w-full': isUserLogged
 								})}>
 								{isUserLogged &&
-								location.pathname !== '/home' &&
-								location.pathname !== '/' ? (
+									location.pathname !== '/home' &&
+									location.pathname !== '/' ? (
 									<div
 										className="p-2 bg-white border border-gray-200 rounded-full shadow-sm cursor-pointer focus:shadow-outline text-red-brand"
 										onClick={() => history.goBack()}>
@@ -73,11 +73,7 @@ export const AppHeader = ({ title, total = 0 }: AppHeaderProps) => {
 									{title && (
 										<div className="text-lg font-semibold text-white">
 											{title}
-										</div>
-									)}
-									{total > 0 && (
-										<div className="text-xs font-semibold text-white">
-											{total}
+											{total > 0 && <span>: {total}</span>}
 										</div>
 									)}
 								</div>
@@ -196,15 +192,15 @@ export const AppHeader = ({ title, total = 0 }: AppHeaderProps) => {
 											isUserLogged
 												? '/home'
 												: authToken
-												? '/staff-login'
-												: '/school-login'
+													? '/staff-login'
+													: '/school-login'
 										}
 										className="px-4 py-2 mt-2 bg-transparent rounded-lg md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 md:bg-gray-100 hover:bg-gray-200 focus:bg-gray-100 focus:outline-none focus:shadow-outline">
 										{isUserLogged
 											? 'Go Home'
 											: authToken
-											? 'Staff Login'
-											: 'Login'}
+												? 'Staff Login'
+												: 'Login'}
 									</Link>
 								</Menu.Items>
 							)}

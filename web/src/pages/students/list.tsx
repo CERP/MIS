@@ -96,8 +96,8 @@ export const StudentList = ({
 				(state.searchByAdmissionNo || state.searchByRollNo
 					? true
 					: state.searchText
-					? searchString.includes(state.searchText.toLowerCase())
-					: true) &&
+						? searchString.includes(state.searchText.toLowerCase())
+						: true) &&
 				(state.class ? s.section_id === state.class : true) &&
 				(state.tag ? Object.keys(s.tags ?? []).includes(state.tag) : true) &&
 				(state.gender ? state.gender.toLowerCase() === s.Gender.toLowerCase() : true) &&
@@ -119,7 +119,7 @@ export const StudentList = ({
 		)
 	}
 
-	const pageTitle = `Students ${toTitleCase(forwardTo)}`
+	const pageTitle = `Students${forwardTo ? ' ' + toTitleCase(forwardTo) : ''}`
 
 	const renderListPage = () => {
 		return (
@@ -140,8 +140,8 @@ export const StudentList = ({
 								(state.searchByAdmissionNo
 									? 'admission no'
 									: state.searchByRollNo
-									? 'roll number'
-									: 'name, fname or phone')
+										? 'roll number'
+										: 'name, fname or phone')
 							}
 							className="md:w-full"
 							type="text"
@@ -156,8 +156,8 @@ export const StudentList = ({
 								style={{
 									top: searchInputRef.current
 										? searchInputRef.current.offsetTop +
-										  searchInputRef.current.offsetHeight +
-										  2
+										searchInputRef.current.offsetHeight +
+										2
 										: 0,
 									left: searchInputRef.current
 										? searchInputRef.current.offsetLeft
@@ -260,7 +260,7 @@ export const StudentList = ({
 	}
 
 	return (
-		<AppLayout total={filteredStudents.length ?? 0} title={pageTitle} showHeaderTitle>
+		<AppLayout total={filteredStudents.length} title={pageTitle} showHeaderTitle>
 			{renderListPage()}
 		</AppLayout>
 	)
