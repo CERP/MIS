@@ -14,9 +14,20 @@ type State = {
 	totalDayIncome: number
 }
 
+const Parser = (val: number): number => {
+	const value = Number(val)
+	if (Number.isFinite(value)) {
+		return val
+	}
+	return 0
+}
+
 const calculateExpense = (exp: { [id: string]: MISSalaryExpense | MISExpense }) => {
 	return Object.values(exp ?? {}).reduce((agg: number, entry: MISExpense | MISSalaryExpense) => {
-		return agg + parseFloat(String(entry.amount).toString())
+		if (entry.expense === 'MIS_EXPENSE') {
+			return agg + Parser(entry.amount) * Parser(entry.quantity)
+		}
+		return agg + Parser(entry.amount)
 	}, 0)
 }
 
@@ -57,22 +68,28 @@ const ExpenseCard = ({ date, expenseData, payments }: ExpenseCardProps) => {
 				<h1 className="font-medium text-teal-brand">Rs {state.totalDayIncome}</h1>
 				<h1 className="font-medium text-red-500">Rs {state.totalDayExpense}</h1>
 			</div>
-			{Object.entries(expenseData ?? {}).map(([id, { amount, label, category, expense }]) => {
+			{Object.entries(expenseData ?? {}).map(([id, expense]) => {
 				return (
 					//expense[0] is key and expense[1] is the Data
 					<div key={id} className="flex flex-row justify-between mb-2">
 						<div className="flex flex-1 items-center font-medium text-gray-500">
-							<h1 className="text-sm">{category}</h1>
+							<h1 className="text-sm">{expense.category}</h1>
 						</div>
 
 						<Link
-							to={expense === 'MIS_EXPENSE' ? `/expenses/${id}` : '#'}
+							to={expense.expense === 'MIS_EXPENSE' ? `/expenses/${id}` : '#'}
 							className="flex flex-1 ml-5 z-20 font-medium">
-							<h1>{label}</h1>
+							<h1>{expense.label}</h1>
 						</Link>
-						<div className="flex flex-1 justify-end font-medium">
-							<h1>Rs {amount}</h1>
-						</div>
+						{expense.expense === 'MIS_EXPENSE' ? (
+							<div className="flex flex-1 justify-end font-medium">
+								<h1>Rs {Number(expense.amount) * Number(expense.quantity)}</h1>
+							</div>
+						) : (
+							<div className="flex flex-1 justify-end font-medium">
+								<h1>Rs {Number(expense.amount)}</h1>
+							</div>
+						)}
 					</div>
 				)
 			})}

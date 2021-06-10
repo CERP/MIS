@@ -65,7 +65,15 @@ interface MISOnboarding {
  * TIP Types
  */
 
-type TIPGrades = '1' | '2' | '3' | 'KG' | 'Oral Test' | 'Not Needed' | 'Not Graded'
+type TIPGrades =
+	| '1'
+	| '2'
+	| '3'
+	| 'KG'
+	| 'Oral Test'
+	| 'Not Needed'
+	| 'Not Graded'
+	| 'Not Reassigned'
 type TIPLearningGroups =
 	| 'Blue'
 	| 'Yellow'
@@ -74,6 +82,7 @@ type TIPLearningGroups =
 	| 'Oral'
 	| 'Remediation Not Needed'
 	| 'Not Graded'
+	| 'Not Reassigned'
 type TIPLevels = 'Level KG' | 'Level 1' | 'Level 2' | 'Level 3' | 'Oral' | 'Remediation Not Needed'
 type TIPSubjects = 'Maths' | 'Urdu' | 'English'
 
@@ -486,11 +495,22 @@ interface MISStudent {
 		quiz_result: TIPQuizReport
 		learning_level: {
 			[subject: string]: {
+				history: TIPGradesHistory
 				grade: TIPGrades
+				is_oral: boolean
 			}
 		}
 	}
 }
+
+type TIPGradesHistory = {
+	[timestamp: string]: {
+		type: TIPGroupAssignmentType
+		grade: TIPGrades
+	}
+}
+
+type TIPGroupAssignmentType = 'Manual' | 'Graduation'
 
 type Report = {
 	[stdId: string]: {

@@ -1,18 +1,32 @@
 import React, { useState } from 'react'
 import { connect } from 'react-redux'
 import clsx from 'clsx'
-import { TModal } from '../Modal'
-import StudentInfoModal from './StudentInfoModal'
-import TIPGroupModal from './TIPGroupModal'
-import ChangeTIPGroup from './ChangeTIPGroup'
+import { TModal } from '../../Modal'
+import StudentInfoModal from '../Modals/StudentInfoModal'
+import TIPGroupModal from '../Modals/TIPGroupModal'
+import ChangeTIPGroup from '../Modals/ChangeTIPGroup'
+import StudentProfileClassView from '../Modals/StudentProfileClassView'
 import { convertLearningGradeToGroupName } from 'utils/TIP'
 import { assignLearningLevel } from 'actions'
 import { useComponentVisible } from 'hooks/useComponentVisible'
-
+import moment from 'moment'
 interface P {
 	std: MISStudent
 
-	setLearningLevel: (student_id: string, subject: TIPSubjects, level: TIPGrades) => void
+	setLearningLevel: (
+		student_id: string,
+		subject: TIPSubjects,
+		level: TIPGrades,
+		is_oral: boolean,
+		history: TIPGradesHistory
+	) => void
+}
+
+enum ModalType {
+	ASSIGNED_GROUPS_INFO = 'assigned_groups-info',
+	TIP_GROUPS = 'tip_groups',
+	CHANGE_GROUP = 'change_group',
+	STUDENT_PROFILE = 'student_profile'
 }
 
 const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
@@ -24,7 +38,28 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 	const [selected_subject, setSelectSubject] = useState<TIPSubjects>()
 
 	const reAssignGrade = () => {
-		setLearningLevel(std.id, selected_subject, selected_grade)
+		const { is_oral: current_oral_value, history: current_history, grade } = std
+			?.targeted_instruction?.learning_level?.[selected_subject] || {
+			is_oral: false,
+			history: {},
+			grade: ''
+		}
+		const is_oral = selected_grade === 'Oral Test' ? true : current_oral_value
+		const timestamp = moment().format('YYYY-MM-DD')
+		const history = {
+			...current_history,
+			[timestamp]: {
+				type: 'Manual',
+				grade: grade
+			}
+		}
+		setLearningLevel(
+			std.id,
+			selected_subject,
+			selected_grade,
+			is_oral,
+			history as TIPGradesHistory
+		)
 		setIsComponentVisible(false)
 	}
 
@@ -32,7 +67,7 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 		<>
 			{isComponentVisible && (
 				<TModal>
-					{modal_type === 'test_info' && (
+					{modal_type === ModalType.ASSIGNED_GROUPS_INFO && (
 						<div ref={ref}>
 							<StudentInfoModal
 								learning_levels={std.targeted_instruction.learning_level}
@@ -42,7 +77,7 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 							/>
 						</div>
 					)}
-					{modal_type === 'tip_groups' && (
+					{modal_type === ModalType.TIP_GROUPS && (
 						<div ref={ref}>
 							<TIPGroupModal
 								subject={selected_subject}
@@ -51,7 +86,7 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 							/>
 						</div>
 					)}
-					{modal_type === 'change_group' && (
+					{modal_type === ModalType.CHANGE_GROUP && (
 						<div ref={ref}>
 							<ChangeTIPGroup
 								subject={selected_subject}
@@ -61,13 +96,29 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 							/>
 						</div>
 					)}
+					{modal_type === ModalType.STUDENT_PROFILE && (
+						<div ref={ref}>
+							<StudentProfileClassView
+								setIsComponentVisible={setIsComponentVisible}
+								learning_levels={std?.targeted_instruction?.learning_level}
+								std={std}
+							/>
+						</div>
+					)}
 				</TModal>
 			)}
-			<div className="h-10 items-center text-xs w-full mt-4 flex flex-row justify-around shadow-lg">
-				<div className="w-4/12 md:w-6/12 flex flex-row justify-between px-3 items-center m-2">
+			<div className="items-center text-xs w-full mt-4 flex flex-row justify-around shadow-lg">
+				<div className="w-2/5 md:w-6/12 flex flex-row justify-start items-center m-2">
 					<div className="font-bold text-center">{std.Name}</div>
+					<div
+						className="ml-2 rounded-full bg-white h-7 w-7 shadow-lg ml-1 flex justify-center items-center cursor-pointer"
+						onClick={() => (
+							setModalType(ModalType.STUDENT_PROFILE), setIsComponentVisible(true)
+						)}>
+						Tag
+					</div>
 				</div>
-				<div className="flex flex-row justify-between w-8/12 md:w-6/12 text-xs m-4">
+				<div className="flex flex-row justify-between w-3/5 md:w-6/12 text-xs my-4 mr-4">
 					{['Urdu', 'Maths', 'English'].map(sub => {
 						const subject = std?.targeted_instruction?.learning_level?.[sub]
 						const grade = convertLearningGradeToGroupName(subject?.grade)
@@ -85,7 +136,8 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 										'bg-gray-600': grade === 'Remediation Not Needed'
 									})}
 									onClick={() => {
-										setIsComponentVisible(true), setModalType('test_info')
+										setIsComponentVisible(true),
+											setModalType(ModalType.ASSIGNED_GROUPS_INFO)
 									}}>
 									{grade === 'Remediation Not Needed' ? 'none' : grade}
 								</div>
@@ -101,7 +153,12 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 export default connect(
 	() => ({}),
 	(dispatch: Function) => ({
-		setLearningLevel: (student_id: string, subject: TIPSubjects, level: TIPGrades) =>
-			dispatch(assignLearningLevel(student_id, subject, level))
+		setLearningLevel: (
+			student_id: string,
+			subject: TIPSubjects,
+			level: TIPGrades,
+			is_oral: boolean,
+			history: TIPGradesHistory
+		) => dispatch(assignLearningLevel(student_id, subject, level, is_oral, history))
 	})
 )(ClassViewCard)

@@ -21,7 +21,7 @@ const ChildView: React.FC<P> = ({ singleStdQuizResult, setType }) => {
 				<div className="w-1/2 flex justify-center">Skills</div>
 				<div className="ml-7 w-1/2 flex flex-row justify-around">
 					<div>Quiz</div>
-					<div>Midpoint</div>
+					{/* <div>Midpoint</div> */}
 				</div>
 			</div>
 			<div className="h-80 overflow-y-auto">
@@ -47,7 +47,7 @@ const ChildView: React.FC<P> = ({ singleStdQuizResult, setType }) => {
 								)}>
 								{isNaN(res.quiz_marks) ? 0 : res.quiz_marks.toFixed(0)}%
 							</div>
-							<div
+							{/* <div
 								className={clsx(
 									'flex flex-row justify-center items-center h-14 w-16',
 									{
@@ -62,7 +62,7 @@ const ChildView: React.FC<P> = ({ singleStdQuizResult, setType }) => {
 									? 0
 									: res.midpoint_test_marks.toFixed(0)}
 								%
-							</div>
+							</div> */}
 						</div>
 					</div>
 				))}
