@@ -112,7 +112,7 @@ const ChildView: React.FC<PropsType> = ({
 													},
 													'bg-red-250'
 												)}>
-												{percentage}%
+												{percentage >= 0 ? `${percentage}%` : '-'}
 											</div>
 										)
 									})}
