@@ -427,13 +427,9 @@ const ListCard = ({ student, sections, removeStudent }: ListCardProps) => {
 			<div className="flex flex-row items-center justify-between w-2/5">
 				<div className="flex flex-col items-start">
 					<div className="text-sm">{toTitleCase(section?.className)}</div>
-					<div className="text-xs text-gray-500">
-						{toTitleCase(
-							section?.name.toUpperCase() === 'DEFAULT'
-								? section?.namespaced_name
-								: section.name
-						)}
-					</div>
+					{section?.name.toUpperCase() !== 'DEFAULT' && (
+						<div className="text-xs text-gray-500">{toTitleCase(section?.name)}</div>
+					)}
 				</div>
 				<div className="ml-4 cursor-pointer" onClick={removeStudent}>
 					<TrashIcon className="text-red-brand w-6 h-6" />
