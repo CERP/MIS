@@ -254,7 +254,7 @@ const List: React.FC<PropsType> = ({
 								})}
 							{quiz && quiz.quiz_id && count === Object.keys(lessonPlans).length && (
 								<div
-									className="no-underline bg-gray-50 h-20 w-full mx-3 rounded-md mb-3 flex flex-row justify-between items-center px-2"
+									className="no-underline bg-gray-tip h-20 w-full mx-3 rounded-md mb-3 flex flex-row justify-between items-center px-2"
 									onClick={e => redirectToQuiz(e, quiz.quiz_id)}>
 									<div className="flex flex-col justify-between items-center w-full h-15 pl-4">
 										<div className="text-white text-lg font-bold mb-1">

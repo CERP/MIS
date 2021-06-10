@@ -48,22 +48,22 @@ const InsertGrades: React.FC<PropsType> = props => {
 										url[2] === 'diagnostic-test'
 											? `/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades/${std.id}/grading`
 											: url[2] === 'oral-test'
-												? `/${url[1]}/${url[2]}/${subject}/${test_id}/insert-grades/${std.id}/grading`
-												: `/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades/${std.id}/grading`
+											? `/${url[1]}/${url[2]}/${subject}/${test_id}/insert-grades/${std.id}/grading`
+											: `/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades/${std.id}/grading`
 									}>
-									<img
-										className="relative border border-solid border-sea-green-tip-brand rounded-full h-14 w-14"
-										src="https://www.atmeplay.com/images/users/avtar/avtar_nouser.png"
-										alt="img"
-									/>
-									{checked && (
-										<div className="relative">
-											<img
-												src={Check}
-												className="h-5 bottom-1 -right-9 absolute"
-											/>
-										</div>
-									)}
+									<div className="relative">
+										<img
+											className="relative border border-solid border-sea-green-tip-brand rounded-full h-14 w-14"
+											src="https://www.atmeplay.com/images/users/avtar/avtar_nouser.png"
+											alt="img"
+										/>
+										{checked && (
+											<div className="absolute right-0 bottom-0">
+												<img src={Check} className="h-5" />
+											</div>
+										)}
+									</div>
+
 									<div className="text-center text-xs flex items-center justify-center w-24 md:w-28 overflow-ellipsis">
 										{std.Name}
 									</div>
