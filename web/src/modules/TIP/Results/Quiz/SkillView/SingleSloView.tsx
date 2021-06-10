@@ -19,7 +19,7 @@ const SingleSloView: React.FC<P> = ({ slo, singleSloQuizResult }) => {
 					Names
 				</div>
 				<div className="w-1/2 flex flex-row justify-around">
-					<div>Quiz</div>
+					<div>Marks</div>
 					{/* <div>Midpoint</div> */}
 				</div>
 			</div>
