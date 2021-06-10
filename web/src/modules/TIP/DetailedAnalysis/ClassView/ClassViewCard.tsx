@@ -10,6 +10,7 @@ import { convertLearningGradeToGroupName } from 'utils/TIP'
 import { assignLearningLevel } from 'actions'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import moment from 'moment'
+import { Tag } from 'assets/icons'
 interface P {
 	std: MISStudent
 
@@ -111,11 +112,12 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 				<div className="w-2/5 md:w-6/12 flex flex-row justify-start items-center m-2">
 					<div className="font-bold text-center">{std.Name}</div>
 					<div
-						className="ml-2 rounded-full bg-white h-7 w-7 shadow-lg ml-1 flex justify-center items-center cursor-pointer"
+						className="rounded-full bg-white p-2 w-max shadow-lg ml-1 flex justify-center items-center cursor-pointer"
 						onClick={() => (
 							setModalType(ModalType.STUDENT_PROFILE), setIsComponentVisible(true)
 						)}>
-						Tag
+						<img className="w-full" src={Tag} alt="" />
+						<div className="ml-1">Tag</div>
 					</div>
 				</div>
 				<div className="flex flex-row justify-between w-3/5 md:w-6/12 text-xs my-4 mr-4">
