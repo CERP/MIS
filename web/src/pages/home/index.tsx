@@ -37,7 +37,9 @@ export const Home = () => {
 	const history = useHistory()
 	const faculty = useSelector((state: RootReducerState) => state.db.faculty)
 	const faculty_id = useSelector((state: RootReducerState) => state.auth.faculty_id)
-	const tip_access = useSelector((state: RootDBState) => state.target_instruction_access)
+	const tip_access = useSelector(
+		(state: RootReducerState) => state.db.targeted_instruction_access
+	)
 	const dispatch = useDispatch()
 
 	const [activeTab, setActiveTab] = useState<number>(

@@ -30,7 +30,9 @@ type PropsType = P & RouteComponentProps
 
 const Home: React.FC<PropsType> = ({ faculty, faculty_id }) => {
 	const max_progress = getLessonProgress(faculty[faculty_id])
-	const tip_access = useSelector((state: RootDBState) => state.target_instruction_access)
+	const tip_access = useSelector(
+		(state: RootReducerState) => state.db.targeted_instruction_access
+	)
 	const dispatch = useDispatch()
 
 	// here we decide which layout to show based on our max_progress on the lessons

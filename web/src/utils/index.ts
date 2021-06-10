@@ -96,23 +96,81 @@ export const checkPermission = (
 	permissions: MISTeacher['permissions'],
 	title: string,
 	subAdmin: boolean,
-	admin: boolean
+	admin: boolean,
+	tipAccess?: boolean
 ): boolean => {
-	if (admin) {
+	if (admin && !tipAccess) {
 		return true
 	}
 
 	switch (title) {
-		case 'fees':
-			return permissions.fee && subAdmin
-		case 'expense':
-			return permissions.expense && subAdmin
+		case 'fees': {
+			if (tipAccess) {
+				return false
+			}
+			return permissions.fee && (subAdmin || admin)
+		}
+		case 'expense': {
+			if (tipAccess) {
+				return false
+			}
+			return permissions.expense && (subAdmin || admin)
+		}
+		case 'attendance': {
+			if (tipAccess) {
+				return false
+			}
+			return subAdmin || admin
+		}
+		case 'exams': {
+			if (tipAccess) {
+				return false
+			}
+			return subAdmin || admin
+		}
+		case 'diary': {
+			if (tipAccess) {
+				return false
+			}
+			return subAdmin || admin
+		}
+		case 'SMS': {
+			if (tipAccess) {
+				return false
+			}
+			return subAdmin || admin
+		}
+		case 'diary': {
+			if (tipAccess) {
+				return false
+			}
+			return subAdmin || admin
+		}
+		case 'Results': {
+			if (tipAccess) {
+				return false
+			}
+			return subAdmin || admin
+		}
+		case 'Analytics': {
+			if (tipAccess) {
+				return false
+			}
+			return subAdmin || admin
+		}
+		case 'TIP': {
+			return tipAccess && (subAdmin || admin)
+		}
 		case 'setup':
-			return permissions.setupPage && subAdmin
+			return permissions.setupPage && (subAdmin || admin)
 		case 'dailyStats':
-			return permissions.dailyStats && subAdmin
-		case 'family':
-			return permissions.family && subAdmin
+			return permissions.dailyStats && (subAdmin || admin)
+		case 'family': {
+			if (tipAccess) {
+				return false
+			}
+			return permissions.family && (subAdmin || admin)
+		}
 		default:
 			return true
 	}

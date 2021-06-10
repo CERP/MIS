@@ -79,6 +79,9 @@ type PropTypes = {
 
 export const ActionTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 	const isActiveInternetConnection = useSelector((state: RootReducerState) => state.connected)
+	const tip_access = useSelector(
+		(state: RootReducerState) => state.db.targeted_instruction_access
+	)
 
 	return (
 		<div className="p-10 pt-6 mx-auto mb-10 md:w-full">
@@ -88,7 +91,15 @@ export const ActionTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 					<Card
 						key={link.title + index}
 						{...link}
-						disabled={!checkPermission(permissions, link.title, subAdmin, admin)}
+						disabled={
+							!checkPermission(
+								permissions,
+								link.title,
+								subAdmin,
+								admin,
+								tip_access ? tip_access : false
+							)
+						}
 					/>
 				))}
 			</div>

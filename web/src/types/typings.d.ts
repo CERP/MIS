@@ -53,7 +53,7 @@ interface RootDBState {
 			[lesson_id: string]: IlmxLesson
 		}
 	}
-	target_instruction_access?: boolean
+	targeted_instruction_access?: boolean
 	onboarding: MISOnboarding
 }
 interface MISOnboarding {
@@ -596,17 +596,17 @@ interface BaseMISExpense {
 	label: string
 	type: string
 	category:
-	| 'SALARY'
-	| 'BILLS'
-	| 'STATIONERY'
-	| 'REPAIRS'
-	| 'RENT'
-	| 'ACTIVITY'
-	| 'DAILY'
-	| 'PETTY_CASH'
-	| 'OTHER'
-	| ''
-	| string
+		| 'SALARY'
+		| 'BILLS'
+		| 'STATIONERY'
+		| 'REPAIRS'
+		| 'RENT'
+		| 'ACTIVITY'
+		| 'DAILY'
+		| 'PETTY_CASH'
+		| 'OTHER'
+		| ''
+		| string
 	date: number
 	time: number
 }
@@ -855,13 +855,13 @@ type SchoolSignup = {
 	schoolName: string
 
 	packageName:
-	| 'FREE_TRIAL'
-	| 'TALEEM1'
-	| 'TALEEM2'
-	| 'TALEEM2A'
-	| 'TALEEM2B'
-	| 'TALEEM2C'
-	| 'TALEEM3'
+		| 'FREE_TRIAL'
+		| 'TALEEM1'
+		| 'TALEEM2'
+		| 'TALEEM2A'
+		| 'TALEEM2B'
+		| 'TALEEM2C'
+		| 'TALEEM3'
 
 	typeOfLogin?: string
 	referralSchoolName?: string
