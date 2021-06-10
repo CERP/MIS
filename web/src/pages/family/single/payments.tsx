@@ -4,7 +4,7 @@ import clsx from 'clsx'
 import toast from 'react-hot-toast'
 import { v4 } from 'node-uuid'
 import { useDispatch, useSelector } from 'react-redux'
-import { RouteComponentProps } from 'react-router-dom'
+import { Link, RouteComponentProps } from 'react-router-dom'
 import { Transition } from '@headlessui/react'
 import { ChevronUpIcon, ChevronDownIcon, CalendarIcon } from '@heroicons/react/outline'
 
@@ -176,7 +176,14 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 			<div className="p-5 md:p-10 md:pt-5 md:pb-0 text-gray-700 relative print:hidden">
 				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-4 rounded-2xl bg-gray-700 p-5 my-4 mt-8">
 					<div className="relative text-white text-center text-base w-full">
-						<div className="absolute left-0 right-0 -top-12 md:-top-16 flex -space-x-4 overflow-hidden justify-center w-full h-24">
+						<div className="absolute right-0 z-10">
+							<Link
+								to={`/families/${famId}`}
+								className="bg-teal-brand text-sm rounded-3xl py-1 px-2 md:py-2 text-white">
+								Add More
+							</Link>
+						</div>
+						<div className="absolute left-0 right-0 -top-12 md:-top-16 flex -space-x-4 overflow-hidden justify-center h-24">
 							{siblings.map(
 								(s, index) =>
 									index <= 2 && (
