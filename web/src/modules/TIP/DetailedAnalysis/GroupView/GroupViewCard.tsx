@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { TModal } from '../../Modal'
 import StudentProfileGroupView from '../Modals/StudentProfileGroupView'
 import { useComponentVisible } from 'hooks/useComponentVisible'
+import { Tag } from 'assets/icons'
 
 interface P {
 	std: MISStudent
@@ -41,7 +42,7 @@ const GroupViewCard: React.FC<P> = ({ std, subject, class_name }) => {
 						onClick={() => (
 							setModalType(ModalType.STUDENT_PROFILE), setIsComponentVisible(true)
 						)}>
-						Tag
+						<img className="w-2 h-4" src={Tag} alt="" />
 					</div>
 				</div>
 				<div className="flex flex-row justify-between w-6/12 text-xs m-4">
