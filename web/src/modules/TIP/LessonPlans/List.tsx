@@ -158,21 +158,21 @@ const List: React.FC<PropsType> = ({
 		history.push(`/${url[1]}/quizzes/${class_name}/${subject}/${quiz_id}/pdf`)
 	}
 
-	const getTakenLessonPlansCount = (lesson_numbers: TIPLessonPlans) => {
-		return Object.values(lesson_numbers).reduce((agg, lesson_plan) => {
-			const answer = Dynamic.get<TIPTeacherLessonPlans>(teacher, [
-				'targeted_instruction',
-				'curriculum',
-				class_name,
-				subject,
-				lesson_plan.lesson_number
-			])
-			if (answer?.taken) {
-				agg = agg + 1
-			}
-			return agg
-		}, 0)
-	}
+	// const getTakenLessonPlansCount = (lesson_numbers: TIPLessonPlans) => {
+	// 	return Object.values(lesson_numbers).reduce((agg, lesson_plan) => {
+	// 		const answer = Dynamic.get<TIPTeacherLessonPlans>(teacher, [
+	// 			'targeted_instruction',
+	// 			'curriculum',
+	// 			class_name,
+	// 			subject,
+	// 			lesson_plan.lesson_number
+	// 		])
+	// 		if (answer?.taken) {
+	// 			agg = agg + 1
+	// 		}
+	// 		return agg
+	// 	}, 0)
+	// }
 
 	return (
 		<div className="flex flex-wrap content-between mt-20">
@@ -187,7 +187,7 @@ const List: React.FC<PropsType> = ({
 						(b.quiz_order ?? Number.MAX_SAFE_INTEGER)
 				)
 				.map(([lessonPlans, quiz]) => {
-					const count = getTakenLessonPlansCount(lessonPlans)
+					//const count = getTakenLessonPlansCount(lessonPlans)
 					const teacher_quizzes_record = teacher_quiz_record[quiz.quiz_id] ?? {
 						taken: false
 					}
@@ -252,7 +252,7 @@ const List: React.FC<PropsType> = ({
 										</>
 									)
 								})}
-							{quiz && quiz.quiz_id && count === Object.keys(lessonPlans).length && (
+							{quiz && quiz.quiz_id && (
 								<div
 									className="no-underline bg-gray-tip h-20 w-full mx-3 rounded-md mb-3 flex flex-row justify-between items-center px-2"
 									onClick={e => redirectToQuiz(e, quiz.quiz_id)}>
