@@ -17,6 +17,7 @@ import {
 	resetStudentGrades
 } from 'actions'
 import moment from 'moment'
+import StudentCard from '../StudentCard'
 interface P {
 	teacher_name: string
 	students: RootDBState['students']
@@ -175,8 +176,8 @@ const Grading: React.FC<PropsType> = ({
 			test_type === 'Diagnostic'
 				? `/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades`
 				: test_type === 'Oral'
-					? `/${url[1]}/${url[2]}/${subject}/${test_id}/insert-grades`
-					: `/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades`
+				? `/${url[1]}/${url[2]}/${subject}/${test_id}/insert-grades`
+				: `/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades`
 		)
 	}
 
@@ -213,9 +214,10 @@ const Grading: React.FC<PropsType> = ({
 					</div>
 				</TModal>
 			)}
-			<Card
+			<StudentCard
 				class_name={class_name ? class_name : 'Oral Test'}
 				subject={subject}
+				student_id={std_id}
 				lesson_name=""
 				lesson_no=""
 			/>
@@ -229,8 +231,9 @@ const Grading: React.FC<PropsType> = ({
 						return (
 							<div
 								key={q_id}
-								className={`flex flex-row justify-between items-center border border-solid border-gray-200 px-3 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'
-									} h-20`}>
+								className={`flex flex-row justify-between items-center border border-solid border-gray-200 px-3 ${
+									index % 2 === 0 ? 'bg-gray-100' : 'bg-white'
+								} h-20`}>
 								<span className="text-xs font-bold">{`${q_id}: `}</span>
 								<div className="flex flex-col w-full">
 									<div className="text-xs px-2">{question.question_text}</div>
