@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import cond from 'cond-construct'
 import { useMediaPredicate } from 'react-media-hook'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
 import { SettingsTab } from './settings'
@@ -9,6 +9,7 @@ import { ActionTab } from './actions'
 import { StatsTab } from './statistics'
 import { AppLayout } from 'components/Layout/appLayout'
 import { Tabbar } from 'components/tabs'
+import { fetchTargetedInstruction } from 'actions'
 
 enum Tabs {
 	SETTINGS,
@@ -36,6 +37,8 @@ export const Home = () => {
 	const history = useHistory()
 	const faculty = useSelector((state: RootReducerState) => state.db.faculty)
 	const faculty_id = useSelector((state: RootReducerState) => state.auth.faculty_id)
+	const tip_access = useSelector((state: RootDBState) => state.target_instruction_access)
+	const dispatch = useDispatch()
 
 	const [activeTab, setActiveTab] = useState<number>(
 		parseInt(urlParams.get('active-tab') ?? '1') ?? Tabs.ACTIONS
@@ -43,6 +46,12 @@ export const Home = () => {
 	const biggerThan880 = useMediaPredicate('(min-width: 880px)')
 
 	const { permissions, Admin, SubAdmin } = faculty[faculty_id]
+
+	useEffect(() => {
+		if (tip_access) {
+			dispatch(fetchTargetedInstruction())
+		}
+	}, [])
 
 	const renderComponent = () =>
 		cond([
