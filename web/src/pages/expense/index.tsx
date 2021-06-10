@@ -200,8 +200,8 @@ export const Expense = () => {
 	return (
 		<AppLayout title={'Expenses'}>
 			<div style={{ height: '80vh' }}>
-				<div className="bg-gray-600 flex-col mt-1 mb-2 mx-3 rounded py-5 px-5 ">
-					<div id="totals" className="w-full z-10  flex flex-row justify-between mb-4">
+				<div className="bg-gray-600 flex-col mt-1 mb-2 mx-3 rounded py-2 px-5 ">
+					<div id="totals" className="w-full z-10  flex flex-row justify-between mb-2">
 						<div className="flex flex-col justify-center items-center text-white">
 							<h1 className="font-medium">Income</h1>
 							<h1>{state.totalIncome}</h1>
@@ -220,7 +220,7 @@ export const Expense = () => {
 							setState({ ...state, detialsExpanded: !state.detialsExpanded })
 						}
 						className="w-full flex justify-center items-center">
-						<div className="bg-blue-400 rounded-full py-2 px-8 text-white font-semibold cursor-pointer mb-4 flex flex-row justify-center items-center ">
+						<div className="bg-blue-400 rounded-full py-2 px-8 text-white font-semibold cursor-pointer mb-2 flex flex-row justify-center items-center ">
 							<CubeTransparentIcon className="w-8 h-8 text-white mr-2" />
 							<h1>Detailed Analysis</h1>
 						</div>
@@ -320,7 +320,7 @@ export const Expense = () => {
 				{state.groupedResults.length > 0 && (
 					<div
 						className={clsx(
-							'flex-1 overflow-y-auto h-4/6 duration-300 transition-all',
+							'flex-1 overflow-y-auto h-3/5 lg:h-5/6 duration-300 transition-all',
 							state.detialsExpanded ? 'opacity-0 max-h-0 invisible' : 'max-h-screen'
 						)}>
 						{state.groupedResults.map((data: { [x: string]: AugmentedExpense }) => {
@@ -339,7 +339,7 @@ export const Expense = () => {
 				)}
 				<div
 					className={clsx(
-						'flex flex-1 z-10 items-center justify-evenly mt-2 transition-all duration-300',
+						'flex flex-1 z-10 items-center justify-evenly  transition-all duration-300',
 						state.detialsExpanded ? 'opacity-0 max-h-0 invisible' : 'max-h-screen'
 					)}>
 					<Link
