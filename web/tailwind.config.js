@@ -48,6 +48,7 @@ module.exports = {
 				'gray-tip-brand': '#808080',
 				'light-blue-tip-brand': '#3478B9',
 				'danger-tip-brand': '#FF002A',
+				'gray-tip': '#858585',
 				'success-tip-brand': '#00FF43',
 				'blue-50': '#7BACAE',
 				'red-250': '#FF9191',
