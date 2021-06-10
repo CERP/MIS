@@ -18,6 +18,7 @@ import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
 import { isValidPhone } from 'utils/helpers'
 import { PhoneInput } from 'components/input/PhoneInput'
+import PhoneCall from 'components/Phone/PhoneCall'
 
 type SingleFamilyProps = RouteComponentProps<{ id: string }>
 
@@ -441,17 +442,3 @@ const ListCard = ({ student, sections, removeStudent }: ListCardProps) => {
 		</div>
 	)
 }
-
-type PhoneCallProps = {
-	phone: string
-}
-const PhoneCall = ({ phone }: PhoneCallProps) => (
-	<a
-		className={clsx(
-			'md:hidden ml-2 text-white h-10 w-10 rounded-md flex items-center justify-center',
-			phone ? 'bg-blue-brand' : 'pointer-events-none bg-gray-500 text-gray-300'
-		)}
-		href={`tel:${phone}`}>
-		<PhoneIcon className="w-6 h-6" />
-	</a>
-)
