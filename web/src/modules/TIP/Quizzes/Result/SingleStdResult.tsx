@@ -17,7 +17,7 @@ const getProgress = (obtained_marks: number) => {
 	} else if (percentage >= 40) {
 		return 'Working'
 	} else if (percentage < 0) {
-		return 'Not Attained'
+		return 'Absent'
 	} else {
 		return 'Struggling'
 	}
@@ -46,7 +46,8 @@ const SingleStdResult: React.FC<P> = ({ student, class_name, subject, quiz_id, t
 							'bg-blue-900 rounded-full h-5 w-5 mr-3',
 							{
 								'bg-sea-green-tip-brand': progress === 'Mastered',
-								'bg-yellow-tip-brand': progress === 'Working'
+								'bg-yellow-tip-brand': progress === 'Working',
+								hidden: progress === 'Absent'
 							},
 							'bg-red-tip-brand'
 						)}></div>
@@ -61,7 +62,8 @@ const SingleStdResult: React.FC<P> = ({ student, class_name, subject, quiz_id, t
 							'font-bold',
 							{
 								'text-sea-green-tip-brand': progress === 'Mastered',
-								'text-yellow-tip-brand': progress === 'Working'
+								'text-yellow-tip-brand': progress === 'Working',
+								'text-black': progress === 'Absent'
 							},
 							'text-red-tip-brand'
 						)}>
