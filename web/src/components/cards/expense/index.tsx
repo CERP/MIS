@@ -27,7 +27,7 @@ const calculateExpense = (exp: { [id: string]: MISSalaryExpense | MISExpense }) 
 		if (entry.expense === 'MIS_EXPENSE') {
 			return agg + Parser(entry.amount) * Parser(entry.quantity)
 		}
-		return agg + Parser(entry.amount)
+		return agg + Parser(entry.amount) + Parser(entry.advance)
 	}, 0)
 }
 
@@ -87,7 +87,7 @@ const ExpenseCard = ({ date, expenseData, payments }: ExpenseCardProps) => {
 							</div>
 						) : (
 							<div className="flex flex-1 justify-end font-medium">
-								<h1>Rs {Number(expense.amount)}</h1>
+								<h1>Rs {Number(expense.amount) + Number(expense.advance)}</h1>
 							</div>
 						)}
 					</div>
