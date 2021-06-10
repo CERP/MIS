@@ -42,7 +42,10 @@ export const Family = ({ forwardTo, pageTitle }: FamilyProps) => {
 		)
 	}
 	return (
-		<AppLayout title={pageTitle ?? 'Families'} showHeaderTitle={!pageTitle}>
+		<AppLayout
+			total={filteredFamilies.length ?? 0}
+			title={pageTitle ?? 'Families'}
+			showHeaderTitle={!pageTitle}>
 			<div className="p-5 md:p-10 md:pt-5 relative mb-10 md:mb-0">
 				<Link to="/families/new">
 					<AddStickyButton label="Create new Family" />

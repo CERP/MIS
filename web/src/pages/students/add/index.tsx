@@ -12,14 +12,16 @@ import { SwitchButton } from 'components/input/switch'
 import toTitleCase from 'utils/toTitleCase'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import AdmissionForm from 'components/Printable/Student/admissionform'
-import { isValidCNIC, isValidPhone } from 'utils/helpers'
+import { isValidPhone } from 'utils/helpers'
 import { formatCNIC } from 'utils'
 import { getImageString, getDownsizedImage } from 'utils/image'
 
+import { PhoneIcon } from '@heroicons/react/solid'
 import { UploadImage } from 'components/image'
 import { PlusButton } from 'components/Button/plus'
 import { cnicRegex, numberRegex } from 'constants/index'
 import { PhoneInput } from 'components/input/PhoneInput'
+import PhoneCall from 'components/Phone/PhoneCall'
 
 const blankStudent = (): MISStudent => ({
 	id: v4(),
@@ -117,14 +119,6 @@ export const CreateOrUpdateStudent = () => {
 
 	const handleSubmit = (event: React.FormEvent) => {
 		event.preventDefault()
-
-		if (!isValidCNIC(state.profile.BForm)) {
-			return toast.error('B-Form number is not valid')
-		}
-
-		if (!isValidCNIC(state.profile.ManCNIC)) {
-			return toast.error('Father/Gaurdian CNIC is not valid')
-		}
 
 		if (!isValidPhone(state.profile.Phone) && state.profile.Phone !== '') {
 			return toast.error('Please provide correct phone number.')
@@ -392,17 +386,21 @@ export const CreateOrUpdateStudent = () => {
 						</div>
 
 						<div>Contact Number</div>
-						<PhoneInput
-							name="Phone"
-							onChange={handleInput}
-							value={state.profile.Phone}
-							error={
-								numberRegex.test(state.profile.Phone) ||
-								!(state.profile.Phone.length <= 11)
-							}
-							className="w-full tw-input tw-is-form-bg-black"
-						/>
-
+						<div className="flex flex-row w-full">
+							<div className="flex w-full flex-col ">
+								<PhoneInput
+									name="Phone"
+									value={state.profile.Phone}
+									error={
+										numberRegex.test(state.profile.Phone) ||
+										!(state.profile.Phone?.length <= 11)
+									}
+									onChange={handleInput}
+									className="tw-input w-full tw-is-form-bg-black"
+								/>
+							</div>
+							<PhoneCall phone={state.profile.Phone} />
+						</div>
 						<div className="text-lg font-semibold text-center">
 							Additional Information
 						</div>
@@ -434,16 +432,21 @@ export const CreateOrUpdateStudent = () => {
 						/>
 
 						<div>Alternative Contact Number</div>
-						<PhoneInput
-							name="AlternatePhone"
-							onChange={handleInput}
-							error={
-								numberRegex.test(state.profile.AlternatePhone) ||
-								!(state.profile.AlternatePhone?.length <= 11)
-							}
-							value={state.profile.AlternatePhone}
-							className="tw-input w-full tw-is-form-bg-black"
-						/>
+						<div className="flex flex-row w-full">
+							<div className="flex w-full flex-col ">
+								<PhoneInput
+									name="AlternatePhone"
+									value={state.profile.AlternatePhone}
+									error={
+										numberRegex.test(state.profile.AlternatePhone) ||
+										!(state.profile.AlternatePhone?.length <= 11)
+									}
+									onChange={handleInput}
+									className="tw-input w-full tw-is-form-bg-black"
+								/>
+							</div>
+							<PhoneCall phone={state.profile.AlternatePhone} />
+						</div>
 
 						<div>Address</div>
 						<textarea

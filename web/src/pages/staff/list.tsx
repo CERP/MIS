@@ -71,7 +71,7 @@ export const StaffList = () => {
 	// }
 
 	return (
-		<AppLayout title="Staff" showHeaderTitle>
+		<AppLayout total={filteredStaff.length ?? 0} title="Staff" showHeaderTitle>
 			<div className="p-5 md:p-10 md:pt-5 relative mb-16 md:mb-0">
 				<Link to="staff/new">
 					<AddStickyButton label="Add new Staff" />

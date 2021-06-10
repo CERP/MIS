@@ -119,7 +119,7 @@ export const StudentList = ({
 		)
 	}
 
-	const pageTitle = `Students ${toTitleCase(forwardTo)}`
+	const pageTitle = `Students${forwardTo ? ' ' + toTitleCase(forwardTo) : ''}`
 
 	const renderListPage = () => {
 		return (
@@ -129,6 +129,7 @@ export const StudentList = ({
 						<AddStickyButton label="Add new Student" />
 					</Link>
 				)}
+
 				<div className="flex flex-col items-center justify-between mt-4 mb-12 space-y-4 md:flex-row md:mb-20 md:space-y-0 md:space-x-60">
 					<div ref={searchInputRef} className="md:w-9/12 w-full">
 						<SearchInput
@@ -259,7 +260,7 @@ export const StudentList = ({
 	}
 
 	return (
-		<AppLayout title={pageTitle} showHeaderTitle>
+		<AppLayout total={filteredStudents.length} title={pageTitle} showHeaderTitle>
 			{renderListPage()}
 		</AppLayout>
 	)

@@ -262,11 +262,13 @@ const Diary: React.FC = () => {
 									className="tw-select w-full"
 									onChange={e => setState({ ...state, classId: e.target.value })}>
 									<option value=""> Select Class</option>
-									{Object.values(classes).map(c => (
-										<option key={c.id} value={c.id}>
-											{c.name}
-										</option>
-									))}
+									{Object.values(classes)
+										.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
+										.map(c => (
+											<option key={c.id} value={c.id}>
+												{c.name}
+											</option>
+										))}
 								</select>
 							</div>
 						</div>

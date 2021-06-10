@@ -143,7 +143,7 @@ export const StaffMemberSalary = ({ match }: StaffMemberSalaryProps) => {
 	const { deduction, paid } = (salaries ?? []).reduce(
 		(agg, salary) => ({
 			deduction: agg.deduction + salary.deduction,
-			paid: agg.paid + salary.amount
+			paid: agg.paid + salary.amount + salary.advance
 		}),
 		{ deduction: 0, paid: 0 }
 	)
@@ -432,11 +432,9 @@ export const StaffMemberSalary = ({ match }: StaffMemberSalaryProps) => {
 					<div className="flex flex-1 text-left  border-gray-500 mt-4 border-t-2 border-dashed ">
 						<div className="flex-1 font-semibold">Total</div>
 						<div className="flex-1 font-semibold text-center text-red-500">
-							{localState.totalDeductions}
+							{deduction}
 						</div>
-						<div className="flex-1 font-semibold text-right">
-							{localState.totalPaid}
-						</div>
+						<div className="flex-1 font-semibold text-right">{paid}</div>
 					</div>
 					<div
 						onClick={() =>
