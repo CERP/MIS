@@ -80,9 +80,9 @@ export const CreateOrUpdateStudent = () => {
 		? students[id].tags
 			? students[id]
 			: {
-					...students[id],
-					tags: {}
-			  }
+				...students[id],
+				tags: {}
+			}
 		: blankStudent()
 
 	const [state, setState] = useState<State>({
@@ -523,13 +523,13 @@ export const CreateOrUpdateStudent = () => {
 							<PlusButton handleClick={addTag} className="ml-4" />
 						</div>
 
-						<div className="flex flex-row items-center">
+						{/* <div className="flex flex-row items-center">
 							<PlusButton
 								handleClick={() => console.log('Not Implemented Yet')}
 								className="mr-4"
 							/>
 							<div>Show Payment Section</div>
-						</div>
+						</div> */}
 
 						<div className="flex flex-row justify-center space-x-4">
 							<button

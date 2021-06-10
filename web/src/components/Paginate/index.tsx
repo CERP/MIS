@@ -106,9 +106,9 @@ const Paginate = ({
 				{currItems.map(item => renderComponent(item))}
 			</div>
 			{items.length >= itemsPerPage && (
-				<div className="flex flex-row my-4 flex-wrap">
+				<div className="flex flex-row my-4 flex-wrap space-x-1">
 					<button
-						className="border p-2 bg-white shadow-md mr-2 mb-1 rounded-md"
+						className="border p-2 bg-white shadow-md rounded-md"
 						onClick={onPrevious}>
 						Prev
 					</button>
@@ -116,21 +116,17 @@ const Paginate = ({
 						<button
 							key={page}
 							className={clsx(
-								'border px-4 py-2 bg-white shadow-md mr-2 mb-1 rounded-md font-bold lg:text-xl',
+								'border px-4 py-2 bg-white shadow-md rounded-md font-bold lg:text-xl',
 								page === pageIndex ? 'bg-teal-brand text-white' : ''
 							)}
 							onClick={() => goToPage(page)}>
 							{page}
 						</button>
 					))}
-					<button
-						className="border p-2 bg-white shadow-md mr-2 mb-1 rounded-md"
-						onClick={onNext}>
+					<button className="border p-2 bg-white shadow-md rounded-md" onClick={onNext}>
 						Next
 					</button>
-					<button
-						className="border p-2 bg-white shadow-md mr-2 mb-1 rounded-md"
-						onClick={onReset}>
+					<button className="border p-2 bg-white shadow-md rounded-md" onClick={onReset}>
 						Reset
 					</button>
 				</div>

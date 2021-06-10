@@ -15,7 +15,7 @@ export const ClassList = () => {
 
 	return (
 		<AppLayout total={Object.values(classes).length ?? 0} title="Classes" showHeaderTitle>
-			<div className="p-5 md:p-10 md:pt-5 relative">
+			<div className="p-5 md:p-10 md:pt-5 relative mb-16 md:mb-0">
 				<Link to="classes/new">
 					<AddStickyButton label="Create new Class" />
 				</Link>

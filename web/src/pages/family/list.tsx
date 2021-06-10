@@ -46,7 +46,7 @@ export const Family = ({ forwardTo, pageTitle }: FamilyProps) => {
 			total={filteredFamilies.length ?? 0}
 			title={pageTitle ?? 'Families'}
 			showHeaderTitle={!pageTitle}>
-			<div className="p-5 md:p-10 md:pt-5 relative">
+			<div className="p-5 md:p-10 md:pt-5 relative mb-10 md:mb-0">
 				<Link to="/families/new">
 					<AddStickyButton label="Create new Family" />
 				</Link>

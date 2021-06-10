@@ -51,11 +51,13 @@ class ReportsMenu extends Component<propTypes, S> {
 						</select>
 					</div>
 				</div>
-				{this.state.report_for === 'CLASS' ? (
-					<ClassListModule {...this.props} forwardTo="report-menu" />
-				) : (
-					<StudentList {...this.props} forwardTo="marks" excludeNavHeader />
-				)}
+				<div className="mb-10">
+					{this.state.report_for === 'CLASS' ? (
+						<ClassListModule {...this.props} forwardTo="report-menu" />
+					) : (
+						<StudentList {...this.props} forwardTo="marks" excludeNavHeader />
+					)}
+				</div>
 			</AppLayout>
 		)
 	}

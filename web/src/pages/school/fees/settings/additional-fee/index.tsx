@@ -14,6 +14,7 @@ import { toTitleCase } from 'utils/toTitleCase'
 import { isValidStudent } from 'utils'
 import { MISFeePeriods } from 'constants/index'
 import { useComponentVisible } from 'hooks/useComponentVisible'
+import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 
 enum AddFeeOptions {
 	STUDENT,
@@ -38,7 +39,9 @@ const defaultFee: State['fee'] = {
 
 export const AdditionalFee = () => {
 	const dispatch = useDispatch()
-	const { settings, classes, students } = useSelector((state: RootReducerState) => state.db)
+	const settings = useSelector((state: RootReducerState) => state.db.settings)
+	const classes = useSelector((state: RootReducerState) => state.db.classes)
+	const students = useSelector((state: RootReducerState) => state.db.students)
 
 	const {
 		ref: confirmAddFeeModalRef,
@@ -243,6 +246,21 @@ export const AdditionalFee = () => {
 		return toTitleCase(selectedClass.name ?? '')
 	}
 
+	// only active students
+	const getClassStudents = () => {
+		// section ids
+		const sections = getSectionsFromClasses(classes).reduce((agg, section) => {
+			if (section.class_id === state.classId) {
+				return [...agg, section.id]
+			}
+			return agg
+		}, [])
+
+		return Object.values(students ?? {}).filter(
+			s => isValidStudent(s) && s.Active && sections.includes(s.section_id)
+		)
+	}
+
 	const totalActiveStudents = Object.values(students).filter(s => isValidStudent(s) && s.Active)
 		.length
 
@@ -257,9 +275,9 @@ export const AdditionalFee = () => {
 		<div className="p-5 md:p-10 md:pt-5 md:pb-0 relative print:hidden">
 			<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-4 rounded-2xl bg-gray-700 py-4 my-4 md:mt-8 text-white min-h-screen">
 				<div className="text-center text-xl font-semibold">Manage additional Fees</div>
-				<div className="space-y-6 px-4 w-full md:w-3/5">
+				<div className="px-4 w-full md:w-3/5">
 					<div className="font-semibold">Add Fee For:</div>
-					<div className="flex items-center space-x-8">
+					<div className="flex items-center space-x-8 space-y-2">
 						<div className="flex items-center">
 							<input
 								name="toStudent"
@@ -294,7 +312,6 @@ export const AdditionalFee = () => {
 							</div>
 						)}
 					</div>
-
 					{renderAddView()}
 					{confirmAddFeeModal && (
 						<TModal>
@@ -310,12 +327,13 @@ export const AdditionalFee = () => {
 										: '( One Time )'}
 								</div>
 								<div className="text-teal-brand font-semibold text-lg">
-									({state.fee.name} - Rs. {state.fee.amount})
+									{state.fee.name} - Rs. {state.fee.amount}
 								</div>
 								<div className="">
 									will be added to{' '}
 									{state.addFeeTo === AddFeeOptions.CLASS
-										? `${getClassName()} Class`
+										? `${getClassName()} Class (${getClassStudents().length
+										} students)`
 										: state.addFeeTo === AddFeeOptions.STUDENT
 											? toTitleCase(students[state.studentId].Name)
 											: `All Active Students (${totalActiveStudents})`}
