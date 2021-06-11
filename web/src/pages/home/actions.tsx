@@ -13,6 +13,7 @@ import iconExams from 'assets/svgs/exams.svg'
 import iconAttendance from 'assets/svgs/attendance.svg'
 import iconDiary from 'assets/svgs/diary.svg'
 import iconExpense from 'assets/svgs/expense.svg'
+import { TIP } from 'assets/icons'
 
 import { checkPermission } from 'utils'
 
@@ -60,7 +61,7 @@ const links: CardProps[] = [
 	{
 		link: '/targeted-instruction',
 		title: 'TIP',
-		icon: '/favicon.ico'
+		icon: TIP
 	}
 ]
 
