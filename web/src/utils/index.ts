@@ -120,37 +120,37 @@ export const checkPermission = (
 			if (tipAccess) {
 				return false
 			}
-			return subAdmin || admin
+			return true
 		}
 		case 'exams': {
 			if (tipAccess) {
 				return false
 			}
-			return subAdmin || admin
+			return true
 		}
 		case 'diary': {
 			if (tipAccess) {
 				return false
 			}
-			return subAdmin || admin
+			return true
 		}
 		case 'SMS': {
 			if (tipAccess) {
 				return false
 			}
-			return subAdmin || admin
+			return true
 		}
 		case 'diary': {
 			if (tipAccess) {
 				return false
 			}
-			return subAdmin || admin
+			return true
 		}
 		case 'Results': {
 			if (tipAccess) {
 				return false
 			}
-			return subAdmin || admin
+			return true
 		}
 		case 'Analytics': {
 			if (tipAccess) {
