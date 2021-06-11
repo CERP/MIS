@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
 import { Link } from 'react-router-dom'
@@ -83,17 +83,13 @@ export const ActionTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 		(state: RootReducerState) => state.db.targeted_instruction_access
 	)
 
-	useEffect(() => {
-		if (tip_access) {
-			links.reverse()
-		}
-	}, [])
+	const sortedLinks = tip_access ? links.reverse() : links
 
 	return (
 		<div className="p-10 pt-6 mx-auto mb-10 md:w-full">
 			<div className="mb-6 text-lg text-center md:hidden">What would you like to do?</div>
 			<div className="grid grid-cols-2 gap-4">
-				{links.map((link, index) => (
+				{sortedLinks.map((link, index) => (
 					<Card
 						key={link.title + index}
 						{...link}
