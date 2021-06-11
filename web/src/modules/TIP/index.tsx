@@ -1,5 +1,5 @@
-import React from 'react'
-import { connect } from 'react-redux'
+import React, { useEffect } from 'react'
+import { connect, useDispatch, useSelector } from 'react-redux'
 import { RouteComponentProps, Link } from 'react-router-dom'
 import {
 	Formative,
@@ -13,6 +13,7 @@ import {
 import { getLessonProgress } from 'utils/TIP'
 import Headings from './Headings'
 import Card from './Card'
+import { fetchTargetedInstruction } from 'actions'
 
 interface P {
 	faculty: RootDBState['faculty']
@@ -29,6 +30,10 @@ type PropsType = P & RouteComponentProps
 
 const Home: React.FC<PropsType> = ({ faculty, faculty_id }) => {
 	const max_progress = getLessonProgress(faculty[faculty_id])
+	const tip_access = useSelector(
+		(state: RootReducerState) => state.db.targeted_instruction_access
+	)
+	const dispatch = useDispatch()
 
 	// here we decide which layout to show based on our max_progress on the lessons
 	let layout = Layouts.DIAGNOSTIC
@@ -39,6 +44,11 @@ const Home: React.FC<PropsType> = ({ faculty, faculty_id }) => {
 		layout = Layouts.SUMMATIVE
 	}
 
+	useEffect(() => {
+		if (tip_access) {
+			dispatch(fetchTargetedInstruction())
+		}
+	}, [])
 	return (
 		<div className="flex flex-wrap content-between bg-white mt-20">
 			<Card />

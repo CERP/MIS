@@ -80,16 +80,29 @@ type PropTypes = {
 
 export const ActionTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 	const isActiveInternetConnection = useSelector((state: RootReducerState) => state.connected)
+	const tip_access = useSelector(
+		(state: RootReducerState) => state.db.targeted_instruction_access
+	)
+
+	const sortedLinks = tip_access ? links.reverse() : links
 
 	return (
 		<div className="p-10 pt-6 mx-auto mb-10 md:w-full">
 			<div className="mb-6 text-lg text-center md:hidden">What would you like to do?</div>
-			<div className="grid grid-cols-2 gap-4 ">
-				{links.map((link, index) => (
+			<div className="grid grid-cols-2 gap-4">
+				{sortedLinks.map((link, index) => (
 					<Card
 						key={link.title + index}
 						{...link}
-						disabled={!checkPermission(permissions, link.title, subAdmin, admin)}
+						disabled={
+							!checkPermission(
+								permissions,
+								link.title,
+								subAdmin,
+								admin,
+								tip_access ? tip_access : false
+							)
+						}
 					/>
 				))}
 			</div>
@@ -123,7 +136,7 @@ const Card = ({ title, icon, link, disabled = false }: CardProps) => {
 					disabled ? toast.error("You don't have permission to access!") : {}
 				}}
 				className={clsx(
-					'p-5 border shadow-md border-gray-50 rounded-2xl hover:shadow-lg',
+					'p-4 border shadow-md border-gray-50 rounded-2xl hover:shadow-lg',
 					disabled ? 'bg-gray-200 opacity-75 cursor-not-allowed' : 'bg-white'
 				)}>
 				<div className="flex flex-col items-center space-y-4">

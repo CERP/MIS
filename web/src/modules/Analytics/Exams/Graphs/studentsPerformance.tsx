@@ -40,7 +40,7 @@ class StudentsPerformance extends Component<PropsType, S> {
 			loading: true,
 			loading_percentage: 0,
 			graph_data: [],
-			student_name: '',
+			student_name: ''
 		}
 
 		this.former = new Former(this, [])
@@ -67,7 +67,7 @@ class StudentsPerformance extends Component<PropsType, S> {
 			const interval = Math.floor(relevant_students.length / 10)
 			if (i % interval === 0) {
 				this.setState({
-					loading_percentage: (i / relevant_students.length) * 100,
+					loading_percentage: (i / relevant_students.length) * 100
 				})
 			}
 
@@ -78,7 +78,7 @@ class StudentsPerformance extends Component<PropsType, S> {
 				this.setState({
 					loading: false,
 					loading_percentage: 0,
-					graph_data: sorted_data,
+					graph_data: sorted_data
 				})
 			}
 
@@ -101,7 +101,7 @@ class StudentsPerformance extends Component<PropsType, S> {
 				marks_obtained: marks_sheet.marks.obtained,
 				total_marks: marks_sheet.marks.total,
 				grade: calculateGrade(marks_sheet.marks.obtained, marks_sheet.marks.total, grades),
-				percentage: this.getPercentage(marks_sheet.marks.obtained, marks_sheet.marks.total),
+				percentage: this.getPercentage(marks_sheet.marks.obtained, marks_sheet.marks.total)
 			})
 
 			this.background_calculation = setTimeout(reducify, 0)
@@ -162,7 +162,7 @@ class StudentsPerformance extends Component<PropsType, S> {
 
 		const name = this.state.student_name
 
-		const table_data = graph_data.filter((s) =>
+		const table_data = graph_data.filter(s =>
 			name ? s.name.toLocaleLowerCase().includes(name.toLocaleLowerCase()) : true
 		)
 
@@ -175,7 +175,7 @@ class StudentsPerformance extends Component<PropsType, S> {
 							<BarChart data={graph_data} barSize={5}>
 								<XAxis dataKey="percentage" type="category" />
 								<YAxis />
-								<Tooltip content={BarLabel} />
+								<Tooltip content={BarLabel as any} />
 								<Bar dataKey="percentage" fill="#74aced" />
 							</BarChart>
 						</ResponsiveContainer>

@@ -8,16 +8,18 @@ import Dynamic from '@cerp/dynamic'
 import toast from 'react-hot-toast'
 
 import { SwitchButton } from 'components/input/switch'
-import { isValidPhone, isValidCNIC } from 'utils/helpers'
+import { isValidPhone } from 'utils/helpers'
 import { createFacultyMerge, deleteFaculty, uploadFacultyProfilePicture } from 'actions'
 import { cnicRegex, StaffType } from 'constants/index'
 import { ShowHidePassword } from 'components/password'
 import { hash, formatCNIC } from 'utils'
 import { getImageString, getDownsizedImage } from 'utils/image'
+import { PhoneIcon } from '@heroicons/react/solid'
 
 import { UploadImage } from 'components/image'
 import { numberRegex } from 'constants/index'
 import { PhoneInput } from 'components/input/PhoneInput'
+import PhoneCall from 'components/Phone/PhoneCall'
 
 const blankTeacher = (): MISTeacher => ({
 	id: v4(),
@@ -126,12 +128,6 @@ export const CreateOrUpdateStaff = () => {
 
 		if (!isValidPhone(profile.Phone) && profile.Phone !== '') {
 			return toast.error('Please provide correct phone number!')
-		}
-		if (!isValidCNIC(profile.ManCNIC)) {
-			return toast.error('Please provide correct CNIC')
-		}
-		if (!isValidCNIC(profile.CNIC)) {
-			return toast.error('Please provide correct CNIC')
 		}
 
 		if (profile.Password.length !== 128) {
@@ -357,16 +353,21 @@ export const CreateOrUpdateStaff = () => {
 						/>
 
 						<div>Personal Contact</div>
-						<PhoneInput
-							name="Phone"
-							onChange={handleInput}
-							error={
-								numberRegex.test(profile.Phone) || !(profile.Phone?.length <= 11)
-							}
-							value={profile.Phone}
-							className="tw-input w-full tw-is-form-bg-black"
-						/>
-
+						<div className="flex items-center flex-row w-full">
+							<div className="flex w-full flex-col ">
+								<PhoneInput
+									name="Phone"
+									value={profile.Phone}
+									error={
+										numberRegex.test(profile.Phone) ||
+										!(profile.Phone?.length <= 11)
+									}
+									onChange={handleInput}
+									className="tw-input w-full tw-is-form-bg-black"
+								/>
+							</div>
+							<PhoneCall phone={profile.Phone} />
+						</div>
 						<div>Password*</div>
 						<div className="w-full relative">
 							<input
@@ -429,7 +430,13 @@ export const CreateOrUpdateStaff = () => {
 							</div>
 						</div>
 
-						<div>{profile.Married ? 'Spouse Name' : 'Father Name'}</div>
+						<div>
+							{profile.Married
+								? profile.Gender === 'male'
+									? 'Father Name'
+									: 'Spouse Name'
+								: 'Father Name'}
+						</div>
 						<input
 							name="ManName"
 							onChange={handleInput}
@@ -438,7 +445,13 @@ export const CreateOrUpdateStaff = () => {
 							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
-						<div>{profile.Married ? 'Spouse CNIC' : 'Father CNIC'}</div>
+						<div>
+							{profile.Married
+								? profile.Gender === 'male'
+									? 'Father CNIC'
+									: 'Spouse CNIC'
+								: 'Father CNIC'}
+						</div>
 						<input
 							name="ManCNIC"
 							value={profile.ManCNIC}
@@ -600,11 +613,15 @@ export const CreateOrUpdateStaff = () => {
 							</>
 						)}
 
-						<button
-							type="submit"
-							className={'w-full items-center tw-btn-blue py-3 font-semibold my-4'}>
-							{isNewStaff() ? 'Save' : 'Update'}
-						</button>
+						{Admin && (
+							<button
+								type="submit"
+								className={
+									'w-full items-center tw-btn-blue py-3 font-semibold my-4'
+								}>
+								{isNewStaff() ? 'Save' : 'Update'}
+							</button>
+						)}
 						{!isNewStaff() && id !== faculty_id && (
 							<button
 								type="button"

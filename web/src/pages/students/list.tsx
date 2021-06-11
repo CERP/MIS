@@ -119,16 +119,17 @@ export const StudentList = ({
 		)
 	}
 
-	const pageTitle = `Students ${toTitleCase(forwardTo)}`
+	const pageTitle = `Students${forwardTo ? ' ' + toTitleCase(forwardTo) : ''}`
 
 	const renderListPage = () => {
 		return (
-			<div className="relative p-5 md:p-10 md:pt-5">
+			<div className="relative p-5 md:p-10 md:pt-5 mb-10 md:mb-0">
 				{!forwardTo && (
 					<Link to="/students/new/menu">
 						<AddStickyButton label="Add new Student" />
 					</Link>
 				)}
+
 				<div className="flex flex-col items-center justify-between mt-4 mb-12 space-y-4 md:flex-row md:mb-20 md:space-y-0 md:space-x-60">
 					<div ref={searchInputRef} className="md:w-9/12 w-full">
 						<SearchInput
@@ -209,8 +210,8 @@ export const StudentList = ({
 							className="w-1/3 rounded shadow tw-select text-teal-brand"
 							onChange={e => setFilter({ ...state, gender: e.target.value })}>
 							<option value="">Gender</option>
-							<option value={'Male'}>Male</option>
-							<option value={'Female'}>Female</option>
+							<option value={'Male'}>M</option>
+							<option value={'Female'}>F</option>
 							<option value={'Other'}>Other</option>
 						</select>
 						<select
@@ -259,7 +260,7 @@ export const StudentList = ({
 	}
 
 	return (
-		<AppLayout title={pageTitle} showHeaderTitle>
+		<AppLayout total={filteredStudents.length} title={pageTitle} showHeaderTitle>
 			{renderListPage()}
 		</AppLayout>
 	)

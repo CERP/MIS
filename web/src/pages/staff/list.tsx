@@ -11,9 +11,11 @@ import UserIconSvg from 'assets/svgs/user.svg'
 import { SearchInput } from 'components/input/search'
 import { AddStickyButton } from 'components/Button/add-sticky'
 import Paginate from 'components/Paginate'
+import { StaffType } from 'constants/index'
 
 type State = {
 	isActive: boolean
+	type: MISTeacher['Type']
 	searchText: string
 	tag: string
 	gender: string
@@ -24,6 +26,7 @@ export const StaffList = () => {
 
 	const [state, setState] = useState<State>({
 		isActive: true,
+		type: '',
 		searchText: '',
 		tag: '',
 		gender: ''
@@ -40,6 +43,7 @@ export const StaffList = () => {
 				isValidTeacher(f) &&
 				f.Active === state.isActive &&
 				(state.gender ? f.Gender === state.gender : true) &&
+				(f.Type && state.type ? f.Type === state.type : true) &&
 				(state.searchText ? searchString.includes(state.searchText.toLowerCase()) : true) &&
 				(state.tag ? f?.tags[state.tag] : true)
 			)
@@ -54,21 +58,21 @@ export const StaffList = () => {
 		)
 	}
 
-	const getUniqueTags = (): string[] => {
-		const tags = new Set<string>()
+	// const getUniqueTags = (): string[] => {
+	// 	const tags = new Set<string>()
 
-		Object.values(faculty ?? {}).forEach(f => {
-			if (isValidTeacher(f)) {
-				Object.keys(f.tags ?? {}).forEach(tag => tags.add(tag))
-			}
-		})
+	// 	Object.values(faculty ?? {}).forEach(f => {
+	// 		if (isValidTeacher(f)) {
+	// 			Object.keys(f.tags ?? {}).forEach(tag => tags.add(tag))
+	// 		}
+	// 	})
 
-		return [...tags]
-	}
+	// 	return [...tags]
+	// }
 
 	return (
-		<AppLayout title="Staff" showHeaderTitle>
-			<div className="p-5 md:p-10 md:pt-5 relative">
+		<AppLayout total={filteredStaff.length ?? 0} title="Staff" showHeaderTitle>
+			<div className="p-5 md:p-10 md:pt-5 relative mb-16 md:mb-0">
 				<Link to="staff/new">
 					<AddStickyButton label="Add new Staff" />
 				</Link>
@@ -79,7 +83,7 @@ export const StaffList = () => {
 						onChange={e => setState({ ...state, searchText: e.target.value })}
 					/>
 					<div className="flex flex-row items-center w-full space-x-2">
-						<select
+						{/* <select
 							onChange={e => setState({ ...state, tag: e.target.value })}
 							className="w-1/3 rounded  tw-select shadow text-teal-brand">
 							<option value={''}>Tags</option>
@@ -88,7 +92,16 @@ export const StaffList = () => {
 									{tag}
 								</option>
 							))}
+						</select> */}
+						<select
+							value={state.type}
+							onChange={e => setState({ ...state, type: e.target.value as any })}
+							className="w-1/3 rounded tw-select shadow text-teal-brand">
+							<option value="">Type</option>
+							<option value={StaffType.TEACHING}>Teaching</option>
+							<option value={StaffType.NON_TEACHING}>Non-Teaching</option>
 						</select>
+
 						<select
 							value={state.gender}
 							onChange={e => setState({ ...state, gender: e.target.value })}

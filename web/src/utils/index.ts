@@ -86,27 +86,91 @@ export const isValidTeacher = (teacher: MISTeacher): boolean => {
 	return !!(teacher && teacher.id && teacher.Name)
 }
 
+/**
+ * Takes permissions of currently logged in staff and
+ * checks if they have the permission to perform a particular
+ * action or not
+ */
+
 export const checkPermission = (
 	permissions: MISTeacher['permissions'],
 	title: string,
 	subAdmin: boolean,
-	admin: boolean
+	admin: boolean,
+	tipAccess?: boolean
 ): boolean => {
-	if (admin) {
+	if (admin && !tipAccess) {
 		return true
 	}
 
 	switch (title) {
-		case 'fees':
-			return permissions.fee && subAdmin
-		case 'expense':
-			return permissions.expense && subAdmin
+		case 'fees': {
+			if (tipAccess) {
+				return false
+			}
+			return permissions.fee && (subAdmin || admin)
+		}
+		case 'expense': {
+			if (tipAccess) {
+				return false
+			}
+			return permissions.expense && (subAdmin || admin)
+		}
+		case 'attendance': {
+			if (tipAccess) {
+				return false
+			}
+			return true
+		}
+		case 'exams': {
+			if (tipAccess) {
+				return false
+			}
+			return true
+		}
+		case 'diary': {
+			if (tipAccess) {
+				return false
+			}
+			return true
+		}
+		case 'SMS': {
+			if (tipAccess) {
+				return false
+			}
+			return true
+		}
+		case 'diary': {
+			if (tipAccess) {
+				return false
+			}
+			return true
+		}
+		case 'Results': {
+			if (tipAccess) {
+				return false
+			}
+			return true
+		}
+		case 'Analytics': {
+			if (tipAccess) {
+				return false
+			}
+			return subAdmin || admin
+		}
+		case 'TIP': {
+			return tipAccess && (subAdmin || admin)
+		}
 		case 'setup':
-			return permissions.setupPage && subAdmin
+			return permissions.setupPage && (subAdmin || admin)
 		case 'dailyStats':
-			return permissions.dailyStats && subAdmin
-		case 'family':
-			return permissions.family && subAdmin
+			return permissions.dailyStats && (subAdmin || admin)
+		case 'family': {
+			if (tipAccess) {
+				return false
+			}
+			return permissions.family && (subAdmin || admin)
+		}
 		default:
 			return true
 	}

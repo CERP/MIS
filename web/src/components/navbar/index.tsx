@@ -15,9 +15,10 @@ import { createLogout } from 'actions'
 
 interface AppHeaderProps {
 	title?: string
+	total?: number
 }
 
-export const AppHeader = ({ title }: AppHeaderProps) => {
+export const AppHeader = ({ title, total = 0 }: AppHeaderProps) => {
 	const dispatch = useDispatch()
 	const location = useLocation()
 	const history = useHistory()
@@ -68,10 +69,14 @@ export const AppHeader = ({ title }: AppHeaderProps) => {
 									</Link>
 								)}
 
-								{title && (
-									<div className="text-lg font-semibold text-white">{title}</div>
-								)}
-
+								<div className=" flex flex-col justify-center items-center">
+									{title && (
+										<div className="text-lg font-semibold text-white">
+											{title}
+											{total > 0 && <span>: {total}</span>}
+										</div>
+									)}
+								</div>
 								{alertBanner && !title && location.pathname === '/home' && (
 									<Link
 										to="/device-time"

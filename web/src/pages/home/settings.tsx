@@ -19,7 +19,9 @@ export const SettingsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 	const faculty = useSelector((state: RootReducerState) => state.db.faculty)
 	const classes = useSelector((state: RootReducerState) => state.db.classes)
 	const students = useSelector((state: RootReducerState) => state.db.students)
-
+	const tip_access = useSelector(
+		(state: RootReducerState) => state.db.targeted_instruction_access
+	)
 	const totalStaff = Object.values(faculty).filter(f => isValidTeacher(f) && f.Active).length
 
 	const { totalFamilies, totalStudents } = getStudentsFamilies(
@@ -56,9 +58,25 @@ export const SettingsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 				<Card
 					title={'Families'}
 					link={
-						checkPermission(permissions, 'family', subAdmin, admin) ? '/families' : '#'
+						checkPermission(
+							permissions,
+							'family',
+							subAdmin,
+							admin,
+							tip_access ? tip_access : false
+						)
+							? '/families'
+							: '#'
 					}
-					disabled={!checkPermission(permissions, 'family', subAdmin, admin)}
+					disabled={
+						!checkPermission(
+							permissions,
+							'family',
+							subAdmin,
+							admin,
+							tip_access ? tip_access : false
+						)
+					}
 					caption={`Total = ${totalFamilies}`}
 					icon={iconFamily}
 				/>

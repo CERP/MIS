@@ -16,8 +16,9 @@ import { createMerges } from 'actions/core'
 import { cnicRegex, numberRegex } from 'constants/index'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
-import { isValidCNIC, isValidPhone } from 'utils/helpers'
+import { isValidPhone } from 'utils/helpers'
 import { PhoneInput } from 'components/input/PhoneInput'
+import PhoneCall from 'components/Phone/PhoneCall'
 
 type SingleFamilyProps = RouteComponentProps<{ id: string }>
 
@@ -125,9 +126,7 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 		if (state.FamilyID.trim().length < 4) {
 			return toast.error('Family Name or Id must be at least 4 character long')
 		}
-		if (!isValidCNIC(state.ManCNIC)) {
-			return toast.error('Father/Gaurdian CNIC is not valid')
-		}
+
 		if (!isValidPhone(state.Phone) && state.Phone !== '') {
 			return toast.error('Please provide a valid Phone Number')
 		}
@@ -428,7 +427,9 @@ const ListCard = ({ student, sections, removeStudent }: ListCardProps) => {
 			<div className="flex flex-row items-center justify-between w-2/5">
 				<div className="flex flex-col items-start">
 					<div className="text-sm">{toTitleCase(section?.className)}</div>
-					<div className="text-xs text-gray-500">{toTitleCase(section?.name)}</div>
+					{section?.name.toUpperCase() !== 'DEFAULT' && (
+						<div className="text-xs text-gray-500">{toTitleCase(section?.name)}</div>
+					)}
 				</div>
 				<div className="ml-4 cursor-pointer" onClick={removeStudent}>
 					<TrashIcon className="text-red-brand w-6 h-6" />
@@ -437,17 +438,3 @@ const ListCard = ({ student, sections, removeStudent }: ListCardProps) => {
 		</div>
 	)
 }
-
-type PhoneCallProps = {
-	phone: string
-}
-const PhoneCall = ({ phone }: PhoneCallProps) => (
-	<a
-		className={clsx(
-			'md:hidden ml-2 text-white h-10 w-10 rounded-md flex items-center justify-center',
-			phone ? 'bg-blue-brand' : 'pointer-events-none bg-gray-500 text-gray-300'
-		)}
-		href={`tel:${phone}`}>
-		<PhoneIcon className="w-6 h-6" />
-	</a>
-)
