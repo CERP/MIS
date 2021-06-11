@@ -28,6 +28,17 @@ const SingleStdResult: React.FC<P> = ({ student, class_name, subject, quiz_id, t
 	const obtained_marks = quiz_result?.[class_name]?.[subject]?.[quiz_id]?.obtained_marks ?? 0
 	const progress = getProgress(obtained_marks)
 
+	const getSmileyFromProgress = (progress: string) => {
+		if (progress === 'Mastered') {
+			return Smile
+		} else if (progress === 'Working') {
+			return Serious
+		} else if (progress === 'Absent') {
+			return ''
+		} else {
+			return Sad
+		}
+	}
 	return (
 		<div className="mb-3 bg-white w-ful text-sm md:text-base lg:text-lg flex flex-row justify-around md:justify-around lg:justify-around">
 			<div className="w-1/3 flex justify-center">
@@ -41,22 +52,7 @@ const SingleStdResult: React.FC<P> = ({ student, class_name, subject, quiz_id, t
 			</div>
 			<div className="flex items-center w-1/3 justify-center">
 				<div className="w-full md:w-1/2 lg:w-1/3 flex flex-row justify-start items-center">
-					<div
-						className={clsx(
-							'bg-blue-900 rounded-full h-5 w-5 mr-3',
-							{
-								'bg-sea-green-tip-brand': progress === 'Mastered',
-								'bg-yellow-tip-brand': progress === 'Working',
-								hidden: progress === 'Absent'
-							},
-							'bg-red-tip-brand'
-						)}></div>
-					{/* <img
-						className="w-5 h-5 mr-2"
-						src={
-							progress === 'Mastered' ? Smile : progress === 'Working' ? Serious : Sad
-						}
-					/> */}
+					<img className="w-5 h-5 mr-2" src={getSmileyFromProgress(progress)} />
 					<div
 						className={clsx(
 							'font-bold',
