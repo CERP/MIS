@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
 import { Link } from 'react-router-dom'
@@ -82,6 +82,12 @@ export const ActionTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 	const tip_access = useSelector(
 		(state: RootReducerState) => state.db.targeted_instruction_access
 	)
+
+	useEffect(() => {
+		if (tip_access) {
+			links.reverse()
+		}
+	}, [])
 
 	return (
 		<div className="p-10 pt-6 mx-auto mb-10 md:w-full">
