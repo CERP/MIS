@@ -56,7 +56,7 @@ const SingleSloView: React.FC<P> = ({ slo, singleSloQuizResult }) => {
 										},
 										'bg-red-250'
 									)}>
-									{quiz}%
+									{quiz >= 0 ? `${quiz}%` : '-'}
 								</div>
 								{/* <div
 									className={clsx(

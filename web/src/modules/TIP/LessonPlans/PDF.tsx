@@ -68,13 +68,13 @@ const PDF: React.FC<PropsType> = ({ match, targeted_instruction }) => {
 				lesson_name={lesson.lesson_title}
 				lesson_no={lesson_number}
 			/>
-			<div className="border border-thin border-black rounded-md">
-				<div className="rounded-lg h-96">
-					<Worker workerUrl="https://unpkg.com/pdfjs-dist@2.6.347/build/pdf.worker.min.js">
+			<div className="border border-thin border-black rounded-md w-11/12">
+				<div className="rounded-lg h-96 w-full">
+					<Worker workerUrl="https://unpkg.com/pdfjs-dist@2.7.570/build/pdf.worker.min.js">
 						<Viewer
 							fileUrl={decodeURIComponent(pdf_url)}
 							renderPage={renderPage}
-							defaultScale={SpecialZoomLevel.PageFit}
+							defaultScale={SpecialZoomLevel.PageWidth}
 							plugins={[plugin_instance]}
 						/>
 					</Worker>
