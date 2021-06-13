@@ -269,13 +269,13 @@ type SubjectLessonProgress = {
  */
 export const getLessonProgress = (teacher: MISTeacher) => {
 	// When a teacher has no progress
-	if (!teacher.targeted_instruction ?? !teacher.targeted_instruction.curriculum) {
+	if (!teacher?.targeted_instruction?.curriculum) {
 		return 0
 	}
 
 	const teacher_curriculum = teacher.targeted_instruction.curriculum
 
-	for (let [, learning_levels] of Object.entries(teacher_curriculum)) {
+	for (let [, learning_levels] of Object.entries(teacher_curriculum || {})) {
 		// go through each subject
 		// in any of these, do we complete the first 17 lessons or not?
 
