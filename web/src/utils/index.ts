@@ -99,7 +99,7 @@ export const checkPermission = (
 	admin: boolean,
 	tipAccess?: boolean
 ): boolean => {
-	if (admin && !tipAccess) {
+	if (admin) {
 		return true
 	}
 
@@ -110,7 +110,7 @@ export const checkPermission = (
 			}
 			return permissions.fee && (subAdmin || admin)
 		}
-		case 'expense': {
+		case 'expenses': {
 			if (tipAccess) {
 				return false
 			}
@@ -165,7 +165,7 @@ export const checkPermission = (
 			return permissions.setupPage && (subAdmin || admin)
 		case 'dailyStats':
 			return permissions.dailyStats && (subAdmin || admin)
-		case 'family': {
+		case 'families': {
 			if (tipAccess) {
 				return false
 			}
