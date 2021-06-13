@@ -42,7 +42,7 @@ const SingleStdResult: React.FC<P> = ({ student, class_name, subject, quiz_id, t
 	return (
 		<div className="mb-3 bg-white w-ful text-sm md:text-base lg:text-lg flex flex-row justify-around md:justify-around lg:justify-around">
 			<div className="w-1/3 flex justify-center">
-				<div className="w-full md:w-1/2 lg:w-1/2 flex flex-row justify-start items-center">
+				<div className="w-full md:w-1/2 lg:w-1/2 flex flex-row justify-center items-center">
 					<img className="h-8 w-8" src={BlackAvatar} />
 					<div>{student.Name}</div>
 				</div>
@@ -51,8 +51,10 @@ const SingleStdResult: React.FC<P> = ({ student, class_name, subject, quiz_id, t
 				{`${obtained_marks === -1 ? 'Absent' : `${obtained_marks}/${total_marks}`}`}
 			</div>
 			<div className="flex items-center w-1/3 justify-center">
-				<div className="w-full md:w-1/2 lg:w-1/3 flex flex-row justify-start items-center">
-					<img className="w-5 h-5 mr-2" src={getSmileyFromProgress(progress)} />
+				<div className="w-full md:w-1/2 lg:w-1/3 flex flex-row justify-center items-center">
+					{progress !== 'Absent' && (
+						<img className="w-5 h-5 mr-2" src={getSmileyFromProgress(progress)} />
+					)}
 					<div
 						className={clsx(
 							'font-bold',
