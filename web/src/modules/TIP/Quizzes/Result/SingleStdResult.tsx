@@ -56,15 +56,13 @@ const SingleStdResult: React.FC<P> = ({ student, class_name, subject, quiz_id, t
 						<img className="w-5 h-5 mr-2" src={getSmileyFromProgress(progress)} />
 					)}
 					<div
-						className={clsx(
-							'font-bold',
-							{
-								'text-sea-green-tip-brand': progress === 'Mastered',
-								'text-yellow-tip-brand': progress === 'Working',
-								'text-black': progress === 'Absent'
-							},
-							'text-red-tip-brand'
-						)}>
+						className={clsx('font-bold', {
+							'fontColor:#3efd45': progress === 'Mastered',
+							'text-yellow-tip-brand': progress === 'Working',
+							'text-red-tip-brand': progress === 'Struggling',
+							'text-black': progress === 'Absent'
+						})}
+						style={progress === 'Mastered' ? { color: '#3efd45' } : {}}>
 						{progress}
 					</div>
 				</div>
