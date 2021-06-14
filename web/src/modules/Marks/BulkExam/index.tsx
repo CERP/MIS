@@ -669,7 +669,7 @@ const ExamScoreSheet: React.FC<ExamScoreSheetProps> = ({
 								.map(student => (
 									<tr key={student.id}>
 										<td title={toTitleCase(student.Name)}>
-											<Link to={`/student/${student.id}/profile`}>
+											<Link to={`/students/${student.id}/profile`}>
 												{student.RollNumber || ''}{' '}
 												{toTitleCase(student.Name)}
 											</Link>

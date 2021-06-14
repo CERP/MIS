@@ -358,7 +358,7 @@ class SingleExam extends Component {
 											<div className="remove row">
 												<label>
 													{student.RollNumber ? student.RollNumber : ''}{' '}
-													<Link to={`/student/${student.id}/profile`}>
+													<Link to={`/students/${student.id}/profile`}>
 														{student.Name}
 													</Link>
 												</label>

@@ -658,7 +658,7 @@ class AttendanceAnalytics extends Component<propTypes, S> {
 					</div>
 					{items.map(([sid, { student, PRESENT, ABSENT, LEAVE }]) => (
 						<div className="mis-table row" key={sid}>
-							<Link to={`/student/${sid}/attendance`}>{student.Name}</Link>
+							<Link to={`/students/${sid}/attendance`}>{student.Name}</Link>
 							<div>{student.Phone}</div>
 							<div style={ABSENT === 0 ? { color: '#5ecdb9' } : { color: '#fc6171' }}>
 								{ABSENT}

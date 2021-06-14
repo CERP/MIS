@@ -171,11 +171,15 @@ class DailyStats extends Component<PropsType, S> {
 							.map(student => (
 								<div className="mis-table row" key={student.id}>
 									{student.FamilyID && student.FamilyID !== '' ? (
-										<Link to={`/families/${student.FamilyID}`}>
+										<Link
+											className="underline text-blue-brand"
+											to={`/families/${student.FamilyID}/payments`}>
 											{student.FamilyID}(F)
 										</Link>
 									) : (
-										<Link to={`/student/${student.id}/payment`}>
+										<Link
+											className="underline text-blue-brand"
+											to={`/students/${student.id}/payments`}>
 											{student.Name}
 										</Link>
 									)}

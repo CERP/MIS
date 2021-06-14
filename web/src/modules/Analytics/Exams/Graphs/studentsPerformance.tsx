@@ -213,7 +213,7 @@ class StudentsPerformance extends Component<PropsType, S> {
 
 								return (
 									<div className="mis-table row" key={student.id}>
-										<Link to={`/student/${student.id}/marks`}>
+										<Link to={`/students/${student.id}/marks`}>
 											{student.name}
 										</Link>
 										<div>
