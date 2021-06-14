@@ -108,13 +108,13 @@ export const checkPermission = (
 			if (tipAccess) {
 				return false
 			}
-			return permissions.fee && (subAdmin || admin)
+			return permissions.fee && subAdmin
 		}
 		case 'expenses': {
 			if (tipAccess) {
 				return false
 			}
-			return permissions.expense && (subAdmin || admin)
+			return permissions.expense && subAdmin
 		}
 		case 'attendance': {
 			if (tipAccess) {
@@ -156,20 +156,17 @@ export const checkPermission = (
 			if (tipAccess) {
 				return false
 			}
-			return subAdmin || admin
-		}
-		case 'TIP': {
-			return tipAccess && (subAdmin || admin)
+			return subAdmin
 		}
 		case 'setup':
-			return permissions.setupPage && (subAdmin || admin)
+			return permissions.setupPage && subAdmin
 		case 'dailyStats':
-			return permissions.dailyStats && (subAdmin || admin)
+			return permissions.dailyStats && subAdmin
 		case 'families': {
 			if (tipAccess) {
 				return false
 			}
-			return permissions.family && (subAdmin || admin)
+			return permissions.family && subAdmin
 		}
 		default:
 			return true

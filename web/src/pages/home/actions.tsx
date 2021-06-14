@@ -35,7 +35,7 @@ const links: CardProps[] = [
 	},
 	{
 		link: '/expenses',
-		title: 'expense',
+		title: 'expenses',
 		icon: iconExpense
 	},
 	{
@@ -51,7 +51,7 @@ const links: CardProps[] = [
 	{
 		link: '/reports-menu',
 		title: 'Results',
-		icon: '/favicon.ico'
+		icon: iconExams
 	},
 	{
 		link: '/analytics',
@@ -85,7 +85,7 @@ export const ActionTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 		(state: RootReducerState) => state.db.targeted_instruction_access
 	)
 
-	const sortedLinks = tip_access ? [tipLink, ...links] : [...links, tipLink]
+	const sortedLinks = tip_access ? [tipLink, ...links] : links
 
 	return (
 		<div className="p-10 pt-6 mx-auto mb-10 md:w-full">
