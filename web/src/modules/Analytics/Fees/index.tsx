@@ -665,9 +665,15 @@ class FeeAnalytics extends Component<propTypes, S> {
 						{items.map(({ student, debt, familyId }) => (
 							<div className="mis-table row" key={student.id}>
 								{familyId ? (
-									<Link to={`/student/${student.id}/payment`}>{familyId}(F)</Link>
+									<Link
+										className="underline text-blue-brand"
+										to={`/families/${student.FamilyID}/payments`}>
+										{familyId}(F)
+									</Link>
 								) : (
-									<Link to={`/student/${student.id}/payment`}>
+									<Link
+										className="underline text-blue-brand"
+										to={`/students/${student.id}/payments`}>
 										{student.Name}
 									</Link>
 								)}
