@@ -44,8 +44,8 @@ const ChildView: React.FC<P> = ({
 			className={clsx(
 				'flex flex-row justify-between items-center px-3 my-1 h-14 shadow-lg w-full',
 				{
-					'bg-green-250': percentage >= 90,
-					'bg-yellow-250': percentage >= 50 && percentage < 90
+					'bg-green-250': percentage >= 80,
+					'bg-yellow-250': percentage >= 50 && percentage < 80
 				},
 				'bg-red-250'
 			)}
