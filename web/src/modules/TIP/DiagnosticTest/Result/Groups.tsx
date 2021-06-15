@@ -15,7 +15,16 @@ const getTIPGroup = (group: TIPLearningGroups) => {
 
 const Groups: React.FC<P> = ({ students, color, level }) => {
 	return (
-		<div className="flex flex-wrap flex-col justify-between w-full">
+		<div
+			className={clsx('flex flex-wrap flex-col justify-between w-full', {
+				'order-1': color === 'Not Graded',
+				'order-2': color === 'Oral',
+				'order-3': color === 'Blue',
+				'order-4': color === 'Yellow',
+				'order-5': color === 'Green',
+				'order-6': color === 'Orange',
+				'order-7': color === 'Remediation Not Needed'
+			})}>
 			<div
 				className={clsx('flex flex-row justify-between py-1 items-center text-white px-3', {
 					'bg-gray-400': color === 'Oral',
@@ -28,8 +37,8 @@ const Groups: React.FC<P> = ({ students, color, level }) => {
 				})}>
 				<div className="capitalize text-sm mr-1">
 					{color === 'Remediation Not Needed' ||
-						color === 'Oral' ||
-						color === 'Not Graded'
+					color === 'Oral' ||
+					color === 'Not Graded'
 						? getTIPGroup(color)
 						: `${color} Group`}
 				</div>
@@ -47,7 +56,7 @@ const Groups: React.FC<P> = ({ students, color, level }) => {
 						.map(std => (
 							<div
 								key={std.id}
-								className="relative no-underline h-24 flex flex-col flex items-center justify-center">
+								className="relative no-underline h-24 flex flex-col items-center justify-center">
 								<img
 									className="border border-solid border-green-tip-brand rounded-full h-14 w-14"
 									src="https://www.atmeplay.com/images/users/avtar/avtar_nouser.png"
