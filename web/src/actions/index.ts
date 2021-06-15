@@ -1508,38 +1508,14 @@ export const fetchTargetedInstruction = () => (
 	getState: () => RootReducerState,
 	syncr: Syncr
 ) => {
-	const state = getState()
-
-	if (!syncr.ready) {
-		console.log('not ready!')
-		syncr.onNext('verify', () => {
-			dispatch(fetchTargetedInstruction())
-		})
-	}
-
-	syncr
-		.send({
-			type: 'GET_TARGETED_INSTRUCTIONS',
-			client_type: client_type,
-			payload: {
-				school_id: state.auth.school_id,
-				token: state.auth.token,
-				client_id: state.client_id
-			}
-		})
-		.then(response =>
+	fetch('https://storage.googleapis.com/targeted-instructions/tip.json')
+		.then(res => res.json())
+		.then(tip_data =>
 			dispatch({
 				type: 'GET_TARGETED_INSTRUCTION_SUCCESS',
-				payload: response
+				payload: tip_data
 			})
 		)
-		.catch(err => {
-			console.error('targeted instruction failure')
-			console.log(err)
-			dispatch({
-				type: 'GET_TARGETED_INSTRUCTION_FAILURE'
-			})
-		})
 }
 export const deletePayment = (student_id: string, payment_id: string) => (dispatch: Function) => {
 	dispatch(
