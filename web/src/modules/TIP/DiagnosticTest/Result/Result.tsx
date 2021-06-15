@@ -19,7 +19,7 @@ const Result: React.FC<PropsType> = props => {
 	return (
 		<div className="flex flex-wrap content-between mt-20">
 			<Card class_name={class_name} />
-			<div className="w-full">
+			<div className="w-full flex flex-col">
 				{Object.entries(result).map(([key, value]) => {
 					const group = convertLearningGradeToGroupName(key as TIPGrades)
 					return <Groups key={key} color={group} level={key} students={value.students} />
