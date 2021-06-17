@@ -1,5 +1,4 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import siteConfig from 'constants/siteConfig.json'
 import { ExclamationIcon } from '@heroicons/react/outline'
 
@@ -14,29 +13,39 @@ export const AppError = ({ error, errInfo }: AppErrorProps) => {
 		<div className="min-w-screen min-h-screen bg-gray-brand flex items-center p-5 lg:p-20 overflow-hidden relative">
 			<div className="flex-1 min-h-full min-w-full rounded-3xl bg-white shadow-xl p-8 lg:p-20 text-gray-800 relative md:flex items-center">
 				<div className="w-full md:w-2/3">
-					<div className="mb-10 text-gray-600">
+					<div className="mb-4 text-gray-600">
 						<h1 className="font-black text-lg lg:text-3xl mb-4 text-center md:text-left">
 							MISchool has encountered an error <span>😓</span>
 						</h1>
 						<div className="mb-2">
-							Please call at{' '}
+							Please call us at{' '}
 							<a
 								className="underline text-blue-brand font-semibold text-lg"
 								href={`tel:${helpline.phoneInt}`}>
 								{helpline.phoneAlt}
-							</a>
+							</a>{' '}
+							<span className="font-semibold">OR</span> Send screenshot via Whatsapp!
 						</div>
 						<p>
 							<span className="font-semibold">{error?.name}</span>: {error?.message}
 						</p>
-						<p>
-							<span className="font-semibold">URL</span>: {window.location.href}
+						<p className="overflow-x-auto">
+							<span className="font-semibold">Path</span>: {window.location.pathname}
+						</p>
+						<p className="overflow-x-auto md:truncate md:overflow-ellipsis">
+							<span className="font-semibold">Trace</span>:{' '}
+							{errInfo?.componentStack
+								? errInfo?.componentStack?.substr(
+									0,
+									errInfo?.componentStack?.indexOf('div') - 4
+								)
+								: ''}
 						</p>
 					</div>
 					<div className="flex justify-center md:justify-start">
-						<Link to="/home" className="tw-btn-blue">
+						<a href="/home" className="tw-btn-blue">
 							Go to Home
-						</Link>
+						</a>
 					</div>
 				</div>
 				<div className="w-full md:w-1/2 text-center hidden md:block">
