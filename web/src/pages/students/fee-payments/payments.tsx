@@ -127,7 +127,7 @@ export const StudentPayments = () => {
 		0
 	)
 
-	const totalPendingAmount = Object.entries(student.payments).reduce(
+	const totalPendingAmount = Object.entries(student.payments ?? {}).reduce(
 		(agg, [, curr]) =>
 			agg - (curr.type === 'SUBMITTED' || curr.type === 'FORGIVEN' ? 1 : -1) * curr.amount,
 		0
@@ -135,7 +135,7 @@ export const StudentPayments = () => {
 
 	const years = [
 		...new Set(
-			Object.entries(student.payments)
+			Object.entries(student.payments ?? {})
 				.sort(([, a_payment], [, b_payment]) => a_payment.date - b_payment.date)
 				.map(([id, payment]) => moment(payment.date).format('YYYY'))
 		)
@@ -284,7 +284,7 @@ const PreviousPayments = ({ years, close, student }: PreviousPaymentsProps) => {
 		year: moment().format('YYYY')
 	})
 
-	const totalPendingAmount = Object.entries(student.payments).reduce(
+	const totalPendingAmount = Object.entries(student.payments ?? {}).reduce(
 		(agg, [, curr]) =>
 			agg - (curr.type === 'SUBMITTED' || curr.type === 'FORGIVEN' ? 1 : -1) * curr.amount,
 		0
@@ -376,7 +376,7 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 		sendSMS: false
 	})
 
-	let balance = [...Object.values(student.payments)].reduce(
+	let balance = [...Object.values(student.payments ?? {})].reduce(
 		(agg, curr) =>
 			agg - (curr.type === 'SUBMITTED' || curr.type === 'FORGIVEN' ? 1 : -1) * curr.amount,
 		0

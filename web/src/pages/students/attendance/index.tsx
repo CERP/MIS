@@ -97,7 +97,7 @@ export const StudentsAttendance = () => {
 				const student = students[studentId]
 
 				if (student?.Name) {
-					const record = (student.attendance || {})[attendanceDate]
+					const record = (student.attendance ?? {})[attendanceDate]
 					if (record) {
 						if (
 							record.status === AttendanceStatus.PRESENT ||
@@ -147,7 +147,7 @@ export const StudentsAttendance = () => {
 						onChange={e => setState({ ...state, selectedSection: e.target.value })}
 						className="w-full bg-transparent tw-input border-blue-brand ring-1">
 						{sections
-							.filter(s => s && s.id && s.name)
+							.filter(s => s && s.id && s.namespaced_name)
 							.map(s => (
 								<option key={s.id} value={s.id}>
 									{toTitleCase(s.namespaced_name, '-')}
