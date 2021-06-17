@@ -60,6 +60,7 @@ import StaffPage from 'pages/staff'
 import PrintPreview from 'pages/school/fees/print-voucher/preview'
 import ClassFeeMenu from 'modules/Class/Single/ClassFeeMenu'
 import SingleClassResults from 'modules/Class/Single/ReportsMenu'
+import { PageNotFound } from 'pages/http_error/404'
 
 interface RoutesProps {
 	store: Store<RootReducerState>
@@ -202,6 +203,7 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<Route exact path="/events" component={Events} />
 						<Route exact path="/features" component={Feature} />
 						<Route exact path="/contact-us" component={ContactUs} />
+						<Route path="*" component={PageNotFound} />
 					</Switch>
 				</BrowserRouter>
 			</Provider>
