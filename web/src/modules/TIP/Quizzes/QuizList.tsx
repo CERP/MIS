@@ -93,11 +93,7 @@ const QuizList: React.FC<PropsType> = ({
 							</div>
 
 							{teacher_record.taken && (
-								<img
-									src={QuizMark}
-									className="h-8 w-8 print:hidden"
-									onClick={e => markQuiz(e, quiz_id, false)}
-								/>
+								<img src={QuizMark} className="h-8 w-8 print:hidden" />
 							)}
 						</div>
 					)
