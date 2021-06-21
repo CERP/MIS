@@ -1,0 +1,718 @@
+.lst-kix_pm3kmatkn2mx-7>li:before {
+    content: ""counter(lst-ctn-kix_pm3kmatkn2mx-7, lower-latin) ". "
+}
+
+.lst-kix_pm3kmatkn2mx-6>li:before {
+    content: ""counter(lst-ctn-kix_pm3kmatkn2mx-6, decimal) ". "
+}
+
+.lst-kix_pm3kmatkn2mx-3>li {
+    counter-increment: lst-ctn-kix_pm3kmatkn2mx-3
+}
+
+.lst-kix_tsptkoxst6z8-2>li {
+    counter-increment: lst-ctn-kix_tsptkoxst6z8-2
+}
+
+ol.lst-kix_tsptkoxst6z8-5.start {
+    counter-reset: lst-ctn-kix_tsptkoxst6z8-5 0
+}
+
+.lst-kix_4fndj2x57o7r-8>li {
+    counter-increment: lst-ctn-kix_4fndj2x57o7r-8
+}
+
+.lst-kix_pm3kmatkn2mx-0>li:before {
+    content: ""counter(lst-ctn-kix_pm3kmatkn2mx-0, decimal) ". "
+}
+
+.lst-kix_pm3kmatkn2mx-8>li:before {
+    content: ""counter(lst-ctn-kix_pm3kmatkn2mx-8, lower-roman) ". "
+}
+
+.lst-kix_tsptkoxst6z8-3>li {
+    counter-increment: lst-ctn-kix_tsptkoxst6z8-3
+}
+
+ol.lst-kix_4fndj2x57o7r-7 {
+    list-style-type: none
+}
+
+ol.lst-kix_4fndj2x57o7r-8 {
+    list-style-type: none
+}
+
+ol.lst-kix_tsptkoxst6z8-8.start {
+    counter-reset: lst-ctn-kix_tsptkoxst6z8-8 0
+}
+
+.lst-kix_pm3kmatkn2mx-2>li {
+    counter-increment: lst-ctn-kix_pm3kmatkn2mx-2
+}
+
+ol.lst-kix_4fndj2x57o7r-1.start {
+    counter-reset: lst-ctn-kix_4fndj2x57o7r-1 0
+}
+
+ol.lst-kix_pm3kmatkn2mx-0.start {
+    counter-reset: lst-ctn-kix_pm3kmatkn2mx-0 0
+}
+
+ol.lst-kix_tsptkoxst6z8-3 {
+    list-style-type: none
+}
+
+ol.lst-kix_tsptkoxst6z8-4 {
+    list-style-type: none
+}
+
+.lst-kix_tsptkoxst6z8-4>li {
+    counter-increment: lst-ctn-kix_tsptkoxst6z8-4
+}
+
+ol.lst-kix_tsptkoxst6z8-1 {
+    list-style-type: none
+}
+
+ol.lst-kix_tsptkoxst6z8-2 {
+    list-style-type: none
+}
+
+ol.lst-kix_pm3kmatkn2mx-6.start {
+    counter-reset: lst-ctn-kix_pm3kmatkn2mx-6 0
+}
+
+ol.lst-kix_tsptkoxst6z8-0 {
+    list-style-type: none
+}
+
+.lst-kix_tsptkoxst6z8-1>li {
+    counter-increment: lst-ctn-kix_tsptkoxst6z8-1
+}
+
+.lst-kix_4fndj2x57o7r-7>li {
+    counter-increment: lst-ctn-kix_4fndj2x57o7r-7
+}
+
+ol.lst-kix_pm3kmatkn2mx-3.start {
+    counter-reset: lst-ctn-kix_pm3kmatkn2mx-3 0
+}
+
+ol.lst-kix_pm3kmatkn2mx-8.start {
+    counter-reset: lst-ctn-kix_pm3kmatkn2mx-8 0
+}
+
+ol.lst-kix_pm3kmatkn2mx-1.start {
+    counter-reset: lst-ctn-kix_pm3kmatkn2mx-1 0
+}
+
+.lst-kix_tsptkoxst6z8-5>li {
+    counter-increment: lst-ctn-kix_tsptkoxst6z8-5
+}
+
+ol.lst-kix_tsptkoxst6z8-7 {
+    list-style-type: none
+}
+
+ol.lst-kix_tsptkoxst6z8-8 {
+    list-style-type: none
+}
+
+ol.lst-kix_4fndj2x57o7r-4.start {
+    counter-reset: lst-ctn-kix_4fndj2x57o7r-4 0
+}
+
+ol.lst-kix_tsptkoxst6z8-5 {
+    list-style-type: none
+}
+
+ol.lst-kix_tsptkoxst6z8-6 {
+    list-style-type: none
+}
+
+.lst-kix_4fndj2x57o7r-5>li {
+    counter-increment: lst-ctn-kix_4fndj2x57o7r-5
+}
+
+ol.lst-kix_tsptkoxst6z8-0.start {
+    counter-reset: lst-ctn-kix_tsptkoxst6z8-0 0
+}
+
+ol.lst-kix_tsptkoxst6z8-6.start {
+    counter-reset: lst-ctn-kix_tsptkoxst6z8-6 0
+}
+
+ol.lst-kix_4fndj2x57o7r-1 {
+    list-style-type: none
+}
+
+ol.lst-kix_pm3kmatkn2mx-2 {
+    list-style-type: none
+}
+
+ol.lst-kix_pm3kmatkn2mx-2.start {
+    counter-reset: lst-ctn-kix_pm3kmatkn2mx-2 0
+}
+
+ol.lst-kix_4fndj2x57o7r-2 {
+    list-style-type: none
+}
+
+ol.lst-kix_pm3kmatkn2mx-3 {
+    list-style-type: none
+}
+
+ol.lst-kix_pm3kmatkn2mx-0 {
+    list-style-type: none
+}
+
+ol.lst-kix_4fndj2x57o7r-0 {
+    list-style-type: none
+}
+
+ol.lst-kix_pm3kmatkn2mx-1 {
+    list-style-type: none
+}
+
+ol.lst-kix_4fndj2x57o7r-5 {
+    list-style-type: none
+}
+
+ol.lst-kix_pm3kmatkn2mx-6 {
+    list-style-type: none
+}
+
+ol.lst-kix_4fndj2x57o7r-6 {
+    list-style-type: none
+}
+
+ol.lst-kix_pm3kmatkn2mx-7 {
+    list-style-type: none
+}
+
+ol.lst-kix_4fndj2x57o7r-3 {
+    list-style-type: none
+}
+
+ol.lst-kix_pm3kmatkn2mx-4 {
+    list-style-type: none
+}
+
+ol.lst-kix_4fndj2x57o7r-4 {
+    list-style-type: none
+}
+
+ol.lst-kix_pm3kmatkn2mx-5 {
+    list-style-type: none
+}
+
+ol.lst-kix_4fndj2x57o7r-3.start {
+    counter-reset: lst-ctn-kix_4fndj2x57o7r-3 0
+}
+
+.lst-kix_pm3kmatkn2mx-1>li {
+    counter-increment: lst-ctn-kix_pm3kmatkn2mx-1
+}
+
+.lst-kix_pm3kmatkn2mx-1>li:before {
+    content: ""counter(lst-ctn-kix_pm3kmatkn2mx-1, lower-latin) ". "
+}
+
+.lst-kix_pm3kmatkn2mx-2>li:before {
+    content: ""counter(lst-ctn-kix_pm3kmatkn2mx-2, lower-roman) ". "
+}
+
+.lst-kix_pm3kmatkn2mx-4>li {
+    counter-increment: lst-ctn-kix_pm3kmatkn2mx-4
+}
+
+ol.lst-kix_pm3kmatkn2mx-8 {
+    list-style-type: none
+}
+
+.lst-kix_tsptkoxst6z8-8>li {
+    counter-increment: lst-ctn-kix_tsptkoxst6z8-8
+}
+
+.lst-kix_pm3kmatkn2mx-3>li:before {
+    content: ""counter(lst-ctn-kix_pm3kmatkn2mx-3, decimal) ". "
+}
+
+.lst-kix_pm3kmatkn2mx-5>li:before {
+    content: ""counter(lst-ctn-kix_pm3kmatkn2mx-5, lower-roman) ". "
+}
+
+.lst-kix_pm3kmatkn2mx-7>li {
+    counter-increment: lst-ctn-kix_pm3kmatkn2mx-7
+}
+
+.lst-kix_pm3kmatkn2mx-4>li:before {
+    content: ""counter(lst-ctn-kix_pm3kmatkn2mx-4, lower-latin) ". "
+}
+
+.lst-kix_pm3kmatkn2mx-8>li {
+    counter-increment: lst-ctn-kix_pm3kmatkn2mx-8
+}
+
+ol.lst-kix_tsptkoxst6z8-1.start {
+    counter-reset: lst-ctn-kix_tsptkoxst6z8-1 0
+}
+
+.lst-kix_4fndj2x57o7r-2>li {
+    counter-increment: lst-ctn-kix_4fndj2x57o7r-2
+}
+
+ol.lst-kix_4fndj2x57o7r-5.start {
+    counter-reset: lst-ctn-kix_4fndj2x57o7r-5 0
+}
+
+ol.lst-kix_4fndj2x57o7r-2.start {
+    counter-reset: lst-ctn-kix_4fndj2x57o7r-2 0
+}
+
+ol.lst-kix_pm3kmatkn2mx-7.start {
+    counter-reset: lst-ctn-kix_pm3kmatkn2mx-7 0
+}
+
+ol.lst-kix_tsptkoxst6z8-4.start {
+    counter-reset: lst-ctn-kix_tsptkoxst6z8-4 0
+}
+
+ol.lst-kix_4fndj2x57o7r-8.start {
+    counter-reset: lst-ctn-kix_4fndj2x57o7r-8 0
+}
+
+ol.lst-kix_tsptkoxst6z8-7.start {
+    counter-reset: lst-ctn-kix_tsptkoxst6z8-7 0
+}
+
+.lst-kix_tsptkoxst6z8-7>li {
+    counter-increment: lst-ctn-kix_tsptkoxst6z8-7
+}
+
+.lst-kix_4fndj2x57o7r-1>li {
+    counter-increment: lst-ctn-kix_4fndj2x57o7r-1
+}
+
+.lst-kix_4fndj2x57o7r-4>li {
+    counter-increment: lst-ctn-kix_4fndj2x57o7r-4
+}
+
+.lst-kix_pm3kmatkn2mx-0>li {
+    counter-increment: lst-ctn-kix_pm3kmatkn2mx-0
+}
+
+ol.lst-kix_4fndj2x57o7r-7.start {
+    counter-reset: lst-ctn-kix_4fndj2x57o7r-7 0
+}
+
+.lst-kix_4fndj2x57o7r-0>li:before {
+    content: ""counter(lst-ctn-kix_4fndj2x57o7r-0, decimal) ". "
+}
+
+ol.lst-kix_4fndj2x57o7r-0.start {
+    counter-reset: lst-ctn-kix_4fndj2x57o7r-0 0
+}
+
+.lst-kix_pm3kmatkn2mx-6>li {
+    counter-increment: lst-ctn-kix_pm3kmatkn2mx-6
+}
+
+.lst-kix_4fndj2x57o7r-1>li:before {
+    content: ""counter(lst-ctn-kix_4fndj2x57o7r-1, lower-latin) ". "
+}
+
+.lst-kix_4fndj2x57o7r-2>li:before {
+    content: ""counter(lst-ctn-kix_4fndj2x57o7r-2, lower-roman) ". "
+}
+
+ol.lst-kix_pm3kmatkn2mx-5.start {
+    counter-reset: lst-ctn-kix_pm3kmatkn2mx-5 0
+}
+
+.lst-kix_pm3kmatkn2mx-5>li {
+    counter-increment: lst-ctn-kix_pm3kmatkn2mx-5
+}
+
+.lst-kix_tsptkoxst6z8-0>li {
+    counter-increment: lst-ctn-kix_tsptkoxst6z8-0
+}
+
+.lst-kix_tsptkoxst6z8-6>li {
+    counter-increment: lst-ctn-kix_tsptkoxst6z8-6
+}
+
+ol.lst-kix_tsptkoxst6z8-3.start {
+    counter-reset: lst-ctn-kix_tsptkoxst6z8-3 0
+}
+
+.lst-kix_tsptkoxst6z8-8>li:before {
+    content: ""counter(lst-ctn-kix_tsptkoxst6z8-8, lower-roman) ". "
+}
+
+.lst-kix_4fndj2x57o7r-0>li {
+    counter-increment: lst-ctn-kix_4fndj2x57o7r-0
+}
+
+.lst-kix_4fndj2x57o7r-3>li {
+    counter-increment: lst-ctn-kix_4fndj2x57o7r-3
+}
+
+.lst-kix_4fndj2x57o7r-6>li {
+    counter-increment: lst-ctn-kix_4fndj2x57o7r-6
+}
+
+.lst-kix_tsptkoxst6z8-5>li:before {
+    content: ""counter(lst-ctn-kix_tsptkoxst6z8-5, lower-roman) ". "
+}
+
+.lst-kix_4fndj2x57o7r-8>li:before {
+    content: ""counter(lst-ctn-kix_4fndj2x57o7r-8, lower-roman) ". "
+}
+
+ol.lst-kix_pm3kmatkn2mx-4.start {
+    counter-reset: lst-ctn-kix_pm3kmatkn2mx-4 0
+}
+
+.lst-kix_tsptkoxst6z8-6>li:before {
+    content: ""counter(lst-ctn-kix_tsptkoxst6z8-6, decimal) ". "
+}
+
+.lst-kix_tsptkoxst6z8-7>li:before {
+    content: ""counter(lst-ctn-kix_tsptkoxst6z8-7, lower-latin) ". "
+}
+
+.lst-kix_4fndj2x57o7r-3>li:before {
+    content: ""counter(lst-ctn-kix_4fndj2x57o7r-3, decimal) ". "
+}
+
+.lst-kix_4fndj2x57o7r-4>li:before {
+    content: ""counter(lst-ctn-kix_4fndj2x57o7r-4, lower-latin) ". "
+}
+
+.lst-kix_tsptkoxst6z8-0>li:before {
+    content: ""counter(lst-ctn-kix_tsptkoxst6z8-0, decimal) ". "
+}
+
+.lst-kix_tsptkoxst6z8-2>li:before {
+    content: ""counter(lst-ctn-kix_tsptkoxst6z8-2, lower-roman) ". "
+}
+
+ol.lst-kix_tsptkoxst6z8-2.start {
+    counter-reset: lst-ctn-kix_tsptkoxst6z8-2 0
+}
+
+.lst-kix_tsptkoxst6z8-1>li:before {
+    content: ""counter(lst-ctn-kix_tsptkoxst6z8-1, lower-latin) ". "
+}
+
+ol.lst-kix_4fndj2x57o7r-6.start {
+    counter-reset: lst-ctn-kix_4fndj2x57o7r-6 0
+}
+
+.lst-kix_tsptkoxst6z8-4>li:before {
+    content: ""counter(lst-ctn-kix_tsptkoxst6z8-4, lower-latin) ". "
+}
+
+.lst-kix_4fndj2x57o7r-7>li:before {
+    content: ""counter(lst-ctn-kix_4fndj2x57o7r-7, lower-latin) ". "
+}
+
+.lst-kix_4fndj2x57o7r-5>li:before {
+    content: ""counter(lst-ctn-kix_4fndj2x57o7r-5, lower-roman) ". "
+}
+
+.lst-kix_4fndj2x57o7r-6>li:before {
+    content: ""counter(lst-ctn-kix_4fndj2x57o7r-6, decimal) ". "
+}
+
+.lst-kix_tsptkoxst6z8-3>li:before {
+    content: ""counter(lst-ctn-kix_tsptkoxst6z8-3, decimal) ". "
+}
+
+ol {
+    margin: 0;
+    padding: 0
+}
+
+table td,
+table th {
+    padding: 0
+}
+
+.c3 {
+    background-color: #ffffff;
+    padding-top: 18pt;
+    padding-bottom: 38pt;
+    line-height: 1.15;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left;
+    height: 16pt
+}
+
+.c0 {
+    background-color: #ffffff;
+    margin-left: 36pt;
+    padding-top: 0pt;
+    padding-left: 0pt;
+    padding-bottom: 38pt;
+    line-height: 1.15;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+}
+
+.c10 {
+    background-color: #ffffff;
+    padding-top: 0pt;
+    padding-bottom: 38pt;
+    line-height: 1.15;
+    orphans: 2;
+    widows: 2;
+    text-align: left;
+    height: 11pt
+}
+
+.c11 {
+    margin-left: 36pt;
+    padding-top: 0pt;
+    padding-left: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.15;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+}
+
+.c13 {
+    background-color: #ffffff;
+    color: #7a7a7a;
+    font-weight: 700;
+    text-decoration: none;
+    vertical-align: baseline;
+    font-size: 14pt;
+    font-family: "Arial";
+    font-style: normal
+}
+
+.c7 {
+    background-color: #ffffff;
+    padding-top: 18pt;
+    padding-bottom: 38pt;
+    line-height: 1.15;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+}
+
+.c2 {
+    background-color: #ffffff;
+    color: #7a7a7a;
+    font-weight: 400;
+    text-decoration: none;
+    vertical-align: baseline;
+    font-size: 12pt;
+    font-family: "Arial";
+    font-style: normal
+}
+
+.c14 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.15;
+    orphans: 2;
+    widows: 2;
+    text-align: center;
+    height: 11pt
+}
+
+.c4 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.15;
+    orphans: 2;
+    widows: 2;
+    text-align: left;
+    height: 11pt
+}
+
+.c6 {
+    color: #000000;
+    font-weight: 400;
+    text-decoration: none;
+    vertical-align: baseline;
+    font-size: 11pt;
+    font-family: "Arial";
+    font-style: normal
+}
+
+.c15 {
+    padding-top: 0pt;
+    padding-bottom: 3pt;
+    line-height: 1.15;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: center
+}
+
+.c8 {
+    color: #000000;
+    font-weight: 400;
+    text-decoration: none;
+    vertical-align: baseline;
+    font-size: 26pt;
+    font-family: "Arial";
+    font-style: normal
+}
+
+.c5 {
+    color: #000000;
+    font-weight: 400;
+    text-decoration: none;
+    vertical-align: baseline;
+    font-size: 16pt;
+    font-family: "Arial";
+    font-style: normal
+}
+
+.c12 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.15;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+}
+
+.c9 {
+    background-color: #ffffff;
+    max-width: 468pt;
+    padding: 72pt 72pt 72pt 72pt
+}
+
+.c1 {
+    padding: 0;
+    margin: 0
+}
+
+.title {
+    padding-top: 0pt;
+    color: #000000;
+    font-size: 26pt;
+    padding-bottom: 3pt;
+    font-family: "Arial";
+    line-height: 1.15;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+}
+
+.subtitle {
+    padding-top: 0pt;
+    color: #666666;
+    font-size: 15pt;
+    padding-bottom: 16pt;
+    font-family: "Arial";
+    line-height: 1.15;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+}
+
+li {
+    color: #000000;
+    font-size: 11pt;
+    font-family: "Arial"
+}
+
+p {
+    margin: 0;
+    color: #000000;
+    font-size: 11pt;
+    font-family: "Arial"
+}
+
+h1 {
+    padding-top: 20pt;
+    color: #000000;
+    font-size: 20pt;
+    padding-bottom: 6pt;
+    font-family: "Arial";
+    line-height: 1.15;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+}
+
+h2 {
+    padding-top: 18pt;
+    color: #000000;
+    font-size: 16pt;
+    padding-bottom: 6pt;
+    font-family: "Arial";
+    line-height: 1.15;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+}
+
+h3 {
+    padding-top: 16pt;
+    color: #434343;
+    font-size: 14pt;
+    padding-bottom: 4pt;
+    font-family: "Arial";
+    line-height: 1.15;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+}
+
+h4 {
+    padding-top: 14pt;
+    color: #666666;
+    font-size: 12pt;
+    padding-bottom: 4pt;
+    font-family: "Arial";
+    line-height: 1.15;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+}
+
+h5 {
+    padding-top: 12pt;
+    color: #666666;
+    font-size: 11pt;
+    padding-bottom: 4pt;
+    font-family: "Arial";
+    line-height: 1.15;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+}
+
+h6 {
+    padding-top: 12pt;
+    color: #666666;
+    font-size: 11pt;
+    padding-bottom: 4pt;
+    font-family: "Arial";
+    line-height: 1.15;
+    page-break-after: avoid;
+    font-style: italic;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+}
