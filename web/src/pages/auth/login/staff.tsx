@@ -136,7 +136,7 @@ const Login: React.FC<LoginProps> = ({
 														key={uid}
 														className="group flex flex-col items-center mb-2 space-y-1">
 														<div
-															className="w-20 h-20 cursor-pointer"
+															className="relative w-20 h-20 cursor-pointer"
 															onClick={() =>
 																setUser({ id: uid, ...user })
 															}>
@@ -151,6 +151,9 @@ const Login: React.FC<LoginProps> = ({
 																}
 																alt={staffMember?.Name}
 															/>
+															{staffMember.Admin && (
+																<div className="absolute bottom-0 right-0 h-2 w-2 my-1 rounded-full bg-red-400"></div>
+															)}
 														</div>
 														<div className="text-xs text-white group-hover:text-blue-brand text-center">
 															{toTitleCase(user.name)}
@@ -257,15 +260,20 @@ const LoginForm: React.FC<LoginFormProps> = ({ user, auth, faculty }) => {
 
 	return (
 		<div className="flex flex-col items-center space-y-2">
-			<img
-				className="rounded-full w-24 h-24"
-				src={
-					staffMember?.ProfilePicture?.url ??
-					staffMember?.ProfilePicture?.image_string ??
-					UserIconSvg
-				}
-				alt={staffMember?.Name}
-			/>
+			<div className="relative">
+				<img
+					className="rounded-full w-24 h-24"
+					src={
+						staffMember?.ProfilePicture?.url ??
+						staffMember?.ProfilePicture?.image_string ??
+						UserIconSvg
+					}
+					alt={staffMember?.Name}
+				/>
+				{staffMember.Admin && (
+					<div className="absolute bottom-0 right-0 h-2 w-2 my-1 rounded-full bg-red-400"></div>
+				)}
+			</div>
 			<div className="text-sm text-white">{toTitleCase(user.name)}</div>
 			<form id="staff-login" onSubmit={handleSubmit}>
 				<div className="w-full relative my-4">
