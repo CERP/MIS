@@ -6,10 +6,12 @@ import moment from 'moment'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
+import months from 'constants/months'
 
 type State = {
 	year: number
 	sectionId: string
+	month: string
 }
 
 enum ExamTerms {
@@ -27,6 +29,7 @@ export const ExamsMarks = () => {
 
 	const [state, setState] = useState<State>({
 		year: Number(moment().format('YYYY')),
+		month: moment().format('MMMM'),
 		sectionId: undefined
 	})
 
@@ -61,11 +64,17 @@ export const ExamsMarks = () => {
 	const deleteExamsByTerm = () => { }
 
 	const getExamsByTerm = () => {
-		const { year, sectionId } = state
+		const { year, sectionId, month } = state
 
 		return Object.values(exams).reduce((agg, exam) => {
 			const examYear = Number(moment(exam.date).format('YYYY'))
-			if (sectionId === exam.section_id && year === examYear) {
+			const examMonth = moment(exam.date).format('MMMM')
+
+			if (
+				exam.section_id === sectionId &&
+				examYear === year &&
+				(exam.name === ExamTerms.TEST && month ? examMonth === month : true)
+			) {
 				return {
 					...agg,
 					[exam.name]: [...(agg[exam.name] ?? []), exam]
@@ -75,7 +84,12 @@ export const ExamsMarks = () => {
 		}, {} as { [id: string]: MISExam[] })
 	}
 
-	const selectedSection = sections.find(section => state.sectionId === section.id)
+	const selectedSection = sections.find(section => section.id === state.sectionId)
+
+	const termExams = Object.entries(getExamsByTerm())
+	const testExams = termExams.filter(([term, _]) => term === ExamTerms.TEST)
+
+	console.log(state)
 
 	return (
 		<AppLayout title="Marks" showHeaderTitle>
@@ -83,7 +97,7 @@ export const ExamsMarks = () => {
 				<div className="flex flex-row items-center w-full space-x-8 md:space-x-16 justify-center">
 					<select
 						id="sectionId"
-						className="tw-select w-1/4"
+						className="tw-select md:w-1/4 w-1/2"
 						name="sectionId"
 						onChange={e => setState({ ...state, sectionId: e.target.value })}>
 						<option value="">Class/Section</option>
@@ -95,10 +109,11 @@ export const ExamsMarks = () => {
 					</select>
 					<select
 						id="examYear"
-						className="tw-select w-1/4"
+						className="tw-select md:w-1/4 w-1/2"
 						name="examYear"
+						value={state.year}
 						onChange={e => setState({ ...state, year: Number(e.target.value) })}>
-						<option>Exam Year</option>
+						<option value="">Exam Year</option>
 						{years.map(year => (
 							<option key={year} value={year}>
 								{year}
@@ -120,8 +135,8 @@ export const ExamsMarks = () => {
 						</p>
 					)}
 				</div>
-				<div className="space-y-2">
-					{Object.entries(getExamsByTerm())
+				<div className="w-full md:w-4/5 mx-auto space-y-2">
+					{termExams
 						.filter(([term, _]) => term !== ExamTerms.TEST)
 						.map(([term, exams]) => (
 							<ExamTermCard
@@ -132,6 +147,35 @@ export const ExamsMarks = () => {
 								section={selectedSection}
 							/>
 						))}
+				</div>
+				<div className="w-full md:w-4/5 mx-auto">
+					<h2 className="text-lg font-semibold mb-2">Test Exams</h2>
+					<div className="flex justify-end">
+						<select
+							id="examMonth"
+							className="tw-select md:w-1/4 w-1/2 mb-2"
+							name="examMonth"
+							value={state.month}
+							onChange={e => setState({ ...state, month: e.target.value })}>
+							<option value="">Test Month</option>
+							{months.map(month => (
+								<option key={month} value={month}>
+									{month}
+								</option>
+							))}
+						</select>
+					</div>
+					<div className="space-y-2">
+						{testExams.map(([term, exams]) => (
+							<ExamTermCard
+								key={term}
+								title={term}
+								exams={exams}
+								year={state.year}
+								section={selectedSection}
+							/>
+						))}
+					</div>
 				</div>
 			</div>
 		</AppLayout>
@@ -146,7 +190,7 @@ type ExamTermCardProps = {
 }
 
 const ExamTermCard = ({ title, exams, year, section }: ExamTermCardProps) => (
-	<div className="w-full md:w-4/5 mx-auto bg-white border border-gray-100 shadow-md rounded-md px-4 py-2 md:p-4">
+	<div className="w-full bg-white border border-gray-100 shadow-md rounded-md px-4 py-2 md:p-4">
 		<div className="flex flex-row justify-between">
 			<div className="flex flex-col space-y-1">
 				<p className="font-semibold">{title}</p>
