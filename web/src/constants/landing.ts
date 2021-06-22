@@ -17,32 +17,32 @@ export const packages: Package[] = [
 		limit: '300'
 	},
 	{
-		title: 'Taleem-2',
-		code: 'TALEEM2A',
+		title: 'Taleem-3',
+		code: 'TALEEM3',
 		price: '17,500',
 		currency: 'PKR',
 		annual_charge: '4,000',
 		limit: '400'
 	},
 	{
-		title: 'Taleem-2',
-		code: 'TALEEM2B',
+		title: 'Taleem-4',
+		code: 'TALEEM4',
 		price: '22,500',
 		currency: 'PKR',
 		annual_charge: '5,000',
 		limit: '500'
 	},
 	{
-		title: 'Taleem-2',
-		code: 'TALEEM2C',
+		title: 'Taleem-5',
+		code: 'TALEEM5',
 		price: '27,500',
 		currency: 'PKR',
 		annual_charge: '6,000',
 		limit: '600'
 	},
 	{
-		title: 'Taleem-3',
-		code: 'TALEEM3',
+		title: 'Taleem-6',
+		code: 'TALEEM6',
 		price: '35,000',
 		currency: 'PKR',
 		annual_charge: '9,000',
