@@ -86,7 +86,7 @@ const Login: React.FC<LoginProps> = ({
 						<div className="flex flex-col items-center md:p-10 space-y-2">
 							<img
 								className="w-16 h-16 md:w-20 md:h-20 p-1 border border-gray-300 rounded-full"
-								src={school.logo ?? '/favicon.ico'}
+								src={school.logo || '/favicon.ico'}
 								alt="school-logo"
 							/>
 							<div className="font-semibold text-center">{school.name}</div>
@@ -127,7 +127,7 @@ const Login: React.FC<LoginProps> = ({
 									</div>
 									<div className="md:mt-6">
 										<div className="grid grid-cols-3 md:grid-cols-5 md:gap-0 md:h-60">
-											{chunkify(filteredUsers ?? [], USERS_PER_GROUP)[
+											{chunkify(filteredUsers || [], USERS_PER_GROUP)[
 												usersGroupIndex
 											].map(([uid, user]: [string, MISUser]) => {
 												const staffMember = faculty[uid]
@@ -144,9 +144,9 @@ const Login: React.FC<LoginProps> = ({
 																className="rounded-full w-20 h-20 p-2 border-2 border-transparent group-hover:border-green-brand focus:border-green-brand"
 																src={
 																	staffMember?.ProfilePicture
-																		?.url ??
+																		?.url ||
 																	staffMember?.ProfilePicture
-																		?.image_string ??
+																		?.image_string ||
 																	UserIconSvg
 																}
 																alt={staffMember?.Name}
@@ -208,7 +208,7 @@ export const StaffLogin = connect((state: RootReducerState) => ({
 	users: state.db?.users || {},
 	onboarding: state.db?.onboarding,
 	connected: state.connected,
-	unsyncd_changes: Object.keys(state.queued.mutations ?? {}).length,
+	unsyncd_changes: Object.keys(state.queued.mutations || {}).length,
 	faculty: state.db.faculty
 }))(Login)
 
@@ -264,8 +264,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ user, auth, faculty }) => {
 				<img
 					className="rounded-full w-24 h-24"
 					src={
-						staffMember?.ProfilePicture?.url ??
-						staffMember?.ProfilePicture?.image_string ??
+						staffMember?.ProfilePicture?.url ||
+						staffMember?.ProfilePicture?.image_string ||
 						UserIconSvg
 					}
 					alt={staffMember?.Name}
