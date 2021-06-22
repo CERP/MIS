@@ -152,7 +152,7 @@ const Login: React.FC<LoginProps> = ({
 																alt={staffMember?.Name}
 															/>
 															{staffMember.Admin && (
-																<div className="absolute bottom-0 right-0 h-2 w-2 my-1 rounded-full bg-red-400"></div>
+																<div className="absolute bottom-2 right-2 h-4 w-4 my-1 rounded-full bg-green-400"></div>
 															)}
 														</div>
 														<div className="text-xs text-white group-hover:text-blue-brand text-center">
@@ -271,7 +271,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ user, auth, faculty }) => {
 					alt={staffMember?.Name}
 				/>
 				{staffMember.Admin && (
-					<div className="absolute bottom-0 right-0 h-2 w-2 my-1 rounded-full bg-red-400"></div>
+					<div className="absolute bottom-0 right-2 h-4 w-4 my-1 rounded-full bg-green-400"></div>
 				)}
 			</div>
 			<div className="text-sm text-white">{toTitleCase(user.name)}</div>
