@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect } from 'react'
 
 import { AppLayout } from 'components/Layout/appLayout'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { blankClass } from 'constants/form-defaults'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { ArrowNarrowRightIcon, ExclamationCircleIcon, TrashIcon } from '@heroicons/react/outline'
@@ -10,6 +10,9 @@ import { isValidStudent } from 'utils'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import { Transition } from '@headlessui/react'
 import toast from 'react-hot-toast'
+import { TModal } from 'components/Modal'
+import { createEditClass, promoteStudents } from 'actions'
+import { useHistory } from 'react-router'
 
 type AugmentedClass = MISClass & {
 	fromSection?: Partial<ModifiedSection>
@@ -38,6 +41,9 @@ type ModifiedSection = AugmentedSection & {
 export const PromoteStudents = () => {
 	const classes = useSelector((state: RootReducerState) => state.db.classes)
 	const students = useSelector((state: RootReducerState) => state.db.students)
+	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false)
+	const dispatch = useDispatch()
+	const history = useHistory()
 
 	const calculateGroupedStudents = () => {
 		let groupedStudents: { [id: string]: Array<MISStudent> } = [
@@ -111,7 +117,10 @@ export const PromoteStudents = () => {
 			}
 
 			if (i === 0) {
-				const TempSection: MISClass['sections'] = { ['temp']: { name: 'TEMPORARY' } }
+				if (Object.keys(localState[i].sections).includes('mis_temp') === true) {
+					continue
+				}
+				const TempSection: MISClass['sections'] = { ['mis_temp']: { name: 'TEMPORARY' } }
 				mapping = {
 					...mapping,
 					[localState[i].id]: {
@@ -131,6 +140,9 @@ export const PromoteStudents = () => {
 					}
 				}
 			} else {
+				if (Object.keys(localState[i].sections).includes('mis_temp') === true) {
+					continue
+				}
 				const toKey = Object.keys(localState[i - 1].sections)[0]
 				mapping = {
 					...mapping,
@@ -203,7 +215,19 @@ export const PromoteStudents = () => {
 	const promoteSectionStudents = (fromkey: string, toKey: string) => {
 		const studentsToPromote = state.groupedStudents[fromkey]
 
-		const promotedStudents = studentsToPromote.reduce<MISStudent[]>((agg, curr) => {
+		if (!studentsToPromote) {
+			setState({
+				...state,
+				augmentedSections: {
+					...state.augmentedSections,
+					[fromkey]: {
+						...state.augmentedSections[fromkey],
+						sectionPromoted: true
+					}
+				}
+			})
+		}
+		const promotedStudents = (studentsToPromote ?? []).reduce<MISStudent[]>((agg, curr) => {
 			return [...agg, { ...curr, section_id: toKey }]
 		}, [])
 
@@ -220,14 +244,14 @@ export const PromoteStudents = () => {
 		})
 	}
 
-	console.log('students', students)
-	console.log('classes', classes)
+	// console.log('students', students)
+	// console.log('classes', classes)
 	// console.log(state.groupedStudents)
 
-	console.log(
-		'see count',
-		Object.values(students).filter(s => s.section_id === 'cc5a4298-1d65-4257-bd90-59edd43cae01')
-	)
+	// console.log(
+	// 	'see count',
+	// 	Object.values(students).filter(s => s.section_id === 'cc5a4298-1d65-4257-bd90-59edd43cae01')
+	// )
 
 	const checkEveryClassPromoted = () => {
 		return Object.values(state.promotionData).every(entry => {
@@ -235,6 +259,65 @@ export const PromoteStudents = () => {
 				return false
 			}
 			return true
+		})
+	}
+
+	type PromotionMap = {
+		[student_id: string]: {
+			current: string
+			next: string
+		}
+	}
+	const promoteAllStudents = () => {
+		console.log(Object.entries(state.groupedStudents))
+
+		const student_section_map: PromotionMap = Object.entries(state.groupedStudents).reduce(
+			(agg, [sectionKey, groupedStudents]) => {
+				const studentMap = groupedStudents.reduce((agg, curr) => {
+					return { ...agg, [curr.id]: { current: sectionKey, next: curr.section_id } }
+				}, {})
+				return { ...agg, ...studentMap }
+			},
+			{}
+		)
+		if (!Object.keys(state.augmentedSections).includes('mis_temp')) {
+			console.log('Running This One')
+			const TempSection: MISClass['sections'] = { ['mis_temp']: { name: 'TEMPORARY' } }
+			const tempClass: MISClass = {
+				...blankClass(),
+				sections: TempSection,
+				name: 'Class 10',
+				classYear: 9999
+			}
+			console.table(getSectionsFromClasses({ ...classes, [tempClass.id]: tempClass }))
+			dispatch(createEditClass(tempClass))
+			dispatch(
+				promoteStudents(
+					student_section_map,
+					getSectionsFromClasses({ ...classes, [tempClass.id]: { ...tempClass } })
+				)
+			)
+		} else {
+			dispatch(promoteStudents(student_section_map, getSectionsFromClasses(classes)))
+		}
+		toast.success('Students Promoted')
+
+		// setTimeout(() => {
+		// 	history.goBack()
+		// }, 1500)
+	}
+
+	const removeStudentFromPromotion = (sectionId: string, studentId: string) => {
+		// console.log(sectionId)
+		// console.log(state.groupedStudents)
+		setState({
+			...state,
+			groupedStudents: {
+				...state.groupedStudents,
+				[sectionId]: state.groupedStudents[sectionId].filter(
+					student => student.id !== studentId
+				)
+			}
 		})
 	}
 
@@ -252,6 +335,7 @@ export const PromoteStudents = () => {
 								return (
 									<div className="lg:mx-28">
 										<PromotionCard
+											removeStudentFromPromotion={removeStudentFromPromotion}
 											promotionData={state.promotionData}
 											groupedStudents={state.groupedStudents}
 											augmentedSections={state.augmentedSections}
@@ -291,17 +375,42 @@ export const PromoteStudents = () => {
 						<div
 							onClick={() => {
 								if (checkEveryClassPromoted()) {
-									toast.success('Promoted')
+									setIsComponentVisible(true)
 								} else {
 									toast.error('Sections Remaining')
 								}
 							}}
-							className="flex flex-1 w-2/5 self-center items-center justify-center bg-blue-brand text-white text-xl font-semibold">
+							className="flex flex-1 py-5 px-10 w-2/5 self-center rounded-md shadow-lg transform cursor-pointer hover:scale-105 transition-all  items-center justify-center bg-blue-brand text-white text-xl font-semibold">
 							Confirm Promotions
 						</div>
 					</div>
 				)}
 			</div>
+			{isComponentVisible && (
+				<TModal>
+					<div ref={ref} className="bg-white pb-3">
+						<div className="text-center p-3 md:p-4 lg:p-5 rounded-md text-sm md:text-base lg:text-xl font-bold">
+							Are you sure you want to promote these students? This action is
+							irreversable.
+						</div>
+						<div className="w-full flex justify-around items-center mt-3">
+							<button
+								className="w-5/12 p-2 md:p-2 lg:p-3 border-none bg-blue-brand text-white rounded-lg outline-none font-bold text-sm md:text-base lg:text-xl"
+								onClick={() => setIsComponentVisible(false)}>
+								No
+							</button>
+							<button
+								className="w-5/12 p-2 md:p-2 lg:p-3 border-none bg-red-brand text-white rounded-lg outline-none font-bold text-sm md:text-base lg:text-xl"
+								onClick={() => {
+									promoteAllStudents()
+									setIsComponentVisible(false)
+								}}>
+								Yes
+							</button>
+						</div>
+					</div>
+				</TModal>
+			)}
 		</AppLayout>
 	)
 }
@@ -320,6 +429,7 @@ type PromotionCardProps = {
 	}
 	groupedStudents: { [id: string]: MISStudent[] }
 	promotionData: PromotionDataType
+	removeStudentFromPromotion: (sectionId: string, studentId: string) => void
 }
 
 const PromotionCard = ({
@@ -331,7 +441,8 @@ const PromotionCard = ({
 	augmentedSections,
 	promoteSection,
 	groupedStudents,
-	promotionData
+	promotionData,
+	removeStudentFromPromotion
 }: PromotionCardProps) => {
 	const [visible, setVisible] = useState(false)
 	return (
@@ -393,6 +504,7 @@ const PromotionCard = ({
 				toSectionKey={val.toSection.id}
 				groupedStudents={groupedStudents}
 				onClickCallback={promoteSection}
+				removeStudentFromPromotion={removeStudentFromPromotion}
 				visible={visible}
 			/>
 		</>
@@ -404,6 +516,7 @@ type PromotableStudentProps = {
 	toSectionKey: string
 	groupedStudents: State['groupedStudents']
 	onClickCallback: (fromSectionKey: string, toSectionKey: string) => void
+	removeStudentFromPromotion: (sectionId: string, studentId: string) => void
 	visible: boolean
 }
 
@@ -415,6 +528,7 @@ const PromotableStudents = ({
 	toSectionKey,
 	groupedStudents,
 	onClickCallback,
+	removeStudentFromPromotion,
 	visible
 }: PromotableStudentProps) => {
 	const [state, setState] = useState<PromotableStudentsState>({
@@ -423,7 +537,7 @@ const PromotableStudents = ({
 
 	useEffect(() => {
 		setState({ ...state, students: groupedStudents[fromSectionKey] })
-	}, [fromSectionKey, toSectionKey])
+	}, [fromSectionKey, toSectionKey, groupedStudents])
 
 	return (
 		<Transition
@@ -444,7 +558,13 @@ const PromotableStudents = ({
 					return (
 						<div className="bg-gray-200 text-lg flex-row mb-3 flex justify-between px-10 py-7 rounded-sm font-medium">
 							<h1>{student.Name}</h1>
-							<TrashIcon color="red" className="cursor-pointer h-6 w-6" />
+							<TrashIcon
+								onClick={() =>
+									removeStudentFromPromotion(fromSectionKey, student.id)
+								}
+								color="red"
+								className="cursor-pointer h-6 w-6"
+							/>
 						</div>
 					)
 				})}
