@@ -48,9 +48,13 @@ export const StaffAttendance = () => {
 	const staffAttendance = useMemo(() => {
 		let attendance = { PRESENT: 0, LEAVE: 0, ABSENT: 0, UNMARK: 0 }
 
+		let activeStaffMembers = 0
+
 		for (const f of Object.values(faculty)) {
 			if (f && f.Name && f.Active) {
 				const record = (f.attendance || {})[attendanceDate]
+
+				activeStaffMembers++
 
 				if (record) {
 					if (record.check_in) {
@@ -73,9 +77,7 @@ export const StaffAttendance = () => {
 
 		return {
 			...attendance,
-			UNMARK:
-				Object.keys(faculty).length -
-				(attendance.PRESENT + attendance.ABSENT + attendance.LEAVE)
+			UNMARK: activeStaffMembers - (attendance.PRESENT + attendance.ABSENT + attendance.LEAVE)
 		}
 	}, [faculty, attendanceDate])
 
