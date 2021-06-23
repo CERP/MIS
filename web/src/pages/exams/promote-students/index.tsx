@@ -1,9 +1,8 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState, useEffect } from 'react'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { useSelector } from 'react-redux'
 import { blankClass } from 'constants/form-defaults'
-import { useEffect } from 'react'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { ArrowNarrowRightIcon, ExclamationCircleIcon, TrashIcon } from '@heroicons/react/outline'
 import moment from 'moment'
@@ -23,7 +22,7 @@ type PromotionDataType = {
 }
 
 type State = {
-	localState: Array<MISClass>
+	// localState: Array<MISClass>
 	promotionData: PromotionDataType
 	displayWarning: boolean
 	groupedStudents: {
@@ -37,29 +36,37 @@ type ModifiedSection = AugmentedSection & {
 }
 
 export const PromoteStudents = () => {
-	const { classes, students } = useSelector((state: RootReducerState) => state.db)
+	const classes = useSelector((state: RootReducerState) => state.db.classes)
+	const students = useSelector((state: RootReducerState) => state.db.students)
 
 	const calculateGroupedStudents = () => {
-		let groupedStudents: { [id: string]: Array<MISStudent> } = Object.values(students).reduce(
-			(agg, curr) => {
+		let groupedStudents: { [id: string]: Array<MISStudent> } = [
+			...Object.values(students ?? {})
+		]
+			.filter(s => isValidStudent(s) && s.Active)
+			.reduce((agg, curr) => {
 				if (!curr.section_id) {
 					return { ...agg }
 				}
 				if (agg[curr.section_id]) {
 					return { ...agg, [curr.section_id]: [...agg[curr.section_id], curr] }
-				} else {
-					return { ...agg, [curr.section_id]: [curr] }
 				}
-			},
-			{} as { [id: string]: Array<MISStudent> }
-		)
-		console.log(groupedStudents)
+
+				return { ...agg, [curr.section_id]: [curr] }
+			}, {} as { [id: string]: Array<MISStudent> })
+		// console.log(groupedStudents)
 		return groupedStudents
 	}
 
+	const sortedClasses = Object.values(classes)
+		.filter(a => checkSpecialClass(a))
+		.sort((a, b) => b.classYear - a.classYear)
+
 	const initialState: State = {
 		displayWarning: true,
-		localState: [],
+		// localState: Object.values(classes)
+		// 	.filter(a => checkSpecialClass(a))
+		// 	.sort((a, b) => b.classYear - a.classYear),
 		promotionData: {},
 		groupedStudents: calculateGroupedStudents(),
 		augmentedSections: getSectionsFromClasses(classes).reduce((agg, curr) => {
@@ -69,48 +76,54 @@ export const PromoteStudents = () => {
 
 	const [state, setState] = useState<State>(initialState)
 
-	useEffect(() => {
-		setState(initialState)
+	// useEffect(() => {
+	// 	setState(initialState)
 
-		return () => {
-			setState({
-				displayWarning: true,
-				localState: [],
-				promotionData: {},
-				groupedStudents: {},
-				augmentedSections: {}
-			})
-		}
-	}, [])
+	// 	return () => {
+	// 		setState({
+	// 			displayWarning: true,
+	// 			localState: [],
+	// 			promotionData: {},
+	// 			groupedStudents: {},
+	// 			augmentedSections: {}
+	// 		})
+	// 	}
+	// }, [])
 
-	const calculatePromotionData = () => {
+	const calculatePromotionData = (localState: MISClass[]) => {
 		let mapping: PromotionDataType
-		for (let i = 0; i < state.localState.length; i++) {
-			const fromkey = Object.keys(state.localState[i].sections)[0]
+
+		for (let i = 0; i < localState.length; i++) {
+			const fromkey = Object.keys(localState[i].sections)[0]
+
 			const sections = getSectionsFromClasses({
-				[state.localState[i].id]: state.localState[i]
+				[localState[i].id]: localState[i]
 			})
+
 			const sectionIds = sections.reduce((agg, curr) => [...agg, curr.id], [])
-			const totalStudents = Object.values(students ?? {}).filter(
+
+			const totalStudents = [...Object.values(students ?? {})].filter(
 				s => isValidStudent(s) && s.Active && sectionIds.includes(s.section_id)
 			).length
+
 			if (totalStudents <= 0) {
 				continue
 			}
+
 			if (i === 0) {
 				const TempSection: MISClass['sections'] = { ['temp']: { name: 'TEMPORARY' } }
 				mapping = {
 					...mapping,
-					[state.localState[i].id]: {
+					[localState[i].id]: {
 						...blankClass(),
-						name: state.localState[i].name,
-						classYear: state.localState[i].classYear + 1,
+						name: localState[i].name,
+						classYear: localState[i].classYear + 1,
 						sections: {
 							['mis_temp']: { name: 'TEMPORARY' }
 						},
 
 						fromSection: {
-							...state.localState[i].sections[fromkey],
+							...localState[i].sections[fromkey],
 							id: fromkey
 						},
 						toSection: { ...TempSection, id: 'mis_temp' },
@@ -118,17 +131,17 @@ export const PromoteStudents = () => {
 					}
 				}
 			} else {
-				const toKey = Object.keys(state.localState[i - 1].sections)[0]
+				const toKey = Object.keys(localState[i - 1].sections)[0]
 				mapping = {
 					...mapping,
-					[state.localState[i].id]: {
-						...state.localState[i - 1],
+					[localState[i].id]: {
+						...localState[i - 1],
 						fromSection: {
-							...state.localState[i].sections[fromkey],
+							...localState[i].sections[fromkey],
 							id: fromkey
 						},
 						toSection: {
-							...state.localState[i - 1].sections[toKey],
+							...localState[i - 1].sections[toKey],
 							id: toKey
 						},
 						promoted: false
@@ -141,23 +154,21 @@ export const PromoteStudents = () => {
 		setState({ ...state, promotionData: mapping })
 	}
 
-	useEffect(() => {
-		console.log('Firing Use Effect')
-
-		setState({
-			...state,
-			localState: Object.values(classes)
-				.filter(a => checkSpecialClass(a))
-				.sort((a, b) => b.classYear - a.classYear)
-		})
-	}, [classes])
+	// useEffect(() => {
+	// 	setState({
+	// 		...state,
+	// 		localState: Object.values(classes)
+	// 			.filter(a => checkSpecialClass(a))
+	// 			.sort((a, b) => b.classYear - a.classYear)
+	// 	})
+	// }, [classes])
 
 	useEffect(() => {
-		if (state.localState.length > 0) {
-			console.log('Calculating')
-			calculatePromotionData()
-		}
-	}, [state.localState])
+		// if (sortedClasses.length > 0) {
+		console.log('Calculating')
+		calculatePromotionData(sortedClasses)
+		// }
+	}, [])
 
 	useEffect(() => {
 		if (Object.values(state.promotionData).length > 0) checkClassPromoted()
@@ -165,9 +176,12 @@ export const PromoteStudents = () => {
 
 	const checkClassPromoted = () => {
 		let promotionData = state.promotionData
-		console.table(state.augmentedSections)
+
+		// console.table(state.augmentedSections)
+
 		Object.keys(promotionData).forEach(class_key => {
 			let noOfPromotedSections = 0
+
 			Object.keys(classes[class_key].sections).forEach(section_key => {
 				let noOfSections = Object.keys(classes[class_key].sections).length
 				if (state.augmentedSections[section_key].sectionPromoted) {
@@ -206,6 +220,15 @@ export const PromoteStudents = () => {
 		})
 	}
 
+	console.log('students', students)
+	console.log('classes', classes)
+	// console.log(state.groupedStudents)
+
+	console.log(
+		'see count',
+		Object.values(students).filter(s => s.section_id === 'cc5a4298-1d65-4257-bd90-59edd43cae01')
+	)
+
 	return (
 		<AppLayout title="Promote Students" showHeaderTitle>
 			<div className="p-5 md:p-10 md:pt-5 md:pb-0 text-gray-700 relative">
@@ -225,9 +248,7 @@ export const PromoteStudents = () => {
 										sectionkey={key}
 										val={val}
 										classes={classes}
-										promoteSection={(fromKey: string, toKey: string) => {
-											promoteSectionStudents(fromKey, toKey)
-										}}
+										promoteSection={promoteSectionStudents}
 										onToChange={(e: string) =>
 											setState({
 												...state,
@@ -267,7 +288,7 @@ type PromotionCardProps = {
 	sectionkey: string
 	onFromChange: Function
 	onToChange: Function
-	promoteSection: Function
+	promoteSection: (fromKey: string, toKey: string) => void
 	augmentedSections: {
 		[id: string]: ModifiedSection
 	}
@@ -318,8 +339,8 @@ const PromotionCard = ({
 						onClick={() => {
 							if (checkPermissionToPromote(promotionData, val.id)) {
 								setVisible(val => !val)
-								console.table(promotionData)
-								console.table(groupedStudents)
+								// console.table(promotionData)
+								// console.table(groupedStudents)
 							} else {
 								//alert('No Permission')
 							}
@@ -399,7 +420,7 @@ const PromotableStudents = ({
 					<h1>Name</h1>
 					<h1>Remove Promotion</h1>
 				</div>
-				{state.students.map(student => {
+				{(state.students || []).map(student => {
 					return (
 						<div className="bg-gray-200 text-lg flex-row mb-3 flex justify-between px-10 py-7 rounded-sm font-medium">
 							<h1>{student.Name}</h1>
@@ -410,7 +431,7 @@ const PromotableStudents = ({
 				<div
 					className="bg-blue-brand px-10 py-4 w-2/5 flex items-center justify-center text-white font-semibold rounded-md self-center cursor-pointer"
 					onClick={() => {
-						console.log('Section Key', fromSectionKey)
+						// console.log('Section Key', fromSectionKey)
 						onClickCallback(fromSectionKey, toSectionKey)
 					}}>
 					Click to promote
@@ -453,7 +474,7 @@ function checkSpecialClass(a: MISClass): boolean {
 function checkPermissionToPromote(promotionData: PromotionDataType, id: string) {
 	let data = Object.values(promotionData)
 	let index = data.findIndex(val => val.id === id)
-	console.log(index)
+	// console.log(index)
 
 	if (index === 0) return true
 
