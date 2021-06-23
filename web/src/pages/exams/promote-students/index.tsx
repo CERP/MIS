@@ -201,11 +201,11 @@ export const PromoteStudents = () => {
 	}
 
 	const promoteSectionStudents = (fromkey: string, toKey: string) => {
-		let promotedStudents = state.groupedStudents[fromkey]
+		const studentsToPromote = state.groupedStudents[fromkey]
 
-		for (let i = 0; i < promotedStudents.length; i++) {
-			promotedStudents[i].section_id = toKey
-		}
+		const promotedStudents = studentsToPromote.reduce<MISStudent[]>((agg, curr) => {
+			return [...agg, { ...curr, section_id: toKey }]
+		}, [])
 
 		setState({
 			...state,
@@ -229,6 +229,15 @@ export const PromoteStudents = () => {
 		Object.values(students).filter(s => s.section_id === 'cc5a4298-1d65-4257-bd90-59edd43cae01')
 	)
 
+	const checkEveryClassPromoted = () => {
+		return Object.values(state.promotionData).every(entry => {
+			if (!entry.promoted) {
+				return false
+			}
+			return true
+		})
+	}
+
 	return (
 		<AppLayout title="Promote Students" showHeaderTitle>
 			<div className="p-5 md:p-10 md:pt-5 md:pb-0 text-gray-700 relative">
@@ -237,47 +246,60 @@ export const PromoteStudents = () => {
 						onPress={() => setState({ ...state, displayWarning: false })}
 					/>
 				) : (
-					Object.entries(state.promotionData ?? {}).map(
-						([key, val]: [key: string, val: AugmentedClass]) => {
-							return (
-								<div className="lg:mx-28">
-									<PromotionCard
-										promotionData={state.promotionData}
-										groupedStudents={state.groupedStudents}
-										augmentedSections={state.augmentedSections}
-										sectionkey={key}
-										val={val}
-										classes={classes}
-										promoteSection={promoteSectionStudents}
-										onToChange={(e: string) =>
-											setState({
-												...state,
-												promotionData: {
-													...state.promotionData,
-													[key]: {
-														...state.promotionData[key],
-														toSection: state.augmentedSections[e]
+					<div className="flex flex-col flex-1">
+						{Object.entries(state.promotionData ?? {}).map(
+							([key, val]: [key: string, val: AugmentedClass]) => {
+								return (
+									<div className="lg:mx-28">
+										<PromotionCard
+											promotionData={state.promotionData}
+											groupedStudents={state.groupedStudents}
+											augmentedSections={state.augmentedSections}
+											sectionkey={key}
+											val={val}
+											classes={classes}
+											promoteSection={promoteSectionStudents}
+											onToChange={(e: string) =>
+												setState({
+													...state,
+													promotionData: {
+														...state.promotionData,
+														[key]: {
+															...state.promotionData[key],
+															toSection: state.augmentedSections[e]
+														}
 													}
-												}
-											})
-										}
-										onFromChange={(e: string) =>
-											setState({
-												...state,
-												promotionData: {
-													...state.promotionData,
-													[key]: {
-														...state.promotionData[key],
-														fromSection: state.augmentedSections[e]
+												})
+											}
+											onFromChange={(e: string) =>
+												setState({
+													...state,
+													promotionData: {
+														...state.promotionData,
+														[key]: {
+															...state.promotionData[key],
+															fromSection: state.augmentedSections[e]
+														}
 													}
-												}
-											})
-										}
-									/>
-								</div>
-							)
-						}
-					)
+												})
+											}
+										/>
+									</div>
+								)
+							}
+						)}
+						<div
+							onClick={() => {
+								if (checkEveryClassPromoted()) {
+									toast.success('Promoted')
+								} else {
+									toast.error('Sections Remaining')
+								}
+							}}
+							className="flex flex-1 w-2/5 self-center items-center justify-center bg-blue-brand text-white text-xl font-semibold">
+							Confirm Promotions
+						</div>
+					</div>
 				)}
 			</div>
 		</AppLayout>
@@ -286,8 +308,8 @@ export const PromoteStudents = () => {
 
 type PromotionCardProps = {
 	sectionkey: string
-	onFromChange: Function
-	onToChange: Function
+	onFromChange: (id: string) => void
+	onToChange: (id: string) => void
 	promoteSection: (fromKey: string, toKey: string) => void
 	augmentedSections: {
 		[id: string]: ModifiedSection
@@ -340,7 +362,7 @@ const PromotionCard = ({
 							if (checkPermissionToPromote(promotionData, val.id)) {
 								setVisible(val => !val)
 								// console.table(promotionData)
-								// console.table(groupedStudents)
+								console.table(groupedStudents)
 							} else {
 								//alert('No Permission')
 							}
@@ -370,9 +392,7 @@ const PromotionCard = ({
 				fromSectionKey={val.fromSection.id}
 				toSectionKey={val.toSection.id}
 				groupedStudents={groupedStudents}
-				onClickCallback={(fromKey: string, toKey: string) => {
-					promoteSection(fromKey, toKey)
-				}}
+				onClickCallback={promoteSection}
 				visible={visible}
 			/>
 		</>
@@ -383,7 +403,7 @@ type PromotableStudentProps = {
 	fromSectionKey: string
 	toSectionKey: string
 	groupedStudents: State['groupedStudents']
-	onClickCallback: Function
+	onClickCallback: (fromSectionKey: string, toSectionKey: string) => void
 	visible: boolean
 }
 
@@ -442,7 +462,7 @@ const PromotableStudents = ({
 }
 
 type PromotionWarningProps = {
-	onPress: Function
+	onPress: () => void
 }
 
 const PromotionWarning = ({ onPress }: PromotionWarningProps) => {
