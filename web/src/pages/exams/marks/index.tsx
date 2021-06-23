@@ -148,35 +148,37 @@ export const ExamsMarks = () => {
 							/>
 						))}
 				</div>
-				<div className="w-full md:w-4/5 mx-auto">
-					<h2 className="text-lg font-semibold mb-2">Test Exams</h2>
-					<div className="flex justify-end">
-						<select
-							id="examMonth"
-							className="tw-select md:w-1/4 w-1/2 mb-2"
-							name="examMonth"
-							value={state.month}
-							onChange={e => setState({ ...state, month: e.target.value })}>
-							<option value="">Test Month</option>
-							{months.map(month => (
-								<option key={month} value={month}>
-									{month}
-								</option>
+				{testExams.length > 0 && (
+					<div className="w-full md:w-4/5 mx-auto">
+						<h2 className="text-lg font-semibold mb-2">Test Exams</h2>
+						<div className="flex justify-end">
+							<select
+								id="examMonth"
+								className="tw-select md:w-1/4 w-1/2 mb-2"
+								name="examMonth"
+								value={state.month}
+								onChange={e => setState({ ...state, month: e.target.value })}>
+								<option value="">Test Month</option>
+								{months.map(month => (
+									<option key={month} value={month}>
+										{month}
+									</option>
+								))}
+							</select>
+						</div>
+						<div className="space-y-2">
+							{testExams.map(([term, exams]) => (
+								<ExamTermCard
+									key={term}
+									title={term}
+									exams={exams}
+									year={state.year}
+									section={selectedSection}
+								/>
 							))}
-						</select>
+						</div>
 					</div>
-					<div className="space-y-2">
-						{testExams.map(([term, exams]) => (
-							<ExamTermCard
-								key={term}
-								title={term}
-								exams={exams}
-								year={state.year}
-								section={selectedSection}
-							/>
-						))}
-					</div>
-				</div>
+				)}
 			</div>
 		</AppLayout>
 	)
