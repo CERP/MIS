@@ -13,6 +13,7 @@ import toast from 'react-hot-toast'
 import { TModal } from 'components/Modal'
 import { createEditClass, promoteStudents } from 'actions'
 import { useHistory } from 'react-router'
+import { ReplyIcon } from '@heroicons/react/solid'
 
 type AugmentedClass = MISClass & {
 	fromSection?: Partial<ModifiedSection>
@@ -188,7 +189,7 @@ export const PromoteStudents = () => {
 
 	const checkClassPromoted = () => {
 		let promotionData = state.promotionData
-
+		console.log('Check Class Running')
 		// console.table(state.augmentedSections)
 
 		Object.keys(promotionData).forEach(class_key => {
@@ -197,17 +198,27 @@ export const PromoteStudents = () => {
 			Object.keys(classes[class_key].sections).forEach(section_key => {
 				let noOfSections = Object.keys(classes[class_key].sections).length
 				if (state.augmentedSections[section_key].sectionPromoted) {
+					console.log('TRUE')
 					noOfPromotedSections = noOfPromotedSections + 1
 				}
 				if (noOfPromotedSections === noOfSections) {
+					console.log(promotionData[class_key].name, ' is true')
 					promotionData = {
 						...promotionData,
 						[class_key]: { ...promotionData[class_key], promoted: true }
+					}
+				} else {
+					promotionData = {
+						...promotionData,
+						[class_key]: { ...promotionData[class_key], promoted: false }
 					}
 				}
 			})
 			noOfPromotedSections = 0
 		})
+
+		console.log(promotionData)
+		console.table(state.augmentedSections)
 
 		setState({ ...state, promotionData: promotionData })
 	}
@@ -321,6 +332,38 @@ export const PromoteStudents = () => {
 		})
 	}
 
+	const undoSectionPromotion = (fromkey: string) => {
+		const studentsToPromote = state.groupedStudents[fromkey]
+
+		if (!studentsToPromote) {
+			setState({
+				...state,
+				augmentedSections: {
+					...state.augmentedSections,
+					[fromkey]: {
+						...state.augmentedSections[fromkey],
+						sectionPromoted: false
+					}
+				}
+			})
+		}
+		const promotedStudents = (studentsToPromote ?? []).reduce<MISStudent[]>((agg, curr) => {
+			return [...agg, { ...curr, section_id: fromkey }]
+		}, [])
+
+		setState({
+			...state,
+			augmentedSections: {
+				...state.augmentedSections,
+				[fromkey]: {
+					...state.augmentedSections[fromkey],
+					sectionPromoted: false
+				}
+			},
+			groupedStudents: { ...state.groupedStudents, [fromkey]: promotedStudents }
+		})
+	}
+
 	return (
 		<AppLayout title="Promote Students" showHeaderTitle>
 			<div className="p-5 md:p-10 md:pt-5 md:pb-0 text-gray-700 relative">
@@ -335,6 +378,7 @@ export const PromoteStudents = () => {
 								return (
 									<div className="lg:mx-28">
 										<PromotionCard
+											undoSectionPromotion={undoSectionPromotion}
 											removeStudentFromPromotion={removeStudentFromPromotion}
 											promotionData={state.promotionData}
 											groupedStudents={state.groupedStudents}
@@ -429,12 +473,14 @@ type PromotionCardProps = {
 	}
 	groupedStudents: { [id: string]: MISStudent[] }
 	promotionData: PromotionDataType
+	undoSectionPromotion: (sectionKey: string) => void
 	removeStudentFromPromotion: (sectionId: string, studentId: string) => void
 }
 
 const PromotionCard = ({
 	sectionkey,
 	val,
+	undoSectionPromotion,
 	classes,
 	onFromChange,
 	onToChange,
@@ -464,24 +510,39 @@ const PromotionCard = ({
 						})}
 					</select>
 				</div>
-				<div
-					key={val.id + sectionkey}
-					className="hidden md:flex flex-1  text-black font-normal justify-center items-center flex-col lg:w-2/6">
-					Move To
-					<div
-						onClick={() => {
-							if (checkPermissionToPromote(promotionData, val.id)) {
-								setVisible(val => !val)
-								// console.table(promotionData)
-								console.table(groupedStudents)
-							} else {
-								//alert('No Permission')
-							}
-						}}
-						className="rounded-full cursor-pointer bg-blue-brand p-1 px-24 mx-4">
-						<ArrowNarrowRightIcon className="h-12  text-white" />
+				{augmentedSections[val.fromSection.id].sectionPromoted ? (
+					<div className="bg-green-brand items-center justify-center h-10 w-10 flex rounded-full">
+						<ReplyIcon
+							onClick={() => {
+								if (checkPermissionToUndo(promotionData, val.id)) {
+									undoSectionPromotion(val.fromSection.id)
+								} else {
+								}
+							}}
+							color="white"
+							className="h-8 w-8 cursor-pointer"
+						/>
 					</div>
-				</div>
+				) : (
+					<div
+						key={val.id + sectionkey}
+						className="hidden md:flex flex-1  text-black font-normal justify-center items-center flex-col lg:w-2/6">
+						Move To
+						<div
+							onClick={() => {
+								if (checkPermissionToPromote(promotionData, val.id)) {
+									setVisible(val => !val)
+									// console.table(promotionData)
+									console.table(groupedStudents)
+								} else {
+									//alert('No Permission')
+								}
+							}}
+							className="rounded-full cursor-pointer bg-blue-brand p-1 px-24 mx-4">
+							<ArrowNarrowRightIcon className="h-12  text-white" />
+						</div>
+					</div>
+				)}
 				<div key={val.id} className="flex items-end flex-col w-2/5 lg:w-2/6">
 					<h1>{val.name}</h1>
 					<select
@@ -503,7 +564,10 @@ const PromotionCard = ({
 				fromSectionKey={val.fromSection.id}
 				toSectionKey={val.toSection.id}
 				groupedStudents={groupedStudents}
-				onClickCallback={promoteSection}
+				onClickCallback={(fromKey: string, toKey: string) => {
+					promoteSection(fromKey, toKey)
+					setVisible(false)
+				}}
 				removeStudentFromPromotion={removeStudentFromPromotion}
 				visible={visible}
 			/>
@@ -622,6 +686,23 @@ function checkPermissionToPromote(promotionData: PromotionDataType, id: string) 
 
 	if (!data[index].promoted) {
 		toast.error('Promote higher classes first')
+		return false
+	}
+
+	return true
+}
+
+function checkPermissionToUndo(promotionData: PromotionDataType, id: string) {
+	let data = Object.values(promotionData)
+	let index = data.findIndex(val => val.id === id)
+	// console.log(index)
+
+	if (index === data.length - 1) return true
+
+	index = index + 1
+
+	if (data[index].promoted) {
+		toast.error('Undo lower classes first')
 		return false
 	}
 
