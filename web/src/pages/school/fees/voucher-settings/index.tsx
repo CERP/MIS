@@ -138,7 +138,7 @@ export const VoucherSettings = () => {
 								placeholder="e.g. MISchool"
 								className="tw-input w-full tw-is-form-bg-black"
 							/>
-							<div>Account Title</div>
+							<div>Account No.</div>
 							<input
 								name="accountNo"
 								value={state.bankInfo.accountNo}

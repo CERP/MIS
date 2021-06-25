@@ -86,7 +86,7 @@ const Login: React.FC<LoginProps> = ({
 						<div className="flex flex-col items-center md:p-10 space-y-2">
 							<img
 								className="w-16 h-16 md:w-20 md:h-20 p-1 border border-gray-300 rounded-full"
-								src={school.logo ?? '/favicon.ico'}
+								src={school.logo || '/favicon.ico'}
 								alt="school-logo"
 							/>
 							<div className="font-semibold text-center">{school.name}</div>
@@ -127,7 +127,7 @@ const Login: React.FC<LoginProps> = ({
 									</div>
 									<div className="md:mt-6">
 										<div className="grid grid-cols-3 md:grid-cols-5 md:gap-0 md:h-60">
-											{chunkify(filteredUsers ?? [], USERS_PER_GROUP)[
+											{chunkify(filteredUsers || [], USERS_PER_GROUP)[
 												usersGroupIndex
 											].map(([uid, user]: [string, MISUser]) => {
 												const staffMember = faculty[uid]
@@ -136,21 +136,26 @@ const Login: React.FC<LoginProps> = ({
 														key={uid}
 														className="group flex flex-col items-center mb-2 space-y-1">
 														<div
-															className="w-20 h-20 cursor-pointer"
+															className="relative w-20 h-20 cursor-pointer"
 															onClick={() =>
 																setUser({ id: uid, ...user })
 															}>
 															<img
-																className="rounded-full w-20 h-20 p-2 border-2 border-transparent group-hover:border-green-brand focus:border-green-brand"
+																className="rounded-full w-20 h-20"
 																src={
 																	staffMember?.ProfilePicture
-																		?.url ??
+																		?.url ||
 																	staffMember?.ProfilePicture
-																		?.image_string ??
+																		?.image_string ||
 																	UserIconSvg
 																}
 																alt={staffMember?.Name}
 															/>
+															{staffMember.Admin && (
+																<div
+																	className="absolute bottom-1.5 right-2 h-3 w-3 rounded-full bg-green-brand"
+																	title="Admin"></div>
+															)}
 														</div>
 														<div className="text-xs text-white group-hover:text-blue-brand text-center">
 															{toTitleCase(user.name)}
@@ -205,7 +210,7 @@ export const StaffLogin = connect((state: RootReducerState) => ({
 	users: state.db?.users || {},
 	onboarding: state.db?.onboarding,
 	connected: state.connected,
-	unsyncd_changes: Object.keys(state.queued.mutations ?? {}).length,
+	unsyncd_changes: Object.keys(state.queued.mutations || {}).length,
 	faculty: state.db.faculty
 }))(Login)
 
@@ -257,15 +262,20 @@ const LoginForm: React.FC<LoginFormProps> = ({ user, auth, faculty }) => {
 
 	return (
 		<div className="flex flex-col items-center space-y-2">
-			<img
-				className="rounded-full w-24 h-24"
-				src={
-					staffMember?.ProfilePicture?.url ??
-					staffMember?.ProfilePicture?.image_string ??
-					UserIconSvg
-				}
-				alt={staffMember?.Name}
-			/>
+			<div className="relative">
+				<img
+					className="rounded-full w-24 h-24"
+					src={
+						staffMember?.ProfilePicture?.url ||
+						staffMember?.ProfilePicture?.image_string ||
+						UserIconSvg
+					}
+					alt={staffMember?.Name}
+				/>
+				{staffMember.Admin && (
+					<div className="absolute bottom-0 right-2 h-4 w-4 my-1 rounded-full bg-green-400"></div>
+				)}
+			</div>
 			<div className="text-sm text-white">{toTitleCase(user.name)}</div>
 			<form id="staff-login" onSubmit={handleSubmit}>
 				<div className="w-full relative my-4">
