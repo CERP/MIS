@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { v4 } from 'node-uuid'
 import { useDispatch, useSelector } from 'react-redux'
-import { Redirect, useLocation, useParams } from 'react-router-dom'
+import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom'
 import clsx from 'clsx'
 import moment from 'moment'
 import Dynamic from '@cerp/dynamic'
@@ -88,6 +88,7 @@ type StateProps = {
 export const CreateOrUpdateStaff = () => {
 	const { id } = useParams<RouteInfo>()
 	const location = useLocation()
+	const history = useHistory()
 	const isNewStaff = () => location.pathname.indexOf('new') >= 0
 
 	const dispatch = useDispatch()
@@ -238,7 +239,7 @@ export const CreateOrUpdateStaff = () => {
 
 	// this will only works when new users would be creating or delete action happen
 	if (redirect) {
-		return <Redirect to={redirect} />
+		history.goBack()
 	}
 
 	return (
