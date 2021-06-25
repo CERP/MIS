@@ -230,7 +230,7 @@ export const Landing = () => {
 			</div>
 			<footer className="flex justify-center px-4 text-gray-100 bg-gray-800">
 				<div className="container py-6">
-					<h1 className="text-center text-lg font-bold lg:text-2xl">
+					<h1 className="text-center text-lg font-bold lg:text-2xl text-white">
 						Join 800+ other schools and never miss <br /> out an oppurtunity to digitize
 						your school at affordable cost.
 					</h1>
@@ -269,9 +269,12 @@ export const Landing = () => {
 								<Link to="/contact-us" className="px-2 text-base hover:underline">
 									Contact
 								</Link>
-								<Link to="/tos" className="px-2 text-base hover:underline">
+								<a
+									href="/tos"
+									target="_blank"
+									className="px-2 text-base hover:underline">
 									Terms of Service
-								</Link>
+								</a>
 								{/* <Link to="/events" className="px-2 text-base hover:underline">
 									Events
 								</Link> */}
@@ -279,7 +282,7 @@ export const Landing = () => {
 						</div>
 						<div className="lg:flex mt-4 lg:mx-5 md:m-0 lg:flex-1 hidden">
 							<div className="-mx-4 lg:flex  lg:space-y-4 lg:flex-col">
-								<h1 className="font-semibold">Contact Us</h1>
+								<h1 className="font-semibold text-white">Contact Us</h1>
 								<div className="flex flex-row items-center">
 									<a href={'tel:' + SiteConfig.helpLine.phone}>
 										<PhoneIcon className="w-10 h-10 p-2 rounded-full bg-white shadow-md mr-4 text-teal-brand" />
