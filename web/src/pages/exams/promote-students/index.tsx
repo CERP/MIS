@@ -13,7 +13,7 @@ import toast from 'react-hot-toast'
 import { TModal } from 'components/Modal'
 import { createEditClass, promoteStudents } from 'actions'
 import { useHistory } from 'react-router'
-import { ReplyIcon } from '@heroicons/react/solid'
+import { CheckIcon, ReplyIcon } from '@heroicons/react/solid'
 
 type AugmentedClass = MISClass & {
 	fromSection?: Partial<ModifiedSection>
@@ -313,9 +313,9 @@ export const PromoteStudents = () => {
 		}
 		toast.success('Students Promoted')
 
-		// setTimeout(() => {
-		// 	history.goBack()
-		// }, 1500)
+		setTimeout(() => {
+			history.goBack()
+		}, 1500)
 	}
 
 	const removeStudentFromPromotion = (sectionId: string, studentId: string) => {
@@ -424,8 +424,8 @@ export const PromoteStudents = () => {
 									toast.error('Sections Remaining')
 								}
 							}}
-							className="flex flex-1 py-5 px-10 w-2/5 self-center rounded-md shadow-lg transform cursor-pointer hover:scale-105 transition-all  items-center justify-center bg-blue-brand text-white text-xl font-semibold">
-							Confirm Promotions
+							className="flex flex-1 py-5 px-10 md:w-2/5 w-10/12 self-center rounded-md shadow-lg transform cursor-pointer hover:scale-105 transition-all  items-center justify-center bg-red-brand text-white mb-4 md:text-xl text-lg font-semibold">
+							Close Promotions
 						</div>
 					</div>
 				)}
@@ -499,7 +499,7 @@ const PromotionCard = ({
 				<div key={sectionkey} className="flex flex-col w-2/5 lg:w-2/6">
 					<h1>{classes[sectionkey].name}</h1>
 					<select
-						className="w-full lg:w-3/6 rounded shadow tw-select text-teal-brand"
+						className="w-full rounded shadow tw-select text-teal-brand"
 						onChange={e => onFromChange(e.target.value)}>
 						{Object.entries(classes[sectionkey].sections).map(([key, section]) => {
 							return (
@@ -511,22 +511,34 @@ const PromotionCard = ({
 					</select>
 				</div>
 				{augmentedSections[val.fromSection.id].sectionPromoted ? (
-					<div className="bg-green-brand items-center justify-center h-10 w-10 flex rounded-full">
-						<ReplyIcon
+					<div className="flex flex-1 items-center justify-center flex-col">
+						<div className="bg-green-brand items-center justify-center h-10 w-10 lg:h-14 lg:w-14 flex rounded-full">
+							<ReplyIcon
+								onClick={() => {
+									if (checkPermissionToUndo(promotionData, val.id)) {
+										undoSectionPromotion(val.fromSection.id)
+									} else {
+									}
+								}}
+								color="white"
+								className="h-8 lg:h-12 cursor-pointer"
+							/>
+						</div>
+						<div
 							onClick={() => {
 								if (checkPermissionToUndo(promotionData, val.id)) {
 									undoSectionPromotion(val.fromSection.id)
 								} else {
 								}
 							}}
-							color="white"
-							className="h-8 w-8 cursor-pointer"
-						/>
+							className="font-light cursor-pointer underline text-red-brand mt-2 md:text-lg text-sm">
+							Undo
+						</div>
 					</div>
 				) : (
 					<div
 						key={val.id + sectionkey}
-						className="hidden md:flex flex-1  text-black font-normal justify-center items-center flex-col lg:w-2/6">
+						className="flex flex-1  text-black font-normal justify-center items-center flex-col w-2/6 md:px-0 px-3">
 						Move To
 						<div
 							onClick={() => {
@@ -538,15 +550,15 @@ const PromotionCard = ({
 									//alert('No Permission')
 								}
 							}}
-							className="rounded-full cursor-pointer bg-blue-brand p-1 px-24 mx-4">
-							<ArrowNarrowRightIcon className="h-12  text-white" />
+							className="rounded-full cursor-pointer bg-blue-brand p-1 px-7 md:px-24 ">
+							<ArrowNarrowRightIcon className="md:h-12 h-6 text-white" />
 						</div>
 					</div>
 				)}
 				<div key={val.id} className="flex items-end flex-col w-2/5 lg:w-2/6">
 					<h1>{val.name}</h1>
 					<select
-						className="w-full lg:w-3/6 rounded shadow tw-select text-teal-brand"
+						className="w-full rounded shadow tw-select text-teal-brand"
 						onChange={e => onToChange(e.target.value)}>
 						{Object.entries(val.sections).map(([key, section]) => {
 							return (
@@ -561,6 +573,7 @@ const PromotionCard = ({
 				</div>
 			</div>
 			<PromotableStudents
+				fromSectionName={augmentedSections[val.fromSection.id].namespaced_name}
 				fromSectionKey={val.fromSection.id}
 				toSectionKey={val.toSection.id}
 				groupedStudents={groupedStudents}
@@ -576,6 +589,7 @@ const PromotionCard = ({
 }
 
 type PromotableStudentProps = {
+	fromSectionName: string
 	fromSectionKey: string
 	toSectionKey: string
 	groupedStudents: State['groupedStudents']
@@ -588,6 +602,7 @@ type PromotableStudentsState = {
 	students: MISStudent[]
 }
 const PromotableStudents = ({
+	fromSectionName,
 	fromSectionKey,
 	toSectionKey,
 	groupedStudents,
@@ -598,6 +613,8 @@ const PromotableStudents = ({
 	const [state, setState] = useState<PromotableStudentsState>({
 		students: []
 	})
+
+	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false)
 
 	useEffect(() => {
 		setState({ ...state, students: groupedStudents[fromSectionKey] })
@@ -633,13 +650,42 @@ const PromotableStudents = ({
 					)
 				})}
 				<div
-					className="bg-blue-brand px-10 py-4 w-2/5 flex items-center justify-center text-white font-semibold rounded-md self-center cursor-pointer"
+					className="bg-green-brand px-10 py-4 w-2/5 flex items-center justify-center text-white font-semibold rounded-md self-center cursor-pointer"
 					onClick={() => {
-						// console.log('Section Key', fromSectionKey)
-						onClickCallback(fromSectionKey, toSectionKey)
+						setIsComponentVisible(true)
 					}}>
-					Click to promote
+					Confirm
 				</div>
+				{isComponentVisible && (
+					<TModal>
+						<div ref={ref} className="bg-white pb-3 relative">
+							<div className="flex flex-1 justify-center pt-4">
+								<CheckIcon className="text-white h-16 bg-green-brand rounded-full" />
+							</div>
+							<div className="text-center p-3 md:p-4 lg:p-5 rounded-md text-sm md:text-base lg:text-xl font-bold">
+								Confirm Promoting students of
+							</div>
+							<div className="text-center p-2  lg:p-3 rounded-md text-base md:text-3xl text-blue-brand font-bold">
+								{fromSectionName}
+							</div>
+							<div className="w-full flex justify-around items-center mt-3">
+								<button
+									className="w-5/12 p-2 md:p-2 lg:p-3 border-none bg-blue-brand text-white rounded-lg outline-none font-bold text-sm md:text-base lg:text-xl"
+									onClick={() => setIsComponentVisible(false)}>
+									Go Back
+								</button>
+								<button
+									className="w-5/12 p-2 md:p-2 lg:p-3 border-none bg-green-brand text-white rounded-lg outline-none font-bold text-sm md:text-base lg:text-xl"
+									onClick={() => {
+										onClickCallback(fromSectionKey, toSectionKey)
+										setIsComponentVisible(false)
+									}}>
+									Promote
+								</button>
+							</div>
+						</div>
+					</TModal>
+				)}
 			</div>
 		</Transition>
 	)
