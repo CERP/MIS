@@ -9,6 +9,7 @@ import { CreateOrUpdateStudent } from './add'
 import { toTitleCase } from 'utils/toTitleCase'
 import StudentMarks from 'modules/Student/Single/Marks'
 import StudentAttendance from 'modules/Student/Single/Attendance'
+import StudentCertificates from 'modules/Student/Single/Certificates'
 
 const nestedRoutes = ['profile', 'payments', 'marks', 'attendance', 'certificates']
 
@@ -42,6 +43,7 @@ const StudentPage = ({ location }: RouteComponentProps) => {
 			<Route path="/students/:id/attendance" component={StudentAttendance} />
 			<Route path="/students/:id/payments" component={StudentPayments} />
 			<Route path="/students/:id/marks" component={StudentMarks} />
+			<Route path="/students/:id/certificates" component={StudentCertificates} />
 		</AppLayout>
 	)
 }

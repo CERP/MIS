@@ -153,8 +153,21 @@ const Login: React.FC<LoginProps> = ({
 															/>
 															{staffMember.Admin && (
 																<div
-																	className="absolute bottom-1.5 right-2 h-3 w-3 rounded-full bg-green-brand"
-																	title="Admin"></div>
+																	className={clsx(
+																		'absolute h-3 w-3 rounded-full bg-green-brand',
+																		!(
+																			staffMember
+																				?.ProfilePicture
+																				?.url ||
+																			staffMember
+																				?.ProfilePicture
+																				?.image_string
+																		)
+																			? 'bottom-2.5 right-3.5'
+																			: 'bottom-1.5 right-2'
+																	)}
+																	title="Admin"
+																/>
 															)}
 														</div>
 														<div className="text-xs text-white group-hover:text-blue-brand text-center">
@@ -207,10 +220,10 @@ export const StaffLogin = connect((state: RootReducerState) => ({
 	},
 	auth: state.auth,
 	initialized: state.initialized,
-	users: state.db?.users || {},
+	users: state.db?.users ?? {},
 	onboarding: state.db?.onboarding,
 	connected: state.connected,
-	unsyncd_changes: Object.keys(state.queued.mutations || {}).length,
+	unsyncd_changes: Object.keys(state.queued.mutations ?? {}).length,
 	faculty: state.db.faculty
 }))(Login)
 
@@ -273,7 +286,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ user, auth, faculty }) => {
 					alt={staffMember?.Name}
 				/>
 				{staffMember.Admin && (
-					<div className="absolute bottom-0 right-2 h-4 w-4 my-1 rounded-full bg-green-400"></div>
+					<div
+						className={clsx(
+							'absolute h-4 w-4 rounded-full bg-green-brand',
+							!(
+								staffMember?.ProfilePicture?.url ||
+								staffMember?.ProfilePicture?.image_string
+							)
+								? 'bottom-2.5 right-3.5'
+								: 'bottom-1.5 right-2'
+						)}
+						title="Admin"
+					/>
 				)}
 			</div>
 			<div className="text-sm text-white">{toTitleCase(user.name)}</div>

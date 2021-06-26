@@ -9,8 +9,9 @@ import { CreateOrUpdateStaff } from './create'
 import { StaffMemberSalary } from 'pages/expense/salary/member'
 import { toTitleCase } from 'utils/toTitleCase'
 import Attendance from 'modules/Teacher/Single/Attendance'
+import Certificates from 'modules/Teacher/Single/Certificates'
 
-const nestedRoutes = ['profile', 'attendance', 'salaries']
+const nestedRoutes = ['profile', 'attendance', 'salaries', 'certificates']
 
 const StaffPage = ({ location }: RouteComponentProps) => {
 	const loc = location.pathname.split('/').slice(-1).pop() as any
@@ -51,6 +52,7 @@ const StaffPage = ({ location }: RouteComponentProps) => {
 			<Route path="/staff/:id/profile" exact component={CreateOrUpdateStaff} />
 			<Route path="/staff/:id/salaries" exact component={StaffMemberSalary} />
 			<Route path="/staff/:id/attendance" exact component={Attendance} />
+			<Route path="/staff/:id/certificates" exact component={Certificates} />
 		</AppLayout>
 	)
 }

@@ -259,7 +259,7 @@ export const CreateOrUpdateStudent = () => {
 		})
 	}
 	if (state.redirect && isNewStudent()) {
-		return <Redirect to="/students" />
+		history.goBack()
 	}
 	return (
 		<>

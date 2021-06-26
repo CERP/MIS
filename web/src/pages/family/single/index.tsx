@@ -29,7 +29,7 @@ type State = Partial<MISStudent> & {
 	redirectTo?: string
 }
 
-export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
+export const SingleFamily = ({ match, location, history }: SingleFamilyProps) => {
 	const dispatch = useDispatch()
 	const { students, classes } = useSelector((state: RootReducerState) => state.db)
 	const { ref, setIsComponentVisible, isComponentVisible } = useComponentVisible(false)
@@ -234,7 +234,7 @@ export const SingleFamily = ({ match, location }: SingleFamilyProps) => {
 	}
 
 	if (state.redirectTo) {
-		return <Redirect to={state.redirectTo} />
+		history.goBack()
 	}
 
 	const pageTitle = isNewFam ? 'Create New Family' : 'Edit Family'
