@@ -30,7 +30,9 @@ export const StaffAttendance = () => {
 	const dispatch = useDispatch()
 
 	const faculty = useSelector((state: RootReducerState) => state.db.faculty)
-	const smsTemplates = useSelector((state: RootReducerState) => state.db.sms_templates)
+	const smsTemplate = useSelector(
+		(state: RootReducerState) => state.db.sms_templates.attendance_staff
+	)
 	const facultyId = useSelector((state: RootReducerState) => state.auth.faculty_id)
 
 	const {
@@ -135,7 +137,7 @@ export const StaffAttendance = () => {
 								date={attendanceDate}
 								faculty={faculty}
 								// TODO: create staff member separate attendance template
-								smsTemplate={smsTemplates.attendance}
+								smsTemplate={smsTemplate}
 								loggedUserId={facultyId}
 							/>
 						</div>
