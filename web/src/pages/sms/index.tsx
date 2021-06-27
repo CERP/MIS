@@ -4,7 +4,7 @@ import toast from 'react-hot-toast'
 import moment from 'moment'
 import { useDispatch, useSelector } from 'react-redux'
 import { ExclamationIcon } from '@heroicons/react/solid'
-import { UserIcon, XCircleIcon } from '@heroicons/react/outline'
+import { CogIcon, UserIcon, XCircleIcon } from '@heroicons/react/outline'
 
 import { CustomSelect } from 'components/select'
 import { AppLayout } from 'components/Layout/appLayout'
@@ -19,6 +19,7 @@ import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { NotPaidMonthDuration, ToFeeDefaulters } from './to-fee-defaulters'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
+import { Link } from 'react-router-dom'
 
 enum SendSmsOptions {
 	TO_SINGLE_STUDENT,
@@ -350,6 +351,14 @@ export const SMS = () => {
 	return (
 		<AppLayout title="SMS Manager" showHeaderTitle>
 			<div className="p-5 md:p-10 md:pt-5 md:pb-0 relative print:hidden">
+				<div className="flex flex-row justify-end w-full md:w-4/5 md:mx-auto mb-4">
+					<Link
+						className="rounded-full w-44 text-center tw-btn-blue inline-flex items-center text-sm"
+						to="/sms/templates">
+						<CogIcon className="w-5 h-5 mr-2" />
+						<span>Template Settings</span>
+					</Link>
+				</div>
 				<div className="md:w-4/5 md:mx-auto flex flex-col space-y-4 rounded-2xl bg-gray-700 p-5 w-full">
 					<div className="text-white">Send SMS To:</div>
 					<CustomSelect
@@ -478,7 +487,7 @@ export const SMS = () => {
 								? 'Type your message here with $NAME, $FNAME and $BALANCE'
 								: 'Type your message here...'
 						}
-						className="tw-input text-white focus-within:bg-transparent ring-1 ring-blue-brand h-32"
+						className="tw-input text-white bg-transparent ring-1 ring-blue-brand h-32"
 						rows={6}
 					/>
 
@@ -527,9 +536,9 @@ export const SMS = () => {
 							</a>
 						)
 					) : (
-						<div className="w-full p-2 flex flex-row bg-gray-100 shadow-lg items-center rounded-md">
+						<div className="w-full p-2 flex flex-row bg-white shadow-lg items-center rounded-md">
 							<ExclamationIcon className="text-red-brand w-8 h-8 mr-2" />
-							<span className="text-sm">
+							<span className="text-sm font-semibold">
 								{!isMobile()
 									? 'Please use MISchool on Mobile Device with Companion App to send SMS'
 									: 'Set SIM option in settings to send SMS'}

@@ -4,7 +4,8 @@ import { openDB } from 'idb'
 import { defaultExams } from 'modules/Settings'
 import moment from 'moment'
 
-const defaultTemplates = () => ({
+const defaultTemplates = (): RootDBState['sms_templates'] => ({
+	attendance_staff: '$NAME has been marked $STATUS today',
 	attendance: '$NAME has been marked $STATUS',
 	fee: '$NAME has paid $AMOUNT Rs, Your remaining Balance is $BALANCE Rs',
 	result: 'Report is ready for $NAME:\n $REPORT'
