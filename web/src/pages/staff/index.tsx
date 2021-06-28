@@ -19,6 +19,7 @@ const StaffPage = ({ location }: RouteComponentProps) => {
 
 	const userId = useSelector((state: RootReducerState) => state.auth.faculty_id)
 	const userInfo = useSelector((state: RootReducerState) => state.db.faculty[userId])
+	const tipAccess = useSelector((state: RootReducerState) => state.db.targeted_instruction_access)
 
 	return (
 		<AppLayout title={pageTitle} showHeaderTitle>
@@ -30,7 +31,8 @@ const StaffPage = ({ location }: RouteComponentProps) => {
 								userInfo.permissions,
 								route,
 								userInfo.SubAdmin,
-								userInfo.Admin
+								userInfo.Admin,
+								tipAccess
 							)
 						)
 						.map(path => (

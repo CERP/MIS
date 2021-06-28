@@ -20,6 +20,7 @@ const StudentPage = ({ location }: RouteComponentProps) => {
 	const pageTitle = loc === 'new' ? 'Create new Student' : 'Student ' + toTitleCase(loc)
 	const userId = useSelector((state: RootReducerState) => state.auth.faculty_id)
 	const userInfo = useSelector((state: RootReducerState) => state.db.faculty[userId])
+	const tipAccess = useSelector((state: RootReducerState) => state.db.targeted_instruction_access)
 
 	return (
 		<AppLayout title={pageTitle} showHeaderTitle>
@@ -31,7 +32,8 @@ const StudentPage = ({ location }: RouteComponentProps) => {
 								userInfo.permissions,
 								route,
 								userInfo.SubAdmin,
-								userInfo.Admin
+								userInfo.Admin,
+								tipAccess
 							)
 						)
 						.map(path => (
