@@ -104,48 +104,31 @@ export const checkPermission = (
 	}
 
 	switch (title) {
-		case 'fees': {
-			return tipAccess ? false : permissions.fee && subAdmin
-		}
-		case 'expenses': {
-			return tipAccess ? false : permissions.expense && subAdmin
-		}
-		case 'attendance': {
-			return tipAccess ? false : true
-		}
-		case 'exams': {
-			return tipAccess ? false : true
-		}
-		case 'diary': {
-			return tipAccess ? false : true
-		}
-		case 'SMS': {
-			return tipAccess ? false : true
-		}
-		case 'diary': {
-			return tipAccess ? false : true
-		}
-		case 'Results': {
-			return tipAccess ? false : true
-		}
-		case 'Analytics': {
-			return tipAccess ? false : subAdmin
-		}
-		case 'payments': {
-			return tipAccess ? false : subAdmin
-		}
-		case 'certificates': {
-			return tipAccess ? false : subAdmin
-		}
 		case 'salaries': {
 			return false
 		}
+		case 'attendance':
+		case 'exams':
+		case 'diary':
+		case 'SMS':
+		case 'diary':
+		case 'results': {
+			return tipAccess ? false : true
+		}
+		case 'analytics':
+		case 'payments':
+		case 'certificates': {
+			return tipAccess ? false : subAdmin
+		}
 		case 'setup':
-			return permissions.setupPage && subAdmin
 		case 'dailyStats':
-			return permissions.dailyStats && subAdmin
+			return (permissions.dailyStats || permissions.setupPage) && subAdmin
+		case 'fees':
+		case 'expenses':
 		case 'families': {
-			return tipAccess ? false : permissions.family && subAdmin
+			return tipAccess
+				? false
+				: (permissions.family || permissions.fee || permissions.expense) && subAdmin
 		}
 		default:
 			return true
