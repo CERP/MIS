@@ -31,7 +31,8 @@ export const StaffAttendance = () => {
 
 	const faculty = useSelector((state: RootReducerState) => state.db.faculty)
 	const smsTemplate = useSelector(
-		(state: RootReducerState) => state.db.sms_templates.attendance_staff
+		(state: RootReducerState) =>
+			state.db.sms_templates.attendance_staff ?? '$NAME has been marked $STATUS today'
 	)
 	const facultyId = useSelector((state: RootReducerState) => state.auth.faculty_id)
 
@@ -54,7 +55,7 @@ export const StaffAttendance = () => {
 
 		for (const f of Object.values(faculty ?? {})) {
 			if (f && f.Name && f.Active) {
-				const record = (f.attendance || {})[attendanceDate]
+				const record = (f.attendance ?? {})[attendanceDate]
 
 				activeStaffMembers++
 
@@ -136,7 +137,6 @@ export const StaffAttendance = () => {
 							<SmsModalContentWrapper
 								date={attendanceDate}
 								faculty={faculty}
-								// TODO: create staff member separate attendance template
 								smsTemplate={smsTemplate}
 								loggedUserId={facultyId}
 							/>

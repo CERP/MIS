@@ -28,7 +28,9 @@ export const Family = ({ forwardTo, pageTitle }: FamilyProps) => {
 	const filteredFamilies = Object.values(families ?? {})
 		.filter(fam => {
 			const searchString = `${fam.id} ${fam.name} ${fam.phone}`.toLowerCase()
-			return fam.id && (state.search ? searchString.includes(state.search) : true)
+			return (
+				fam.id && (state.search ? searchString.includes(state.search.toLowerCase()) : true)
+			)
 		})
 		.sort((a, b) => a.id.localeCompare(b.id))
 
