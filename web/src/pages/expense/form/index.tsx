@@ -6,9 +6,11 @@ import { RouteComponentProps, useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { CameraIcon } from '@heroicons/react/outline'
 
-import { addExpense, editExpense } from 'actions'
+import { addExpense, deleteExpense, editExpense } from 'actions'
 import { AppLayout } from 'components/Layout/appLayout'
 import { ExpenseCategories } from 'constants/expense'
+import { useComponentVisible } from 'hooks/useComponentVisible'
+import { TModal } from 'components/Modal'
 
 const initialState = {
 	date: new Date().getTime(),
@@ -20,7 +22,12 @@ export const ExpenseForm = ({ match }: RouteComponentProps<{ id: string }>) => {
 	const dispatch = useDispatch()
 	const key = match.params.id
 	const expense: any = useSelector((state: RootReducerState) => state.db.expenses)
+	const faculty = useSelector((state: RootReducerState) => state.db.faculty)
+	const faculty_id = useSelector((state: RootReducerState) => state.auth.faculty_id)
+
+	const { Admin } = faculty[faculty_id]
 	const history = useHistory()
+	const { ref, setIsComponentVisible, isComponentVisible } = useComponentVisible(false)
 
 	const [state, setState] = useState(expense[key] ?? initialState)
 
@@ -67,6 +74,14 @@ export const ExpenseForm = ({ match }: RouteComponentProps<{ id: string }>) => {
 			})
 		)
 		toast.success('Expense entry has been updated')
+	}
+
+	const handleDeleteExpense = () => {
+		dispatch(deleteExpense(key))
+
+		setTimeout(() => {
+			history.goBack()
+		}, 500)
 	}
 
 	const categories = Object.keys(ExpenseCategories).filter(obj => obj.toString() !== 'SALARY')
@@ -186,6 +201,38 @@ export const ExpenseForm = ({ match }: RouteComponentProps<{ id: string }>) => {
 								{state.quantity && state.amount ? state.quantity * state.amount : 0}
 							</h1>
 						</div>
+						{!isNew() && Admin && (
+							<div
+								onClick={() => setIsComponentVisible(true)}
+								className="flex flex-1 flex-row justify-center mt-6 pl-4 pr-4 pt-2 pb-2 rounded-md bg-red-brand">
+								<h1 className="text-xl text-gray-100 font-semibold">
+									Delete Expense
+								</h1>
+							</div>
+						)}
+						{isComponentVisible && (
+							<TModal>
+								<div className="bg-white md:p-10 p-8 text-center text-sm" ref={ref}>
+									<div className="font-semibold text-lg">
+										Are you sure you want to delete this expense? This action
+										cannot be reversed
+									</div>
+
+									<div className="flex flex-row justify-between space-x-4 mt-4">
+										<button
+											onClick={() => setIsComponentVisible(false)}
+											className="py-1 md:py-2 tw-btn bg-gray-400 hover:bg-gray-500 text-white w-full">
+											Cancel
+										</button>
+										<button
+											onClick={handleDeleteExpense}
+											className="py-1 md:py-2 tw-btn-red w-full font-semibold">
+											Confirm
+										</button>
+									</div>
+								</div>
+							</TModal>
+						)}
 					</div>
 				)}
 			</div>
