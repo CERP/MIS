@@ -6,7 +6,7 @@ import { v4 } from 'node-uuid'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { Transition } from '@headlessui/react'
-import { ChevronUpIcon, ChevronDownIcon, CalendarIcon } from '@heroicons/react/outline'
+import { ChevronUpIcon, ChevronDownIcon, CalendarIcon, TrashIcon } from '@heroicons/react/outline'
 
 import toTitleCase from 'utils/toTitleCase'
 import months from 'constants/months'
@@ -16,7 +16,7 @@ import { CustomSelect } from 'components/select'
 import { MISFeeLabels } from 'constants/index'
 import { getFilteredPayments } from 'utils/getFilteredPayments'
 import { checkStudentDuesReturning } from 'utils/checkStudentDues'
-import { addMultiplePayments, addPayment, logSms } from 'actions'
+import { addMultiplePayments, addPayment, deletePayment, logSms } from 'actions'
 import { smsIntentLink } from 'utils/intent'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
@@ -281,9 +281,16 @@ interface PreviousPaymentsProps {
 const PreviousPayments = ({ years, close, student }: PreviousPaymentsProps) => {
 	const [state, setState] = useState({
 		month: moment().format('MMMM'),
-		year: moment().format('YYYY')
+		year: moment().format('YYYY'),
+		paymentIdtoDelete: ''
 	})
 
+	const faculty = useSelector((state: RootReducerState) => state.db.faculty)
+	const faculty_id = useSelector((state: RootReducerState) => state.auth.faculty_id)
+	const { Admin } = faculty[faculty_id]
+	const { ref, setIsComponentVisible, isComponentVisible } = useComponentVisible(false)
+
+	const dispatch = useDispatch()
 	const totalPendingAmount = Object.entries(student.payments ?? {}).reduce(
 		(agg, [, curr]) =>
 			agg - (curr.type === 'SUBMITTED' || curr.type === 'FORGIVEN' ? 1 : -1) * curr.amount,
@@ -324,8 +331,20 @@ const PreviousPayments = ({ years, close, student }: PreviousPaymentsProps) => {
 					([id, payment]) => (
 						<div key={id} className="flex flex-row items-start justify-between">
 							<div className="w-1/4">{moment(payment.date).format('DD-MM')}</div>
-							<div className="w-2/5 md:w-1/3 mx-auto text-xs md:text-sm flex flex-row justify-center">
+							<div className="w-2/5 md:w-1/3 mx-auto items-center text-xs md:text-sm flex flex-row justify-center">
 								{getPaymentLabel(payment.fee_name, payment.type)}
+								{Admin && (
+									<TrashIcon
+										onClick={() => {
+											setState({
+												...state,
+												paymentIdtoDelete: id
+											})
+											setIsComponentVisible(true)
+										}}
+										className="text-danger-tip-brand cursor-pointer h-4 md:h-5 ml-1"
+									/>
+								)}
 							</div>
 							<div className="w-1/4 flex flex-row justify-end">
 								{payment.type === 'FORGIVEN'
@@ -350,6 +369,37 @@ const PreviousPayments = ({ years, close, student }: PreviousPaymentsProps) => {
 			<button onClick={close} className="tw-btn bg-orange-brand w-full text-white">
 				Go Back
 			</button>
+			{isComponentVisible && (
+				<TModal>
+					<div className="bg-white md:p-10 p-8 text-center text-sm" ref={ref}>
+						<div className="font-semibold text-lg">
+							Are you sure you want to delete this Payment?
+						</div>
+
+						<div className="flex flex-row justify-between space-x-4 mt-4">
+							<button
+								onClick={() => {
+									setState({
+										...state,
+										paymentIdtoDelete: ''
+									})
+									setIsComponentVisible(false)
+								}}
+								className="py-1 md:py-2 tw-btn bg-gray-400 hover:bg-gray-500 text-white w-full">
+								Cancel
+							</button>
+							<button
+								onClick={() => {
+									dispatch(deletePayment(student.id, state.paymentIdtoDelete))
+									setIsComponentVisible(false)
+								}}
+								className="py-1 md:py-2 tw-btn-red w-full font-semibold">
+								Confirm
+							</button>
+						</div>
+					</div>
+				</TModal>
+			)}
 		</Transition>
 	)
 }
@@ -407,10 +457,10 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 					type === 'text' || type === 'checkbox'
 						? value
 						: isNaN(valueAsNumber)
-							? name === 'date'
-								? Date.now()
-								: 0
-							: valueAsNumber
+						? name === 'date'
+							? Date.now()
+							: 0
+						: valueAsNumber
 			}
 		})
 	}
@@ -456,7 +506,8 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 				)
 
 				toast.success(
-					`Rs. ${state.payment.amount} has been added as ${state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
+					`Rs. ${state.payment.amount} has been added as ${
+						state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
 					} amount.`
 				)
 
@@ -479,7 +530,8 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 			)
 
 			toast.success(
-				`Rs. ${state.payment.amount} has been added as ${state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
+				`Rs. ${state.payment.amount} has been added as ${
+					state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
 				} amount.`
 			)
 			setState({
