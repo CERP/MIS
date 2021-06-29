@@ -185,7 +185,7 @@ export const StatsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 										? getDailyStatsRoute('attendance')
 										: getDailyStatsRoute('teacher-attendance')
 								}
-								className="">
+								className="hover:underline hover:text-blue-brand">
 								Present
 							</Link>
 						</div>
@@ -197,7 +197,7 @@ export const StatsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 										? getDailyStatsRoute('attendance')
 										: getDailyStatsRoute('teacher-attendance')
 								}
-								className="">
+								className="hover:underline hover:text-blue-brand">
 								Absent
 							</Link>
 						</div>
@@ -209,7 +209,7 @@ export const StatsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 										? getDailyStatsRoute('attendance')
 										: getDailyStatsRoute('teacher-attendance')
 								}
-								className="">
+								className="hover:underline hover:text-blue-brand">
 								Leave
 							</Link>
 						</div>

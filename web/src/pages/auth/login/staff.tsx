@@ -92,19 +92,19 @@ const Login: React.FC<LoginProps> = ({
 				{showConfirmSchoolModal && (
 					<TModal>
 						<div
-							className="bg-white md:p-10 p-8 space-y-2 text-center"
+							className="bg-white md:p-10 p-8 space-y-2 text-center space-y-10"
 							ref={confirmSwitchSchoolModalRef}>
-							<h1>Please confirm that you would like to switch schools.</h1>
+							<h1 className="lg:text-xl">Are you sure you want to switch school?</h1>
 							<div className="font-semibold text-lg md:text-xl"></div>
-							<div className="flex flex-row justify-between">
+							<div className="flex flex-row justify-between space-x-4">
 								<button
 									onClick={() => setShowConfirmSchoolModal(false)}
-									className="py-1 md:py-2 tw-btn bg-gray-400 text-white">
+									className="w-full py-1 md:py-2 tw-btn bg-gray-400 text-white">
 									Cancel
 								</button>
 								<button
 									onClick={switchSchoolHandler}
-									className="py-1 md:py-2 tw-btn-red">
+									className="w-full py-1 md:py-2 tw-btn-red">
 									Confirm
 								</button>
 							</div>
