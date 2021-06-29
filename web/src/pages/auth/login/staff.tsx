@@ -15,6 +15,8 @@ import { ShowHidePassword } from 'components/password'
 import { ActionTypes } from 'constants/index'
 
 import UserIconSvg from 'assets/svgs/user.svg'
+import { TModal } from 'components/Modal'
+import { useComponentVisible } from 'hooks/useComponentVisible'
 
 type LoginProps = RootReducerState & {
 	users: RootDBState['users']
@@ -56,6 +58,12 @@ const Login: React.FC<LoginProps> = ({
 	// renders number of buttons to view user group
 	const userGroups = Math.ceil(filteredUsers.length / USERS_PER_GROUP)
 
+	const {
+		ref: confirmSwitchSchoolModalRef,
+		isComponentVisible: showConfirmSchoolModal,
+		setIsComponentVisible: setShowConfirmSchoolModal
+	} = useComponentVisible(false)
+
 	const switchSchoolHandler = () => {
 		// TODO: convert it to react-alert modal
 		if (unsyncd_changes > 0) {
@@ -81,6 +89,28 @@ const Login: React.FC<LoginProps> = ({
 				<div className="text-xl md:text-2xl text-center font-bold">
 					MISchool Staff Login
 				</div>
+				{showConfirmSchoolModal && (
+					<TModal>
+						<div
+							className="bg-white md:p-10 p-8 space-y-2 text-center"
+							ref={confirmSwitchSchoolModalRef}>
+							<h1>Please confirm that you would like to switch schools.</h1>
+							<div className="font-semibold text-lg md:text-xl"></div>
+							<div className="flex flex-row justify-between">
+								<button
+									onClick={() => setShowConfirmSchoolModal(false)}
+									className="py-1 md:py-2 tw-btn bg-gray-400 text-white">
+									Cancel
+								</button>
+								<button
+									onClick={switchSchoolHandler}
+									className="py-1 md:py-2 tw-btn-red">
+									Confirm
+								</button>
+							</div>
+						</div>
+					</TModal>
+				)}
 				<div className="w-full md:w-3/4 mx-auto flex flex-col md:flex-row items-center mt-10 md:t-20">
 					<div className="relative border md:w-2/5 p-5 rounded-2xl rounded-bl-none md:rounded-bl-2xl md:rounded-tr-none rounded-br-none shadow-md w-4/5">
 						<div className="flex flex-col items-center md:p-10 space-y-2">
@@ -93,7 +123,7 @@ const Login: React.FC<LoginProps> = ({
 							<div className="font-medium"></div>
 							<button
 								disabled={!connected}
-								onClick={() => switchSchoolHandler()}
+								onClick={() => setShowConfirmSchoolModal(true)}
 								className={clsx(
 									'inline-flex items-center text-center w-full tw-btn-red',
 									{
