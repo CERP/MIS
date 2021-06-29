@@ -120,15 +120,15 @@ export const StaffAttendance = () => {
 	// TODO: add logic to handle log sms history
 
 	return (
-		<div className="p-5 md:p-10 md:pt-5 print:hidden">
+		<div className="p-5 md:p-10 md:pt-0 print:hidden">
 			<div className="space-y-6">
-				<div className="flex flex-row items-center space-x-2">
+				<div className="flex flex-row items-center justify-center">
 					<input
 						name="attendance-date"
 						type="date"
 						onChange={e => setState({ ...state, date: e.target.valueAsNumber })}
 						value={attendanceDate}
-						className="w-full text-sm bg-transparent tw-input border-blue-brand ring-1"
+						className="w-full md:w-72 text-sm bg-transparent tw-input border-blue-brand ring-1"
 					/>
 				</div>
 				{showSendSmsModal && (
@@ -159,7 +159,7 @@ export const StaffAttendance = () => {
 					</div>
 				</div>
 
-				<div className="space-y-2">
+				<div className="space-y-2 pt-4">
 					{Object.values(faculty)
 						.filter(f => f && f.Name && f.Active)
 						.sort((a, b) => a.Name.localeCompare(b.Name))
