@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import cond from 'cond-construct'
 import { CameraIcon } from '@heroicons/react/outline'
 import { useMediaPredicate } from 'react-media-hook'
+import { useSelector } from 'react-redux'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { TextDivider } from 'components/divider'
@@ -38,6 +39,8 @@ export const SchoolAttendance = () => {
 	const [toggleView, setToggleView] = useState<AttendaceMarkOptions>(AttendaceMarkOptions.MENU)
 	const [activeTab, setActiveTab] = useState<Tabs>(Tabs.STUDENT_ATTENDANCE)
 	const biggerThan880 = useMediaPredicate('(min-width: 880px)')
+	const userId = useSelector((state: RootReducerState) => state.auth.faculty_id)
+	const isAdmin = useSelector((state: RootReducerState) => state.db.faculty[userId].Admin)
 
 	const renderComponent = () =>
 		cond([
@@ -79,35 +82,43 @@ export const SchoolAttendance = () => {
 				</div>
 			)}
 			{toggleView === AttendaceMarkOptions.MANUAL && (
-				<>
-					{biggerThan880 ? (
-						<div className="flex flex-row items-center my-4 w-full justify-center flex-wrap print:hidden space-x-2">
-							<button
-								onClick={() => setActiveTab(Tabs.STUDENT_ATTENDANCE)}
-								className={clsx(
-									'rounded-full p-2 md:px-4 w-40 text-md border shadow-md lg:text-lg hover:bg-teal-brand hover:text-white text-center',
-									activeTab === Tabs.STUDENT_ATTENDANCE
-										? 'bg-teal-brand text-white'
-										: 'bg-white text-teal-brand'
-								)}>
-								Students
-							</button>
-							<button
-								onClick={() => setActiveTab(Tabs.STAFF_ATTENDANCE)}
-								className={clsx(
-									'rounded-full p-2 md:px-4 w-40 text-md border shadow-md text-sm lg:text-lg hover:bg-teal-brand hover:text-white text-center',
-									activeTab === Tabs.STAFF_ATTENDANCE
-										? 'bg-teal-brand text-white'
-										: 'bg-white text-teal-brand'
-								)}>
-								Staff
-							</button>
-						</div>
-					) : (
-						<Tabbar tab={activeTab} setTab={setActiveTab} content={TabbarContent} />
+				<div className={clsx(isAdmin ? '' : 'mt-4')}>
+					{isAdmin && (
+						<>
+							{biggerThan880 ? (
+								<div className="flex flex-row items-center my-4 w-full justify-center flex-wrap print:hidden space-x-2">
+									<button
+										onClick={() => setActiveTab(Tabs.STUDENT_ATTENDANCE)}
+										className={clsx(
+											'rounded-full p-2 md:px-4 w-40 text-md border shadow-md lg:text-lg hover:bg-teal-brand hover:text-white text-center',
+											activeTab === Tabs.STUDENT_ATTENDANCE
+												? 'bg-teal-brand text-white'
+												: 'bg-white text-teal-brand'
+										)}>
+										Students
+									</button>
+									<button
+										onClick={() => setActiveTab(Tabs.STAFF_ATTENDANCE)}
+										className={clsx(
+											'rounded-full p-2 md:px-4 w-40 text-md border shadow-md text-sm lg:text-lg hover:bg-teal-brand hover:text-white text-center',
+											activeTab === Tabs.STAFF_ATTENDANCE
+												? 'bg-teal-brand text-white'
+												: 'bg-white text-teal-brand'
+										)}>
+										Staff
+									</button>
+								</div>
+							) : (
+								<Tabbar
+									tab={activeTab}
+									setTab={setActiveTab}
+									content={TabbarContent}
+								/>
+							)}
+						</>
 					)}
 					{renderComponent()}
-				</>
+				</div>
 			)}
 		</AppLayout>
 	)
