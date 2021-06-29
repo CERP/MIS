@@ -33,7 +33,7 @@ enum AttendanceStatus {
 }
 
 const getStudentsForSection = (sectionId: string, students: RootDBState['students']) =>
-	Object.values(students).filter(s => isValidStudent(s) && s.section_id === sectionId)
+	Object.values(students).filter(s => isValidStudent(s) && s.section_id === sectionId && s.Active)
 
 const deriveSelectedStudents = (sectionId: string, students: RootDBState['students']) =>
 	getStudentsForSection(sectionId, students).reduce(
@@ -187,14 +187,17 @@ export const StudentsAttendance = () => {
 				</div>
 
 				<div className="space-y-2">
-					{Object.keys(selectedStudents).map(studentId => (
-						<Card
-							key={studentId}
-							student={students[studentId]}
-							attendanceDate={attendanceDate}
-							markAttendance={markAttendanceHandler}
-						/>
-					))}
+					{Object.values(students)
+						.filter(s => s && s.Name && s.Active)
+						.sort((a, b) => a.Name.localeCompare(b.Name))
+						.map(s => (
+							<Card
+								key={s.id}
+								student={students[s.id]}
+								attendanceDate={attendanceDate}
+								markAttendance={markAttendanceHandler}
+							/>
+						))}
 				</div>
 			</div>
 		</div>
