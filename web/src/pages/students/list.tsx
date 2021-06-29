@@ -14,6 +14,7 @@ import { AddStickyButton } from 'components/Button/add-sticky'
 import Paginate from 'components/Paginate'
 import { SwitchButton } from 'components/input/switch'
 import { useComponentVisible } from 'hooks/useComponentVisible'
+import moment from 'moment'
 
 type State = {
 	searchText: string
@@ -39,6 +40,7 @@ export const StudentList = ({
 	const students = useSelector((state: RootReducerState) => state.db.students, shallowEqual)
 	const classes = useSelector((state: RootReducerState) => state.db.classes, shallowEqual)
 	const searchInputRef = useRef(null)
+	const { schoolName } = useSelector((state: RootReducerState) => state.db.settings)
 
 	const {
 		ref: searchMenuRef,
@@ -96,8 +98,8 @@ export const StudentList = ({
 				(state.searchByAdmissionNo || state.searchByRollNo
 					? true
 					: state.searchText
-						? searchString.includes(state.searchText.toLowerCase())
-						: true) &&
+					? searchString.includes(state.searchText.toLowerCase())
+					: true) &&
 				(state.class ? s.section_id === state.class : true) &&
 				(state.tag ? Object.keys(s.tags ?? []).includes(state.tag) : true) &&
 				(state.gender ? state.gender.toLowerCase() === s.Gender.toLowerCase() : true) &&
@@ -123,135 +125,192 @@ export const StudentList = ({
 
 	const renderListPage = () => {
 		return (
-			<div className="relative p-5 md:p-10 md:pt-5 mb-10 md:mb-0">
-				{!forwardTo && (
-					<Link to="/students/new/menu">
-						<AddStickyButton label="Add new Student" />
-					</Link>
-				)}
+			<>
+				<div className="relative p-5 md:p-10 md:pt-5 mb-10 md:mb-0 print:hidden">
+					{!forwardTo && (
+						<Link to="/students/new/menu">
+							<AddStickyButton label="Add new Student" />
+						</Link>
+					)}
 
-				<div className="flex flex-col items-center justify-between mt-4 mb-12 space-y-4 md:flex-row md:mb-20 md:space-y-0 md:space-x-60">
-					<div ref={searchInputRef} className="md:w-9/12 w-full">
-						<SearchInput
-							showMenuButton
-							showMenuCallback={() => setShowSearchMenu(true)}
-							placeholder={
-								'Search by ' +
-								(state.searchByAdmissionNo
-									? 'admission no'
-									: state.searchByRollNo
+					<div className="flex flex-col items-center justify-between mt-4 mb-12 space-y-4 md:flex-row md:mb-20 md:space-y-0 md:space-x-60">
+						<div ref={searchInputRef} className="md:w-9/12 w-full">
+							<SearchInput
+								showMenuButton
+								showMenuCallback={() => setShowSearchMenu(true)}
+								placeholder={
+									'Search by ' +
+									(state.searchByAdmissionNo
+										? 'admission no'
+										: state.searchByRollNo
 										? 'roll number'
 										: 'name, fname or phone')
-							}
-							className="md:w-full"
-							type="text"
-							onChange={e => {
-								setFilter({ ...state, searchText: e.target.value })
-							}}
-						/>
-						{showSearchMenu && (
-							<div
-								ref={searchMenuRef}
-								className="absolute top-2 z-20 space-y-3 bg-gray-600 p-5 rounded-2xl text-white"
-								style={{
-									top: searchInputRef.current
-										? searchInputRef.current.offsetTop +
-										searchInputRef.current.offsetHeight +
-										2
-										: 0,
-									left: searchInputRef.current
-										? searchInputRef.current.offsetLeft
-										: 0,
-									width: searchInputRef.current
-										? searchInputRef.current.offsetWidth
-										: 0
-								}}>
-								<div className="flex flex-1  justify-center items-center">
-									<h1 className="flex-1 text-sm">Search By Admission Number</h1>
-									<SwitchButton
-										state={state.searchByAdmissionNo}
-										callback={() =>
-											setFilter({
-												...state,
-												searchByAdmissionNo: !state.searchByAdmissionNo,
-												searchByRollNo: false
-											})
-										}
-									/>
+								}
+								className="md:w-full"
+								type="text"
+								onChange={e => {
+									setFilter({ ...state, searchText: e.target.value })
+								}}
+							/>
+							{showSearchMenu && (
+								<div
+									ref={searchMenuRef}
+									className="absolute top-2 z-20 space-y-3 bg-gray-600 p-5 rounded-2xl text-white"
+									style={{
+										top: searchInputRef.current
+											? searchInputRef.current.offsetTop +
+											  searchInputRef.current.offsetHeight +
+											  2
+											: 0,
+										left: searchInputRef.current
+											? searchInputRef.current.offsetLeft
+											: 0,
+										width: searchInputRef.current
+											? searchInputRef.current.offsetWidth
+											: 0
+									}}>
+									<div className="flex flex-1  justify-center items-center">
+										<h1 className="flex-1 text-sm">
+											Search By Admission Number
+										</h1>
+										<SwitchButton
+											state={state.searchByAdmissionNo}
+											callback={() =>
+												setFilter({
+													...state,
+													searchByAdmissionNo: !state.searchByAdmissionNo,
+													searchByRollNo: false
+												})
+											}
+										/>
+									</div>
+									<div className="flex flex-1 justify-center items-center">
+										<h1 className="flex-1 text-sm">Search By Roll Number</h1>
+										<SwitchButton
+											state={state.searchByRollNo}
+											callback={() =>
+												setFilter({
+													...state,
+													searchByRollNo: !state.searchByRollNo,
+													searchByAdmissionNo: false
+												})
+											}
+										/>
+									</div>
 								</div>
-								<div className="flex flex-1 justify-center items-center">
-									<h1 className="flex-1 text-sm">Search By Roll Number</h1>
-									<SwitchButton
-										state={state.searchByRollNo}
-										callback={() =>
-											setFilter({
-												...state,
-												searchByRollNo: !state.searchByRollNo,
-												searchByAdmissionNo: false
-											})
-										}
-									/>
-								</div>
-							</div>
-						)}
-					</div>
-					<div className="flex flex-row items-center w-full space-x-2">
-						<select
-							onChange={e => setFilter({ ...state, tag: e.target.value })}
-							className="w-1/3 rounded shadow tw-select text-teal-brand">
-							<option value="">Tags</option>
-							{getTags().map(tag => (
-								<option key={tag} value={tag}>
-									{tag}
-								</option>
-							))}
-						</select>
-						<select
-							className="w-1/3 rounded shadow tw-select text-teal-brand"
-							onChange={e => setFilter({ ...state, gender: e.target.value })}>
-							<option value="">Gender</option>
-							<option value={'Male'}>M</option>
-							<option value={'Female'}>F</option>
-							<option value={'Other'}>Other</option>
-						</select>
-						<select
-							className="w-1/3 rounded shadow tw-select text-teal-brand"
-							onChange={e =>
-								setFilter({ ...state, active: e.target.value === 'true' })
-							}>
-							<option value={'true'}>Active</option>
-							<option value={'false'}>InActive</option>
-						</select>
-						<select
-							onChange={e => setFilter({ ...state, class: e.target.value })}
-							className="w-1/3 rounded shadow tw-select text-teal-brand">
-							<option value="">Class</option>
-							{sections
-								.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
-								.map(s => (
-									<option key={s.id + s.class_id} value={s.id}>
-										{toTitleCase(s.namespaced_name, '-')}
+							)}
+						</div>
+						<div className="flex flex-row items-center w-full space-x-2">
+							<select
+								onChange={e => setFilter({ ...state, tag: e.target.value })}
+								className="w-1/3 rounded shadow tw-select text-teal-brand">
+								<option value="">Tags</option>
+								{getTags().map(tag => (
+									<option key={tag} value={tag}>
+										{tag}
 									</option>
 								))}
-						</select>
-						{!forwardTo && (
-							<button
-								onClick={() => window.print()}
-								className="hidden lg:inline-flex items-center tw-btn-blue rounded-3xl shadow-md">
-								<span>Print</span>
-								<PrinterIcon className="h-6 w-6 ml-4" />
-							</button>
-						)}
+							</select>
+							<select
+								className="w-1/3 rounded shadow tw-select text-teal-brand"
+								onChange={e => setFilter({ ...state, gender: e.target.value })}>
+								<option value="">Gender</option>
+								<option value={'Male'}>M</option>
+								<option value={'Female'}>F</option>
+								<option value={'Other'}>Other</option>
+							</select>
+							<select
+								className="w-1/3 rounded shadow tw-select text-teal-brand"
+								onChange={e =>
+									setFilter({ ...state, active: e.target.value === 'true' })
+								}>
+								<option value={'true'}>Active</option>
+								<option value={'false'}>InActive</option>
+							</select>
+							<select
+								onChange={e => setFilter({ ...state, class: e.target.value })}
+								className="w-1/3 rounded shadow tw-select text-teal-brand">
+								<option value="">Class</option>
+								{sections
+									.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
+									.map(s => (
+										<option key={s.id + s.class_id} value={s.id}>
+											{toTitleCase(s.namespaced_name, '-')}
+										</option>
+									))}
+							</select>
+							{!forwardTo && (
+								<button
+									onClick={() => window.print()}
+									className="hidden lg:inline-flex items-center tw-btn-blue rounded-3xl shadow-md">
+									<span>Print</span>
+									<PrinterIcon className="h-6 w-6 ml-4" />
+								</button>
+							)}
+						</div>
 					</div>
-				</div>
 
-				<Paginate
-					items={filteredStudents}
-					itemsPerPage={10}
-					numberOfBottomPages={3}
-					renderComponent={listItem}
-				/>
-			</div>
+					<Paginate
+						items={filteredStudents}
+						itemsPerPage={10}
+						numberOfBottomPages={3}
+						renderComponent={listItem}
+					/>
+				</div>
+				<table
+					id="printTable"
+					cellSpacing={3}
+					className="hidden border p-2 text-sm print:flex-col print:flex">
+					<div className="text-center flex flex-1 text-2xl font-semibold items-center justify-center mb-4">
+						{schoolName}
+					</div>
+					<tbody>
+						<tr>
+							<th>SR#</th>
+							<th>Name</th>
+							<th>Father Name</th>
+							<th className="px-6">DOB</th>
+							<th>ADM Date</th>
+							<th>ADM#</th>
+							<th>Class</th>
+							<th>Roll#</th>
+							<th>Phone#</th>
+						</tr>
+						{filteredStudents.map((student, index) => {
+							return (
+								<tr>
+									<td className="text-center border-2">{index + 1}</td>
+									<td className="text-center border-2">{student.Name}</td>
+									<td className="text-center border-2">
+										{student.ManName || '-'}
+									</td>
+									<td className="text-center border-2">
+										{student.Birthdate
+											? moment(student.Birthdate).format('DD-MM-YYYY')
+											: '-'}
+									</td>
+									<td className="text-center border-2">
+										{student.StartDate
+											? moment(student.StartDate).format('DD-MM-YYYY')
+											: '-'}
+									</td>{' '}
+									<td className="text-center border-2">
+										{student.AdmissionNumber || '-'}
+									</td>
+									<td className="text-center border-2">
+										{sections.find(s => s.id === student.section_id)
+											.namespaced_name || '-'}
+									</td>
+									<td className="text-center border-2">
+										{student.RollNumber || '-'}
+									</td>
+									<td className="text-center border-2">{student.Phone || '-'}</td>
+								</tr>
+							)
+						})}
+					</tbody>
+				</table>
+			</>
 		)
 	}
 
