@@ -22,7 +22,7 @@ import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
 
 import UserIconSvg from 'assets/svgs/user.svg'
-import { isValidStudent, getPaymentLabel } from 'utils'
+import { isValidStudent, getPaymentLabel, checkPermission } from 'utils'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { TrashIcon } from '@heroicons/react/solid'
 
@@ -461,7 +461,7 @@ const PreviousPayments = ({ years, close, payments, pendingAmount }: PreviousPay
 							<div className="w-1/4">{moment(payment.date).format('DD-MM')}</div>
 							<div className="w-2/5 md:w-1/3 mx-auto text-xs md:text-sm flex flex-row justify-center">
 								{payment.fee_name}
-								{Admin && (
+								{checkPermissionToDelete(payment, Admin) && (
 									<TrashIcon
 										onClick={() => {
 											setState({
@@ -793,4 +793,8 @@ const AddPayment = ({ siblings, auth, settings, smsTemplates, pendingAmount }: A
 			)}
 		</>
 	)
+}
+function checkPermissionToDelete(payment: Partial<AugmentedMISPayment>, admin: boolean) {
+	if (payment.type === 'OWED') return false
+	return admin && moment(payment.date).isSame(moment.now(), 'M')
 }

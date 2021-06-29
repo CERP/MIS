@@ -333,7 +333,7 @@ const PreviousPayments = ({ years, close, student }: PreviousPaymentsProps) => {
 							<div className="w-1/4">{moment(payment.date).format('DD-MM')}</div>
 							<div className="w-2/5 md:w-1/3 mx-auto items-center text-xs md:text-sm flex flex-row justify-center">
 								{getPaymentLabel(payment.fee_name, payment.type)}
-								{Admin && (
+								{checkPermissionToDelete(payment, Admin) && (
 									<TrashIcon
 										onClick={() => {
 											setState({
@@ -651,4 +651,9 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 			)}
 		</>
 	)
+}
+
+function checkPermissionToDelete(payment: Partial<AugmentedMISPayment>, admin: boolean) {
+	if (payment.type === 'OWED') return false
+	return admin && moment(payment.date).isSame(moment.now(), 'M')
 }
