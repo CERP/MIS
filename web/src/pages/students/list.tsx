@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react'
 import { shallowEqual, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { PrinterIcon } from '@heroicons/react/outline'
+import { PrinterIcon, UsersIcon } from '@heroicons/react/outline'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { toTitleCase } from 'utils/toTitleCase'
@@ -15,6 +15,8 @@ import Paginate from 'components/Paginate'
 import { SwitchButton } from 'components/input/switch'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import moment from 'moment'
+import QRCode from 'qrcode.react'
+import chunkify from 'utils/chunkify'
 
 type State = {
 	searchText: string
@@ -24,6 +26,8 @@ type State = {
 	gender: string
 	searchByAdmissionNo: boolean
 	searchByRollNo: boolean
+	printCards: boolean
+	singleStudentPrintID: string
 }
 
 interface StudentListProps {
@@ -40,7 +44,20 @@ export const StudentList = ({
 	const students = useSelector((state: RootReducerState) => state.db.students, shallowEqual)
 	const classes = useSelector((state: RootReducerState) => state.db.classes, shallowEqual)
 	const searchInputRef = useRef(null)
-	const { schoolName } = useSelector((state: RootReducerState) => state.db.settings)
+	const settings = useSelector((state: RootReducerState) => state.db.settings)
+
+	const schoolName = settings.schoolName
+
+	const schoolSession = {
+		startYear:
+			settings && settings.schoolSession
+				? moment(settings.schoolSession.start_date).format('YYYY')
+				: '',
+		endYear:
+			settings && settings.schoolSession
+				? moment(settings.schoolSession.end_date).format('YYYY')
+				: ''
+	}
 
 	const {
 		ref: searchMenuRef,
@@ -55,7 +72,9 @@ export const StudentList = ({
 		class: '',
 		gender: '',
 		searchByAdmissionNo: false,
-		searchByRollNo: false
+		searchByRollNo: false,
+		printCards: false,
+		singleStudentPrintID: ''
 	})
 
 	const getTags = () => {
@@ -116,9 +135,27 @@ export const StudentList = ({
 		const forwardToLink = forwardTo ?? 'profile'
 		return (
 			<Link key={f.id} to={`/students/${f.id}/${forwardToLink}`}>
-				<Card student={f} sections={sections} />
+				<Card
+					schoolName={schoolName}
+					schoolSession={settings.schoolSession}
+					student={f}
+					sections={sections}
+					printSingleStudentCard={id => {
+						setFilter({ ...state, singleStudentPrintID: id, printCards: true })
+
+						setTimeout(() => {
+							onPrint()
+						}, 200)
+					}}
+				/>
 			</Link>
 		)
+	}
+
+	const onPrint = () => {
+		window.print()
+
+		setFilter({ ...state, singleStudentPrintID: '', printCards: false })
 	}
 
 	const pageTitle = `Students${forwardTo ? ' ' + toTitleCase(forwardTo) : ''}`
@@ -240,12 +277,32 @@ export const StudentList = ({
 									))}
 							</select>
 							{!forwardTo && (
-								<button
-									onClick={() => window.print()}
-									className="hidden lg:inline-flex items-center tw-btn-blue rounded-3xl shadow-md">
-									<span>Print</span>
-									<PrinterIcon className="h-6 w-6 ml-4" />
-								</button>
+								<>
+									<button
+										onClick={() => onPrint()}
+										className="hidden lg:inline-flex items-center tw-btn-blue rounded-3xl shadow-md">
+										<span>Print</span>
+										<PrinterIcon className="h-6 w-6 ml-4" />
+									</button>
+									<div className="flex flex-col w-96 space-y-1">
+										<div className="flex flex-row items-center">
+											<input
+												className="mr-2 tw-input outline-none"
+												type="checkbox"
+												checked={state.printCards}
+												value="DisplayCards"
+												name="gender"
+												onChange={() =>
+													setFilter({
+														...state,
+														printCards: !state.printCards
+													})
+												}
+											/>
+											Print Cards
+										</div>
+									</div>
+								</>
 							)}
 						</div>
 					</div>
@@ -257,59 +314,170 @@ export const StudentList = ({
 						renderComponent={listItem}
 					/>
 				</div>
-				<table
-					id="printTable"
-					cellSpacing={3}
-					className="hidden border p-2 text-sm print:flex-col print:flex">
-					<div className="text-center flex flex-1 text-2xl font-semibold items-center justify-center mb-4">
-						{schoolName}
-					</div>
-					<tbody>
-						<tr>
-							<th>SR#</th>
-							<th>Name</th>
-							<th>Father Name</th>
-							<th className="px-6">DOB</th>
-							<th>ADM Date</th>
-							<th>ADM#</th>
-							<th>Class</th>
-							<th>Roll#</th>
-							<th>Phone#</th>
-						</tr>
-						{filteredStudents.map((student, index) => {
+				{!state.printCards
+					? chunkify(filteredStudents, 27, false).map(
+							(students: MISStudent[], ChunkIndex: number) => {
+								return (
+									<table
+										style={{ pageBreakInside: 'auto', breakInside: 'auto' }}
+										id="printTable"
+										cellSpacing={3}
+										className=" my-10 mb-96 hidden border p-2 text-sm print:flex-col print:flex">
+										<div className="text-center flex flex-1 text-2xl font-semibold items-center justify-center mb-4">
+											{schoolName}
+										</div>
+										<tbody className="block">
+											<tr>
+												<th>SR#</th>
+												<th>Name</th>
+												<th>Father Name</th>
+												<th className="px-6">DOB</th>
+												<th>ADM Date</th>
+												<th>ADM#</th>
+												<th>Class</th>
+												<th>Roll#</th>
+												<th>Phone#</th>
+											</tr>
+											{students.map((student, index) => {
+												return (
+													<tr
+														style={{
+															pageBreakInside: 'avoid',
+															breakInside: 'avoid',
+															pageBreakAfter: 'auto',
+															breakAfter: 'auto'
+														}}>
+														<td className="text-center border-2">
+															{index + ChunkIndex * 27 + 1}
+														</td>
+														<td className="text-center border-2">
+															{student.Name}
+														</td>
+														<td className="text-center border-2">
+															{student.ManName || '-'}
+														</td>
+														<td className="text-center border-2">
+															{student.Birthdate
+																? moment(student.Birthdate).format(
+																		'DD-MM-YYYY'
+																  )
+																: '-'}
+														</td>
+														<td className="text-center border-2">
+															{student.StartDate
+																? moment(student.StartDate).format(
+																		'DD-MM-YYYY'
+																  )
+																: '-'}
+														</td>{' '}
+														<td className="text-center border-2">
+															{student.AdmissionNumber || '-'}
+														</td>
+														<td className="text-center border-2">
+															{sections.find(
+																s => s.id === student.section_id
+															).namespaced_name || '-'}
+														</td>
+														<td className="text-center border-2">
+															{student.RollNumber || '-'}
+														</td>
+														<td className="text-center border-2">
+															{student.Phone || '-'}
+														</td>
+													</tr>
+												)
+											})}{' '}
+										</tbody>
+									</table>
+								)
+							}
+					  )
+					: chunkify(
+							[
+								...(state.singleStudentPrintID === ''
+									? filteredStudents
+									: [
+											filteredStudents.find(
+												s => s.id === state.singleStudentPrintID
+											)
+									  ])
+							],
+							6,
+							false
+					  ).map((students: MISStudent[], index: number) => {
 							return (
-								<tr>
-									<td className="text-center border-2">{index + 1}</td>
-									<td className="text-center border-2">{student.Name}</td>
-									<td className="text-center border-2">
-										{student.ManName || '-'}
-									</td>
-									<td className="text-center border-2">
-										{student.Birthdate
-											? moment(student.Birthdate).format('DD-MM-YYYY')
-											: '-'}
-									</td>
-									<td className="text-center border-2">
-										{student.StartDate
-											? moment(student.StartDate).format('DD-MM-YYYY')
-											: '-'}
-									</td>{' '}
-									<td className="text-center border-2">
-										{student.AdmissionNumber || '-'}
-									</td>
-									<td className="text-center border-2">
-										{sections.find(s => s.id === student.section_id)
-											.namespaced_name || '-'}
-									</td>
-									<td className="text-center border-2">
-										{student.RollNumber || '-'}
-									</td>
-									<td className="text-center border-2">{student.Phone || '-'}</td>
-								</tr>
+								<div className="flex-row flex-wrap w-full items-center justify-evenly p-4 mb-96  hidden print:flex">
+									{students.map(student => {
+										return (
+											<div className="flex flex-col w-5/12 mb-12 rounded-md max-h-64 border-2 p-4">
+												<div className="flex flex-row text-center">
+													<img
+														className="max-w-6 max-h-6"
+														src="/favicon.ico"
+														alt="mischool"
+													/>
+													<div className="text-center font-bold ml-2 mt-2 flex flex-1 justify-center ">
+														{schoolName}
+													</div>
+												</div>
+												<div className="mt-2 flex flex-row">
+													<div className="h-20 w-20 border-2">
+														<img
+															className="h-20 w-20 "
+															src={
+																student.ProfilePicture?.url ??
+																student.ProfilePicture
+																	?.image_string ??
+																UserIconSvg
+															}
+														/>
+													</div>
+													<div className="flex flex-col ml-2 text-sm">
+														<div className="flex flex-row">
+															<h1 className="font-bold mr-1">
+																Name:{' '}
+															</h1>
+															<h1>{student.Name}</h1>
+														</div>
+														<div className="flex flex-row">
+															<h1 className="font-bold mr-1">
+																Class:{' '}
+															</h1>
+															{sections.find(
+																s => s.id === student.section_id
+															).namespaced_name || '-'}{' '}
+														</div>
+														<div className="flex flex-row">
+															<h1 className="font-bold mr-1">
+																Roll #:{' '}
+															</h1>
+															<h1> {student.RollNumber || '-'}</h1>
+														</div>
+														<div className="flex flex-row">
+															<h1 className="font-bold mr-1">
+																Valid For:{' '}
+															</h1>
+															<h1>
+																{schoolSession.startYear}-
+																{schoolSession.endYear}
+															</h1>
+														</div>
+													</div>
+												</div>
+												<div className="flex flex-wrap justify-between">
+													<div className="mt-6">
+														<h1>_________________</h1>
+														<h1>Issuing Authority</h1>
+													</div>
+													<QRCode value={student.id} size={68} />
+												</div>
+											</div>
+										)
+									})}
+								</div>
 							)
-						})}
-					</tbody>
-				</table>
+					  })}
+				)
 			</>
 		)
 	}
@@ -328,51 +496,124 @@ export const StudentList = ({
 type CardProps = {
 	student: MISStudent
 	sections: AugmentedSection[]
+	schoolName: string
+	schoolSession: MISSettings['schoolSession']
+	printSingleStudentCard: (id: string) => void
 }
 
-const Card = ({ student, sections }: CardProps) => {
+const Card = ({
+	student,
+	sections,
+	schoolName,
+	schoolSession,
+	printSingleStudentCard
+}: CardProps) => {
 	const studentSection = sections.find(s => s.id === student.section_id)
 
 	return (
-		<div className="relative">
-			<div className="px-3 py-4 text-center bg-white border shadow-md rounded-xl lg:h-48 border-gray-50 md:p-5">
-				<div className="w-4/5 pt-8 mx-auto font-bold truncate">
-					{toTitleCase(student.Name)}
+		<>
+			<div className="relative">
+				<div className="px-3 py-4 text-center bg-white border shadow-md rounded-xl lg:h-48 border-gray-50 md:p-5">
+					<div className="w-4/5 pt-8 mx-auto font-bold truncate">
+						{toTitleCase(student.Name)}
+					</div>
+					<div className="mt-2 space-y-0 text-sm text-gray-900">
+						<div className="flex flex-row items-center justify-between">
+							<div className="font-semibold">Father</div>
+							<div className="text-xs text-gray-500 truncate">
+								{toTitleCase(student.ManName)}
+							</div>
+						</div>
+						<div className="flex flex-row items-center justify-between">
+							<div className="font-semibold">Class</div>
+							<div className="text-gray-500 truncate">
+								{toTitleCase(studentSection?.namespaced_name)}
+							</div>
+						</div>
+						<div className="flex flex-row items-center justify-between">
+							<div className="font-semibold">Roll #</div>
+							<div className="text-gray-500">{student.RollNumber}</div>
+						</div>
+						<div className="flex flex-row items-center justify-between">
+							<div className="font-semibold">Phone</div>
+							<div className="text-gray-500">{student.Phone}</div>
+						</div>
+					</div>
 				</div>
-				<div className="mt-2 space-y-0 text-sm text-gray-900">
-					<div className="flex flex-row items-center justify-between">
-						<div className="font-semibold">Father</div>
-						<div className="text-xs text-gray-500 truncate">
-							{toTitleCase(student.ManName)}
+				<div className="absolute left-0 right-0 -top-10">
+					<img
+						src={
+							student.ProfilePicture?.url ??
+							student.ProfilePicture?.image_string ??
+							UserIconSvg
+						}
+						className="w-20 h-20 mx-auto bg-gray-500 rounded-full shadow-md hover:bg-gray-700"
+						alt={student.Name.split(' ')[0]}
+					/>
+				</div>
+				<div
+					onClick={e => {
+						e.preventDefault()
+						printSingleStudentCard(student.id)
+					}}
+					className=" z-50 absolute top-2 right-2 px-3 py-1 text-xs rounded-md hidden lg:block transition-all hover:bg-blue-brand bg-gray-700 text-white">
+					Print Student Card
+				</div>
+			</div>
+
+			<div className="hidden">
+				<div
+					id="studentCardPrint"
+					className="flex flex-col w-5/12 mb-12 rounded-md max-h-64 border-2 p-4">
+					<div className="flex flex-row text-center">
+						<img className="max-w-6 max-h-6" src="/favicon.ico" alt="mischool" />
+						<div className="text-center font-bold ml-2 mt-2 flex flex-1 justify-center ">
+							{schoolName}
 						</div>
 					</div>
-					<div className="flex flex-row items-center justify-between">
-						<div className="font-semibold">Class</div>
-						<div className="text-gray-500 truncate">
-							{toTitleCase(studentSection?.namespaced_name)}
+					<div className="mt-2 flex flex-row">
+						<div className="h-20 w-20 border-2">
+							<img
+								className="h-20 w-20 "
+								src={
+									student.ProfilePicture?.url ??
+									student.ProfilePicture?.image_string ??
+									UserIconSvg
+								}
+							/>
+						</div>
+						<div className="flex flex-col ml-2 text-sm">
+							<div className="flex flex-row">
+								<h1 className="font-bold mr-1">Name: </h1>
+								<h1>{student.Name}</h1>
+							</div>
+							<div className="flex flex-row">
+								<h1 className="font-bold mr-1">Class: </h1>
+								{sections.find(s => s.id === student.section_id).namespaced_name ||
+									'-'}
+							</div>
+							<div className="flex flex-row">
+								<h1 className="font-bold mr-1">Roll #: </h1>
+								<h1> {student.RollNumber || '-'}</h1>
+							</div>
+							<div className="flex flex-row">
+								<h1 className="font-bold mr-1">Valid For: </h1>
+								<h1>
+									{moment(schoolSession.start_date ?? 0).format('YYYY')}-
+									{moment(schoolSession.start_date ?? 0).format('YYYY')}
+								</h1>
+							</div>
 						</div>
 					</div>
-					<div className="flex flex-row items-center justify-between">
-						<div className="font-semibold">Roll #</div>
-						<div className="text-gray-500">{student.RollNumber}</div>
-					</div>
-					<div className="flex flex-row items-center justify-between">
-						<div className="font-semibold">Phone</div>
-						<div className="text-gray-500">{student.Phone}</div>
+					<div className="flex flex-wrap justify-between">
+						<div className="mt-6">
+							<h1>_________________</h1>
+							<h1>Issuing Authority</h1>
+						</div>
+						<QRCode value={student.id} size={68} />
 					</div>
 				</div>
 			</div>
-			<div className="absolute left-0 right-0 -top-10">
-				<img
-					src={
-						student.ProfilePicture?.url ??
-						student.ProfilePicture?.image_string ??
-						UserIconSvg
-					}
-					className="w-20 h-20 mx-auto bg-gray-500 rounded-full shadow-md hover:bg-gray-700"
-					alt={student.Name.split(' ')[0]}
-				/>
-			</div>
-		</div>
+		</>
 	)
 }
