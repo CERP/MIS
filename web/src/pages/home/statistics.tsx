@@ -13,7 +13,7 @@ import {
 	ExclamationIcon
 } from '@heroicons/react/outline'
 import { PieChart, Pie, Sector, ResponsiveContainer } from 'recharts'
-import { checkPermission } from 'utils'
+import { checkPermission, isValidStudent } from 'utils'
 
 enum Tab {
 	TEACHER,
@@ -98,7 +98,7 @@ export const StatsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 		let totalPayee = 0
 
 		for (const student of Object.values(students)) {
-			if (student && student.Name) {
+			if (isValidStudent(student) && student.Active) {
 				const additional_payment = Object.values(student.payments ?? {})
 					.filter(
 						x =>

@@ -42,6 +42,8 @@ import { Family } from 'pages/family/list'
 import { SingleFamily } from 'pages/family/single'
 import { SingleFamilyPayments } from 'pages/family/single/payments'
 import { SMS } from 'pages/sms'
+import { SMSTemplates } from 'pages/sms/templates'
+
 import { Settings } from 'pages/school/settings'
 import { ResetSchoolPassword } from 'pages/auth/reset-password/school'
 
@@ -125,6 +127,7 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<PrivateRoute path="/fees" exact component={SchoolFees} />
 						<PrivateRoute path="/fees/:page" exact component={SchoolFees} />
 
+						<PrivateRoute path="/sms/templates" component={SMSTemplates} />
 						<PrivateRoute path="/sms" component={SMS} />
 
 						<PrivateRoute exact path="/reports/bulk-exams" component={BulkExam} />

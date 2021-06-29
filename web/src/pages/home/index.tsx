@@ -47,7 +47,7 @@ export const Home = () => {
 	)
 	const biggerThan880 = useMediaPredicate('(min-width: 880px)')
 
-	const { permissions, Admin, SubAdmin } = faculty[faculty_id]
+	const { permissions = {} as MISTeacher['permissions'], Admin, SubAdmin } = faculty[faculty_id]
 
 	useEffect(() => {
 		if (tip_access) {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { v4 } from 'node-uuid'
 import { useDispatch, useSelector } from 'react-redux'
-import { Redirect, useLocation, useParams } from 'react-router-dom'
+import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom'
 import clsx from 'clsx'
 import moment from 'moment'
 import Dynamic from '@cerp/dynamic'
@@ -88,14 +88,15 @@ type StateProps = {
 export const CreateOrUpdateStaff = () => {
 	const { id } = useParams<RouteInfo>()
 	const location = useLocation()
+	const history = useHistory()
 	const isNewStaff = () => location.pathname.indexOf('new') >= 0
 
 	const dispatch = useDispatch()
 	const { faculty } = useSelector((state: RootReducerState) => state.db)
 	const { faculty_id } = useSelector((state: RootReducerState) => state.auth)
-	const { Admin } = faculty[faculty_id]
 
 	const existingStaff = faculty[id]
+	const currLoggedUser = faculty[faculty_id]
 
 	const [state, setState] = useState<StateProps>({
 		profile: {
@@ -121,7 +122,7 @@ export const CreateOrUpdateStaff = () => {
 		if (nextStaff) {
 			setState(prevState => ({ ...prevState, profile: nextStaff }))
 		}
-	}, [faculty])
+	}, [faculty, id])
 
 	const handleSubmit = (event: React.FormEvent) => {
 		event.preventDefault()
@@ -192,7 +193,7 @@ export const CreateOrUpdateStaff = () => {
 	const handleInputByPath = (path: string[], value: boolean) => {
 		//Checks if Current user is admin and then allows editing of permissions
 		if (['permissions', 'SubAdmin', 'Admin'].some(i => path.includes(i))) {
-			if (!Admin) {
+			if (!currLoggedUser.Admin) {
 				return toast.error('You are not allowed to set permissions')
 			}
 		}
@@ -238,7 +239,7 @@ export const CreateOrUpdateStaff = () => {
 
 	// this will only works when new users would be creating or delete action happen
 	if (redirect) {
-		return <Redirect to={redirect} />
+		history.goBack()
 	}
 
 	return (
@@ -368,40 +369,46 @@ export const CreateOrUpdateStaff = () => {
 							</div>
 							<PhoneCall phone={profile.Phone} />
 						</div>
-						<div>Password*</div>
-						<div className="w-full relative">
-							<input
-								name="Password"
-								required
-								value={profile.Password}
-								onChange={handleInput}
-								type={showPassword ? 'text' : 'password'}
-								autoCapitalize="off"
-								autoCorrect="off"
-								autoComplete="off"
-								placeholder="Enter password"
-								className="tw-input w-full tw-is-form-bg-black"
-							/>
-							<div
-								onClick={() => setState({ ...state, showPassword: !showPassword })}
-								className="absolute bg-gray-700 cursor-pointer flex inset-y-0 items-center m-2  px-3 py-2 right-0">
-								{<ShowHidePassword open={showPassword} />}
-							</div>
-						</div>
+						{(isNewStaff() || currLoggedUser.Admin) && (
+							<>
+								<div>Password*</div>
+								<div className="w-full relative">
+									<input
+										name="Password"
+										required
+										value={profile.Password}
+										onChange={handleInput}
+										type={showPassword ? 'text' : 'password'}
+										autoCapitalize="off"
+										autoCorrect="off"
+										autoComplete="off"
+										placeholder="Enter password"
+										className="tw-input w-full tw-is-form-bg-black"
+									/>
+									<div
+										onClick={() =>
+											setState({ ...state, showPassword: !showPassword })
+										}
+										className="absolute bg-gray-700 cursor-pointer flex inset-y-0 items-center m-2  px-3 py-2 right-0">
+										{<ShowHidePassword open={showPassword} />}
+									</div>
+								</div>
+							</>
+						)}
 
-						{/* 
-							TODO: Change salary from string to number in typings
-						*/}
-						<div>Salary</div>
-						<input
-							name="Salary"
-							type="number"
-							value={profile.Salary}
-							onChange={handleInput}
-							placeholder="e.g. 10,000 PKR"
-							className="tw-input w-full tw-is-form-bg-black"
-						/>
-
+						{(isNewStaff() || currLoggedUser.Admin || currLoggedUser.id === id) && (
+							<>
+								<div>Salary</div>
+								<input
+									name="Salary"
+									type="number"
+									value={profile.Salary}
+									onChange={handleInput}
+									placeholder="e.g. 10,000 PKR"
+									className="tw-input w-full tw-is-form-bg-black"
+								/>
+							</>
+						)}
 						<div className="text-lg font-semibold text-center">
 							Additional Information
 						</div>
@@ -613,24 +620,27 @@ export const CreateOrUpdateStaff = () => {
 							</>
 						)}
 
-						{Admin && (
-							<button
-								type="submit"
-								className={
-									'w-full items-center tw-btn-blue py-3 font-semibold my-4'
-								}>
-								{isNewStaff() ? 'Save' : 'Update'}
-							</button>
-						)}
-						{!isNewStaff() && id !== faculty_id && (
-							<button
-								type="button"
-								onClick={deleteStaff}
-								className={
-									'w-full items-center tw-btn-red py-3 font-semibold my-4'
-								}>
-								Delete
-							</button>
+						{currLoggedUser.Admin && (
+							<>
+								<button
+									type="submit"
+									className={
+										'w-full items-center tw-btn-blue py-3 font-semibold my-4'
+									}>
+									{isNewStaff() ? 'Save' : 'Update'}
+								</button>
+
+								{!isNewStaff() && id !== faculty_id && (
+									<button
+										type="button"
+										onClick={deleteStaff}
+										className={
+											'w-full items-center tw-btn-red py-3 font-semibold my-4'
+										}>
+										Delete
+									</button>
+								)}
+							</>
 						)}
 					</form>
 				</div>

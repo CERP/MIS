@@ -29,10 +29,13 @@ enum AttendanceStatus {
 export const StaffAttendance = () => {
 	const dispatch = useDispatch()
 
-	const {
-		auth: { faculty_id },
-		db: { faculty, sms_templates }
-	} = useSelector((state: RootReducerState) => state)
+	const faculty = useSelector((state: RootReducerState) => state.db.faculty)
+	const smsTemplate = useSelector(
+		(state: RootReducerState) =>
+			state.db.sms_templates.attendance_staff ?? '$NAME has been marked $STATUS today'
+	)
+	const facultyId = useSelector((state: RootReducerState) => state.auth.faculty_id)
+
 	const {
 		ref: sendSmsModalRef,
 		isComponentVisible: showSendSmsModal,
@@ -50,9 +53,9 @@ export const StaffAttendance = () => {
 
 		let activeStaffMembers = 0
 
-		for (const f of Object.values(faculty)) {
+		for (const f of Object.values(faculty ?? {})) {
 			if (f && f.Name && f.Active) {
-				const record = (f.attendance || {})[attendanceDate]
+				const record = (f.attendance ?? {})[attendanceDate]
 
 				activeStaffMembers++
 
@@ -83,10 +86,10 @@ export const StaffAttendance = () => {
 
 	const markAttendanceHandler = (member: MISTeacher, status: AttendanceStatus) => {
 		const record =
-			member.attendance?.[attendanceDate] ||
+			member.attendance?.[attendanceDate] ??
 			({} as { [id in MISTeacherAttendanceStatus]: number })
 
-		const prevStatus = new Set([...Object.keys(record || {})])
+		const prevStatus = new Set([...Object.keys(record ?? {})])
 
 		// this should remove any previous key-pair value
 		// to make sure, there should be single entry in the system for the staff for the given attendance date
@@ -109,7 +112,7 @@ export const StaffAttendance = () => {
 	}
 
 	const handleMarkAllPresent = () => {
-		const activeFaculty = Object.values(faculty).filter(f => isValidTeacher(f))
+		const activeFaculty = Object.values(faculty).filter(f => isValidTeacher(f) && f.Active)
 		dispatch(markAllFacultyAttendance(activeFaculty, attendanceDate, AttendanceStatus.CHECK_IN))
 	}
 
@@ -117,15 +120,15 @@ export const StaffAttendance = () => {
 	// TODO: add logic to handle log sms history
 
 	return (
-		<div className="p-5 md:p-10 md:pt-5 print:hidden">
+		<div className="p-5 md:p-10 md:pt-0 print:hidden">
 			<div className="space-y-6">
-				<div className="flex flex-row items-center space-x-2">
+				<div className="flex flex-row items-center justify-center">
 					<input
 						name="attendance-date"
 						type="date"
 						onChange={e => setState({ ...state, date: e.target.valueAsNumber })}
 						value={attendanceDate}
-						className="w-full text-sm bg-transparent tw-input border-blue-brand ring-1"
+						className="w-full md:w-72 text-sm bg-transparent tw-input border-blue-brand ring-1"
 					/>
 				</div>
 				{showSendSmsModal && (
@@ -134,9 +137,8 @@ export const StaffAttendance = () => {
 							<SmsModalContentWrapper
 								date={attendanceDate}
 								faculty={faculty}
-								// TODO: create staff member separate attendance template
-								smsTemplate={sms_templates.attendance}
-								loggedUserId={faculty_id}
+								smsTemplate={smsTemplate}
+								loggedUserId={facultyId}
 							/>
 						</div>
 					</TModal>
@@ -157,7 +159,7 @@ export const StaffAttendance = () => {
 					</div>
 				</div>
 
-				<div className="space-y-2">
+				<div className="space-y-2 pt-4">
 					{Object.values(faculty)
 						.filter(f => f && f.Name && f.Active)
 						.sort((a, b) => a.Name.localeCompare(b.Name))
@@ -193,8 +195,10 @@ const Card: React.FC<CardProps> = ({ member, attendanceDate, markAttendance }) =
 	})
 
 	const attendance =
-		member.attendance?.[attendanceDate] ||
+		member.attendance?.[attendanceDate] ??
 		({} as { [id in MISTeacherAttendanceStatus]: number })
+
+	console.log('attendance', attendance)
 
 	return (
 		<div className="p-2 space-y-1 text-sm border rounded-md shadow-md md:p-3 md:text-base border-gray-50">
@@ -210,7 +214,8 @@ const Card: React.FC<CardProps> = ({ member, attendanceDate, markAttendance }) =
 					<button
 						onClick={() => {
 							setState({ togglePresent: !state.togglePresent, toggleLeave: false })
-							markAttendance(member, AttendanceStatus.CHECK_IN)
+							if (!attendance.check_in)
+								markAttendance(member, AttendanceStatus.CHECK_IN)
 						}}
 						name="present"
 						className={clsx(
@@ -245,11 +250,9 @@ const Card: React.FC<CardProps> = ({ member, attendanceDate, markAttendance }) =
 						// check if the status of the attendance isn't in check_in, checkout or absent
 						// set bg color to orange
 						className={clsx('rounded-lg shadow-md px-2 py-1', {
-							'bg-orange-brand text-white': !(
-								attendance.absent ||
-								attendance.check_in ||
-								attendance.check_out
-							)
+							'bg-orange-brand text-white':
+								Object.keys(attendance ?? {}).length > 0 &&
+								!(attendance.absent || attendance.check_in || attendance.check_out)
 						})}>
 						<span>Leave</span>
 					</button>
