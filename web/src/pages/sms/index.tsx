@@ -487,7 +487,7 @@ export const SMS = () => {
 								? 'Type your message here with $NAME, $FNAME and $BALANCE'
 								: 'Type your message here...'
 						}
-						className="tw-input text-white bg-transparent ring-1 ring-blue-brand h-32"
+						className="tw-input text-white bg-transparent focus-within:bg-transparent ring-1 ring-blue-brand h-32"
 						rows={6}
 					/>
 

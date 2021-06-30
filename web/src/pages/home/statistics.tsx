@@ -26,6 +26,12 @@ type PropTypes = {
 	subAdmin: boolean
 }
 
+export const getDailyStatsRoute = (stats_type: string) => {
+	return `/analytics/${stats_type}?start_date=${moment().format(
+		'MM-DD-YYYY'
+	)}&end_date=${moment().format('MM-DD-YYYY')}&period=Daily`
+}
+
 export const StatsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 	const todayDate = moment().format('YYYY-MM-DD')
 
@@ -173,15 +179,39 @@ export const StatsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 					<div className="flex flex-row justify-between">
 						<div className="flex flex-col items-center text-teal-brand">
 							<div className="font-semibold">{attendanceStats.PRESENT}</div>
-							<div className="">Present</div>
+							<Link
+								to={
+									activeTab === Tab.STUDENT
+										? getDailyStatsRoute('attendance')
+										: getDailyStatsRoute('teacher-attendance')
+								}
+								className="hover:underline hover:text-blue-brand">
+								Present
+							</Link>
 						</div>
 						<div className="flex flex-col items-center text-red-brand">
 							<div className="font-semibold">{attendanceStats.ABSENT}</div>
-							<div className="">Absent</div>
+							<Link
+								to={
+									activeTab === Tab.STUDENT
+										? getDailyStatsRoute('attendance')
+										: getDailyStatsRoute('teacher-attendance')
+								}
+								className="hover:underline hover:text-blue-brand">
+								Absent
+							</Link>
 						</div>
 						<div className="flex flex-col items-center text-orange-brand">
 							<div className="font-semibold">{attendanceStats.LEAVE}</div>
-							<div className="">Leave</div>
+							<Link
+								to={
+									activeTab === Tab.STUDENT
+										? getDailyStatsRoute('attendance')
+										: getDailyStatsRoute('teacher-attendance')
+								}
+								className="hover:underline hover:text-blue-brand">
+								Leave
+							</Link>
 						</div>
 					</div>
 					<div className="hidden lg:block">

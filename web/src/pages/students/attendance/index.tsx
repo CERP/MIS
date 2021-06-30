@@ -33,7 +33,7 @@ enum AttendanceStatus {
 }
 
 const getStudentsForSection = (sectionId: string, students: RootDBState['students']) =>
-	Object.values(students).filter(s => isValidStudent(s) && s.section_id === sectionId)
+	Object.values(students).filter(s => isValidStudent(s) && s.section_id === sectionId && s.Active)
 
 const deriveSelectedStudents = (sectionId: string, students: RootDBState['students']) =>
 	getStudentsForSection(sectionId, students).reduce(
@@ -130,22 +130,22 @@ export const StudentsAttendance = () => {
 	}
 
 	return (
-		<div className="p-5 md:p-10 md:pt-5 print:hidden">
+		<div className="p-5 md:p-10 md:pt-0 print:hidden">
 			<div className="space-y-6">
-				<div className="flex flex-row items-center space-x-2">
+				<div className="flex flex-row items-center justify-center space-x-4">
 					<input
 						name="attendance-date"
 						type="date"
 						onChange={e => setState({ ...state, date: e.target.valueAsNumber })}
 						value={attendanceDate}
-						className="w-full text-sm bg-transparent tw-input border-blue-brand ring-1"
+						className="w-full md:w-72 text-sm bg-transparent tw-input border-blue-brand ring-1"
 					/>
 
 					<select
 						name="section-id"
 						value={state.selectedSection}
 						onChange={e => setState({ ...state, selectedSection: e.target.value })}
-						className="w-full bg-transparent tw-input border-blue-brand ring-1">
+						className="w-full md:w-72 bg-transparent tw-input border-blue-brand ring-1">
 						{sections
 							.filter(s => s && s.id && s.namespaced_name)
 							.map(s => (
@@ -185,8 +185,7 @@ export const StudentsAttendance = () => {
 						</button>
 					</div>
 				</div>
-
-				<div className="space-y-2">
+				<div className="space-y-2 pt-4">
 					{Object.keys(selectedStudents).map(studentId => (
 						<Card
 							key={studentId}

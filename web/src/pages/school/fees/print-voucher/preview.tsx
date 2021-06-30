@@ -7,19 +7,24 @@ import chunkify from 'utils/chunkify'
 import getFilteredPayments from 'utils/getFilteredPayments'
 import getSectionFromId from 'utils/getSectionFromId'
 import { StudentLedgerPage } from 'modules/Student/Single/Fees/StudentLedgerPage'
+import { isValidStudent } from 'utils'
 
 import './style.css'
 
 const PrintPreview = () => {
+	// TODO: remove logic arround class fee vouchers from this component
+	// TODO: make understanding of printing class-vise fee vouchers
+
 	const params = new URLSearchParams(useLocation().search)
 	const type = params.get('type')
 	const id = params.get('id')
 	const month = params.get('month')
 	const year = params.get('year')
 
-	const { settings, classes, students, assets } = useSelector(
-		(state: RootReducerState) => state.db
-	)
+	const settings = useSelector((state: RootReducerState) => state.db.settings)
+	const classes = useSelector((state: RootReducerState) => state.db.classes)
+	const students = useSelector((state: RootReducerState) => state.db.students)
+	const assets = useSelector((state: RootReducerState) => state.db.assets)
 
 	const currClass = type === 'CLASS' ? classes[id] : undefined
 	const vouchersPerPage = parseInt(settings.vouchersPerPage || '3')
@@ -48,9 +53,12 @@ const PrintPreview = () => {
 	}
 
 	const getRelevantStudents = (): MISStudent[] => {
+		// don't include family students while
+		// printing classvise vouchers because we have
+		// separate logic to print
 		if (type === 'CLASS') {
 			return Object.values(students)
-				.filter(s => currClass.sections[s.section_id] !== undefined)
+				.filter(s => isValidStudent(s) && currClass.sections[s.section_id] !== undefined)
 				.sort((a, b) => parseInt(a.RollNumber || '0') - parseInt(b.RollNumber || '0'))
 		}
 
@@ -60,6 +68,27 @@ const PrintPreview = () => {
 	const relevantStudents = getRelevantStudents()
 
 	const getMergedPaymentsForStudents = (student: MISStudent) => {
+		if (id !== undefined && type === 'FAMILY') {
+			const familyStudents = siblings()
+			const merged_payments = familyStudents.reduce(
+				(agg, curr) => ({
+					...agg,
+					...Object.entries(curr.payments ?? {}).reduce((agg, [pid, p]) => {
+						return {
+							...agg,
+							[pid]: {
+								...p,
+								fee_name: p.fee_name && `${curr.Name}-${p.fee_name}`
+							}
+						}
+					}, {} as MISStudent['payments'])
+				}),
+				{} as { [id: string]: MISStudentPayment }
+			)
+
+			return merged_payments
+		}
+
 		return student.payments
 	}
 
@@ -189,9 +218,8 @@ const PrintPreview = () => {
 	const onPrint = () => window.print()
 
 	return (
-		<AppLayout title={'Print Preview'}>
-			<div className="text-2xl font-bold mt-4 mb-4 text-center print:hidden"> Preview </div>
-			<div className="student-fees-ledger">
+		<AppLayout title={'Print Preview'} showHeaderTitle>
+			<div className="student-fees-ledger p-5 pb-0 md:p-10 md:pt-5 md:pb-0">
 				<div
 					className="tw-btn-blue w-full font-semibold text-center mb-2 print:hidden"
 					onClick={onPrint}>

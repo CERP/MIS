@@ -182,7 +182,8 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<PrivateRoute path="/help" component={Help} />
 						<PrivateRoute path="/reset-password" component={ResetPassword} />
 						<PrivateRoute path="/expenses" exact component={Expense} />
-						<PrivateRoute path="/expenses/:id" exact component={ExpenseForm} />
+						<PrivateRoute path="/expenses/new" exact component={ExpenseForm} />
+						<PrivateRoute path="/expenses/:id/edit" exact component={ExpenseForm} />
 
 						<PublicRoute exact path="/signup" component={SchoolSignup} />
 						<PublicRoute path="/school-login" component={SchoolLogin} />

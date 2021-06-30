@@ -100,7 +100,7 @@ class ClassFeeMenu extends Component<propTypes, S> {
 		const { students, curr_class, settings, schoolLogo, classes } = this.props
 
 		const relevant_students = Object.values(students)
-			.filter(s => curr_class.sections[s.section_id] !== undefined)
+			.filter(s => curr_class.sections[s.section_id] !== undefined && !s.FamilyID)
 			.sort((a, b) => parseInt(a.RollNumber || '0') - parseInt(b.RollNumber || '0'))
 
 		let Years: Array<string> = []

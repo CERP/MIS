@@ -10,6 +10,7 @@ import { StatsTab } from './statistics'
 import { AppLayout } from 'components/Layout/appLayout'
 import { Tabbar } from 'components/tabs'
 import { fetchTargetedInstruction } from 'actions'
+import { useGeneratePayments } from 'hooks/useGeneratePayments'
 
 enum Tabs {
 	SETTINGS,
@@ -35,25 +36,28 @@ const TabbarContent = [
 export const Home = () => {
 	const urlParams = new URLSearchParams(location.search)
 	const history = useHistory()
+	const dispatch = useDispatch()
+
 	const faculty = useSelector((state: RootReducerState) => state.db.faculty)
 	const faculty_id = useSelector((state: RootReducerState) => state.auth.faculty_id)
 	const tip_access = useSelector(
 		(state: RootReducerState) => state.db.targeted_instruction_access
 	)
-	const dispatch = useDispatch()
 
 	const [activeTab, setActiveTab] = useState<number>(
 		parseInt(urlParams.get('active-tab') ?? '1') ?? Tabs.ACTIONS
 	)
 	const biggerThan880 = useMediaPredicate('(min-width: 880px)')
-
 	const { permissions = {} as MISTeacher['permissions'], Admin, SubAdmin } = faculty[faculty_id]
+
+	// generate payments if not generated
+	useGeneratePayments()
 
 	useEffect(() => {
 		if (tip_access) {
 			dispatch(fetchTargetedInstruction())
 		}
-	}, [])
+	}, [tip_access])
 
 	const renderComponent = () =>
 		cond([

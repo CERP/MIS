@@ -14,6 +14,7 @@ import { CustomSelect } from 'components/select'
 import { SearchInput } from 'components/input/search'
 import { AppLayout } from 'components/Layout/appLayout'
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
+import { useGeneratePayments } from 'hooks/useGeneratePayments'
 
 import UserIconSvg from 'assets/svgs/user.svg'
 
@@ -24,7 +25,11 @@ type State = {
 }
 
 export const PrintVoucher = () => {
-	const { classes, students } = useSelector((state: RootReducerState) => state.db)
+	const classes = useSelector((state: RootReducerState) => state.db.classes)
+	const students = useSelector((state: RootReducerState) => state.db.students)
+
+	// generate payments if not generated
+	useGeneratePayments()
 
 	const currentYear = moment().format('YYYY')
 	const currentMonth = moment().format('MMMM')
@@ -130,7 +135,7 @@ export const PrintVoucher = () => {
 						})}>
 						{state.id
 							? 'Print Preview'
-							: `Please ${toTitleCase(state.printFor)} to preview voucher.`}
+							: `Please select ${toTitleCase(state.printFor)} to preview voucher.`}
 					</Link>
 				</div>
 			</div>
@@ -154,9 +159,7 @@ export const FamilyDropdown: React.FC<FamilyDropdownProps> = ({ students, setFam
 	return (
 		<>
 			<div className="text-white font-semibold">Select Family</div>
-			<select
-				onChange={e => setFamilyId(e.target.value)}
-				className="tw-is-form-bg-black tw-select py-2 w-full">
+			<select onChange={e => setFamilyId(e.target.value)} className="tw-select py-2 w-full">
 				<option value={''}>Choose from here</option>
 				{[...family]
 					.filter(s => s)
@@ -182,7 +185,7 @@ export const PrintForClass = ({ classes, setClassId }: PrintForClassProps) => {
 			<select
 				onChange={e => setClassId(e.target.value)}
 				name="classId"
-				className="tw-is-form-bg-black tw-select py-2 w-full">
+				className="tw-select py-2 w-full">
 				<option value={''}>Choose from here</option>
 				{Object.values(classes)
 					.filter(c => c)
@@ -256,6 +259,7 @@ export const StudentListSearch = ({ students, setStudentId, classes }: StudentLi
 								s =>
 									isValidStudent(s) &&
 									s.Active &&
+									!s.FamilyID && // don't show family students in list to print voucher
 									(searchText
 										? s.Name.toLowerCase().includes(searchText.toLowerCase())
 										: true)

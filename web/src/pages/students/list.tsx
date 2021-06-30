@@ -1,26 +1,26 @@
-import React, { Fragment, MouseEvent, useMemo, useRef, useState } from 'react'
-import { shallowEqual, useSelector } from 'react-redux'
+import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react'
+import { shallowEqual, useDispatch, useSelector } from 'react-redux'
+import moment from 'moment'
 import { Link } from 'react-router-dom'
-import { DotsVerticalIcon, PrinterIcon, UsersIcon } from '@heroicons/react/outline'
+import { PrinterIcon } from '@heroicons/react/outline'
+import { Popover, Transition } from '@headlessui/react'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { toTitleCase } from 'utils/toTitleCase'
 import { isValidStudent } from 'utils'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
-
-import UserIconSvg from 'assets/svgs/user.svg'
 import { SearchInput } from 'components/input/search'
 import { AddStickyButton } from 'components/Button/add-sticky'
 import Paginate from 'components/Paginate'
 import { SwitchButton } from 'components/input/switch'
 import { useComponentVisible } from 'hooks/useComponentVisible'
-import moment from 'moment'
-import QRCode from 'qrcode.react'
 import chunkify from 'utils/chunkify'
 import { StudentPrintableList } from 'components/Printable/Student/list'
 import { StudenPrintableIDCardList } from 'components/Printable/Student/cardlist'
-import { Popover, Transition } from '@headlessui/react'
-import clsx from 'clsx'
+import { checkStudentDuesReturning } from 'utils/checkStudentDues'
+import { addMultiplePayments } from 'actions'
+
+import UserIconSvg from 'assets/svgs/user.svg'
 
 type State = {
 	searchText: string
@@ -45,11 +45,12 @@ export const StudentList = ({
 	excludeFamilyStudents,
 	excludeNavHeader
 }: StudentListProps) => {
+	const dispatch = useDispatch()
 	const students = useSelector((state: RootReducerState) => state.db.students, shallowEqual)
 	const classes = useSelector((state: RootReducerState) => state.db.classes, shallowEqual)
+	const settings = useSelector((state: RootReducerState) => state.db.settings, shallowEqual)
+
 	const searchInputRef = useRef(null)
-	const settings = useSelector((state: RootReducerState) => state.db.settings)
-	const { schoolLogo } = useSelector((state: RootReducerState) => state.db.assets)
 
 	const schoolName = settings.schoolName
 
@@ -104,6 +105,42 @@ export const StudentList = ({
 		return getSectionsFromClasses(classes)
 	}, [classes])
 
+	useEffect(() => {
+		const sectionStudents = Object.values(students).reduce<AugmentedStudent[]>(
+			(agg, student) => {
+				if (isValidStudent(student) && student.Active) {
+					return [
+						...agg,
+						{
+							...student,
+							section: sections?.find(section => section.id === student.section_id)
+						}
+					]
+				}
+				return agg
+			},
+			[]
+		)
+
+		const generatePayments = (students: AugmentedStudent[]) => {
+			if (students.length > 0) {
+				const payments = students.reduce((agg, curr) => {
+					const curr_student_payments = checkStudentDuesReturning(curr, settings)
+					if (curr_student_payments.length > 0) {
+						return [...agg, ...curr_student_payments]
+					}
+					return agg
+				}, [])
+
+				if (payments.length > 0) {
+					dispatch(addMultiplePayments(payments))
+				}
+			}
+		}
+
+		generatePayments(sectionStudents)
+	}, [students, settings])
+
 	// TODO: add options to cards
 	// TODO: add a check here for max_limit: state.db.max_limit
 	// to restrict adding students
@@ -122,8 +159,8 @@ export const StudentList = ({
 				(state.searchByAdmissionNo || state.searchByRollNo
 					? true
 					: state.searchText
-					? searchString.includes(state.searchText.toLowerCase())
-					: true) &&
+						? searchString.includes(state.searchText.toLowerCase())
+						: true) &&
 				(state.class ? s.section_id === state.class : true) &&
 				(state.tag ? Object.keys(s.tags ?? []).includes(state.tag) : true) &&
 				(state.gender ? state.gender.toLowerCase() === s.Gender.toLowerCase() : true) &&
@@ -193,8 +230,8 @@ export const StudentList = ({
 									(state.searchByAdmissionNo
 										? 'admission no'
 										: state.searchByRollNo
-										? 'roll number'
-										: 'name, fname or phone')
+											? 'roll number'
+											: 'name, fname or phone')
 								}
 								className="md:w-full"
 								type="text"
@@ -209,8 +246,8 @@ export const StudentList = ({
 									style={{
 										top: searchInputRef.current
 											? searchInputRef.current.offsetTop +
-											  searchInputRef.current.offsetHeight +
-											  2
+											searchInputRef.current.offsetHeight +
+											2
 											: 0,
 										left: searchInputRef.current
 											? searchInputRef.current.offsetLeft
@@ -312,7 +349,7 @@ export const StudentList = ({
 													static
 													className="absolute z-10 max-w-sm px-4 mt-2 right-4 sm:px-0 w-60">
 													<div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
-														<div className="relative bg-white p-4 w-full">
+														<div className="relative bg-white w-full">
 															<button
 																className="inline-flex items-center p-2 hover:bg-blue-brand group w-full rounded-md"
 																onClick={e => {
@@ -323,7 +360,7 @@ export const StudentList = ({
 																</span>
 															</button>
 														</div>
-														<div className="relative bg-white p-4 w-full">
+														<div className="relative bg-white w-full">
 															<button
 																className="inline-flex items-center p-2 hover:bg-blue-brand group w-full rounded-md"
 																onClick={e => {
@@ -361,44 +398,44 @@ export const StudentList = ({
 				</div>
 				{!state.printCards
 					? chunkify(filteredStudents, 29, false).map(
-							(students: AugmentedStudent[], ChunkIndex: number) => {
-								return (
-									<StudentPrintableList
-										schoolName={schoolName}
-										chunkSize={ChunkIndex === 0 ? 0 : 29 * ChunkIndex}
-										students={students}
-										studentClass=""
-										key={ChunkIndex + 1 * 32}
-									/>
-								)
-							}
-					  )
-					: chunkify(
-							[
-								...(state.singleStudentPrintID === ''
-									? filteredStudents
-									: [
-											filteredStudents.find(
-												s => s.id === state.singleStudentPrintID
-											)
-									  ])
-							],
-							8,
-							false
-					  ).map((students: AugmentedStudent[], index: number) => {
+						(students: AugmentedStudent[], ChunkIndex: number) => {
 							return (
-								<div className="flex flex-1 h-screen font-serif  leading-tight">
-									<StudenPrintableIDCardList
-										students={students}
-										key={index}
-										schoolName={settings.schoolName}
-										schoolLogo={'/favicon.ico'}
-										studentClass={''}
-										schoolSession={schoolSession}
-									/>
-								</div>
+								<StudentPrintableList
+									schoolName={schoolName}
+									chunkSize={ChunkIndex === 0 ? 0 : 29 * ChunkIndex}
+									students={students}
+									studentClass=""
+									key={ChunkIndex + 1 * 32}
+								/>
 							)
-					  })}
+						}
+					)
+					: chunkify(
+						[
+							...(state.singleStudentPrintID === ''
+								? filteredStudents
+								: [
+									filteredStudents.find(
+										s => s.id === state.singleStudentPrintID
+									)
+								])
+						],
+						8,
+						false
+					).map((students: AugmentedStudent[], index: number) => {
+						return (
+							<div className="flex flex-1 h-screen font-serif  leading-tight">
+								<StudenPrintableIDCardList
+									students={students}
+									key={index}
+									schoolName={settings.schoolName}
+									schoolLogo={'/favicon.ico'}
+									studentClass={''}
+									schoolSession={schoolSession}
+								/>
+							</div>
+						)
+					})}
 				)
 			</>
 		)

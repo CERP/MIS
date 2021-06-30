@@ -21,7 +21,7 @@ const TabbarContent = [
 	},
 	{
 		tab: Tabs.ADDITIONAL,
-		title: 'Additional'
+		title: 'Additionals'
 	},
 	{
 		tab: Tabs.SCHOLARSHIP,
