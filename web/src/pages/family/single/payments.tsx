@@ -461,24 +461,31 @@ const PreviousPayments = ({ years, close, payments, pendingAmount }: PreviousPay
 							<div className="w-1/4">{moment(payment.date).format('DD-MM')}</div>
 							<div className="w-2/5 md:w-1/3 mx-auto text-xs md:text-sm flex flex-row justify-center">
 								{payment.fee_name}
-								{checkPermissionToDelete(payment, Admin) && (
-									<TrashIcon
-										onClick={() => {
-											setState({
-												...state,
-												paymentId: id,
-												studentId: payment.student_id
-											})
-											setIsComponentVisible(true)
-										}}
-										className="text-danger-tip-brand cursor-pointer h-4 md:h-5 ml-1"
-									/>
-								)}
 							</div>
-							<div className="w-1/4 flex flex-row justify-end">
+							<div className="w-1/4 flex flex-row justify-end items-center">
 								{payment.type === 'FORGIVEN'
 									? `-${payment.amount}`
 									: `${payment.amount}`}
+								<div>
+									<TrashIcon
+										onClick={() => {
+											if (checkPermissionToDelete(payment, Admin)) {
+												setState({
+													...state,
+													paymentId: id,
+													studentId: payment.student_id
+												})
+												setIsComponentVisible(true)
+											}
+										}}
+										className={clsx(
+											'cursor-pointer h-5 md:h-6 ml-1',
+											checkPermissionToDelete(payment, Admin)
+												? 'text-danger-tip-brand'
+												: 'text-gray-tip-brand'
+										)}
+									/>
+								</div>
 							</div>
 						</div>
 					)
