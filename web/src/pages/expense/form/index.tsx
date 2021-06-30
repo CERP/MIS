@@ -196,29 +196,30 @@ export const ExpenseForm = ({ match, history }: RouteComponentProps<{ id: string
 								<CameraIcon className="text-teal-brand"></CameraIcon>
 							</div>
 						</div> */}
-								<div
-									onClick={() => handleAddOrUpdateExpense()}
-									className="flex flex-1 flex-row justify-between mt-6 pl-4 pr-4 pt-2 pb-2 rounded-md bg-teal-brand">
-									<p className="font-semibold">
-										{isNewExpenseItem() ? 'Add Expense' : 'Edit Expense'}
-									</p>
-									<p className="font-semibold">
-										Rs{' '}
-										{state.quantity && state.amount
-											? state.quantity * state.amount
-											: 0}
-									</p>
+								<div className="space-y-4 mt-4">
+									<button
+										onClick={() => handleAddOrUpdateExpense()}
+										className="flex flex-1 flex-row justify-between w-full pl-4 pr-4 pt-2 pb-2 rounded-md bg-teal-brand cursor-pointer">
+										<p className="font-semibold">
+											{isNewExpenseItem() ? 'Add Expense' : 'Edit Expense'}
+										</p>
+										<p className="font-semibold">
+											Rs{' '}
+											{state.quantity && state.amount
+												? state.quantity * state.amount
+												: 0}
+										</p>
+									</button>
+									{!isNewExpenseItem() && Admin && (
+										<button
+											onClick={() => setIsComponentVisible(true)}
+											className="w-full flex flex-1 flex-row justify-center pl-4 pr-4 pt-2 pb-2 rounded-md bg-red-brand font-semibold cursor-pointer">
+											Delete Expense
+										</button>
+									)}
 								</div>
 							</div>
-							{!isNewExpenseItem() && Admin && (
-								<div
-									onClick={() => setIsComponentVisible(true)}
-									className="flex flex-1 flex-row justify-center mt-6 pl-4 pr-4 pt-2 pb-2 rounded-md bg-red-brand">
-									<h1 className="text-xl text-gray-100 font-semibold">
-										Delete Expense
-									</h1>
-								</div>
-							)}
+
 							{isComponentVisible && (
 								<TModal>
 									<div
