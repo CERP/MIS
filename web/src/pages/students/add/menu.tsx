@@ -10,9 +10,8 @@ import iconExcelSheet from '../assets/excelsheet.svg'
 // TODO: Think about better solution
 
 export const AddStudentMenu = () => (
-	<AppLayout title={'Add Students'}>
-		<div className="relative p-5 space-y-8 text-gray-700 md:p-10 md:pb-0 print:hidden">
-			<div className="text-2xl font-bold text-center">Add Students</div>
+	<AppLayout title={'Add Students'} showHeaderTitle>
+		<div className="relative p-5 space-y-8 text-gray-700 md:p-10 md:pt-5 md:pb-0 print:hidden">
 			<div className="w-full mx-auto md:w-3/5">
 				<Link to="/students/excel-import">
 					<div className="inline-block w-full mx-auto rounded-lg cursor-pointer bg-blue-brand hover:shadow-md">
