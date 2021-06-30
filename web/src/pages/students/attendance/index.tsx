@@ -33,7 +33,7 @@ enum AttendanceStatus {
 }
 
 const getStudentsForSection = (sectionId: string, students: RootDBState['students']) =>
-	Object.values(students).filter(s => isValidStudent(s) && s.section_id === sectionId)
+	Object.values(students).filter(s => isValidStudent(s) && s.section_id === sectionId && s.Active)
 
 const deriveSelectedStudents = (sectionId: string, students: RootDBState['students']) =>
 	getStudentsForSection(sectionId, students).reduce(
@@ -185,7 +185,6 @@ export const StudentsAttendance = () => {
 						</button>
 					</div>
 				</div>
-
 				<div className="space-y-2 pt-4">
 					{Object.keys(selectedStudents).map(studentId => (
 						<Card

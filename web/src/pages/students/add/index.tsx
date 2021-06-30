@@ -458,6 +458,16 @@ export const CreateOrUpdateStudent = () => {
 							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
+						<div>Notes</div>
+						<textarea
+							name="Notes"
+							value={state.profile.Notes}
+							onChange={handleInput}
+							rows={2}
+							placeholder="Type notes"
+							className="tw-input w-full tw-is-form-bg-black"
+						/>
+
 						<div className="flex flex-row items-center justify-between space-x-4">
 							<div className="flex flex-col space-y-4">
 								<div>Admission Date</div>

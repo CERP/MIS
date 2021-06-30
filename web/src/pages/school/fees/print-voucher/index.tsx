@@ -130,7 +130,7 @@ export const PrintVoucher = () => {
 						})}>
 						{state.id
 							? 'Print Preview'
-							: `Please ${toTitleCase(state.printFor)} to preview voucher.`}
+							: `Please select ${toTitleCase(state.printFor)} to preview voucher.`}
 					</Link>
 				</div>
 			</div>
