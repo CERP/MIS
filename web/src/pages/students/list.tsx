@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
 import { Link } from 'react-router-dom'
-import { PrinterIcon } from '@heroicons/react/outline'
+import { CreditCardIcon, PrinterIcon, ViewListIcon } from '@heroicons/react/outline'
 import { Popover, Transition } from '@headlessui/react'
 
 import { AppLayout } from 'components/Layout/appLayout'
@@ -348,37 +348,31 @@ export const StudentList = ({
 												<Popover.Panel
 													static
 													className="absolute z-10 max-w-sm px-4 mt-2 right-4 sm:px-0 w-60">
-													<div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
-														<div className="relative bg-white w-full">
-															<button
-																className="inline-flex items-center p-2 hover:bg-blue-brand group w-full rounded-md"
-																onClick={e => {
-																	onPrint()
-																}}>
-																<span className="group-hover:text-white text-sm md:text-base">
-																	Print Student List
-																</span>
-															</button>
-														</div>
-														<div className="relative bg-white w-full">
-															<button
-																className="inline-flex items-center p-2 hover:bg-blue-brand group w-full rounded-md"
-																onClick={e => {
-																	setFilter({
-																		...state,
-																		singleStudentPrintID: '',
-																		printCards: true
-																	})
+													<div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 divide-y-2">
+														<button
+															className="bg-white inline-flex items-center p-4 hover:bg-blue-brand w-full rounded-md hover:text-white"
+															onClick={e => {
+																onPrint()
+															}}>
+															<ViewListIcon className="w-6 mr-2" />
+															<span>Students List</span>
+														</button>
+														<button
+															className="bg-white inline-flex items-center p-4 hover:bg-blue-brand w-full hover:text-white rounded-md"
+															onClick={e => {
+																setFilter({
+																	...state,
+																	singleStudentPrintID: '',
+																	printCards: true
+																})
 
-																	setTimeout(() => {
-																		onPrint()
-																	}, 2500)
-																}}>
-																<span className="group-hover:text-white text-sm md:text-base">
-																	Print Student Card
-																</span>
-															</button>
-														</div>
+																setTimeout(() => {
+																	onPrint()
+																}, 2500)
+															}}>
+															<CreditCardIcon className="w-6 mr-2" />
+															<span>Students Card</span>
+														</button>
 													</div>
 												</Popover.Panel>
 											</Transition>
