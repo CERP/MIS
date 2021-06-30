@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import clsx from 'clsx'
+import toast from 'react-hot-toast'
 import Dynamic from '@cerp/dynamic'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -68,6 +69,10 @@ export const CreateClass = ({ skipStage }: CreateClassProps) => {
 	}
 
 	const addNewSubject = () => {
+		if (!newSubject) {
+			toast.error('Please enter subject name')
+		}
+
 		const updatedState = Dynamic.put(state, ['subjects', newSubject], true) as MISClass
 		setState(updatedState)
 		setNewSubject('')
