@@ -58,7 +58,24 @@ export const StudentLedgerPage: React.FC<StudentLedgerPageProp> = ({
 		totalFeeFine = fee_late_days * fee_fine * siblingsCount
 	}
 
-	const fees = getMergedFees(family, student)
+	let fees = getMergedFees(family, student, settings) as {
+		[id: string]: MISStudentFee | MISClassFee
+	}
+
+	// merge class and student fees
+	if (voucherFor === 'Student') {
+		// get default class fee
+		const classFee = settings?.classes?.defaultFee?.[section.class_id]
+
+		// get class additional fees
+		const classAdditionals = settings?.classes?.additionalFees?.[section.class_id]
+
+		fees = {
+			...fees,
+			[student.id]: classFee,
+			...classAdditionals
+		}
+	}
 
 	// agg + (amount < 0 ? Math.abs(amount) : 0) this scholarship amount which is entered negative but as OWED type
 	const scholarship = payments.reduce((agg, [, curr]) => {
@@ -275,27 +292,62 @@ export const StudentLedgerPage: React.FC<StudentLedgerPageProp> = ({
 	)
 }
 
-export const getMergedFees = (family: AugmentedMISFamily, single_student: MISStudent) => {
+export const getMergedFees = (
+	family: AugmentedMISFamily,
+	single_student: MISStudent,
+	settings?: RootDBState['settings']
+) => {
 	const siblings = family?.children
 
 	if (!siblings || siblings.length === 0) {
-		return single_student.fees
+		// Date: 30-06-2021
+		// make sure don't include fee of type FEE with period MONTHLY, because we're moving
+		// towards class fee as student monthly fee
+		return Object.entries(single_student.fees ?? {}).reduce((agg, [id, fee]) => {
+			if (fee.type === 'FEE' && fee.period === 'MONTHLY') {
+				return agg
+			}
+
+			return {
+				...agg,
+				[id]: fee
+			}
+		}, {} as { [id: string]: MISStudentFee })
 	}
 
-	return siblings.reduce(
-		(agg, curr) => ({
+	return siblings.reduce((agg, student) => {
+		// get default class fee
+		const classFee =
+			settings?.classes?.defaultFee?.[student.section?.class_id] ?? ({} as MISClassFee)
+
+		// get class additional fees
+		const classAdditionals =
+			settings?.classes?.additionalFees?.[student.section?.class_id] ?? {}
+
+		return {
 			...agg,
-			...Object.entries(curr.fees).reduce((agg, [fid, f]) => {
+			...Object.entries(student.fees ?? {}).reduce((agg, [id, fee]) => {
+				// Date: 30-06-2021
+				// make sure don't include fee of type FEE with period MONTHLY, because we're moving
+				// towards class fee as student monthly fee
+				if (fee.type === 'FEE' && fee.period === 'MONTHLY') {
+					return agg
+				}
+
 				return {
 					...agg,
-					[fid]: {
-						...f
+					[id]: {
+						...fee
 					}
 				}
-			}, {} as MISStudent['fees'])
-		}),
-		{} as { [id: string]: MISStudentFee }
-	)
+			}, {} as MISStudent['fees']),
+			// Date: 30-06-2021
+			// to make sure a distinct, temporary storing against student id
+			// merge class and student fees altogether
+			[student.id]: classFee,
+			...classAdditionals
+		}
+	}, {} as { [id: string]: MISStudentFee | MISClassFee })
 }
 
 const getParsedAmount = (amount: number | string) => {

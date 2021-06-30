@@ -11,6 +11,7 @@ import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
 import { ProgressBar } from 'components/ProgressBar'
 import { chunkify } from 'utils/chunkify'
 import { OutstandingFeePrintableList } from 'components/Printable/Fee/outstandingList'
+import { isValidStudent } from 'utils'
 
 import { ResponsiveContainer, XAxis, YAxis, Tooltip, LineChart, Line } from 'recharts'
 
@@ -272,14 +273,14 @@ class FeeAnalytics extends Component<propTypes, S> {
 
 	componentDidMount() {
 		// first update fees
-		const { addPayments } = this.props
+		const { addPayments, settings } = this.props
 
 		const s1 = new Date().getTime()
 		console.log('computing dues')
 
 		const filtered_students = this.filterPropsStudents()
 
-		checkDuesAsync(filtered_students).then(nextPayments => {
+		checkDuesAsync(filtered_students, settings).then(nextPayments => {
 			console.log('done computing dues', new Date().getTime() - s1)
 			if (nextPayments.length > 0) {
 				addPayments(nextPayments)
@@ -481,9 +482,20 @@ class FeeAnalytics extends Component<propTypes, S> {
 	}
 
 	filterPropsStudents = () => {
-		return Object.values(this.props.students).filter(
-			student => student && student.id && student.Name && student.Active && student.section_id
-		)
+		const sections = getSectionsFromClasses(this.props.classes)
+
+		return Object.values(this.props.students).reduce<AugmentedStudent[]>((agg, student) => {
+			if (isValidStudent(student) && student.Active) {
+				return [
+					...agg,
+					{
+						...student,
+						section: sections.find(section => section.id === student.id)
+					}
+				]
+			}
+			return agg
+		}, [])
 	}
 
 	render() {
