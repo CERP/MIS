@@ -1,7 +1,7 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { Fragment, MouseEvent, useMemo, useRef, useState } from 'react'
 import { shallowEqual, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { PrinterIcon, UsersIcon } from '@heroicons/react/outline'
+import { DotsVerticalIcon, PrinterIcon, UsersIcon } from '@heroicons/react/outline'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { toTitleCase } from 'utils/toTitleCase'
@@ -17,6 +17,10 @@ import { useComponentVisible } from 'hooks/useComponentVisible'
 import moment from 'moment'
 import QRCode from 'qrcode.react'
 import chunkify from 'utils/chunkify'
+import { StudentPrintableList } from 'components/Printable/Student/list'
+import { StudenPrintableIDCardList } from 'components/Printable/Student/cardlist'
+import { Popover, Transition } from '@headlessui/react'
+import clsx from 'clsx'
 
 type State = {
 	searchText: string
@@ -45,6 +49,7 @@ export const StudentList = ({
 	const classes = useSelector((state: RootReducerState) => state.db.classes, shallowEqual)
 	const searchInputRef = useRef(null)
 	const settings = useSelector((state: RootReducerState) => state.db.settings)
+	const { schoolLogo } = useSelector((state: RootReducerState) => state.db.assets)
 
 	const schoolName = settings.schoolName
 
@@ -103,7 +108,7 @@ export const StudentList = ({
 	// TODO: add a check here for max_limit: state.db.max_limit
 	// to restrict adding students
 
-	const filteredStudents = Object.values(students ?? {})
+	const filteredStudents: AugmentedStudent[] = Object.values(students ?? {})
 		.filter(s => {
 			const searchString = `${s.Name} ${s.ManName} ${s.FamilyID} ${s.Phone}`.toLowerCase()
 			const searchAdmission = (s.AdmissionNumber ?? '').toLowerCase()
@@ -130,6 +135,14 @@ export const StudentList = ({
 			)
 		})
 		.sort((a, b) => a.Name.localeCompare(b.Name))
+		.map(student => {
+			const relevant_section = sections.find(section => section.id === student.section_id)
+
+			return {
+				...student,
+				section: relevant_section
+			}
+		})
 
 	const listItem = (f: MISStudent) => {
 		const forwardToLink = forwardTo ?? 'profile'
@@ -277,32 +290,64 @@ export const StudentList = ({
 									))}
 							</select>
 							{!forwardTo && (
-								<>
-									<button
-										onClick={() => onPrint()}
-										className="hidden lg:inline-flex items-center tw-btn-blue rounded-3xl shadow-md">
-										<span>Print</span>
-										<PrinterIcon className="h-6 w-6 ml-4" />
-									</button>
-									<div className="flex flex-col w-96 space-y-1">
-										<div className="flex flex-row items-center">
-											<input
-												className="mr-2 tw-input outline-none"
-												type="checkbox"
-												checked={state.printCards}
-												value="DisplayCards"
-												name="gender"
-												onChange={() =>
-													setFilter({
-														...state,
-														printCards: !state.printCards
-													})
-												}
-											/>
-											Print Cards
-										</div>
-									</div>
-								</>
+								<Popover className="inline">
+									{({ open }) => (
+										<>
+											<Popover.Button
+												as={'div'}
+												className="hidden lg:inline-flex items-center tw-btn-blue rounded-3xl shadow-md">
+												<span>Print</span>
+												<PrinterIcon className="h-6 w-6 ml-4" />
+											</Popover.Button>
+											<Transition
+												show={open}
+												as={Fragment}
+												enter="transition ease-out duration-200"
+												enterFrom="opacity-0 translate-y-1"
+												enterTo="opacity-100 translate-y-0"
+												leave="transition ease-in duration-150"
+												leaveFrom="opacity-100 translate-y-0"
+												leaveTo="opacity-0 translate-y-1">
+												<Popover.Panel
+													static
+													className="absolute z-10 max-w-sm px-4 mt-2 right-4 sm:px-0 w-60">
+													<div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
+														<div className="relative bg-white p-4 w-full">
+															<button
+																className="inline-flex items-center p-2 hover:bg-blue-brand group w-full rounded-md"
+																onClick={e => {
+																	onPrint()
+																}}>
+																<span className="group-hover:text-white text-sm md:text-base">
+																	Print Student List
+																</span>
+															</button>
+														</div>
+														<div className="relative bg-white p-4 w-full">
+															<button
+																className="inline-flex items-center p-2 hover:bg-blue-brand group w-full rounded-md"
+																onClick={e => {
+																	setFilter({
+																		...state,
+																		singleStudentPrintID: '',
+																		printCards: true
+																	})
+
+																	setTimeout(() => {
+																		onPrint()
+																	}, 2500)
+																}}>
+																<span className="group-hover:text-white text-sm md:text-base">
+																	Print Student Card
+																</span>
+															</button>
+														</div>
+													</div>
+												</Popover.Panel>
+											</Transition>
+										</>
+									)}
+								</Popover>
 							)}
 						</div>
 					</div>
@@ -315,80 +360,16 @@ export const StudentList = ({
 					/>
 				</div>
 				{!state.printCards
-					? chunkify(filteredStudents, 27, false).map(
-							(students: MISStudent[], ChunkIndex: number) => {
+					? chunkify(filteredStudents, 29, false).map(
+							(students: AugmentedStudent[], ChunkIndex: number) => {
 								return (
-									<table
-										style={{ pageBreakInside: 'auto', breakInside: 'auto' }}
-										id="printTable"
-										cellSpacing={3}
-										className=" my-10 mb-96 hidden border p-2 text-sm print:flex-col print:flex">
-										<div className="text-center flex flex-1 text-2xl font-semibold items-center justify-center mb-4">
-											{schoolName}
-										</div>
-										<tbody className="block">
-											<tr>
-												<th>SR#</th>
-												<th>Name</th>
-												<th>Father Name</th>
-												<th className="px-6">DOB</th>
-												<th>ADM Date</th>
-												<th>ADM#</th>
-												<th>Class</th>
-												<th>Roll#</th>
-												<th>Phone#</th>
-											</tr>
-											{students.map((student, index) => {
-												return (
-													<tr
-														style={{
-															pageBreakInside: 'avoid',
-															breakInside: 'avoid',
-															pageBreakAfter: 'auto',
-															breakAfter: 'auto'
-														}}>
-														<td className="text-center border-2">
-															{index + ChunkIndex * 27 + 1}
-														</td>
-														<td className="text-center border-2">
-															{student.Name}
-														</td>
-														<td className="text-center border-2">
-															{student.ManName || '-'}
-														</td>
-														<td className="text-center border-2">
-															{student.Birthdate
-																? moment(student.Birthdate).format(
-																		'DD-MM-YYYY'
-																  )
-																: '-'}
-														</td>
-														<td className="text-center border-2">
-															{student.StartDate
-																? moment(student.StartDate).format(
-																		'DD-MM-YYYY'
-																  )
-																: '-'}
-														</td>{' '}
-														<td className="text-center border-2">
-															{student.AdmissionNumber || '-'}
-														</td>
-														<td className="text-center border-2">
-															{sections.find(
-																s => s.id === student.section_id
-															).namespaced_name || '-'}
-														</td>
-														<td className="text-center border-2">
-															{student.RollNumber || '-'}
-														</td>
-														<td className="text-center border-2">
-															{student.Phone || '-'}
-														</td>
-													</tr>
-												)
-											})}{' '}
-										</tbody>
-									</table>
+									<StudentPrintableList
+										schoolName={schoolName}
+										chunkSize={ChunkIndex === 0 ? 0 : 29 * ChunkIndex}
+										students={students}
+										studentClass=""
+										key={ChunkIndex + 1 * 32}
+									/>
 								)
 							}
 					  )
@@ -402,78 +383,19 @@ export const StudentList = ({
 											)
 									  ])
 							],
-							6,
+							8,
 							false
-					  ).map((students: MISStudent[], index: number) => {
+					  ).map((students: AugmentedStudent[], index: number) => {
 							return (
-								<div className="flex-row flex-wrap w-full items-center justify-evenly p-4 mb-96  hidden print:flex">
-									{students.map(student => {
-										return (
-											<div className="flex flex-col w-5/12 mb-12 rounded-md max-h-64 border-2 p-4">
-												<div className="flex flex-row text-center">
-													<img
-														className="max-w-6 max-h-6"
-														src="/favicon.ico"
-														alt="mischool"
-													/>
-													<div className="text-center font-bold ml-2 mt-2 flex flex-1 justify-center ">
-														{schoolName}
-													</div>
-												</div>
-												<div className="mt-2 flex flex-row">
-													<div className="h-20 w-20 border-2">
-														<img
-															className="h-20 w-20 "
-															src={
-																student.ProfilePicture?.url ??
-																student.ProfilePicture
-																	?.image_string ??
-																UserIconSvg
-															}
-														/>
-													</div>
-													<div className="flex flex-col ml-2 text-sm">
-														<div className="flex flex-row">
-															<h1 className="font-bold mr-1">
-																Name:{' '}
-															</h1>
-															<h1>{student.Name}</h1>
-														</div>
-														<div className="flex flex-row">
-															<h1 className="font-bold mr-1">
-																Class:{' '}
-															</h1>
-															{sections.find(
-																s => s.id === student.section_id
-															).namespaced_name || '-'}{' '}
-														</div>
-														<div className="flex flex-row">
-															<h1 className="font-bold mr-1">
-																Roll #:{' '}
-															</h1>
-															<h1> {student.RollNumber || '-'}</h1>
-														</div>
-														<div className="flex flex-row">
-															<h1 className="font-bold mr-1">
-																Valid For:{' '}
-															</h1>
-															<h1>
-																{schoolSession.startYear}-
-																{schoolSession.endYear}
-															</h1>
-														</div>
-													</div>
-												</div>
-												<div className="flex flex-wrap justify-between">
-													<div className="mt-6">
-														<h1>_________________</h1>
-														<h1>Issuing Authority</h1>
-													</div>
-													<QRCode value={student.id} size={68} />
-												</div>
-											</div>
-										)
-									})}
+								<div className="flex flex-1 h-screen font-serif  leading-tight">
+									<StudenPrintableIDCardList
+										students={students}
+										key={index}
+										schoolName={settings.schoolName}
+										schoolLogo={'/favicon.ico'}
+										studentClass={''}
+										schoolSession={schoolSession}
+									/>
 								</div>
 							)
 					  })}
@@ -511,109 +433,95 @@ const Card = ({
 	const studentSection = sections.find(s => s.id === student.section_id)
 
 	return (
-		<>
-			<div className="relative">
-				<div className="px-3 py-4 text-center bg-white border shadow-md rounded-xl lg:h-48 border-gray-50 md:p-5">
-					<div className="w-4/5 pt-8 mx-auto font-bold truncate">
-						{toTitleCase(student.Name)}
-					</div>
-					<div className="mt-2 space-y-0 text-sm text-gray-900">
-						<div className="flex flex-row items-center justify-between">
-							<div className="font-semibold">Father</div>
-							<div className="text-xs text-gray-500 truncate">
-								{toTitleCase(student.ManName)}
-							</div>
-						</div>
-						<div className="flex flex-row items-center justify-between">
-							<div className="font-semibold">Class</div>
-							<div className="text-gray-500 truncate">
-								{toTitleCase(studentSection?.namespaced_name)}
-							</div>
-						</div>
-						<div className="flex flex-row items-center justify-between">
-							<div className="font-semibold">Roll #</div>
-							<div className="text-gray-500">{student.RollNumber}</div>
-						</div>
-						<div className="flex flex-row items-center justify-between">
-							<div className="font-semibold">Phone</div>
-							<div className="text-gray-500">{student.Phone}</div>
+		<div className="relative">
+			<div className="px-3 py-4 text-center bg-white border shadow-md rounded-xl lg:h-48 border-gray-50 md:p-5">
+				<div className="w-4/5 pt-8 mx-auto font-bold truncate">
+					{toTitleCase(student.Name)}
+				</div>
+				<div className="mt-2 space-y-0 text-sm text-gray-900">
+					<div className="flex flex-row items-center justify-between">
+						<div className="font-semibold">Father</div>
+						<div className="text-xs text-gray-500 truncate">
+							{toTitleCase(student.ManName)}
 						</div>
 					</div>
-				</div>
-				<div className="absolute left-0 right-0 -top-10">
-					<img
-						src={
-							student.ProfilePicture?.url ??
-							student.ProfilePicture?.image_string ??
-							UserIconSvg
-						}
-						className="w-20 h-20 mx-auto bg-gray-500 rounded-full shadow-md hover:bg-gray-700"
-						alt={student.Name.split(' ')[0]}
-					/>
-				</div>
-				<div
-					onClick={e => {
-						e.preventDefault()
-						printSingleStudentCard(student.id)
-					}}
-					className=" z-50 absolute top-2 right-2 px-3 py-1 text-xs rounded-md hidden lg:block transition-all hover:bg-blue-brand bg-gray-700 text-white">
-					Print Student Card
+					<div className="flex flex-row items-center justify-between">
+						<div className="font-semibold">Class</div>
+						<div className="text-gray-500 truncate">
+							{toTitleCase(studentSection?.namespaced_name)}
+						</div>
+					</div>
+					<div className="flex flex-row items-center justify-between">
+						<div className="font-semibold">Roll #</div>
+						<div className="text-gray-500">{student.RollNumber}</div>
+					</div>
+					<div className="flex flex-row items-center justify-between">
+						<div className="font-semibold">Phone</div>
+						<div className="text-gray-500">{student.Phone}</div>
+					</div>
 				</div>
 			</div>
-
-			<div className="hidden">
-				<div
-					id="studentCardPrint"
-					className="flex flex-col w-5/12 mb-12 rounded-md max-h-64 border-2 p-4">
-					<div className="flex flex-row text-center">
-						<img className="max-w-6 max-h-6" src="/favicon.ico" alt="mischool" />
-						<div className="text-center font-bold ml-2 mt-2 flex flex-1 justify-center ">
-							{schoolName}
-						</div>
-					</div>
-					<div className="mt-2 flex flex-row">
-						<div className="h-20 w-20 border-2">
-							<img
-								className="h-20 w-20 "
-								src={
-									student.ProfilePicture?.url ??
-									student.ProfilePicture?.image_string ??
-									UserIconSvg
+			<div className="absolute left-0 right-0 -top-10">
+				<img
+					src={
+						student.ProfilePicture?.url ??
+						student.ProfilePicture?.image_string ??
+						UserIconSvg
+					}
+					className="w-20 h-20 mx-auto bg-gray-500 rounded-full shadow-md hover:bg-gray-700"
+					alt={student.Name.split(' ')[0]}
+				/>
+			</div>
+			{/* <Popover className="absolute top-2 right-2 table-cell p-2 pt-0">
+				{({ open }) => (
+					<>
+						<Popover.Button
+							onClick={(
+								e: React.MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
+							) => {
+								e.preventDefault()
+								e.stopPropagation()
+							}}
+							as={'button'}
+							className={clsx(
+								'px-3 py-2 outline-none rounded-md inline-flex items-center text-gray-400 cursor-pointer',
+								{
+									'text-teal-brand': open
 								}
-							/>
-						</div>
-						<div className="flex flex-col ml-2 text-sm">
-							<div className="flex flex-row">
-								<h1 className="font-bold mr-1">Name: </h1>
-								<h1>{student.Name}</h1>
-							</div>
-							<div className="flex flex-row">
-								<h1 className="font-bold mr-1">Class: </h1>
-								{sections.find(s => s.id === student.section_id).namespaced_name ||
-									'-'}
-							</div>
-							<div className="flex flex-row">
-								<h1 className="font-bold mr-1">Roll #: </h1>
-								<h1> {student.RollNumber || '-'}</h1>
-							</div>
-							<div className="flex flex-row">
-								<h1 className="font-bold mr-1">Valid For: </h1>
-								<h1>
-									{moment(schoolSession.start_date ?? 0).format('YYYY')}-
-									{moment(schoolSession.start_date ?? 0).format('YYYY')}
-								</h1>
-							</div>
-						</div>
-					</div>
-					<div className="flex flex-wrap justify-between">
-						<div className="mt-6">
-							<h1>_________________</h1>
-							<h1>Issuing Authority</h1>
-						</div>
-						<QRCode value={student.id} size={68} />
-					</div>
-				</div>
-			</div>
-		</>
+							)}>
+							<DotsVerticalIcon className={clsx('w-5')} />
+						</Popover.Button>
+						<Transition
+							show={open}
+							as={Fragment}
+							enter="transition ease-out duration-200"
+							enterFrom="opacity-0 translate-y-1"
+							enterTo="opacity-100 translate-y-0"
+							leave="transition ease-in duration-150"
+							leaveFrom="opacity-100 translate-y-0"
+							leaveTo="opacity-0 translate-y-1">
+							<Popover.Panel
+								static
+								className="absolute z-10 max-w-sm px-4 mt-2 right-4 sm:px-0 w-60">
+								<div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
+									<div className="relative bg-white p-4 w-full">
+										<button
+											className="inline-flex items-center p-2 hover:bg-gray-300 group w-full rounded-md"
+											onClick={e => {
+												e.preventDefault()
+												printSingleStudentCard(student.id)
+											}}>
+											<span className="group-hover:text-white text-sm md:text-base">
+												Print Student Card
+											</span>
+										</button>
+									</div>
+								</div>
+							</Popover.Panel>
+						</Transition>
+					</>
+				)}
+			</Popover> */}
+		</div>
 	)
 }
