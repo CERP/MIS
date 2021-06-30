@@ -66,7 +66,13 @@ const Card = ({ misClass, students }: CardProps) => {
 		s => isValidStudent(s) && s.Active && sectionIds.includes(s.section_id)
 	).length
 
-	const teachers = sections.reduce((agg, curr) => [...agg, curr.faculty_id], [])
+	const teachers = sections.reduce((agg, curr) => {
+		if (curr.faculty_id) {
+			return [...agg, curr.faculty_id]
+		}
+		return agg
+	}, [])
+
 	const totalTeachers = new Set(teachers).size
 
 	return (
