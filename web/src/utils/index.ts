@@ -81,7 +81,8 @@ export const isValidStudent = (student: MISStudent): boolean => {
 		student.Name &&
 		student.section_id &&
 		!student.tags?.['PROSPECTIVE'] &&
-		!student.tags?.['FINISHED_SCHOOL']
+		!student.tags?.['FINISHED_SCHOOL'] &&
+		!student.prospective_section_id
 	)
 }
 
