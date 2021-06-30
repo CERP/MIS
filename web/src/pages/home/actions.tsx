@@ -24,6 +24,16 @@ const links: CardProps[] = [
 		icon: iconAttendance
 	},
 	{
+		link: '/diary',
+		title: 'diary',
+		icon: iconDiary
+	},
+	{
+		link: '/sms',
+		title: 'SMS',
+		icon: iconSms
+	},
+	{
 		link: '/fees',
 		title: 'fees',
 		icon: iconFee
@@ -39,23 +49,13 @@ const links: CardProps[] = [
 		icon: iconExpense
 	},
 	{
-		link: '/diary',
-		title: 'diary',
-		icon: iconDiary
-	},
-	{
-		link: '/sms',
-		title: 'SMS',
-		icon: iconSms
-	},
-	{
 		link: '/reports-menu',
-		title: 'Results',
+		title: 'results',
 		icon: iconExams
 	},
 	{
 		link: '/analytics',
-		title: 'Analytics',
+		title: 'analytics',
 		icon: iconMarks
 	}
 ]

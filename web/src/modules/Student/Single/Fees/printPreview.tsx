@@ -4,16 +4,16 @@ import { withRouter, RouteComponentProps } from 'react-router-dom'
 import queryString from 'query-string'
 import { getFilteredPayments } from 'utils/getFilteredPayments'
 import { StudentLedgerPage } from './StudentLedgerPage'
-import Layout from "components/Layout"
+import Layout from 'components/Layout'
 import moment from 'moment'
 import getSectionFromId from 'utils/getSectionFromId'
 
 interface P {
-	classes: RootDBState["classes"]
+	classes: RootDBState['classes']
 	student: MISStudent
-	faculty_id: RootReducerState["auth"]["faculty_id"]
-	students: RootDBState["students"]
-	settings: RootDBState["settings"]
+	faculty_id: RootReducerState['auth']['faculty_id']
+	students: RootDBState['students']
+	settings: RootDBState['settings']
 	schoolLogo: string
 }
 
@@ -24,31 +24,34 @@ interface RouteInfo {
 
 type propTypes = RouteComponentProps<RouteInfo> & P
 
-class PrintPreview extends Component<propTypes>{
-
-	month = (): string => queryString.parse(this.props.location.search).month.toString() || moment().format("MMMM")
-	year = (): string => queryString.parse(this.props.location.search).year.toString() || moment().format("YYYY")
+class PrintPreview extends Component<propTypes> {
+	month = (): string =>
+		queryString.parse(this.props.location.search).month.toString() || moment().format('MMMM')
+	year = (): string =>
+		queryString.parse(this.props.location.search).year.toString() || moment().format('YYYY')
 
 	studentID = (): string => this.props.match.params.id
 
 	familyID = (): string => this.props.match.params.famId
 
 	mergedPaymentsForStudent = () => {
-
 		if (this.familyID() !== undefined) {
 			const siblings = this.siblings()
-			const merged_payments = siblings.reduce((agg, curr) => ({
-				...agg,
-				...Object.entries(curr.payments).reduce((agg, [pid, p]) => {
-					return {
-						...agg,
-						[pid]: {
-							...p,
-							fee_name: p.fee_name && `${curr.Name}-${p.fee_name}`
+			const merged_payments = siblings.reduce(
+				(agg, curr) => ({
+					...agg,
+					...Object.entries(curr.payments ?? {}).reduce((agg, [pid, p]) => {
+						return {
+							...agg,
+							[pid]: {
+								...p,
+								fee_name: p.fee_name && `${curr.Name}-${p.fee_name}`
+							}
 						}
-					}
-				}, {} as MISStudent['payments'])
-			}), {} as { [id: string]: MISStudentPayment })
+					}, {} as MISStudent['payments'])
+				}),
+				{} as { [id: string]: MISStudentPayment }
+			)
 
 			return merged_payments
 		}
@@ -62,7 +65,6 @@ class PrintPreview extends Component<propTypes>{
 	}
 
 	siblings = (): AugmentedSibling[] => {
-
 		const { students, classes } = this.props
 
 		const famId = this.familyID()
@@ -97,7 +99,6 @@ class PrintPreview extends Component<propTypes>{
 	generateVoucherNumber = (): number => Math.floor(100000 + Math.random() * 900000)
 
 	render() {
-
 		const { classes, settings, schoolLogo } = this.props
 		const famId = this.familyID()
 
@@ -111,56 +112,71 @@ class PrintPreview extends Component<propTypes>{
 			family = this.getFamily()
 		}
 
-		const filteredPayments = getFilteredPayments(this.mergedPaymentsForStudent(), "", "")
+		const filteredPayments = getFilteredPayments(this.mergedPaymentsForStudent(), '', '')
 
 		// generate random voucher number
 		const voucherNo = this.generateVoucherNumber()
-		let vouchers = [];
+		let vouchers = []
 
-		for (let i = 0; i < parseInt(settings.vouchersPerPage || "3"); i++) {
-
+		for (let i = 0; i < parseInt(settings.vouchersPerPage || '3'); i++) {
 			if (famId === undefined) {
-				vouchers.push(<StudentLedgerPage key={i}
-					payments={filteredPayments}
-					settings={settings}
-					student={this.student()}
-					section={student_section}
-					voucherNo={voucherNo}
-					css_style={i === 0 ? "" : "print-only"}
-					logo={schoolLogo}
-					month={this.month()}
-					year={this.year()} />)
+				vouchers.push(
+					<StudentLedgerPage
+						key={i}
+						payments={filteredPayments}
+						settings={settings}
+						student={this.student()}
+						section={student_section}
+						voucherNo={voucherNo}
+						css_style={i === 0 ? '' : 'print-only'}
+						logo={schoolLogo}
+						month={this.month()}
+						year={this.year()}
+					/>
+				)
 			} else {
-				vouchers.push(<StudentLedgerPage key={i}
-					payments={filteredPayments}
-					settings={settings}
-					family={family}
-					voucherNo={voucherNo}
-					css_style={i === 0 ? "" : "print-only"}
-					logo={schoolLogo}
-					month={this.month()}
-					year={this.year()} />)
+				vouchers.push(
+					<StudentLedgerPage
+						key={i}
+						payments={filteredPayments}
+						settings={settings}
+						family={family}
+						voucherNo={voucherNo}
+						css_style={i === 0 ? '' : 'print-only'}
+						logo={schoolLogo}
+						month={this.month()}
+						year={this.year()}
+					/>
+				)
 			}
 		}
-		const RenderBody = <div className="student-fees-ledger">
-			<div className="print button" style={{ marginBottom: "10px" }} onClick={() => window.print()}>Print</div>
-			<div className="voucher-row">{vouchers}</div>
-		</div>
+		const RenderBody = (
+			<div className="student-fees-ledger">
+				<div
+					className="print button"
+					style={{ marginBottom: '10px' }}
+					onClick={() => window.print()}>
+					Print
+				</div>
+				<div className="voucher-row">{vouchers}</div>
+			</div>
+		)
 
 		if (famId === undefined) {
 			return RenderBody
 		}
 		// if family payment ledger
-		return <Layout history={this.props.history}>
-			<div style={{ marginTop: 10 }}>{RenderBody}</div>
-		</Layout>
+		return (
+			<Layout history={this.props.history}>
+				<div style={{ marginTop: 10 }}>{RenderBody}</div>
+			</Layout>
+		)
 	}
-
 }
 export default connect((state: RootReducerState) => ({
 	classes: state.db.classes,
 	faculty_id: state.auth.faculty_id,
 	students: state.db.students,
 	settings: state.db.settings,
-	schoolLogo: state.db.assets ? state.db.assets.schoolLogo || "" : ""
+	schoolLogo: state.db.assets ? state.db.assets.schoolLogo || '' : ''
 }))(withRouter(PrintPreview))
