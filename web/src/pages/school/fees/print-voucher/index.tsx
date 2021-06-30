@@ -154,9 +154,7 @@ export const FamilyDropdown: React.FC<FamilyDropdownProps> = ({ students, setFam
 	return (
 		<>
 			<div className="text-white font-semibold">Select Family</div>
-			<select
-				onChange={e => setFamilyId(e.target.value)}
-				className="tw-is-form-bg-black tw-select py-2 w-full">
+			<select onChange={e => setFamilyId(e.target.value)} className="tw-select py-2 w-full">
 				<option value={''}>Choose from here</option>
 				{[...family]
 					.filter(s => s)
@@ -182,7 +180,7 @@ export const PrintForClass = ({ classes, setClassId }: PrintForClassProps) => {
 			<select
 				onChange={e => setClassId(e.target.value)}
 				name="classId"
-				className="tw-is-form-bg-black tw-select py-2 w-full">
+				className="tw-select py-2 w-full">
 				<option value={''}>Choose from here</option>
 				{Object.values(classes)
 					.filter(c => c)
@@ -256,6 +254,7 @@ export const StudentListSearch = ({ students, setStudentId, classes }: StudentLi
 								s =>
 									isValidStudent(s) &&
 									s.Active &&
+									!s.FamilyID && // don't show family students in list to print voucher
 									(searchText
 										? s.Name.toLowerCase().includes(searchText.toLowerCase())
 										: true)
