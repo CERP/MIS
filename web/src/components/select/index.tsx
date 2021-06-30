@@ -34,7 +34,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
 	}
 
 	return (
-		<div className="flex z-50 items-center justify-center w-full">
+		<div className="flex z-20 items-center justify-center w-full">
 			<Listbox
 				as="div"
 				className="space-y-1 w-full"

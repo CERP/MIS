@@ -360,8 +360,9 @@ export const CreateOrUpdateStaff = () => {
 									name="Phone"
 									value={profile.Phone}
 									error={
-										numberRegex.test(profile.Phone) ||
-										!(profile.Phone?.length <= 11)
+										profile.Phone &&
+										(numberRegex.test(profile.Phone) ||
+											!(profile.Phone?.length <= 11))
 									}
 									onChange={handleInput}
 									className="tw-input w-full tw-is-form-bg-black"

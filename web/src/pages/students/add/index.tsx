@@ -392,8 +392,9 @@ export const CreateOrUpdateStudent = () => {
 									name="Phone"
 									value={state.profile.Phone}
 									error={
-										numberRegex.test(state.profile.Phone) ||
-										!(state.profile.Phone?.length <= 11)
+										state.profile.Phone &&
+										(numberRegex.test(state.profile.Phone) ||
+											!(state.profile.Phone?.length <= 11))
 									}
 									onChange={handleInput}
 									className="tw-input w-full tw-is-form-bg-black"
@@ -438,8 +439,9 @@ export const CreateOrUpdateStudent = () => {
 									name="AlternatePhone"
 									value={state.profile.AlternatePhone}
 									error={
-										numberRegex.test(state.profile.AlternatePhone) ||
-										!(state.profile.AlternatePhone?.length <= 11)
+										state.profile.AlternatePhone &&
+										(numberRegex.test(state.profile.AlternatePhone) ||
+											!(state.profile.AlternatePhone?.length <= 11))
 									}
 									onChange={handleInput}
 									className="tw-input w-full tw-is-form-bg-black"
@@ -533,41 +535,34 @@ export const CreateOrUpdateStudent = () => {
 							<PlusButton handleClick={addTag} className="ml-4" />
 						</div>
 
-						{/* <div className="flex flex-row items-center">
-							<PlusButton
-								handleClick={() => console.log('Not Implemented Yet')}
-								className="mr-4"
-							/>
-							<div>Show Payment Section</div>
-						</div> */}
+						<div className="space-y-4">
+							<div className="flex flex-row justify-center space-x-4">
+								<button
+									type="button"
+									onClick={() => window.print()}
+									className="items-center w-full py-3 font-semibold tw-btn-blue">
+									Print Form
+								</button>
 
-						<div className="flex flex-row justify-center space-x-4">
-							<button
-								type="button"
-								onClick={() => window.print()}
-								className="items-center w-full py-3 my-4 font-semibold tw-btn-blue">
-								Print Form
-							</button>
+								<button
+									type={'submit'}
+									className="items-center w-full py-3 font-semibold tw-btn bg-teal-brand">
+									{isNewStudent() ? 'Save' : 'Update'}
+								</button>
+							</div>
 
-							<button
-								type={'submit'}
-								className="items-center w-full py-3 my-4 font-semibold tw-btn bg-teal-brand">
-								{isNewStudent() ? 'Save' : 'Update'}
-							</button>
+							{!isNewStudent() && (
+								<button
+									type={'button'}
+									onClick={deleteStudent}
+									className="items-center w-full py-3 font-semibold tw-btn-red">
+									Delete
+								</button>
+							)}
 						</div>
-
-						{!isNewStudent() && (
-							<button
-								type={'button'}
-								onClick={deleteStudent}
-								className="items-center w-full py-3 my-4 font-semibold tw-btn-red">
-								Delete
-							</button>
-						)}
 					</form>
 				</div>
 			</div>
-			{/* TODO: fix styling of print page */}
 			<AdmissionForm
 				student={state.profile}
 				school={{

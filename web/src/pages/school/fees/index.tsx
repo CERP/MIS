@@ -88,7 +88,7 @@ export const SchoolFees: React.FC<Props> = ({ match }) => {
 						<div className="text-2xl font-bold text-center">Manage Fees</div>
 						<div className="text-right">
 							<Link to="/fees/reset" className="shadow-md tw-btn-red rounded-3xl">
-								Reset
+								Reset Fee
 							</Link>
 						</div>
 						<div className="space-y-4">
