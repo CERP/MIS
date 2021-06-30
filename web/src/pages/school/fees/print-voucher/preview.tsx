@@ -7,6 +7,7 @@ import chunkify from 'utils/chunkify'
 import getFilteredPayments from 'utils/getFilteredPayments'
 import getSectionFromId from 'utils/getSectionFromId'
 import { StudentLedgerPage } from 'modules/Student/Single/Fees/StudentLedgerPage'
+import { isValidStudent } from 'utils'
 
 import './style.css'
 
@@ -48,9 +49,17 @@ const PrintPreview = () => {
 	}
 
 	const getRelevantStudents = (): MISStudent[] => {
+		// don't include family students while
+		// printing classvise vouchers because we have
+		// separate logic to print
 		if (type === 'CLASS') {
 			return Object.values(students)
-				.filter(s => currClass.sections[s.section_id] !== undefined)
+				.filter(
+					s =>
+						isValidStudent(s) &&
+						currClass.sections[s.section_id] !== undefined &&
+						!s.FamilyID
+				)
 				.sort((a, b) => parseInt(a.RollNumber || '0') - parseInt(b.RollNumber || '0'))
 		}
 
