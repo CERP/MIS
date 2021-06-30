@@ -16,7 +16,6 @@ import { isValidPhone } from 'utils/helpers'
 import { formatCNIC } from 'utils'
 import { getImageString, getDownsizedImage } from 'utils/image'
 
-import { PhoneIcon } from '@heroicons/react/solid'
 import { UploadImage } from 'components/image'
 import { PlusButton } from 'components/Button/plus'
 import { cnicRegex, numberRegex } from 'constants/index'
@@ -124,23 +123,32 @@ export const CreateOrUpdateStudent = () => {
 			return toast.error('Please provide correct phone number.')
 		}
 
-		if (isNewStudent()) {
-			for (const student of Object.values(students)) {
-				if (
-					student.RollNumber === state.profile.RollNumber &&
-					state.profile.RollNumber != ''
-				) {
-					toast.error('This Roll Number is already assigned to an existing student')
-					return
-				}
-				if (
-					student.AdmissionNumber === state.profile.AdmissionNumber &&
-					state.profile.AdmissionNumber != ''
-				) {
-					toast.error('This Admission Number is already assigned to an existing student')
-					return
-				}
+		let errorMessage = ''
+
+		for (const student of Object.values(students)) {
+			const isDuplicateRollNumber =
+				student.section_id === state.profile.section_id &&
+				student.RollNumber !== undefined &&
+				student.id !== state.profile.id &&
+				student.RollNumber !== '' &&
+				student.RollNumber === state.profile.RollNumber
+
+			const isDuplicateAdmissionNumber =
+				student.id !== state.profile.id &&
+				student.AdmissionNumber !== undefined &&
+				student.AdmissionNumber !== '' &&
+				student.AdmissionNumber === state.profile.AdmissionNumber
+
+			if (isDuplicateRollNumber || isDuplicateAdmissionNumber) {
+				errorMessage = isDuplicateRollNumber
+					? 'This Roll Number is already assigned to an existing student'
+					: 'This Admission Number is already assigned to an existing student'
+				break
 			}
+		}
+
+		if (errorMessage) {
+			return toast.error(errorMessage)
 		}
 
 		// TODO: introduce object props trim()
@@ -258,9 +266,11 @@ export const CreateOrUpdateStudent = () => {
 			dispatch(uploadStudentProfilePicture(state.profile, img))
 		})
 	}
+
 	if (state.redirect && isNewStudent()) {
-		history.goBack()
+		return <Redirect to={state.redirect as string} />
 	}
+
 	return (
 		<>
 			<div className="relative px-5 text-gray-700 md:pb-0 print:hidden">
