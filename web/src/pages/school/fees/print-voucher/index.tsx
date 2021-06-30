@@ -14,6 +14,7 @@ import { CustomSelect } from 'components/select'
 import { SearchInput } from 'components/input/search'
 import { AppLayout } from 'components/Layout/appLayout'
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
+import { useGeneratePayments } from 'hooks/useGeneratePayments'
 
 import UserIconSvg from 'assets/svgs/user.svg'
 
@@ -24,7 +25,11 @@ type State = {
 }
 
 export const PrintVoucher = () => {
-	const { classes, students } = useSelector((state: RootReducerState) => state.db)
+	const classes = useSelector((state: RootReducerState) => state.db.classes)
+	const students = useSelector((state: RootReducerState) => state.db.students)
+
+	// generate payments if not generated
+	useGeneratePayments()
 
 	const currentYear = moment().format('YYYY')
 	const currentMonth = moment().format('MMMM')
