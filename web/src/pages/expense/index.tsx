@@ -10,6 +10,7 @@ import CalendarIcon from 'assets/svgs/react/Calendar'
 import ExpenseCard from 'components/cards/expense'
 import { AppLayout } from 'components/Layout/appLayout'
 import { CustomSelect } from 'components/select'
+import { toTitleCase } from 'utils/toTitleCase'
 
 type AugmentedExpense = MISExpense | MISSalaryExpense
 type State = {
@@ -198,133 +199,160 @@ export const Expense = () => {
 	}
 
 	return (
-		<AppLayout title={'Expenses'}>
-			<div style={{ height: '80vh' }}>
-				<div className="bg-gray-600 flex-col mt-1 mb-2 mx-3 rounded py-2 px-5 ">
-					<div id="totals" className="w-full z-10  flex flex-row justify-between mb-2">
-						<div className="flex flex-col justify-center items-center text-white">
-							<h1 className="font-medium">Income</h1>
-							<h1>{state.totalIncome}</h1>
-						</div>
-						<div className="flex flex-col justify-center items-center text-white">
-							<h1 className="font-medium">Expenses</h1>
-							<h1>{state.totalExpense}</h1>
-						</div>
-						<div className="flex flex-col justify-center items-center text-white">
-							<h1 className="font-medium">Total</h1>
-							<h1>{state.totalIncome - state.totalExpense}</h1>
-						</div>
-					</div>
-					<div
-						onClick={() =>
-							setState({ ...state, detialsExpanded: !state.detialsExpanded })
-						}
-						className="w-full flex justify-center items-center">
-						<div className="bg-blue-400 rounded-full py-2 px-8 text-white font-semibold cursor-pointer mb-2 flex flex-row justify-center items-center ">
-							<CubeTransparentIcon className="w-8 h-8 text-white mr-2" />
-							<h1>Detailed Analysis</h1>
-						</div>
-					</div>
-					<div
-						id="selects"
-						className="flex flex-row items-center justify-between w-full md:w-3/5 space-x-4 mx-auto">
-						<CustomSelect
-							onChange={month => setState({ ...state, month })}
-							data={months}
-							selectedItem={state.month}>
-							<CalendarIcon className="w-5 h-5 text-teal-brand" />
-						</CustomSelect>
-						<CustomSelect
-							onChange={year => setState({ ...state, year })}
-							data={state.years ?? []}
-							selectedItem={state.year}>
-							<ChevronDownIcon className="w-5 h-5 text-teal-brand" />
-						</CustomSelect>
-					</div>
-					{state.categoryGroups && (
-						<div
-							className={clsx(
-								'text-gray-100 border-gray-300 border-dashed transition-all duration-500  border-t-2',
-								state.detialsExpanded
-									? 'mt-4 pt-3 pb-3 max-h-screen'
-									: 'max-h-0 opacity-0 invisible'
-							)}>
-							<div className="flex flex-row justify-between text-lg">
-								<h1 className="font-semibold">Category</h1>
-								<h1 className="font-semibold">Expense</h1>
+		<AppLayout title={'Expenses'} showHeaderTitle>
+			<div className="p-5 md:p-10 md:pt-5 md:pb-0 relative print:hidden">
+				<div style={{ height: '80vh' }} className="w-full">
+					<div className="bg-gray-600 flex-col mt-1 mb-2 rounded py-2 px-5 ">
+						<div id="totals" className="w-full flex flex-row justify-between mb-2">
+							<div className="flex flex-col justify-center items-center text-white">
+								<p className="font-medium">Income</p>
+								<p>{state.totalIncome}</p>
 							</div>
-							{Object.entries(state.categoryGroups ?? {}).map(([id, data]) => {
-								return (
-									<div key={id}>
-										<div className="flex flex-row justify-between space-y-2 text-gray-300 ">
-											<div className="flex flex-1 justify-between pr-5 flex-row items-center space-x-2">
-												<h1>{id}</h1>
-												<ChevronDownIcon
-													onClick={() => selectCategory(id)}
-													className={clsx(
-														'bg-teal-brand z-10 w-6 h-6 rounded-full transition-all duration-500 text-white cursor-pointer',
-														state.selectedCategory === id
-															? 'transform rotate-180 bg-red-tip-brand'
-															: ''
-													)}></ChevronDownIcon>
-											</div>
-											<div className="flex flex-1 justify-end">
-												<h1>{calculateCategoryExpense(id)}</h1>
-											</div>
-										</div>
-										<ul
-											className={clsx(
-												'border-l-2 border-gray-400 pl-5 transition-all ease-in-out duration-1000 space-y-2',
-												state.selectedCategory === id
-													? 'max-h-screen '
-													: 'max-h-0 opacity-0 scale-0 '
-											)}>
-											{Object.entries(data ?? {}).map(([id, expense]) => {
-												return (
-													<div
-														key={id}
-														className={clsx(
-															'flex-row flex text-sm text-gray-400 justify-between',
-															state.selectedCategory === id
-																? ''
-																: 'visible'
-														)}>
-														<li>{`${expense.label} - ${moment(
-															expense.date
-														).format('ddd')} ${moment(
-															expense.date
-														).format('Do')}`}</li>
-														<li>{getListTotal(expense)}</li>
+							<div className="flex flex-col justify-center items-center text-white">
+								<p className="font-medium">Expense</p>
+								<p>{state.totalExpense}</p>
+							</div>
+							<div className="flex flex-col justify-center items-center text-white">
+								<p className="font-medium">Total</p>
+								<p>{state.totalIncome - state.totalExpense}</p>
+							</div>
+						</div>
+						<div className="flex justify-center mb-4">
+							<button
+								onClick={() =>
+									setState({ ...state, detialsExpanded: !state.detialsExpanded })
+								}
+								className="tw-btn-blue inline-flex items-center rounded-3xl">
+								<CubeTransparentIcon className="w-6 h-6 mr-2" />
+								<span className="font-semibold">Detailed Analysis</span>
+							</button>
+						</div>
+						<div
+							id="selects"
+							className="flex flex-row items-center justify-between w-full md:w-3/5 space-x-4 mx-auto">
+							<CustomSelect
+								onChange={month => setState({ ...state, month })}
+								data={months}
+								selectedItem={state.month}>
+								<CalendarIcon className="w-5 h-5 text-teal-brand" />
+							</CustomSelect>
+							<CustomSelect
+								onChange={year => setState({ ...state, year })}
+								data={state.years ?? []}
+								selectedItem={state.year}>
+								<ChevronDownIcon className="w-5 h-5 text-teal-brand" />
+							</CustomSelect>
+						</div>
+						{state.categoryGroups && state.detialsExpanded && (
+							<div
+								className={clsx(
+									'text-gray-100 border-gray-300 border-dashed transition-all duration-500  border-t-2',
+									state.detialsExpanded
+										? 'mt-4 pt-3 pb-3 max-h-screen'
+										: 'max-h-0 opacity-0 invisible'
+								)}>
+								<div className="flex flex-row justify-between font-semibold">
+									<p>Category</p>
+									<p>Expense</p>
+								</div>
+								<div className="space-y-2 md:space-y-0">
+									{Object.entries(state.categoryGroups ?? {}).map(
+										([id, data]) => {
+											return (
+												<div key={id}>
+													<div className="flex flex-row justify-between space-y-2 text-white">
+														<div
+															onClick={() => selectCategory(id)}
+															className="flex flex-1 justify-between pr-5 flex-row items-center space-x-2 cursor-pointer hover:text-gray-brand">
+															<p className="text-sm">
+																{toTitleCase(id)}
+															</p>
+															<div
+																className={clsx(
+																	'bg-teal-brand z-10 p-px w-8 h-8 md:w-6 md:h-6 rounded-full transition-all duration-500',
+																	{
+																		'bg-red-brand':
+																			state.selectedCategory ===
+																			id
+																	}
+																)}>
+																<ChevronDownIcon
+																	className={clsx(
+																		state.selectedCategory ===
+																			id
+																			? 'transform rotate-180'
+																			: ''
+																	)}
+																/>
+															</div>
+														</div>
+														<div className="flex flex-1 justify-end">
+															<p>{calculateCategoryExpense(id)}</p>
+														</div>
 													</div>
-												)
-											})}
-										</ul>
-									</div>
-								)
-							})}
-							<div className="border-t-2 pt-5 border-dashed mt-2">
-								<div
-									onClick={() =>
-										setState({
-											...state,
-											detialsExpanded: !state.detialsExpanded
-										})
-									}
-									className="py-2 m-5 px-6 flex flex-1 bg-yellow-400 text-gray-50   text-lg font-medium rounded text-center items-center justify-center">
-									<h1>Go Back</h1>
+													<div
+														className={clsx(
+															'border-l-2 border-gray-400 pl-5 transition-all ease-in-out duration-1000 space-y-2',
+															state.selectedCategory === id
+																? 'max-h-screen '
+																: 'max-h-0 opacity-0 scale-0 '
+														)}>
+														{Object.entries(data ?? {}).map(
+															([id, expense]) => {
+																return (
+																	<div
+																		key={id}
+																		className={clsx(
+																			'flex-row flex text-sm text-gray-400 justify-between',
+																			state.selectedCategory ===
+																				id
+																				? ''
+																				: 'visible'
+																		)}>
+																		<p>{`${expense.label
+																			} - ${moment(
+																				expense.date
+																			).format('ddd')} ${moment(
+																				expense.date
+																			).format('Do')}`}</p>
+																		<p>
+																			{getListTotal(expense)}
+																		</p>
+																	</div>
+																)
+															}
+														)}
+													</div>
+												</div>
+											)
+										}
+									)}
+								</div>
+								<div className="border-t-2 pt-5 border-dashed mt-2" />
+								<div className="flex justify-center">
+									<button
+										onClick={() =>
+											setState({
+												...state,
+												detialsExpanded: !state.detialsExpanded
+											})
+										}
+										className="tw-btn text-white bg-orange-brand w-full md:w-1/4">
+										Go Back
+									</button>
 								</div>
 							</div>
-						</div>
-					)}
-				</div>
-				{state.groupedResults.length > 0 && (
-					<div
-						className={clsx(
-							'flex-1 overflow-y-auto h-3/5 lg:h-5/6 duration-300 transition-all',
-							state.detialsExpanded ? 'opacity-0 max-h-0 invisible' : 'max-h-screen'
-						)}>
-						{state.groupedResults.map((data: { [x: string]: AugmentedExpense }) => {
-							return (
+						)}
+					</div>
+					{state.groupedResults.length > 0 && !state.detialsExpanded && (
+						<div
+							className={clsx(
+								'flex-1 overflow-y-auto h-3/5 lg:h-5/6 duration-300 transition-all w-full space-y-4',
+								state.detialsExpanded
+									? 'opacity-0 max-h-0 invisible'
+									: 'max-h-screen'
+							)}>
+							{state.groupedResults.map(data => (
 								<ExpenseCard
 									// TODO: What we're getting from '0' indexed
 									// '0' index returns the key for the first entry in data
@@ -333,25 +361,25 @@ export const Expense = () => {
 									date={data[Object.keys(data)[0]].date}
 									expenseData={data}
 								/>
-							)
-						})}
+							))}
+						</div>
+					)}
+					<div
+						className={clsx(
+							'flex flex-1  items-center justify-evenly  transition-all duration-300',
+							state.detialsExpanded ? 'opacity-0 max-h-0 invisible' : 'max-h-screen'
+						)}>
+						<Link
+							to="/staff/salaries"
+							className="py-2 m-5 px-6 flex flex-1 bg-red-brand text-white text-lg font-medium rounded text-center justify-center">
+							Salaries
+						</Link>
+						<Link
+							to="/expenses/new"
+							className="py-2 px-6 m-5 flex flex-1 bg-blue-brand text-white text-lg font-medium rounded text-center justify-center">
+							Add New
+						</Link>
 					</div>
-				)}
-				<div
-					className={clsx(
-						'flex flex-1 z-10 items-center justify-evenly  transition-all duration-300',
-						state.detialsExpanded ? 'opacity-0 max-h-0 invisible' : 'max-h-screen'
-					)}>
-					<Link
-						to="/staff/salaries"
-						className="py-2 z-20 m-5 px-6 flex flex-1 bg-red-500 text-white text-lg font-medium rounded text-center items-center justify-center">
-						<h1>Salaries</h1>
-					</Link>
-					<Link
-						to="/expenses/new"
-						className="py-2 z-20 px-6 m-5 flex flex-1 bg-blue-400 text-white text-lg font-medium rounded text-center items-center justify-center">
-						<h1>Add New</h1>
-					</Link>
 				</div>
 			</div>
 		</AppLayout>
