@@ -75,7 +75,14 @@ export const formatPhone = (phone: string): string => {
  * @param student
  */
 export const isValidStudent = (student: MISStudent): boolean => {
-	return !!(student && student.id && student.Name && student.section_id)
+	return !!(
+		student &&
+		student.id &&
+		student.Name &&
+		student.section_id &&
+		!student?.tags['PROSPECTIVE'] &&
+		!student?.tags['FINISHED_SCHOOL']
+	)
 }
 
 /**
