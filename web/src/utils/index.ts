@@ -151,6 +151,8 @@ export const checkPermission = (
 			break
 		}
 	}
+
+	return flag
 }
 
 export const getPaymentLabel = (
