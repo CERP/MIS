@@ -1,5 +1,5 @@
-import React, { useMemo, useRef, useState } from 'react'
-import { shallowEqual, useSelector } from 'react-redux'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { PrinterIcon } from '@heroicons/react/outline'
 
@@ -14,6 +14,8 @@ import { AddStickyButton } from 'components/Button/add-sticky'
 import Paginate from 'components/Paginate'
 import { SwitchButton } from 'components/input/switch'
 import { useComponentVisible } from 'hooks/useComponentVisible'
+import { checkStudentDuesReturning } from 'utils/checkStudentDues'
+import { addMultiplePayments } from 'actions'
 
 type State = {
 	searchText: string
@@ -36,8 +38,11 @@ export const StudentList = ({
 	excludeFamilyStudents,
 	excludeNavHeader
 }: StudentListProps) => {
+	const dispatch = useDispatch()
 	const students = useSelector((state: RootReducerState) => state.db.students, shallowEqual)
 	const classes = useSelector((state: RootReducerState) => state.db.classes, shallowEqual)
+	const settings = useSelector((state: RootReducerState) => state.db.settings, shallowEqual)
+
 	const searchInputRef = useRef(null)
 
 	const {
@@ -77,6 +82,42 @@ export const StudentList = ({
 	const sections = useMemo(() => {
 		return getSectionsFromClasses(classes)
 	}, [classes])
+
+	useEffect(() => {
+		const sectionStudents = Object.values(students).reduce<AugmentedStudent[]>(
+			(agg, student) => {
+				if (isValidStudent(student) && student.Active) {
+					return [
+						...agg,
+						{
+							...student,
+							section: sections?.find(section => section.id === student.section_id)
+						}
+					]
+				}
+				return agg
+			},
+			[]
+		)
+
+		const generatePayments = (students: AugmentedStudent[]) => {
+			if (students.length > 0) {
+				const payments = students.reduce((agg, curr) => {
+					const curr_student_payments = checkStudentDuesReturning(curr, settings)
+					if (curr_student_payments.length > 0) {
+						return [...agg, ...curr_student_payments]
+					}
+					return agg
+				}, [])
+
+				if (payments.length > 0) {
+					dispatch(addMultiplePayments(payments))
+				}
+			}
+		}
+
+		generatePayments(sectionStudents)
+	}, [students, settings])
 
 	// TODO: add options to cards
 	// TODO: add a check here for max_limit: state.db.max_limit

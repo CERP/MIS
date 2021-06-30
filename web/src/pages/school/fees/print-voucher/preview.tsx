@@ -12,15 +12,19 @@ import { isValidStudent } from 'utils'
 import './style.css'
 
 const PrintPreview = () => {
+	// TODO: remove logic arround class fee vouchers from this component
+	// TODO: make understanding of printing class-vise fee vouchers
+
 	const params = new URLSearchParams(useLocation().search)
 	const type = params.get('type')
 	const id = params.get('id')
 	const month = params.get('month')
 	const year = params.get('year')
 
-	const { settings, classes, students, assets } = useSelector(
-		(state: RootReducerState) => state.db
-	)
+	const settings = useSelector((state: RootReducerState) => state.db.settings)
+	const classes = useSelector((state: RootReducerState) => state.db.classes)
+	const students = useSelector((state: RootReducerState) => state.db.students)
+	const assets = useSelector((state: RootReducerState) => state.db.assets)
 
 	const currClass = type === 'CLASS' ? classes[id] : undefined
 	const vouchersPerPage = parseInt(settings.vouchersPerPage || '3')
