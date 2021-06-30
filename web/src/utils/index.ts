@@ -75,7 +75,14 @@ export const formatPhone = (phone: string): string => {
  * @param student
  */
 export const isValidStudent = (student: MISStudent): boolean => {
-	return !!(student && student.id && student.Name && student.section_id)
+	return !!(
+		student &&
+		student.id &&
+		student.Name &&
+		student.section_id &&
+		!student.tags?.['PROSPECTIVE'] &&
+		!student.tags?.['FINISHED_SCHOOL']
+	)
 }
 
 /**
@@ -103,9 +110,12 @@ export const checkPermission = (
 		return true
 	}
 
+	let flag = false
+
 	switch (title) {
 		case 'salaries': {
-			return false
+			flag = false
+			break
 		}
 		case 'attendance':
 		case 'exams':
@@ -113,26 +123,36 @@ export const checkPermission = (
 		case 'SMS':
 		case 'diary':
 		case 'results': {
-			return tipAccess ? false : true
+			flag = tipAccess ? false : true
+			break
 		}
+		case 'settings':
 		case 'analytics':
 		case 'payments':
 		case 'certificates': {
-			return tipAccess ? false : subAdmin
+			flag = tipAccess ? false : subAdmin
+			break
 		}
 		case 'setup':
-		case 'dailyStats':
-			return (permissions.dailyStats || permissions.setupPage) && subAdmin
+		case 'dailyStats': {
+			flag = (permissions.dailyStats || permissions.setupPage) && subAdmin
+			break
+		}
 		case 'fees':
 		case 'expenses':
 		case 'families': {
-			return tipAccess
+			flag = tipAccess
 				? false
 				: (permissions.family || permissions.fee || permissions.expense) && subAdmin
+			break
 		}
-		default:
-			return true
+		default: {
+			flag = true
+			break
+		}
 	}
+
+	return flag
 }
 
 export const getPaymentLabel = (

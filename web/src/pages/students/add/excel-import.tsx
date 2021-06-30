@@ -183,22 +183,25 @@ export const ImportStudentsCSV = () => {
 	}
 
 	return (
-		<AppLayout title="Excel Import">
-			<div className="relative p-5 space-y-8 text-gray-700 md:p-10 md:pb-0 print:hidden">
-				<div className="text-2xl font-bold text-center">Add Students</div>
+		<AppLayout title="Add Students - Excel Import" showHeaderTitle>
+			<div className="relative p-5 space-y-8 md:p-10 md:pt-5 print:hidden">
 				<div className="pb-2 space-y-4">
-					<button
-						type="button"
-						className="inline-flex w-full text-white tw-btn bg-orange-brand"
-						onClick={() => downloadCSV([studentCSVHeaders], 'student-import-template')}>
-						<DownloadIcon className="w-5 h-5" />
-						<span className="mx-auto">Download Template</span>
-					</button>
+					<div className="flex md:justify-end">
+						<button
+							type="button"
+							className="inline-flex w-full md:w-60 text-white tw-btn bg-orange-brand"
+							onClick={() =>
+								downloadCSV([studentCSVHeaders], 'student-import-template')
+							}>
+							<DownloadIcon className="w-5 h-5" />
+							<span className="mx-auto">Download Template</span>
+						</button>
+					</div>
 
 					<div className="bg-gray-700 rounded-lg">
-						<div className="flex flex-row items-center p-5 space-x-4 text-white">
-							<div className="flex flex-col w-full space-y-4">
-								<div>Class</div>
+						<div className="flex flex-row items-center p-5 space-x-4">
+							<div className="flex flex-col w-full space-y-2">
+								<div className="text-white">Class</div>
 								<select
 									name="classId"
 									value={state.classId}
@@ -209,7 +212,7 @@ export const ImportStudentsCSV = () => {
 											classId: e.target.value
 										})
 									}
-									className="tw-input tw-is-form-bg-black">
+									className="tw-select">
 									<option value={''}>Select Class</option>
 									{Object.values(classes)
 										.filter(c => c)
@@ -221,15 +224,15 @@ export const ImportStudentsCSV = () => {
 										))}
 								</select>
 							</div>
-							<div className="flex flex-col w-full space-y-4">
-								<div>Section</div>
+							<div className="flex flex-col w-full space-y-2">
+								<div className="text-white">Section</div>
 								<select
 									name="sectionId"
 									value={state.sectionId}
 									onChange={e =>
 										setState({ ...state, sectionId: e.target.value })
 									}
-									className="tw-input tw-is-form-bg-black">
+									className="tw-select">
 									<option value={''}>Select Section</option>
 									{getSectionsFromClasses(
 										state.classId

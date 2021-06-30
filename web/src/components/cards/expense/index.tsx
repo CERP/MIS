@@ -1,7 +1,7 @@
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { toTitleCase } from 'utils/toTitleCase'
 
 interface ExpenseCardProps {
 	expenseData: { [index: string]: MISExpense | MISSalaryExpense }
@@ -50,49 +50,55 @@ const ExpenseCard = ({ date, expenseData, payments }: ExpenseCardProps) => {
 		})
 	}, [])
 	return (
-		<div className="p-3 m-5 rounded flex flex-col justify-between border shadow-md  border-gray-50">
+		<div className="p-3 rounded flex flex-col justify-between border shadow-md  border-gray-50">
 			<div className="flex flex-row justify-between w-full items-center border-b  pb-1 border-gray-400 border-0 mb-2">
 				<div className="flex flex-row items-center">
-					<h1 className="text-3xl font-bold mr-1">{moment(date).format('DD')}</h1>
+					<p className="text-3xl font-bold mr-1">{moment(date).format('DD')}</p>
 					<div>
-						<h1 className="text-xs font-bold text-gray-400">
+						<p className="text-xs font-bold text-gray-400">
 							{moment(date).format('MM')}.{moment(date).format('YYYY')}
-						</h1>
+						</p>
 						<div className="p-1 bg-gray-400 rounded justify-center items-center text-center">
-							<h1 className="text-xs font-bold text-white">
+							<p className="text-xs font-bold text-white">
 								{moment(date).format('ddd')}
-							</h1>
+							</p>
 						</div>
 					</div>
 				</div>
-				<h1 className="font-medium text-teal-brand">Rs {state.totalDayIncome}</h1>
-				<h1 className="font-medium text-red-500">Rs {state.totalDayExpense}</h1>
+				<p className="text-teal-brand font-medium">Rs. {state.totalDayIncome}</p>
+				<p className="text-red-500 font-medium">Rs. {state.totalDayExpense}</p>
 			</div>
-			{Object.entries(expenseData ?? {}).map(([id, expense]) => {
-				return (
-					//expense[0] is key and expense[1] is the Data
-					<div key={id} className="flex flex-row justify-between mb-2">
-						<div className="flex flex-1 items-center font-medium text-gray-500">
-							<h1 className="text-sm">{expense.category}</h1>
-						</div>
+			<div className="space-y-2">
+				{Object.entries(expenseData ?? {}).map(([id, expense]) => {
+					return (
+						//expense[0] is key and expense[1] is the Data
+						<div key={id} className="flex flex-row justify-between">
+							<div className="flex flex-1 items-center">
+								<p>{toTitleCase(expense.category)}</p>
+							</div>
 
-						<Link
-							to={expense.expense === 'MIS_EXPENSE' ? `/expenses/${id}` : '#'}
-							className="flex flex-1 ml-5 z-20 font-medium">
-							<h1>{expense.label}</h1>
-						</Link>
-						{expense.expense === 'MIS_EXPENSE' ? (
-							<div className="flex flex-1 justify-end font-medium">
-								<h1>Rs {Number(expense.amount) * Number(expense.quantity)}</h1>
-							</div>
-						) : (
-							<div className="flex flex-1 justify-end font-medium">
-								<h1>Rs {Number(expense.amount) + Number(expense.advance)}</h1>
-							</div>
-						)}
-					</div>
-				)
-			})}
+							{expense.expense === 'MIS_EXPENSE' ? (
+								<Link
+									to={`/expenses/${id}/edit`}
+									className="flex flex-1 ml-5 text-blue-brand hover:underline">
+									{expense.label}
+								</Link>
+							) : (
+								<p>{expense.label}</p>
+							)}
+							{expense.expense === 'MIS_EXPENSE' ? (
+								<div className="flex flex-1 justify-end">
+									<p>{Number(expense.amount) * Number(expense.quantity)}</p>
+								</div>
+							) : (
+								<div className="flex flex-1 justify-end">
+									<p>{Number(expense.amount) + Number(expense.advance)}</p>
+								</div>
+							)}
+						</div>
+					)
+				})}
+			</div>
 		</div>
 	)
 }
