@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ES2020",
     "downlevelIteration": true,
     "lib": [
       "dom",
@@ -20,10 +20,11 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "src"
+    "src",
+    "src/types/typings.d.ts"
   ]
 }

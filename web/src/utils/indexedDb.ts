@@ -4,7 +4,8 @@ import { openDB } from 'idb'
 import { defaultExams } from 'modules/Settings'
 import moment from 'moment'
 
-const defaultTemplates = () => ({
+const defaultTemplates = (): RootDBState['sms_templates'] => ({
+	attendance_staff: '$NAME has been marked $STATUS today',
 	attendance: '$NAME has been marked $STATUS',
 	fee: '$NAME has paid $AMOUNT Rs, Your remaining Balance is $BALANCE Rs',
 	result: 'Report is ready for $NAME:\n $REPORT'
@@ -51,7 +52,8 @@ export const initState: RootReducerState = {
 		ilmx: {
 			events: {},
 			lessons: {}
-		}
+		},
+		onboarding: {} as MISOnboarding
 	},
 	auth: {
 		school_id: undefined,
@@ -243,13 +245,18 @@ const addFacultyID = (state: RootReducerState) => {
 
 	const faculty = Object.values(state.db.faculty).find(f => f.Name === state.auth.name)
 
-	state.auth.faculty_id = faculty.id
+	state.auth.faculty_id = faculty?.id
 
 	return state
 }
 
+// TODO: at some time in future, remove this and diagnose the consequences
 const checkPermissions = (state: RootReducerState) => {
-	const permission = state.db.faculty[state.auth.faculty_id].permissions
+	const permission = state.db?.faculty?.[state.auth.faculty_id]?.permissions
+
+	if (!permission) {
+		return state
+	}
 
 	if (
 		permission.dailyStats !== undefined &&
@@ -347,3 +354,43 @@ const onLoadScripts = [
 	reconstructGradesObject,
 	addSchoolSessionSettings
 ]
+
+export const exportToJSON = async () => {
+	if (!window.confirm('Are you sure, you want to export data to your device?')) {
+		return
+	}
+	try {
+		const db = await openDB('db', 1, {
+			upgrade(db) {
+				db.createObjectStore('root-state')
+			}
+		})
+
+		const IdbData = await db.get('root-state', 'db')
+
+		if (IdbData) {
+			console.log('Exporting From idb')
+
+			const a = document.createElement('a')
+			const client_id = localStorage.getItem('client_id')
+
+			a.href = URL.createObjectURL(new Blob([JSON.stringify(IdbData)], { type: 'text/json' }))
+			a.download = `mischool_export_idb_${client_id}_${moment().format('DD-MM-YYYY')}.json`
+			a.click()
+		} else {
+			const db = localStorage.getItem('backup')
+
+			if (db) {
+				console.log('Exporting From ls')
+				const a = document.createElement('a')
+				const client_id = localStorage.getItem('client_id')
+
+				a.href = URL.createObjectURL(new Blob([db], { type: 'text/json' }))
+				a.download = `mischool_export_${client_id}_${moment().format('DD-MM-YYYY')}.json`
+				a.click()
+			}
+		}
+	} catch (err) {
+		console.error('Export', err)
+	}
+}

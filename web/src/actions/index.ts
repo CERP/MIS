@@ -5,6 +5,7 @@ import { v4 } from 'node-uuid'
 import Syncr from '@cerp/syncr'
 
 import { historicalPayment } from 'modules/Settings/HistoricalFees/historical-fee'
+import { OnboardingStage } from 'constants/index'
 
 const client_type = 'mis'
 
@@ -45,12 +46,41 @@ export const createFacultyMerge = (faculty: MISTeacher, is_first?: boolean) => (
 	)
 
 	if (is_first) {
+		// start the school onboarding jounery
+		dispatch(
+			createMerges([
+				{
+					path: ['db', 'onboarding', 'stage'],
+					value: OnboardingStage.ADD_STAFF
+				}
+			])
+		)
+
 		dispatch({
 			type: LOCAL_LOGIN,
 			name: faculty.Name,
 			password: faculty.Password
 		})
 	}
+}
+
+/**
+ * @description an action to dispatch the upload image merge
+ *
+ * @param facultyId
+ * @param image_string
+ */
+
+export const uploadFacultyProfilePicture = (facultyId: string, imageString: string) => (
+	dispatch: Function
+) => {
+	const merge_item: ImageMergeItem = {
+		path: ['db', 'faculty', facultyId, 'ProfilePicture'],
+		image_string: imageString,
+		id: v4()
+	}
+
+	dispatch(uploadImages([merge_item]))
 }
 
 export const MERGE_STUDENT = 'MERGE_STUDENT'
@@ -235,20 +265,7 @@ export const SIGN_UP_LOADING = 'SIGN_UP_LOADING'
 export const SIGN_UP_SUCCEED = 'SIGN_UP_SUCCEED'
 export const SIGN_UP_FAILED = 'SIGN_UP_FAILED'
 
-type Profile = {
-	name: string
-	phone: string
-	city: string
-	password: string
-	schoolName: string
-	packageName: 'FREE_TRIAL' | 'TALEEM1' | 'TALEEM2' | 'TALEEM3'
-
-	typeOfLogin: string
-	referralSchoolName: string
-	ownerEasypaisaNumber: string
-}
-
-export const createSignUp = (profile: Profile) => (
+export const createSignUp = (profile: SchoolSignup) => (
 	dispatch: Function,
 	getState: () => RootReducerState,
 	syncr: Syncr
@@ -261,7 +278,7 @@ export const createSignUp = (profile: Profile) => (
 	const signup_obj = {
 		signup: profile,
 		referral: {
-			school_name: profile.referralSchoolName,
+			school_name: '',
 			city: profile.city,
 			office: profile.city,
 			user: '',
@@ -271,12 +288,12 @@ export const createSignUp = (profile: Profile) => (
 			owner_phone: profile.phone,
 			school_type: '',
 			package_name: profile.packageName,
-			type_of_login: profile.typeOfLogin,
+			type_of_login: '',
 			owner_other_job: '',
 			association_name: '',
 			area_manager_name: '',
 			computer_operator: '',
-			owner_easypaisa_number: profile.ownerEasypaisaNumber,
+			owner_easypaisa_number: '',
 			previous_software_name: '',
 			previous_management_system: ''
 		}
@@ -535,24 +552,15 @@ export const markAllStudents = (
 	dispatch(createMerges(merges))
 }
 
-export const addStudentToFamily = (student: MISStudent, family_id: string) => (
-	dispatch: Function
-) => {
-	dispatch(
-		createMerges([
-			{
-				path: ['db', 'students', student.id, 'FamilyID'],
-				value: family_id
-			}
-		])
-	)
-}
-
-export const saveFamilyInfo = (siblings: MISStudent[], info: MISFamilyInfo) => (
+export const saveFamilyInfo = (siblings: MISStudent[], info: MISFamilyInfo, famId?: string) => (
 	dispatch: Function
 ) => {
 	const siblingMerges = siblings
 		.map(s => [
+			{
+				path: ['db', 'students', s.id, 'FamilyID'],
+				value: famId ?? '' // just to be sure, otherwise famId will not be undefined
+			},
 			{
 				path: ['db', 'students', s.id, 'ManName'],
 				value: info.ManName
@@ -563,7 +571,7 @@ export const saveFamilyInfo = (siblings: MISStudent[], info: MISFamilyInfo) => (
 			},
 			{
 				path: ['db', 'students', s.id, 'AlternatePhone'],
-				value: info.AlternatePhone
+				value: info.AlternatePhone ?? ''
 			},
 			{
 				path: ['db', 'students', s.id, 'ManCNIC'],
@@ -579,6 +587,19 @@ export const saveFamilyInfo = (siblings: MISStudent[], info: MISFamilyInfo) => (
 		}, [])
 
 	dispatch(createMerges(siblingMerges))
+}
+
+export const addStudentToFamily = (student: MISStudent, family_id: string) => (
+	dispatch: Function
+) => {
+	dispatch(
+		createMerges([
+			{
+				path: ['db', 'students', student.id, 'FamilyID'],
+				value: family_id
+			}
+		])
+	)
 }
 
 export const markFaculty = (
@@ -597,6 +618,25 @@ export const markFaculty = (
 			}
 		])
 	)
+}
+
+export const markAllFacultyAttendance = (
+	faculty: MISTeacher[],
+	date: string,
+	status: MISTeacherAttendanceStatus,
+	time = moment.now()
+) => (dispatch: Function) => {
+	const merges = faculty.reduce((agg, f) => {
+		return [
+			...agg,
+			{
+				path: ['db', 'faculty', f.id, 'attendance', date, status],
+				value: time
+			}
+		]
+	}, [])
+
+	dispatch(createMerges(merges))
 }
 
 export const undoFacultyAttendance = (faculty: MISTeacher, date: string) => (
@@ -639,9 +679,13 @@ export const addPayment = (
 	)
 }
 
-export const assignLearningLevel = (student_id: string, subject: TIPSubjects, level: TIPGrades) => (
-	dispatch: Function
-) => {
+export const assignLearningLevel = (
+	student_id: string,
+	subject: TIPSubjects,
+	level: TIPGrades,
+	is_oral: boolean,
+	history: TIPGradesHistory
+) => (dispatch: Function) => {
 	dispatch(
 		createMerges([
 			{
@@ -655,6 +699,30 @@ export const assignLearningLevel = (student_id: string, subject: TIPSubjects, le
 					'grade'
 				],
 				value: level
+			},
+			{
+				path: [
+					'db',
+					'students',
+					student_id,
+					'targeted_instruction',
+					'learning_level',
+					subject,
+					'is_oral'
+				],
+				value: is_oral
+			},
+			{
+				path: [
+					'db',
+					'students',
+					student_id,
+					'targeted_instruction',
+					'learning_level',
+					subject,
+					'history'
+				],
+				value: history
 			}
 		])
 	)
@@ -915,18 +983,11 @@ export const addHistoricalPayment = (payment: historicalPayment, student_id: str
 	dispatch(createMerges(merges))
 }
 
-export const addExpense = (
-	amount: number,
-	label: string,
-	type: MISExpense['type'],
-	category: MISExpense['category'],
-	quantity: number,
-	date: number,
-	time = moment.now()
-) => (dispatch: Function) => {
+export const addExpense = (newExpense: Partial<MISExpense>) => (dispatch: Function) => {
 	const expense = 'MIS_EXPENSE'
 	const id = v4()
-
+	const time = moment.now()
+	const { amount, label, type, category, quantity, date } = newExpense
 	dispatch(
 		createMerges([
 			{
@@ -946,21 +1007,21 @@ export const addExpense = (
 	)
 }
 
-export const addSalaryExpense = (
-	id: string,
-	amount: number,
-	label: string,
-	type: MISSalaryExpense['type'],
-	faculty_id: string,
-	date: number,
-	advance: number,
-	deduction: number,
-	deduction_reason: string,
-	category = 'SALARY',
-	time = moment.now()
-) => (dispatch: Function) => {
+export const addSalaryExpense = (newSalary: Partial<MISSalaryExpense>) => (dispatch: Function) => {
+	const {
+		faculty_id,
+		date,
+		amount,
+		label,
+		category,
+		type,
+		deduction,
+		deduction_reason,
+		advance
+	} = newSalary
+	const id = `${moment(date).format('MM-YYYY')}-${faculty_id}`
 	const expense = 'SALARY_EXPENSE'
-
+	let time = moment.now()
 	dispatch(
 		createMerges([
 			{
@@ -1447,38 +1508,14 @@ export const fetchTargetedInstruction = () => (
 	getState: () => RootReducerState,
 	syncr: Syncr
 ) => {
-	const state = getState()
-
-	if (!syncr.ready) {
-		console.log('not ready!')
-		syncr.onNext('verify', () => {
-			dispatch(fetchTargetedInstruction())
-		})
-	}
-
-	syncr
-		.send({
-			type: 'GET_TARGETED_INSTRUCTIONS',
-			client_type: client_type,
-			payload: {
-				school_id: state.auth.school_id,
-				token: state.auth.token,
-				client_id: state.client_id
-			}
-		})
-		.then(response =>
+	fetch('https://storage.googleapis.com/targeted-instructions/tip.json')
+		.then(res => res.json())
+		.then(tip_data =>
 			dispatch({
 				type: 'GET_TARGETED_INSTRUCTION_SUCCESS',
-				payload: response
+				payload: tip_data
 			})
 		)
-		.catch(err => {
-			console.error('targeted instruction failure')
-			console.log(err)
-			dispatch({
-				type: 'GET_TARGETED_INSTRUCTION_FAILURE'
-			})
-		})
 }
 export const deletePayment = (student_id: string, payment_id: string) => (dispatch: Function) => {
 	dispatch(

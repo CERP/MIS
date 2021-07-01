@@ -2,10 +2,12 @@ import React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import { connect } from 'react-redux'
 import Card from '../Card'
-import { Check, WhiteTick } from 'assets/icons'
+import { Check, WhiteTick, Formative, Summative, QuizMark } from 'assets/icons'
 import { lessonPlanTaken, clearLessonPlans, quizTaken } from 'actions'
 import Dynamic from '@cerp/dynamic'
 import Headings from '../Headings'
+import { getLessonProgress } from 'utils/TIP'
+import { Link } from 'react-router-dom'
 
 interface P {
 	faculty: RootDBState['faculty']
@@ -158,21 +160,23 @@ const List: React.FC<PropsType> = ({
 		history.push(`/${url[1]}/quizzes/${class_name}/${subject}/${quiz_id}/pdf`)
 	}
 
-	const getTakenLessonPlansCount = (lesson_numbers: TIPLessonPlans) => {
-		return Object.values(lesson_numbers).reduce((agg, lesson_plan) => {
-			const answer = Dynamic.get<TIPTeacherLessonPlans>(teacher, [
-				'targeted_instruction',
-				'curriculum',
-				class_name,
-				subject,
-				lesson_plan.lesson_number
-			])
-			if (answer?.taken) {
-				agg = agg + 1
-			}
-			return agg
-		}, 0)
-	}
+	// const getTakenLessonPlansCount = (lesson_numbers: TIPLessonPlans) => {
+	// 	return Object.values(lesson_numbers).reduce((agg, lesson_plan) => {
+	// 		const answer = Dynamic.get<TIPTeacherLessonPlans>(teacher, [
+	// 			'targeted_instruction',
+	// 			'curriculum',
+	// 			class_name,
+	// 			subject,
+	// 			lesson_plan.lesson_number
+	// 		])
+	// 		if (answer?.taken) {
+	// 			agg = agg + 1
+	// 		}
+	// 		return agg
+	// 	}, 0)
+	// }
+
+	const lesson_progress = getLessonProgress(faculty[faculty_id])
 
 	return (
 		<div className="flex flex-wrap content-between mt-20">
@@ -187,7 +191,7 @@ const List: React.FC<PropsType> = ({
 						(b.quiz_order ?? Number.MAX_SAFE_INTEGER)
 				)
 				.map(([lessonPlans, quiz]) => {
-					const count = getTakenLessonPlansCount(lessonPlans)
+					//const count = getTakenLessonPlansCount(lessonPlans)
 					const teacher_quizzes_record = teacher_quiz_record[quiz.quiz_id] ?? {
 						taken: false
 					}
@@ -209,7 +213,7 @@ const List: React.FC<PropsType> = ({
 										<>
 											<div
 												key={lpId}
-												className="no-underline bg-blue-50 pb-1 h-20 w-full mx-3 rounded-md mb-3 flex flex-row justify-between items-center px-2"
+												className="no-underline bg-blue-50 pb-1 h-20 w-full mx-3 rounded-md mb-3 flex flex-row justify-between items-center px-2 shadow-lg"
 												onClick={e =>
 													redirect(e, lessonPlan.lesson_number)
 												}>
@@ -249,12 +253,42 @@ const List: React.FC<PropsType> = ({
 													</div>
 												)}
 											</div>
+											{lesson_progress >= 17 &&
+												parseInt(lessonPlan.lesson_number) === 17 && (
+													<Link
+														className="w-full mx-3 mb-3 bg-white rounded-md h-40 flex flex-col justify-center items-center shadow-lg no-underline"
+														to={'/targeted-instruction/formative-test'}>
+														<img
+															className="h-24 w-28"
+															src={Formative}
+															alt="img"
+														/>
+														<div className="text-blue-900 text-lg font-bold">
+															Midpoint Test
+														</div>
+													</Link>
+												)}
+											{lesson_progress >= 35 &&
+												parseInt(lessonPlan.lesson_number) === 35 && (
+													<Link
+														className="w-full mx-3 mb-3 bg-white rounded-md h-40 flex flex-col justify-center items-center shadow-lg no-underline"
+														to={'/targeted-instruction/summative-test'}>
+														<img
+															className="h-24 w-28"
+															src={Summative}
+															alt="img"
+														/>
+														<div className="text-blue-900 text-lg font-bold">
+															Final Test
+														</div>
+													</Link>
+												)}
 										</>
 									)
 								})}
-							{quiz && quiz.quiz_id && count === Object.keys(lessonPlans).length && (
+							{quiz && quiz.quiz_id && (
 								<div
-									className="no-underline bg-gray-50 h-20 w-full mx-3 rounded-md mb-3 flex flex-row justify-between items-center px-2"
+									className="no-underline bg-gray-tip h-20 w-full mx-3 rounded-md mb-3 flex flex-row justify-between items-center px-2"
 									onClick={e => redirectToQuiz(e, quiz.quiz_id)}>
 									<div className="flex flex-col justify-between items-center w-full h-15 pl-4">
 										<div className="text-white text-lg font-bold mb-1">
@@ -264,18 +298,11 @@ const List: React.FC<PropsType> = ({
 											Quiz Number {quiz.quiz_order}
 										</div>
 									</div>
-									{teacher_quizzes_record.taken ? (
+									{teacher_quizzes_record.taken && (
 										<img
-											src={Check}
-											className="h-8 w-8 bg-white rounded-full flex items-center justify-center print:hidden cursor-pointer"
-											onClick={e => markQuiz(e, quiz.quiz_id, false)}
+											src={QuizMark}
+											className="h-8 w-8 flex items-center justify-center print:hidden cursor-pointer"
 										/>
-									) : (
-										<div
-											className="h-8 w-8 bg-white rounded-full flex items-center justify-center print:hidden cursor-pointer"
-											onClick={e => markQuiz(e, quiz.quiz_id, true)}>
-											<img className="h-3 w-3" src={WhiteTick} />
-										</div>
 									)}
 								</div>
 							)}

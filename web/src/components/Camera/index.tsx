@@ -25,17 +25,17 @@ export default class Camera extends React.Component<P, S> {
 			video: {
 				facingMode: 'environment',
 				width: { max: props.width, ideal: props.width },
-				height: { max: props.height, ideal: props.height },
-			},
+				height: { max: props.height, ideal: props.height }
+			}
 		})
 
 		this.state = {
-			image_string: undefined,
+			image_string: undefined
 		}
 	}
 
 	componentDidMount() {
-		this.stream.then((stream) => (this.video.srcObject = stream))
+		this.stream.then(stream => (this.video.srcObject = stream))
 	}
 
 	onCameraClick = () => {
@@ -49,7 +49,7 @@ export default class Camera extends React.Component<P, S> {
 		const data = canvas.toDataURL(`image/${this.props.format}`)
 
 		this.setState({
-			image_string: data,
+			image_string: data
 		})
 
 		canvas.remove()
@@ -58,10 +58,10 @@ export default class Camera extends React.Component<P, S> {
 	onImageReject = () => {
 		this.setState(
 			{
-				image_string: undefined,
+				image_string: undefined
 			},
 			() => {
-				this.stream.then((stream) => (this.video.srcObject = stream))
+				this.stream.then(stream => (this.video.srcObject = stream))
 			}
 		)
 	}
@@ -73,15 +73,15 @@ export default class Camera extends React.Component<P, S> {
 	}
 
 	componentWillUnmount() {
-		this.stream.then((stream) => {
-			stream.getTracks().forEach((t) => t.stop())
+		this.stream.then(stream => {
+			stream.getTracks().forEach(t => t.stop())
 		})
 	}
 
 	render() {
 		if (this.state.image_string) {
 			return (
-				<div className="camera">
+				<div className="camera w-72">
 					<div className="title">Camera</div>
 					<img src={this.state.image_string} alt="camera-result" />
 					<div className="row">
@@ -97,23 +97,25 @@ export default class Camera extends React.Component<P, S> {
 		}
 
 		return (
-			<div className="camera">
-				<div className="close button red" onClick={this.props.onClose}>
-					✕
+			<div className="camera w-72">
+				<div className="flex flex-row justify-end">
+					<button className="tw-btn-red" onClick={this.props.onClose}>
+						✕
+					</button>
 				</div>
 
 				<div className="title">Camera</div>
 				<video
 					id="viewfinder"
-					ref={(x) => (this.video = x)}
+					ref={x => (this.video = x)}
 					autoPlay={true}
 					height={this.props.height}
 					width={this.props.width}
 				/>
 
-				<div className="button blue" onClick={this.onCameraClick}>
+				<button className="tw-btn-blue w-full" onClick={this.onCameraClick}>
 					Take Picture
-				</div>
+				</button>
 			</div>
 		)
 	}

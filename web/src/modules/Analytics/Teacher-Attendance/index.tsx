@@ -54,7 +54,7 @@ const AttendanceChart = ({ attendance, filter, date_format }: ChartData) => {
 						PRESENT,
 						LEAVE,
 						ABSENT,
-						percent: ((ABSENT / (ABSENT + PRESENT + LEAVE)) * 100).toFixed(2),
+						percent: ((ABSENT / (ABSENT + PRESENT + LEAVE)) * 100).toFixed(2)
 					}))}>
 				<XAxis dataKey="month" />
 				<YAxis />
@@ -142,7 +142,7 @@ const AttendanceTable = ({ attendance, totals, date_format }: TableData) => {
 							%
 						</b>
 					</label>
-				</div>,
+				</div>
 			]}
 		</div>
 	)
@@ -196,14 +196,14 @@ class TeacherAttendanceAnalytics extends Component<propTypes, S> {
 				present: true,
 				absent: true,
 				leave: true,
-				percentage: true,
+				percentage: true
 			},
 			classFilter: '',
 			is_attendance_filter: false,
 			selected_faculty_id: '',
 			selected_period: period !== '' ? period.toString() : 'Monthly',
 			start_date: start_date,
-			end_date: end_date,
+			end_date: end_date
 		}
 		this.former = new Former(this, [])
 	}
@@ -248,7 +248,7 @@ class TeacherAttendanceAnalytics extends Component<propTypes, S> {
 		this.setState({
 			start_date,
 			end_date,
-			selected_period,
+			selected_period
 		})
 	}
 
@@ -299,7 +299,7 @@ class TeacherAttendanceAnalytics extends Component<propTypes, S> {
 		)
 
 		return (
-			<div className="attendance-analytics">
+			<div className="attendance-analytics mx-auto">
 				<PrintHeader settings={settings} logo={schoolLogo} />
 
 				<div className="mis-table row">
@@ -326,15 +326,15 @@ class TeacherAttendanceAnalytics extends Component<propTypes, S> {
 				</div>
 
 				<div className="no-print btn-filter-toggle row">
-					<div
-						className="button green"
+					<button
+						className="tw-btn bg-teal-brand text-white"
 						onClick={() =>
 							this.setState({
-								is_attendance_filter: !this.state.is_attendance_filter,
+								is_attendance_filter: !this.state.is_attendance_filter
 							})
 						}>
 						Show Filters
-					</div>
+					</button>
 				</div>
 				{this.state.is_attendance_filter && (
 					<div className="no-print section form">
@@ -342,6 +342,7 @@ class TeacherAttendanceAnalytics extends Component<propTypes, S> {
 							<label> Start Date </label>
 							<input
 								type="date"
+								className="tw-input"
 								onChange={this.former.handle(
 									['start_date'],
 									() => true,
@@ -355,6 +356,7 @@ class TeacherAttendanceAnalytics extends Component<propTypes, S> {
 							<label> End Date </label>
 							<input
 								type="date"
+								className="tw-input"
 								onChange={this.former.handle(
 									['end_date'],
 									() => true,
@@ -368,6 +370,7 @@ class TeacherAttendanceAnalytics extends Component<propTypes, S> {
 						<div className="row">
 							<label> Teacher </label>
 							<select
+								className="tw-select"
 								{...this.former.super_handle(
 									['selected_faculty_id'],
 									() => true,
@@ -375,9 +378,9 @@ class TeacherAttendanceAnalytics extends Component<propTypes, S> {
 								)}>
 								<option value="">All Teacher </option>
 								{Object.values(this.props.teachers)
-									.filter((f) => f && f.Active && f.Name)
+									.filter(f => f && f.Active && f.Name)
 									.sort((a, b) => a.Name.localeCompare(b.Name))
-									.map((f) => (
+									.map(f => (
 										<option value={f.id}>{f.Name}</option>
 									))}
 							</select>
@@ -386,6 +389,7 @@ class TeacherAttendanceAnalytics extends Component<propTypes, S> {
 						<div className="row">
 							<label> Attendance Period </label>
 							<select
+								className="tw-select"
 								{...this.former.super_handle(
 									['selected_period'],
 									() => true,
@@ -410,37 +414,41 @@ class TeacherAttendanceAnalytics extends Component<propTypes, S> {
 					/>
 				</div>
 
-				<div className="no-print checkbox-container">
+				<div className="no-print checkbox-container space-x-2">
 					<div className="chart-checkbox" style={{ color: '#93d0c5' }}>
 						<input
+							className="tw-checkbox form-checkbox"
 							type="checkbox"
 							{...this.former.super_handle(['chartFilter', 'present'])}
 						/>
-						Present
+						<span className="ml-1">Present</span>
 					</div>
 
 					<div className="chart-checkbox" style={{ color: '#fc6171' }}>
 						<input
+							className="tw-checkbox form-checkbox"
 							type="checkbox"
 							{...this.former.super_handle(['chartFilter', 'absent'])}
 						/>
-						Absent
+						<span className="ml-1">Absent</span>
 					</div>
 
 					<div className="chart-checkbox" style={{ color: '#656565' }}>
 						<input
+							className="tw-checkbox form-checkbox"
 							type="checkbox"
 							{...this.former.super_handle(['chartFilter', 'leave'])}
 						/>
-						Leave
+						<span className="ml-1">Leave</span>
 					</div>
 
 					<div className="chart-checkbox" style={{ color: '#74aced' }}>
 						<input
+							className="tw-checkbox form-checkbox"
 							type="checkbox"
 							{...this.former.super_handle(['chartFilter', 'percentage'])}
 						/>
-						Absentee (%)
+						<span className="ml-1">Absentee (%)</span>
 					</div>
 				</div>
 
@@ -454,7 +462,7 @@ class TeacherAttendanceAnalytics extends Component<propTypes, S> {
 				<div className="section">
 					<div className="row no-print">
 						<input
-							className="search-bar"
+							className="tw-input w-full"
 							type="text"
 							{...this.former.super_handle(['filterText'])}
 							placeholder="search"
@@ -500,5 +508,5 @@ class TeacherAttendanceAnalytics extends Component<propTypes, S> {
 export default connect((state: RootReducerState) => ({
 	teachers: state.db.faculty,
 	settings: state.db.settings,
-	schoolLogo: state.db.assets ? state.db.assets.schoolLogo || '' : '',
+	schoolLogo: state.db.assets ? state.db.assets.schoolLogo || '' : ''
 }))(TeacherAttendanceAnalytics)

@@ -51,7 +51,8 @@ const Grading: React.FC<PropsType> = ({
 	const group = convertLearningLevelToGrade(class_name ? (class_name as TIPLevels) : 'Oral')
 
 	const filtered_students = useMemo(() => getStudentsByGroup(students, group, subject), [subject])
-	const total_marks = targeted_instruction?.quizzes?.[class_name]?.[subject][quiz_id].total_marks
+	const total_marks =
+		targeted_instruction?.quizzes?.[class_name]?.[subject]?.[quiz_id]?.total_marks
 	const quiz_title =
 		targeted_instruction?.quizzes?.[class_name]?.[subject]?.[quiz_id]?.quiz_title || ''
 
@@ -62,7 +63,7 @@ const Grading: React.FC<PropsType> = ({
 		const reports: QuizResult = filtered_students.reduce((agg, student) => {
 			const obtained_marks =
 				student.targeted_instruction?.quiz_result?.[class_name]?.[subject]?.[quiz_id]
-					?.obtained_marks ?? 0
+					?.obtained_marks ?? -1
 			return {
 				...agg,
 				[student.id]: obtained_marks

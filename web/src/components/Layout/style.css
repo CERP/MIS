@@ -1,6 +1,6 @@
 :root {
 	--blue: #74aced;
-	--offwhite: #fafafa;
+	--offwhite: #f8f9fb;
 	--darkgrey: #333333;
 }
 
@@ -12,7 +12,7 @@ body,
 	width: 100%;
 	margin: 0;
 	position: absolute;
-	background-color: var(--offwhite);
+	background-color: white;
 	overflow: visible;
 }
 
@@ -223,9 +223,9 @@ a.block {
 		}
 		*/
 
-	.form input {
+	/* .form input {
 		min-width: 30%;
-	}
+	} */
 
 	.form select {
 		min-width: 30%;
@@ -245,7 +245,7 @@ a.block {
 	margin-left: auto;
 	margin-top: 10px;
 }
-
+/* 
 .form input {
 	background-color: inherit;
 	border: none;
@@ -254,9 +254,9 @@ a.block {
 	outline: none;
 	padding: 0 5px;
 	box-sizing: border-box;
-}
+} */
 
-input[disabled] {
+/* input[disabled] {
 	background-color: #aaa;
 }
 
@@ -300,13 +300,13 @@ select {
 
 select:focus {
 	background-color: white;
-}
-
+} */
+/* 
 .form input:focus {
 	background-color: white;
 	border: 1px solid #4da2df;
 	border: 1px solid #74aced;
-}
+} */
 
 .title {
 	margin: 20px 0;
@@ -542,14 +542,14 @@ textarea:focus {
 	box-shadow: 0px 0px;
 }
 
-input::-webkit-calendar-picker-indicator {
+/* input::-webkit-calendar-picker-indicator {
 	opacity: 100;
 }
 
 input::-webkit-inner-spin-button {
 	-webkit-appearance: none;
 	display: none;
-}
+} */
 
 .tabs a {
 	margin: 10px;

@@ -12,6 +12,7 @@ import Layout from 'components/Layout'
 import Former from 'utils/former'
 import Dropdown from 'components/Dropdown'
 import calculateGrade from 'utils/calculateGrade'
+import { AppLayout } from 'components/Layout/appLayout'
 
 import './style.css'
 
@@ -39,13 +40,13 @@ class SingleExam extends Component {
 			exam:
 				this.exam_id() === undefined
 					? {
-							...blankExam(),
-							student_marks
-					  }
+						...blankExam(),
+						student_marks
+					}
 					: {
-							...this.props.exams[this.exam_id()],
-							student_marks: this.getGradesForExistingExam(this.exam_id())
-					  },
+						...this.props.exams[this.exam_id()],
+						student_marks: this.getGradesForExistingExam(this.exam_id())
+					},
 			sendSMS: false,
 			redirect: false,
 			banner: {
@@ -201,7 +202,7 @@ class SingleExam extends Component {
 		clearTimeout(this.banner_timeout)
 	}
 
-	componentWillReceiveProps(nextProps) {}
+	componentWillReceiveProps(nextProps) { }
 
 	addStudent = student => {
 		this.setState({
@@ -269,19 +270,18 @@ class SingleExam extends Component {
 			)
 		}
 		return (
-			<Layout history={this.props.history}>
-				<div className="single-exam">
+			<AppLayout title="Exam" showHeaderTitle>
+				<div className="single-exam p-5 md:p-10 md:pt-5">
 					{this.state.banner.active ? (
 						<Banner isGood={this.state.banner.good} text={this.state.banner.text} />
 					) : (
 						false
 					)}
 
-					<div className="title">Exam</div>
 					<div className="form">
 						<div className="row">
 							<label>Exam Name</label>
-							<select {...this.former.super_handle(['name'])}>
+							<select className="tw-select" {...this.former.super_handle(['name'])}>
 								<option value="">Select Exam</option>
 								<option value="Test">Test</option>
 								<option value="1st Term">1st Term</option>
@@ -293,7 +293,9 @@ class SingleExam extends Component {
 
 						<div className="row">
 							<label>Subject</label>
-							<select {...this.former.super_handle(['subject'])}>
+							<select
+								className="tw-select"
+								{...this.former.super_handle(['subject'])}>
 								<option value="" disabled>
 									Please Select a Subject
 								</option>
@@ -310,6 +312,7 @@ class SingleExam extends Component {
 						<div className="row">
 							<label>Total Score</label>
 							<input
+								className="tw-input"
 								type="number"
 								{...this.former.super_handle(['total_score'])}
 								placeholder="Maximum Score"
@@ -319,6 +322,7 @@ class SingleExam extends Component {
 						<div className="row">
 							<label>Date of Test</label>
 							<input
+								className="tw-input"
 								type="date"
 								onChange={this.former.handle(['date'])}
 								value={moment(this.state.exam.date).format('YYYY-MM-DD')}
@@ -354,7 +358,7 @@ class SingleExam extends Component {
 											<div className="remove row">
 												<label>
 													{student.RollNumber ? student.RollNumber : ''}{' '}
-													<Link to={`/student/${student.id}/profile`}>
+													<Link to={`/students/${student.id}/profile`}>
 														{student.Name}
 													</Link>
 												</label>
@@ -365,9 +369,10 @@ class SingleExam extends Component {
 												</div>
 											</div>
 
-											<div className="marks row">
+											<div className="marks row space-x-2">
 												<input
 													type="number"
+													className="tw-input"
 													{...this.former.super_handle(
 														['student_marks', student.id, 'score'],
 														() => true,
@@ -376,6 +381,7 @@ class SingleExam extends Component {
 													placeholder="Score"
 												/>
 												<select
+													className="tw-select"
 													{...this.former.super_handle([
 														'student_marks',
 														student.id,
@@ -394,6 +400,7 @@ class SingleExam extends Component {
 												</select>
 
 												<select
+													className="tw-select"
 													{...this.former.super_handle([
 														'student_marks',
 														student.id,
@@ -419,6 +426,7 @@ class SingleExam extends Component {
 							<div className="students">
 								<div className="row">
 									<Dropdown
+										className="tw-input"
 										items={students}
 										toLabel={s => s.Name}
 										onSelect={s => this.addStudent(s)}
@@ -444,7 +452,7 @@ class SingleExam extends Component {
 						</div>
 					</div>
 				</div>
-			</Layout>
+			</AppLayout>
 		)
 	}
 }

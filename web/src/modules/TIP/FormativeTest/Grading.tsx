@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { connect } from 'react-redux'
 import { RouteComponentProps } from 'react-router-dom'
 import { convertLearningGradeToGroupName, getTestType } from 'utils/TIP'
-import { useComponentVisible } from 'utils/customHooks'
+import { useComponentVisible } from 'hooks/useComponentVisible'
 import AssignedGroupModal from './AssignedGroupModal'
 import { TModal } from '../Modal'
 import Card from '../Card'
@@ -16,6 +16,8 @@ import {
 	resetStudentLearningLevel,
 	resetStudentGrades
 } from 'actions'
+import moment from 'moment'
+import StudentCard from '../StudentCard'
 interface P {
 	teacher_name: string
 	students: RootDBState['students']
@@ -23,7 +25,13 @@ interface P {
 
 	resetStudentLearningLevel: (student_id: string, subject: TIPSubjects) => void
 	resetStudentGrades: (student_id: string, test_id: string) => void
-	setLearningLevel: (student_id: string, subject: TIPSubjects, level: TIPGrades) => void
+	setLearningLevel: (
+		student_id: string,
+		subject: TIPSubjects,
+		level: TIPGrades,
+		is_oral: boolean,
+		history: TIPGradesHistory
+	) => void
 	saveReport: (
 		student_id: string,
 		diagnostic_report: TIPDiagnosticReport,
@@ -127,7 +135,23 @@ const Grading: React.FC<PropsType> = ({
 		) {
 			// if user has gradded all questions => a Modal will open to display assigned Group else it will display warning
 			if (test_type === 'Diagnostic' || test_type === 'Oral') {
-				setLearningLevel(std_id, subject, level)
+				const { is_oral: current_oral_value, history: current_history, grade } = students?.[
+					std_id
+				]?.targeted_instruction?.learning_level?.[subject] || {
+					is_oral: false,
+					history: {},
+					grade: ''
+				}
+				const is_oral = level === 'Oral Test' ? true : current_oral_value
+				const timestamp = moment().format('YYYY-MM-DD')
+				const history = {
+					...current_history,
+					[timestamp]: {
+						type: 'Graduation',
+						grade
+					}
+				}
+				setLearningLevel(std_id, subject, level, is_oral, history as TIPGradesHistory)
 				setIsComponentVisible(true)
 				setModaltype('assign_group_modal')
 			} else {
@@ -152,8 +176,8 @@ const Grading: React.FC<PropsType> = ({
 			test_type === 'Diagnostic'
 				? `/${url[1]}/${url[2]}/${section_id}/${class_name}/${subject}/${test_id}/insert-grades`
 				: test_type === 'Oral'
-					? `/${url[1]}/${url[2]}/${subject}/${test_id}/insert-grades`
-					: `/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades`
+				? `/${url[1]}/${url[2]}/${subject}/${test_id}/insert-grades`
+				: `/${url[1]}/${url[2]}/${class_name}/${subject}/${test_id}/insert-grades`
 		)
 	}
 
@@ -190,9 +214,10 @@ const Grading: React.FC<PropsType> = ({
 					</div>
 				</TModal>
 			)}
-			<Card
+			<StudentCard
 				class_name={class_name ? class_name : 'Oral Test'}
 				subject={subject}
+				student_id={std_id}
 				lesson_name=""
 				lesson_no=""
 			/>
@@ -206,8 +231,9 @@ const Grading: React.FC<PropsType> = ({
 						return (
 							<div
 								key={q_id}
-								className={`flex flex-row justify-between items-center border border-solid border-gray-200 px-3 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'
-									} h-20`}>
+								className={`flex flex-row justify-between items-center border border-solid border-gray-200 px-3 ${
+									index % 2 === 0 ? 'bg-gray-100' : 'bg-white'
+								} h-20`}>
 								<span className="text-xs font-bold">{`${q_id}: `}</span>
 								<div className="flex flex-col w-full">
 									<div className="text-xs px-2">{question.question_text}</div>
@@ -268,7 +294,12 @@ export default connect(
 			dispatch(resetStudentLearningLevel(student_id, subject)),
 		saveReport: (student_id: string, diagnostic_report: TIPDiagnosticReport, test_id: string) =>
 			dispatch(mergeTIPResult(student_id, diagnostic_report, test_id)),
-		setLearningLevel: (student_id: string, subject: TIPSubjects, level: TIPGrades) =>
-			dispatch(assignLearningLevel(student_id, subject, level))
+		setLearningLevel: (
+			student_id: string,
+			subject: TIPSubjects,
+			level: TIPGrades,
+			is_oral: boolean,
+			history: TIPGradesHistory
+		) => dispatch(assignLearningLevel(student_id, subject, level, is_oral, history))
 	})
 )(Grading)

@@ -38,8 +38,8 @@ import backArrow from './svgs/left-arrow.svg'
 import burger from './svgs/burger.svg'
 import tip from './svgs/TIP.svg'
 import down from './svgs/down.svg'
-import whiteUser from './svgs/whiteUser.svg'
-import blackUser from './svgs/blackUser.svg'
+import whiteAvatar from './svgs/whiteUser.svg'
+import blackAvatar from './svgs/blackUser.svg'
 import whiteQuiz from './svgs/whiteQuiz.svg'
 import blueQuiz from './svgs/blueQuiz.svg'
 import results from './svgs/results.svg'
@@ -49,6 +49,8 @@ import smile from './svgs/smile.svg'
 import sad from './svgs/sad.svg'
 import serious from './svgs/serious.svg'
 import oralTest from './svgs/oralTest.png'
+import to from './svgs/to.svg'
+import tag from './svgs/tag.svg'
 
 export const EditIcon = deleteIcon
 export const DeleteIcon = editIcon
@@ -90,8 +92,8 @@ export const BackArrow = backArrow
 export const Burger = burger
 export const TIP = tip
 export const DownArrow = down
-export const WhiteUser = whiteUser
-export const BlackUser = blackUser
+export const WhiteAvatar = whiteAvatar
+export const BlackAvatar = blackAvatar
 export const BlueQuiz = blueQuiz
 export const Results = results
 export const WhiteQuiz = whiteQuiz
@@ -101,3 +103,5 @@ export const Smile = smile
 export const Sad = sad
 export const Serious = serious
 export const OralTest = oralTest
+export const To = to
+export const Tag = tag

@@ -26,38 +26,37 @@ const Layout = ({ user, children, history, title, link, auth, client_id }: Props
 			{history.location.pathname === '/' ? (
 				<FrontHeader user={user} />
 			) : (
-				<Header
-					user={user}
-					history={history}
-					title={title}
-					link={link}
-					auth={auth}
-					client_id={client_id}
-				/>
-			)}
+					<Header
+						user={user}
+						history={history}
+						title={title}
+						link={link}
+						auth={auth}
+						client_id={client_id}
+					/>
+				)}
 			{children}
 		</div>
 	)
 }
 
-const FrontHeader = ({ user }: PropsType) => (
-	<div className="header bg-red">
-		<div className="left">
-			<Link to="/landing">MISchool</Link>
-		</div>
-		{user ? (
-			<Link className="profile" to={`/faculty/${user.id}/profile`}>
-				{user.Name}
-			</Link>
-		) : (
-			<Link className="profile" style={{ marginRight: '10px' }} to="/login">
-				Login
-			</Link>
-		)}
+const FrontHeader = ({ user }: PropsType) => <div className="header bg-red">
+	<div className="left"><Link to="/home">MISchool</Link></div>
+	{user ? <Link className="profile" to={`/faculty/${user.id}/profile`}>{user.Name}</Link> : <Link className="profile" style={{ marginRight: "10px" }} to="/school-login">Login</Link>}
+</div>
+
+const Header = ({ user, history, title, link, auth, client_id }: PropsType) => (<div className="header" style={{ justifyContent: "space-between" }}>
+	<div className="row header-items">
+		{
+			(history.location.pathname !== "/home" && history.location.pathname !== "/" && history.location.pathname !== "/school-login") &&
+			<div className="back" onClick={() => history.goBack()} style={{ backgroundImage: `url(${BackButtonIcon})` }} />
+		}
+		<div className="left"><Link to="/home">MISchool</Link></div>
 	</div>
+</div>
 )
 
-const Header = ({ user, history, title, link, auth, client_id }: PropsType) => (
+const OldHeader = ({ user, history, title, link, auth, client_id }: PropsType) => (
 	<div className="header" style={{ justifyContent: 'space-between' }}>
 		<div className="row header-items">
 			{history.location.pathname !== '/landing' &&
@@ -83,10 +82,10 @@ const Header = ({ user, history, title, link, auth, client_id }: PropsType) => (
 					<HelpButton title={title} link={link} />
 				</div>
 			) : (
-				<div className="row header-items">
-					<HelpButton title={title} link={link} />
-				</div>
-			)}
+					<div className="row header-items">
+						<HelpButton title={title} link={link} />
+					</div>
+				)}
 		</div>
 	</div>
 )
@@ -142,8 +141,8 @@ const SpecialLayoutWrap = (WrappedComponent: any) => ({ user, ...props }: PropsT
 		{props.history.location.pathname === '/front' ? (
 			<FrontHeader user={user} />
 		) : (
-			<Header user={user} history={props.history} title={props.title} link={props.link} />
-		)}
+				<Header user={user} history={props.history} title={props.title} link={props.link} />
+			)}
 		<WrappedComponent {...props} />
 	</div>
 )

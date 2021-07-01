@@ -1,8 +1,59 @@
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer components {
+	.tw-table-container {
+		@apply inline-block min-w-full overflow-hidden rounded-lg shadow;
+	}
+	.tw-table {
+		@apply w-full leading-normal table-auto;
+	}
+	.tw-thead {
+		@apply text-xs font-semibold tracking-wider text-center text-gray-700 uppercase bg-gray-200 border-b-2 border-gray-200;
+	}
+	.tw-th {
+		@apply px-5 py-3;
+	}
+	.tw-tr {
+		@apply text-center;
+	}
+	.tw-td {
+		@apply px-5 py-3 text-sm text-gray-900 border-b border-gray-200;
+	}
+
+	.tw-input {
+		@apply px-4 py-2 border border-gray-500 rounded-md outline-none focus:ring-2 focus:ring-blue-brand ring-blue-brand placeholder-gray-500;
+	}
+
+	.tw-btn {
+		@apply px-4 py-3 font-semibold rounded-md outline-none cursor-pointer focus:ring-2;
+	}
+
+	.tw-btn-blue {
+		@apply px-4 py-3 text-white rounded-md outline-none cursor-pointer bg-blue-brand hover:bg-blue-400 focus:ring-2 focus:ring-blue-brand;
+	}
+
+	.tw-btn-red {
+		@apply px-4 py-2 text-white rounded-md cursor-pointer bg-red-brand hover:bg-red-400;
+	}
+
 	.tw-select {
-		@apply rounded-lg block bg-white border-none outline-none py-2 px-4 leading-tight text-blue-900 shadow-lg text-base;
+		@apply py-2 text-gray-700 bg-white border border-gray-500 rounded-lg outline-none focus:ring-2 focus:ring-blue-brand cursor-pointer;
+	}
+
+	.tw-select-tip {
+		@apply px-4 py-2 text-base leading-tight text-blue-900 bg-white border-none rounded-lg shadow-lg outline-none;
+	}
+
+	.tw-is-form-bg-black {
+		@apply text-gray-200 focus-within:bg-transparent bg-transparent border-blue-brand ring-1;
+	}
+	.tw-checkbox {
+		@apply w-5 h-5 rounded text-teal-brand cursor-pointer;
+	}
+
+	.tw-radio {
+		@apply w-5 h-5 text-teal-brand cursor-pointer;
 	}
 }

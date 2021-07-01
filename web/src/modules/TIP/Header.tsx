@@ -2,9 +2,7 @@ import React from 'react'
 import { BackArrow, TIP } from 'assets/icons'
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom'
 
-interface P { }
-
-type PropsType = P & RouteComponentProps
+type PropsType = RouteComponentProps
 
 const Header: React.FC<PropsType> = ({ history }) => {
 	return (

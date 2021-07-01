@@ -160,17 +160,15 @@ const MISActivation: React.FC<P> = ({
 											{stateProps.isPaid ? (
 												<span> You have been marked as Paid User.</span>
 											) : (
-												<span> Your Trial has been reset.</span>
-											)}
+													<span> Your Trial has been reset.</span>
+												)}
 											Thanks for using MISchool!
 										</div>
 									</div>
 								</div>
 								<div className="activation-code" style={{ marginTop: 15 }}>
 									<div className="row">
-										<Link className="button blue" to="/landing">
-											Continue to Use MISchool
-										</Link>
+										<Link className="button blue" to="/home">Continue to Use MISchool</Link>
 									</div>
 								</div>
 							</div>

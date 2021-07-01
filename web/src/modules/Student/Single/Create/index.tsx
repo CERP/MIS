@@ -206,7 +206,7 @@ class SingleStudent extends Component<propTypes, S> {
 					profile: {
 						...profile,
 						fees: {
-							[v4()]: settings.classes.defaultFee[class_id]
+							[v4()]: settings.classes.defaultFee[class_id] as any
 						}
 					}
 				})

@@ -25,10 +25,18 @@ module.exports = {
 			blue: colors.blue,
 			indigo: colors.indigo,
 			purple: colors.violet,
-			pink: colors.pink
+			pink: colors.pink,
+			teal: colors.teal,
+			orange: colors.orange
 		},
 		extend: {
 			colors: {
+				'red-brand': '#FC6171',
+				'green-brand': '#5ECDB9',
+				'orange-brand': '#FFC107',
+				'blue-brand': '#74ACED',
+				'gray-brand': '#E0E0E0',
+				'teal-brand': '#1bb4bb',
 				'red-tip-brand': '#FC6171',
 				'green-tip-brand': '#00CD8A',
 				'sea-green-tip-brand': '#1BB4BB',
@@ -40,13 +48,20 @@ module.exports = {
 				'gray-tip-brand': '#808080',
 				'light-blue-tip-brand': '#3478B9',
 				'danger-tip-brand': '#FF002A',
+				'gray-tip': '#858585',
 				'success-tip-brand': '#00FF43',
 				'blue-50': '#7BACAE',
 				'red-250': '#FF9191',
 				'green-250': '#C6EFCE',
 				'yellow-250': '#FFEB9C',
-				'gray-50': '#858585',
+				'yellow-250': '#FFEB9C',
 				'red-50': '#D93025'
+			},
+			screens: {
+				print: { raw: 'print' }
+			},
+			transitionProperty: {
+				height: 'max-height'
 			},
 			screens: {
 				print: { raw: 'print' }
@@ -878,5 +893,5 @@ module.exports = {
 		wordBreak: ['responsive'],
 		zIndex: ['responsive', 'focus-within', 'focus']
 	},
-	plugins: []
+	plugins: [require('@tailwindcss/forms')]
 }

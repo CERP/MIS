@@ -7,7 +7,7 @@ import {
 	CartesianGrid,
 	Tooltip,
 	ResponsiveContainer,
-	Label,
+	Label
 } from 'recharts'
 
 interface P {
@@ -34,7 +34,7 @@ const VideoWatchGraph: React.FC<P> = ({ graph_data }) => {
 						top: 10,
 						right: 30,
 						left: 10,
-						bottom: 5,
+						bottom: 5
 					}}>
 					<CartesianGrid strokeDasharray="3 3" />
 					<XAxis dataKey="day">
@@ -46,7 +46,7 @@ const VideoWatchGraph: React.FC<P> = ({ graph_data }) => {
 						allowDecimals={false}>
 						<Label value="Time(m)" offset={0} position="left" angle={-90} />
 					</YAxis>
-					<Tooltip content={PointLabel} />
+					<Tooltip content={PointLabel as any} />
 					<Line
 						isAnimationActive={false}
 						type="monotone"

@@ -8,12 +8,12 @@ class List extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			filterText: '',
+			filterText: ''
 		}
 		this.former = new Former(this, [])
 	}
 
-	onChange = (e) => {
+	onChange = e => {
 		this.setState({ filterText: e.target.value })
 	}
 
@@ -21,7 +21,7 @@ class List extends Component {
 		const { items, toLabel, Component, children } = this.props
 
 		const filteredList = items
-			.filter((item) => {
+			.filter(item => {
 				return (
 					toLabel(item) !== undefined &&
 					toLabel(item).toLowerCase().includes(this.state.filterText.toLowerCase())
@@ -33,7 +33,7 @@ class List extends Component {
 					toLabel(a).localeCompare(this.state.filterText)
 			)
 
-		const header = filteredList.some((i) => i.header)
+		const header = filteredList.some(i => i.header)
 
 		return (
 			<div className="list-wrap">
@@ -56,7 +56,7 @@ class List extends Component {
 				/>
 
 				{children}
-				<div className="list">{filteredList.map((item) => Component(item))}</div>
+				<div className="list">{filteredList.map(item => Component(item))}</div>
 			</div>
 		)
 	}

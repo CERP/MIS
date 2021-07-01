@@ -23,12 +23,12 @@ const AdmissionForm = (props: PropsType) => {
 	const section = getSectionFromId(student.section_id, classes)
 
 	return (
-		<div className="print-only admission-form">
+		<div className="admission-form hidden print:block">
 			<div className="header-section">
 				<div className="header-body">
 					<div className="logo-container">
 						{school.logo !== '' && (
-							<img className="header-logo" src={school.logo} alt="School Logo" />
+							<img className="header-logo" src={school.logo} alt="school" />
 						)}
 					</div>
 					<div className="header-style">

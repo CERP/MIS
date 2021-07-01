@@ -20,7 +20,7 @@ const CSVHeaders = [
 	'AdmissionNumber',
 	'AlternatePhone',
 	'BloodType',
-	'Religion',
+	'Religion'
 ]
 
 type PropsType = {
@@ -37,11 +37,11 @@ const StudentExportModal: React.FC<PropsType> = ({ students, classes, onClose })
 	const generateCSV = () => {
 		// for filename
 		let section_name = sectionID
-			? sections.find((section) => section.id === sectionID).namespaced_name
+			? sections.find(section => section.id === sectionID).namespaced_name
 			: 'all-students'
 
 		const csv_data = Object.values(students)
-			.filter((student) => {
+			.filter(student => {
 				return (
 					student &&
 					student.Name &&
@@ -70,8 +70,8 @@ const StudentExportModal: React.FC<PropsType> = ({ students, classes, onClose })
 						StartDate: moment(curr.StartDate).format('DD/MM/YYYY') || '',
 						AdmissionNumber: curr.AdmissionNumber || '',
 						BloodType: curr.BloodType || '',
-						Religion: curr.Religion || '',
-					},
+						Religion: curr.Religion || ''
+					}
 				]
 			}, [])
 
@@ -80,21 +80,23 @@ const StudentExportModal: React.FC<PropsType> = ({ students, classes, onClose })
 	}
 
 	return (
-		<div className="exports-modal">
+		<div className="exports-modal w-full">
 			<div className="close button red" onClick={onClose}>
 				✕
 			</div>
 			<div className="title">Export Students</div>
-			<div className="section-container section">
-				<div className="row">Export all or single class students</div>
+			<div className="space-y-4">
+				<div>Export all or single class students</div>
 				<div className="row" style={{ marginTop: 5 }}>
 					<select
-						onChange={(e) => setSectionID(e.target.value)}
+						className="tw-select"
+						autoFocus={true}
+						onChange={e => setSectionID(e.target.value)}
 						style={{ width: '100%' }}>
 						<option value="">All Classes</option>
 						{sections
 							.sort((a, b) => a.classYear - b.classYear)
-							.map((section) => (
+							.map(section => (
 								<option key={section.id} value={section.id}>
 									{' '}
 									{section.namespaced_name}{' '}
@@ -102,18 +104,17 @@ const StudentExportModal: React.FC<PropsType> = ({ students, classes, onClose })
 							))}
 					</select>
 				</div>
-				<div className="row" style={{ alignItems: 'center' }}>
-					<div className="row" style={{ alignItems: 'center' }}>
-						<input
-							type="checkbox"
-							onChange={(e) => setActive(e.target.checked)}
-							defaultChecked={active}></input>
-						<label>Only Active</label>
-					</div>
-					<div className="button blue" onClick={generateCSV}>
-						Export as CSV
-					</div>
+				<div className="flex flex-row items-center">
+					<input
+						className="form-checkbox text-teal-brand rounded w-5 h-5"
+						type="checkbox"
+						onChange={e => setActive(e.target.checked)}
+						defaultChecked={active}></input>
+					<label className="ml-2">Only Active</label>
 				</div>
+				<button className="tw-btn-blue w-full" onClick={generateCSV}>
+					Export as CSV
+				</button>
 			</div>
 		</div>
 	)

@@ -11,7 +11,7 @@ class Dropdown extends Component {
 		super(props)
 
 		this.state = {
-			text: '',
+			text: ''
 		}
 
 		this.former = new Former(this, [])
@@ -23,6 +23,7 @@ class Dropdown extends Component {
 		return (
 			<div className="dropdown">
 				<input
+					className="tw-input"
 					type="text"
 					{...this.former.super_handle(['text'])}
 					placeholder={this.props.placeholder || 'Enter Text'}
@@ -31,23 +32,23 @@ class Dropdown extends Component {
 					{this.state.text.length === 0
 						? false
 						: items
-								.filter(
-									(item) =>
-										toLabel(item) &&
-										toLabel(item)
-											.toLowerCase()
-											.startsWith(this.state.text.toLowerCase())
-								)
-								.map((item) => (
-									<div
-										onClick={() => {
-											onSelect(item)
-											this.setState({ text: '' })
-										}}
-										key={toKey(item)}>
-										{toLabel(item)}
-									</div>
-								))}
+							.filter(
+								item =>
+									toLabel(item) &&
+									toLabel(item)
+										.toLowerCase()
+										.startsWith(this.state.text.toLowerCase())
+							)
+							.map(item => (
+								<div
+									onClick={() => {
+										onSelect(item)
+										this.setState({ text: '' })
+									}}
+									key={toKey(item)}>
+									{toLabel(item)}
+								</div>
+							))}
 				</div>
 			</div>
 		)
@@ -58,7 +59,7 @@ Dropdown.propTypes = {
 	items: PropTypes.array.isRequired,
 	toLabel: PropTypes.func.isRequired,
 	toKey: PropTypes.func.isRequired,
-	onSelect: PropTypes.func.isRequired,
+	onSelect: PropTypes.func.isRequired
 }
 
 export default Dropdown

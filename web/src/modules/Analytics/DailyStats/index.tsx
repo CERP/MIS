@@ -1,14 +1,16 @@
 import React, { Component } from 'react'
-import Layout from 'components/Layout'
-import { connect } from 'react-redux'
 import moment from 'moment'
-import { RouteComponentProps } from 'react-router'
-import { Link } from 'react-router-dom'
-import getSectionFromId from 'utils/getSectionFromId'
 import queryString from 'query-string'
-import { PaidFeeStudentsPrintableList } from 'components/Printable/Fee/paidList'
-import chunkify from 'utils/chunkify'
+import { Link } from 'react-router-dom'
+import { connect } from 'react-redux'
+import { RouteComponentProps } from 'react-router'
+
 import Former from 'utils/former'
+import chunkify from 'utils/chunkify'
+import getSectionFromId from 'utils/getSectionFromId'
+import { PaidFeeStudentsPrintableList } from 'components/Printable/Fee/paidList'
+import { AppLayout } from 'components/Layout/appLayout'
+import { isValidStudent } from 'utils'
 
 import './style.css'
 
@@ -41,17 +43,17 @@ class DailyStats extends Component<PropsType, S> {
 
 		this.state = {
 			statsType: type,
-			statsDate: moment.now(),
+			statsDate: moment.now()
 		}
 
 		this.former = new Former(this, [])
 	}
 
 	getSiblings = (student: MISStudent): MISStudent[] => {
-		const famId = student.FamilyID ? student.FamilyID : undefined
+		const famId = student?.FamilyID
 
 		return Object.values(this.props.students).filter(
-			(s) => s && s.Name && s.FamilyID && s.FamilyID === famId
+			s => isValidStudent(s) && s.Active && s.FamilyID === famId
 		)
 	}
 
@@ -61,16 +63,16 @@ class DailyStats extends Component<PropsType, S> {
 			const merged_payments = siblings.reduce(
 				(agg, curr) => ({
 					...agg,
-					...Object.entries(curr.payments).reduce((agg, [pid, p]) => {
+					...Object.entries(curr.payments ?? {}).reduce((agg, [pid, p]) => {
 						return {
 							...agg,
 							[pid]: {
 								...p,
 								fee_name: p.fee_name && `${curr.Name}-${p.fee_name}`,
-								student_id: curr.id,
-							},
+								student_id: curr.id
+							}
 						}
-					}, {}),
+					}, {})
 				}),
 				{} as AugmentedMISPaymentMap
 			)
@@ -78,13 +80,13 @@ class DailyStats extends Component<PropsType, S> {
 			return merged_payments
 		}
 
-		return Object.entries(student.payments).reduce(
+		return Object.entries(student.payments ?? {}).reduce(
 			(agg, [pid, curr]) => ({
 				...agg,
 				[pid]: {
 					...curr,
-					student_id: student.id,
-				},
+					student_id: student.id
+				}
 			}),
 			{} as AugmentedMISPaymentMap
 		)
@@ -105,47 +107,47 @@ class DailyStats extends Component<PropsType, S> {
 		const { classes, students } = this.props
 		const { statsDate } = this.state
 
-		const today_date = moment(statsDate).format('YYYY-MM-DD')
-		const chunk_size = 22
+		const todayDate = moment(statsDate).format('YYYY-MM-DD')
+		const chunkSize = 22
 
-		let total_amount_received = 0
-		let total_students_paid = 0
-		let paid_students = [] as AugmentedStudent[]
+		let totalAmountReceived = 0
+		let totalStudentsWhoPaid = 0
+		let paidStudents = [] as AugmentedStudent[]
 
 		for (const student of Object.values(students)) {
-			if (student && student.Name) {
-				const amount_paid_today = Object.values(student.payments || {})
+			if (isValidStudent(student) && student.Active) {
+				const amount_paid_today = Object.values(student.payments ?? {})
 					.filter(
-						(payment) =>
-							moment(payment.date).format('YYYY-MM-DD') === today_date &&
+						payment =>
+							moment(payment.date).format('YYYY-MM-DD') === todayDate &&
 							payment.type === 'SUBMITTED'
 					)
 					.reduce((agg, curr) => agg + curr.amount, 0)
 
 				if (amount_paid_today > 0) {
-					paid_students.push({
+					paidStudents.push({
 						...student,
 						amount_paid: amount_paid_today,
 						balance: this.getStudentBalance(student),
-						section: getSectionFromId(student.section_id, classes),
+						section: getSectionFromId(student.section_id, classes)
 					})
-					total_students_paid += 1
+					totalStudentsWhoPaid += 1
 				}
-				total_amount_received += amount_paid_today
+				totalAmountReceived += amount_paid_today
 			}
 		}
 
 		return (
 			<>
 				<div className="section no-print">
-					<div className="title">Students Fee</div>
+					<div className="text-center text-2xl">Students Fee</div>
 					<div className="mis-table row">
 						<label>Total Amount Received: </label>
-						<div className="number">Rs. {total_amount_received}</div>
+						<div className="number">Rs. {totalAmountReceived}</div>
 					</div>
 					<div className="mis-table row student-count">
 						<label>Total Students Paid: </label>
-						<div className="number">{total_students_paid}</div>
+						<div className="number">{totalStudentsWhoPaid}</div>
 					</div>
 					<div style={{ border: '1px solid grey', borderRadius: '4px', padding: '5px' }}>
 						<div className="mis-table row">
@@ -162,26 +164,26 @@ class DailyStats extends Component<PropsType, S> {
 								<b>Balance</b>
 							</label>
 						</div>
-						{paid_students
+						{paidStudents
 							.sort(
-								(a, b) =>
-									((a.section && a.section.classYear) || 0) -
-									((b.section && b.section.classYear) || 0)
+								(a, b) => (a.section?.classYear ?? 0) - (b.section?.classYear ?? 0)
 							)
-							.map((student) => (
+							.map(student => (
 								<div className="mis-table row" key={student.id}>
 									{student.FamilyID && student.FamilyID !== '' ? (
-										<Link to={`/families/${student.FamilyID}`}>
+										<Link
+											className="underline text-blue-brand"
+											to={`/families/${student.FamilyID}/payments`}>
 											{student.FamilyID}(F)
 										</Link>
 									) : (
-										<Link to={`/student/${student.id}/payment`}>
+										<Link
+											className="underline text-blue-brand"
+											to={`/students/${student.id}/payments`}>
 											{student.Name}
 										</Link>
 									)}
-									<div>
-										{(student.section && student.section.namespaced_name) || ''}
-									</div>
+									<div>{student.section?.namespaced_name ?? ''}</div>
 									<div>{student.amount_paid}</div>
 									<div
 										className={
@@ -195,19 +197,19 @@ class DailyStats extends Component<PropsType, S> {
 							))}
 					</div>
 					<div className="row print-button">
-						<div className="button grey" onClick={() => window.print()}>
+						<button className="tw-btn bg-gray-brand" onClick={() => window.print()}>
 							Print Paid Students List
-						</div>
+						</button>
 					</div>
 				</div>
-				{chunkify(paid_students, chunk_size).map(
+				{chunkify(paidStudents, chunkSize).map(
 					(itemsChunk: AugmentedStudent[], index: number) => (
 						<PaidFeeStudentsPrintableList
 							key={index}
 							students={itemsChunk}
-							chunkSize={index === 0 ? 0 : chunk_size * index}
-							totalAmount={total_amount_received}
-							totalStudents={total_students_paid}
+							chunkSize={index === 0 ? 0 : chunkSize * index}
+							totalAmount={totalAmountReceived}
+							totalStudents={totalStudentsWhoPaid}
 							paidDate={moment(statsDate).format('DD/MM/YYYY')}
 						/>
 					)
@@ -228,11 +230,11 @@ class DailyStats extends Component<PropsType, S> {
 		const { statsDate } = this.state
 
 		return (
-			<Layout history={this.props.history}>
-				<div className="daily-stats">
-					<div className="title no-print">Daily Statistics</div>
-					<div className="row date no-print">
+			<AppLayout title="Daily Statistics" showHeaderTitle>
+				<div className="daily-stats p-5 md:p-10 md:pt-5">
+					<div className="flex text-center justify-center no-print mb-4">
 						<input
+							className="tw-input"
 							type="date"
 							onChange={this.former.handle(['statsDate'])}
 							value={moment(statsDate).format('YYYY-MM-DD')}
@@ -241,12 +243,12 @@ class DailyStats extends Component<PropsType, S> {
 					</div>
 					{this.renderSection()}
 				</div>
-			</Layout>
+			</AppLayout>
 		)
 	}
 }
 
 export default connect((state: RootReducerState) => ({
 	students: state.db.students,
-	classes: state.db.classes,
+	classes: state.db.classes
 }))(DailyStats)

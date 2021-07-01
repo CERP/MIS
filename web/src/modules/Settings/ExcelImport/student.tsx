@@ -201,11 +201,8 @@ class StudentExcelImport extends React.Component<P, S> {
 			meta && meta.sections ? Object.keys(meta.sections).includes(section_id) : false
 		)
 
-		const class_default_fee =
-			settings &&
-			settings.classes &&
-			settings.classes.defaultFee &&
-			settings.classes.defaultFee[class_id]
+		// TODO: remove this logic
+		const class_default_fee = settings?.classes?.defaultFee[class_id] as any
 
 		const classed_students = students.map(s => {
 			const fee_id = v4()

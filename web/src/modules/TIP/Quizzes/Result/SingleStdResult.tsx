@@ -1,5 +1,5 @@
 import React from 'react'
-import { BlackUser, Smile, Sad, Serious } from 'assets/icons'
+import { BlackAvatar, Smile, Sad, Serious } from 'assets/icons'
 import clsx from 'clsx'
 
 interface P {
@@ -16,6 +16,8 @@ const getProgress = (obtained_marks: number) => {
 		return 'Mastered'
 	} else if (percentage >= 40) {
 		return 'Working'
+	} else if (percentage < 0) {
+		return 'Absent'
 	} else {
 		return 'Struggling'
 	}
@@ -26,43 +28,41 @@ const SingleStdResult: React.FC<P> = ({ student, class_name, subject, quiz_id, t
 	const obtained_marks = quiz_result?.[class_name]?.[subject]?.[quiz_id]?.obtained_marks ?? 0
 	const progress = getProgress(obtained_marks)
 
+	const getSmileyFromProgress = (progress: string) => {
+		if (progress === 'Mastered') {
+			return Smile
+		} else if (progress === 'Working') {
+			return Serious
+		} else if (progress === 'Absent') {
+			return ''
+		} else {
+			return Sad
+		}
+	}
 	return (
 		<div className="mb-3 bg-white w-ful text-sm md:text-base lg:text-lg flex flex-row justify-around md:justify-around lg:justify-around">
 			<div className="w-1/3 flex justify-center">
-				<div className="w-full md:w-1/2 lg:w-1/2 flex flex-row justify-start items-center">
-					<img className="h-8 w-8" src={BlackUser} />
+				<div className="w-full md:w-1/2 lg:w-1/2 flex flex-row justify-center items-center">
+					<img className="h-8 w-8" src={BlackAvatar} />
 					<div>{student.Name}</div>
 				</div>
 			</div>
 			<div className="flex items-center w-1/3 justify-center font-bold">
-				{obtained_marks}/{total_marks}
+				{`${obtained_marks === -1 ? 'Absent' : `${obtained_marks}/${total_marks}`}`}
 			</div>
 			<div className="flex items-center w-1/3 justify-center">
-				<div className="w-full md:w-1/2 lg:w-1/3 flex flex-row justify-start items-center">
+				<div className="w-full md:w-1/2 lg:w-1/3 flex flex-row justify-center items-center">
+					{progress !== 'Absent' && (
+						<img className="w-5 h-5 mr-2" src={getSmileyFromProgress(progress)} />
+					)}
 					<div
-						className={clsx(
-							'bg-blue-900 rounded-full h-5 w-5 mr-3',
-							{
-								'bg-sea-green-tip-brand': progress === 'Mastered',
-								'bg-yellow-tip-brand': progress === 'Working'
-							},
-							'bg-red-tip-brand'
-						)}></div>
-					{/* <img
-						className="w-5 h-5 mr-2"
-						src={
-							progress === 'Mastered' ? Smile : progress === 'Working' ? Serious : Sad
-						}
-					/> */}
-					<div
-						className={clsx(
-							'font-bold',
-							{
-								'text-sea-green-tip-brand': progress === 'Mastered',
-								'text-yellow-tip-brand': progress === 'Working'
-							},
-							'text-red-tip-brand'
-						)}>
+						className={clsx('font-bold', {
+							'fontColor:#3efd45': progress === 'Mastered',
+							'text-yellow-tip-brand': progress === 'Working',
+							'text-red-tip-brand': progress === 'Struggling',
+							'text-black': progress === 'Absent'
+						})}
+						style={progress === 'Mastered' ? { color: '#3efd45' } : {}}>
 						{progress}
 					</div>
 				</div>

@@ -203,7 +203,7 @@ class CreateTeacher extends Component<propTypes, S> {
 			setTimeout(() => {
 				this.setState({
 					...this.state,
-					redirect: '/landing'
+					redirect: '/home'
 				})
 			}, 2000)
 		}

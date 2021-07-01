@@ -28,7 +28,6 @@ const SkillView: React.FC<P> = ({ skillViewResult, setSelectedSlo, setType }) =>
 								<span className="mr-2">{index + 1} .</span>
 								<div>{slo}</div>
 							</div>
-							<div className="h-7 w-7 bg-white rounded-full"></div>
 						</div>
 						<div className="w-full text-blue-tip-brand flex flex-col justify-between text-sm md:text-base lg:text-lg font-bold">
 							<div className="px-3 pt-3 pb-1 flex flex-row justify-around">
@@ -59,7 +58,7 @@ const SkillView: React.FC<P> = ({ skillViewResult, setSelectedSlo, setType }) =>
 									})}
 								</div>
 							</div>
-							<div className="px-3 pb-3 pt-1 flex flex-row justify-around">
+							{/* <div className="px-3 pb-3 pt-1 flex flex-row justify-around">
 								<div className="w-2/6 text-center">Midpoint</div>
 								<div className="flex flex-row w-full -space-x-4">
 									{Object.entries(res.midpoint ?? {}).map(
@@ -88,7 +87,7 @@ const SkillView: React.FC<P> = ({ skillViewResult, setSelectedSlo, setType }) =>
 										}
 									)}
 								</div>
-							</div>
+							</div> */}
 						</div>
 					</div>
 				))

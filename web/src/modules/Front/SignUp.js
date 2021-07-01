@@ -14,16 +14,16 @@ import './style.css'
 
 function emptyProfile() {
 	return {
-		name: '',
-		phone: '',
-		city: '',
-		schoolName: '',
-		schoolPassword: '',
-		packageName: 'FREE_TRIAL',
+		name: "",
+		phone: "",
+		city: "",
+		school: "",
+		password: "",
+		package: "FREE_TRIAL",
 
-		typeOfLogin: '',
-		referralSchoolName: '',
-		ownerEasypaisaNumber: '',
+		login_type: "",
+		ref_school_name: "",
+		owner_easypaisa_num: ""
 	}
 }
 
@@ -46,14 +46,13 @@ class SignUp extends Component {
 	}
 
 	onSave = () => {
-		const compulsoryFields =
-			this.state.profile.typeOfLogin === 'SCHOOL_REFERRAL'
-				? checkCompulsoryFields(this.state.profile, [
-						['name'],
-						['phone'],
-						['referralSchoolName'],
-				  ])
-				: checkCompulsoryFields(this.state.profile, [['name'], ['phone']])
+		const compulsoryFields = this.state.profile.login_type === 'SCHOOL_REFERRAL' ?
+			checkCompulsoryFields(this.state.profile, [
+				["name"], ["phone"], ['ref_school_name']
+			]) :
+			checkCompulsoryFields(this.state.profile, [
+				["name"], ["phone"]
+			])
 
 		if (compulsoryFields) {
 			const errorText = 'Please Fill ' + compulsoryFields + ' !'
@@ -68,11 +67,7 @@ class SignUp extends Component {
 		}
 
 		if (this.state.otherLogin) {
-			const signup = {
-				...this.state.profile,
-				typeOfLogin: this.state.otherLogin,
-				date: moment.now(),
-			}
+			const signup = { ...this.state.profile, login_type: this.state.otherLogin, date: moment.now() }
 			this.props.createSignup(signup)
 		} else {
 			this.props.createSignUp({ ...this.state.profile, date: moment.now() })
@@ -84,7 +79,7 @@ class SignUp extends Component {
 		if (reason) {
 			return reason.includes(this.state.profile.phone)
 				? this.state.profile.phone +
-						' already exist. Please login or contact us at our helpline number'
+				' already exist. Please login or contact us at our helpline number'
 				: reason
 		}
 
@@ -115,6 +110,7 @@ class SignUp extends Component {
 				})
 			}, 3000)
 		}
+
 		if (sign_up_form.loading === true) {
 			this.setState({
 				banner: {
@@ -153,52 +149,48 @@ class SignUp extends Component {
 		if (this.state.redirect) {
 			return <Redirect to="/school-login" />
 		}
-		return (
-			<div className="section-container section card sign-up">
-				{this.state.banner.active ? (
-					<Banner isGood={this.state.banner.good} text={this.state.banner.text} />
-				) : (
-					false
-				)}
-				<div className="row">
-					<label>
-						{' '}
-						Name
-						<Span />{' '}
-					</label>
-					<input
-						type="text"
-						{...this.former.super_handle(['profile', 'name'])}
-						placeholder="Enter full-name"></input>
-				</div>
-				<div className="row">
-					<label>
-						{' '}
-						Mobile # (School Id)
-						<Span />
-					</label>
-					<input
-						type="text"
-						{...this.former.super_handle(['profile', 'phone'])}
-						placeholder="Enter mobile # e.g 0301xxxxxxx"></input>
-				</div>
-				<div className="row">
-					<label>
-						{' '}
-						City/District
-						<Span />
-					</label>
-					<select {...this.former.super_handle(['profile', 'city'])}>
-						<option value="">Select District</option>
-						{getDistricts()
+		return <div className="section-container section card sign-up">
+			{this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
+			<div className="row">
+				<label> Name<Span /> </label>
+				<input type="text" {...this.former.super_handle(["profile", "name"])} placeholder='Enter full-name'></input>
+			</div>
+			<div className="row">
+				<label> Mobile # (School Id)<Span /></label>
+				<input type="text" {...this.former.super_handle(["profile", "phone"])} placeholder='Enter mobile # e.g 0301xxxxxxx'></input>
+			</div>
+			<div className="row">
+				<label> City/District<Span /></label>
+				<select {...this.former.super_handle(["profile", "city"])}>
+					<option value="">Select District</option>
+					{
+						getDistricts().sort().map(d => (<option key={d} value={d}>{toTitleCase(d)}</option>))
+					}
+				</select>
+			</div>
+			<div className="row">
+				<label> School Name<Span /></label>
+				<input type="text" {...this.former.super_handle(["profile", "school"])} placeholder='Enter school-name'></input>
+			</div>
+			<div className="row">
+				<label> School Password<Span /></label>
+				<input type="password" {...this.former.super_handle(["profile", "password"])} placeholder='Enter password'></input>
+			</div>
+			<div className="row">
+				<label>How did you hear about MISchool?</label>
+				<select {...this.former.super_handle(["profile", "login_type"])}>
+					<option value="">Select Strategy</option>
+					{
+						[...getStrategies()]
 							.sort()
-							.map((d) => (
-								<option key={d} value={d}>
-									{toTitleCase(d)}
-								</option>
-							))}
-					</select>
-				</div>
+							.map(strategy => {
+								const str = strategy.replace(' ', "_").toUpperCase()
+								return <option key={str} value={str}>{strategy}</option>
+							})
+					}
+				</select>
+			</div>
+			{this.state.profile.login_type === 'OTHER' &&
 				<div className="row">
 					<label>
 						{' '}
@@ -210,47 +202,22 @@ class SignUp extends Component {
 						{...this.former.super_handle(['profile', 'schoolName'])}
 						placeholder="Enter school-name"></input>
 				</div>
+			}
+			<div className="row">
+				<label> Select Package </label>
+				<select style={{ marginTop: 5 }} {...this.former.super_handle(["profile", "package"])}>
+					<option value="FREE_TRIAL">Free-Trial</option>
+				</select>
+			</div>
+			{this.state.profile.login_type === 'SCHOOL_REFERRAL' && <>
+				<div className="divider"> Referral School Information </div>
 				<div className="row">
-					<label>
-						{' '}
-						School Password
-						<Span />
-					</label>
-					<input
-						type="password"
-						{...this.former.super_handle(['profile', 'schoolPassword'])}
-						placeholder="Enter password"></input>
+					<label>School Name<Span /></label>
+					<input list="schl-list" {...this.former.super_handle(["profile", "ref_school_name"])} placeholder="school name" />
 				</div>
 				<div className="row">
-					<label>How did you hear about MISchool?</label>
-					<select {...this.former.super_handle(['profile', 'typeOfLogin'])}>
-						<option value="">Select Strategy</option>
-						{[...getStrategies()].sort().map((strategy) => {
-							const str = strategy.replace(' ', '_').toUpperCase()
-							return (
-								<option key={str} value={str}>
-									{strategy}
-								</option>
-							)
-						})}
-					</select>
-				</div>
-				{this.state.profile.typeOfLogin === 'OTHER' && (
-					<div className="row">
-						<label> Other </label>
-						<input
-							type="text"
-							{...this.former.super_handle(['otherLogin'])}
-							placeholder="e.g. internet"></input>
-					</div>
-				)}
-				<div className="row">
-					<label> Select Package </label>
-					<select
-						style={{ marginTop: 5 }}
-						{...this.former.super_handle(['profile', 'packageName'])}>
-						<option value="FREE_TRIAL">Free-Trial</option>
-					</select>
+					<label>Owner Easy Paisa<Span /></label>
+					<input type="number" {...this.former.super_handle(["profile", "owner_easypaisa_num"])} placeholder="Easy Paisa" />
 				</div>
 				{this.state.profile.typeOfLogin === 'SCHOOL_REFERRAL' && (
 					<>
@@ -280,12 +247,13 @@ class SignUp extends Component {
 						</div>
 					</>
 				)}
-				<div className="button red" onClick={() => this.onSave()}>
-					{' '}
+			</>
+			}
+			<div className="button red" onClick={() => this.onSave()}>
+				{' '}
 					Create Signup
 				</div>
-			</div>
-		)
+		</div>
 	}
 }
 export default connect(

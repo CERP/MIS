@@ -32,7 +32,7 @@ const ExpenseChart: React.SFC<ChartProps> = ({ collective_obj, chartFilter, date
 						month,
 						income,
 						expense,
-						profit: Math.abs(income - expense),
+						profit: Math.abs(income - expense)
 					}))}>
 				<XAxis dataKey="month" />
 				<YAxis />
@@ -63,7 +63,7 @@ const ExpenseTable: React.SFC<TableProps> = ({
 	collective_obj,
 	total_income,
 	total_expense,
-	date_format,
+	date_format
 }) => {
 	return (
 		<div className="section mistable">
@@ -103,7 +103,7 @@ const ExpenseTable: React.SFC<TableProps> = ({
 								</div>
 							</div>
 						)
-					}),
+					})
 			]}
 			<div className="mis-table row footing">
 				<br />
@@ -182,7 +182,7 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 			chartFilter: {
 				income: true,
 				expense: true,
-				profit: true,
+				profit: true
 			},
 			collective_obj: {},
 			total_income: 0,
@@ -192,7 +192,7 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 			is_payment_filter: false,
 			selected_period: period !== '' ? period.toString() : 'Monthly',
 			loading: true,
-			percentage: 0,
+			percentage: 0
 		}
 		this.former = new Former(this, [])
 	}
@@ -201,7 +201,7 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 		SUBMITTED,
 		FORGIVEN,
 		OWED,
-		SCHOLARSHIP,
+		SCHOLARSHIP
 	}: {
 		SUBMITTED: number
 		FORGIVEN: number
@@ -244,7 +244,7 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 		this.setState({
 			start_date,
 			end_date,
-			selected_period,
+			selected_period
 		})
 
 		this.calculate()
@@ -261,7 +261,7 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 		clearTimeout(this.background_calculation)
 
 		this.setState({
-			loading: true,
+			loading: true
 		})
 
 		const collective_obj: { [month: string]: { income: number; expense: number } } = {}
@@ -287,7 +287,7 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 			const interval = Math.floor(s_length / 10)
 			if (i % interval === 0) {
 				this.setState({
-					percentage: (i / s_length) * 100,
+					percentage: (i / s_length) * 100
 				})
 			}
 
@@ -297,7 +297,7 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 					collective_obj,
 					total_income,
 					total_expense,
-					percentage: 0,
+					percentage: 0
 				})
 			}
 
@@ -316,13 +316,13 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 					) {
 						collective_obj[inc_month] = collective_obj[inc_month]
 							? {
-									income: collective_obj[inc_month].income + payment.amount,
-									expense: collective_obj[inc_month].expense,
-							  }
+								income: collective_obj[inc_month].income + payment.amount,
+								expense: collective_obj[inc_month].expense
+							}
 							: {
-									income: payment.amount,
-									expense: 0,
-							  }
+								income: payment.amount,
+								expense: 0
+							}
 
 						total_income += payment.amount
 					}
@@ -348,20 +348,20 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 
 					collective_obj[inc_month] = collective_obj[inc_month]
 						? {
-								income: collective_obj[inc_month].income,
-								expense:
-									collective_obj[inc_month].expense +
-									(expense.expense === 'SALARY_EXPENSE'
-										? curr_amount - deduction
-										: curr_amount),
-						  }
+							income: collective_obj[inc_month].income,
+							expense:
+								collective_obj[inc_month].expense +
+								(expense.expense === 'SALARY_EXPENSE'
+									? curr_amount - deduction
+									: curr_amount)
+						}
 						: {
-								income: 0,
-								expense:
-									expense.expense === 'SALARY_EXPENSE'
-										? curr_amount - deduction
-										: curr_amount,
-						  }
+							income: 0,
+							expense:
+								expense.expense === 'SALARY_EXPENSE'
+									? curr_amount - deduction
+									: curr_amount
+						}
 
 					total_expense += curr_amount - deduction
 				}
@@ -374,8 +374,7 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 
 	filterPropsStudents = () => {
 		return Object.values(this.props.students).filter(
-			(student) =>
-				student && student.id && student.Name && student.Active && student.section_id
+			student => student && student.id && student.Name && student.Active && student.section_id
 		)
 	}
 
@@ -387,19 +386,19 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 		return this.state.loading ? (
 			<ProgressBar percentage={this.state.percentage} />
 		) : (
-			<div className="expense-analytics">
+			<div className="expense-analytics mx-auto">
 				<PrintHeader settings={settings} logo={schoolLogo} />
 
 				<div className="divider">Payments over Time</div>
 
 				<div className="no-print btn-filter-toggle row">
-					<div
-						className="button green"
+					<button
+						className="tw-btn bg-teal-brand text-white"
 						onClick={() =>
 							this.setState({ is_payment_filter: !this.state.is_payment_filter })
 						}>
 						Show Filters
-					</div>
+					</button>
 				</div>
 				{this.state.is_payment_filter && (
 					<div className="no-print section form">
@@ -407,6 +406,7 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 							<label> Start Date </label>
 							<input
 								type="date"
+								className="tw-input"
 								onChange={this.former.handle(
 									['start_date'],
 									() => true,
@@ -420,6 +420,7 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 							<label> End Date </label>
 							<input
 								type="date"
+								className="tw-input"
 								onChange={this.former.handle(
 									['end_date'],
 									() => true,
@@ -432,6 +433,7 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 						<div className="row">
 							<label> Payments Period </label>
 							<select
+								className="tw-select"
 								{...this.former.super_handle(
 									['selected_period'],
 									() => true,
@@ -457,24 +459,27 @@ class ExpenseAnalytics extends Component<propTypes, S> {
 				<div className="no-print checkbox-container">
 					<div className="chart-checkbox" style={{ color: '#bedcff' }}>
 						<input
+							className="tw-checkbox form-checkbox"
 							type="checkbox"
 							{...this.former.super_handle(['chartFilter', 'income'])}
 						/>
-						Income
+						<span className="ml-1">Income</span>
 					</div>
 					<div className="chart-checkbox" style={{ color: '#e0e0e0' }}>
 						<input
+							className="tw-checkbox form-checkbox"
 							type="checkbox"
 							{...this.former.super_handle(['chartFilter', 'expense'])}
 						/>
-						Expense
+						<span className="ml-1">Expense</span>
 					</div>
 					<div className="chart-checkbox" style={{ color: '#93d0c5' }}>
 						<input
+							className="tw-checkbox form-checkbox"
 							type="checkbox"
 							{...this.former.super_handle(['chartFilter', 'profit'])}
 						/>
-						Profit
+						<span className="ml-1">Profit</span>
 					</div>
 				</div>
 				<ExpenseTable
@@ -500,7 +505,7 @@ export default connect(
 		settings: state.db.settings,
 		classes: state.db.classes,
 		expenses: state.db.expenses,
-		schoolLogo: state.db.assets ? state.db.assets.schoolLogo || '' : '',
+		schoolLogo: state.db.assets ? state.db.assets.schoolLogo || '' : ''
 	}),
 	(dispatch: Function) => ({})
 )(ExpenseAnalytics)

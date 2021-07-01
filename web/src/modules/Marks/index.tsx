@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
-import Layout from 'components/Layout'
+import { AppLayout } from 'components/Layout/appLayout'
 import { RouteComponentProps } from 'react-router'
 import Former from 'utils/former'
 import moment from 'moment'
@@ -232,14 +232,14 @@ class Reports extends Component<propsType, S> {
 		}
 
 		return (
-			<Layout history={this.props.history}>
-				<div className="reports-page no-print">
-					<div className="title">Grade Book</div>
+			<AppLayout title="Manage Exams" showHeaderTitle>
+				<div className="reports-page no-print my-5">
 					<div className="form section exams-filter">
 						<div className="mis-table">
 							<div className="row">
 								<label>Class/Section</label>
 								<select
+									className="tw-select"
 									{...this.former.super_handle(
 										['section_id'],
 										() => true,
@@ -256,6 +256,7 @@ class Reports extends Component<propsType, S> {
 							<div className="row">
 								<label>Exams for Year</label>
 								<select
+									className="tw-select"
 									{...this.former.super_handle(
 										['year'],
 										() => true,
@@ -274,6 +275,7 @@ class Reports extends Component<propsType, S> {
 							<div className="row">
 								<label>Exam Title</label>
 								<select
+									className="tw-select"
 									{...this.former.super_handle(
 										['exam_title'],
 										() => true,
@@ -291,6 +293,7 @@ class Reports extends Component<propsType, S> {
 								<div className="row">
 									<label>Test Month</label>
 									<select
+										className="tw-select"
 										{...this.former.super_handle(
 											['month'],
 											() => true,
@@ -344,7 +347,7 @@ class Reports extends Component<propsType, S> {
 													{moment(exam.date).format('DD/MM')}
 												</div>
 												<div className="cell" style={{ width: '10%' }}>
-													<div className="">
+													<div className="flex flex-row space-x-2">
 														<img
 															className="edit-icon"
 															src={EditIcon}
@@ -377,7 +380,7 @@ class Reports extends Component<propsType, S> {
 				{section_id && exam_title && year && (
 					<div className="print-only">{this.renderClassResultSheet(curr_section)}</div>
 				)}
-			</Layout>
+			</AppLayout>
 		)
 	}
 }
