@@ -29,7 +29,7 @@ export const SchoolSetup = () => {
 
 	return (
 		<AppLayout title={'Setup School'}>
-			<div className="p-5 pb-0 md:p-10 md:pb-0 text-gray-700">
+			<div className="p-5 pb-0 md:p-10 md:pt-5 md:pb-0 text-gray-700">
 				<div className="text-2xl text-center font-bold mt-4 mb-8">
 					{toggleAdminForm ? 'Create Admin Account' : 'Build School Profile'}
 				</div>

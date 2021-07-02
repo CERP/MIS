@@ -69,8 +69,6 @@ export const StatsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 		for (const staff of Object.values(faculty)) {
 			const record = (staff.attendance ?? {})[todayDate]
 
-			console.log(record)
-
 			if (record === undefined) {
 				continue
 			}

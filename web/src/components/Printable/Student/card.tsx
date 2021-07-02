@@ -22,7 +22,7 @@ const StudentIDCard = (props: PropsTypes) => {
 		: ''
 
 	return (
-		<div className="student-card">
+		<div className="student-card" style={{ position: 'relative' }}>
 			<div className="card-row card-school-info">
 				<img className="card-school-logo" src={schoolLogo} alt="School Logo" />
 				<div className="card-school-title">{schoolName}</div>
@@ -37,7 +37,9 @@ const StudentIDCard = (props: PropsTypes) => {
 							alt="profile"
 						/>
 					)}
-					<div className="card-signature" style={{ marginTop: avatar ? 18 : 122 }}>
+					<div
+						className="card-signature"
+						style={{ position: 'absolute', left: 5, bottom: 5 }}>
 						Issuing Authority
 					</div>
 				</div>
@@ -59,7 +61,7 @@ const StudentIDCard = (props: PropsTypes) => {
 							</span>
 						</div>
 					</div>
-					<div style={{ marginLeft: 130 }}>
+					<div style={{ position: 'absolute', bottom: 10, right: 10 }}>
 						<QRCode value={student.id} size={72} />
 					</div>
 				</div>
