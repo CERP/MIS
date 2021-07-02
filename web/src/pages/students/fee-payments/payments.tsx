@@ -16,7 +16,13 @@ import { CustomSelect } from 'components/select'
 import { MISFeeLabels } from 'constants/index'
 import { getFilteredPayments } from 'utils/getFilteredPayments'
 import { checkStudentDuesReturning } from 'utils/checkStudentDues'
-import { addMultiplePayments, addPayment, deleteDuplicatePayments, logSms } from 'actions'
+import {
+	addMultiplePayments,
+	addPayment,
+	deleteDuplicatePayments,
+	deletePayment,
+	logSms
+} from 'actions'
 import { smsIntentLink } from 'utils/intent'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
