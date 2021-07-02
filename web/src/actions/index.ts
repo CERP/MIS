@@ -6,6 +6,7 @@ import Syncr from '@cerp/syncr'
 
 import { historicalPayment } from 'modules/Settings/HistoricalFees/historical-fee'
 import { OnboardingStage } from 'constants/index'
+import student from 'modules/Settings/ExcelImport/student'
 
 const client_type = 'mis'
 
@@ -1525,4 +1526,27 @@ export const deletePayment = (student_id: string, payment_id: string) => (dispat
 			}
 		])
 	)
+}
+
+type paymentsToDelete = { [id: string]: string[] }
+
+export const deleteDuplicatePayments = (payments: paymentsToDelete[]) => (dispatch: Function) => {
+	const paths = payments.reduce((agg, curr) => {
+		return [
+			...agg,
+			...Object.entries(curr).reduce((agg2, [studentKey, paymentsIdsArr]) => {
+				return [
+					...agg2,
+					...paymentsIdsArr.reduce((agg3, currId) => {
+						return [
+							...agg3,
+							{ path: ['db', 'students', studentKey, 'payments', currId] }
+						]
+					}, [])
+				]
+			}, [])
+		]
+	}, [])
+
+	dispatch(createDeletes(paths))
 }

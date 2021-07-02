@@ -16,7 +16,7 @@ import { CustomSelect } from 'components/select'
 import { MISFeeLabels } from 'constants/index'
 import { getFilteredPayments } from 'utils/getFilteredPayments'
 import { checkStudentDuesReturning } from 'utils/checkStudentDues'
-import { addMultiplePayments, addPayment, logSms } from 'actions'
+import { addMultiplePayments, addPayment, deleteDuplicatePayments, logSms } from 'actions'
 import { smsIntentLink } from 'utils/intent'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
@@ -65,6 +65,40 @@ export const StudentPayments = () => {
 		}
 	})
 
+	const filtered_class_fees = Object.entries(students).reduce((agg, [id, student]) => {
+		const student_payments = Object.entries(student.payments ?? {}).reduce(
+			(agg2, [pid, payment]) => {
+				const pDate = pid.split('-')[0]
+
+				if (
+					'07/2021' === pDate &&
+					payment.type === 'OWED' &&
+					!pid.includes(id) &&
+					payment.amount > 0
+				) {
+					return {
+						...agg2,
+						[id]: [...(agg2[id] ?? []), pid]
+					}
+				}
+
+				return agg2
+			},
+			{} as { [id: string]: string[] }
+		)
+
+		if (Object.values(student_payments).length <= 0) {
+			return agg
+		}
+
+		return [...agg, student_payments]
+	}, [] as { [id: string]: string[] }[])
+
+	console.log('Filtered Fees', filtered_class_fees)
+
+	const deleteRepeatedPayments = () => {
+		dispatch(deleteDuplicatePayments(filtered_class_fees))
+	}
 	// generate payments, if not generated
 	useEffect(() => {
 		if (augmentedStudent) {
@@ -244,7 +278,9 @@ export const StudentPayments = () => {
 											? 'Advance Amount'
 											: 'Total Payable'}
 									</div>
-									<div>Rs. {numberWithCommas(totalPendingAmount)}</div>
+									<div onClick={() => deleteRepeatedPayments()}>
+										Rs. {numberWithCommas(totalPendingAmount)}
+									</div>
 								</div>
 							</div>
 							<AddPayment
@@ -407,10 +443,10 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 					type === 'text' || type === 'checkbox'
 						? value
 						: isNaN(valueAsNumber)
-							? name === 'date'
-								? Date.now()
-								: 0
-							: valueAsNumber
+						? name === 'date'
+							? Date.now()
+							: 0
+						: valueAsNumber
 			}
 		})
 	}
@@ -456,7 +492,8 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 				)
 
 				toast.success(
-					`Rs. ${state.payment.amount} has been added as ${state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
+					`Rs. ${state.payment.amount} has been added as ${
+						state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
 					} amount.`
 				)
 
@@ -479,7 +516,8 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 			)
 
 			toast.success(
-				`Rs. ${state.payment.amount} has been added as ${state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
+				`Rs. ${state.payment.amount} has been added as ${
+					state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
 				} amount.`
 			)
 			setState({
