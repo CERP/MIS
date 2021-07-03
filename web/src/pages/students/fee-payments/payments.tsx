@@ -87,22 +87,24 @@ export const StudentPayments = () => {
 				}
 			],
 			...Object.entries(classAdditionalFees ?? {}),
-			...(Object.entries(student.fees ?? {}).map(([feeId, fee]) => {
-				return [
-					feeId,
-					{
-						...fee,
-						amount:
-							fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP
-								? '-' + fee.amount
-								: fee.amount,
-						name:
-							fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP
-								? 'Scholarship (M)'
-								: fee.name
-					}
-				]
-			}) as Array<[string, MISStudentFee]>)
+			...(Object.entries(student.fees ?? {})
+				.filter(([id, fee]) => !(fee.type === 'FEE' && fee.period === 'MONTHLY'))
+				.map(([feeId, fee]) => {
+					return [
+						feeId,
+						{
+							...fee,
+							amount:
+								fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP
+									? '-' + fee.amount
+									: fee.amount,
+							name:
+								fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP
+									? 'Scholarship (M)'
+									: fee.name
+						}
+					]
+				}) as Array<[string, MISStudentFee]>)
 		]
 	}
 
@@ -464,10 +466,10 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 					type === 'text' || type === 'checkbox'
 						? value
 						: isNaN(valueAsNumber)
-						? name === 'date'
-							? Date.now()
-							: 0
-						: valueAsNumber
+							? name === 'date'
+								? Date.now()
+								: 0
+							: valueAsNumber
 			}
 		})
 	}
@@ -513,8 +515,7 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 				)
 
 				toast.success(
-					`Rs. ${state.payment.amount} has been added as ${
-						state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
+					`Rs. ${state.payment.amount} has been added as ${state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
 					} amount.`
 				)
 
@@ -537,8 +538,7 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 			)
 
 			toast.success(
-				`Rs. ${state.payment.amount} has been added as ${
-					state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
+				`Rs. ${state.payment.amount} has been added as ${state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
 				} amount.`
 			)
 			setState({
