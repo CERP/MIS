@@ -48,7 +48,7 @@ const Login: React.FC<LoginProps> = ({
 	const [user, setUser] = useState<AugmentedMISUser>()
 
 	const filteredUsers = Object.entries(users)
-		.filter(([, f]) => f && f.name && f.hasLogin !== false)
+		.filter(([uid, f]) => f && f.name && faculty[uid] && f.hasLogin !== false)
 		.sort(([, a], [, b]) => a.name.localeCompare(b.name))
 
 	// For desktop screen, there would be 10 users per group
@@ -115,7 +115,7 @@ const Login: React.FC<LoginProps> = ({
 					<div className="relative border md:w-2/5 p-5 rounded-2xl rounded-bl-none md:rounded-bl-2xl md:rounded-tr-none rounded-br-none shadow-md w-4/5">
 						<div className="flex flex-col items-center md:p-10 space-y-2">
 							<img
-								className="w-16 h-16 md:w-20 md:h-20 p-1 border border-gray-300 rounded-full"
+								className="w-16 h-16 md:w-20 object-cover md:h-20 p-1 border border-gray-300 rounded-full"
 								src={school.logo || '/favicon.ico'}
 								alt="school-logo"
 							/>
