@@ -49,6 +49,7 @@ export const StudentList = ({
 	const students = useSelector((state: RootReducerState) => state.db.students, shallowEqual)
 	const classes = useSelector((state: RootReducerState) => state.db.classes, shallowEqual)
 	const settings = useSelector((state: RootReducerState) => state.db.settings, shallowEqual)
+	const assets = useSelector((state: RootReducerState) => state.db.assets, shallowEqual)
 
 	const searchInputRef = useRef(null)
 
@@ -391,19 +392,19 @@ export const StudentList = ({
 					/>
 				</div>
 				{!state.printCards
-					? chunkify(filteredStudents, 29, false).map(
-						(students: AugmentedStudent[], ChunkIndex: number) => {
-							return (
-								<StudentPrintableList
-									schoolName={schoolName}
-									chunkSize={ChunkIndex === 0 ? 0 : 29 * ChunkIndex}
-									students={students}
-									studentClass=""
-									key={ChunkIndex + 1 * 32}
-								/>
-							)
-						}
-					)
+					? chunkify(
+						filteredStudents,
+						29,
+						false
+					).map((students: AugmentedStudent[], ChunkIndex: number) => (
+						<StudentPrintableList
+							schoolName={schoolName}
+							chunkSize={ChunkIndex === 0 ? 0 : 29 * ChunkIndex}
+							students={students}
+							studentClass=""
+							key={ChunkIndex + 1 * 29}
+						/>
+					))
 					: chunkify(
 						[
 							...(state.singleStudentPrintID === ''
@@ -416,20 +417,20 @@ export const StudentList = ({
 						],
 						8,
 						false
-					).map((students: AugmentedStudent[], index: number) => {
-						return (
-							<div className="flex flex-1 h-screen font-serif  leading-tight">
-								<StudenPrintableIDCardList
-									students={students}
-									key={index}
-									schoolName={settings.schoolName}
-									schoolLogo={'/favicon.ico'}
-									studentClass={''}
-									schoolSession={schoolSession}
-								/>
-							</div>
-						)
-					})}
+					).map((students: AugmentedStudent[], index: number) => (
+						<div
+							key={8 * index}
+							className="flex flex-1 h-screen font-serif  leading-tight">
+							<StudenPrintableIDCardList
+								students={students}
+								key={index}
+								schoolName={settings.schoolName}
+								schoolLogo={assets?.schoolLogo || '/favicon.ico'}
+								studentClass={''}
+								schoolSession={schoolSession}
+							/>
+						</div>
+					))}
 				)
 			</>
 		)
@@ -454,13 +455,7 @@ type CardProps = {
 	printSingleStudentCard: (id: string) => void
 }
 
-const Card = ({
-	student,
-	sections,
-	schoolName,
-	schoolSession,
-	printSingleStudentCard
-}: CardProps) => {
+const Card = ({ student, sections }: CardProps) => {
 	const studentSection = sections.find(s => s.id === student.section_id)
 
 	return (
@@ -503,56 +498,6 @@ const Card = ({
 					alt={student.Name.split(' ')[0]}
 				/>
 			</div>
-			{/* <Popover className="absolute top-2 right-2 table-cell p-2 pt-0">
-				{({ open }) => (
-					<>
-						<Popover.Button
-							onClick={(
-								e: React.MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
-							) => {
-								e.preventDefault()
-								e.stopPropagation()
-							}}
-							as={'button'}
-							className={clsx(
-								'px-3 py-2 outline-none rounded-md inline-flex items-center text-gray-400 cursor-pointer',
-								{
-									'text-teal-brand': open
-								}
-							)}>
-							<DotsVerticalIcon className={clsx('w-5')} />
-						</Popover.Button>
-						<Transition
-							show={open}
-							as={Fragment}
-							enter="transition ease-out duration-200"
-							enterFrom="opacity-0 translate-y-1"
-							enterTo="opacity-100 translate-y-0"
-							leave="transition ease-in duration-150"
-							leaveFrom="opacity-100 translate-y-0"
-							leaveTo="opacity-0 translate-y-1">
-							<Popover.Panel
-								static
-								className="absolute z-10 max-w-sm px-4 mt-2 right-4 sm:px-0 w-60">
-								<div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
-									<div className="relative bg-white p-4 w-full">
-										<button
-											className="inline-flex items-center p-2 hover:bg-gray-300 group w-full rounded-md"
-											onClick={e => {
-												e.preventDefault()
-												printSingleStudentCard(student.id)
-											}}>
-											<span className="group-hover:text-white text-sm md:text-base">
-												Print Student Card
-											</span>
-										</button>
-									</div>
-								</div>
-							</Popover.Panel>
-						</Transition>
-					</>
-				)}
-			</Popover> */}
 		</div>
 	)
 }
