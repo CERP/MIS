@@ -108,18 +108,17 @@ export const CreateClass = ({ skipStage }: CreateClassProps) => {
 					))}
 				</select>
 
-				<div>Section*</div>
+				<div>Section</div>
 				<div className="flex flex-row items-center justify-between">
 					<input
 						name="section"
-						required
 						onChange={handleInput}
 						placeholder="Type section name"
 						className="w-full tw-input tw-is-form-bg-black"
 					/>
 				</div>
 
-				<div>Subjects*</div>
+				<div>Subjects</div>
 				<div className="grid grid-cols-3 gap-3">
 					{Object.keys(state.subjects).map((s, index) => (
 						<div
@@ -146,7 +145,7 @@ export const CreateClass = ({ skipStage }: CreateClassProps) => {
 					<PlusButton handleClick={addNewSubject} className="ml-4" />
 				</div>
 
-				<div>Assign Class Teacher*</div>
+				<div>Assign Class Teacher</div>
 				<div className="grid grid-cols-3 gap-5">
 					{Object.values(faculty)
 						.filter(f => f && f.Active && f.Name)
