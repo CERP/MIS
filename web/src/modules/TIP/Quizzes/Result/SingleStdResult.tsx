@@ -18,6 +18,8 @@ const getProgress = (obtained_marks: number) => {
 		return 'Working'
 	} else if (percentage < 0) {
 		return 'Absent'
+	} else if (isNaN(percentage)) {
+		return 'Not Graded'
 	} else {
 		return 'Struggling'
 	}
@@ -25,7 +27,7 @@ const getProgress = (obtained_marks: number) => {
 
 const SingleStdResult: React.FC<P> = ({ student, class_name, subject, quiz_id, total_marks }) => {
 	const quiz_result = student?.targeted_instruction?.quiz_result
-	const obtained_marks = quiz_result?.[class_name]?.[subject]?.[quiz_id]?.obtained_marks ?? 0
+	const obtained_marks = quiz_result?.[class_name]?.[subject]?.[quiz_id]?.obtained_marks
 	const progress = getProgress(obtained_marks)
 
 	const getSmileyFromProgress = (progress: string) => {
@@ -48,7 +50,7 @@ const SingleStdResult: React.FC<P> = ({ student, class_name, subject, quiz_id, t
 				</div>
 			</div>
 			<div className="flex items-center w-1/3 justify-center font-bold">
-				{`${obtained_marks === -1 ? 'Absent' : `${obtained_marks}/${total_marks}`}`}
+				{`${obtained_marks === -1 ? 'Absent' : `${obtained_marks || 0}/${total_marks}`}`}
 			</div>
 			<div className="flex items-center w-1/3 justify-center">
 				<div className="w-full md:w-1/2 lg:w-1/3 flex flex-row justify-center items-center">
@@ -59,7 +61,8 @@ const SingleStdResult: React.FC<P> = ({ student, class_name, subject, quiz_id, t
 						className={clsx('font-bold', {
 							'fontColor:#3efd45': progress === 'Mastered',
 							'text-yellow-tip-brand': progress === 'Working',
-							'text-red-tip-brand': progress === 'Struggling',
+							'text-red-tip-brand':
+								progress === 'Struggling' || progress === 'Not Graded',
 							'text-black': progress === 'Absent'
 						})}
 						style={progress === 'Mastered' ? { color: '#3efd45' } : {}}>
