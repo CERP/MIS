@@ -15,6 +15,7 @@ import { OnboardingStage, StaffType } from 'constants/index'
 
 import { getDownsizedImage, getImageString } from 'utils/image'
 import { UploadImage } from 'components/image'
+import { PlusButton } from 'components/Button/plus'
 
 interface AddStaffProps {
 	onBack?: (close: boolean) => void
@@ -147,8 +148,7 @@ export const AddStaff: React.FC<AddStaffProps> = ({ skipStage }) => {
 	}
 
 	return (
-		<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 my-4 py-4 md:mt-8">
-			<div className="text-white text-center text-base mb-4">Please fill Information</div>
+		<div className="w-full md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 my-4 py-4 md:mt-8">
 			<div className="flex flex-row items-baseline justify-between w-3/5 md:w-1/4">
 				<UploadImage
 					src={profile.ProfilePicture?.url || profile.ProfilePicture?.image_string}
@@ -156,8 +156,11 @@ export const AddStaff: React.FC<AddStaffProps> = ({ skipStage }) => {
 					handleCameraImageTaken={uploadProfileImageFromCamera}
 				/>
 			</div>
-			<form id="admin-account" className="text-white space-y-4 px-4" onSubmit={handleSubmit}>
-				<div className="">Name*</div>
+			<form
+				id="admin-account"
+				className="text-white space-y-4 w-full px-4"
+				onSubmit={handleSubmit}>
+				<div>Name*</div>
 				<input
 					name="Name"
 					onChange={handleInput}
@@ -165,7 +168,7 @@ export const AddStaff: React.FC<AddStaffProps> = ({ skipStage }) => {
 					placeholder="Type name here"
 					className="tw-input w-full tw-is-form-bg-black"
 				/>
-				<div className="">Personal Number*</div>
+				<div>Contact Number*</div>
 				<input
 					name="Phone"
 					onChange={handleInput}
@@ -174,7 +177,7 @@ export const AddStaff: React.FC<AddStaffProps> = ({ skipStage }) => {
 					placeholder="e.g. 03xxxxxxxx"
 					className="tw-input w-full tw-is-form-bg-black"
 				/>
-				<div className="">Password*</div>
+				<div>Password*</div>
 				<div className="w-full relative">
 					<input
 						name="Password"
@@ -194,7 +197,7 @@ export const AddStaff: React.FC<AddStaffProps> = ({ skipStage }) => {
 					</div>
 				</div>
 
-				<div className="">Staff Type</div>
+				<div>Staff Type</div>
 				<div className="flex items-center">
 					<input
 						name="type"
@@ -209,19 +212,17 @@ export const AddStaff: React.FC<AddStaffProps> = ({ skipStage }) => {
 
 				{!showAdditionalFields && (
 					<div className="flex flex-row items-center justify-between">
-						<div
-							onClick={() =>
+						<PlusButton
+							handleClick={() =>
 								setState({ ...state, showAdditionalFields: !showAdditionalFields })
 							}
-							className="w-8 h-8 flex items-center justify-center rounded-full border cursor-pointer bg-blue-brand hover:bg-blue-400">
-							+
-						</div>
+						/>
 						<div className="text-sm">Show Additional Fields</div>
 					</div>
 				)}
 				{showAdditionalFields && (
 					<>
-						<div className="">Gender</div>
+						<div>Gender</div>
 						<div className="flex items-center flex-wrap justify-between">
 							<div className="flex items-center">
 								<input
@@ -258,7 +259,7 @@ export const AddStaff: React.FC<AddStaffProps> = ({ skipStage }) => {
 							</div>
 						</div>
 
-						<div className="">CNIC</div>
+						<div>CNIC</div>
 						<input
 							name="CNIC"
 							onChange={handleInput}
@@ -270,7 +271,7 @@ export const AddStaff: React.FC<AddStaffProps> = ({ skipStage }) => {
 						<select
 							name="Qualification"
 							onChange={handleInput}
-							className="tw-select"
+							className="w-full tw-select"
 							value={profile.Qualification}>
 							<option>Select</option>
 							{Object.entries(Qualification).map(([k, v]) => (
@@ -304,6 +305,16 @@ export const AddStaff: React.FC<AddStaffProps> = ({ skipStage }) => {
 
 				{!profile.Admin && (
 					<>
+						{!profile.Admin && (
+							<SwitchButton
+								title={'Sub Admin Status'}
+								state={profile.SubAdmin}
+								callback={() =>
+									handleInputByPath(['profile', 'SubAdmin'], !profile.SubAdmin)
+								}
+							/>
+						)}
+
 						<SwitchButton
 							title={'Allow Setup View'}
 							state={profile.permissions.setupPage}

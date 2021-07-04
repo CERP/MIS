@@ -17,6 +17,38 @@ export const blankClass = (): MISClass => ({
 	}
 })
 
+export const blankStudent = (): MISStudent => ({
+	id: v4(),
+	Name: '',
+	RollNumber: '',
+	BForm: '',
+	Gender: '',
+	Phone: '',
+	AlternatePhone: '',
+	Fee: 0,
+	Active: true,
+
+	ManCNIC: '',
+	ManName: '',
+	Birthdate: '',
+	Address: '',
+	Notes: '',
+	StartDate: new Date().getTime(),
+	AdmissionNumber: '',
+	BloodType: '',
+	FamilyID: '',
+	Religion: '',
+
+	fees: {},
+	payments: {},
+	attendance: {},
+	section_id: '',
+	tags: {},
+	exams: {},
+	certificates: {},
+	prospective_section_id: ''
+})
+
 export const defaultClasses: Record<string, number> = {
 	Preschool: 0,
 	'Play Group': 1,

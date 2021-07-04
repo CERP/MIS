@@ -28,19 +28,19 @@ const stageMap = {
 
 const getOnboardingHeadings = (stage: OnboardingStage, button?: boolean) => {
 	if (stage === OnboardingStage.ADD_STAFF || (button && stage === undefined)) {
-		return 'Add School Staff'
+		return 'Onboarding-Add Staff'
 	}
 
 	if (stage === OnboardingStage.ADD_CLASS) {
-		return 'Add School Class'
+		return 'Onboarding-Add Class'
 	}
 
 	if (stage === OnboardingStage.ADD_STUDENTS) {
-		return 'Add Students to Class'
+		return 'Onboarding-Add Students'
 	}
 
 	if (stage === OnboardingStage.COMPLETED) {
-		return ''
+		return 'Onboarding-Completed'
 	}
 
 	return 'Onboarding'
@@ -49,10 +49,8 @@ const getOnboardingHeadings = (stage: OnboardingStage, button?: boolean) => {
 export const SchoolOnboarding = () => {
 	const dispatch = useDispatch()
 
-	const {
-		db: { onboarding },
-		auth
-	} = useSelector((state: RootReducerState) => state)
+	const onboarding = useSelector((state: RootReducerState) => state.db.onboarding)
+	const auth = useSelector((state: RootReducerState) => state.auth)
 
 	const persistentStage = onboarding?.stage
 
@@ -120,12 +118,12 @@ export const SchoolOnboarding = () => {
 	}
 
 	return (
-		<AppLayout title={'Onboarding'}>
+		<AppLayout title={getOnboardingHeadings(stage as OnboardingStage)} showHeaderTitle>
 			<div className="p-5 md:p-10 md:pt-5 md:pb-0 text-gray-700 relative">
-				<div className="text-2xl font-bold mt-4 mb-8 text-center">
+				{/* <div className="text-2xl font-bold mt-4 mb-8 text-center">
 					{getOnboardingHeadings(stage as OnboardingStage)}
-				</div>
-				{renderComponent() || (
+				</div> */}
+				{renderComponent() ?? (
 					<>
 						<div className="flex flex-col md:flex-row items-center justify-center space-y-16 md:space-y-0 md:space-x-16 md:w-11/12 mx-auto md:p-10">
 							<div className="flex flex-row items-center md:flex-col">
