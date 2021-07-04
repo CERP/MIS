@@ -54,7 +54,7 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 		}
 	})
 
-	const { sections, siblings } = useMemo(() => {
+	const { siblings } = useMemo(() => {
 		// merge siblings sections
 		// merge siblings classes fees
 		const getSiblings = (
@@ -62,7 +62,7 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 			sections: AugmentedSection[]
 		): AugmentedStudent[] => {
 			return Object.values(stds)
-				.filter(s => isValidStudent(s) && s.Active && s.FamilyID && s.FamilyID === famId)
+				.filter(s => isValidStudent(s) && s.Active && s?.FamilyID === famId)
 				.map(s => {
 					const section = sections.find(sec => sec.id === s.section_id)
 					let classFee = {} as MISClassFee
@@ -322,22 +322,24 @@ const FeeBreakdownCard = ({ student }: FeeBreakdownCardProps) => {
 				}
 			],
 			...Object.entries(student.classAdditionalFees ?? {}),
-			...(Object.entries(student.fees ?? {}).map(([feeId, fee]) => {
-				return [
-					feeId,
-					{
-						...fee,
-						amount:
-							fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP
-								? '-' + fee.amount
-								: fee.amount,
-						name:
-							fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP
-								? 'Scholarship (M)'
-								: fee.name
-					}
-				]
-			}) as Array<[string, MISStudentFee]>)
+			...(Object.entries(student.fees ?? {})
+				.filter(([id, fee]) => !(fee.type === 'FEE' && fee.period === 'MONTHLY'))
+				.map(([feeId, fee]) => {
+					return [
+						feeId,
+						{
+							...fee,
+							amount:
+								fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP
+									? '-' + fee.amount
+									: fee.amount,
+							name:
+								fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP
+									? 'Scholarship (M)'
+									: fee.name
+						}
+					]
+				}) as Array<[string, MISStudentFee]>)
 		]
 	}, [student])
 
@@ -590,10 +592,10 @@ const AddPayment = ({ siblings, auth, settings, smsTemplates, pendingAmount }: A
 					type === 'text' || type === 'checkbox'
 						? value
 						: isNaN(valueAsNumber)
-						? name === 'date'
-							? Date.now()
-							: 0
-						: valueAsNumber
+							? name === 'date'
+								? Date.now()
+								: 0
+							: valueAsNumber
 			}
 		})
 	}
@@ -641,8 +643,7 @@ const AddPayment = ({ siblings, auth, settings, smsTemplates, pendingAmount }: A
 				)
 
 				toast.success(
-					`Rs. ${state.payment.amount} has been added as ${
-						state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
+					`Rs. ${state.payment.amount} has been added as ${state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
 					} amount.`
 				)
 
@@ -665,8 +666,7 @@ const AddPayment = ({ siblings, auth, settings, smsTemplates, pendingAmount }: A
 			)
 
 			toast.success(
-				`Rs. ${state.payment.amount} has been added as ${
-					state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
+				`Rs. ${state.payment.amount} has been added as ${state.payment.type === 'FORGIVEN' ? 'scholarship' : 'paid'
 				} amount.`
 			)
 			setState({

@@ -5,40 +5,9 @@ import toast from 'react-hot-toast'
 
 import { isValidPhone } from 'utils/helpers'
 import { createStudentMerge } from 'actions'
+import { numberRegex } from 'constants/index'
 import { PhoneInput } from 'components/input/PhoneInput'
-
-// TODO: move this to single single source of default
-const blankStudent = (): MISStudent => ({
-	id: v4(),
-	Name: '',
-	RollNumber: '',
-	BForm: '',
-	Gender: '',
-	Phone: '',
-	AlternatePhone: '',
-	Fee: 0,
-	Active: true,
-
-	ManCNIC: '',
-	ManName: '',
-	Birthdate: '',
-	Address: '',
-	Notes: '',
-	StartDate: new Date().getTime(),
-	AdmissionNumber: '',
-	BloodType: '',
-	FamilyID: '',
-	Religion: '',
-
-	fees: {},
-	payments: {},
-	attendance: {},
-	section_id: '',
-	tags: {},
-	exams: {},
-	certificates: {},
-	prospective_section_id: ''
-})
+import { blankStudent } from 'constants/form-defaults'
 
 interface AddStudentFormProps {
 	section: AugmentedSection
@@ -47,10 +16,12 @@ interface AddStudentFormProps {
 export const AddStudentForm: React.FC<AddStudentFormProps> = ({ section }) => {
 	const dispatch = useDispatch()
 
+	console.log('check the id', section)
+
 	// adding students to only created section
 	const [state, setState] = useState({
-		section_id: section?.id,
-		...blankStudent()
+		...blankStudent(),
+		section_id: section?.id
 	})
 
 	const handleSubmit = (event: React.FormEvent) => {
@@ -77,9 +48,11 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({ section }) => {
 		setState({ ...state, [name]: value })
 	}
 
+	console.log(state)
+
 	return (
 		<form className="w-full text-white space-y-4 mt-4" onSubmit={handleSubmit}>
-			<div className="text-center">Add Students Data Manually</div>
+			<h2 className="text-center font-semibold">Add Students Data Manually</h2>
 
 			<div className="">Name*</div>
 			<input
@@ -107,6 +80,9 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({ section }) => {
 				onChange={handleInput}
 				value={state.Phone}
 				required
+				error={
+					state.Phone && (numberRegex.test(state.Phone) || !(state.Phone?.length <= 11))
+				}
 				className="tw-input w-full tw-is-form-bg-black"
 			/>
 
