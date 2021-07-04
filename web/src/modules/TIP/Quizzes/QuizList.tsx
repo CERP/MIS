@@ -73,7 +73,7 @@ const QuizList: React.FC<PropsType> = ({
 			<div className="mb-5 flex justify-center w-full">
 				<Headings heading={'Quiz Library'} />
 			</div>
-			{Object.entries(filterredQuizzes)
+			{Object.entries(filterredQuizzes || {})
 				.sort(([, a], [, b]) => a.quiz_order - b.quiz_order)
 				.map(([quiz_id, quiz]) => {
 					const teacher_record = teacher_lesson_record[quiz_id] || {

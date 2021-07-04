@@ -63,7 +63,7 @@ const Grading: React.FC<PropsType> = ({
 		const reports: QuizResult = filtered_students.reduce((agg, student) => {
 			const obtained_marks =
 				student.targeted_instruction?.quiz_result?.[class_name]?.[subject]?.[quiz_id]
-					?.obtained_marks ?? -1
+					?.obtained_marks ?? undefined
 			return {
 				...agg,
 				[student.id]: obtained_marks
