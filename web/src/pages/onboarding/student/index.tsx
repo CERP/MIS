@@ -5,10 +5,10 @@ import { v4 } from 'node-uuid'
 import moment from 'moment'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
-import { DownloadIcon, TrashIcon, UploadIcon } from '@heroicons/react/outline'
+import { DotsVerticalIcon, DownloadIcon, TrashIcon, UploadIcon } from '@heroicons/react/outline'
 
 import downloadCSV from 'utils/downloadCSV'
-import { formatCNIC, formatPhone } from 'utils'
+import { formatCNIC, formatPhone, isValidStudent } from 'utils'
 import { toTitleCase } from 'utils/toTitleCase'
 
 import { TextDivider } from 'components/divider'
@@ -246,12 +246,12 @@ export const AddStudent: React.FC<AddStudentProps> = ({ skipStage }) => {
 							<div className="my-4">
 								<div
 									className={
-										'w-full h-48 overflow-y-scroll text-xs md:text-base rounded-md'
+										'w-full h-48 overflow-y-auto text-xs md:text-base rounded-md'
 									}>
 									<div className="table w-full">
 										<div className="table-row-group bg-white">
 											{state.importedStudents
-												.filter(s => s.Name)
+												.filter(s => isValidStudent(s))
 												.sort((a, b) => a.Name.localeCompare(b.Name))
 												.map(s => (
 													<div
@@ -267,15 +267,7 @@ export const AddStudent: React.FC<AddStudentProps> = ({ skipStage }) => {
 															{s.Phone}
 														</div>
 														{/* TODO: add TModal here */}
-														{/* <div className="table-cell p-2">
-															<svg
-																className="w-4 text-gray-400 mx-auto"
-																xmlns="http://www.w3.org/2000/svg"
-																viewBox="0 0 20 20"
-																fill="currentColor">
-																<path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-															</svg>
-														</div> */}
+														{/* <DotsVerticalIcon className="w-5 h-5 text-gray-brand" /> */}
 													</div>
 												))}
 										</div>
@@ -288,14 +280,16 @@ export const AddStudent: React.FC<AddStudentProps> = ({ skipStage }) => {
 					</>
 				) : (
 					<div
-						className={clsx(
-							'w-full h-20 overflow-y-scroll text-xs md:text-base rounded-md',
-							{ 'h-72': isMoreThanMaxStudents }
-						)}>
+						className={clsx('w-full overflow-y-auto text-xs md:text-base rounded-md', {
+							'h-20':
+								Object.values(students ?? {}).filter(s => isValidStudent(s))
+									.length > 0,
+							'h-72': isMoreThanMaxStudents
+						})}>
 						<div className="table w-full">
 							<div className="table-row-group bg-white">
 								{Object.values(students)
-									.filter(s => s.Name)
+									.filter(s => isValidStudent(s))
 									.sort((a, b) => a.Name.localeCompare(b.Name))
 									.map(s => (
 										<div key={s.id + s.section_id} className="table-row">

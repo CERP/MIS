@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
+import { isValidStudent } from 'utils'
 
 import iconMarkDone from 'assets/svgs/mark-done.svg'
 
@@ -38,11 +39,11 @@ export const OnboardingCompletion = () => {
 						Class Teacher: {sectionTeacher?.Name || 'Not Available'}
 					</div>
 					<div className="text-lg font-semibold">
-						Total Students: {Object.keys(students).length}
+						Total Students:{' '}
+						{Object.values(students).filter(s => isValidStudent(s)).length}
 					</div>
 				</div>
 				<div>
-					{/* <button className="w-full tw-btn bg-orange-brand text-white font-semibold mb-4">Add More Classes</button> */}
 					<Link to="/home">
 						<button className="w-full tw-btn-blue py-3 font-semibold">
 							Go to Home
