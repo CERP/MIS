@@ -4,8 +4,7 @@ import { AppLayout } from 'components/Layout/appLayout'
 import { useDispatch, useSelector } from 'react-redux'
 import { blankClass } from 'constants/form-defaults'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
-import { ArrowNarrowRightIcon, ExclamationCircleIcon, TrashIcon } from '@heroicons/react/outline'
-import moment from 'moment'
+import { ArrowNarrowRightIcon, TrashIcon } from '@heroicons/react/outline'
 import { isValidStudent } from 'utils'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import { Transition } from '@headlessui/react'
@@ -65,6 +64,8 @@ export const PromoteStudents = () => {
 		return groupedStudents
 	}
 
+	const orignal_grouped_students = calculateGroupedStudents()
+
 	const sortedClasses = Object.values(classes)
 		.filter(a => checkSpecialClass(a))
 		.sort((a, b) => b.classYear - a.classYear)
@@ -82,20 +83,6 @@ export const PromoteStudents = () => {
 	}
 
 	const [state, setState] = useState<State>(initialState)
-
-	// useEffect(() => {
-	// 	setState(initialState)
-
-	// 	return () => {
-	// 		setState({
-	// 			displayWarning: true,
-	// 			localState: [],
-	// 			promotionData: {},
-	// 			groupedStudents: {},
-	// 			augmentedSections: {}
-	// 		})
-	// 	}
-	// }, [])
 
 	const calculatePromotionData = (localState: MISClass[]) => {
 		let mapping: PromotionDataType
@@ -223,8 +210,8 @@ export const PromoteStudents = () => {
 		setState({ ...state, promotionData: promotionData })
 	}
 
-	const promoteSectionStudents = (fromkey: string, toKey: string) => {
-		const studentsToPromote = state.groupedStudents[fromkey]
+	const promoteSectionStudents = (fromkey: string, toKey: string, students: MISStudent[]) => {
+		const studentsToPromote = students
 
 		if (!studentsToPromote) {
 			setState({
@@ -238,9 +225,9 @@ export const PromoteStudents = () => {
 				}
 			})
 		}
-		const promotedStudents = (studentsToPromote ?? []).reduce<MISStudent[]>((agg, curr) => {
-			return [...agg, { ...curr, section_id: toKey }]
-		}, [])
+		// const promotedStudents = (studentsToPromote ?? []).reduce<MISStudent[]>((agg, curr) => {
+		// 	return [...agg, { ...curr, section_id: toKey }]
+		// }, [])
 
 		setState({
 			...state,
@@ -251,18 +238,9 @@ export const PromoteStudents = () => {
 					sectionPromoted: true
 				}
 			},
-			groupedStudents: { ...state.groupedStudents, [fromkey]: promotedStudents }
+			groupedStudents: { ...state.groupedStudents, [fromkey]: students }
 		})
 	}
-
-	// console.log('students', students)
-	// console.log('classes', classes)
-	// console.log(state.groupedStudents)
-
-	// console.log(
-	// 	'see count',
-	// 	Object.values(students).filter(s => s.section_id === 'cc5a4298-1d65-4257-bd90-59edd43cae01')
-	// )
 
 	const checkEveryClassPromoted = () => {
 		return Object.values(state.promotionData).every(entry => {
@@ -282,15 +260,14 @@ export const PromoteStudents = () => {
 	const promoteAllStudents = () => {
 		console.log(Object.entries(state.groupedStudents))
 
-		const student_section_map: PromotionMap = Object.entries(state.groupedStudents).reduce(
-			(agg, [sectionKey, groupedStudents]) => {
-				const studentMap = groupedStudents.reduce((agg, curr) => {
-					return { ...agg, [curr.id]: { current: sectionKey, next: curr.section_id } }
-				}, {})
-				return { ...agg, ...studentMap }
-			},
-			{}
-		)
+		const student_section_map: PromotionMap = Object.entries(
+			state.groupedStudents ?? {}
+		).reduce((agg, [sectionKey, groupedStudents]) => {
+			const studentMap = (groupedStudents ?? []).reduce((agg, curr) => {
+				return { ...agg, [curr.id]: { current: sectionKey, next: curr.section_id } }
+			}, {})
+			return { ...agg, ...studentMap }
+		}, {})
 		if (!Object.keys(state.augmentedSections).includes('mis_temp')) {
 			console.log('Running This One')
 			const TempSection: MISClass['sections'] = { ['mis_temp']: { name: 'TEMPORARY' } }
@@ -318,39 +295,7 @@ export const PromoteStudents = () => {
 		}, 1500)
 	}
 
-	const removeStudentFromPromotion = (sectionId: string, studentId: string) => {
-		// console.log(sectionId)
-		// console.log(state.groupedStudents)
-		setState({
-			...state,
-			groupedStudents: {
-				...state.groupedStudents,
-				[sectionId]: state.groupedStudents[sectionId].filter(
-					student => student.id !== studentId
-				)
-			}
-		})
-	}
-
 	const undoSectionPromotion = (fromkey: string) => {
-		const studentsToPromote = state.groupedStudents[fromkey]
-
-		if (!studentsToPromote) {
-			setState({
-				...state,
-				augmentedSections: {
-					...state.augmentedSections,
-					[fromkey]: {
-						...state.augmentedSections[fromkey],
-						sectionPromoted: false
-					}
-				}
-			})
-		}
-		const promotedStudents = (studentsToPromote ?? []).reduce<MISStudent[]>((agg, curr) => {
-			return [...agg, { ...curr, section_id: fromkey }]
-		}, [])
-
 		setState({
 			...state,
 			augmentedSections: {
@@ -360,7 +305,10 @@ export const PromoteStudents = () => {
 					sectionPromoted: false
 				}
 			},
-			groupedStudents: { ...state.groupedStudents, [fromkey]: promotedStudents }
+			groupedStudents: {
+				...state.groupedStudents,
+				[fromkey]: orignal_grouped_students[fromkey]
+			}
 		})
 	}
 
@@ -379,11 +327,10 @@ export const PromoteStudents = () => {
 									<div className="lg:mx-28">
 										<PromotionCard
 											undoSectionPromotion={undoSectionPromotion}
-											removeStudentFromPromotion={removeStudentFromPromotion}
 											promotionData={state.promotionData}
 											groupedStudents={state.groupedStudents}
 											augmentedSections={state.augmentedSections}
-											sectionkey={key}
+											classKey={key}
 											val={val}
 											classes={classes}
 											promoteSection={promoteSectionStudents}
@@ -460,10 +407,10 @@ export const PromoteStudents = () => {
 }
 
 type PromotionCardProps = {
-	sectionkey: string
+	classKey: string
 	onFromChange: (id: string) => void
 	onToChange: (id: string) => void
-	promoteSection: (fromKey: string, toKey: string) => void
+	promoteSection: (fromKey: string, toKey: string, students: MISStudent[]) => void
 	augmentedSections: {
 		[id: string]: ModifiedSection
 	}
@@ -474,11 +421,10 @@ type PromotionCardProps = {
 	groupedStudents: { [id: string]: MISStudent[] }
 	promotionData: PromotionDataType
 	undoSectionPromotion: (sectionKey: string) => void
-	removeStudentFromPromotion: (sectionId: string, studentId: string) => void
 }
 
 const PromotionCard = ({
-	sectionkey,
+	classKey,
 	val,
 	undoSectionPromotion,
 	classes,
@@ -487,21 +433,57 @@ const PromotionCard = ({
 	augmentedSections,
 	promoteSection,
 	groupedStudents,
-	promotionData,
-	removeStudentFromPromotion
+	promotionData
 }: PromotionCardProps) => {
 	const [visible, setVisible] = useState(false)
+	const [cardGroupedStudents, setCardGroupedStudents] = useState<{
+		[id: string]: MISStudent[]
+	}>({})
+
+	useEffect(() => {
+		setCardGroupedStudents({
+			...groupedStudents,
+			[val.fromSection.id]: (groupedStudents[val.fromSection.id] ?? []).map(student => {
+				return { ...student, section_id: val.toSection.id }
+			})
+		})
+	}, [groupedStudents])
+
+	const removeStudentFromPromotion = (sectionId: string, studentId: string) => {
+		setCardGroupedStudents({
+			...cardGroupedStudents,
+			[sectionId]: cardGroupedStudents[sectionId].filter(student => student.id !== studentId)
+		})
+	}
+
+	const changeStudentSection = (newSectionKey: string, studentKey: string) => {
+		const newSection = cardGroupedStudents[val.fromSection.id].reduce((agg, student) => {
+			if (student.id === studentKey) {
+				return [...agg, { ...student, section_id: newSectionKey }]
+			} else {
+				return [...agg, student]
+			}
+		}, [] as MISStudent[])
+
+		setCardGroupedStudents({
+			...cardGroupedStudents,
+			[val.fromSection.id]: newSection
+		})
+
+		// console.log(augmentedSections[newSectionKey].namespaced_name)
+	}
+
 	return (
 		<>
 			<div
-				key={sectionkey + val.id}
+				key={classKey + val.id}
 				className="flex flex-row justify-between p-2 bg-gray-50 shadow-md border-gray-200 border mb-4 rounded-xl font-medium text-gray-600 lg:text-2xl lg:py-6 lg:px-10  ">
-				<div key={sectionkey} className="flex flex-col w-2/5 lg:w-2/6">
-					<h1>{classes[sectionkey].name}</h1>
+				<div key={classKey} className="flex flex-col w-2/5 lg:w-2/6">
+					<h1>{classes[classKey].name}</h1>
 					<select
 						className="w-full rounded shadow tw-select text-teal-brand"
 						onChange={e => onFromChange(e.target.value)}>
-						{Object.entries(classes[sectionkey].sections).map(([key, section]) => {
+						{Object.entries(classes[classKey].sections).map(([key, section]) => {
 							return (
 								<option value={key}>
 									{augmentedSections[key].namespaced_name}
@@ -537,7 +519,7 @@ const PromotionCard = ({
 					</div>
 				) : (
 					<div
-						key={val.id + sectionkey}
+						key={val.id + classKey}
 						className="flex flex-1  text-black font-normal justify-center items-center flex-col w-2/6 md:px-0 px-3">
 						Move To
 						<div
@@ -573,42 +555,53 @@ const PromotionCard = ({
 				</div>
 			</div>
 			<PromotableStudents
+				classKey={val.id}
+				changeStudentSection={changeStudentSection}
 				fromSectionName={augmentedSections[val.fromSection.id].namespaced_name}
 				fromSectionKey={val.fromSection.id}
 				toSectionKey={val.toSection.id}
-				groupedStudents={groupedStudents}
-				onClickCallback={(fromKey: string, toKey: string) => {
-					promoteSection(fromKey, toKey)
+				groupedStudents={cardGroupedStudents}
+				onClickCallback={(fromKey: string, toKey: string, students: MISStudent[]) => {
+					promoteSection(fromKey, toKey, students)
 					setVisible(false)
 				}}
 				removeStudentFromPromotion={removeStudentFromPromotion}
 				visible={visible}
+				augmentedSections={augmentedSections}
 			/>
 		</>
 	)
 }
 
 type PromotableStudentProps = {
+	classKey: string
 	fromSectionName: string
 	fromSectionKey: string
 	toSectionKey: string
 	groupedStudents: State['groupedStudents']
-	onClickCallback: (fromSectionKey: string, toSectionKey: string) => void
+	onClickCallback: (fromSectionKey: string, toKey: string, students: MISStudent[]) => void
 	removeStudentFromPromotion: (sectionId: string, studentId: string) => void
 	visible: boolean
+	changeStudentSection: (newSectionKey: string, studentId: string) => void
+	augmentedSections: {
+		[id: string]: ModifiedSection
+	}
 }
 
 type PromotableStudentsState = {
 	students: MISStudent[]
 }
 const PromotableStudents = ({
+	classKey,
 	fromSectionName,
 	fromSectionKey,
 	toSectionKey,
+	changeStudentSection,
 	groupedStudents,
 	onClickCallback,
 	removeStudentFromPromotion,
-	visible
+	visible,
+	augmentedSections
 }: PromotableStudentProps) => {
 	const [state, setState] = useState<PromotableStudentsState>({
 		students: []
@@ -637,15 +630,37 @@ const PromotableStudents = ({
 				</div>
 				{(state.students || []).map(student => {
 					return (
-						<div className="bg-gray-200 text-lg flex-row mb-3 flex justify-between px-10 py-7 rounded-sm font-medium">
-							<h1>{student.Name}</h1>
-							<TrashIcon
-								onClick={() =>
-									removeStudentFromPromotion(fromSectionKey, student.id)
-								}
-								color="red"
-								className="cursor-pointer h-6 w-6"
-							/>
+						<div className="bg-gray-200 text-lg flex-row mb-3 items-center flex justify-between px-10 py-7 rounded-sm font-medium">
+							<div className="flex flex-1">
+								<h1>{student.Name}</h1>
+							</div>
+							<div className="flex flex-1">
+								<select
+									defaultValue={toSectionKey}
+									className="w-full rounded shadow tw-select text-teal-brand"
+									onChange={e =>
+										changeStudentSection(e.target.value, student.id)
+									}>
+									{Object.entries(augmentedSections)
+										.filter(([secKey, sec]) => sec.class_id === classKey)
+										.map(([key, section]) => {
+											return (
+												<option value={key}>
+													{section.namespaced_name}
+												</option>
+											)
+										})}
+								</select>
+							</div>{' '}
+							<div className="flex flex-1 justify-end">
+								<TrashIcon
+									onClick={() =>
+										removeStudentFromPromotion(fromSectionKey, student.id)
+									}
+									color="red"
+									className="cursor-pointer h-6 w-6"
+								/>
+							</div>
 						</div>
 					)
 				})}
@@ -677,7 +692,11 @@ const PromotableStudents = ({
 								<button
 									className="w-5/12 p-2 md:p-2 lg:p-3 border-none bg-green-brand text-white rounded-lg outline-none font-bold text-sm md:text-base lg:text-xl"
 									onClick={() => {
-										onClickCallback(fromSectionKey, toSectionKey)
+										onClickCallback(
+											fromSectionKey,
+											toSectionKey,
+											state.students
+										)
 										setIsComponentVisible(false)
 									}}>
 									Promote
