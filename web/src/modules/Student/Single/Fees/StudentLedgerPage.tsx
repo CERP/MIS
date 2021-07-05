@@ -70,10 +70,18 @@ export const StudentLedgerPage: React.FC<StudentLedgerPageProp> = ({
 		// get class additional fees
 		const classAdditionals = settings?.classes?.additionalFees?.[section.class_id]
 
-		fees = {
-			...fees,
-			[student.id]: classFee,
-			...classAdditionals
+		if (classFee) {
+			fees = {
+				...fees,
+				[student.id]: classFee
+			}
+		}
+
+		if (classAdditionals) {
+			fees = {
+				...fees,
+				...classAdditionals
+			}
 		}
 	}
 
