@@ -164,7 +164,7 @@ export const getPaymentLabel = (
 		return 'Scholarship (M)'
 	}
 	// set fee name in default class fee logic
-	if (feeName === 'Montly') {
+	if (feeName === 'Monthly') {
 		return 'Class Fee'
 	}
 
@@ -177,4 +177,34 @@ export const getPaymentLabel = (
 	}
 
 	return feeName
+}
+
+export const classYearSorter = (
+	classA: MISClass | AugmentedSection,
+	classB: MISClass | AugmentedSection
+) => {
+	return (
+		(isNaN(Number(classA.classYear)) ? 0 : Number(classA.classYear)) -
+		(isNaN(Number(classB.classYear)) ? 0 : Number(classB.classYear))
+	)
+}
+export const rollNumberSorter = (
+	studentA: MISStudent | AugmentedStudent,
+	studentB: MISStudent | AugmentedStudent
+) => {
+	if (isNaN(Number(studentA.RollNumber)) || isNaN(Number(studentB.RollNumber))) {
+		const rollNumberA = studentA.RollNumber?.toUpperCase() // ignore upper and lowercase
+		const rollNumberB = studentB.RollNumber?.toUpperCase() // ignore upper and lowercase
+		if (rollNumberA < rollNumberB) {
+			return -1
+		}
+		if (rollNumberA > rollNumberB) {
+			return 1
+		}
+
+		// names must be equal
+		return 0
+	}
+
+	return Number(studentA.RollNumber) - Number(studentB.RollNumber)
 }

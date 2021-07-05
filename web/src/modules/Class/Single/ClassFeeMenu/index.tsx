@@ -11,7 +11,7 @@ import { StudentLedgerPage } from 'modules/Student/Single/Fees/StudentLedgerPage
 import getSectionFromId from 'utils/getSectionFromId'
 import chunkify from 'utils/chunkify'
 
-import { isValidStudent } from 'utils'
+import { isValidStudent, rollNumberSorter } from 'utils'
 import { AppLayout } from 'components/Layout/appLayout'
 import { toTitleCase } from 'utils/toTitleCase'
 
@@ -76,7 +76,7 @@ class ClassFeeMenu extends Component<propTypes, S> {
 	mergedPaymentsForStudent = (student: MISStudent) => {
 		if (student.FamilyID) {
 			const siblings = Object.values(this.props.students).filter(
-				s => s.Name && s.FamilyID && s.FamilyID === student.FamilyID
+				s => isValidStudent(s) && s.FamilyID && s.FamilyID === student.FamilyID
 			)
 
 			const merged_payments = siblings.reduce(
@@ -101,7 +101,7 @@ class ClassFeeMenu extends Component<propTypes, S> {
 
 		const relevant_students = Object.values(students)
 			.filter(s => curr_class.sections[s.section_id] !== undefined && !s.FamilyID)
-			.sort((a, b) => parseInt(a.RollNumber || '0') - parseInt(b.RollNumber || '0'))
+			.sort(rollNumberSorter)
 
 		let Years: Array<string> = []
 
