@@ -8,7 +8,7 @@ import { Transition } from '@headlessui/react'
 import { CalendarIcon, ChevronDownIcon, XCircleIcon } from '@heroicons/react/outline'
 
 import months from 'constants/months'
-import { isValidStudent } from 'utils'
+import { classYearSorter, isValidStudent } from 'utils'
 import { toTitleCase } from 'utils/toTitleCase'
 import { CustomSelect } from 'components/select'
 import { SearchInput } from 'components/input/search'
@@ -189,7 +189,7 @@ export const PrintForClass = ({ classes, setClassId }: PrintForClassProps) => {
 				<option value={''}>Choose from here</option>
 				{Object.values(classes)
 					.filter(c => c)
-					.sort((a, b) => a.classYear ?? 0 - b.classYear ?? 0)
+					.sort(classYearSorter)
 					.map(c => (
 						<option key={c.id} value={c.id}>
 							{toTitleCase(c.name)}
