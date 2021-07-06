@@ -48,7 +48,9 @@ const Login: React.FC<LoginProps> = ({
 	const [user, setUser] = useState<AugmentedMISUser>()
 
 	const filteredUsers = Object.entries(users)
-		.filter(([uid, f]) => f && f.name && faculty[uid] && f.hasLogin !== false)
+		.filter(
+			([uid, f]) => f && f.name && faculty[uid] && faculty[uid].Active && f.hasLogin !== false
+		)
 		.sort(([, a], [, b]) => a.name.localeCompare(b.name))
 
 	// For desktop screen, there would be 10 users per group
