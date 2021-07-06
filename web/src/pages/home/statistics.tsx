@@ -13,7 +13,7 @@ import {
 	ExclamationIcon
 } from '@heroicons/react/outline'
 import { PieChart, Pie, Sector, ResponsiveContainer } from 'recharts'
-import { checkPermission } from 'utils'
+import { checkPermission, isValidStudent } from 'utils'
 
 enum Tab {
 	TEACHER,
@@ -24,6 +24,12 @@ type PropTypes = {
 	permissions: MISTeacher['permissions']
 	admin: boolean
 	subAdmin: boolean
+}
+
+export const getDailyStatsRoute = (stats_type: string) => {
+	return `/analytics/${stats_type}?start_date=${moment().format(
+		'MM-DD-YYYY'
+	)}&end_date=${moment().format('MM-DD-YYYY')}&period=Daily`
 }
 
 export const StatsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
@@ -63,8 +69,6 @@ export const StatsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 		for (const staff of Object.values(faculty)) {
 			const record = (staff.attendance ?? {})[todayDate]
 
-			console.log(record)
-
 			if (record === undefined) {
 				continue
 			}
@@ -92,7 +96,7 @@ export const StatsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 		let totalPayee = 0
 
 		for (const student of Object.values(students)) {
-			if (student && student.Name) {
+			if (isValidStudent(student) && student.Active) {
 				const additional_payment = Object.values(student.payments ?? {})
 					.filter(
 						x =>
@@ -173,15 +177,39 @@ export const StatsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 					<div className="flex flex-row justify-between">
 						<div className="flex flex-col items-center text-teal-brand">
 							<div className="font-semibold">{attendanceStats.PRESENT}</div>
-							<div className="">Present</div>
+							<Link
+								to={
+									activeTab === Tab.STUDENT
+										? getDailyStatsRoute('attendance')
+										: getDailyStatsRoute('teacher-attendance')
+								}
+								className="hover:underline hover:text-blue-brand">
+								Present
+							</Link>
 						</div>
 						<div className="flex flex-col items-center text-red-brand">
 							<div className="font-semibold">{attendanceStats.ABSENT}</div>
-							<div className="">Absent</div>
+							<Link
+								to={
+									activeTab === Tab.STUDENT
+										? getDailyStatsRoute('attendance')
+										: getDailyStatsRoute('teacher-attendance')
+								}
+								className="hover:underline hover:text-blue-brand">
+								Absent
+							</Link>
 						</div>
 						<div className="flex flex-col items-center text-orange-brand">
 							<div className="font-semibold">{attendanceStats.LEAVE}</div>
-							<div className="">Leave</div>
+							<Link
+								to={
+									activeTab === Tab.STUDENT
+										? getDailyStatsRoute('attendance')
+										: getDailyStatsRoute('teacher-attendance')
+								}
+								className="hover:underline hover:text-blue-brand">
+								Leave
+							</Link>
 						</div>
 					</div>
 					<div className="hidden lg:block">

@@ -64,3 +64,30 @@ export const DefaultExamGrades = {
 		}
 	}
 }
+
+type TemplateOptions = {
+	[id: string]: string[]
+}
+
+export const TEMPLATE_OPTIONS: TemplateOptions = {
+	attendance: [
+		"Use $NAME to insert the student's name.",
+		"Use $FNAME to insert the student's father name.",
+		'Use $STATUS to insert the attendance status.'
+	],
+	attendance_staff: [
+		"Use $NAME to insert the staff memeber's name.",
+		'Use $STATUS to insert the attendance status.'
+	],
+	fee: [
+		"Use $NAME to insert the student's name.",
+		"Use $FNAME to insert the student's father name.",
+		'Use $AMOUNT to insert the fee amount.',
+		'Use $BALANCE to insert the total fee balance.'
+	],
+	result: [
+		"Use $NAME to insert the student's name.",
+		"Use $FNAME to insert the student's father name.",
+		'Use $REPORT to send report line by line.'
+	]
+}

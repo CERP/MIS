@@ -15,6 +15,8 @@ import { ShowHidePassword } from 'components/password'
 import { ActionTypes } from 'constants/index'
 
 import UserIconSvg from 'assets/svgs/user.svg'
+import { TModal } from 'components/Modal'
+import { useComponentVisible } from 'hooks/useComponentVisible'
 
 type LoginProps = RootReducerState & {
 	users: RootDBState['users']
@@ -46,7 +48,7 @@ const Login: React.FC<LoginProps> = ({
 	const [user, setUser] = useState<AugmentedMISUser>()
 
 	const filteredUsers = Object.entries(users)
-		.filter(([, f]) => f && f.name && f.hasLogin !== false)
+		.filter(([uid, f]) => f && f.name && faculty[uid] && f.hasLogin !== false)
 		.sort(([, a], [, b]) => a.name.localeCompare(b.name))
 
 	// For desktop screen, there would be 10 users per group
@@ -55,6 +57,12 @@ const Login: React.FC<LoginProps> = ({
 
 	// renders number of buttons to view user group
 	const userGroups = Math.ceil(filteredUsers.length / USERS_PER_GROUP)
+
+	const {
+		ref: confirmSwitchSchoolModalRef,
+		isComponentVisible: showConfirmSchoolModal,
+		setIsComponentVisible: setShowConfirmSchoolModal
+	} = useComponentVisible(false)
 
 	const switchSchoolHandler = () => {
 		// TODO: convert it to react-alert modal
@@ -81,19 +89,41 @@ const Login: React.FC<LoginProps> = ({
 				<div className="text-xl md:text-2xl text-center font-bold">
 					MISchool Staff Login
 				</div>
+				{showConfirmSchoolModal && (
+					<TModal>
+						<div
+							className="bg-white md:p-10 p-8 space-y-2 text-center space-y-10"
+							ref={confirmSwitchSchoolModalRef}>
+							<h1 className="lg:text-xl">Are you sure you want to switch school?</h1>
+							<div className="font-semibold text-lg md:text-xl"></div>
+							<div className="flex flex-row justify-between space-x-4">
+								<button
+									onClick={() => setShowConfirmSchoolModal(false)}
+									className="w-full py-1 md:py-2 tw-btn bg-gray-400 text-white">
+									Cancel
+								</button>
+								<button
+									onClick={switchSchoolHandler}
+									className="w-full py-1 md:py-2 tw-btn-red">
+									Confirm
+								</button>
+							</div>
+						</div>
+					</TModal>
+				)}
 				<div className="w-full md:w-3/4 mx-auto flex flex-col md:flex-row items-center mt-10 md:t-20">
 					<div className="relative border md:w-2/5 p-5 rounded-2xl rounded-bl-none md:rounded-bl-2xl md:rounded-tr-none rounded-br-none shadow-md w-4/5">
 						<div className="flex flex-col items-center md:p-10 space-y-2">
 							<img
-								className="w-16 h-16 md:w-20 md:h-20 p-1 border border-gray-300 rounded-full"
-								src={school.logo ?? '/favicon.ico'}
+								className="w-16 h-16 md:w-20 object-cover md:h-20 p-1 border border-gray-300 rounded-full"
+								src={school.logo || '/favicon.ico'}
 								alt="school-logo"
 							/>
 							<div className="font-semibold text-center">{school.name}</div>
 							<div className="font-medium"></div>
 							<button
 								disabled={!connected}
-								onClick={() => switchSchoolHandler()}
+								onClick={() => setShowConfirmSchoolModal(true)}
 								className={clsx(
 									'inline-flex items-center text-center w-full tw-btn-red',
 									{
@@ -127,7 +157,7 @@ const Login: React.FC<LoginProps> = ({
 									</div>
 									<div className="md:mt-6">
 										<div className="grid grid-cols-3 md:grid-cols-5 md:gap-0 md:h-60">
-											{chunkify(filteredUsers ?? [], USERS_PER_GROUP)[
+											{chunkify(filteredUsers || [], USERS_PER_GROUP)[
 												usersGroupIndex
 											].map(([uid, user]: [string, MISUser]) => {
 												const staffMember = faculty[uid]
@@ -136,21 +166,39 @@ const Login: React.FC<LoginProps> = ({
 														key={uid}
 														className="group flex flex-col items-center mb-2 space-y-1">
 														<div
-															className="w-20 h-20 cursor-pointer"
+															className="relative w-20 h-20 cursor-pointer"
 															onClick={() =>
 																setUser({ id: uid, ...user })
 															}>
 															<img
-																className="rounded-full w-20 h-20 p-2 border-2 border-transparent group-hover:border-green-brand focus:border-green-brand"
+																className="rounded-full w-20 h-20"
 																src={
 																	staffMember?.ProfilePicture
-																		?.url ??
+																		?.url ||
 																	staffMember?.ProfilePicture
-																		?.image_string ??
+																		?.image_string ||
 																	UserIconSvg
 																}
 																alt={staffMember?.Name}
 															/>
+															{staffMember.Admin && (
+																<div
+																	className={clsx(
+																		'absolute h-3 w-3 rounded-full bg-green-brand',
+																		!(
+																			staffMember
+																				?.ProfilePicture
+																				?.url ||
+																			staffMember
+																				?.ProfilePicture
+																				?.image_string
+																		)
+																			? 'bottom-2.5 right-3.5'
+																			: 'bottom-1.5 right-2'
+																	)}
+																	title="Admin"
+																/>
+															)}
 														</div>
 														<div className="text-xs text-white group-hover:text-blue-brand text-center">
 															{toTitleCase(user.name)}
@@ -202,7 +250,7 @@ export const StaffLogin = connect((state: RootReducerState) => ({
 	},
 	auth: state.auth,
 	initialized: state.initialized,
-	users: state.db?.users || {},
+	users: state.db?.users ?? {},
 	onboarding: state.db?.onboarding,
 	connected: state.connected,
 	unsyncd_changes: Object.keys(state.queued.mutations ?? {}).length,
@@ -257,15 +305,31 @@ const LoginForm: React.FC<LoginFormProps> = ({ user, auth, faculty }) => {
 
 	return (
 		<div className="flex flex-col items-center space-y-2">
-			<img
-				className="rounded-full w-24 h-24"
-				src={
-					staffMember?.ProfilePicture?.url ??
-					staffMember?.ProfilePicture?.image_string ??
-					UserIconSvg
-				}
-				alt={staffMember?.Name}
-			/>
+			<div className="relative">
+				<img
+					className="rounded-full w-24 h-24"
+					src={
+						staffMember?.ProfilePicture?.url ||
+						staffMember?.ProfilePicture?.image_string ||
+						UserIconSvg
+					}
+					alt={staffMember?.Name}
+				/>
+				{staffMember.Admin && (
+					<div
+						className={clsx(
+							'absolute h-4 w-4 rounded-full bg-green-brand',
+							!(
+								staffMember?.ProfilePicture?.url ||
+								staffMember?.ProfilePicture?.image_string
+							)
+								? 'bottom-2.5 right-3.5'
+								: 'bottom-1.5 right-2'
+						)}
+						title="Admin"
+					/>
+				)}
+			</div>
 			<div className="text-sm text-white">{toTitleCase(user.name)}</div>
 			<form id="staff-login" onSubmit={handleSubmit}>
 				<div className="w-full relative my-4">

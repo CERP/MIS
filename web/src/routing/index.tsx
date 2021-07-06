@@ -42,6 +42,8 @@ import { Family } from 'pages/family/list'
 import { SingleFamily } from 'pages/family/single'
 import { SingleFamilyPayments } from 'pages/family/single/payments'
 import { SMS } from 'pages/sms'
+import { SMSTemplates } from 'pages/sms/templates'
+
 import { Settings } from 'pages/school/settings'
 import { ResetSchoolPassword } from 'pages/auth/reset-password/school'
 
@@ -61,6 +63,8 @@ import PrintPreview from 'pages/school/fees/print-voucher/preview'
 import ClassFeeMenu from 'modules/Class/Single/ClassFeeMenu'
 import SingleClassResults from 'modules/Class/Single/ReportsMenu'
 import { ExamsMenu } from 'pages/exams/menu'
+import { PageNotFound } from 'pages/http_error/404'
+import { TermsOfService } from 'pages/terms/tos'
 
 interface RoutesProps {
 	store: Store<RootReducerState>
@@ -124,6 +128,7 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<PrivateRoute path="/fees" exact component={SchoolFees} />
 						<PrivateRoute path="/fees/:page" exact component={SchoolFees} />
 
+						<PrivateRoute path="/sms/templates" component={SMSTemplates} />
 						<PrivateRoute path="/sms" component={SMS} />
 
 						<PrivateRoute exact path="/reports/bulk-exams" component={BulkExam} />
@@ -178,7 +183,8 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<PrivateRoute path="/help" component={Help} />
 						<PrivateRoute path="/reset-password" component={ResetPassword} />
 						<PrivateRoute path="/expenses" exact component={Expense} />
-						<PrivateRoute path="/expenses/:id" exact component={ExpenseForm} />
+						<PrivateRoute path="/expenses/new" exact component={ExpenseForm} />
+						<PrivateRoute path="/expenses/:id/edit" exact component={ExpenseForm} />
 
 						<PublicRoute exact path="/signup" component={SchoolSignup} />
 						<PublicRoute path="/school-login" component={SchoolLogin} />
@@ -203,6 +209,8 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<Route exact path="/events" component={Events} />
 						<Route exact path="/features" component={Feature} />
 						<Route exact path="/contact-us" component={ContactUs} />
+						<Route exact path="/tos" component={TermsOfService} />
+						<Route path="*" component={PageNotFound} />
 					</Switch>
 				</BrowserRouter>
 			</Provider>

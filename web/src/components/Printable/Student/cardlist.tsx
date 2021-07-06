@@ -30,16 +30,12 @@ export const StudenPrintableIDCardList = (props: PropsTypes) => {
 			<table>
 				<tbody>
 					<div className="card-grid">
-						{sorted_students.map((student) => (
+						{sorted_students.map(student => (
 							<StudentIDCard
 								key={student.id}
 								student={student}
 								schoolName={schoolName}
-								studentClass={
-									student.section && student.section.namespaced_name
-										? student.section.namespaced_name
-										: ''
-								}
+								studentClass={student?.section?.namespaced_name || 'nil'}
 								schoolLogo={schoolLogo}
 								schoolSession={schoolSession}
 							/>

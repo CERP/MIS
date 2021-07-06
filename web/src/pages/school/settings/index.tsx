@@ -231,10 +231,7 @@ export const Settings = () => {
 						/>
 						<div>School Phone</div>
 						<PhoneInput
-							error={
-								numberRegex.test(state.settings.schoolPhoneNumber) ||
-								!(state.settings.schoolPhoneNumber?.length <= 11)
-							}
+							error={false}
 							onChange={handleInputChange}
 							name="schoolPhoneNumber"
 							value={state.settings.schoolPhoneNumber}

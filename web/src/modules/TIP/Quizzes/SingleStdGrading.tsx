@@ -44,20 +44,27 @@ const SingleStdGrading: React.FC<P> = ({ student, obtained_marks, total_marks, h
 			</div>
 			<div className="flex items-center w-1/2 justify-center">
 				<div className="rounded-full bg-white py-2 px-4 md:px-5 lg:px-8 h-4 shadow-lg flex items-center">
-					<div
-						className={clsx(
-							`bg-white rounded-full w-min px-2 h-7 flex justify-center items-center absolute shadow-lg transform -translate-y-6 translate-x-${obtained_marks > 5
-								? getTranslateValue(obtained_marks)
-								: obtained_marks * 2
-							}`,
-							{
-								'bg-red-500 text-white': obtained_marks === -1
-							}
-						)}>
-						{obtained_marks === -1 ? 'Absent' : obtained_marks}
-					</div>
+					{obtained_marks !== undefined && (
+						<div
+							className={clsx(
+								`flex justify-center items-center bg-white rounded-full w-max px-2 h-7 shadow-lg absolute transform -translate-y-6 translate-x-${obtained_marks > 5
+									? getTranslateValue(obtained_marks)
+									: obtained_marks * 2
+								}`,
+								{
+									'bg-red-500 text-white': obtained_marks === -1
+								}
+							)}>
+							{obtained_marks === -1 ? 'Absent' : obtained_marks}
+						</div>
+					)}
 					<input
-						className="rounded-lg appearance-none bg-gray-400 h-1 w-128 outline-none cursor-pointer"
+						className={clsx(
+							`rounded-lg appearance-none bg-gray-400 h-1 w-128 outline-none cursor-pointer opacity-none`,
+							{
+								'opacity-30': obtained_marks === undefined
+							}
+						)}
 						type="range"
 						min={-1}
 						max={total_marks}

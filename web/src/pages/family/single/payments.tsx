@@ -16,14 +16,15 @@ import { CustomSelect } from 'components/select'
 import { MISFeeLabels } from 'constants/index'
 import { getFilteredPayments } from 'utils/getFilteredPayments'
 import { checkStudentDuesReturning } from 'utils/checkStudentDues'
-import { addMultiplePayments, addPayment, logSms } from 'actions'
+import { addMultiplePayments, addPayment, deletePayment, logSms } from 'actions'
 import { smsIntentLink } from 'utils/intent'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
 
 import UserIconSvg from 'assets/svgs/user.svg'
-import { isValidStudent, getPaymentLabel } from 'utils'
+import { isValidStudent, getPaymentLabel, checkPermission } from 'utils'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
+import { TrashIcon } from '@heroicons/react/solid'
 
 type State = {
 	filter: {
@@ -53,7 +54,7 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 		}
 	})
 
-	const { sections, siblings } = useMemo(() => {
+	const { siblings } = useMemo(() => {
 		// merge siblings sections
 		// merge siblings classes fees
 		const getSiblings = (
@@ -61,7 +62,7 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 			sections: AugmentedSection[]
 		): AugmentedStudent[] => {
 			return Object.values(stds)
-				.filter(s => isValidStudent(s) && s.Active && s.FamilyID && s.FamilyID === famId)
+				.filter(s => isValidStudent(s) && s.Active && s?.FamilyID === famId)
 				.map(s => {
 					const section = sections.find(sec => sec.id === s.section_id)
 					let classFee = {} as MISClassFee
@@ -321,22 +322,24 @@ const FeeBreakdownCard = ({ student }: FeeBreakdownCardProps) => {
 				}
 			],
 			...Object.entries(student.classAdditionalFees ?? {}),
-			...(Object.entries(student.fees ?? {}).map(([feeId, fee]) => {
-				return [
-					feeId,
-					{
-						...fee,
-						amount:
-							fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP
-								? '-' + fee.amount
-								: fee.amount,
-						name:
-							fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP
-								? 'Scholarship (M)'
-								: fee.name
-					}
-				]
-			}) as Array<[string, MISStudentFee]>)
+			...(Object.entries(student.fees ?? {})
+				.filter(([id, fee]) => !(fee.type === 'FEE' && fee.period === 'MONTHLY'))
+				.map(([feeId, fee]) => {
+					return [
+						feeId,
+						{
+							...fee,
+							amount:
+								fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP
+									? '-' + fee.amount
+									: fee.amount,
+							name:
+								fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP
+									? 'Scholarship (M)'
+									: fee.name
+						}
+					]
+				}) as Array<[string, MISStudentFee]>)
 		]
 	}, [student])
 
@@ -412,8 +415,17 @@ interface PreviousPaymentsProps {
 const PreviousPayments = ({ years, close, payments, pendingAmount }: PreviousPaymentsProps) => {
 	const [state, setState] = useState({
 		month: moment().format('MMMM'),
-		year: moment().format('YYYY')
+		year: moment().format('YYYY'),
+		paymentId: '',
+		studentId: ''
 	})
+
+	const faculty = useSelector((state: RootReducerState) => state.db.faculty)
+	const faculty_id = useSelector((state: RootReducerState) => state.auth.faculty_id)
+	const { Admin } = faculty[faculty_id]
+	const { ref, setIsComponentVisible, isComponentVisible } = useComponentVisible(false)
+
+	const dispatch = useDispatch()
 
 	return (
 		<Transition
@@ -445,19 +457,41 @@ const PreviousPayments = ({ years, close, payments, pendingAmount }: PreviousPay
 					<div>Label</div>
 					<div>Amount</div>
 				</div>
-				{getFilteredPayments(payments, state.year, state.month).map(([id, payment]) => (
-					<div key={id} className="flex flex-row items-start justify-between">
-						<div className="w-1/4">{moment(payment.date).format('DD-MM')}</div>
-						<div className="w-2/5 md:w-1/3 mx-auto text-xs md:text-sm flex flex-row justify-center">
-							{payment.fee_name}
+				{getFilteredPayments(payments, state.year, state.month).map(
+					([id, payment]: [id: string, payment: Partial<AugmentedMISPayment>]) => (
+						<div key={id} className="flex flex-row items-start justify-between">
+							<div className="w-1/4">{moment(payment.date).format('DD-MM')}</div>
+							<div className="w-2/5 md:w-1/3 mx-auto text-xs md:text-sm flex flex-row justify-center">
+								{payment.fee_name}
+							</div>
+							<div className="w-1/4 flex flex-row justify-end items-center">
+								{payment.type === 'FORGIVEN'
+									? `-${payment.amount}`
+									: `${payment.amount}`}
+								<div>
+									<TrashIcon
+										onClick={() => {
+											if (checkPermissionToDelete(payment, Admin)) {
+												setState({
+													...state,
+													paymentId: id,
+													studentId: payment.student_id
+												})
+												setIsComponentVisible(true)
+											}
+										}}
+										className={clsx(
+											'cursor-pointer h-5 md:h-6 ml-1',
+											checkPermissionToDelete(payment, Admin)
+												? 'text-danger-tip-brand'
+												: 'text-gray-tip-brand'
+										)}
+									/>
+								</div>
+							</div>
 						</div>
-						<div className="w-1/4 flex flex-row justify-end">
-							{payment.type === 'FORGIVEN'
-								? `-${payment.amount}`
-								: `${payment.amount}`}
-						</div>
-					</div>
-				))}
+					)
+				)}
 			</div>
 
 			<div className="border-b-2 border-dashed w-full" />
@@ -473,6 +507,38 @@ const PreviousPayments = ({ years, close, payments, pendingAmount }: PreviousPay
 			<button onClick={close} className="tw-btn bg-orange-brand w-full text-white">
 				Go Back
 			</button>
+			{isComponentVisible && (
+				<TModal>
+					<div className="bg-white md:p-10 p-8 text-center text-sm" ref={ref}>
+						<div className="font-semibold text-lg">
+							Are you sure you want to delete this Payment?
+						</div>
+
+						<div className="flex flex-row justify-between space-x-4 mt-4">
+							<button
+								onClick={() => {
+									setState({
+										...state,
+										paymentId: '',
+										studentId: ''
+									})
+									setIsComponentVisible(false)
+								}}
+								className="py-1 md:py-2 tw-btn bg-gray-400 hover:bg-gray-500 text-white w-full">
+								Cancel
+							</button>
+							<button
+								onClick={() => {
+									dispatch(deletePayment(state.studentId, state.paymentId))
+									setIsComponentVisible(false)
+								}}
+								className="py-1 md:py-2 tw-btn-red w-full font-semibold">
+								Confirm
+							</button>
+						</div>
+					</div>
+				</TModal>
+			)}
 		</Transition>
 	)
 }
@@ -734,4 +800,8 @@ const AddPayment = ({ siblings, auth, settings, smsTemplates, pendingAmount }: A
 			)}
 		</>
 	)
+}
+function checkPermissionToDelete(payment: Partial<AugmentedMISPayment>, admin: boolean) {
+	if (payment.type === 'OWED') return false
+	return admin && moment(payment.date).isSame(moment.now(), 'M')
 }

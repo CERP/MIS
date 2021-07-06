@@ -75,7 +75,15 @@ export const formatPhone = (phone: string): string => {
  * @param student
  */
 export const isValidStudent = (student: MISStudent): boolean => {
-	return !!(student && student.id && student.Name && student.section_id)
+	return !!(
+		student &&
+		student.id &&
+		student.Name &&
+		student.section_id &&
+		!student.tags?.['PROSPECTIVE'] &&
+		!student.tags?.['FINISHED_SCHOOL'] &&
+		!student.prospective_section_id
+	)
 }
 
 /**
@@ -103,74 +111,49 @@ export const checkPermission = (
 		return true
 	}
 
+	let flag = false
+
 	switch (title) {
-		case 'fees': {
-			if (tipAccess) {
-				return false
-			}
-			return permissions.fee && subAdmin
+		case 'salaries': {
+			flag = false
+			break
 		}
-		case 'expenses': {
-			if (tipAccess) {
-				return false
-			}
-			return permissions.expense && subAdmin
+		case 'attendance':
+		case 'exams':
+		case 'diary':
+		case 'SMS':
+		case 'diary':
+		case 'results': {
+			flag = tipAccess ? false : true
+			break
 		}
-		case 'attendance': {
-			if (tipAccess) {
-				return false
-			}
-			return true
-		}
-		case 'exams': {
-			if (tipAccess) {
-				return false
-			}
-			return true
-		}
-		case 'diary': {
-			if (tipAccess) {
-				return false
-			}
-			return true
-		}
-		case 'SMS': {
-			if (tipAccess) {
-				return false
-			}
-			return true
-		}
-		case 'diary': {
-			if (tipAccess) {
-				return false
-			}
-			return true
-		}
-		case 'Results': {
-			if (tipAccess) {
-				return false
-			}
-			return true
-		}
-		case 'Analytics': {
-			if (tipAccess) {
-				return false
-			}
-			return subAdmin
+		case 'settings':
+		case 'analytics':
+		case 'payments':
+		case 'certificates': {
+			flag = tipAccess ? false : subAdmin
+			break
 		}
 		case 'setup':
-			return permissions.setupPage && subAdmin
-		case 'dailyStats':
-			return permissions.dailyStats && subAdmin
-		case 'families': {
-			if (tipAccess) {
-				return false
-			}
-			return permissions.family && subAdmin
+		case 'dailyStats': {
+			flag = (permissions.dailyStats || permissions.setupPage) && subAdmin
+			break
 		}
-		default:
-			return true
+		case 'fees':
+		case 'expenses':
+		case 'families': {
+			flag = tipAccess
+				? false
+				: (permissions.family || permissions.fee || permissions.expense) && subAdmin
+			break
+		}
+		default: {
+			flag = true
+			break
+		}
 	}
+
+	return flag
 }
 
 export const getPaymentLabel = (

@@ -73,7 +73,7 @@ const QuizList: React.FC<PropsType> = ({
 			<div className="mb-5 flex justify-center w-full">
 				<Headings heading={'Quiz Library'} />
 			</div>
-			{Object.entries(filterredQuizzes)
+			{Object.entries(filterredQuizzes || {})
 				.sort(([, a], [, b]) => a.quiz_order - b.quiz_order)
 				.map(([quiz_id, quiz]) => {
 					const teacher_record = teacher_lesson_record[quiz_id] || {
@@ -93,11 +93,7 @@ const QuizList: React.FC<PropsType> = ({
 							</div>
 
 							{teacher_record.taken && (
-								<img
-									src={QuizMark}
-									className="h-8 w-8 print:hidden"
-									onClick={e => markQuiz(e, quiz_id, false)}
-								/>
+								<img src={QuizMark} className="h-8 w-8 print:hidden" />
 							)}
 						</div>
 					)

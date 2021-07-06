@@ -12,7 +12,7 @@ const ClassViewCard: React.FC<P> = ({ std }) => {
 				<div className="font-bold text-center">{std.Name}</div>
 			</div>
 			<div className="flex flex-row justify-between w-8/12 md:w-6/12 m-4">
-				{Object.entries(std.targeted_instruction.learning_level || {})
+				{Object.entries(std?.targeted_instruction?.learning_level || {})
 					.sort(([sub]) => sub.localeCompare(sub))
 					.map(([, grade_obj]) => {
 						const grade = convertLearningGradeToGroupName(grade_obj.grade)

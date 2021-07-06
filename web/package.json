@@ -1,6 +1,6 @@
 {
-	"name": "web",
-	"version": "0.1.0",
+	"name": "mischool-web",
+	"version": "1.0.0",
 	"private": true,
 	"optionalDependencies": {
 		"fsevents": "^2.1.3"

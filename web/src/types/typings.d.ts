@@ -12,6 +12,7 @@ interface RootDBState {
 		[id: string]: MISClass
 	}
 	sms_templates: {
+		attendance_staff: string
 		attendance: string
 		fee: string
 		result: string
@@ -596,17 +597,17 @@ interface BaseMISExpense {
 	label: string
 	type: string
 	category:
-		| 'SALARY'
-		| 'BILLS'
-		| 'STATIONERY'
-		| 'REPAIRS'
-		| 'RENT'
-		| 'ACTIVITY'
-		| 'DAILY'
-		| 'PETTY_CASH'
-		| 'OTHER'
-		| ''
-		| string
+	| 'SALARY'
+	| 'BILLS'
+	| 'STATIONERY'
+	| 'REPAIRS'
+	| 'RENT'
+	| 'ACTIVITY'
+	| 'DAILY'
+	| 'PETTY_CASH'
+	| 'OTHER'
+	| ''
+	| string
 	date: number
 	time: number
 }
@@ -837,7 +838,7 @@ type AugmentedSmsHistory = {
 } & MISSMSHistory
 
 interface Package {
-	title: 'Taleem-1' | 'Taleem-2' | 'Taleem-3' | ''
+	title: 'Taleem-1' | 'Taleem-2' | 'Taleem-3' | 'Taleem-4' | 'Taleem-5' | 'Taleem-6'
 	code: string
 	popular?: boolean
 	price: string
@@ -855,13 +856,13 @@ type SchoolSignup = {
 	schoolName: string
 
 	packageName:
-		| 'FREE_TRIAL'
-		| 'TALEEM1'
-		| 'TALEEM2'
-		| 'TALEEM2A'
-		| 'TALEEM2B'
-		| 'TALEEM2C'
-		| 'TALEEM3'
+	| 'FREE_TRIAL'
+	| 'TALEEM1'
+	| 'TALEEM2'
+	| 'TALEEM3'
+	| 'TALEEM4'
+	| 'TALEEM5'
+	| 'TALEEM6'
 
 	typeOfLogin?: string
 	referralSchoolName?: string

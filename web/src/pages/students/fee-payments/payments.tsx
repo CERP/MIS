@@ -6,7 +6,7 @@ import { v4 } from 'node-uuid'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { Transition } from '@headlessui/react'
-import { ChevronUpIcon, ChevronDownIcon, CalendarIcon } from '@heroicons/react/outline'
+import { ChevronUpIcon, ChevronDownIcon, CalendarIcon, TrashIcon } from '@heroicons/react/outline'
 
 import toTitleCase from 'utils/toTitleCase'
 import months from 'constants/months'
@@ -16,7 +16,7 @@ import { CustomSelect } from 'components/select'
 import { MISFeeLabels } from 'constants/index'
 import { getFilteredPayments } from 'utils/getFilteredPayments'
 import { checkStudentDuesReturning } from 'utils/checkStudentDues'
-import { addMultiplePayments, addPayment, logSms } from 'actions'
+import { addMultiplePayments, addPayment, deletePayment, logSms } from 'actions'
 import { smsIntentLink } from 'utils/intent'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
@@ -87,22 +87,24 @@ export const StudentPayments = () => {
 				}
 			],
 			...Object.entries(classAdditionalFees ?? {}),
-			...(Object.entries(student.fees ?? {}).map(([feeId, fee]) => {
-				return [
-					feeId,
-					{
-						...fee,
-						amount:
-							fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP
-								? '-' + fee.amount
-								: fee.amount,
-						name:
-							fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP
-								? 'Scholarship (M)'
-								: fee.name
-					}
-				]
-			}) as Array<[string, MISStudentFee]>)
+			...(Object.entries(student.fees ?? {})
+				.filter(([id, fee]) => !(fee.type === 'FEE' && fee.period === 'MONTHLY'))
+				.map(([feeId, fee]) => {
+					return [
+						feeId,
+						{
+							...fee,
+							amount:
+								fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP
+									? '-' + fee.amount
+									: fee.amount,
+							name:
+								fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP
+									? 'Scholarship (M)'
+									: fee.name
+						}
+					]
+				}) as Array<[string, MISStudentFee]>)
 		]
 	}
 
@@ -127,7 +129,7 @@ export const StudentPayments = () => {
 		0
 	)
 
-	const totalPendingAmount = Object.entries(student.payments).reduce(
+	const totalPendingAmount = Object.entries(student.payments ?? {}).reduce(
 		(agg, [, curr]) =>
 			agg - (curr.type === 'SUBMITTED' || curr.type === 'FORGIVEN' ? 1 : -1) * curr.amount,
 		0
@@ -135,7 +137,7 @@ export const StudentPayments = () => {
 
 	const years = [
 		...new Set(
-			Object.entries(student.payments)
+			Object.entries(student.payments ?? {})
 				.sort(([, a_payment], [, b_payment]) => a_payment.date - b_payment.date)
 				.map(([id, payment]) => moment(payment.date).format('YYYY'))
 		)
@@ -281,10 +283,17 @@ interface PreviousPaymentsProps {
 const PreviousPayments = ({ years, close, student }: PreviousPaymentsProps) => {
 	const [state, setState] = useState({
 		month: moment().format('MMMM'),
-		year: moment().format('YYYY')
+		year: moment().format('YYYY'),
+		paymentIdtoDelete: ''
 	})
 
-	const totalPendingAmount = Object.entries(student.payments).reduce(
+	const faculty = useSelector((state: RootReducerState) => state.db.faculty)
+	const faculty_id = useSelector((state: RootReducerState) => state.auth.faculty_id)
+	const { Admin } = faculty[faculty_id]
+	const { ref, setIsComponentVisible, isComponentVisible } = useComponentVisible(false)
+
+	const dispatch = useDispatch()
+	const totalPendingAmount = Object.entries(student.payments ?? {}).reduce(
 		(agg, [, curr]) =>
 			agg - (curr.type === 'SUBMITTED' || curr.type === 'FORGIVEN' ? 1 : -1) * curr.amount,
 		0
@@ -324,13 +333,32 @@ const PreviousPayments = ({ years, close, student }: PreviousPaymentsProps) => {
 					([id, payment]) => (
 						<div key={id} className="flex flex-row items-start justify-between">
 							<div className="w-1/4">{moment(payment.date).format('DD-MM')}</div>
-							<div className="w-2/5 md:w-1/3 mx-auto text-xs md:text-sm flex flex-row justify-center">
+							<div className="w-2/5 md:w-1/3 mx-auto items-center text-xs md:text-sm flex flex-row justify-center">
 								{getPaymentLabel(payment.fee_name, payment.type)}
 							</div>
-							<div className="w-1/4 flex flex-row justify-end">
+							<div className="w-1/4 flex flex-row justify-end items-center">
 								{payment.type === 'FORGIVEN'
 									? `-${payment.amount}`
 									: `${payment.amount}`}
+								<div>
+									<TrashIcon
+										onClick={() => {
+											if (checkPermissionToDelete(payment, Admin)) {
+												setState({
+													...state,
+													paymentIdtoDelete: id
+												})
+												setIsComponentVisible(true)
+											}
+										}}
+										className={clsx(
+											'cursor-pointer h-5 md:h-6 ml-1',
+											checkPermissionToDelete(payment, Admin)
+												? 'text-danger-tip-brand'
+												: 'text-gray-tip-brand'
+										)}
+									/>
+								</div>
 							</div>
 						</div>
 					)
@@ -350,6 +378,37 @@ const PreviousPayments = ({ years, close, student }: PreviousPaymentsProps) => {
 			<button onClick={close} className="tw-btn bg-orange-brand w-full text-white">
 				Go Back
 			</button>
+			{isComponentVisible && (
+				<TModal>
+					<div className="bg-white md:p-10 p-8 text-center text-sm" ref={ref}>
+						<div className="font-semibold text-lg">
+							Are you sure you want to delete this Payment?
+						</div>
+
+						<div className="flex flex-row justify-between space-x-4 mt-4">
+							<button
+								onClick={() => {
+									setState({
+										...state,
+										paymentIdtoDelete: ''
+									})
+									setIsComponentVisible(false)
+								}}
+								className="py-1 md:py-2 tw-btn bg-gray-400 hover:bg-gray-500 text-white w-full">
+								Cancel
+							</button>
+							<button
+								onClick={() => {
+									dispatch(deletePayment(student.id, state.paymentIdtoDelete))
+									setIsComponentVisible(false)
+								}}
+								className="py-1 md:py-2 tw-btn-red w-full font-semibold">
+								Confirm
+							</button>
+						</div>
+					</div>
+				</TModal>
+			)}
 		</Transition>
 	)
 }
@@ -376,7 +435,7 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 		sendSMS: false
 	})
 
-	let balance = [...Object.values(student.payments)].reduce(
+	let balance = [...Object.values(student.payments ?? {})].reduce(
 		(agg, curr) =>
 			agg - (curr.type === 'SUBMITTED' || curr.type === 'FORGIVEN' ? 1 : -1) * curr.amount,
 		0
@@ -599,4 +658,9 @@ const AddPayment = ({ student, auth, settings, smsTemplates }: AddPaymentProps) 
 			)}
 		</>
 	)
+}
+
+function checkPermissionToDelete(payment: Partial<AugmentedMISPayment>, admin: boolean) {
+	if (payment.type === 'OWED') return false
+	return admin && moment(payment.date).isSame(moment.now(), 'M')
 }

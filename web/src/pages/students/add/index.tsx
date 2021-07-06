@@ -16,7 +16,6 @@ import { isValidPhone } from 'utils/helpers'
 import { formatCNIC } from 'utils'
 import { getImageString, getDownsizedImage } from 'utils/image'
 
-import { PhoneIcon } from '@heroicons/react/solid'
 import { UploadImage } from 'components/image'
 import { PlusButton } from 'components/Button/plus'
 import { cnicRegex, numberRegex } from 'constants/index'
@@ -124,23 +123,32 @@ export const CreateOrUpdateStudent = () => {
 			return toast.error('Please provide correct phone number.')
 		}
 
-		if (isNewStudent()) {
-			for (const student of Object.values(students)) {
-				if (
-					student.RollNumber === state.profile.RollNumber &&
-					state.profile.RollNumber != ''
-				) {
-					toast.error('This Roll Number is already assigned to an existing student')
-					return
-				}
-				if (
-					student.AdmissionNumber === state.profile.AdmissionNumber &&
-					state.profile.AdmissionNumber != ''
-				) {
-					toast.error('This Admission Number is already assigned to an existing student')
-					return
-				}
+		let errorMessage = ''
+
+		for (const student of Object.values(students)) {
+			const isDuplicateRollNumber =
+				student.section_id === state.profile.section_id &&
+				student.RollNumber !== undefined &&
+				student.id !== state.profile.id &&
+				student.RollNumber !== '' &&
+				student.RollNumber === state.profile.RollNumber
+
+			const isDuplicateAdmissionNumber =
+				student.id !== state.profile.id &&
+				student.AdmissionNumber !== undefined &&
+				student.AdmissionNumber !== '' &&
+				student.AdmissionNumber === state.profile.AdmissionNumber
+
+			if (isDuplicateRollNumber || isDuplicateAdmissionNumber) {
+				errorMessage = isDuplicateRollNumber
+					? 'This Roll Number is already assigned to an existing student'
+					: 'This Admission Number is already assigned to an existing student'
+				break
 			}
+		}
+
+		if (errorMessage) {
+			return toast.error(errorMessage)
 		}
 
 		// TODO: introduce object props trim()
@@ -258,9 +266,11 @@ export const CreateOrUpdateStudent = () => {
 			dispatch(uploadStudentProfilePicture(state.profile, img))
 		})
 	}
+
 	if (state.redirect && isNewStudent()) {
-		return <Redirect to="/students" />
+		return <Redirect to={state.redirect as string} />
 	}
+
 	return (
 		<>
 			<div className="relative px-5 text-gray-700 md:pb-0 print:hidden">
@@ -392,8 +402,9 @@ export const CreateOrUpdateStudent = () => {
 									name="Phone"
 									value={state.profile.Phone}
 									error={
-										numberRegex.test(state.profile.Phone) ||
-										!(state.profile.Phone?.length <= 11)
+										state.profile.Phone &&
+										(numberRegex.test(state.profile.Phone) ||
+											!(state.profile.Phone?.length <= 11))
 									}
 									onChange={handleInput}
 									className="tw-input w-full tw-is-form-bg-black"
@@ -438,8 +449,9 @@ export const CreateOrUpdateStudent = () => {
 									name="AlternatePhone"
 									value={state.profile.AlternatePhone}
 									error={
-										numberRegex.test(state.profile.AlternatePhone) ||
-										!(state.profile.AlternatePhone?.length <= 11)
+										state.profile.AlternatePhone &&
+										(numberRegex.test(state.profile.AlternatePhone) ||
+											!(state.profile.AlternatePhone?.length <= 11))
 									}
 									onChange={handleInput}
 									className="tw-input w-full tw-is-form-bg-black"
@@ -455,6 +467,16 @@ export const CreateOrUpdateStudent = () => {
 							onChange={handleInput}
 							rows={2}
 							placeholder="Type street address"
+							className="tw-input w-full tw-is-form-bg-black"
+						/>
+
+						<div>Notes</div>
+						<textarea
+							name="Notes"
+							value={state.profile.Notes}
+							onChange={handleInput}
+							rows={2}
+							placeholder="Type notes"
 							className="tw-input w-full tw-is-form-bg-black"
 						/>
 
@@ -523,41 +545,34 @@ export const CreateOrUpdateStudent = () => {
 							<PlusButton handleClick={addTag} className="ml-4" />
 						</div>
 
-						{/* <div className="flex flex-row items-center">
-							<PlusButton
-								handleClick={() => console.log('Not Implemented Yet')}
-								className="mr-4"
-							/>
-							<div>Show Payment Section</div>
-						</div> */}
+						<div className="space-y-4">
+							<div className="flex flex-row justify-center space-x-4">
+								<button
+									type="button"
+									onClick={() => window.print()}
+									className="items-center w-full py-3 font-semibold tw-btn-blue">
+									Print Form
+								</button>
 
-						<div className="flex flex-row justify-center space-x-4">
-							<button
-								type="button"
-								onClick={() => window.print()}
-								className="items-center w-full py-3 my-4 font-semibold tw-btn-blue">
-								Print Form
-							</button>
+								<button
+									type={'submit'}
+									className="items-center w-full py-3 font-semibold tw-btn bg-teal-brand">
+									{isNewStudent() ? 'Save' : 'Update'}
+								</button>
+							</div>
 
-							<button
-								type={'submit'}
-								className="items-center w-full py-3 my-4 font-semibold tw-btn bg-teal-brand">
-								{isNewStudent() ? 'Save' : 'Update'}
-							</button>
+							{!isNewStudent() && (
+								<button
+									type={'button'}
+									onClick={deleteStudent}
+									className="items-center w-full py-3 font-semibold tw-btn-red">
+									Delete
+								</button>
+							)}
 						</div>
-
-						{!isNewStudent() && (
-							<button
-								type={'button'}
-								onClick={deleteStudent}
-								className="items-center w-full py-3 my-4 font-semibold tw-btn-red">
-								Delete
-							</button>
-						)}
 					</form>
 				</div>
 			</div>
-			{/* TODO: fix styling of print page */}
 			<AdmissionForm
 				student={state.profile}
 				school={{
