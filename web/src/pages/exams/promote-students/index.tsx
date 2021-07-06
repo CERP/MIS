@@ -436,9 +436,9 @@ const PromotionCard = ({
 	promotionData
 }: PromotionCardProps) => {
 	const [visible, setVisible] = useState(false)
-	const [cardGroupedStudents, setCardGroupedStudents] = useState<{
-		[id: string]: MISStudent[]
-	}>({})
+	const [cardGroupedStudents, setCardGroupedStudents] = useState<{ [id: string]: MISStudent[] }>(
+		{}
+	)
 
 	useEffect(() => {
 		setCardGroupedStudents({
@@ -447,7 +447,7 @@ const PromotionCard = ({
 				return { ...student, section_id: val.toSection.id }
 			})
 		})
-	}, [groupedStudents])
+	}, [groupedStudents, val.toSection, val.fromSection])
 
 	const removeStudentFromPromotion = (sectionId: string, studentId: string) => {
 		setCardGroupedStudents({
@@ -624,48 +624,51 @@ const PromotableStudents = ({
 			leaveFrom="opacity-100 rotate-0 scale-100 "
 			leaveTo="opacity-0 scale-95 ">
 			<div className="flex-1 flex-col flex mb-4  py-4 text-xs md:text-lg">
-				<div className="text-lg flex-row flex justify-between px-10 py-2 bg-gray-700 text-white rounded-md font-medium">
+				<div className="hidden text-lg flex-row md:flex justify-between px-10 py-2 bg-gray-700 text-white rounded-md font-medium">
 					<h1>Name</h1>
+					<h1>Promoted Section</h1>
 					<h1>Remove Promotion</h1>
 				</div>
 				{(state.students || []).map(student => {
 					return (
-						<div className="bg-gray-200 text-lg flex-row mb-3 items-center flex justify-between px-10 py-7 rounded-sm font-medium">
-							<div className="flex flex-1">
+						<div className="md:bg-gray-200 bg-gray-50 text-lg flex-col md:flex-row mb-3 items-center flex justify-between px-5 md:px-10 py-3 md:py-7 rounded-md border-gray-200 border shadow-md md:shadow-none md:rounded-sm font-medium">
+							<div className="flex text-sm md:text-base self-start md:self-center md:w-1/3">
 								<h1>{student.Name}</h1>
 							</div>
-							<div className="flex flex-1">
-								<select
-									defaultValue={toSectionKey}
-									className="w-full rounded shadow tw-select text-teal-brand"
-									onChange={e =>
-										changeStudentSection(e.target.value, student.id)
-									}>
-									{Object.entries(augmentedSections)
-										.filter(([secKey, sec]) => sec.class_id === classKey)
-										.map(([key, section]) => {
-											return (
-												<option value={key}>
-													{section.namespaced_name}
-												</option>
-											)
-										})}
-								</select>
-							</div>{' '}
-							<div className="flex flex-1 justify-end">
-								<TrashIcon
-									onClick={() =>
-										removeStudentFromPromotion(fromSectionKey, student.id)
-									}
-									color="red"
-									className="cursor-pointer h-6 w-6"
-								/>
+							<div className="flex flex-1 self-start items-center w-full">
+								<div className="flex md:flex-1 items-center w-3/4">
+									<select
+										defaultValue={toSectionKey}
+										className="w-full rounded shadow tw-select text-teal-brand"
+										onChange={e =>
+											changeStudentSection(e.target.value, student.id)
+										}>
+										{Object.entries(augmentedSections)
+											.filter(([secKey, sec]) => sec.class_id === classKey)
+											.map(([key, section]) => {
+												return (
+													<option value={key}>
+														{section.namespaced_name}
+													</option>
+												)
+											})}
+									</select>
+								</div>
+								<div className="flex md:flex-1 w-1/3 justify-end items-end  flex-row">
+									<TrashIcon
+										onClick={() =>
+											removeStudentFromPromotion(fromSectionKey, student.id)
+										}
+										color="red"
+										className="cursor-pointer h-6 w-6"
+									/>
+								</div>
 							</div>
 						</div>
 					)
 				})}
 				<div
-					className="bg-green-brand px-10 py-4 w-2/5 flex items-center justify-center text-white font-semibold rounded-md self-center cursor-pointer"
+					className="bg-green-brand px-10 py-4 w-2/5 flex text-base items-center justify-center text-white font-semibold rounded-md self-center cursor-pointer"
 					onClick={() => {
 						setIsComponentVisible(true)
 					}}>
