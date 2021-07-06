@@ -5,7 +5,7 @@ import { v4 } from 'node-uuid'
 import { useDispatch, useSelector } from 'react-redux'
 import { Transition } from '@headlessui/react'
 
-import { getPaymentLabel, isValidStudent } from 'utils'
+import { classYearSorter, getPaymentLabel, isValidStudent, rollNumberSorter } from 'utils'
 import { toTitleCase } from 'utils/toTitleCase'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { SearchInput } from 'components/input/search'
@@ -68,9 +68,7 @@ export const Scholarship = () => {
 		sectionId: '',
 		search: '',
 		students: {},
-		classId: Object.values(classes).sort((a, b) => {
-			return (a.classYear ?? 0) - (b.classYear ?? 0)
-		})?.[0].id
+		classId: Object.values(classes).sort(classYearSorter)?.[0].id
 	})
 
 	useEffect(() => {
@@ -85,11 +83,7 @@ export const Scholarship = () => {
 	const classDefaultFee = settings?.classes?.defaultFee?.[state.classId]
 	const classAdditionalFees = settings?.classes?.additionalFees?.[state.classId]
 
-	const sections = useMemo(
-		() =>
-			getSectionsFromClasses(classes).sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0)),
-		[classes]
-	)
+	const sections = useMemo(() => getSectionsFromClasses(classes).sort(classYearSorter), [classes])
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLSelectElement & HTMLInputElement>) => {
 		const { name, value } = e.target
@@ -154,7 +148,7 @@ export const Scholarship = () => {
 						className="rounded-md tw-select shadow-sm w-full">
 						<option disabled>Select Class</option>
 						{Object.values(classes)
-							.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
+							.sort(classYearSorter)
 							.map(c => (
 								<option key={c.id} value={c.id}>
 									{toTitleCase(c.name)}
@@ -169,7 +163,7 @@ export const Scholarship = () => {
 						<option>Select Section</option>
 						{sections
 							.filter(s => s.class_id === state.classId)
-							.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
+							.sort(classYearSorter)
 							.map(s => (
 								<option key={s.id + s.class_id} value={s.id}>
 									{toTitleCase(s.namespaced_name, '-')}
@@ -222,7 +216,7 @@ export const Scholarship = () => {
 								? student.Name.toLowerCase().includes(state.search.toLowerCase())
 								: true)
 					)
-					.sort((a, b) => (parseInt(a.RollNumber) ?? 0) - (parseInt(b.RollNumber) ?? 0))
+					.sort(rollNumberSorter)
 					.map((s, index) => (
 						<Card
 							classFee={classDefaultFee}

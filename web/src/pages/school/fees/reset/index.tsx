@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import toast from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { isValidStudent } from 'utils'
+import { classYearSorter, isValidStudent } from 'utils'
 import { toTitleCase } from 'utils/toTitleCase'
 import { AppLayout } from 'components/Layout/appLayout'
 import { resetFees } from 'actions'
@@ -44,9 +44,7 @@ export const ResetFee = () => {
 
 	const sections = useMemo(() => {
 		// TODO: sort the sections by default
-		return getSectionsFromClasses(classes).sort(
-			(a, b) => (a.classYear ?? 0) - (b.classYear ?? 0)
-		)
+		return getSectionsFromClasses(classes).sort(classYearSorter)
 	}, [classes])
 
 	const handleResetFee = (): void => {

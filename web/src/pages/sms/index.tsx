@@ -10,7 +10,7 @@ import { CustomSelect } from 'components/select'
 import { AppLayout } from 'components/Layout/appLayout'
 import { StaffDropdownSearch, StudentDropdownSearch } from 'components/input/search'
 import { logSms } from 'actions'
-import { isValidStudent, isValidTeacher } from 'utils'
+import { classYearSorter, isValidStudent, isValidTeacher } from 'utils'
 import { replaceSpecialCharsWithUTFChars } from 'utils/stringHelper'
 import { isMobile, isValidPhone } from 'utils/helpers'
 import { smsIntentLink } from 'utils/intent'
@@ -181,9 +181,7 @@ export const SMS = () => {
 		}
 	}, [state.sendTo, state.defaulterOptions, state.pendingDuration, students])
 
-	const sections = getSectionsFromClasses(classes).sort(
-		(a, b) => a.classYear ?? 0 - b.classYear ?? 0
-	)
+	const sections = getSectionsFromClasses(classes).sort(classYearSorter)
 
 	const logSMS = () => {
 		let msgCounter = 1

@@ -5,6 +5,7 @@ import toast from 'react-hot-toast'
 
 import { toTitleCase } from 'utils/toTitleCase'
 import { mergeSettings } from 'actions'
+import { classYearSorter } from 'utils'
 
 type State = MISSettings['classes']['defaultFee']
 
@@ -78,7 +79,7 @@ export const DefaultFee = () => {
 					<div className="table-row-group bg-white">
 						{Object.values(classes)
 							.filter(c => c && c.id && c.name)
-							.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
+							.sort(classYearSorter)
 							.map(c => (
 								<div key={c.id} className="table-row bg-gray-100">
 									<div className="table-cell p-2">{toTitleCase(c.name)}</div>

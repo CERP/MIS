@@ -13,7 +13,7 @@ import toTitleCase from 'utils/toTitleCase'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import AdmissionForm from 'components/Printable/Student/admissionform'
 import { isValidPhone } from 'utils/helpers'
-import { formatCNIC } from 'utils'
+import { classYearSorter, formatCNIC } from 'utils'
 import { getImageString, getDownsizedImage } from 'utils/image'
 
 import { UploadImage } from 'components/image'
@@ -363,7 +363,7 @@ export const CreateOrUpdateStudent = () => {
 							className="w-full tw-select">
 							<option value={''}>Choose</option>
 							{sections
-								.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
+								.sort(classYearSorter)
 								.filter(s => s && s.id && s.name)
 								.map(s => (
 									<option key={s.id} value={s.id}>

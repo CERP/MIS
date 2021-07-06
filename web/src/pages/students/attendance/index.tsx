@@ -7,7 +7,7 @@ import moment from 'moment'
 import { AttendanceStatsCard } from 'components/attendance'
 import { TModal } from 'components/Modal'
 import { markAllStudents, markStudent } from 'actions'
-import { isValidStudent } from 'utils'
+import { classYearSorter, isValidStudent } from 'utils'
 import { toTitleCase } from 'utils/toTitleCase'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
@@ -63,11 +63,7 @@ export const StudentsAttendance = () => {
 
 	const attendanceDate = moment(date).format('YYYY-MM-DD')
 
-	const sections = useMemo(
-		() =>
-			getSectionsFromClasses(classes).sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0)),
-		[classes]
-	)
+	const sections = useMemo(() => getSectionsFromClasses(classes).sort(classYearSorter), [classes])
 
 	useEffect(() => {
 		if (sections.length !== 0) {

@@ -7,7 +7,7 @@ import chunkify from 'utils/chunkify'
 import getFilteredPayments from 'utils/getFilteredPayments'
 import getSectionFromId from 'utils/getSectionFromId'
 import { StudentLedgerPage } from 'modules/Student/Single/Fees/StudentLedgerPage'
-import { isValidStudent } from 'utils'
+import { isValidStudent, rollNumberSorter } from 'utils'
 
 import './style.css'
 
@@ -59,7 +59,7 @@ const PrintPreview = () => {
 		if (type === 'CLASS') {
 			return Object.values(students)
 				.filter(s => isValidStudent(s) && currClass.sections[s.section_id] !== undefined)
-				.sort((a, b) => parseInt(a.RollNumber || '0') - parseInt(b.RollNumber || '0'))
+				.sort(rollNumberSorter)
 		}
 
 		return [getCurrStudent()]

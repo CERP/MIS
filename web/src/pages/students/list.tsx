@@ -7,7 +7,7 @@ import { Popover, Transition } from '@headlessui/react'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { toTitleCase } from 'utils/toTitleCase'
-import { isValidStudent } from 'utils'
+import { classYearSorter, isValidStudent } from 'utils'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { SearchInput } from 'components/input/search'
 import { AddStickyButton } from 'components/Button/add-sticky'
@@ -319,13 +319,11 @@ export const StudentList = ({
 								onChange={e => setFilter({ ...state, class: e.target.value })}
 								className="w-1/3 rounded shadow tw-select text-teal-brand">
 								<option value="">Class</option>
-								{sections
-									.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
-									.map(s => (
-										<option key={s.id + s.class_id} value={s.id}>
-											{toTitleCase(s.namespaced_name, '-')}
-										</option>
-									))}
+								{sections.sort(classYearSorter).map(s => (
+									<option key={s.id + s.class_id} value={s.id}>
+										{toTitleCase(s.namespaced_name, '-')}
+									</option>
+								))}
 							</select>
 							{!forwardTo && (
 								<Popover className="inline">
