@@ -51,6 +51,7 @@ export const PromoteStudents = () => {
 	const dispatch = useDispatch()
 	const history = useHistory()
 
+	// This function returns students grouped by their section_ID
 	const calculateGroupedStudents = () => {
 		let groupedStudents: { [id: string]: Array<MISStudent> } = [
 			...Object.values(students ?? {})
@@ -69,15 +70,18 @@ export const PromoteStudents = () => {
 		return groupedStudents
 	}
 
-	const orignal_grouped_students = calculateGroupedStudents()
+	// This is used when we undo promotion for a section
+	// We simply replace the students in our state with these by using the section key
+	const orignalGroupedStudents = calculateGroupedStudents()
 
+	// These are sorted classes in Descending order, i.e Class 10 to Pre-School
+	// Special Classes like A and O Levels are filtered out
 	const sortedClasses = Object.values(classes)
 		.filter(a => checkSpecialClass(a))
 		.sort((a, b) => b.classYear - a.classYear)
 
 	const initialState: State = {
 		displayWarning: true,
-
 		promotionData: {},
 		groupedStudents: calculateGroupedStudents(),
 		augmentedSections: getSectionsFromClasses(classes).reduce((agg, curr) => {
@@ -91,7 +95,7 @@ export const PromoteStudents = () => {
 		let mapping: PromotionDataType
 
 		for (let i = 0; i < localState.length; i++) {
-			const fromkey = Object.keys(localState[i].sections)[0]
+			const fromSectionId = Object.keys(localState[i].sections)[0]
 
 			const sections = getSectionsFromClasses({
 				[localState[i].id]: localState[i]
@@ -111,7 +115,9 @@ export const PromoteStudents = () => {
 				if (Object.keys(localState[i].sections).includes('mis_temp')) {
 					continue
 				}
-				const TempSection: MISClass['sections'] = { ['mis_temp']: { name: 'TEMPORARY' } }
+
+				const TempSection: MISClass['sections'] = { mis_temp: { name: 'TEMPORARY' } }
+
 				mapping = {
 					...mapping,
 					[localState[i].id]: {
@@ -119,12 +125,12 @@ export const PromoteStudents = () => {
 						name: localState[i].name,
 						classYear: localState[i].classYear + 1,
 						sections: {
-							['mis_temp']: { name: 'TEMPORARY' }
+							mis_temp: { name: 'TEMPORARY' }
 						},
 
 						fromSection: {
-							...localState[i].sections[fromkey],
-							id: fromkey
+							...localState[i].sections[fromSectionId],
+							id: fromSectionId
 						},
 						toSection: { ...TempSection, id: 'mis_temp' },
 						promoted: false
@@ -134,18 +140,20 @@ export const PromoteStudents = () => {
 				if (Object.keys(localState[i].sections).includes('mis_temp')) {
 					continue
 				}
-				const toKey = Object.keys(localState[i - 1].sections)[0]
+
+				const toSectionId = Object.keys(localState[i - 1].sections)[0]
+
 				mapping = {
 					...mapping,
 					[localState[i].id]: {
 						...localState[i - 1],
 						fromSection: {
-							...localState[i].sections[fromkey],
-							id: fromkey
+							...localState[i].sections[fromSectionId],
+							id: fromSectionId
 						},
 						toSection: {
-							...localState[i - 1].sections[toKey],
-							id: toKey
+							...localState[i - 1].sections[toSectionId],
+							id: toSectionId
 						},
 						promoted: false
 					}
@@ -160,10 +168,14 @@ export const PromoteStudents = () => {
 		calculatePromotionData(sortedClasses)
 	}, [])
 
+	// This hook is fired Everytime there is a change in augmentedSections
+	// This is needed because of the nature of how state works in React
 	useEffect(() => {
 		if (Object.values(state.promotionData).length > 0) checkClassPromoted()
 	}, [state.augmentedSections])
 
+	// This Function checks if all sections of a class have been promoted and then sets the promoted field
+	// in true or false depending on the result
 	const checkClassPromoted = () => {
 		let promotionData = state.promotionData
 
@@ -172,9 +184,11 @@ export const PromoteStudents = () => {
 
 			Object.keys(classes[class_key].sections).forEach(section_key => {
 				let noOfSections = Object.keys(classes[class_key].sections).length
+
 				if (state.augmentedSections[section_key].sectionPromoted) {
 					noOfPromotedSections = noOfPromotedSections + 1
 				}
+
 				if (noOfPromotedSections === noOfSections) {
 					promotionData = {
 						...promotionData,
@@ -187,15 +201,22 @@ export const PromoteStudents = () => {
 					}
 				}
 			})
+
 			noOfPromotedSections = 0
 		})
 
 		setState({ ...state, promotionData: promotionData })
 	}
 
-	const promoteSectionStudents = (fromkey: string, toKey: string, students: MISStudent[]) => {
+	//Promotes students of the selected Section
+	const promoteSectionStudents = (
+		fromkey: string,
+		toSectionId: string,
+		students: MISStudent[]
+	) => {
 		const studentsToPromote = students
 
+		//This check if necessary if there are no students in a given section
 		if (!studentsToPromote) {
 			setState({
 				...state,
@@ -226,6 +247,8 @@ export const PromoteStudents = () => {
 		return Object.values(state.promotionData).every(entry => entry.promoted)
 	}
 
+	// This method is called by our 'Atomic Button'. It calculates a mapping between student ids and the ids of their
+	// current and previous section by using our local state and then dispatches action to promote them all
 	const promoteAllStudents = () => {
 		const student_section_map: PromotionMap = Object.entries(
 			state.groupedStudents ?? {}
@@ -235,15 +258,19 @@ export const PromoteStudents = () => {
 			}, {})
 			return { ...agg, ...studentMap }
 		}, {})
+
 		if (!Object.keys(state.augmentedSections).includes('mis_temp')) {
 			const TempSection: MISClass['sections'] = { ['mis_temp']: { name: 'TEMPORARY' } }
+
 			const tempClass: MISClass = {
 				...blankClass(),
 				sections: TempSection,
 				name: 'Class 10',
 				classYear: 9999
 			}
+
 			dispatch(createEditClass(tempClass))
+
 			dispatch(
 				promoteStudents(
 					student_section_map,
@@ -253,6 +280,7 @@ export const PromoteStudents = () => {
 		} else {
 			dispatch(promoteStudents(student_section_map, getSectionsFromClasses(classes)))
 		}
+
 		toast.success('Students Promoted')
 
 		setTimeout(() => {
@@ -272,7 +300,7 @@ export const PromoteStudents = () => {
 			},
 			groupedStudents: {
 				...state.groupedStudents,
-				[fromkey]: orignal_grouped_students[fromkey]
+				[fromkey]: orignalGroupedStudents[fromkey]
 			}
 		})
 	}
@@ -296,7 +324,7 @@ export const PromoteStudents = () => {
 											groupedStudents={state.groupedStudents}
 											augmentedSections={state.augmentedSections}
 											classKey={key}
-											val={val}
+											currentClass={val}
 											classes={classes}
 											promoteSection={promoteSectionStudents}
 											onToChange={(e: string) =>
@@ -373,11 +401,11 @@ type PromotionCardProps = {
 	classKey: string
 	onFromChange: (id: string) => void
 	onToChange: (id: string) => void
-	promoteSection: (fromKey: string, toKey: string, students: MISStudent[]) => void
+	promoteSection: (fromKey: string, toSectionId: string, students: MISStudent[]) => void
 	augmentedSections: {
 		[id: string]: ModifiedSection
 	}
-	val: AugmentedClass
+	currentClass: AugmentedClass
 	classes: {
 		[id: string]: MISClass
 	}
@@ -388,7 +416,7 @@ type PromotionCardProps = {
 
 const PromotionCard = ({
 	classKey,
-	val,
+	currentClass,
 	undoSectionPromotion,
 	classes,
 	onFromChange,
@@ -403,14 +431,17 @@ const PromotionCard = ({
 		{}
 	)
 
+	//This hook is necessary because we are setting the student section id to the default toSectionID
 	useEffect(() => {
 		setCardGroupedStudents({
 			...groupedStudents,
-			[val.fromSection.id]: (groupedStudents[val.fromSection.id] ?? []).map(student => {
-				return { ...student, section_id: val.toSection.id }
-			})
+			[currentClass.fromSection.id]: (groupedStudents[currentClass.fromSection.id] ?? []).map(
+				student => {
+					return { ...student, section_id: currentClass.toSection.id }
+				}
+			)
 		})
-	}, [groupedStudents, val.toSection, val.fromSection])
+	}, [groupedStudents, currentClass.toSection, currentClass.fromSection])
 
 	const removeStudentFromPromotion = (sectionId: string, studentId: string) => {
 		setCardGroupedStudents({
@@ -420,24 +451,27 @@ const PromotionCard = ({
 	}
 
 	const changeStudentSection = (newSectionKey: string, studentKey: string) => {
-		const newSection = cardGroupedStudents[val.fromSection.id].reduce((agg, student) => {
-			if (student.id === studentKey) {
-				return [...agg, { ...student, section_id: newSectionKey }]
-			} else {
-				return [...agg, student]
-			}
-		}, [] as MISStudent[])
+		const newSection = cardGroupedStudents[currentClass.fromSection.id].reduce(
+			(agg, student) => {
+				if (student.id === studentKey) {
+					return [...agg, { ...student, section_id: newSectionKey }]
+				} else {
+					return [...agg, student]
+				}
+			},
+			[] as MISStudent[]
+		)
 
 		setCardGroupedStudents({
 			...cardGroupedStudents,
-			[val.fromSection.id]: newSection
+			[currentClass.fromSection.id]: newSection
 		})
 	}
 
 	return (
 		<>
 			<div
-				key={classKey + val.id}
+				key={classKey + currentClass.id}
 				className="flex flex-row justify-between p-2 bg-gray-50 shadow-md border-gray-200 border mb-4 rounded-xl font-medium text-gray-600 lg:text-2xl lg:py-6 lg:px-10  ">
 				<div key={classKey} className="flex flex-col w-2/5 lg:w-2/6">
 					<h1>{classes[classKey].name}</h1>
@@ -453,13 +487,13 @@ const PromotionCard = ({
 						})}
 					</select>
 				</div>
-				{augmentedSections[val.fromSection.id].sectionPromoted ? (
+				{augmentedSections[currentClass.fromSection.id].sectionPromoted ? (
 					<div className="flex flex-1 items-center justify-center flex-col">
 						<div className="bg-green-brand items-center justify-center h-10 w-10 lg:h-14 lg:w-14 flex rounded-full">
 							<ReplyIcon
 								onClick={() => {
-									if (checkPermissionToUndo(promotionData, val.id)) {
-										undoSectionPromotion(val.fromSection.id)
+									if (checkPermissionToUndo(promotionData, currentClass.id)) {
+										undoSectionPromotion(currentClass.fromSection.id)
 									}
 								}}
 								color="white"
@@ -468,8 +502,8 @@ const PromotionCard = ({
 						</div>
 						<div
 							onClick={() => {
-								if (checkPermissionToUndo(promotionData, val.id)) {
-									undoSectionPromotion(val.fromSection.id)
+								if (checkPermissionToUndo(promotionData, currentClass.id)) {
+									undoSectionPromotion(currentClass.fromSection.id)
 								}
 							}}
 							className="font-light cursor-pointer underline text-red-brand mt-2 md:text-lg text-sm">
@@ -478,13 +512,13 @@ const PromotionCard = ({
 					</div>
 				) : (
 					<div
-						key={val.id + classKey}
+						key={currentClass.id + classKey}
 						className="flex flex-1  text-black font-normal justify-center items-center flex-col w-2/6 md:px-0 px-3">
 						Move To
 						<div
 							onClick={() => {
-								if (checkPermissionToPromote(promotionData, val.id)) {
-									setVisible(val => !val)
+								if (checkPermissionToPromote(promotionData, currentClass.id)) {
+									setVisible(isVisible => !isVisible)
 								}
 							}}
 							className="rounded-full cursor-pointer bg-blue-brand p-1 px-7 md:px-24 ">
@@ -492,12 +526,12 @@ const PromotionCard = ({
 						</div>
 					</div>
 				)}
-				<div key={val.id} className="flex items-end flex-col w-2/5 lg:w-2/6">
-					<h1>{val.name}</h1>
+				<div key={currentClass.id} className="flex items-end flex-col w-2/5 lg:w-2/6">
+					<h1>{currentClass.name}</h1>
 					<select
 						className="w-full rounded shadow tw-select text-teal-brand"
 						onChange={e => onToChange(e.target.value)}>
-						{Object.entries(val.sections).map(([key, section]) => {
+						{Object.entries(currentClass.sections).map(([key, section]) => {
 							return (
 								<option value={key}>
 									{key === 'mis_temp'
@@ -510,14 +544,14 @@ const PromotionCard = ({
 				</div>
 			</div>
 			<PromotableStudents
-				classKey={val.id}
+				classKey={currentClass.id}
 				changeStudentSection={changeStudentSection}
-				fromSectionName={augmentedSections[val.fromSection.id].namespaced_name}
-				fromSectionKey={val.fromSection.id}
-				toSectionKey={val.toSection.id}
+				fromSectionName={augmentedSections[currentClass.fromSection.id].namespaced_name}
+				fromSectionKey={currentClass.fromSection.id}
+				toSectionKey={currentClass.toSection.id}
 				groupedStudents={cardGroupedStudents}
-				onClickCallback={(fromKey: string, toKey: string, students: MISStudent[]) => {
-					promoteSection(fromKey, toKey, students)
+				onClickCallback={(fromKey: string, toSectionId: string, students: MISStudent[]) => {
+					promoteSection(fromKey, toSectionId, students)
 					setVisible(false)
 				}}
 				removeStudentFromPromotion={removeStudentFromPromotion}
@@ -534,7 +568,7 @@ type PromotableStudentProps = {
 	fromSectionKey: string
 	toSectionKey: string
 	groupedStudents: State['groupedStudents']
-	onClickCallback: (fromSectionKey: string, toKey: string, students: MISStudent[]) => void
+	onClickCallback: (fromSectionKey: string, toSectionId: string, students: MISStudent[]) => void
 	removeStudentFromPromotion: (sectionId: string, studentId: string) => void
 	visible: boolean
 	changeStudentSection: (newSectionKey: string, studentId: string) => void
@@ -691,6 +725,8 @@ const PromotionWarning = ({ onPress }: PromotionWarningProps) => {
 		</div>
 	)
 }
+
+// Checks if class is A or O Levels
 function checkSpecialClass(a: MISClass): boolean {
 	return !(
 		'alevel' === a.name.replace(/[^A-Z0-9]+/gi, '').toLowerCase() ||
@@ -698,6 +734,8 @@ function checkSpecialClass(a: MISClass): boolean {
 	)
 }
 
+// Checks if the senior class is promoted so junior can be promoted
+// Basically ensures the order in which the classes are to be promoted
 function checkPermissionToPromote(promotionData: PromotionDataType, id: string) {
 	let data = Object.values(promotionData)
 	let index = data.findIndex(val => val.id === id)
@@ -714,6 +752,8 @@ function checkPermissionToPromote(promotionData: PromotionDataType, id: string) 
 	return true
 }
 
+// The inverse of the above method
+// Ensures the order in which we can undo a class promotion
 function checkPermissionToUndo(promotionData: PromotionDataType, id: string) {
 	let data = Object.values(promotionData)
 	let index = data.findIndex(val => val.id === id)
