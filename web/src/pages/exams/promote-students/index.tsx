@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react'
+import React, { Fragment, useState, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { ArrowNarrowRightIcon, TrashIcon } from '@heroicons/react/outline'
 import { Transition } from '@headlessui/react'
@@ -73,9 +73,11 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 
 	// These are sorted classes in Descending order, i.e Class 10 to Pre-School
 	// Special Classes like A and O Levels are filtered out
-	const sortedClasses = Object.values(classes)
-		.filter(a => checkSpecialClass(a))
-		.sort((a, b) => b.classYear - a.classYear)
+	const sortedClasses = useMemo(() => {
+		return Object.values(classes)
+			.filter(a => checkSpecialClass(a))
+			.sort((a, b) => b.classYear - a.classYear)
+	}, [classes])
 
 	const initialState: State = {
 		displayWarning: true,
