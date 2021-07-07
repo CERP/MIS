@@ -420,9 +420,8 @@ const PreviousPayments = ({ years, close, payments, pendingAmount }: PreviousPay
 		studentId: ''
 	})
 
-	const faculty = useSelector((state: RootReducerState) => state.db.faculty)
 	const faculty_id = useSelector((state: RootReducerState) => state.auth.faculty_id)
-	const { Admin } = faculty[faculty_id]
+	const isAdmin = useSelector((state: RootReducerState) => state.db.faculty[faculty_id].Admin)
 	const { ref, setIsComponentVisible, isComponentVisible } = useComponentVisible(false)
 
 	const dispatch = useDispatch()
@@ -471,7 +470,7 @@ const PreviousPayments = ({ years, close, payments, pendingAmount }: PreviousPay
 								<div>
 									<TrashIcon
 										onClick={() => {
-											if (checkPermissionToDelete(payment, Admin)) {
+											if (checkPermissionToDelete(payment, isAdmin)) {
 												setState({
 													...state,
 													paymentId: id,
@@ -481,10 +480,10 @@ const PreviousPayments = ({ years, close, payments, pendingAmount }: PreviousPay
 											}
 										}}
 										className={clsx(
-											'cursor-pointer h-5 md:h-6 ml-1',
-											checkPermissionToDelete(payment, Admin)
-												? 'text-danger-tip-brand'
-												: 'text-gray-tip-brand'
+											'h-5 md:h-6 ml-1',
+											checkPermissionToDelete(payment, isAdmin)
+												? 'cursor-pointer text-red-brand'
+												: 'text-gray-brand'
 										)}
 									/>
 								</div>
@@ -511,7 +510,7 @@ const PreviousPayments = ({ years, close, payments, pendingAmount }: PreviousPay
 				<TModal>
 					<div className="bg-white md:p-10 p-8 text-center text-sm" ref={ref}>
 						<div className="font-semibold text-lg">
-							Are you sure you want to delete this Payment?
+							Are you sure you want to delete this payment?
 						</div>
 
 						<div className="flex flex-row justify-between space-x-4 mt-4">

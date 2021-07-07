@@ -5,12 +5,19 @@ import { v4 } from 'node-uuid'
 import { useDispatch, useSelector } from 'react-redux'
 import { Transition } from '@headlessui/react'
 
-import { classYearSorter, getPaymentLabel, isValidStudent, rollNumberSorter } from 'utils'
+import {
+	classYearSorter,
+	getPaymentLabel,
+	isMonthlyFee,
+	isValidStudent,
+	rollNumberSorter
+} from 'utils'
 import { toTitleCase } from 'utils/toTitleCase'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { SearchInput } from 'components/input/search'
 import { addMultipleFees } from 'actions'
 import { MISFeeLabels } from 'constants/index'
+import { Link } from 'react-router-dom'
 
 type State = {
 	classId: string
@@ -43,9 +50,12 @@ const getFeeStudents = (students: MISStudent[]) => {
 	return students
 		.filter(s => isValidStudent(s) && s.Active)
 		.reduce<State['students']>((agg, curr) => {
-			const [id, scholarshipFee] = Object.entries(curr.fees || {}).find(
-				([feeId, fee]) => fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP
-			) ?? [v4(), blankFee()]
+			const [id, scholarshipFee] = Object.entries(curr.fees || {})
+				.filter(([feeId, fee]) => !isMonthlyFee(fee))
+				.find(([feeId, fee]) => fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP) ?? [
+					v4(),
+					blankFee()
+				]
 
 			return {
 				...agg,
@@ -62,7 +72,9 @@ const getFeeStudents = (students: MISStudent[]) => {
 
 export const Scholarship = () => {
 	const dispatch = useDispatch()
-	const { students, classes, settings } = useSelector((state: RootReducerState) => state.db)
+	const students = useSelector((state: RootReducerState) => state.db.students)
+	const classes = useSelector((state: RootReducerState) => state.db.classes)
+	const settings = useSelector((state: RootReducerState) => state.db.settings)
 
 	const [state, setState] = useState<State>({
 		sectionId: '',
@@ -109,7 +121,7 @@ export const Scholarship = () => {
 	}
 
 	const saveScholarship = () => {
-		const updatedScholarships = Object.entries(state.students || {}).reduce<FeeAddItem[]>(
+		const updatedScholarships = Object.entries(state.students ?? {}).reduce<FeeAddItem[]>(
 			(agg, [studentId, feeItem]) => {
 				const { edited, fee } = feeItem
 
@@ -132,7 +144,9 @@ export const Scholarship = () => {
 
 		if (updatedScholarships.length > 0) {
 			dispatch(addMultipleFees(updatedScholarships))
-			const msg = `Scholarship has been updated for ${updatedScholarships.length} students`
+
+			const scholarshipFor = updatedScholarships.length === 0 ? 'student' : 'students'
+			const msg = `Scholarship has been updated for ${updatedScholarships.length} ${scholarshipFor}`
 			toast.success(msg)
 		}
 	}
@@ -206,6 +220,7 @@ export const Scholarship = () => {
 					.filter(
 						student =>
 							isValidStudent(student) &&
+							student.Active &&
 							(state.sectionId
 								? student.section_id === state.sectionId
 								: sections
@@ -263,11 +278,11 @@ const Card = ({
 			name: 'Class Fee'
 		},
 		...Object.values(additionalFees ?? {}),
-		...Object.values(student.fees ?? {})
+		...Object.values(student.fees ?? {}).filter(fee => !isMonthlyFee(fee))
 	]
 
 	const totalFeeAmount = fees
-		.filter(f => f.name && f.amount)
+		.filter(f => f.amount)
 		.reduce(
 			(agg, curr) =>
 				curr.type === 'SCHOLARSHIP'
@@ -280,7 +295,11 @@ const Card = ({
 		<div className="border border-gray-100 shadow-md rounded-lg p-2 bg-white w-full">
 			<div className="flex flex-row justify-between">
 				<div className="flex flex-col w-full">
-					<div>{toTitleCase(student.Name)}</div>
+					<Link
+						to={`/students/${student.id}/payments`}
+						className="hover:underline hover:text-blue-brand">
+						{toTitleCase(student.Name)}
+					</Link>
 					<div className="flex flex-row items-center space-x-2">
 						<div className="text-teal-brand w-2/5 md:w-1/3">
 							Final = Rs. {totalFeeAmount}

@@ -416,7 +416,7 @@ export const AdditionalFee = () => {
 								/>
 								<div className="text-sm">One Time</div>
 							</div>
-							<div className="flex items-center">
+							{/* <div className="flex items-center">
 								<input
 									id="duration"
 									name="periodMonthly"
@@ -434,7 +434,7 @@ export const AdditionalFee = () => {
 									className="mr-2 form-radio tw-radio"
 								/>
 								<div className="sm:text-sm text-base">Every Month</div>
-							</div>
+							</div> */}
 						</div>
 						<button
 							disabled={isFormDisabled}

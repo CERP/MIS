@@ -163,13 +163,14 @@ export const getPaymentLabel = (
 	if (feeName === MISFeeLabels.SPECIAL_SCHOLARSHIP) {
 		return 'Scholarship (M)'
 	}
-	// set fee name in default class fee logic
-	if (feeName === 'Monthly') {
-		return 'Class Fee'
+
+	if (type === 'SCHOLARSHIP' || type === 'FORGIVEN') {
+		return 'Scholarship (A)'
 	}
 
-	if (type === 'FORGIVEN') {
-		return 'Scholarship (A)'
+	// set fee name in default class fee logic
+	if ((feeName === 'MONTHLY_CLASS_FEE' || feeName === 'Monthly') && type === 'OWED') {
+		return 'Class Fee'
 	}
 
 	if (type === 'SUBMITTED') {
@@ -207,4 +208,11 @@ export const rollNumberSorter = (
 	}
 
 	return Number(studentA.RollNumber) - Number(studentB.RollNumber)
+}
+
+// We have shift generating payments from classes, now we have to get rid of those fees which we're not intend
+// to show anywhere in the app
+
+export const isMonthlyFee = (fee: MISStudentFee): boolean => {
+	return fee.period === 'MONTHLY' && fee.type === 'FEE'
 }

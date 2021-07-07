@@ -146,7 +146,7 @@ export const StudentPayments = () => {
 	return (
 		<>
 			<div className="px-5 text-gray-700 relative print:hidden">
-				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-4 rounded-2xl bg-gray-700 p-5 my-4 mt-16 md:mt-8">
+				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-4 rounded-2xl bg-gray-700 p-5 my-4 mt-14">
 					<div className="flex flex-col items-center justify-center relative text-white">
 						<img
 							className="-top-14 absolute rounded-full bg-gray-500 w-20 h-20 object-contain"
@@ -158,7 +158,7 @@ export const StudentPayments = () => {
 							alt="student"
 						/>
 						<div className="mt-8">{toTitleCase(student.Name)}</div>
-						<div className="text-sm">Class {section?.namespaced_name}</div>
+						<div className="text-sm">{section?.namespaced_name}</div>
 					</div>
 
 					<button
@@ -207,7 +207,7 @@ export const StudentPayments = () => {
 									<div
 										key={id}
 										className="flex flex-row justify-between text-white w-full">
-										<div>{fee.name}</div>
+										<div>{getPaymentLabel(fee.name, fee.type)}</div>
 										<div>{fee?.amount ?? 0}</div>
 									</div>
 								))}
@@ -229,7 +229,7 @@ export const StudentPayments = () => {
 										</span>
 										)
 									</div>
-									<div>{filteredPendingAmount}</div>
+									<div>Rs. {numberWithCommas(filteredPendingAmount)}</div>
 								</div>
 
 								<div className="border-b-2 border-dashed w-full" />
@@ -287,9 +287,8 @@ const PreviousPayments = ({ years, close, student }: PreviousPaymentsProps) => {
 		paymentIdtoDelete: ''
 	})
 
-	const faculty = useSelector((state: RootReducerState) => state.db.faculty)
 	const faculty_id = useSelector((state: RootReducerState) => state.auth.faculty_id)
-	const { Admin } = faculty[faculty_id]
+	const isAdmin = useSelector((state: RootReducerState) => state.db.faculty[faculty_id].Admin)
 	const { ref, setIsComponentVisible, isComponentVisible } = useComponentVisible(false)
 
 	const dispatch = useDispatch()
@@ -343,7 +342,7 @@ const PreviousPayments = ({ years, close, student }: PreviousPaymentsProps) => {
 								<div>
 									<TrashIcon
 										onClick={() => {
-											if (checkPermissionToDelete(payment, Admin)) {
+											if (checkPermissionToDelete(payment, isAdmin)) {
 												setState({
 													...state,
 													paymentIdtoDelete: id
@@ -352,10 +351,10 @@ const PreviousPayments = ({ years, close, student }: PreviousPaymentsProps) => {
 											}
 										}}
 										className={clsx(
-											'cursor-pointer h-5 md:h-6 ml-1',
-											checkPermissionToDelete(payment, Admin)
-												? 'text-danger-tip-brand'
-												: 'text-gray-tip-brand'
+											'h-5 md:h-6 ml-2',
+											checkPermissionToDelete(payment, isAdmin)
+												? 'text-red-brand cursor-pointer'
+												: 'text-gray-brand'
 										)}
 									/>
 								</div>
@@ -382,7 +381,7 @@ const PreviousPayments = ({ years, close, student }: PreviousPaymentsProps) => {
 				<TModal>
 					<div className="bg-white md:p-10 p-8 text-center text-sm" ref={ref}>
 						<div className="font-semibold text-lg">
-							Are you sure you want to delete this Payment?
+							Are you sure you want to delete this payment?
 						</div>
 
 						<div className="flex flex-row justify-between space-x-4 mt-4">
