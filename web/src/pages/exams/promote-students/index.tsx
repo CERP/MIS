@@ -24,12 +24,19 @@ type PromotionDataType = {
 	[id: string]: AugmentedClass
 }
 
+type PromotionMap = {
+	[student_id: string]: {
+		current: string
+		next: string
+	}
+}
+
 type State = {
 	// localState: Array<MISClass>
 	promotionData: PromotionDataType
 	displayWarning: boolean
 	groupedStudents: {
-		[section_id: string]: Array<MISStudent>
+		[section_id: string]: MISStudent[]
 	}
 	augmentedSections: { [id: string]: ModifiedSection }
 }
@@ -251,12 +258,6 @@ export const PromoteStudents = () => {
 		})
 	}
 
-	type PromotionMap = {
-		[student_id: string]: {
-			current: string
-			next: string
-		}
-	}
 	const promoteAllStudents = () => {
 		console.log(Object.entries(state.groupedStudents))
 
