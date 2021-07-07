@@ -250,12 +250,7 @@ export const PromoteStudents = () => {
 	}
 
 	const checkEveryClassPromoted = () => {
-		return Object.values(state.promotionData).every(entry => {
-			if (!entry.promoted) {
-				return false
-			}
-			return true
-		})
+		return Object.values(state.promotionData).every(entry => entry.promoted)
 	}
 
 	const promoteAllStudents = () => {
