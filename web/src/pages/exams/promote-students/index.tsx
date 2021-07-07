@@ -379,10 +379,10 @@ export const PromoteStudents = () => {
 			{isComponentVisible && (
 				<TModal>
 					<div ref={ref} className="bg-white pb-3">
-						<div className="text-center p-3 md:p-4 lg:p-5 rounded-md text-sm md:text-base lg:text-xl font-bold">
+						<p className="text-center p-3 md:p-4 lg:p-5 rounded-md text-sm md:text-base lg:text-xl font-bold">
 							Are you sure you want to promote these students? This action is
 							irreversable.
-						</div>
+						</p>
 						<div className="w-full flex justify-around items-center mt-3">
 							<button
 								className="w-5/12 p-2 md:p-2 lg:p-3 border-none bg-blue-brand text-white rounded-lg outline-none font-bold text-sm md:text-base lg:text-xl"
@@ -677,12 +677,12 @@ const PromotableStudents = ({
 							<div className="flex flex-1 justify-center pt-4">
 								<CheckIcon className="text-white h-16 bg-green-brand rounded-full" />
 							</div>
-							<div className="text-center p-3 md:p-4 lg:p-5 rounded-md text-sm md:text-base lg:text-xl font-bold">
+							<p className="text-center p-3 md:p-4 lg:p-5 rounded-md text-sm md:text-base lg:text-xl font-bold">
 								Confirm Promoting students of
-							</div>
-							<div className="text-center p-2  lg:p-3 rounded-md text-base md:text-3xl text-blue-brand font-bold">
+							</p>
+							<p className="text-center p-2  lg:p-3 rounded-md text-base md:text-3xl text-blue-brand font-bold">
 								{fromSectionName}
-							</div>
+							</p>
 							<div className="w-full flex justify-around items-center mt-3">
 								<button
 									className="w-5/12 p-2 md:p-2 lg:p-3 border-none bg-blue-brand text-white rounded-lg outline-none font-bold text-sm md:text-base lg:text-xl"
@@ -717,19 +717,19 @@ type PromotionWarningProps = {
 const PromotionWarning = ({ onPress }: PromotionWarningProps) => {
 	return (
 		<div className="flex-1 flex justify-center flex-col items-center ">
-			<div className="w-32 h-32 rounded-full items-center justify-center flex text-6xl bg-blue-brand text-center text-white mt-10">
+			<p className="w-32 h-32 rounded-full items-center justify-center flex text-6xl bg-blue-brand text-center text-white mt-10">
 				!
-			</div>
-			<div className="font-bold mt-8 mb-4">You are going to </div>
-			<div className="font-semibold text-3xl text-blue-brand">Open Promotions</div>
-			<div className="font-normal my-4 text-lg text-center">
+			</p>
+			<p className="font-bold mt-8 mb-4">You are going to </p>
+			<p className="font-semibold text-3xl text-blue-brand">Open Promotions</p>
+			<p className="font-normal my-4 text-lg text-center">
 				You can promote a class only once per academic year
-			</div>
-			<div
+			</p>
+			<p
 				onClick={() => onPress()}
 				className=" bg-blue-brand cursor-pointer text-white text-center items-center justify-center px-6 py-3 rounded-xl text-lg font-semibold ">
 				Ok, I understand
-			</div>
+			</p>
 		</div>
 	)
 }
