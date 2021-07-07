@@ -498,7 +498,6 @@ const PromotionCard = ({
 								onClick={() => {
 									if (checkPermissionToUndo(promotionData, val.id)) {
 										undoSectionPromotion(val.fromSection.id)
-									} else {
 									}
 								}}
 								color="white"
@@ -509,7 +508,6 @@ const PromotionCard = ({
 							onClick={() => {
 								if (checkPermissionToUndo(promotionData, val.id)) {
 									undoSectionPromotion(val.fromSection.id)
-								} else {
 								}
 							}}
 							className="font-light cursor-pointer underline text-red-brand mt-2 md:text-lg text-sm">
