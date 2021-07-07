@@ -2,7 +2,7 @@ import React, { Fragment, useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { ArrowNarrowRightIcon, TrashIcon } from '@heroicons/react/outline'
 import { Transition } from '@headlessui/react'
-import { useHistory } from 'react-router'
+import { RouteComponentProps, useHistory } from 'react-router'
 import { CheckIcon, ReplyIcon } from '@heroicons/react/solid'
 import toast from 'react-hot-toast'
 
@@ -44,12 +44,11 @@ type ModifiedSection = AugmentedSection & {
 	sectionPromoted: boolean
 }
 
-export const PromoteStudents = () => {
+export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 	const classes = useSelector((state: RootReducerState) => state.db.classes)
 	const students = useSelector((state: RootReducerState) => state.db.students)
 	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false)
 	const dispatch = useDispatch()
-	const history = useHistory()
 
 	// This function returns students grouped by their section_ID
 	const calculateGroupedStudents = () => {
