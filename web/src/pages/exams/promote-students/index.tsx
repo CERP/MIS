@@ -1,18 +1,18 @@
 import React, { Fragment, useState, useEffect } from 'react'
-
-import { AppLayout } from 'components/Layout/appLayout'
 import { useDispatch, useSelector } from 'react-redux'
-import { blankClass } from 'constants/form-defaults'
-import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { ArrowNarrowRightIcon, TrashIcon } from '@heroicons/react/outline'
-import { isValidStudent } from 'utils'
-import { useComponentVisible } from 'hooks/useComponentVisible'
 import { Transition } from '@headlessui/react'
-import toast from 'react-hot-toast'
-import { TModal } from 'components/Modal'
-import { createEditClass, promoteStudents } from 'actions'
 import { useHistory } from 'react-router'
 import { CheckIcon, ReplyIcon } from '@heroicons/react/solid'
+import toast from 'react-hot-toast'
+
+import { AppLayout } from 'components/Layout/appLayout'
+import { blankClass } from 'constants/form-defaults'
+import getSectionsFromClasses from 'utils/getSectionsFromClasses'
+import { isValidStudent } from 'utils'
+import { useComponentVisible } from 'hooks/useComponentVisible'
+import { TModal } from 'components/Modal'
+import { createEditClass, promoteStudents } from 'actions'
 
 type AugmentedClass = MISClass & {
 	fromSection?: Partial<ModifiedSection>
