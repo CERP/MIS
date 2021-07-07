@@ -55,18 +55,16 @@ export const PromoteStudents = () => {
 	const calculateGroupedStudents = () => {
 		let groupedStudents: { [id: string]: Array<MISStudent> } = [
 			...Object.values(students ?? {})
-		]
-			.filter(s => isValidStudent(s) && s.Active)
-			.reduce((agg, curr) => {
-				if (!curr.section_id) {
-					return { ...agg }
-				}
-				if (agg[curr.section_id]) {
-					return { ...agg, [curr.section_id]: [...agg[curr.section_id], curr] }
-				}
+		].reduce((agg, curr) => {
+			if (!curr.section_id || !curr.Active || !isValidStudent(curr)) {
+				return { ...agg }
+			}
+			if (agg[curr.section_id]) {
+				return { ...agg, [curr.section_id]: [...agg[curr.section_id], curr] }
+			}
 
-				return { ...agg, [curr.section_id]: [curr] }
-			}, {} as { [id: string]: Array<MISStudent> })
+			return { ...agg, [curr.section_id]: [curr] }
+		}, {} as { [id: string]: Array<MISStudent> })
 		return groupedStudents
 	}
 
