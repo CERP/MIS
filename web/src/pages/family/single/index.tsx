@@ -3,8 +3,8 @@ import clsx from 'clsx'
 import toast from 'react-hot-toast'
 import Dynamic from '@cerp/dynamic'
 import { useDispatch, useSelector } from 'react-redux'
-import { Redirect, RouteComponentProps } from 'react-router-dom'
-import { UserIcon, TrashIcon, PhoneIcon } from '@heroicons/react/solid'
+import { RouteComponentProps } from 'react-router-dom'
+import { UserIcon, TrashIcon } from '@heroicons/react/solid'
 
 import toTitleCase from 'utils/toTitleCase'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
@@ -85,7 +85,7 @@ export const SingleFamily = ({ match, location, history }: SingleFamilyProps) =>
 				s.ManName !== siblings[0].ManName ||
 				s.Address !== siblings[0].Address
 		)
-		if (matching) toast.error('Sibling Information does not match')
+
 		return matching
 	}
 
@@ -289,8 +289,9 @@ export const SingleFamily = ({ match, location, history }: SingleFamilyProps) =>
 											name="Phone"
 											value={state.Phone}
 											error={
-												numberRegex.test(state.Phone) ||
-												!(state.Phone?.length <= 11)
+												state.Phone &&
+												(numberRegex.test(state.Phone) ||
+													!(state.Phone?.length <= 11))
 											}
 											onChange={handleInputChange}
 											className="tw-input w-full tw-is-form-bg-black"
@@ -305,8 +306,9 @@ export const SingleFamily = ({ match, location, history }: SingleFamilyProps) =>
 											value={state.AlternatePhone}
 											onChange={handleInputChange}
 											error={
-												numberRegex.test(state.AlternatePhone) ||
-												!(state.AlternatePhone?.length <= 11)
+												state.AlternatePhone &&
+												(numberRegex.test(state.AlternatePhone) ||
+													!(state.AlternatePhone?.length <= 11))
 											}
 											name="AlternatePhone"
 											className="tw-input w-full tw-is-form-bg-black"
