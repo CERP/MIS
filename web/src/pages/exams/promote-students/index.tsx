@@ -365,13 +365,11 @@ export const PromoteStudents = () => {
 							}
 						)}
 						<div
-							onClick={() => {
-								if (checkEveryClassPromoted()) {
-									setIsComponentVisible(true)
-								} else {
-									toast.error('Sections Remaining')
-								}
-							}}
+							onClick={() =>
+								checkEveryClassPromoted()
+									? setIsComponentVisible(true)
+									: toast.error('All sections are not promoted yet')
+							}
 							className="flex flex-1 py-5 px-10 md:w-2/5 w-10/12 self-center rounded-md shadow-lg transform cursor-pointer hover:scale-105 transition-all  items-center justify-center bg-red-brand text-white mb-4 md:text-xl text-lg font-semibold">
 							Close Promotions
 						</div>
