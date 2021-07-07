@@ -32,7 +32,6 @@ type PromotionMap = {
 }
 
 type State = {
-	// localState: Array<MISClass>
 	promotionData: PromotionDataType
 	displayWarning: boolean
 	groupedStudents: {
@@ -67,7 +66,6 @@ export const PromoteStudents = () => {
 
 				return { ...agg, [curr.section_id]: [curr] }
 			}, {} as { [id: string]: Array<MISStudent> })
-		// console.log(groupedStudents)
 		return groupedStudents
 	}
 
@@ -79,9 +77,7 @@ export const PromoteStudents = () => {
 
 	const initialState: State = {
 		displayWarning: true,
-		// localState: Object.values(classes)
-		// 	.filter(a => checkSpecialClass(a))
-		// 	.sort((a, b) => b.classYear - a.classYear),
+
 		promotionData: {},
 		groupedStudents: calculateGroupedStudents(),
 		augmentedSections: getSectionsFromClasses(classes).reduce((agg, curr) => {
@@ -112,7 +108,7 @@ export const PromoteStudents = () => {
 			}
 
 			if (i === 0) {
-				if (Object.keys(localState[i].sections).includes('mis_temp') === true) {
+				if (Object.keys(localState[i].sections).includes('mis_temp')) {
 					continue
 				}
 				const TempSection: MISClass['sections'] = { ['mis_temp']: { name: 'TEMPORARY' } }
@@ -135,7 +131,7 @@ export const PromoteStudents = () => {
 					}
 				}
 			} else {
-				if (Object.keys(localState[i].sections).includes('mis_temp') === true) {
+				if (Object.keys(localState[i].sections).includes('mis_temp')) {
 					continue
 				}
 				const toKey = Object.keys(localState[i - 1].sections)[0]
@@ -157,24 +153,11 @@ export const PromoteStudents = () => {
 			}
 		}
 
-		// console.table(mapping)
 		setState({ ...state, promotionData: mapping })
 	}
 
-	// useEffect(() => {
-	// 	setState({
-	// 		...state,
-	// 		localState: Object.values(classes)
-	// 			.filter(a => checkSpecialClass(a))
-	// 			.sort((a, b) => b.classYear - a.classYear)
-	// 	})
-	// }, [classes])
-
 	useEffect(() => {
-		// if (sortedClasses.length > 0) {
-		console.log('Calculating')
 		calculatePromotionData(sortedClasses)
-		// }
 	}, [])
 
 	useEffect(() => {
@@ -183,8 +166,6 @@ export const PromoteStudents = () => {
 
 	const checkClassPromoted = () => {
 		let promotionData = state.promotionData
-		console.log('Check Class Running')
-		// console.table(state.augmentedSections)
 
 		Object.keys(promotionData).forEach(class_key => {
 			let noOfPromotedSections = 0
@@ -192,11 +173,9 @@ export const PromoteStudents = () => {
 			Object.keys(classes[class_key].sections).forEach(section_key => {
 				let noOfSections = Object.keys(classes[class_key].sections).length
 				if (state.augmentedSections[section_key].sectionPromoted) {
-					console.log('TRUE')
 					noOfPromotedSections = noOfPromotedSections + 1
 				}
 				if (noOfPromotedSections === noOfSections) {
-					console.log(promotionData[class_key].name, ' is true')
 					promotionData = {
 						...promotionData,
 						[class_key]: { ...promotionData[class_key], promoted: true }
@@ -210,9 +189,6 @@ export const PromoteStudents = () => {
 			})
 			noOfPromotedSections = 0
 		})
-
-		console.log(promotionData)
-		console.table(state.augmentedSections)
 
 		setState({ ...state, promotionData: promotionData })
 	}
@@ -232,9 +208,6 @@ export const PromoteStudents = () => {
 				}
 			})
 		}
-		// const promotedStudents = (studentsToPromote ?? []).reduce<MISStudent[]>((agg, curr) => {
-		// 	return [...agg, { ...curr, section_id: toKey }]
-		// }, [])
 
 		setState({
 			...state,
@@ -254,8 +227,6 @@ export const PromoteStudents = () => {
 	}
 
 	const promoteAllStudents = () => {
-		console.log(Object.entries(state.groupedStudents))
-
 		const student_section_map: PromotionMap = Object.entries(
 			state.groupedStudents ?? {}
 		).reduce((agg, [sectionKey, groupedStudents]) => {
@@ -265,7 +236,6 @@ export const PromoteStudents = () => {
 			return { ...agg, ...studentMap }
 		}, {})
 		if (!Object.keys(state.augmentedSections).includes('mis_temp')) {
-			console.log('Running This One')
 			const TempSection: MISClass['sections'] = { ['mis_temp']: { name: 'TEMPORARY' } }
 			const tempClass: MISClass = {
 				...blankClass(),
@@ -273,7 +243,6 @@ export const PromoteStudents = () => {
 				name: 'Class 10',
 				classYear: 9999
 			}
-			console.table(getSectionsFromClasses({ ...classes, [tempClass.id]: tempClass }))
 			dispatch(createEditClass(tempClass))
 			dispatch(
 				promoteStudents(
@@ -463,8 +432,6 @@ const PromotionCard = ({
 			...cardGroupedStudents,
 			[val.fromSection.id]: newSection
 		})
-
-		// console.log(augmentedSections[newSectionKey].namespaced_name)
 	}
 
 	return (
@@ -518,10 +485,6 @@ const PromotionCard = ({
 							onClick={() => {
 								if (checkPermissionToPromote(promotionData, val.id)) {
 									setVisible(val => !val)
-									// console.table(promotionData)
-									console.table(groupedStudents)
-								} else {
-									//alert('No Permission')
 								}
 							}}
 							className="rounded-full cursor-pointer bg-blue-brand p-1 px-7 md:px-24 ">
@@ -738,7 +701,6 @@ function checkSpecialClass(a: MISClass): boolean {
 function checkPermissionToPromote(promotionData: PromotionDataType, id: string) {
 	let data = Object.values(promotionData)
 	let index = data.findIndex(val => val.id === id)
-	// console.log(index)
 
 	if (index === 0) return true
 
@@ -755,7 +717,6 @@ function checkPermissionToPromote(promotionData: PromotionDataType, id: string) 
 function checkPermissionToUndo(promotionData: PromotionDataType, id: string) {
 	let data = Object.values(promotionData)
 	let index = data.findIndex(val => val.id === id)
-	// console.log(index)
 
 	if (index === data.length - 1) return true
 
