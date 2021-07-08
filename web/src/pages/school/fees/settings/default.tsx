@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Dynamic from '@cerp/dynamic'
 import toast from 'react-hot-toast'
@@ -15,7 +15,7 @@ const getDefaultFeeForClasses = (classes: RootDBState['classes']): State => {
 		return {
 			...agg,
 			[curr]: {
-				name: 'Monthly',
+				name: 'MONTHLY_CLASS_FEE',
 				type: 'FEE',
 				amount: 0,
 				period: 'MONTHLY'
@@ -27,12 +27,20 @@ const getDefaultFeeForClasses = (classes: RootDBState['classes']): State => {
 export const DefaultFee = () => {
 	const dispatch = useDispatch()
 
-	const { classes, settings } = useSelector((state: RootReducerState) => state.db)
+	const classes = useSelector((state: RootReducerState) => state.db.classes)
+	const settings = useSelector((state: RootReducerState) => state.db.settings)
 
 	const [state, setState] = useState<State>({
 		...getDefaultFeeForClasses(classes),
 		...settings?.classes?.defaultFee
 	})
+
+	useEffect(() => {
+		setState({
+			...getDefaultFeeForClasses(classes),
+			...settings?.classes?.defaultFee
+		})
+	}, [classes, settings.classes])
 
 	const saveDefaultFee = (): void => {
 		let modified_settings: MISSettings
@@ -78,7 +86,7 @@ export const DefaultFee = () => {
 					</div>
 					<div className="table-row-group bg-white">
 						{Object.values(classes)
-							.filter(c => c && c.id && c.name)
+							.filter(c => c && c.id)
 							.sort(classYearSorter)
 							.map(c => (
 								<div key={c.id} className="table-row bg-gray-100">
