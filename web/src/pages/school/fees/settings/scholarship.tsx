@@ -180,7 +180,7 @@ export const Scholarship = () => {
 							.sort(classYearSorter)
 							.map(s => (
 								<option key={s.id + s.class_id} value={s.id}>
-									{toTitleCase(s.namespaced_name, '-')}
+									{s.namespaced_name}
 								</option>
 							))}
 					</select>

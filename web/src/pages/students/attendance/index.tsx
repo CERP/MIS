@@ -143,10 +143,10 @@ export const StudentsAttendance = () => {
 						onChange={e => setState({ ...state, selectedSection: e.target.value })}
 						className="w-full md:w-72 bg-transparent tw-input border-blue-brand ring-1">
 						{sections
-							.filter(s => s && s.id && s.namespaced_name)
+							.filter(s => s && s.id)
 							.map(s => (
 								<option key={s.id} value={s.id}>
-									{toTitleCase(s.namespaced_name, '-')}
+									{s.namespaced_name}
 								</option>
 							))}
 					</select>

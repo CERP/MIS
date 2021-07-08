@@ -130,7 +130,7 @@ export const ResetFee = () => {
 											.filter(s => s.id && s.className)
 											.map(s => (
 												<option key={s.id} value={s.id}>
-													{toTitleCase(s.namespaced_name, '-')}
+													{s.namespaced_name}
 												</option>
 											))}
 									</select>

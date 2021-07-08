@@ -20,7 +20,7 @@ import { addMultiplePayments, addPayment, deletePayment, logSms } from 'actions'
 import { smsIntentLink } from 'utils/intent'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
-import { getPaymentLabel } from 'utils'
+import { getPaymentLabel, isMonthlyFee } from 'utils'
 
 import UserIconSvg from 'assets/svgs/user.svg'
 
@@ -54,8 +54,8 @@ export const StudentPayments = () => {
 	}
 
 	// get class fees
-	const classDefaultFee = settings?.classes?.defaultFee?.[section.class_id]
-	const classAdditionalFees = settings?.classes?.additionalFees?.[section.class_id]
+	const classDefaultFee = settings?.classes?.defaultFee?.[section?.class_id]
+	const classAdditionalFees = settings?.classes?.additionalFees?.[section?.class_id]
 
 	const [state, setState] = useState<State>({
 		filter: {
@@ -88,7 +88,7 @@ export const StudentPayments = () => {
 			],
 			...Object.entries(classAdditionalFees ?? {}),
 			...(Object.entries(student.fees ?? {})
-				.filter(([id, fee]) => !(fee.type === 'FEE' && fee.period === 'MONTHLY'))
+				.filter(([id, fee]) => !isMonthlyFee(fee))
 				.map(([feeId, fee]) => {
 					return [
 						feeId,

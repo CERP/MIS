@@ -22,7 +22,7 @@ import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
 
 import UserIconSvg from 'assets/svgs/user.svg'
-import { isValidStudent, getPaymentLabel, checkPermission } from 'utils'
+import { isValidStudent, getPaymentLabel, isMonthlyFee } from 'utils'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { TrashIcon } from '@heroicons/react/solid'
 
@@ -323,7 +323,7 @@ const FeeBreakdownCard = ({ student }: FeeBreakdownCardProps) => {
 			],
 			...Object.entries(student.classAdditionalFees ?? {}),
 			...(Object.entries(student.fees ?? {})
-				.filter(([id, fee]) => !(fee.type === 'FEE' && fee.period === 'MONTHLY'))
+				.filter(([id, fee]) => !isMonthlyFee(fee))
 				.map(([feeId, fee]) => {
 					return [
 						feeId,

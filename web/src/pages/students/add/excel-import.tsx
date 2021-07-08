@@ -243,7 +243,7 @@ export const ImportStudentsCSV = () => {
 										.filter(s => s && s.id && s.name)
 										.map(s => (
 											<option key={s.id} value={s.id}>
-												{toTitleCase(s.namespaced_name, '-')}
+												{s.namespaced_name}
 											</option>
 										))}
 								</select>
