@@ -11,7 +11,7 @@ export interface AttendanceStatsCard {
 }
 
 export const AttendanceStatsCard = ({ attendance }: AttendanceStatsCard) => (
-	<div className="p-5 pt-2 border rounded-lg shadow-md sm:w-full md:pt-5 border-gray-50">
+	<div className="p-5 pt-2 border rounded-lg shadow-md sm:w-full md:pt-5 border-gray-50 bg-white">
 		<div></div>
 		<div className="flex flex-row justify-between text-sm md:text-base">
 			<div className="flex flex-col items-center justify-center text-teal-brand">
