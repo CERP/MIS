@@ -48,7 +48,7 @@ const blankFee = (): MISStudentFee => ({
 
 const getFeeStudents = (students: MISStudent[]) => {
 	return students
-		.filter(s => isValidStudent(s) && s.Active)
+		.filter(s => isValidStudent(s, { active: true }))
 		.reduce<State['students']>((agg, curr) => {
 			const [id, scholarshipFee] = Object.entries(curr.fees || {})
 				.filter(([feeId, fee]) => !isMonthlyFee(fee))
@@ -219,8 +219,7 @@ export const Scholarship = () => {
 				{Object.values(students)
 					.filter(
 						student =>
-							isValidStudent(student) &&
-							student.Active &&
+							isValidStudent(student, { active: true }) &&
 							(state.sectionId
 								? student.section_id === state.sectionId
 								: sections

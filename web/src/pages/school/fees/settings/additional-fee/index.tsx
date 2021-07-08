@@ -108,8 +108,8 @@ export const AdditionalFee = () => {
 		}
 
 		if (state.addFeeTo === AddFeeOptions.ALL) {
-			const filteredStudents = Object.values(students).filter(
-				s => isValidStudent(s) && s.Active
+			const filteredStudents = Object.values(students).filter(s =>
+				isValidStudent(s, { active: true })
 			)
 
 			addOrUpdateText = `All Students (${filteredStudents.length})`
@@ -257,12 +257,13 @@ export const AdditionalFee = () => {
 		}, [])
 
 		return Object.values(students ?? {}).filter(
-			s => isValidStudent(s) && s.Active && sections.includes(s.section_id)
+			s => isValidStudent(s, { active: true }) && sections.includes(s.section_id)
 		)
 	}
 
-	const totalActiveStudents = Object.values(students).filter(s => isValidStudent(s) && s.Active)
-		.length
+	const totalActiveStudents = Object.values(students).filter(s =>
+		isValidStudent(s, { active: true })
+	).length
 
 	const isFormDisabled =
 		!state.fee?.name?.trim() ||

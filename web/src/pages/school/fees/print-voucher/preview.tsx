@@ -32,7 +32,7 @@ const PrintPreview = () => {
 
 	const siblings = (): AugmentedSibling[] => {
 		return Object.values(students)
-			.filter(s => s && s.Name && s.FamilyID && s.FamilyID === id)
+			.filter(s => s && s.Active && s.Name && s.FamilyID && s.FamilyID === id)
 			.reduce((agg, curr) => {
 				const section_id = curr.section_id
 				return [
@@ -58,7 +58,11 @@ const PrintPreview = () => {
 		// separate logic to print
 		if (type === 'CLASS') {
 			return Object.values(students)
-				.filter(s => isValidStudent(s) && currClass.sections[s.section_id] !== undefined)
+				.filter(
+					s =>
+						isValidStudent(s, { active: true }) &&
+						currClass.sections[s.section_id] !== undefined
+				)
 				.sort(rollNumberSorter)
 		}
 

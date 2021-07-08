@@ -50,12 +50,12 @@ export const ResetFee = () => {
 	const handleResetFee = (): void => {
 		const filteredStudents = Object.values(students).filter(student => {
 			if (state.resetFor === ResetFeeOptions.ALL_STUDENTS) {
-				return isValidStudent(student)
+				return isValidStudent(student, { active: true })
 			}
 
 			if (
 				state.resetFor === ResetFeeOptions.SINGLE_CLASS &&
-				isValidStudent(student) &&
+				isValidStudent(student, { active: true }) &&
 				student.section_id === state.sectionId
 			) {
 				return true
@@ -148,7 +148,7 @@ export const ResetFee = () => {
 									{Object.values(students)
 										.filter(
 											s =>
-												isValidStudent(s) &&
+												isValidStudent(s, { active: true }) &&
 												s.section_id === state.sectionId
 										)
 										.sort((a, b) => a.Name.localeCompare(b.Name))

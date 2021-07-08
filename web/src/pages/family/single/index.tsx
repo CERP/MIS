@@ -396,7 +396,7 @@ export const SingleFamily = ({ match, location, history }: SingleFamilyProps) =>
 
 const getSiblings = (famId: string, students: RootDBState['students']) => {
 	return Object.values(students).filter(
-		std => isValidStudent(std) && std.Active && std.FamilyID === famId
+		std => isValidStudent(std, { active: true }) && std.FamilyID === famId
 	)
 }
 

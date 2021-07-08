@@ -485,7 +485,7 @@ class FeeAnalytics extends Component<propTypes, S> {
 		const sections = getSectionsFromClasses(this.props.classes)
 
 		return Object.values(this.props.students).reduce<AugmentedStudent[]>((agg, student) => {
-			if (isValidStudent(student) && student.Active) {
+			if (isValidStudent(student, { active: true })) {
 				return [
 					...agg,
 					{

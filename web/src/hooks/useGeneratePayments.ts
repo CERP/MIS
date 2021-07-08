@@ -16,7 +16,7 @@ export const useGeneratePayments = () => {
 	const sections = getSectionsFromClasses(classes)
 
 	const sectionStudents = Object.values(students).reduce<AugmentedStudent[]>((agg, student) => {
-		if (isValidStudent(student) && student.Active) {
+		if (isValidStudent(student, { active: true })) {
 			return [
 				...agg,
 				{

@@ -87,7 +87,7 @@ export const SMS = () => {
 			const totalStudentDebts = {} as State['totalStudentDebts']
 
 			const student_list = Object.values(students ?? {}).filter(
-				student => isValidStudent(student) && student.Active && student.Phone
+				student => isValidStudent(student, { active: true }) && student.Phone
 			)
 
 			let notPaidSinceDate = moment()
@@ -188,13 +188,16 @@ export const SMS = () => {
 
 		// if (state.sendTo === SendSmsOptions.TO_ALL_STUDENTS) {
 		// 	msgCounter = Object.values(students || {}).filter(
-		// 		s => isValidStudent(s) && s.Active && s.Phone
+		// 		s => isValidStudent(s, { active: true }) && s.Phone
 		// 	).length
 		// }
 
 		if (state.sendTo === SendSmsOptions.TO_SINGLE_SECTION) {
 			msgCounter = Object.values(students || {}).filter(
-				s => isValidStudent(s) && s.Active && s.Phone && s.section_id === state.sectionId
+				s =>
+					isValidStudent(s, { active: true }) &&
+					s.Phone &&
+					s.section_id === state.sectionId
 			).length
 		}
 
@@ -271,8 +274,7 @@ export const SMS = () => {
 			return Object.values(students ?? {})
 				.filter(
 					s =>
-						isValidStudent(s) &&
-						s.Active &&
+						isValidStudent(s, { active: true }) &&
 						s.Phone &&
 						s.section_id === state.sectionId &&
 						isValidPhone(s.Phone)

@@ -88,7 +88,7 @@ export const StudentList = ({
 		return [
 			...new Set(
 				Object.values(students ?? {})
-					.filter(s => isValidStudent(s) && s.Active === state.active)
+					.filter(s => isValidStudent(s, { active: true }) && s.Active === state.active)
 					.reduce((tags, student) => {
 						return [
 							...tags,
@@ -109,7 +109,7 @@ export const StudentList = ({
 	useEffect(() => {
 		const sectionStudents = Object.values(students).reduce<AugmentedStudent[]>(
 			(agg, student) => {
-				if (isValidStudent(student) && student.Active) {
+				if (isValidStudent(student, { active: true })) {
 					return [
 						...agg,
 						{
@@ -154,8 +154,11 @@ export const StudentList = ({
 			const advanceFilterActive = state.searchByAdmissionNo || state.searchByRollNo
 
 			return (
-				isValidStudent(s) &&
-				s.Active === state.active &&
+				isValidStudent(s, {
+					active: state.active,
+					includeFinishSchool: !state.active,
+					includeSectionId: !state.active
+				}) &&
 				(excludeFamilyStudents ? !s.FamilyID : true) &&
 				(state.searchByAdmissionNo || state.searchByRollNo
 					? true
@@ -321,7 +324,7 @@ export const StudentList = ({
 								<option value="">Class</option>
 								{sections.sort(classYearSorter).map(s => (
 									<option key={s.id + s.class_id} value={s.id}>
-										{toTitleCase(s.namespaced_name, '-')}
+										{s.namespaced_name}
 									</option>
 								))}
 							</select>
@@ -429,7 +432,6 @@ export const StudentList = ({
 							/>
 						</div>
 					))}
-				)
 			</>
 		)
 	}

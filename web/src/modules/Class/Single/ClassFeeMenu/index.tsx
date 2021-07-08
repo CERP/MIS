@@ -54,8 +54,7 @@ class ClassFeeMenu extends Component<propTypes, S> {
 
 		const class_payments = Object.values(this.props.students).reduce((agg, s) => {
 			if (
-				!isValidStudent(s) ||
-				!s.Active ||
+				!isValidStudent(s, { active: false }) ||
 				this.props.curr_class.sections[s.section_id] === undefined
 			) {
 				return agg
@@ -76,7 +75,10 @@ class ClassFeeMenu extends Component<propTypes, S> {
 	mergedPaymentsForStudent = (student: MISStudent) => {
 		if (student.FamilyID) {
 			const siblings = Object.values(this.props.students).filter(
-				s => isValidStudent(s) && s.FamilyID && s.FamilyID === student.FamilyID
+				s =>
+					isValidStudent(s, { active: true }) &&
+					s.FamilyID &&
+					s.FamilyID === student.FamilyID
 			)
 
 			const merged_payments = siblings.reduce(
@@ -96,11 +98,16 @@ class ClassFeeMenu extends Component<propTypes, S> {
 	generateVoucherNumber = (): number => Math.floor(100000 + Math.random() * 900000)
 
 	render() {
-		// const { month, year } = this.state
 		const { students, curr_class, settings, schoolLogo, classes } = this.props
 
 		const relevant_students = Object.values(students)
-			.filter(s => curr_class.sections[s.section_id] !== undefined && !s.FamilyID)
+			.filter(
+				s =>
+					curr_class.sections[s.section_id] !== undefined &&
+					!s.FamilyID &&
+					s.Active &&
+					!s.tags?.['FINISHED_SCHOOL']
+			)
 			.sort(rollNumberSorter)
 
 		let Years: Array<string> = []

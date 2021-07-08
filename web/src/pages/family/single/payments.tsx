@@ -62,7 +62,7 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 			sections: AugmentedSection[]
 		): AugmentedStudent[] => {
 			return Object.values(stds)
-				.filter(s => isValidStudent(s) && s.Active && s?.FamilyID === famId)
+				.filter(s => isValidStudent(s, { active: true }) && s?.FamilyID === famId)
 				.map(s => {
 					const section = sections.find(sec => sec.id === s.section_id)
 					let classFee = {} as MISClassFee

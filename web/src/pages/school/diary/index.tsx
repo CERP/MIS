@@ -124,12 +124,7 @@ const Diary: React.FC = () => {
 
 	const getSelectedSectionStudents = () => {
 		return Object.values(students).filter(
-			s =>
-				isValidStudent(s) &&
-				s.Active &&
-				s.section_id === state.sectionId &&
-				(s.tags === undefined || !s.tags['PROSPECTIVE']) &&
-				s.Phone
+			s => isValidStudent(s, { active: true }) && s.section_id === state.sectionId && s.Phone
 		)
 	}
 

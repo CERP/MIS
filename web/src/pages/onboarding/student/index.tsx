@@ -251,7 +251,7 @@ export const AddStudent: React.FC<AddStudentProps> = ({ skipStage }) => {
 									<div className="table w-full">
 										<div className="table-row-group bg-white">
 											{state.importedStudents
-												.filter(s => isValidStudent(s))
+												.filter(s => isValidStudent(s, { active: true }))
 												.sort((a, b) => a.Name.localeCompare(b.Name))
 												.map(s => (
 													<div
@@ -282,14 +282,15 @@ export const AddStudent: React.FC<AddStudentProps> = ({ skipStage }) => {
 					<div
 						className={clsx('w-full overflow-y-auto text-xs md:text-base rounded-md', {
 							'h-20':
-								Object.values(students ?? {}).filter(s => isValidStudent(s))
-									.length > 0,
+								Object.values(students ?? {}).filter(s =>
+									isValidStudent(s, { active: true })
+								).length > 0,
 							'h-72': isMoreThanMaxStudents
 						})}>
 						<div className="table w-full">
 							<div className="table-row-group bg-white">
 								{Object.values(students)
-									.filter(s => isValidStudent(s))
+									.filter(s => isValidStudent(s, { active: true }))
 									.sort((a, b) => a.Name.localeCompare(b.Name))
 									.map(s => (
 										<div key={s.id + s.section_id} className="table-row">

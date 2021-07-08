@@ -74,15 +74,25 @@ export const formatPhone = (phone: string): string => {
  * Takes a MIS student and check if it's valid student
  * @param student
  */
-export const isValidStudent = (student: MISStudent): boolean => {
+
+type FilterOptions = {
+	active: boolean
+	includeFinishSchool: boolean
+	includeSectionId: boolean
+	includePropspective: boolean
+}
+
+export const isValidStudent = (student: MISStudent, options?: Partial<FilterOptions>): boolean => {
 	return !!(
 		student &&
 		student.id &&
 		student.Name &&
-		student.section_id &&
-		!student.tags?.['PROSPECTIVE'] &&
-		!student.tags?.['FINISHED_SCHOOL'] &&
-		!student.prospective_section_id
+		student.Active === options?.active &&
+		(options?.includeFinishSchool ? true : !student?.tags['FINISHED_SCHOOL']) &&
+		(options?.includeSectionId ? true : student.section_id) &&
+		(options?.includePropspective
+			? true
+			: !student.tags?.['PROSPECTIVE'] && !student.prospective_section_id)
 	)
 }
 

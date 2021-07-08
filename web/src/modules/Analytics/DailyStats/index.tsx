@@ -52,7 +52,7 @@ class DailyStats extends Component<PropsType, S> {
 	getSiblings = (student: MISStudent): MISStudent[] => {
 		const famId = student?.FamilyID
 		return Object.values(this.props.students).filter(
-			s => isValidStudent(s) && s.Active && s.FamilyID && s.FamilyID === famId
+			s => isValidStudent(s, { active: true }) && s.FamilyID && s.FamilyID === famId
 		)
 	}
 
@@ -114,7 +114,7 @@ class DailyStats extends Component<PropsType, S> {
 		let paidStudents = [] as AugmentedStudent[]
 
 		for (const student of Object.values(students)) {
-			if (isValidStudent(student) && student.Active) {
+			if (isValidStudent(student, { active: true })) {
 				const amount_paid_today = Object.values(student.payments ?? {})
 					.filter(
 						payment =>
