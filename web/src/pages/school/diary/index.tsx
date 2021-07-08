@@ -281,7 +281,7 @@ const Diary: React.FC = () => {
 									{Object.entries(classes[state.classId].sections ?? {}).map(
 										([id, s]) => (
 											<option key={id} value={id}>
-												{s.name}
+												{s.name || classes[state.classId]?.name}
 											</option>
 										)
 									)}
