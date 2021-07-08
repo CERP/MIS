@@ -111,7 +111,7 @@ export const Scholarship = () => {
 					edited: true,
 					fee: {
 						...scholarship['fee'],
-						amount: isNaN(Number(amount) ? 0 : Number(amount)) as any
+						amount: (isNaN(Number(amount)) ? 0 : Number(amount)) as any
 					}
 				}
 			}
