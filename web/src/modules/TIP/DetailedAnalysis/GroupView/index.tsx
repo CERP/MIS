@@ -34,9 +34,7 @@ const GroupView: React.FC<P> = ({ students, sorted_sections }) => {
 		subject,
 		group
 	])
-	const total_students = filtered_students.filter(
-		s => isValidStudent(s) && s.Active && (s.tags ? !s.tags['prospective'] : true)
-	).length
+	const total_students = filtered_students.filter(s => isValidStudent(s, { active: true })).length
 
 	return (
 		<>

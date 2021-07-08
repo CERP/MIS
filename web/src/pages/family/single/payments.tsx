@@ -22,7 +22,7 @@ import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
 
 import UserIconSvg from 'assets/svgs/user.svg'
-import { isValidStudent, getPaymentLabel, checkPermission } from 'utils'
+import { isValidStudent, getPaymentLabel, isMonthlyFee } from 'utils'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { TrashIcon } from '@heroicons/react/solid'
 
@@ -41,10 +41,14 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 
 	const { id: famId } = match.params
 
-	const {
-		auth,
-		db: { students, settings, sms_templates: smsTemplates, classes }
-	} = useSelector((state: RootReducerState) => state)
+	const auth = useSelector((state: RootReducerState) => state.auth)
+	const students = useSelector((state: RootReducerState) => state.db.students)
+	const settings = useSelector((state: RootReducerState) => state.db.settings)
+	const classes = useSelector((state: RootReducerState) => state.db.classes)
+	const smsTemplates = useSelector((state: RootReducerState) => state.db.sms_templates)
+	const isAdmin = useSelector(
+		(state: RootReducerState) => state.db.faculty[auth.faculty_id].Admin
+	)
 
 	const [state, setState] = useState<State>({
 		filter: {
@@ -62,7 +66,7 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 			sections: AugmentedSection[]
 		): AugmentedStudent[] => {
 			return Object.values(stds)
-				.filter(s => isValidStudent(s) && s.Active && s?.FamilyID === famId)
+				.filter(s => isValidStudent(s, { active: true }) && s?.FamilyID === famId)
 				.map(s => {
 					const section = sections.find(sec => sec.id === s.section_id)
 					let classFee = {} as MISClassFee
@@ -95,16 +99,16 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 	// generate payments for all siblings, if not generated
 	useEffect(() => {
 		if (siblings.length > 0) {
-			const sibling_payments = siblings.reduce((agg, curr) => {
-				const curr_student_payments = checkStudentDuesReturning(curr, settings)
-				if (curr_student_payments.length > 0) {
-					return [...agg, ...curr_student_payments]
+			const siblingPayments = siblings.reduce((agg, curr) => {
+				const studentPayments = checkStudentDuesReturning(curr, settings)
+				if (studentPayments.length > 0) {
+					return [...agg, ...studentPayments]
 				}
 				return agg
 			}, [])
 
-			if (sibling_payments.length > 0) {
-				dispatch(addMultiplePayments(sibling_payments))
+			if (siblingPayments.length > 0) {
+				dispatch(addMultiplePayments(siblingPayments))
 			}
 		}
 	}, [siblings, settings.classes])
@@ -120,13 +124,18 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 
 	const mergedPayments = useCallback(() => {
 		if (siblings.length > 0) {
-			const merged_payments = siblings.reduce(
+			const mergedPayments = siblings.reduce(
 				(agg, student) => ({
 					...agg,
 					...Object.entries(student.payments ?? {}).reduce((agg2, [pid, p]) => {
+						// this is to make sure, all payments should have unique ID
+						// because 2 or more than 2 students can have same fee or payment ID
+						// if they're are in the same class (now we're generating payments from class additionals)
+						const paymentId = p.type === 'OWED' ? student.id + '$' + pid : pid
+
 						return {
 							...agg2,
-							[pid]: {
+							[paymentId]: {
 								...p,
 								fee_name:
 									p.fee_name &&
@@ -139,7 +148,7 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 				{} as AugmentedMISPaymentMap
 			)
 
-			return merged_payments
+			return mergedPayments
 		}
 	}, [siblings])
 
@@ -283,6 +292,7 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 					) : (
 						<PreviousPayments
 							years={years}
+							isAdmin={isAdmin}
 							close={() =>
 								setState({
 									...state,
@@ -323,7 +333,7 @@ const FeeBreakdownCard = ({ student }: FeeBreakdownCardProps) => {
 			],
 			...Object.entries(student.classAdditionalFees ?? {}),
 			...(Object.entries(student.fees ?? {})
-				.filter(([id, fee]) => !(fee.type === 'FEE' && fee.period === 'MONTHLY'))
+				.filter(([id, fee]) => !isMonthlyFee(fee))
 				.map(([feeId, fee]) => {
 					return [
 						feeId,
@@ -410,9 +420,16 @@ interface PreviousPaymentsProps {
 	pendingAmount: number
 	students: RootDBState['students']
 	payments: AugmentedMISPaymentMap
+	isAdmin?: boolean
 }
 
-const PreviousPayments = ({ years, close, payments, pendingAmount }: PreviousPaymentsProps) => {
+const PreviousPayments = ({
+	years,
+	close,
+	payments,
+	pendingAmount,
+	isAdmin
+}: PreviousPaymentsProps) => {
 	const [state, setState] = useState({
 		month: moment().format('MMMM'),
 		year: moment().format('YYYY'),
@@ -420,9 +437,6 @@ const PreviousPayments = ({ years, close, payments, pendingAmount }: PreviousPay
 		studentId: ''
 	})
 
-	const faculty = useSelector((state: RootReducerState) => state.db.faculty)
-	const faculty_id = useSelector((state: RootReducerState) => state.auth.faculty_id)
-	const { Admin } = faculty[faculty_id]
 	const { ref, setIsComponentVisible, isComponentVisible } = useComponentVisible(false)
 
 	const dispatch = useDispatch()
@@ -471,7 +485,7 @@ const PreviousPayments = ({ years, close, payments, pendingAmount }: PreviousPay
 								<div>
 									<TrashIcon
 										onClick={() => {
-											if (checkPermissionToDelete(payment, Admin)) {
+											if (checkPermissionToDelete(payment, isAdmin)) {
 												setState({
 													...state,
 													paymentId: id,
@@ -481,10 +495,10 @@ const PreviousPayments = ({ years, close, payments, pendingAmount }: PreviousPay
 											}
 										}}
 										className={clsx(
-											'cursor-pointer h-5 md:h-6 ml-1',
-											checkPermissionToDelete(payment, Admin)
-												? 'text-danger-tip-brand'
-												: 'text-gray-tip-brand'
+											'h-5 md:h-6 ml-1',
+											checkPermissionToDelete(payment, isAdmin)
+												? 'cursor-pointer text-red-brand'
+												: 'text-gray-brand'
 										)}
 									/>
 								</div>
@@ -511,7 +525,7 @@ const PreviousPayments = ({ years, close, payments, pendingAmount }: PreviousPay
 				<TModal>
 					<div className="bg-white md:p-10 p-8 text-center text-sm" ref={ref}>
 						<div className="font-semibold text-lg">
-							Are you sure you want to delete this Payment?
+							Are you sure you want to delete this payment?
 						</div>
 
 						<div className="flex flex-row justify-between space-x-4 mt-4">
@@ -610,7 +624,7 @@ const AddPayment = ({ siblings, auth, settings, smsTemplates, pendingAmount }: A
 			const message = smsTemplates.fee
 				.replace(/\$BALANCE/g, `${balance}`)
 				.replace(/\$AMOUNT/g, `${state.payment.amount}`)
-				// .replace(/\$NAME/g, student.Name)
+				.replace(/\$NAME/g, student.Name)
 				.replace(/\$FNAME/g, student.ManName)
 
 			if (settings.sendSMSOption !== 'SIM') {

@@ -74,15 +74,25 @@ export const formatPhone = (phone: string): string => {
  * Takes a MIS student and check if it's valid student
  * @param student
  */
-export const isValidStudent = (student: MISStudent): boolean => {
+
+type FilterOptions = {
+	active: boolean
+	includeFinishSchool: boolean
+	includeSectionId: boolean
+	includePropspective: boolean
+}
+
+export const isValidStudent = (student: MISStudent, options?: Partial<FilterOptions>): boolean => {
 	return !!(
 		student &&
 		student.id &&
 		student.Name &&
-		student.section_id &&
-		!student.tags?.['PROSPECTIVE'] &&
-		!student.tags?.['FINISHED_SCHOOL'] &&
-		!student.prospective_section_id
+		student.Active === options?.active &&
+		(options?.includeFinishSchool ? true : !student?.tags['FINISHED_SCHOOL']) &&
+		(options?.includeSectionId ? true : student.section_id) &&
+		(options?.includePropspective
+			? true
+			: !student.tags?.['PROSPECTIVE'] && !student.prospective_section_id)
 	)
 }
 
@@ -163,13 +173,14 @@ export const getPaymentLabel = (
 	if (feeName === MISFeeLabels.SPECIAL_SCHOLARSHIP) {
 		return 'Scholarship (M)'
 	}
-	// set fee name in default class fee logic
-	if (feeName === 'Montly') {
-		return 'Class Fee'
+
+	if (type === 'SCHOLARSHIP' || type === 'FORGIVEN') {
+		return 'Scholarship (A)'
 	}
 
-	if (type === 'FORGIVEN') {
-		return 'Scholarship (A)'
+	// set fee name in default class fee logic
+	if ((feeName === 'MONTHLY_CLASS_FEE' || feeName === 'Monthly') && type === 'OWED') {
+		return 'Class Fee'
 	}
 
 	if (type === 'SUBMITTED') {
@@ -177,4 +188,41 @@ export const getPaymentLabel = (
 	}
 
 	return feeName
+}
+
+export const classYearSorter = (
+	classA: MISClass | AugmentedSection,
+	classB: MISClass | AugmentedSection
+) => {
+	return (
+		(isNaN(Number(classA.classYear)) ? 0 : Number(classA.classYear)) -
+		(isNaN(Number(classB.classYear)) ? 0 : Number(classB.classYear))
+	)
+}
+export const rollNumberSorter = (
+	studentA: MISStudent | AugmentedStudent,
+	studentB: MISStudent | AugmentedStudent
+) => {
+	if (isNaN(Number(studentA.RollNumber)) || isNaN(Number(studentB.RollNumber))) {
+		const rollNumberA = studentA.RollNumber?.toUpperCase() // ignore upper and lowercase
+		const rollNumberB = studentB.RollNumber?.toUpperCase() // ignore upper and lowercase
+		if (rollNumberA < rollNumberB) {
+			return -1
+		}
+		if (rollNumberA > rollNumberB) {
+			return 1
+		}
+
+		// names must be equal
+		return 0
+	}
+
+	return Number(studentA.RollNumber) - Number(studentB.RollNumber)
+}
+
+// We have shift generating payments from classes, now we have to get rid of those fees which we're not intend
+// to show anywhere in the app
+
+export const isMonthlyFee = (fee: MISStudentFee): boolean => {
+	return fee.period === 'MONTHLY' && fee.type === 'FEE'
 }

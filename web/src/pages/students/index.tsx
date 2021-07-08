@@ -25,7 +25,7 @@ const StudentPage = ({ location }: RouteComponentProps) => {
 	return (
 		<AppLayout title={pageTitle} showHeaderTitle>
 			{loc !== 'new' && (
-				<div className="flex flex-row items-center my-4 space-x-2 w-full justify-center flex-wrap print:hidden">
+				<div className="flex flex-row items-center my-4 space-x-2 w-full justify-center flex-wrap print:hidden space-y-1">
 					{nestedRoutes
 						.filter(route =>
 							checkPermission(

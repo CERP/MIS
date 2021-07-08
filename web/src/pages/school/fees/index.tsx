@@ -66,7 +66,11 @@ export const SchoolFees: React.FC<Props> = ({ match }) => {
 			[page === Pages.PRINT_VOUCHER, <PrintVoucher key={Pages.PRINT_VOUCHER} />],
 			[
 				page === Pages.FAMILY_PAYMENTS,
-				<Family key={Pages.FAMILY_PAYMENTS} forwardTo="payments" pageTitle="Families" />
+				<Family
+					key={Pages.FAMILY_PAYMENTS}
+					forwardTo="payments"
+					pageTitle="Families Payments"
+				/>
 			],
 			[
 				page === Pages.STUDENT_PAYMENTS,

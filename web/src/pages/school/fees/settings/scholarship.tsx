@@ -5,12 +5,19 @@ import { v4 } from 'node-uuid'
 import { useDispatch, useSelector } from 'react-redux'
 import { Transition } from '@headlessui/react'
 
-import { getPaymentLabel, isValidStudent } from 'utils'
+import {
+	classYearSorter,
+	getPaymentLabel,
+	isMonthlyFee,
+	isValidStudent,
+	rollNumberSorter
+} from 'utils'
 import { toTitleCase } from 'utils/toTitleCase'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { SearchInput } from 'components/input/search'
 import { addMultipleFees } from 'actions'
 import { MISFeeLabels } from 'constants/index'
+import { Link } from 'react-router-dom'
 
 type State = {
 	classId: string
@@ -41,11 +48,14 @@ const blankFee = (): MISStudentFee => ({
 
 const getFeeStudents = (students: MISStudent[]) => {
 	return students
-		.filter(s => isValidStudent(s) && s.Active)
+		.filter(s => isValidStudent(s, { active: true }))
 		.reduce<State['students']>((agg, curr) => {
-			const [id, scholarshipFee] = Object.entries(curr.fees || {}).find(
-				([feeId, fee]) => fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP
-			) ?? [v4(), blankFee()]
+			const [id, scholarshipFee] = Object.entries(curr.fees ?? {})
+				.filter(([feeId, fee]) => !isMonthlyFee(fee))
+				.find(([feeId, fee]) => fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP) ?? [
+					v4(),
+					blankFee()
+				]
 
 			return {
 				...agg,
@@ -62,34 +72,28 @@ const getFeeStudents = (students: MISStudent[]) => {
 
 export const Scholarship = () => {
 	const dispatch = useDispatch()
-	const { students, classes, settings } = useSelector((state: RootReducerState) => state.db)
+	const students = useSelector((state: RootReducerState) => state.db.students)
+	const classes = useSelector((state: RootReducerState) => state.db.classes)
+	const settings = useSelector((state: RootReducerState) => state.db.settings)
 
 	const [state, setState] = useState<State>({
 		sectionId: '',
 		search: '',
 		students: {},
-		classId: Object.values(classes).sort((a, b) => {
-			return (a.classYear ?? 0) - (b.classYear ?? 0)
-		})?.[0].id
+		classId: Object.values(classes).sort(classYearSorter)?.[0].id
 	})
 
 	useEffect(() => {
-		setState(prevState => {
-			return {
-				...prevState,
-				students: getFeeStudents(Object.values(students || {}))
-			}
-		})
+		setState(prevState => ({
+			...prevState,
+			students: getFeeStudents(Object.values(students ?? {}))
+		}))
 	}, [students])
 
 	const classDefaultFee = settings?.classes?.defaultFee?.[state.classId]
 	const classAdditionalFees = settings?.classes?.additionalFees?.[state.classId]
 
-	const sections = useMemo(
-		() =>
-			getSectionsFromClasses(classes).sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0)),
-		[classes]
-	)
+	const sections = useMemo(() => getSectionsFromClasses(classes).sort(classYearSorter), [classes])
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLSelectElement & HTMLInputElement>) => {
 		const { name, value } = e.target
@@ -107,7 +111,7 @@ export const Scholarship = () => {
 					edited: true,
 					fee: {
 						...scholarship['fee'],
-						amount: amount as any
+						amount: isNaN(Number(amount) ? 0 : Number(amount)) as any
 					}
 				}
 			}
@@ -115,7 +119,7 @@ export const Scholarship = () => {
 	}
 
 	const saveScholarship = () => {
-		const updatedScholarships = Object.entries(state.students || {}).reduce<FeeAddItem[]>(
+		const updatedScholarships = Object.entries(state.students ?? {}).reduce<FeeAddItem[]>(
 			(agg, [studentId, feeItem]) => {
 				const { edited, fee } = feeItem
 
@@ -138,7 +142,9 @@ export const Scholarship = () => {
 
 		if (updatedScholarships.length > 0) {
 			dispatch(addMultipleFees(updatedScholarships))
-			const msg = `Scholarship has been updated for ${updatedScholarships.length} students`
+
+			const scholarshipFor = updatedScholarships.length === 1 ? 'student' : 'students'
+			const msg = `Scholarship has been updated for ${updatedScholarships.length} ${scholarshipFor}`
 			toast.success(msg)
 		}
 	}
@@ -154,7 +160,7 @@ export const Scholarship = () => {
 						className="rounded-md tw-select shadow-sm w-full">
 						<option disabled>Select Class</option>
 						{Object.values(classes)
-							.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
+							.sort(classYearSorter)
 							.map(c => (
 								<option key={c.id} value={c.id}>
 									{toTitleCase(c.name)}
@@ -169,10 +175,10 @@ export const Scholarship = () => {
 						<option>Select Section</option>
 						{sections
 							.filter(s => s.class_id === state.classId)
-							.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
+							.sort(classYearSorter)
 							.map(s => (
 								<option key={s.id + s.class_id} value={s.id}>
-									{toTitleCase(s.namespaced_name, '-')}
+									{s.namespaced_name}
 								</option>
 							))}
 					</select>
@@ -211,7 +217,7 @@ export const Scholarship = () => {
 				{Object.values(students)
 					.filter(
 						student =>
-							isValidStudent(student) &&
+							isValidStudent(student, { active: true }) &&
 							(state.sectionId
 								? student.section_id === state.sectionId
 								: sections
@@ -222,7 +228,7 @@ export const Scholarship = () => {
 								? student.Name.toLowerCase().includes(state.search.toLowerCase())
 								: true)
 					)
-					.sort((a, b) => (parseInt(a.RollNumber) ?? 0) - (parseInt(b.RollNumber) ?? 0))
+					.sort(rollNumberSorter)
 					.map((s, index) => (
 						<Card
 							classFee={classDefaultFee}
@@ -269,11 +275,11 @@ const Card = ({
 			name: 'Class Fee'
 		},
 		...Object.values(additionalFees ?? {}),
-		...Object.values(student.fees ?? {})
+		...Object.values(student.fees ?? {}).filter(fee => !isMonthlyFee(fee))
 	]
 
 	const totalFeeAmount = fees
-		.filter(f => f.name && f.amount)
+		.filter(f => f.amount)
 		.reduce(
 			(agg, curr) =>
 				curr.type === 'SCHOLARSHIP'
@@ -286,7 +292,11 @@ const Card = ({
 		<div className="border border-gray-100 shadow-md rounded-lg p-2 bg-white w-full">
 			<div className="flex flex-row justify-between">
 				<div className="flex flex-col w-full">
-					<div>{toTitleCase(student.Name)}</div>
+					<Link
+						to={`/students/${student.id}/payments`}
+						className="hover:underline hover:text-blue-brand">
+						{toTitleCase(student.Name)}
+					</Link>
 					<div className="flex flex-row items-center space-x-2">
 						<div className="text-teal-brand w-2/5 md:w-1/3">
 							Final = Rs. {totalFeeAmount}

@@ -1,4 +1,5 @@
 import moment from 'moment'
+import { isMonthlyFee } from 'utils'
 
 type payment = {
 	student: AugmentedStudent
@@ -44,7 +45,7 @@ function checkStudentDuesReturning(
 	// because in future, payments would be generated from class fees of type 'MONTHLY'
 	let fees: Array<[string, MISStudentFee | MISClassFee]> = Object.entries(
 		student.fees ?? {}
-	).filter(([id, fee]) => !(fee.type === 'FEE' && fee.period === 'MONTHLY'))
+	).filter(([id, fee]) => !isMonthlyFee(fee))
 
 	if (student.section?.class_id) {
 		// get default class fee
