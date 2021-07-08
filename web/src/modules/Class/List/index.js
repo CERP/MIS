@@ -1,11 +1,12 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
+import qs from 'query-string'
 
 import { LayoutWrap } from 'components/Layout'
 import List from 'components/List'
-import qs from 'query-string'
 import { getSectionsFromClasses } from 'utils/getSectionsFromClasses'
+import { classYearSorter } from 'utils'
 
 const ClassItem = c => {
 	return (
@@ -27,7 +28,7 @@ const SectionItem = section => {
 
 export const ClassListModule = ({ classes, forwardTo }) => {
 	let items = Object.values(classes)
-		.sort((a, b) => (a.classYear || 0) - (b.classYear || 0))
+		.sort(classYearSorter)
 		.map(c => ({ ...c, forwardTo }))
 
 	let create = '/class/new'
@@ -41,7 +42,7 @@ export const ClassListModule = ({ classes, forwardTo }) => {
 	if (forwardTo === 'report-menu') {
 		create = ''
 		items = getSectionsFromClasses(classes)
-			.sort((a, b) => (a.classYear || 0) - (b.classYear || 0))
+			.sort(classYearSorter)
 			.map(section => ({ ...section, forwardTo }))
 	}
 
