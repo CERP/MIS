@@ -65,7 +65,7 @@ class DailyStats extends Component<PropsType, S> {
 					...Object.entries(curr.payments ?? {}).reduce((agg, [pid, p]) => {
 						return {
 							...agg,
-							[pid]: {
+							[pid + '$' + curr.id]: {
 								...p,
 								fee_name: p.fee_name && `${curr.Name}-${p.fee_name}`,
 								student_id: curr.id

@@ -103,10 +103,9 @@ class ClassFeeMenu extends Component<propTypes, S> {
 		const relevant_students = Object.values(students)
 			.filter(
 				s =>
+					isValidStudent(s, { active: true }) &&
 					curr_class.sections[s.section_id] !== undefined &&
-					!s.FamilyID &&
-					s.Active &&
-					!s.tags?.['FINISHED_SCHOOL']
+					!s.FamilyID
 			)
 			.sort(rollNumberSorter)
 
