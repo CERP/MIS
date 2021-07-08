@@ -7,7 +7,7 @@ import moment from 'moment'
 import { AttendanceStatsCard } from 'components/attendance'
 import { TModal } from 'components/Modal'
 import { markAllStudents, markStudent } from 'actions'
-import { isValidStudent } from 'utils'
+import { classYearSorter, isValidStudent, rollNumberSorter } from 'utils'
 import { toTitleCase } from 'utils/toTitleCase'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
@@ -18,7 +18,7 @@ type State = {
 	selectedSection?: string
 	date: number
 	selectedStudents: {
-		[id: string]: boolean
+		[id: string]: MISStudent
 	}
 }
 
@@ -33,11 +33,13 @@ enum AttendanceStatus {
 }
 
 const getStudentsForSection = (sectionId: string, students: RootDBState['students']) =>
-	Object.values(students).filter(s => isValidStudent(s) && s.section_id === sectionId && s.Active)
+	Object.values(students).filter(
+		s => isValidStudent(s, { active: true }) && s.section_id === sectionId
+	)
 
 const deriveSelectedStudents = (sectionId: string, students: RootDBState['students']) =>
 	getStudentsForSection(sectionId, students).reduce(
-		(agg, curr) => ({ ...agg, [curr.id]: true }),
+		(agg, curr) => ({ ...agg, [curr.id]: curr }),
 		{}
 	)
 
@@ -63,11 +65,7 @@ export const StudentsAttendance = () => {
 
 	const attendanceDate = moment(date).format('YYYY-MM-DD')
 
-	const sections = useMemo(
-		() =>
-			getSectionsFromClasses(classes).sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0)),
-		[classes]
-	)
+	const sections = useMemo(() => getSectionsFromClasses(classes).sort(classYearSorter), [classes])
 
 	useEffect(() => {
 		if (sections.length !== 0) {
@@ -147,10 +145,10 @@ export const StudentsAttendance = () => {
 						onChange={e => setState({ ...state, selectedSection: e.target.value })}
 						className="w-full md:w-72 bg-transparent tw-input border-blue-brand ring-1">
 						{sections
-							.filter(s => s && s.id && s.namespaced_name)
+							.filter(s => s && s.id)
 							.map(s => (
 								<option key={s.id} value={s.id}>
-									{toTitleCase(s.namespaced_name, '-')}
+									{s.namespaced_name}
 								</option>
 							))}
 					</select>
@@ -186,14 +184,16 @@ export const StudentsAttendance = () => {
 					</div>
 				</div>
 				<div className="space-y-2 pt-4">
-					{Object.keys(selectedStudents).map(studentId => (
-						<Card
-							key={studentId}
-							student={students[studentId]}
-							attendanceDate={attendanceDate}
-							markAttendance={markAttendanceHandler}
-						/>
-					))}
+					{Object.entries(selectedStudents)
+						.sort(([, a], [, b]) => rollNumberSorter(a, b))
+						.map(([studentId, student]) => (
+							<Card
+								key={studentId}
+								student={students[studentId]}
+								attendanceDate={attendanceDate}
+								markAttendance={markAttendanceHandler}
+							/>
+						))}
 				</div>
 			</div>
 		</div>

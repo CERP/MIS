@@ -1,19 +1,19 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps } from 'react-router'
 import { v4 } from 'node-uuid'
 import moment from 'moment'
 import Banner from 'components/Banner'
 import Layout from 'components/Layout'
-import former from "utils/former"
+import former from 'utils/former'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
 import { addMultipleFees, addFee, deleteMultipleFees, resetFees } from 'actions'
 import { Link } from 'react-router-dom'
 import { isValidStudent } from 'utils'
 
 interface P {
-	students: RootDBState["students"]
-	classes: RootDBState["classes"]
+	students: RootDBState['students']
+	classes: RootDBState['classes']
 
 	addMultipleFees: (fees: FeeAddItem[]) => void
 	addFee: (fee: FeeSingleItem) => void
@@ -31,11 +31,11 @@ interface S {
 	fee: MISStudentFee
 	selected_section_id: string
 	selected_student_id: string
-	fee_filter: "to_all_students" | "to_single_class" | "to_single_student" | ""
+	fee_filter: 'to_all_students' | 'to_single_class' | 'to_single_student' | ''
 
 	reset_of_selected_section_id: string
 	reset_of_selected_student_id: string
-	reset_fee_filter: "to_all_students" | "to_single_class" | "to_single_student" | ""
+	reset_fee_filter: 'to_all_students' | 'to_single_class' | 'to_single_student' | ''
 }
 
 interface FeeDeleteMap {
@@ -65,29 +65,28 @@ type ReducedFeeMap = {
 type propTypes = RouteComponentProps & P
 
 class ManageFees extends Component<propTypes, S> {
-
 	former: former
 
 	constructor(props: propTypes) {
-		super(props);
+		super(props)
 
 		this.state = {
 			banner: {
 				active: false,
 				good: true,
-				text: "Saved!"
+				text: 'Saved!'
 			},
-			fee_filter: "to_all_students",
-			selected_section_id: "",
-			selected_student_id: "",
-			reset_fee_filter: "to_all_students",
-			reset_of_selected_section_id: "",
-			reset_of_selected_student_id: "",
+			fee_filter: 'to_all_students',
+			selected_section_id: '',
+			selected_student_id: '',
+			reset_fee_filter: 'to_all_students',
+			reset_of_selected_section_id: '',
+			reset_of_selected_student_id: '',
 			fee: {
-				name: "",
-				type: "",
-				amount: "",
-				period: ""
+				name: '',
+				type: '',
+				amount: '',
+				period: ''
 			}
 		}
 
@@ -95,11 +94,14 @@ class ManageFees extends Component<propTypes, S> {
 	}
 
 	delete = (students_fees: FeeDeleteMap) => {
-
 		const effected_students = Object.values(students_fees).length // no. of fees == no. of effected students
 
-		if (window.confirm(effected_students + " students records will be effected! Are you sure you want to Delete Added Fees?")) {
-
+		if (
+			window.confirm(
+				effected_students +
+				' students records will be effected! Are you sure you want to Delete Added Fees?'
+			)
+		) {
 			// deleting multiple fees and generated payments
 			this.props.deleteMultipleFees(students_fees)
 
@@ -107,29 +109,26 @@ class ManageFees extends Component<propTypes, S> {
 				banner: {
 					active: true,
 					good: true,
-					text: "Bulk fees removed successfully"
+					text: 'Bulk fees removed successfully'
 				}
 			})
 
-			setTimeout(() => this.setState({ banner: { active: false } }), 3000);
-
+			setTimeout(() => this.setState({ banner: { active: false } }), 3000)
 		}
 	}
 
 	save = () => {
-
-		const { students } = this.props;
+		const { students } = this.props
 		const { amount, name, type, period } = this.state.fee
 
-		if (name === "" || amount === "" || period === "" || type === "") {
-
-			setTimeout(() => this.setState({ banner: { active: false } }), 3000);
+		if (name === '' || amount === '' || period === '' || type === '') {
+			setTimeout(() => this.setState({ banner: { active: false } }), 3000)
 
 			return this.setState({
 				banner: {
 					active: true,
 					good: false,
-					text: "Please Fill All of the Information"
+					text: 'Please Fill All of the Information'
 				}
 			})
 		}
@@ -139,21 +138,24 @@ class ManageFees extends Component<propTypes, S> {
 		// Negative while generating every payment from fees having type SCHOLARSHIP against any student,
 		// to differentiate between other types of generated payments, so it must be a Absolute Amount here
 
-		let temp_amount = amount;
+		let temp_amount = amount
 
-		if (type === "SCHOLARSHIP") {
+		if (type === 'SCHOLARSHIP') {
 			const parsed_amount = parseFloat(temp_amount)
 
 			if (!isNaN(parsed_amount)) {
 				temp_amount = Math.abs(parsed_amount).toString()
 			} else {
-				alert("Please Enter Valid Amount")
+				alert('Please Enter Valid Amount')
 				return
 			}
 		}
 
-		if (this.state.fee_filter === "to_single_student" && this.state.selected_student_id !== "" && this.state.selected_section_id !== "") {
-
+		if (
+			this.state.fee_filter === 'to_single_student' &&
+			this.state.selected_student_id !== '' &&
+			this.state.selected_section_id !== ''
+		) {
 			const student_fee = {
 				student_id: this.state.selected_student_id,
 				fee_id: v4(),
@@ -170,15 +172,23 @@ class ManageFees extends Component<propTypes, S> {
 				banner: {
 					active: true,
 					good: true,
-					text: "Saved!"
+					text: 'Saved!'
 				}
 			})
 		}
 
-		if (this.state.fee_filter === "to_all_students" || (this.state.fee_filter === "to_single_class")) {
-
+		if (
+			this.state.fee_filter === 'to_all_students' ||
+			this.state.fee_filter === 'to_single_class'
+		) {
 			const fees = Object.values(students)
-				.filter(s => isValidStudent(s) && (this.state.selected_section_id === "" ? true : s.section_id === this.state.selected_section_id))
+				.filter(
+					s =>
+						isValidStudent(s) &&
+						(this.state.selected_section_id === ''
+							? true
+							: s.section_id === this.state.selected_section_id)
+				)
 				.map(student => {
 					const fee_id = v4()
 					return {
@@ -191,12 +201,11 @@ class ManageFees extends Component<propTypes, S> {
 					}
 				})
 
-			const temp = this.state.fee_filter === "to_all_students" ? 'All' : 'Class';
-			const effected_students = Object.values(fees).length  // no. of fees == no. of effected students
+			const temp = this.state.fee_filter === 'to_all_students' ? 'All' : 'Class'
+			const effected_students = Object.values(fees).length // no. of fees == no. of effected students
 			const alert_message = `${effected_students} Students Records will be effected! Are you sure you want to add fee to whole ${temp} Students?`
 
 			if (window.confirm(alert_message)) {
-
 				// adding multiple fees of type FEE | SCHOLARSHIP
 				this.props.addMultipleFees(fees)
 
@@ -204,17 +213,16 @@ class ManageFees extends Component<propTypes, S> {
 					banner: {
 						active: true,
 						good: true,
-						text: "Saved!"
+						text: 'Saved!'
 					}
 				})
 			}
 		}
 
-		setTimeout(() => this.setState({ banner: { active: false } }), 3000);
+		setTimeout(() => this.setState({ banner: { active: false } }), 3000)
 	}
 
 	getSelectedSectionStudents = () => {
-
 		const { selected_section_id } = this.state
 
 		return Object.values(this.props.students)
@@ -223,7 +231,6 @@ class ManageFees extends Component<propTypes, S> {
 	}
 
 	getSelectedSectionStudentsForFeeReset = () => {
-
 		const { reset_of_selected_section_id } = this.state
 
 		return Object.values(this.props.students)
@@ -232,37 +239,44 @@ class ManageFees extends Component<propTypes, S> {
 	}
 
 	filterCallback = () => {
-		if (this.state.fee_filter === "to_all_students" || this.state.fee_filter === "") {
+		if (this.state.fee_filter === 'to_all_students' || this.state.fee_filter === '') {
 			this.setState({
-				selected_section_id: "",
-				selected_student_id: ""
+				selected_section_id: '',
+				selected_student_id: ''
 			})
 		}
 	}
 
 	resetStudentsFees = () => {
-
-		const { reset_fee_filter, reset_of_selected_section_id, reset_of_selected_student_id } = this.state
+		const {
+			reset_fee_filter,
+			reset_of_selected_section_id,
+			reset_of_selected_student_id
+		} = this.state
 
 		let students = Object.values(this.props.students)
 			.filter(s => isValidStudent(s))
 			.filter(student => {
-
-				if (reset_fee_filter === "to_all_students") {
+				if (reset_fee_filter === 'to_all_students') {
 					return true
 				}
 
-				if (reset_fee_filter === "to_single_class" && student.section_id === reset_of_selected_section_id) {
+				if (
+					reset_fee_filter === 'to_single_class' &&
+					student.section_id === reset_of_selected_section_id
+				) {
 					return true
 				}
 
-				if (reset_fee_filter === "to_single_student" && student.id === reset_of_selected_student_id) {
+				if (
+					reset_fee_filter === 'to_single_student' &&
+					student.id === reset_of_selected_student_id
+				) {
 					return true
 				}
 
 				// in case of empty selection
 				return false
-
 			})
 
 		const student_count = students.length
@@ -270,173 +284,241 @@ class ManageFees extends Component<propTypes, S> {
 		const alert_message = `Warning this action cannot be undo! ${student_count} student will be affected. Are you sure you want to reset fees?`
 
 		if (window.confirm(alert_message) && student_count > 0) {
-
 			this.props.resetFees(students)
 
-			this.setState({
-				banner: {
-					active: true,
-					good: true,
-					text: "Fees has been reset!"
+			this.setState(
+				{
+					banner: {
+						active: true,
+						good: true,
+						text: 'Fees has been reset!'
+					}
+				},
+				() => {
+					setTimeout(() => this.setState({ banner: { active: false } }), 3000)
 				}
-			}, () => {
-				setTimeout(() => this.setState({ banner: { active: false } }), 3000)
-			})
+			)
 		}
 	}
 
 	render() {
+		const { classes } = this.props
+		const sortedSections = getSectionsFromClasses(classes).sort(
+			(a, b) => (a.classYear || 0) - (b.classYear || 0)
+		)
 
-		const { classes } = this.props;
-		const sortedSections = getSectionsFromClasses(classes).sort((a, b) => (a.classYear || 0) - (b.classYear || 0));
+		const fee_undo_students =
+			this.state.fee_filter === 'to_all_students'
+				? Object.values(this.props.students)
+				: this.getSelectedSectionStudents()
 
-		const fee_undo_students = this.state.fee_filter === "to_all_students" ?
-			Object.values(this.props.students) :
-			this.getSelectedSectionStudents();
+		return (
+			<Layout history={this.props.history}>
+				<div className="section-container" style={{ display: 'block' }}>
+					{this.state.banner.active ? (
+						<Banner isGood={this.state.banner.good} text={this.state.banner.text} />
+					) : (
+						false
+					)}
 
-		return <Layout history={this.props.history}>
-			<div className="section-container" style={{ display: "block" }}>
+					<div className="title">Fee Management</div>
+					<div className="row" style={{ justifyContent: 'flex-end' }}>
+						<Link className="button blue" to="/fees/add-historical-fee">
+							Add Historical Fee
+						</Link>
+					</div>
+					<div className="divider">Add Fee</div>
+					<div className="section form">
+						<div className="row">
+							<label>Add To</label>
+							<select
+								{...this.former.super_handle(
+									['fee_filter'],
+									() => true,
+									() => this.filterCallback()
+								)}>
+								<option value="">Select Students</option>
+								<option value="to_all_students">All Students</option>
+								<option value="to_single_class">Single Class</option>
+								<option value="to_single_student">Single Student</option>
+							</select>
+						</div>
 
-				{this.state.banner.active ? <Banner isGood={this.state.banner.good} text={this.state.banner.text} /> : false}
+						{this.state.fee_filter === 'to_single_class' ||
+							this.state.fee_filter === 'to_single_student' ? ( //Section Wise
+							<div className="row">
+								<label>Select Class</label>
+								<select {...this.former.super_handle(['selected_section_id'])}>
+									<option value="">Select Class</option>
+									{sortedSections.map(s => (
+										<option key={s.id} value={s.id}>
+											{s.namespaced_name}
+										</option>
+									))}
+								</select>
+							</div>
+						) : (
+							false
+						)}
+						{this.state.fee_filter === 'to_single_student' &&
+							this.state.selected_section_id !== '' ? (
+							<div className="row">
+								<label>Select Student</label>
+								<select {...this.former.super_handle(['selected_student_id'])}>
+									<option value="">Select Student</option>
+									{this.getSelectedSectionStudents().map(s => (
+										<option key={s.id} value={s.id}>
+											{s.Name}
+										</option>
+									))}
+								</select>
+							</div>
+						) : (
+							false
+						)}
 
-				<div className="title">Fee Management</div>
-				<div className="row" style={{ justifyContent: "flex-end" }}>
-					<Link className="button blue" to="/fees/add-historical-fee">Add Historical Fee</Link>
+						<div className="row">
+							<label>Fee Type</label>
+							<select {...this.former.super_handle(['fee', 'type'])}>
+								<option value="">Select Fee Type</option>
+								<option value="FEE">Fee</option>
+								<option value="SCHOLARSHIP">Scholarship</option>
+							</select>
+						</div>
+						<div className="row">
+							<label>Name</label>
+							<input
+								type="text"
+								{...this.former.super_handle(['fee', 'name'])}
+								placeholder="Enter Name"
+							/>
+						</div>
+						<div className="row">
+							<label>Amount</label>
+							<input
+								type="number"
+								{...this.former.super_handle(['fee', 'amount'])}
+								placeholder="Enter Amount"
+							/>
+						</div>
+						<div className="row">
+							<label>Fee Period</label>
+							<select {...this.former.super_handle(['fee', 'period'])}>
+								<option value="">Select Period</option>
+								<option value="MONTHLY">Monthly</option>
+								<option value="SINGLE">One Time</option>
+							</select>
+						</div>
+						<div className="button blue" onClick={this.save}>
+							{' '}
+							Add{' '}
+						</div>
+					</div>
+					<div className="divider">Reset Fee</div>
+					<div className="section form">
+						<div className="row">
+							<label>Reset of</label>
+							<select
+								{...this.former.super_handle(
+									['reset_fee_filter'],
+									() => true,
+									() => this.filterCallback()
+								)}>
+								<option value="">Select Students</option>
+								<option value="to_all_students">All Students</option>
+								<option value="to_single_class">Single Class</option>
+								<option value="to_single_student">Single Student</option>
+							</select>
+						</div>
+
+						{this.state.reset_fee_filter === 'to_single_class' ||
+							this.state.reset_fee_filter === 'to_single_student' ? ( //Section Wise
+							<div className="row">
+								<label>Select Class</label>
+								<select
+									{...this.former.super_handle(['reset_of_selected_section_id'])}>
+									<option value="">Select Class</option>
+									{sortedSections.map(s => (
+										<option key={s.id} value={s.id}>
+											{s.namespaced_name}
+										</option>
+									))}
+								</select>
+							</div>
+						) : (
+							false
+						)}
+						{this.state.reset_fee_filter === 'to_single_student' &&
+							this.state.reset_of_selected_section_id !== '' ? (
+							<div className="row">
+								<label>Select Student</label>
+								<select
+									{...this.former.super_handle(['reset_of_selected_student_id'])}>
+									<option value="">Select Student</option>
+									{this.getSelectedSectionStudentsForFeeReset().map(s => (
+										<option key={s.id} value={s.id}>
+											{s.Name}
+										</option>
+									))}
+								</select>
+							</div>
+						) : (
+							false
+						)}
+						<div
+							className="button red"
+							style={{ marginTop: 10 }}
+							onClick={this.resetStudentsFees}>
+							Reset Fee
+						</div>
+					</div>
+
+					<div className="divider">Recent Added Fees</div>
+					<RemoveFeesComponent
+						students={fee_undo_students}
+						fee_filter={this.state.fee_filter}
+						selected_section_id={this.state.selected_section_id}
+						selected_student_id={this.state.selected_student_id}
+						delete={this.delete}
+					/>
 				</div>
-				<div className="divider">Add Fee</div>
-				<div className="section form">
-					<div className="row">
-						<label>Add To</label>
-						<select {...this.former.super_handle(["fee_filter"], () => true, () => this.filterCallback())}>
-							<option value="">Select Students</option>
-							<option value="to_all_students">All Students</option>
-							<option value="to_single_class">Single Class</option>
-							<option value="to_single_student">Single Student</option>
-						</select>
-					</div>
-
-					{this.state.fee_filter === "to_single_class" || this.state.fee_filter === "to_single_student" ?  //Section Wise
-						<div className="row">
-							<label>Select Class</label>
-							<select {...this.former.super_handle(["selected_section_id"])}>
-								<option value="" >Select Class</option>
-								{
-									sortedSections.map(s => <option key={s.id} value={s.id}>{s.namespaced_name}</option>)
-								}
-							</select>
-						</div> : false}
-					{this.state.fee_filter === "to_single_student" && this.state.selected_section_id !== "" ?
-						<div className="row">
-							<label>Select Student</label>
-							<select {...this.former.super_handle(["selected_student_id"])}>
-								<option value="">Select Student</option>
-								{
-									this.getSelectedSectionStudents().map(s => <option key={s.id} value={s.id}>{s.Name}</option>)
-								}
-							</select>
-						</div> : false}
-
-					<div className="row">
-						<label>Fee Type</label>
-						<select {...this.former.super_handle(["fee", "type"])}>
-							<option value="">Select Fee Type</option>
-							<option value="FEE">Fee</option>
-							<option value="SCHOLARSHIP">Scholarship</option>
-						</select>
-					</div>
-					<div className="row">
-						<label>Name</label>
-						<input type="text" {...this.former.super_handle(["fee", "name"])} placeholder="Enter Name" />
-					</div>
-					<div className="row">
-						<label>Amount</label>
-						<input type="number" {...this.former.super_handle(["fee", "amount"])} placeholder="Enter Amount" />
-					</div>
-					<div className="row">
-						<label>Fee Period</label>
-						<select {...this.former.super_handle(["fee", "period"])}>
-							<option value="">Select Period</option>
-							<option value="MONTHLY">Monthly</option>
-							<option value="SINGLE">One Time</option>
-						</select>
-					</div>
-					<div className="button blue" onClick={this.save}> Add </div>
-				</div>
-				<div className="divider">Reset Fee</div>
-				<div className="section form">
-					<div className="row">
-						<label>Reset of</label>
-						<select {...this.former.super_handle(["reset_fee_filter"], () => true, () => this.filterCallback())}>
-							<option value="">Select Students</option>
-							<option value="to_all_students">All Students</option>
-							<option value="to_single_class">Single Class</option>
-							<option value="to_single_student">Single Student</option>
-						</select>
-					</div>
-
-					{this.state.reset_fee_filter === "to_single_class" || this.state.reset_fee_filter === "to_single_student" ?  //Section Wise
-						<div className="row">
-							<label>Select Class</label>
-							<select {...this.former.super_handle(["reset_of_selected_section_id"])}>
-								<option value="" >Select Class</option>
-								{
-									sortedSections.map(s => <option key={s.id} value={s.id}>{s.namespaced_name}</option>)
-								}
-							</select>
-						</div> : false}
-					{this.state.reset_fee_filter === "to_single_student" && this.state.reset_of_selected_section_id !== "" ?
-						<div className="row">
-							<label>Select Student</label>
-							<select {...this.former.super_handle(["reset_of_selected_student_id"])}>
-								<option value="">Select Student</option>
-								{
-									this.getSelectedSectionStudentsForFeeReset().map(s => <option key={s.id} value={s.id}>{s.Name}</option>)
-								}
-							</select>
-						</div> : false}
-					<div className="button red" style={{ marginTop: 10 }} onClick={this.resetStudentsFees}>Reset Fee</div>
-				</div>
-
-				<div className="divider">Recent Added Fees</div>
-				<RemoveFeesComponent students={fee_undo_students} fee_filter={this.state.fee_filter} selected_section_id={this.state.selected_section_id} selected_student_id={this.state.selected_student_id} delete={this.delete} />
-
-			</div>
-		</Layout>
+			</Layout>
+		)
 	}
 }
 
-export default connect((state: RootReducerState) => ({
-	students: state.db.students,
-	classes: state.db.classes,
-}), (dispatch: Function) => ({
-	addMultipleFees: (fees: FeeAddItem[]) => dispatch(addMultipleFees(fees)),
-	addFee: (fee: FeeSingleItem) => dispatch(addFee(fee)),
-	deleteMultipleFees: (students_fees: FeeDeleteMap) => dispatch(deleteMultipleFees(students_fees)),
-	resetFees: (students: MISStudent[]) => dispatch(resetFees(students)),
-}))(ManageFees);
-
+export default connect(
+	(state: RootReducerState) => ({
+		students: state.db.students,
+		classes: state.db.classes
+	}),
+	(dispatch: Function) => ({
+		addMultipleFees: (fees: FeeAddItem[]) => dispatch(addMultipleFees(fees)),
+		addFee: (fee: FeeSingleItem) => dispatch(addFee(fee)),
+		deleteMultipleFees: (students_fees: FeeDeleteMap) =>
+			dispatch(deleteMultipleFees(students_fees)),
+		resetFees: (students: MISStudent[]) => dispatch(resetFees(students))
+	})
+)(ManageFees)
 
 interface RemoveProps {
 	students: MISStudent[]
-	fee_filter: "to_all_students" | "to_single_class" | "to_single_student" | ""
+	fee_filter: 'to_all_students' | 'to_single_class' | 'to_single_student' | ''
 	selected_section_id: string
 	selected_student_id: string
 	delete: (students_fees: FeeDeleteMap) => void
 }
 
 interface RemoveState {
-
 	loading: boolean
 	reduced_fees: ReducedFeeMap
-
 }
 
 class RemoveFeesComponent extends React.PureComponent<RemoveProps, RemoveState> {
-
 	background_calculation: NodeJS.Timeout
 
 	constructor(props: RemoveProps) {
-		super(props);
+		super(props)
 
 		this.state = {
 			loading: true,
@@ -453,8 +535,7 @@ class RemoveFeesComponent extends React.PureComponent<RemoveProps, RemoveState> 
 	}
 
 	calculate = () => {
-
-		const s1 = new Date().getTime();
+		const s1 = new Date().getTime()
 		console.log('STARTING REDUCE')
 
 		const { students } = this.props
@@ -464,23 +545,23 @@ class RemoveFeesComponent extends React.PureComponent<RemoveProps, RemoveState> 
 			clearTimeout(this.background_calculation)
 		}
 
-		let i = 0;
+		let i = 0
 		const agg: ReducedFeeMap = {}
 
 		const reducify = () => {
 			if (i >= students.length) {
 				// we are done with the calculation
 
-				const s2 = new Date().getTime();
-				console.log("done reducing", s2 - s1)
+				const s2 = new Date().getTime()
+				console.log('done reducing', s2 - s1)
 				return this.setState({
 					loading: false,
 					reduced_fees: agg
 				})
 			}
 
-			const curr = students[i];
-			i += 1;
+			const curr = students[i]
+			i += 1
 			console.log('computing student', i)
 
 			if (!curr.Name || !curr.fees || !curr.payments) {
@@ -488,103 +569,109 @@ class RemoveFeesComponent extends React.PureComponent<RemoveProps, RemoveState> 
 				return
 			}
 
-			const fees = curr.fees;
+			const fees = curr.fees
 			const curr_payments = curr.payments
 
-			Object.entries(fees)
-				.forEach(([fee_id, fee]) => {
+			Object.entries(fees).forEach(([fee_id, fee]) => {
+				// if the fee id is empty string, just return
+				if (fee_id === '') return
 
-					// if the fee id is empty string, just return
-					if (fee_id === "") return;
+				const fee_key = `${fee.name}-${fee.period}-${fee.type}-${fee.amount}`
+				const curr_date = moment().format('MM/YYYY')
 
-					const fee_key = `${fee.name}-${fee.period}-${fee.type}-${fee.amount}`
-					const curr_date = moment().format("MM/YYYY")
-
-					const paymentIds = Object.entries(curr_payments)
-						.reduce((agg2, [payment_id, payment]) => {
-							if (!payment || payment.type !== "OWED" || payment.fee_id !== fee_id ||
-								moment(payment.date).format("MM/YYYY") !== curr_date) {
-								return agg2;
-							}
-
-							agg2.push(payment_id)
-							return agg2;
-						}, [])
-
-
-					if (agg[fee_key]) {
-						agg[fee_key] = {
-							count: agg[fee_key].count + 1,
-							students_fees: {
-								...agg[fee_key].students_fees,
-								[fee_id]: {
-									student_id: curr.id,
-									paymentIds: paymentIds
-								}
-							}
+				const paymentIds = Object.entries(curr_payments).reduce(
+					(agg2, [payment_id, payment]) => {
+						if (
+							!payment ||
+							payment.type !== 'OWED' ||
+							payment.fee_id !== fee_id ||
+							moment(payment.date).format('MM/YYYY') !== curr_date
+						) {
+							return agg2
 						}
-					} else {
-						agg[fee_key] = {
-							count: 1,
-							students_fees: {
-								[fee_id]: {
-									student_id: curr.id,
-									paymentIds: paymentIds
-								}
+
+						agg2.push(payment_id)
+						return agg2
+					},
+					[]
+				)
+
+				if (agg[fee_key]) {
+					agg[fee_key] = {
+						count: agg[fee_key].count + 1,
+						students_fees: {
+							...agg[fee_key].students_fees,
+							[fee_id]: {
+								student_id: curr.id,
+								paymentIds: paymentIds
 							}
 						}
 					}
-				})
+				} else {
+					agg[fee_key] = {
+						count: 1,
+						students_fees: {
+							[fee_id]: {
+								student_id: curr.id,
+								paymentIds: paymentIds
+							}
+						}
+					}
+				}
+			})
 
 			this.background_calculation = setTimeout(reducify, 0)
 		}
 
 		reducify()
-
 	}
 
 	shouldComponentUpdate(nextProps: RemoveProps, nextState: RemoveState) {
-
 		// check if the students changed
 
-
-		return true;
+		return true
 	}
 
 	render() {
-
 		if (this.state.loading) {
 			return <div>Loading...</div>
 		}
 
-		const reduced_fees = this.state.reduced_fees;
+		const reduced_fees = this.state.reduced_fees
 
-		return <div className="section form">
-			{Object.entries(reduced_fees)
-				.filter(([, val]) => {
-					if (this.props.fee_filter === "to_all_students") {
-						// get size of all students
-						const total_students = Object.values(this.props.students).length
-						return val.count > .9 * total_students;
-					}
+		return (
+			<div className="section form">
+				{Object.entries(reduced_fees)
+					.filter(([, val]) => {
+						if (this.props.fee_filter === 'to_all_students') {
+							// get size of all students
+							const total_students = Object.values(this.props.students).length
+							return val.count > 0.9 * total_students
+						} else if (
+							this.props.fee_filter === 'to_single_class' &&
+							this.props.selected_section_id !== ''
+						) {
+							// get size of class with section_id this.state.selected_section_id
+							const size_of_class = Object.values(this.props.students).filter(
+								s => s.section_id === this.props.selected_section_id
+							).length
+							return val.count > 0.9 * size_of_class
+						}
 
-					else if (this.props.fee_filter === "to_single_class" && this.props.selected_section_id !== "") {
-						// get size of class with section_id this.state.selected_section_id
-						const size_of_class = Object.values(this.props.students).filter(s => s.section_id === this.props.selected_section_id).length;
-						return val.count > .9 * size_of_class
-					}
-
-					return false;
-				})
-				.sort(([a,], [b,]) => a.localeCompare(b))
-				.map(([key, val]) =>
-					<div className="row" key={key}>
-						<label>{key}</label>
-						<div className="button red" onClick={() => this.props.delete(val.students_fees)}>Delete</div>
-					</div>
-				)
-			}
-		</div>
+						return false
+					})
+					.sort(([a], [b]) => a.localeCompare(b))
+					.map(([key, val]) => (
+						<div className="row" key={key}>
+							<label>{key}</label>
+							<div
+								className="button red"
+								onClick={() => this.props.delete(val.students_fees)}>
+								Delete
+							</div>
+						</div>
+					))}
+			</div>
+		)
 	}
-
 }

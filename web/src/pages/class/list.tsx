@@ -7,10 +7,11 @@ import { toTitleCase } from 'utils/toTitleCase'
 import { AppLayout } from 'components/Layout/appLayout'
 import { SearchInput } from 'components/input/search'
 import { AddStickyButton } from 'components/Button/add-sticky'
-import { isValidStudent } from 'utils'
+import { classYearSorter, isValidStudent } from 'utils'
 
 export const ClassList = () => {
-	const { classes, students } = useSelector((state: RootReducerState) => state.db)
+	const classes = useSelector((state: RootReducerState) => state.db.classes)
+	const students = useSelector((state: RootReducerState) => state.db.students)
 	const [search, setSearch] = useState('')
 
 	return (
@@ -41,7 +42,7 @@ export const ClassList = () => {
 									? c.name.toLowerCase().includes(search.toLowerCase())
 									: true)
 						)
-						.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
+						.sort(classYearSorter)
 						.map(c => (
 							<Link key={c.id} to={`classes/${c.id}/view`}>
 								<Card misClass={c} students={students} />
@@ -63,7 +64,7 @@ const Card = ({ misClass, students }: CardProps) => {
 	const sectionIds = sections.reduce((agg, curr) => [...agg, curr.id], [])
 
 	const totalStudents = Object.values(students ?? {}).filter(
-		s => isValidStudent(s) && s.Active && sectionIds.includes(s.section_id)
+		s => isValidStudent(s, { active: true }) && sectionIds.includes(s.section_id)
 	).length
 
 	const teachers = sections.reduce((agg, curr) => {

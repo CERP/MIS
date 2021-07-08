@@ -485,7 +485,7 @@ class FeeAnalytics extends Component<propTypes, S> {
 		const sections = getSectionsFromClasses(this.props.classes)
 
 		return Object.values(this.props.students).reduce<AugmentedStudent[]>((agg, student) => {
-			if (isValidStudent(student) && student.Active) {
+			if (isValidStudent(student, { active: true })) {
 				return [
 					...agg,
 					{
@@ -512,9 +512,8 @@ class FeeAnalytics extends Component<propTypes, S> {
 		const items = Object.values(this.state.total_student_debts)
 			.filter(
 				({ student, debt }) =>
-					student.id !== undefined &&
+					isValidStudent(student, { active: true }) &&
 					student.Phone !== undefined &&
-					(student.tags === undefined || !student.tags['PROSPECTIVE']) &&
 					(this.state.classFilter === '' ||
 						student.section_id === this.state.classFilter) &&
 					student.Name.toUpperCase().includes(this.state.filterText.toUpperCase()) &&

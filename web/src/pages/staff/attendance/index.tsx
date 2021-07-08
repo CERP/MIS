@@ -198,8 +198,6 @@ const Card: React.FC<CardProps> = ({ member, attendanceDate, markAttendance }) =
 		member.attendance?.[attendanceDate] ??
 		({} as { [id in MISTeacherAttendanceStatus]: number })
 
-	console.log('attendance', attendance)
-
 	return (
 		<div className="p-2 space-y-1 text-sm border rounded-md shadow-md md:p-3 md:text-base border-gray-50">
 			<div className="flex flex-row items-center justify-between">

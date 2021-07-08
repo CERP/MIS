@@ -4,6 +4,7 @@ import { Transition } from '@headlessui/react'
 
 import { toTitleCase } from 'utils/toTitleCase'
 import { MISFeePeriods } from 'constants/index'
+import { classYearSorter } from 'utils'
 
 interface AddFeeToClassProps {
 	classes: RootDBState['classes']
@@ -30,7 +31,7 @@ export const AddFeeToClass = ({ classes, settings, setClass, setFee }: AddFeeToC
 				<option value="">Choose from here</option>
 				{Object.values(classes ?? {})
 					.filter(c => c && c.name)
-					.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
+					.sort(classYearSorter)
 					.map(c => (
 						<option key={c.id} value={c.id}>
 							{toTitleCase(c.name)}

@@ -24,7 +24,7 @@ const StaffPage = ({ location }: RouteComponentProps) => {
 	return (
 		<AppLayout title={pageTitle} showHeaderTitle>
 			{loc !== 'new' && (
-				<div className="flex flex-row items-center my-4 w-full justify-center flex-wrap print:hidden space-x-2">
+				<div className="flex flex-row items-center my-4 w-full justify-center flex-wrap print:hidden space-x-2 space-y-1">
 					{nestedRoutes
 						.filter(route =>
 							checkPermission(

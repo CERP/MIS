@@ -59,7 +59,7 @@ export const StudentDropdownSearch: React.FC<StudentDropdownSearchProps> = ({
 	const sectionStudents = useMemo(() => {
 		const sections = getSectionsFromClasses(classes)
 		return Object.values(students)
-			.filter(s => isValidStudent(s) && s.Active)
+			.filter(s => isValidStudent(s, { active: true }))
 			.map(s => {
 				const section = sections.find(section => s.section_id === section.id)
 				return {
