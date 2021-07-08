@@ -364,7 +364,6 @@ export const CreateOrUpdateStudent = () => {
 							<option value={''}>Choose</option>
 							{sections
 								.sort(classYearSorter)
-								.filter(s => s && s.id && s.name)
 								.map(s => (
 									<option key={s.id} value={s.id}>
 										{s.namespaced_name}
