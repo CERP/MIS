@@ -7,7 +7,7 @@ import moment from 'moment'
 import { AttendanceStatsCard } from 'components/attendance'
 import { TModal } from 'components/Modal'
 import { markAllStudents, markStudent } from 'actions'
-import { classYearSorter, isValidStudent } from 'utils'
+import { classYearSorter, isValidStudent, rollNumberSorter } from 'utils'
 import { toTitleCase } from 'utils/toTitleCase'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
@@ -18,7 +18,7 @@ type State = {
 	selectedSection?: string
 	date: number
 	selectedStudents: {
-		[id: string]: boolean
+		[id: string]: MISStudent
 	}
 }
 
@@ -34,12 +34,12 @@ enum AttendanceStatus {
 
 const getStudentsForSection = (sectionId: string, students: RootDBState['students']) =>
 	Object.values(students).filter(
-		s => isValidStudent(s, { active: true }) && s.section_id === sectionId && s.Active
+		s => isValidStudent(s, { active: true }) && s.section_id === sectionId
 	)
 
 const deriveSelectedStudents = (sectionId: string, students: RootDBState['students']) =>
 	getStudentsForSection(sectionId, students).reduce(
-		(agg, curr) => ({ ...agg, [curr.id]: true }),
+		(agg, curr) => ({ ...agg, [curr.id]: curr }),
 		{}
 	)
 
@@ -184,14 +184,16 @@ export const StudentsAttendance = () => {
 					</div>
 				</div>
 				<div className="space-y-2 pt-4">
-					{Object.keys(selectedStudents).map(studentId => (
-						<Card
-							key={studentId}
-							student={students[studentId]}
-							attendanceDate={attendanceDate}
-							markAttendance={markAttendanceHandler}
-						/>
-					))}
+					{Object.entries(selectedStudents)
+						.sort(([, a], [, b]) => rollNumberSorter(a, b))
+						.map(([studentId, student]) => (
+							<Card
+								key={studentId}
+								student={students[studentId]}
+								attendanceDate={attendanceDate}
+								markAttendance={markAttendanceHandler}
+							/>
+						))}
 				</div>
 			</div>
 		</div>

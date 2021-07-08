@@ -9,7 +9,7 @@ interface SmsModalContentWrapperProps {
 	students: RootDBState['students']
 	date: string
 	markedStudents: {
-		[id: string]: boolean
+		[id: string]: MISStudent
 	}
 	smsTemplate: string
 	teacherId: string
