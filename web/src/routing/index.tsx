@@ -16,7 +16,7 @@ import TargetedInstruction from 'modules/TIP/Routing'
 import Help from 'modules/Help'
 import Diary from 'pages/school/diary'
 import ResetPassword from 'modules/Password/index'
-import MISActivation from 'modules/Activation'
+import MISActivation from 'pages/auth/ActivateMIS'
 import BulkExam from 'modules/Marks/BulkExam'
 
 import { Home } from 'pages/home'
