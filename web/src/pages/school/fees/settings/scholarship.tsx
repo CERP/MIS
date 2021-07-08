@@ -50,7 +50,7 @@ const getFeeStudents = (students: MISStudent[]) => {
 	return students
 		.filter(s => isValidStudent(s, { active: true }))
 		.reduce<State['students']>((agg, curr) => {
-			const [id, scholarshipFee] = Object.entries(curr.fees || {})
+			const [id, scholarshipFee] = Object.entries(curr.fees ?? {})
 				.filter(([feeId, fee]) => !isMonthlyFee(fee))
 				.find(([feeId, fee]) => fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP) ?? [
 					v4(),
@@ -84,12 +84,10 @@ export const Scholarship = () => {
 	})
 
 	useEffect(() => {
-		setState(prevState => {
-			return {
-				...prevState,
-				students: getFeeStudents(Object.values(students || {}))
-			}
-		})
+		setState(prevState => ({
+			...prevState,
+			students: getFeeStudents(Object.values(students ?? {}))
+		}))
 	}, [students])
 
 	const classDefaultFee = settings?.classes?.defaultFee?.[state.classId]
@@ -113,7 +111,7 @@ export const Scholarship = () => {
 					edited: true,
 					fee: {
 						...scholarship['fee'],
-						amount: amount as any
+						amount: isNaN(Number(amount) ? 0 : Number(amount)) as any
 					}
 				}
 			}
@@ -145,7 +143,7 @@ export const Scholarship = () => {
 		if (updatedScholarships.length > 0) {
 			dispatch(addMultipleFees(updatedScholarships))
 
-			const scholarshipFor = updatedScholarships.length === 0 ? 'student' : 'students'
+			const scholarshipFor = updatedScholarships.length === 1 ? 'student' : 'students'
 			const msg = `Scholarship has been updated for ${updatedScholarships.length} ${scholarshipFor}`
 			toast.success(msg)
 		}
