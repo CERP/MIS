@@ -9,9 +9,9 @@ import { StudentPayments } from 'pages/students/fee-payments/payments'
 import { CreateOrUpdateStudent } from './add'
 import { toTitleCase } from 'utils/toTitleCase'
 import StudentMarks from 'modules/Student/Single/Marks'
-import StudentAttendance from 'modules/Student/Single/Attendance'
 import StudentCertificates from 'modules/Student/Single/Certificates'
 import { checkPermission } from 'utils'
+import { SingleStudentAttendance } from './attendance/single'
 
 const nestedRoutes = ['profile', 'marks', 'attendance', 'payments', 'certificates']
 
@@ -54,7 +54,7 @@ const StudentPage = ({ location }: RouteComponentProps) => {
 			)}
 			<Route path="/students/new" component={CreateOrUpdateStudent} />
 			<Route path="/students/:id/profile" component={CreateOrUpdateStudent} />
-			<Route path="/students/:id/attendance" component={StudentAttendance} />
+			<Route path="/students/:id/attendance" component={SingleStudentAttendance} />
 			<Route path="/students/:id/payments" component={StudentPayments} />
 			<Route path="/students/:id/marks" component={StudentMarks} />
 			<Route path="/students/:id/certificates" component={StudentCertificates} />
