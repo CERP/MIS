@@ -81,7 +81,7 @@ export const SettingsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 					icon={iconFamily}
 				/>
 				<Card
-					title={'Profile'}
+					title={'School Profile'}
 					link={
 						checkPermission(permissions, 'setup', subAdmin, admin) ? '/settings' : '#'
 					}
