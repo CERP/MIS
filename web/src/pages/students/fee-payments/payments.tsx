@@ -97,11 +97,7 @@ export const StudentPayments = () => {
 							amount:
 								fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP
 									? '-' + fee.amount
-									: fee.amount,
-							name:
-								fee.name === MISFeeLabels.SPECIAL_SCHOLARSHIP
-									? 'Scholarship (M)'
-									: fee.name
+									: fee.amount
 						}
 					]
 				}) as Array<[string, MISStudentFee]>)
@@ -134,6 +130,8 @@ export const StudentPayments = () => {
 			agg - (curr.type === 'SUBMITTED' || curr.type === 'FORGIVEN' ? 1 : -1) * curr.amount,
 		0
 	)
+
+	console.log(getFees())
 
 	const years = [
 		...new Set(
