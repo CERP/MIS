@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Fixes
 
--   Fix monthly scholarship amount bug ([#389](https://github.com/CERP/MIS/pull/389))
+-   Fix monthly scholarship amount bug ([#390https://github.com/CERP/MIS/pull/390
 
 ## [mischool-web@v1.0.4] - 2021-07-08
 
