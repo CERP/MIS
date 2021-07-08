@@ -344,7 +344,10 @@ export const getMergedFees = (
 
 				return {
 					...agg,
-					[id]: {
+					// this is to make sure, all fees should have unique ID
+					// because 2 or more than 2 students can have same fee or payment ID
+					// if they're are in the same class (now we're generating payments from class additionals)
+					[id + '$' + student.id]: {
 						...fee
 					}
 				}

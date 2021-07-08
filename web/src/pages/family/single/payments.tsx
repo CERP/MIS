@@ -41,10 +41,14 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 
 	const { id: famId } = match.params
 
-	const {
-		auth,
-		db: { students, settings, sms_templates: smsTemplates, classes }
-	} = useSelector((state: RootReducerState) => state)
+	const auth = useSelector((state: RootReducerState) => state.auth)
+	const students = useSelector((state: RootReducerState) => state.db.students)
+	const settings = useSelector((state: RootReducerState) => state.db.settings)
+	const classes = useSelector((state: RootReducerState) => state.db.classes)
+	const smsTemplates = useSelector((state: RootReducerState) => state.db.sms_templates)
+	const isAdmin = useSelector(
+		(state: RootReducerState) => state.db.faculty[auth.faculty_id].Admin
+	)
 
 	const [state, setState] = useState<State>({
 		filter: {
@@ -95,16 +99,16 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 	// generate payments for all siblings, if not generated
 	useEffect(() => {
 		if (siblings.length > 0) {
-			const sibling_payments = siblings.reduce((agg, curr) => {
-				const curr_student_payments = checkStudentDuesReturning(curr, settings)
-				if (curr_student_payments.length > 0) {
-					return [...agg, ...curr_student_payments]
+			const siblingPayments = siblings.reduce((agg, curr) => {
+				const studentPayments = checkStudentDuesReturning(curr, settings)
+				if (studentPayments.length > 0) {
+					return [...agg, ...studentPayments]
 				}
 				return agg
 			}, [])
 
-			if (sibling_payments.length > 0) {
-				dispatch(addMultiplePayments(sibling_payments))
+			if (siblingPayments.length > 0) {
+				dispatch(addMultiplePayments(siblingPayments))
 			}
 		}
 	}, [siblings, settings.classes])
@@ -120,13 +124,18 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 
 	const mergedPayments = useCallback(() => {
 		if (siblings.length > 0) {
-			const merged_payments = siblings.reduce(
+			const mergedPayments = siblings.reduce(
 				(agg, student) => ({
 					...agg,
 					...Object.entries(student.payments ?? {}).reduce((agg2, [pid, p]) => {
+						// this is to make sure, all payments should have unique ID
+						// because 2 or more than 2 students can have same fee or payment ID
+						// if they're are in the same class (now we're generating payments from class additionals)
+						const paymentId = p.type === 'OWED' ? student.id + '$' + pid : pid
+
 						return {
 							...agg2,
-							[pid]: {
+							[paymentId]: {
 								...p,
 								fee_name:
 									p.fee_name &&
@@ -139,7 +148,7 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 				{} as AugmentedMISPaymentMap
 			)
 
-			return merged_payments
+			return mergedPayments
 		}
 	}, [siblings])
 
@@ -283,6 +292,7 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 					) : (
 						<PreviousPayments
 							years={years}
+							isAdmin={isAdmin}
 							close={() =>
 								setState({
 									...state,
@@ -410,9 +420,16 @@ interface PreviousPaymentsProps {
 	pendingAmount: number
 	students: RootDBState['students']
 	payments: AugmentedMISPaymentMap
+	isAdmin?: boolean
 }
 
-const PreviousPayments = ({ years, close, payments, pendingAmount }: PreviousPaymentsProps) => {
+const PreviousPayments = ({
+	years,
+	close,
+	payments,
+	pendingAmount,
+	isAdmin
+}: PreviousPaymentsProps) => {
 	const [state, setState] = useState({
 		month: moment().format('MMMM'),
 		year: moment().format('YYYY'),
@@ -420,8 +437,6 @@ const PreviousPayments = ({ years, close, payments, pendingAmount }: PreviousPay
 		studentId: ''
 	})
 
-	const faculty_id = useSelector((state: RootReducerState) => state.auth.faculty_id)
-	const isAdmin = useSelector((state: RootReducerState) => state.db.faculty[faculty_id].Admin)
 	const { ref, setIsComponentVisible, isComponentVisible } = useComponentVisible(false)
 
 	const dispatch = useDispatch()
@@ -609,7 +624,7 @@ const AddPayment = ({ siblings, auth, settings, smsTemplates, pendingAmount }: A
 			const message = smsTemplates.fee
 				.replace(/\$BALANCE/g, `${balance}`)
 				.replace(/\$AMOUNT/g, `${state.payment.amount}`)
-				// .replace(/\$NAME/g, student.Name)
+				.replace(/\$NAME/g, student.Name)
 				.replace(/\$FNAME/g, student.ManName)
 
 			if (settings.sendSMSOption !== 'SIM') {

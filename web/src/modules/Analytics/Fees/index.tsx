@@ -512,9 +512,8 @@ class FeeAnalytics extends Component<propTypes, S> {
 		const items = Object.values(this.state.total_student_debts)
 			.filter(
 				({ student, debt }) =>
-					student.id !== undefined &&
+					isValidStudent(student, { active: true }) &&
 					student.Phone !== undefined &&
-					(student.tags === undefined || !student.tags['PROSPECTIVE']) &&
 					(this.state.classFilter === '' ||
 						student.section_id === this.state.classFilter) &&
 					student.Name.toUpperCase().includes(this.state.filterText.toUpperCase()) &&

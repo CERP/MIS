@@ -71,8 +71,8 @@ const PrintPreview = () => {
 
 	const relevantStudents = getRelevantStudents()
 
-	const getMergedPaymentsForStudents = (student: MISStudent) => {
-		if (id !== undefined && type === 'FAMILY') {
+	const getMergedPaymentsForStudents = (student?: MISStudent) => {
+		if (id && type === 'FAMILY') {
 			const familyStudents = siblings()
 			const merged_payments = familyStudents.reduce(
 				(agg, curr) => ({
@@ -80,9 +80,12 @@ const PrintPreview = () => {
 					...Object.entries(curr.payments ?? {}).reduce((agg, [pid, p]) => {
 						return {
 							...agg,
-							[pid]: {
+							// // this is to make sure, all payments should have unique ID
+							// because 2 or more than 2 siblings can have same fee or payment ID
+							// if they're are in the same class (now we're generating payments from class additionals)
+							[pid + '$' + curr.id]: {
 								...p,
-								fee_name: p.fee_name && `${curr.Name}-${p.fee_name}`
+								fee_name: `${curr.Name}-${p.fee_name}`
 							}
 						}
 					}, {} as MISStudent['payments'])
@@ -123,7 +126,7 @@ const PrintPreview = () => {
 							<StudentLedgerPage
 								key={student.id}
 								payments={getFilteredPayments(
-									getMergedPaymentsForStudents(student),
+									getMergedPaymentsForStudents(),
 									'',
 									''
 								)}
@@ -175,11 +178,7 @@ const PrintPreview = () => {
 					vouchers.push(
 						<StudentLedgerPage
 							key={student.id + i} // adding i to avoid key duplicaiton
-							payments={getFilteredPayments(
-								getMergedPaymentsForStudents(student),
-								'',
-								''
-							)}
+							payments={getFilteredPayments(getMergedPaymentsForStudents(), '', '')}
 							settings={settings}
 							family={getFamily()}
 							voucherNo={voucher_no}
