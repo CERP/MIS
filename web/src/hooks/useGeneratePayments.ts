@@ -50,12 +50,12 @@ export const useGeneratePayments = () => {
 		if (auto_payments === null || auto_payments.date !== curr_date) {
 			auto_payments = { date: curr_date, isGenerated: true }
 		}
-		if (auto_payments.isGenerated) {
-			// generate payments async
-			generatePayments(sectionStudents)
-			auto_payments = { date: curr_date, isGenerated: false }
-			localStorage.setItem('auto-payments', JSON.stringify(auto_payments))
-			console.log('payments-generated')
-		}
+		// if (auto_payments.isGenerated) {
+		// generate payments async
+		generatePayments(sectionStudents)
+		// auto_payments = { date: curr_date, isGenerated: false }
+		// localStorage.setItem('auto-payments', JSON.stringify(auto_payments))
+		console.log('payments-generated')
+		// }
 	}, [sectionStudents, settings])
 }
