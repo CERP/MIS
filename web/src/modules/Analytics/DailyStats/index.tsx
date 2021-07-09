@@ -10,7 +10,7 @@ import chunkify from 'utils/chunkify'
 import getSectionFromId from 'utils/getSectionFromId'
 import { PaidFeeStudentsPrintableList } from 'components/Printable/Fee/paidList'
 import { AppLayout } from 'components/Layout/appLayout'
-import { isValidStudent } from 'utils'
+import { classYearSorter, isValidStudent } from 'utils'
 
 import './style.css'
 
@@ -51,9 +51,8 @@ class DailyStats extends Component<PropsType, S> {
 
 	getSiblings = (student: MISStudent): MISStudent[] => {
 		const famId = student?.FamilyID
-
 		return Object.values(this.props.students).filter(
-			s => isValidStudent(s) && s.Active && s.FamilyID === famId
+			s => isValidStudent(s, { active: true }) && s.FamilyID && s.FamilyID === famId
 		)
 	}
 
@@ -66,7 +65,7 @@ class DailyStats extends Component<PropsType, S> {
 					...Object.entries(curr.payments ?? {}).reduce((agg, [pid, p]) => {
 						return {
 							...agg,
-							[pid]: {
+							[pid + '$' + curr.id]: {
 								...p,
 								fee_name: p.fee_name && `${curr.Name}-${p.fee_name}`,
 								student_id: curr.id
@@ -115,7 +114,7 @@ class DailyStats extends Component<PropsType, S> {
 		let paidStudents = [] as AugmentedStudent[]
 
 		for (const student of Object.values(students)) {
-			if (isValidStudent(student) && student.Active) {
+			if (isValidStudent(student, { active: true })) {
 				const amount_paid_today = Object.values(student.payments ?? {})
 					.filter(
 						payment =>
@@ -165,9 +164,7 @@ class DailyStats extends Component<PropsType, S> {
 							</label>
 						</div>
 						{paidStudents
-							.sort(
-								(a, b) => (a.section?.classYear ?? 0) - (b.section?.classYear ?? 0)
-							)
+							.sort((a, b) => classYearSorter(a.section, b.section))
 							.map(student => (
 								<div className="mis-table row" key={student.id}>
 									{student.FamilyID && student.FamilyID !== '' ? (

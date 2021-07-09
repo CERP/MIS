@@ -17,7 +17,11 @@ export const useFamily = () => {
 
 	const families = useMemo(() => {
 		const reduced = Object.values(students)
-			.filter(s => isValidStudent(s) && s.Active)
+			.filter(s =>
+				isValidStudent(s, {
+					active: true
+				})
+			)
 			.reduce<{ [id: string]: AugmentedFamily }>((agg, curr) => {
 				if (!curr.FamilyID) {
 					return agg

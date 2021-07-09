@@ -247,7 +247,7 @@ export const Settings = () => {
 							className="tw-input w-full text-gray-500 focus-within:text-gray-200 focus-within:bg-transparent"
 							placeholder="Type school address"
 						/>
-						<div className="flex flex-row justify-between space-x-1 md:space-x-2">
+						<div className="flex flex-col space-y-1 md:space-y-0 md:flex-row justify-between md:space-x-1 md:space-x-2">
 							<div className="w-full space-y-2">
 								<div>Session Start</div>
 								<input
@@ -257,7 +257,7 @@ export const Settings = () => {
 									value={moment(state.settings.schoolSession.start_date).format(
 										'YYYY-MM-DD'
 									)}
-									className="px-0 md:px-4 w-full tw-input text-gray-500 focus-within:text-gray-200 focus-within:bg-transparent"
+									className="px-4 w-full tw-input text-gray-500 focus-within:text-gray-200 focus-within:bg-transparent"
 								/>
 							</div>
 							<div className="w-full space-y-2">
@@ -269,7 +269,7 @@ export const Settings = () => {
 									value={moment(state.settings.schoolSession.end_date).format(
 										'YYYY-MM-DD'
 									)}
-									className="px-0 md:px-4 tw-input w-full text-gray-500 focus-within:text-gray-200 focus-within:bg-transparent"
+									className="px-4 tw-input w-full text-gray-500 focus-within:text-gray-200 focus-within:bg-transparent"
 								/>
 							</div>
 						</div>

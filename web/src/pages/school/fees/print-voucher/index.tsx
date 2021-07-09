@@ -8,7 +8,7 @@ import { Transition } from '@headlessui/react'
 import { CalendarIcon, ChevronDownIcon, XCircleIcon } from '@heroicons/react/outline'
 
 import months from 'constants/months'
-import { isValidStudent } from 'utils'
+import { classYearSorter, isValidStudent } from 'utils'
 import { toTitleCase } from 'utils/toTitleCase'
 import { CustomSelect } from 'components/select'
 import { SearchInput } from 'components/input/search'
@@ -151,7 +151,7 @@ interface FamilyDropdownProps {
 export const FamilyDropdown: React.FC<FamilyDropdownProps> = ({ students, setFamilyId }) => {
 	const family = new Set<string>()
 	Object.values(students).forEach(s => {
-		if (isValidStudent(s) && s.Active && s.FamilyID) {
+		if (isValidStudent(s, { active: true }) && s.FamilyID) {
 			family.add(s.FamilyID)
 		}
 	})
@@ -189,7 +189,7 @@ export const PrintForClass = ({ classes, setClassId }: PrintForClassProps) => {
 				<option value={''}>Choose from here</option>
 				{Object.values(classes)
 					.filter(c => c)
-					.sort((a, b) => a.classYear ?? 0 - b.classYear ?? 0)
+					.sort(classYearSorter)
 					.map(c => (
 						<option key={c.id} value={c.id}>
 							{toTitleCase(c.name)}
@@ -227,7 +227,7 @@ export const StudentListSearch = ({ students, setStudentId, classes }: StudentLi
 	const sectionStudents = useMemo(() => {
 		const sections = getSectionsFromClasses(classes)
 		return Object.values(students)
-			.filter(s => isValidStudent(s) && s.Active)
+			.filter(s => isValidStudent(s, { active: true }))
 			.map(s => {
 				const section = sections.find(section => s.section_id === section.id)
 				return {
@@ -257,8 +257,7 @@ export const StudentListSearch = ({ students, setStudentId, classes }: StudentLi
 						{sectionStudents
 							.filter(
 								s =>
-									isValidStudent(s) &&
-									s.Active &&
+									isValidStudent(s, { active: true }) &&
 									!s.FamilyID && // don't show family students in list to print voucher
 									(searchText
 										? s.Name.toLowerCase().includes(searchText.toLowerCase())

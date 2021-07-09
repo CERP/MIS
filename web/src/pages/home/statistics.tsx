@@ -96,7 +96,7 @@ export const StatsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 		let totalPayee = 0
 
 		for (const student of Object.values(students)) {
-			if (isValidStudent(student) && student.Active) {
+			if (isValidStudent(student, { active: true })) {
 				const additional_payment = Object.values(student.payments ?? {})
 					.filter(
 						x =>

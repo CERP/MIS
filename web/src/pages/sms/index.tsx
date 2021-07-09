@@ -10,7 +10,7 @@ import { CustomSelect } from 'components/select'
 import { AppLayout } from 'components/Layout/appLayout'
 import { StaffDropdownSearch, StudentDropdownSearch } from 'components/input/search'
 import { logSms } from 'actions'
-import { isValidStudent, isValidTeacher } from 'utils'
+import { classYearSorter, isValidStudent, isValidTeacher } from 'utils'
 import { replaceSpecialCharsWithUTFChars } from 'utils/stringHelper'
 import { isMobile, isValidPhone } from 'utils/helpers'
 import { smsIntentLink } from 'utils/intent'
@@ -87,7 +87,7 @@ export const SMS = () => {
 			const totalStudentDebts = {} as State['totalStudentDebts']
 
 			const student_list = Object.values(students ?? {}).filter(
-				student => isValidStudent(student) && student.Active && student.Phone
+				student => isValidStudent(student, { active: true }) && student.Phone
 			)
 
 			let notPaidSinceDate = moment()
@@ -181,22 +181,23 @@ export const SMS = () => {
 		}
 	}, [state.sendTo, state.defaulterOptions, state.pendingDuration, students])
 
-	const sections = getSectionsFromClasses(classes).sort(
-		(a, b) => a.classYear ?? 0 - b.classYear ?? 0
-	)
+	const sections = getSectionsFromClasses(classes).sort(classYearSorter)
 
 	const logSMS = () => {
 		let msgCounter = 1
 
 		// if (state.sendTo === SendSmsOptions.TO_ALL_STUDENTS) {
 		// 	msgCounter = Object.values(students || {}).filter(
-		// 		s => isValidStudent(s) && s.Active && s.Phone
+		// 		s => isValidStudent(s, { active: true }) && s.Phone
 		// 	).length
 		// }
 
 		if (state.sendTo === SendSmsOptions.TO_SINGLE_SECTION) {
 			msgCounter = Object.values(students || {}).filter(
-				s => isValidStudent(s) && s.Active && s.Phone && s.section_id === state.sectionId
+				s =>
+					isValidStudent(s, { active: true }) &&
+					s.Phone &&
+					s.section_id === state.sectionId
 			).length
 		}
 
@@ -273,8 +274,7 @@ export const SMS = () => {
 			return Object.values(students ?? {})
 				.filter(
 					s =>
-						isValidStudent(s) &&
-						s.Active &&
+						isValidStudent(s, { active: true }) &&
 						s.Phone &&
 						s.section_id === state.sectionId &&
 						isValidPhone(s.Phone)

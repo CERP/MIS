@@ -25,7 +25,7 @@ export const SettingsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 	const totalStaff = Object.values(faculty).filter(f => isValidTeacher(f) && f.Active).length
 
 	const { totalFamilies, totalStudents } = getStudentsFamilies(
-		Object.values(students).filter(s => isValidStudent(s) && s.Active)
+		Object.values(students).filter(s => isValidStudent(s, { active: true }))
 	)
 
 	return (
@@ -81,7 +81,7 @@ export const SettingsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 					icon={iconFamily}
 				/>
 				<Card
-					title={'Profile'}
+					title={'School Profile'}
 					link={
 						checkPermission(permissions, 'setup', subAdmin, admin) ? '/settings' : '#'
 					}

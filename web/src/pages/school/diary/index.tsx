@@ -15,7 +15,7 @@ import { fetchLessons, sendBatchSMS } from 'actions/core'
 import { replaceSpecialCharsWithUTFChars } from 'utils/stringHelper'
 import { AppLayout } from 'components/Layout/appLayout'
 import { isMobile } from 'utils/helpers'
-import { isValidStudent } from 'utils'
+import { isValidStudent, classYearSorter } from 'utils'
 
 interface S {
 	selectedDate: string
@@ -124,12 +124,7 @@ const Diary: React.FC = () => {
 
 	const getSelectedSectionStudents = () => {
 		return Object.values(students).filter(
-			s =>
-				isValidStudent(s) &&
-				s.Active &&
-				s.section_id === state.sectionId &&
-				(s.tags === undefined || !s.tags['PROSPECTIVE']) &&
-				s.Phone
+			s => isValidStudent(s, { active: true }) && s.section_id === state.sectionId && s.Phone
 		)
 	}
 
@@ -263,7 +258,7 @@ const Diary: React.FC = () => {
 									onChange={e => setState({ ...state, classId: e.target.value })}>
 									<option value=""> Select Class</option>
 									{Object.values(classes)
-										.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
+										.sort(classYearSorter)
 										.map(c => (
 											<option key={c.id} value={c.id}>
 												{c.name}
@@ -286,7 +281,7 @@ const Diary: React.FC = () => {
 									{Object.entries(classes[state.classId].sections ?? {}).map(
 										([id, s]) => (
 											<option key={id} value={id}>
-												{s.name}
+												{s.name || classes[state.classId]?.name}
 											</option>
 										)
 									)}

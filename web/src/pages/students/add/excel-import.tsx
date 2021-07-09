@@ -10,7 +10,7 @@ import { Redirect } from 'react-router-dom'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { toTitleCase } from 'utils/toTitleCase'
-import { formatCNIC, formatPhone } from 'utils'
+import { classYearSorter, formatCNIC, formatPhone } from 'utils'
 import { createStudentMerges } from 'actions'
 import downloadCSV from 'utils/downloadCSV'
 import getSectionsFromClasses from 'utils/getSectionsFromClasses'
@@ -216,7 +216,7 @@ export const ImportStudentsCSV = () => {
 									<option value={''}>Select Class</option>
 									{Object.values(classes)
 										.filter(c => c)
-										.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
+										.sort(classYearSorter)
 										.map(c => (
 											<option key={c.id} value={c.id}>
 												{toTitleCase(c.name)}
@@ -239,11 +239,11 @@ export const ImportStudentsCSV = () => {
 											? { [state.classId]: classes[state.classId] }
 											: {}
 									)
-										.sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0))
+										.sort(classYearSorter)
 										.filter(s => s && s.id && s.name)
 										.map(s => (
 											<option key={s.id} value={s.id}>
-												{toTitleCase(s.namespaced_name, '-')}
+												{s.namespaced_name}
 											</option>
 										))}
 								</select>

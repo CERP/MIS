@@ -12,10 +12,7 @@ const ClassView: React.FC<P> = ({ students, sorted_sections }) => {
 	const [section_id, setSectionId] = useState('')
 	const total_students = Object.values(students ?? {}).filter(
 		s =>
-			isValidStudent(s) &&
-			s.Active &&
-			(s.tags ? !s.tags['prospective'] : true) &&
-			(section_id ? s.section_id === section_id : true)
+			isValidStudent(s, { active: true }) && (section_id ? s.section_id === section_id : true)
 	).length
 
 	return (
