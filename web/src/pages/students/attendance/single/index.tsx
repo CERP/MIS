@@ -213,8 +213,7 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 								ABSENT: num_absent,
 								PRESENT: num_present,
 								LEAVE:
-									num_short_leave + num_sick_leave + num_casual_leave + num_leave,
-								UNMARK: num_unmark
+									num_short_leave + num_sick_leave + num_casual_leave + num_leave
 							}}
 						/>
 					</div>
