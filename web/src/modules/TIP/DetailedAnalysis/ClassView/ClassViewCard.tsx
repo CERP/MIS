@@ -134,13 +134,16 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 										'bg-green-tip-brand': grade === 'Green',
 										'bg-orange-tip-brand': grade === 'Orange',
 										'bg-gray-400': grade === 'Oral',
-										'bg-gray-600': grade === 'Remediation Not Needed'
+										'bg-gray-600': grade === 'Remediation Not Needed',
+										'bg-gray-100': grade === undefined
 									})}
 									onClick={() => {
-										setIsComponentVisible(true),
+										if (subject && grade) {
+											setIsComponentVisible(true)
 											setModalType(ModalType.ASSIGNED_GROUPS_INFO)
+										}
 									}}>
-									{grade === 'Remediation Not Needed' ? 'none' : grade}
+									{grade === 'Remediation Not Needed' ? 'none' : 'grade'}
 								</div>
 							</div>
 						)
