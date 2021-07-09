@@ -58,7 +58,7 @@ const ChildView: React.FC<P> = ({
 				<div className="flex flex-row justify-around w-2/4 text-sm md:text-md lg:text-lg">
 					<div className="w-4/5 flex flex-row justify-around">
 						<div>
-							{test_type === 'summative-test'
+							{test_type === 'Summative'
 								? percentage < 50
 									? 'F'
 									: 'P'
