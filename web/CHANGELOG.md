@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [@mischool-web@v1.0.6] - 2021-07-09
 
+### Added
+
 -   Change status column in Final Result to P/S (according to design)
 -   Quiz Result: Added Not Graded in both the marks column and the Progress Column
 -   Quiz Result: Changed the color of the text for Not Graded to black
