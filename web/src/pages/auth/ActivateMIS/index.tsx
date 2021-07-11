@@ -7,16 +7,7 @@ import { hash } from 'utils'
 import { resetTrial, markPurchased } from 'actions'
 import { AppLayout } from 'components/Layout/appLayout'
 import { ExclamationIcon, HappyEmojiIcon } from 'assets/icons'
-
-interface P {
-	initialized: boolean
-	schoolId: string
-	packageInfo: MISPackage
-	history: History
-
-	resetTrial: () => void
-	markAsPurchased: () => void
-}
+import { useSelector, useDispatch } from 'react-redux'
 
 interface S {
 	code: string
@@ -25,13 +16,16 @@ interface S {
 	isInvalidCode: boolean
 }
 
-const MISActivation: React.FC<P> = ({
-	initialized,
-	schoolId,
-	resetTrial,
-	markAsPurchased,
-	history
-}) => {
+export const MISActivation = () => {
+	const dispatch = useDispatch()
+
+	const initialized = useSelector((state: RootReducerState) => state.initialized)
+	const schoolId = useSelector((state: RootReducerState) => state.auth.school_id)
+	const packageInfo = useSelector(
+		(state: RootReducerState) =>
+			state.db.package_info ?? { date: -1, trial_period: 15, paid: false }
+	)
+
 	const [stateProps, setStateProps] = useState<S>({
 		code: '',
 		isInvalidCode: false,
@@ -49,15 +43,13 @@ const MISActivation: React.FC<P> = ({
 		).then(res => res.substr(0, 4).toLowerCase())
 
 		if (code === reset_code) {
-			resetTrial()
+			dispatch(resetTrial())
 			return [true, 'RESET']
 		}
-
 		if (code === purchase_code) {
-			markAsPurchased()
+			dispatch(markPurchased())
 			return [true, 'PURCHASED']
 		}
-
 		return [false, 'INVALID']
 	}
 
@@ -192,14 +184,4 @@ const MISActivation: React.FC<P> = ({
 	)
 }
 
-export default connect(
-	(state: RootReducerState) => ({
-		initialized: state.initialized,
-		schoolId: state.auth.school_id,
-		packageInfo: state.db.package_info || { date: -1, trial_period: 15, paid: false }
-	}),
-	(dispatch: Function) => ({
-		resetTrial: () => dispatch(resetTrial()),
-		markAsPurchased: () => dispatch(markPurchased())
-	})
-)(MISActivation)
+export default MISActivation
