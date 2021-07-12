@@ -9,17 +9,20 @@ type StudentAttendancePrintProps = {
 	presents: number
 	absents: number
 	leaves: number
+	schoolName: string
+	schoolAddress: string
+	schoolPhoneNumber: string
 }
 export const StudentAttendancePrint = ({
 	studentName,
 	attendance,
 	presents,
 	absents,
-	leaves
+	leaves,
+	schoolName,
+	schoolAddress,
+	schoolPhoneNumber
 }: StudentAttendancePrintProps) => {
-	const { schoolName, schoolAddress, schoolPhoneNumber } = useSelector(
-		(state: RootReducerState) => state.db.settings
-	)
 	return (
 		<div className="hidden print:block py-4 px-14 w-full">
 			<div className="flex text-3xl mb-3 font-semibold flex-1 items-center justify-center">

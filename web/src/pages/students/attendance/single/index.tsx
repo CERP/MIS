@@ -34,7 +34,9 @@ type AttendanceHistory = {
 
 export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 	const student = useSelector((state: RootReducerState) => state.db.students[match.params.id])
-
+	const { schoolAddress, schoolName, schoolPhoneNumber } = useSelector(
+		(state: RootReducerState) => state.db.settings
+	)
 	const [localState, setLocalState] = useState<localState>({
 		detailsExpanded: false,
 		month: '',
@@ -398,6 +400,9 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 				absents={num_absent}
 				leaves={total_leave_count}
 				studentName={student.Name}
+				schoolAddress={schoolAddress}
+				schoolName={schoolName}
+				schoolPhoneNumber={schoolPhoneNumber}
 			/>
 		</>
 	)
