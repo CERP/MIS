@@ -26,7 +26,7 @@ export const AttendanceStatsCard = ({ attendance }: AttendanceStatsCard) => (
 				<div className="text-lg font-semibold">{attendance.LEAVE}</div>
 				<div className="">Leave</div>
 			</div>
-			{attendance.UNMARK && (
+			{attendance.UNMARK !== undefined && (
 				<div className="flex flex-col items-center justify-center text-gray-500">
 					<div className="text-lg font-semibold">{attendance.UNMARK}</div>
 					<div>Unmarked</div>
