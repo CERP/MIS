@@ -173,7 +173,7 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 					ref={mainFormRef}
 					className="bg-gray-700  rounded-b-2xl flex flex-1 flex-col lg:mt-4 lg:rounded-2xl  lg:px-8">
 					<div className="m-5 text-gray-50 space-y-2 lg:space-y-4">
-						<div
+						<button
 							onClick={() => {
 								setLocalState({
 									...localState,
@@ -187,10 +187,9 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 								<h1>Attendance History </h1>
 								<ChevronDownIcon className="w-4 h-4 text-white ml-3" />
 							</div>
-						</div>
+						</button>
 					</div>
 					<div className="flex w-full items-center justify-center flex-col space-y-1 mb-4">
-						<h1 className="text-white font-semibold">Select Month</h1>
 						<select
 							className="tw-select"
 							onChange={e => {
@@ -217,7 +216,7 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 							}}
 						/>
 					</div>
-					<div className="flex w-full overflow-y-auto flex-col max-h-60 md:max-h-96">
+					<div className="flex w-full overflow-y-auto flex-col space-y-2 max-h-60 md:max-h-96">
 						{filtered_attendance.map(attendance => {
 							return (
 								<DailyAttendanceCard
@@ -230,7 +229,7 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 					<div className="lg:flex hidden flex-1 justify-center items-center mt-4 mb-3 px-5">
 						<button
 							onClick={() => window.print()}
-							className="tw-button bg-yellow-400 text-white px-5 py-2 rounded-md font-semibold w-2/5 md:py-4 text-lg md:text-xl">
+							className="tw-button bg-yellow-400 text-white px-5 py-2 rounded-md font-semibold w-2/5 md:py-4 text-base">
 							Print
 						</button>
 					</div>
@@ -249,10 +248,10 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 							/>
 						</div>
 						<div className="flex flex-col  text-center lg:text-left lg:ml-6 lg:flex-1 lg:flex ">
-							<h1 className="lg:text-xl">{toTitleCase(student.Name)}</h1>
+							<p className="lg:text-xl">{toTitleCase(student.Name)}</p>
 						</div>
 						<div className="flex flex-row items-center justify-center  text-center lg:text-left lg:ml-6 lg:flex-1 lg:flex ">
-							<h1 className="mr-1">Total Percentage:</h1>
+							<p className="mr-1">Total Percentage:</p>
 							{(
 								(num_present / (num_absent + num_present + total_leave_count)) *
 								100
@@ -266,23 +265,21 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
                       lg:shadow-lg lg:border lg:border-gray-300">
 						<h1 className="lg:text-xl lg:font-medium hidden">View Past Payments</h1>
 						<div className="w-full flex flex-1 flex-col space-y-2  mt-2 overflow-y-auto max-h-96">
-							<div className="flex flex-1 justify-center items-center text-center">
+							<p className="flex flex-1 justify-center items-center text-center">
 								Past 6 Months
-							</div>
+							</p>
 							<div className="flex flex-1 text-left ">
-								<div className="flex-1">Month</div>
-								<div className="flex-1 text-center">Presents</div>
-								<div className="flex-1 text-right">Absents</div>
+								<p className="flex-1">Month</p>
+								<p className="flex-1 text-center">Presents</p>
+								<p className="flex-1 text-right">Absents</p>
 							</div>
 							{lastSixMonthsAttendance ? (
 								Object.entries(lastSixMonthsAttendance).map(([date, stats]) => {
 									return (
 										<div key={date} className={'flex flex-1 text-left text-sm'}>
-											<div className="flex-1">{date}</div>
-											<div className="flex-1 text-center">
-												{stats.presents}
-											</div>
-											<div
+											<p className="flex-1">{date}</p>
+											<p className="flex-1 text-center">{stats.presents}</p>
+											<p
 												className={clsx(
 													'flex-1 text-right',
 													stats.absents > stats.presents
@@ -290,7 +287,7 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 														: ''
 												)}>
 												{stats.absents}
-											</div>
+											</p>
 										</div>
 									)
 								})
@@ -299,13 +296,13 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 							)}
 						</div>
 						<div className="flex w-full flex-1 text-left  border-gray-500 mt-4 border-t-2 border-dashed ">
-							<div className="flex-1 font-semibold">Total</div>
-							<div className="flex-1 font-semibold text-center">
+							<p className="flex-1 font-semibold">Total</p>
+							<p className="flex-1 font-semibold text-center">
 								{totalHistoryPresents}
-							</div>
-							<div className="flex-1 font-semibold text-red-500 text-right">
+							</p>
+							<p className="flex-1 font-semibold text-red-500 text-right">
 								{totalHistoryAbsents}
-							</div>
+							</p>
 						</div>
 					</div>
 				</div>
@@ -327,7 +324,7 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 					}}
 					className={'bg-white rounded-md print:hidden ml-5 absolute  p-5 lg:hidden'}>
 					<div className="bg-white text-blue-400 rounded-full py-2 px-2 font-semibold cursor-pointer mb-4 flex flex-row justify-center items-center lg:hidden">
-						<h1
+						<p
 							onClick={() => {
 								setLocalState({
 									...localState,
@@ -335,7 +332,7 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 								})
 							}}>
 							Hide Attendance
-						</h1>
+						</p>
 						<ChevronUpIcon
 							onClick={() => {
 								setLocalState({
@@ -347,13 +344,13 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 						/>
 					</div>
 					<div className="w-full flex flex-1 flex-col space-y-3 mt-2 overflow-y-scroll max-h-72">
-						<div className="flex flex-1 justify-center items-center text-center">
+						<h1 className="flex flex-1 justify-center items-center text-center">
 							Past 6 Months
-						</div>
+						</h1>
 						<div className="flex flex-1 text-left ">
-							<div className="flex-1 font-medium">Month</div>
-							<div className="flex-1 font-medium text-center">Presents</div>
-							<div className="flex-1 font-medium text-right">Absents</div>
+							<p className="flex-1 font-medium">Month</p>
+							<p className="flex-1 font-medium text-center">Presents</p>
+							<p className="flex-1 font-medium text-right">Absents</p>
 						</div>
 						{lastSixMonthsAttendance ? (
 							Object.entries(lastSixMonthsAttendance).map(([date, stats]) => {
@@ -364,9 +361,9 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 											'flex flex-1 text-left text-sm',
 											stats.absents > stats.presents ? 'text-red-brand' : ''
 										)}>
-										<div className="flex-1">{date}</div>
-										<div className="flex-1 text-center">{stats.presents}</div>
-										<div className="flex-1 text-right">{stats.absents}</div>
+										<p className="flex-1">{date}</p>
+										<p className="flex-1 text-center">{stats.presents}</p>
+										<p className="flex-1 text-right">{stats.absents}</p>
 									</div>
 								)
 							})
@@ -376,22 +373,22 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 					</div>
 					<div className="flex flex-1 text-left  border-gray-500 mt-4 border-t-2 border-dashed ">
 						<div className="flex-1 font-semibold">Total</div>
-						<div className="flex-1 font-semibold text-center">
-							{totalHistoryPresents}
-						</div>
-						<div className="flex-1 font-semibold text-red-500 text-right">
+						<p className="flex-1 font-semibold text-center">{totalHistoryPresents}</p>
+						<p className="flex-1 font-semibold text-red-500 text-right">
 							{totalHistoryAbsents}
-						</div>
+						</p>
 					</div>
-					<div
-						onClick={() =>
-							setLocalState({
-								...localState,
-								detailsExpanded: !localState.detailsExpanded
-							})
-						}
-						className="flex flex-1 flex-row justify-center text-center mt-6 pl-4 pr-4 pt-2 pb-2 ml-1 mr-1 rounded-md bg-yellow-tip-brand lg:mt-10">
-						<h1 className="text-xl text-gray-100 font-semibold">Go Back</h1>
+					<div className="flex flex-1 flex-row justify-center text-center">
+						<button
+							className="tw-btn h-full w-full p-0 bg-yellow-400 text-white font-medium mt-2 py-2"
+							onClick={() =>
+								setLocalState({
+									...localState,
+									detailsExpanded: !localState.detailsExpanded
+								})
+							}>
+							Go Back
+						</button>
 					</div>
 				</div>
 			</Transition>
@@ -412,18 +409,18 @@ type AttendanceCardProps = {
 }
 const DailyAttendanceCard = ({ date, status }: AttendanceCardProps) => {
 	return (
-		<div className="flex flex-1  flex-col bg-white rounded-md mx-2 mb-2 px-3 py-1">
+		<div className="flex flex-1  flex-col bg-white rounded-md mx-2 px-3 py-1">
 			<div className="flex w-full flex-row justify-between text-gray-500 font-normal">
-				<h1>Date</h1>
-				<h1>Status</h1>
+				<p>Date</p>
+				<p>Status</p>
 			</div>
 			<div
 				className={clsx(
 					'flex w-full flex-row justify-between text-black font-normal',
 					status !== 'Present' ? 'text-red-brand' : ''
 				)}>
-				<h1>{date}</h1>
-				<h1>{status}</h1>
+				<p>{date}</p>
+				<p>{status}</p>
 			</div>
 		</div>
 	)
