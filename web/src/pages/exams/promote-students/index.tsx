@@ -52,11 +52,11 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 
 	// This function returns students grouped by their section_ID
 	const calculateGroupedStudents = () => {
-		let groupedStudents: { [id: string]: Array<MISStudent> } = [
-			...Object.values(students ?? {})
-		].reduce((agg, curr) => {
+		let groupedStudents: { [id: string]: Array<MISStudent> } = Object.values(
+			students ?? {}
+		).reduce((agg, curr) => {
 			if (!curr.section_id || !curr.Active || !isValidStudent(curr)) {
-				return { ...agg }
+				return agg
 			}
 			if (agg[curr.section_id]) {
 				return { ...agg, [curr.section_id]: [...agg[curr.section_id], curr] }
@@ -90,6 +90,7 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 
 	const [state, setState] = useState<State>(initialState)
 
+	//This methods takes the sorted and filtered classes, maps the key of a class against the object of the next class
 	const calculatePromotionData = (localState: MISClass[]) => {
 		let mapping: PromotionDataType
 
@@ -115,13 +116,12 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 					continue
 				}
 
-				const TempSection: MISClass['sections'] = { mis_temp: { name: 'TEMPORARY' } }
-
+				const tempSection: MISClass['sections'] = { mis_temp: { name: 'TEMPORARY' } }
 				mapping = {
 					...mapping,
 					[localState[i].id]: {
 						...blankClass(),
-						name: localState[i].name,
+						name: 'Temporary',
 						classYear: localState[i].classYear + 1,
 						sections: {
 							mis_temp: { name: 'TEMPORARY' }
@@ -131,7 +131,7 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 							...localState[i].sections[fromSectionId],
 							id: fromSectionId
 						},
-						toSection: { ...TempSection, id: 'mis_temp' },
+						toSection: { ...tempSection, id: 'mis_temp' },
 						promoted: false
 					}
 				}
@@ -209,7 +209,7 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 
 	//Promotes students of the selected Section
 	const promoteSectionStudents = (
-		fromkey: string,
+		fromSectionId: string,
 		toSectionId: string,
 		students: MISStudent[]
 	) => {
@@ -221,8 +221,8 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 				...state,
 				augmentedSections: {
 					...state.augmentedSections,
-					[fromkey]: {
-						...state.augmentedSections[fromkey],
+					[fromSectionId]: {
+						...state.augmentedSections[fromSectionId],
 						sectionPromoted: true
 					}
 				}
@@ -233,12 +233,12 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 			...state,
 			augmentedSections: {
 				...state.augmentedSections,
-				[fromkey]: {
-					...state.augmentedSections[fromkey],
+				[fromSectionId]: {
+					...state.augmentedSections[fromSectionId],
 					sectionPromoted: true
 				}
 			},
-			groupedStudents: { ...state.groupedStudents, [fromkey]: students }
+			groupedStudents: { ...state.groupedStudents, [fromSectionId]: students }
 		})
 	}
 
@@ -264,7 +264,7 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 			const tempClass: MISClass = {
 				...blankClass(),
 				sections: TempSection,
-				name: 'Class 10',
+				name: 'Temporary',
 				classYear: 9999
 			}
 
@@ -287,19 +287,19 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 		}, 1500)
 	}
 
-	const undoSectionPromotion = (fromkey: string) => {
+	const undoSectionPromotion = (fromSectionId: string) => {
 		setState({
 			...state,
 			augmentedSections: {
 				...state.augmentedSections,
-				[fromkey]: {
-					...state.augmentedSections[fromkey],
+				[fromSectionId]: {
+					...state.augmentedSections[fromSectionId],
 					sectionPromoted: false
 				}
 			},
 			groupedStudents: {
 				...state.groupedStudents,
-				[fromkey]: orignalGroupedStudents[fromkey]
+				[fromSectionId]: orignalGroupedStudents[fromSectionId]
 			}
 		})
 	}
@@ -400,7 +400,7 @@ type PromotionCardProps = {
 	classKey: string
 	onFromChange: (id: string) => void
 	onToChange: (id: string) => void
-	promoteSection: (fromKey: string, toSectionId: string, students: MISStudent[]) => void
+	promoteSection: (fromSectionId: string, toSectionId: string, students: MISStudent[]) => void
 	augmentedSections: {
 		[id: string]: ModifiedSection
 	}
@@ -454,9 +454,8 @@ const PromotionCard = ({
 			(agg, student) => {
 				if (student.id === studentKey) {
 					return [...agg, { ...student, section_id: newSectionKey }]
-				} else {
-					return [...agg, student]
 				}
+				return [...agg, student]
 			},
 			[] as MISStudent[]
 		)
@@ -530,15 +529,13 @@ const PromotionCard = ({
 					<select
 						className="w-full rounded shadow tw-select text-teal-brand"
 						onChange={e => onToChange(e.target.value)}>
-						{Object.entries(currentClass.sections).map(([key, section]) => {
-							return (
-								<option value={key}>
-									{key === 'mis_temp'
-										? section.name
-										: augmentedSections[key].namespaced_name}
-								</option>
-							)
-						})}
+						{Object.entries(currentClass.sections).map(([key, section]) => (
+							<option value={key}>
+								{key === 'mis_temp'
+									? section.name
+									: augmentedSections[key].namespaced_name}
+							</option>
+						))}
 					</select>
 				</div>
 			</div>
@@ -549,8 +546,12 @@ const PromotionCard = ({
 				fromSectionKey={currentClass.fromSection.id}
 				toSectionKey={currentClass.toSection.id}
 				groupedStudents={cardGroupedStudents}
-				onClickCallback={(fromKey: string, toSectionId: string, students: MISStudent[]) => {
-					promoteSection(fromKey, toSectionId, students)
+				onClickCallback={(
+					fromSectionId: string,
+					toSectionId: string,
+					students: MISStudent[]
+				) => {
+					promoteSection(fromSectionId, toSectionId, students)
 					setVisible(false)
 				}}
 				removeStudentFromPromotion={removeStudentFromPromotion}
@@ -633,13 +634,14 @@ const PromotableStudents = ({
 										}>
 										{Object.entries(augmentedSections)
 											.filter(([secKey, sec]) => sec.class_id === classKey)
-											.map(([key, section]) => {
-												return (
-													<option value={key}>
-														{section.namespaced_name}
-													</option>
-												)
-											})}
+											.map(([key, section]) => (
+												<option value={key}>
+													{section.namespaced_name}
+												</option>
+											))}
+										{toSectionKey === 'mis_temp' && (
+											<option value="mis_temp">TEMPORARY</option>
+										)}
 									</select>
 								</div>
 								<div className="flex md:flex-1 w-1/3 justify-end items-end  flex-row">
