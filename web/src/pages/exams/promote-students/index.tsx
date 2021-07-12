@@ -304,6 +304,32 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 		})
 	}
 
+	const onToChange = (e: string, sectionKey: string) => {
+		setState({
+			...state,
+			promotionData: {
+				...state.promotionData,
+				[sectionKey]: {
+					...state.promotionData[sectionKey],
+					toSection: state.augmentedSections[e]
+				}
+			}
+		})
+	}
+
+	const onFromChange = (e: string, sectionKey: string) => {
+		setState({
+			...state,
+			promotionData: {
+				...state.promotionData,
+				[sectionKey]: {
+					...state.promotionData[sectionKey],
+					fromSection: state.augmentedSections[e]
+				}
+			}
+		})
+	}
+
 	return (
 		<AppLayout title="Promote Students" showHeaderTitle>
 			<div className="p-5 md:p-10 md:pt-5 md:pb-0 text-gray-700 relative">
@@ -316,7 +342,7 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 						{Object.entries(state.promotionData ?? {}).map(
 							([key, val]: [key: string, val: AugmentedClass]) => {
 								return (
-									<div className="lg:mx-28">
+									<div className="lg:mx-auto lg:w-4/5">
 										<PromotionCard
 											undoSectionPromotion={undoSectionPromotion}
 											promotionData={state.promotionData}
@@ -326,30 +352,8 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 											currentClass={val}
 											classes={classes}
 											promoteSection={promoteSectionStudents}
-											onToChange={(e: string) =>
-												setState({
-													...state,
-													promotionData: {
-														...state.promotionData,
-														[key]: {
-															...state.promotionData[key],
-															toSection: state.augmentedSections[e]
-														}
-													}
-												})
-											}
-											onFromChange={(e: string) =>
-												setState({
-													...state,
-													promotionData: {
-														...state.promotionData,
-														[key]: {
-															...state.promotionData[key],
-															fromSection: state.augmentedSections[e]
-														}
-													}
-												})
-											}
+											onToChange={(e: string) => onToChange(e, key)}
+											onFromChange={(e: string) => onFromChange(e, key)}
 										/>
 									</div>
 								)
