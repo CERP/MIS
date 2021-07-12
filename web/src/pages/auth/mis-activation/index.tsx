@@ -1,13 +1,11 @@
 import React, { useState } from 'react'
-import { connect } from 'react-redux'
-import { Redirect, Link } from 'react-router-dom'
-import { History } from 'history'
 import moment from 'moment'
+import { Redirect, Link } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
 import { hash } from 'utils'
 import { resetTrial, markPurchased } from 'actions'
 import { AppLayout } from 'components/Layout/appLayout'
-import { ExclamationIcon, HappyEmojiIcon } from 'assets/icons'
-import { useSelector, useDispatch } from 'react-redux'
+import { EmojiHappyIcon, ShieldExclamationIcon } from '@heroicons/react/outline'
 
 interface S {
 	code: string
@@ -21,10 +19,6 @@ export const MISActivation = () => {
 
 	const initialized = useSelector((state: RootReducerState) => state.initialized)
 	const schoolId = useSelector((state: RootReducerState) => state.auth.school_id)
-	const packageInfo = useSelector(
-		(state: RootReducerState) =>
-			state.db.package_info ?? { date: -1, trial_period: 15, paid: false }
-	)
 
 	const [stateProps, setStateProps] = useState<S>({
 		code: '',
@@ -92,26 +86,24 @@ export const MISActivation = () => {
 	}
 
 	return (
-		<AppLayout title={'MIS Activation'} showHeaderTitle={true}>
-			<div className="max-w-7xl mx-auto px-16">
-				<div className="section-container">
-					<div className="title text-center">Verify Activation Code</div>
-					{!stateProps.isVerified && (
-						<div className="section">
+		<AppLayout title={'MIS Activation'} showHeaderTitle>
+			<div className="px-5 md:px-10 w-full md:w-2/4 mx-auto">
+				<div className="text-xl md:text-2xl font-semibold text-center my-4 md:my-8">
+					Verify Activation Code
+				</div>
+				{!stateProps.isVerified && (
+					<>
+						<div className="md:flex flex-row md:flex-col border border-1 border-gray-500 p-4 md:p-6 rounded-lg">
 							<div className="flex">
-								<div className="m-3">
-									<img
-										className="w-11 h-11"
-										src={ExclamationIcon}
-										alt="exclamation"
-									/>
+								<div className="p-2 pt-0 text-red-brand">
+									<ShieldExclamationIcon className="w-8 h-8 md:w-12 md:h-12" />
 								</div>
-								<div className="text-red-500 text-xl mt-1 pt-2.5">
+								<div className="text-red-brand md:text-xl">
 									Trial has been ended. Please enter <strong>reset trial</strong>{' '}
 									or <strong>purchase</strong> code to use MISchool
 								</div>
 							</div>
-							<div className="px-14">
+							<div className="md:px-14">
 								<input
 									className="tw-input w-full mt-2"
 									type="text"
@@ -121,67 +113,62 @@ export const MISActivation = () => {
 											code: e.target.value
 										})
 									}
-									placeholder="Enter valid code"
+									placeholder="Enter valid 4 characters code"
 									autoFocus
 								/>
 
-								<div className="text-red-400 mt-2">
+								<div className="text-red-brand mt-2">
 									{stateProps.isInvalidCode && (
 										<div>Invalid Code, Enter valid code</div>
 									)}
 								</div>
-								<div className="row" style={{ marginTop: '0.375rem' }}>
-									<div
-										className="w-full mt-2 text-center tw-btn-blue"
-										onClick={handleVerifyCode}>
-										Verify Code
-									</div>
+								<button
+									className="w-full mt-2 text-center tw-btn-blue"
+									onClick={handleVerifyCode}>
+									Verify Code
+								</button>
+							</div>
+						</div>
+						<div className="mt-2">
+							<p>
+								<span className="font-semibold">Note:</span> Please contact us at
+								helpline for Verification Code.
+							</p>
+						</div>
+					</>
+				)}
+				{stateProps.isVerified && (
+					<div className="space-y-4">
+						<div className="flex border border-1 border-gray-500 flex p-4 rounded-lg">
+							<div className="p-2 pt-0 text-red-brand">
+								<EmojiHappyIcon className="w-8 h-8 md:w-12 md:h-12" />
+							</div>
+							<div className="text-teal-brand md:text-xl">
+								<div>
+									Hurrah!{' '}
+									<strong>
+										{stateProps.isPaid ? 'Purchase' : 'Reset Trial'}
+									</strong>{' '}
+									code has been verified.
+									{stateProps.isPaid ? (
+										<span> You have been marked as Paid User.</span>
+									) : (
+										<span> Your Trial has been reset. </span>
+									)}
+									Thanks for using MISchool!
 								</div>
 							</div>
 						</div>
-					)}
-					{stateProps.isVerified && (
-						<div className="max-w-7xl mx-auto px-16">
-							<div className="section flex">
-								<div className="m-3">
-									<img
-										className="w-11 h-11"
-										src={HappyEmojiIcon}
-										alt="exclamation"
-									/>
-								</div>
-								<div className="text-green-400 py-6 text-xl">
-									<div>
-										{' '}
-										Hurrah!{' '}
-										<strong>
-											{stateProps.isPaid ? 'Purchase' : 'Reset Trial'}
-										</strong>{' '}
-										code has been verified.
-										{stateProps.isPaid ? (
-											<span> You have been marked as Paid User.</span>
-										) : (
-											<span> Your Trial has been reset. </span>
-										)}
-										Thanks for using MISchool!
-									</div>
-								</div>
-							</div>
-							<div className="activation-code" style={{ marginTop: 15 }}>
-								<div className="row">
-									<Link
-										className="w-full mt-2 text-center tw-btn-blue"
-										to="/home">
-										Continue to Use MISchool
-									</Link>
-								</div>
-							</div>
+						<div className="w-full">
+							<Link to="/home">
+								<button className="w-full text-center tw-btn-blue">
+									Continue to Use MISchool
+								</button>
+							</Link>
 						</div>
-					)}
-				</div>
+					</div>
+				)}
 			</div>
 		</AppLayout>
 	)
 }
-
-export default MISActivation
