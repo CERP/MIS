@@ -10,7 +10,7 @@ import { addSalaryExpense } from 'actions'
 import UserIconSvg from 'assets/svgs/user.svg'
 import toTitleCase from 'utils/toTitleCase'
 import { AttendanceStatsCard } from 'components/attendance'
-import { StudentAttendancePrint } from './StudentAttendancePrint'
+import { StudentAttendancePrint } from 'components/Printable/Student/StudentAttendancePrint'
 
 type StudentAttendanceProps = RouteComponentProps<{ id: string }>
 
@@ -47,71 +47,48 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 	})
 
 	const allDates: string[] = useMemo(() => {
-		return [
-			...new Set(
-				Object.values(student.attendance)
-					.sort((a, b) => b.time - a.time)
-					.reduce((agg, curr) => {
-						return [...agg, moment(curr.time).format('MMMM YYYY')]
-					}, [] as string[])
-			)
-		]
+		const dates = Object.values(student.attendance)
+			.sort((a, b) => b.time - a.time)
+			.reduce((agg, curr) => {
+				return [...agg, moment(curr.date).format('MMMM YYYY')]
+			}, [] as string[])
+
+		return [...new Set(dates)]
 	}, [student])
 
 	const lastSixMonthsAttendance: AttendanceHistory = useMemo(() => {
 		return Object.values(student.attendance ?? {})
-			.filter(att =>
-				moment(att.time).isSameOrAfter(moment(moment.now()).subtract(6, 'month'))
-			)
 			.sort((a, b) => b.time - a.time)
 			.reduce((agg, curr) => {
-				const date = moment(curr.time).format('MMMM YYYY')
-				if (agg[date] === undefined) {
-					if (curr.status.includes('LEAVES')) {
-						return {
-							...agg,
-							[date]: { absents: 0, presents: 0, unmarked: 0, leaves: 1 }
-						}
-					}
-					if (curr.status === 'ABSENT') {
-						return {
-							...agg,
-							[date]: { absents: 1, presents: 0, unmarked: 0, leaves: 0 }
-						}
-					}
-					if (curr.status === 'PRESENT') {
-						return {
-							...agg,
-							[date]: { absents: 0, presents: 1, unmarked: 0, leaves: 0 }
-						}
-					} else {
-						return {
-							...agg,
-							[date]: { absents: 0, presents: 0, unmarked: 1, leaves: 0 }
-						}
-					}
+				if (!moment(curr.date).isSameOrAfter(moment(moment.now()).subtract(6, 'month'))) {
+					return agg
 				}
-				if (curr.status.includes('LEAVES')) {
+				const date = moment(curr.date).format('MMMM YYYY')
+				if (curr.status.includes('LEAVE')) {
 					return {
 						...agg,
-						[date]: { ...agg[date], leaves: agg[date].leaves + 1 }
+						[date]: {
+							...agg[date],
+							leaves: agg[date]?.leaves ? agg[date].leaves + 1 : 1
+						}
 					}
 				}
 				if (curr.status === 'ABSENT') {
 					return {
 						...agg,
-						[date]: { ...agg[date], absents: agg[date].absents + 1 }
+						[date]: {
+							...agg[date],
+							absents: agg[date]?.absents ? agg[date].absents + 1 : 1
+						}
 					}
 				}
 				if (curr.status === 'PRESENT') {
 					return {
 						...agg,
-						[date]: { ...agg[date], presents: agg[date].presents + 1 }
-					}
-				} else {
-					return {
-						...agg,
-						[date]: { ...agg[date], unmarked: agg[date].unmarked + 1 }
+						[date]: {
+							...agg[date],
+							presents: agg[date]?.presents ? agg[date].presents + 1 : 1
+						}
 					}
 				}
 			}, {} as AttendanceHistory)
@@ -120,12 +97,10 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 	const { totalHistoryAbsents, totalHistoryPresents } = Object.values(
 		lastSixMonthsAttendance
 	).reduce(
-		(agg, curr) => {
-			return {
-				totalHistoryAbsents: agg.totalHistoryAbsents + curr.absents,
-				totalHistoryPresents: agg.totalHistoryPresents + curr.presents
-			}
-		},
+		(agg, curr) => ({
+			totalHistoryAbsents: agg.totalHistoryAbsents + (curr.absents ?? 0),
+			totalHistoryPresents: agg.totalHistoryPresents + (curr.presents ?? 0)
+		}),
 		{ totalHistoryAbsents: 0, totalHistoryPresents: 0 }
 	)
 
@@ -141,15 +116,10 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 		LEAVE: num_leave,
 		SICK_LEAVE: num_sick_leave,
 		SHORT_LEAVE: num_short_leave,
-		CASUAL_LEAVE: num_casual_leave,
-		UNMARK: num_unmark
+		CASUAL_LEAVE: num_casual_leave
 	} = filtered_attendance.reduce(
 		(agg, curr) => {
-			if (!curr.status) {
-				agg['UNMARK'] += 1
-			} else {
-				agg[curr.status] += 1
-			}
+			agg[curr.status] += 1
 			return agg
 		},
 		{
@@ -170,7 +140,7 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 
 	return (
 		<>
-			<div className="flex print:hidden flex-col-reverse px-5 lg:flex-row lg:mx-32">
+			<div className="flex print:hidden mb-10 flex-col-reverse px-5 lg:flex-row lg:mx-32">
 				<div
 					ref={mainFormRef}
 					className="bg-gray-700  rounded-b-2xl flex flex-1 flex-col lg:mt-4 lg:rounded-2xl  lg:px-8">
@@ -222,7 +192,7 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 						{filtered_attendance.map(attendance => {
 							return (
 								<DailyAttendanceCard
-									date={moment(attendance.time).format('DD-MM-YYYY')}
+									date={moment(attendance.date).format('DD-MM-YYYY')}
 									status={toTitleCase(attendance.status)}
 								/>
 							)
@@ -280,15 +250,17 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 									return (
 										<div key={date} className={'flex flex-1 text-left text-sm'}>
 											<p className="flex-1">{date}</p>
-											<p className="flex-1 text-center">{stats.presents}</p>
+											<p className="flex-1 text-center">
+												{stats.presents ?? 0}
+											</p>
 											<p
 												className={clsx(
 													'flex-1 text-right',
-													stats.absents > stats.presents
+													(stats.absents ?? 0) > (stats.presents ?? 0)
 														? 'text-red-brand'
 														: ''
 												)}>
-												{stats.absents}
+												{stats.absents ?? 0}
 											</p>
 										</div>
 									)
@@ -361,11 +333,13 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 										key={date}
 										className={clsx(
 											'flex flex-1 text-left text-sm',
-											stats.absents > stats.presents ? 'text-red-brand' : ''
+											(stats.absents ?? 0) > (stats.presents ?? 0)
+												? 'text-red-brand'
+												: ''
 										)}>
 										<p className="flex-1">{date}</p>
-										<p className="flex-1 text-center">{stats.presents}</p>
-										<p className="flex-1 text-right">{stats.absents}</p>
+										<p className="flex-1 text-center">{stats.presents ?? 0}</p>
+										<p className="flex-1 text-right">{stats.absents ?? 0}</p>
 									</div>
 								)
 							})
