@@ -232,10 +232,10 @@ export const StudentList = ({
 								placeholder={
 									'Search by ' +
 									(state.searchByAdmissionNo
-										? 'admission no'
+										? 'Admission no'
 										: state.searchByRollNo
-											? 'roll number'
-											: 'name, fname or phone')
+											? 'Roll number'
+											: 'Name, FName or Phone')
 								}
 								className="md:w-full"
 								type="text"

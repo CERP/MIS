@@ -52,15 +52,11 @@ export const Family = ({ forwardTo, pageTitle }: FamilyProps) => {
 				<Link to="/families/new">
 					<AddStickyButton label="Create new Family" />
 				</Link>
-
-				{/* {!pageTitle && (
-					<div className="text-center font-bold text-2xl my-4 lg:hidden">Families</div>
-				)} */}
 				<div className="flex flex-row mt-4 mb-12 md:mb-20 space-x-4 md:space-y-0 md:space-x-60">
 					<SearchInput
 						className="md:w-4/12"
 						onChange={e => setState({ ...state, search: e.target.value })}
-						placeholder="Search by Name or Family Id"
+						placeholder="Search by Father Name, Phone or Family Id"
 					/>
 				</div>
 
