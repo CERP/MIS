@@ -338,11 +338,11 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 						onPress={() => setState({ ...state, displayWarning: false })}
 					/>
 				) : (
-					<div className="flex flex-col flex-1">
+					<div className="space-y-4">
 						{Object.entries(state.promotionData ?? {}).map(
 							([key, val]: [key: string, val: AugmentedClass]) => {
 								return (
-									<div className="lg:mx-auto lg:w-4/5">
+									<div className="lg:mx-auto  lg:w-4/5">
 										<PromotionCard
 											undoSectionPromotion={undoSectionPromotion}
 											promotionData={state.promotionData}
@@ -359,14 +359,16 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 								)
 							}
 						)}
-						<div
-							onClick={() =>
-								checkEveryClassPromoted()
-									? setIsComponentVisible(true)
-									: toast.error('All sections are not promoted yet')
-							}
-							className="flex flex-1 py-5 px-10 md:w-2/5 w-10/12 self-center rounded-md shadow-lg transform cursor-pointer hover:scale-105 transition-all  items-center justify-center bg-red-brand text-white mb-4 md:text-xl text-lg font-semibold">
-							Close Promotions
+						<div className="flex justify-center">
+							<button
+								onClick={() =>
+									checkEveryClassPromoted()
+										? setIsComponentVisible(true)
+										: toast.error('All sections are not promoted yet')
+								}
+								className="tw-btn md:w-2/5 w-full mx-auto  text-center rounded-md shadow-md transform  hover:scale-105 transition-all   bg-red-brand text-white mb-4 md:text-lg text-base font-semibold">
+								Finalise Promotions
+							</button>
 						</div>
 					</div>
 				)}
@@ -474,7 +476,7 @@ const PromotionCard = ({
 		<>
 			<div
 				key={classKey + currentClass.id}
-				className="flex flex-row justify-between p-2 bg-gray-50 shadow-md border-gray-200 border mb-4 rounded-xl font-medium text-gray-600 lg:text-2xl lg:py-6 lg:px-10  ">
+				className="flex flex-row justify-between p-2 bg-gray-50 shadow-md border-gray-200 border rounded-md font-medium text-gray-600 lg:text-lg lg:py-6 lg:px-10  ">
 				<div key={classKey} className="flex flex-col w-2/5 lg:w-2/6">
 					<h1>{classes[classKey].name}</h1>
 					<select
@@ -491,7 +493,7 @@ const PromotionCard = ({
 				</div>
 				{augmentedSections[currentClass.fromSection.id].sectionPromoted ? (
 					<div className="flex flex-1 items-center justify-center flex-col">
-						<div className="bg-green-brand items-center justify-center h-10 w-10 lg:h-14 lg:w-14 flex rounded-full">
+						<div className="bg-green-brand items-center justify-center h-8 w-8 lg:h-12 lg:w-12 flex rounded-full">
 							<ReplyIcon
 								onClick={() => {
 									if (checkPermissionToUndo(promotionData, currentClass.id)) {
@@ -499,7 +501,7 @@ const PromotionCard = ({
 									}
 								}}
 								color="white"
-								className="h-8 lg:h-12 cursor-pointer"
+								className="h-7 lg:h-10 cursor-pointer"
 							/>
 						</div>
 						<div
@@ -508,24 +510,24 @@ const PromotionCard = ({
 									undoSectionPromotion(currentClass.fromSection.id)
 								}
 							}}
-							className="font-light cursor-pointer underline text-red-brand mt-2 md:text-lg text-sm">
+							className="font-light cursor-pointer underline text-red-brand mt-2 md:text-base text-sm">
 							Undo
 						</div>
 					</div>
 				) : (
 					<div
 						key={currentClass.id + classKey}
-						className="flex flex-1  text-black font-normal justify-center items-center flex-col w-2/6 md:px-0 px-3">
+						className="flex flex-1  text-black font-normal text-sm justify-center items-center flex-col w-2/6 lg:px-0 px-3">
 						Move To
-						<div
+						<button
 							onClick={() => {
 								if (checkPermissionToPromote(promotionData, currentClass.id)) {
 									setVisible(isVisible => !isVisible)
 								}
 							}}
-							className="rounded-full cursor-pointer bg-blue-brand p-1 px-7 md:px-24 ">
-							<ArrowNarrowRightIcon className="md:h-12 h-6 text-white" />
-						</div>
+							className="tw-btn-blue rounded-full w-full py-1  lg:w-1/2 text-center">
+							<ArrowNarrowRightIcon className="lg:h-12 md:h-10 h-6 mx-auto text-white" />
+						</button>
 					</div>
 				)}
 				<div key={currentClass.id} className="flex items-end flex-col w-2/5 lg:w-2/6">
@@ -624,7 +626,7 @@ const PromotableStudents = ({
 				</div>
 				{(state.students || []).map(student => {
 					return (
-						<div className="md:bg-gray-200 bg-gray-50 text-lg flex-col md:flex-row mb-3 items-center flex justify-between px-5 md:px-10 py-3 md:py-7 rounded-md border-gray-200 border shadow-md md:shadow-none md:rounded-sm font-medium">
+						<div className="md:bg-gray-200 bg-gray-50  flex-col md:flex-row mb-3 items-center flex justify-between px-5 md:px-10 py-3 md:py-7 rounded-md border-gray-200 border shadow-md md:shadow-none md:rounded-sm font-medium">
 							<div className="flex text-sm md:text-base self-start md:self-center md:w-1/3">
 								<h1>{student.Name}</h1>
 							</div>
@@ -648,7 +650,7 @@ const PromotableStudents = ({
 										)}
 									</select>
 								</div>
-								<div className="flex md:flex-1 w-1/3 justify-end items-end  flex-row">
+								<button className="flex md:flex-1 w-1/3 justify-end items-end  flex-row">
 									<TrashIcon
 										onClick={() =>
 											removeStudentFromPromotion(fromSectionKey, student.id)
@@ -656,18 +658,18 @@ const PromotableStudents = ({
 										color="red"
 										className="cursor-pointer h-6 w-6"
 									/>
-								</div>
+								</button>
 							</div>
 						</div>
 					)
 				})}
-				<div
-					className="bg-green-brand px-10 py-4 w-2/5 flex text-base items-center justify-center text-white font-semibold rounded-md self-center cursor-pointer"
+				<button
+					className="tw-btn w-full bg-green-brand md:w-2/5 text-white mx-auto"
 					onClick={() => {
 						setIsComponentVisible(true)
 					}}>
 					Confirm
-				</div>
+				</button>
 				{isComponentVisible && (
 					<TModal>
 						<div ref={ref} className="bg-white pb-3 relative">
@@ -682,12 +684,12 @@ const PromotableStudents = ({
 							</p>
 							<div className="w-full flex justify-around items-center mt-3">
 								<button
-									className="w-5/12 p-2 md:p-2 lg:p-3 border-none bg-blue-brand text-white rounded-lg outline-none font-bold text-sm md:text-base lg:text-xl"
+									className="tw-btn-blue w-5/12"
 									onClick={() => setIsComponentVisible(false)}>
 									Go Back
 								</button>
 								<button
-									className="w-5/12 p-2 md:p-2 lg:p-3 border-none bg-green-brand text-white rounded-lg outline-none font-bold text-sm md:text-base lg:text-xl"
+									className="tw-btn bg-green-brand w-5/12 text-white"
 									onClick={() => {
 										onClickCallback(
 											fromSectionKey,
@@ -722,11 +724,9 @@ const PromotionWarning = ({ onPress }: PromotionWarningProps) => {
 			<p className="font-normal my-4 text-lg text-center">
 				You can promote a class only once per academic year
 			</p>
-			<p
-				onClick={() => onPress()}
-				className=" bg-blue-brand cursor-pointer text-white text-center items-center justify-center px-6 py-3 rounded-xl text-lg font-semibold ">
+			<button onClick={() => onPress()} className=" tw-btn-blue font-semibold">
 				Ok, I understand
-			</p>
+			</button>
 		</div>
 	)
 }
