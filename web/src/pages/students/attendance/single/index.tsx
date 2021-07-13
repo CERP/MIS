@@ -143,7 +143,7 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 			<div className="flex print:hidden mb-10 flex-col-reverse px-5 lg:flex-row lg:mx-32">
 				<div
 					ref={mainFormRef}
-					className="bg-gray-700  rounded-b-2xl flex flex-1 flex-col lg:mt-4 lg:rounded-2xl  lg:px-8">
+					className="bg-gray-700 rounded-b-2xl flex flex-1 flex-col lg:mt-4 lg:rounded-2xl px-2 lg:px-8 pb-4 md:pb-0">
 					<div className="m-5 text-gray-50 space-y-2 lg:space-y-4">
 						<button
 							onClick={() => {
@@ -173,12 +173,14 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 								setLocalState({ ...localState, month, year })
 							}}>
 							<option value="">Select Month</option>
-							{allDates.map(date => {
-								return <option value={date}>{date}</option>
-							})}
+							{allDates.map(date => (
+								<option key={date} value={date}>
+									{date}
+								</option>
+							))}
 						</select>
 					</div>
-					<div className="w-full px-2 mb-2">
+					<div className="w-full mb-2">
 						<AttendanceStatsCard
 							attendance={{
 								ABSENT: num_absent,
@@ -188,15 +190,20 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 							}}
 						/>
 					</div>
-					<div className="flex w-full overflow-y-auto flex-col space-y-2 max-h-60 md:max-h-96">
-						{filtered_attendance.map(attendance => {
-							return (
+					<div>
+						<div className="flex justify-between text-white px-4 mb-2">
+							<p className="font-semibold">Date</p>
+							<p className="font-semibold">Status</p>
+						</div>
+						<div className="flex w-full overflow-y-auto flex-col space-y-2 max-h-60 md:max-h-96">
+							{filtered_attendance.map(attendance => (
 								<DailyAttendanceCard
+									key={attendance.date}
 									date={moment(attendance.date).format('DD-MM-YYYY')}
 									status={toTitleCase(attendance.status)}
 								/>
-							)
-						})}
+							))}
+						</div>
 					</div>
 					<div className="lg:flex hidden flex-1 justify-center items-center mt-4 mb-3 px-5">
 						<button
@@ -207,23 +214,23 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 					</div>
 				</div>
 				<div className="lg:flex-1">
-					<div className="text-white lg:pl-14 pt-2 lg:mx-3 font-medium bg-gray-700 rounded-t-2xl mt-4 lg:bg-white lg:text-black lg:rounded-2xl lg:flex lg:p-5 lg:items-center lg:flex-1 lg:flex-row lg:shadow-lg lg:border lg:border-gray-300">
-						<div>
+					<div className="text-white pt-2 lg:mx-3 font-medium bg-gray-700 rounded-t-2xl mt-4 lg:bg-white lg:text-black lg:rounded-2xl lg:flex lg:p-4 lg:items-center lg:flex-1 lg:flex-row lg:shadow-lg lg:border lg:border-gray-300">
+						<div className="hidden md:block">
 							<img
 								src={
 									student.ProfilePicture?.url ??
 									student.ProfilePicture?.image_string ??
 									UserIconSvg
 								}
-								className="mx-auto h-20 w-20 rounded-full shadow-lg bg-gray-500 hover:bg-gray-700"
+								className="mx-auto h-16 w-16 rounded-full shadow-lg bg-gray-500 hover:bg-gray-700"
 								alt={student.Name}
 							/>
 						</div>
-						<div className="flex flex-col  text-center lg:text-left lg:ml-6 lg:flex-1 lg:flex ">
-							<p className="lg:text-xl">{toTitleCase(student.Name)}</p>
+						<div className="hidden md:block flex flex-col  text-center lg:text-left lg:ml-6 lg:flex-1 lg:flex ">
+							<p>{toTitleCase(student.Name)}</p>
 						</div>
-						<div className="flex flex-row items-center justify-center  text-center lg:text-left lg:ml-6 lg:flex-1 lg:flex ">
-							<p className="mr-1">Total Percentage:</p>
+						<div className="flex flex-row items-center justify-center  text-center lg:text-left lg:flex-1 lg:flex ">
+							<p className="mr-2">Percentage:</p>
 							{(
 								(num_present / (num_absent + num_present + total_leave_count)) *
 								100
@@ -246,25 +253,21 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 								<p className="flex-1 text-right">Absents</p>
 							</div>
 							{lastSixMonthsAttendance ? (
-								Object.entries(lastSixMonthsAttendance).map(([date, stats]) => {
-									return (
-										<div key={date} className={'flex flex-1 text-left text-sm'}>
-											<p className="flex-1">{date}</p>
-											<p className="flex-1 text-center">
-												{stats.presents ?? 0}
-											</p>
-											<p
-												className={clsx(
-													'flex-1 text-right',
-													(stats.absents ?? 0) > (stats.presents ?? 0)
-														? 'text-red-brand'
-														: ''
-												)}>
-												{stats.absents ?? 0}
-											</p>
-										</div>
-									)
-								})
+								Object.entries(lastSixMonthsAttendance).map(([date, stats]) => (
+									<div key={date} className={'flex flex-1 text-left text-sm'}>
+										<p className="flex-1">{date}</p>
+										<p className="flex-1 text-center">{stats.presents ?? 0}</p>
+										<p
+											className={clsx(
+												'flex-1 text-right',
+												(stats.absents ?? 0) > (stats.presents ?? 0)
+													? 'text-red-brand'
+													: ''
+											)}>
+											{stats.absents ?? 0}
+										</p>
+									</div>
+								))
 							) : (
 								<div>No Data Available</div>
 							)}
@@ -388,18 +391,15 @@ type AttendanceCardProps = {
 }
 const DailyAttendanceCard = ({ date, status }: AttendanceCardProps) => {
 	return (
-		<div className="flex flex-1  flex-col bg-white rounded-md mx-2 px-3 py-1">
-			<div className="flex w-full flex-row justify-between text-gray-500 font-normal">
-				<p>Date</p>
-				<p>Status</p>
-			</div>
+		<div className="flex flex-1 flex-col bg-white rounded-md px-4 py-2">
 			<div
-				className={clsx(
-					'flex w-full flex-row justify-between text-black font-normal',
-					status !== 'Present' ? 'text-red-brand' : ''
-				)}>
+				className={clsx('flex w-full flex-row justify-between text-black font-normal', {
+					'text-teal-brand': status === 'Present',
+					'text-red-brand': status === 'Absent',
+					'text-orange-brand': status.toLowerCase().includes('leave')
+				})}>
 				<p>{date}</p>
-				<p>{status}</p>
+				<p>{toTitleCase(status, '_')}</p>
 			</div>
 		</div>
 	)
