@@ -94,14 +94,15 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 			}, {} as AttendanceHistory)
 	}, [student])
 
-	const { totalHistoryAbsents, totalHistoryPresents } = Object.values(
+	const { totalHistoryAbsents, totalHistoryPresents, totalHistoryLeaves } = Object.values(
 		lastSixMonthsAttendance
 	).reduce(
 		(agg, curr) => ({
 			totalHistoryAbsents: agg.totalHistoryAbsents + (curr.absents ?? 0),
-			totalHistoryPresents: agg.totalHistoryPresents + (curr.presents ?? 0)
+			totalHistoryPresents: agg.totalHistoryPresents + (curr.presents ?? 0),
+			totalHistoryLeaves: agg.totalHistoryLeaves + (curr.leaves ?? 0)
 		}),
-		{ totalHistoryAbsents: 0, totalHistoryPresents: 0 }
+		{ totalHistoryAbsents: 0, totalHistoryPresents: 0, totalHistoryLeaves: 0 }
 	)
 
 	const filtered_attendance = useMemo(() => {
@@ -226,7 +227,7 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 								alt={student.Name}
 							/>
 						</div>
-						<div className="hidden md:block flex flex-col  text-center lg:text-left lg:ml-6 lg:flex-1 lg:flex ">
+						<div className=" md:block flex flex-col  text-center lg:text-left lg:ml-6 lg:flex-1 lg:flex ">
 							<p>{toTitleCase(student.Name)}</p>
 						</div>
 						<div className="flex flex-row items-center justify-center  text-center lg:text-left lg:flex-1 lg:flex ">
@@ -250,6 +251,8 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 							<div className="flex flex-1 text-left ">
 								<p className="flex-1">Month</p>
 								<p className="flex-1 text-center">Presents</p>
+								<p className="flex-1 text-center">Leaves</p>
+
 								<p className="flex-1 text-right">Absents</p>
 							</div>
 							{lastSixMonthsAttendance ? (
@@ -257,6 +260,8 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 									<div key={date} className={'flex flex-1 text-left text-sm'}>
 										<p className="flex-1">{date}</p>
 										<p className="flex-1 text-center">{stats.presents ?? 0}</p>
+										<p className="flex-1 text-center">{stats.leaves ?? 0}</p>
+
 										<p
 											className={clsx(
 												'flex-1 text-right',
@@ -276,6 +281,9 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 							<p className="flex-1 font-semibold">Total</p>
 							<p className="flex-1 font-semibold text-center">
 								{totalHistoryPresents}
+							</p>
+							<p className="flex-1 font-semibold text-yellow-300 text-center">
+								{totalHistoryLeaves}
 							</p>
 							<p className="flex-1 font-semibold text-red-500 text-right">
 								{totalHistoryAbsents}
@@ -324,9 +332,10 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 						<h1 className="flex flex-1 justify-center items-center text-center">
 							Past 6 Months
 						</h1>
-						<div className="flex flex-1 text-left ">
+						<div className="flex flex-1 text-left text-sm ">
 							<p className="flex-1 font-medium">Month</p>
 							<p className="flex-1 font-medium text-center">Presents</p>
+							<p className="flex-1 font-medium text-center">Leaves</p>
 							<p className="flex-1 font-medium text-right">Absents</p>
 						</div>
 						{lastSixMonthsAttendance ? (
@@ -342,6 +351,7 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 										)}>
 										<p className="flex-1">{date}</p>
 										<p className="flex-1 text-center">{stats.presents ?? 0}</p>
+										<p className="flex-1 text-center">{stats.leaves ?? 0}</p>
 										<p className="flex-1 text-right">{stats.absents ?? 0}</p>
 									</div>
 								)
@@ -353,6 +363,9 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 					<div className="flex flex-1 text-left  border-gray-500 mt-4 border-t-2 border-dashed ">
 						<div className="flex-1 font-semibold">Total</div>
 						<p className="flex-1 font-semibold text-center">{totalHistoryPresents}</p>
+						<p className="flex-1 font-semibold text-yellow-300 text-center">
+							{totalHistoryLeaves}
+						</p>
 						<p className="flex-1 font-semibold text-red-500 text-right">
 							{totalHistoryAbsents}
 						</p>
