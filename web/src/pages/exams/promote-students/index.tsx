@@ -46,6 +46,8 @@ type ModifiedSection = AugmentedSection & {
 	sectionPromoted: boolean
 }
 
+const MIS_TEMP_SECTION_ID = 'mis_temp'
+
 export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 	const classes = useSelector((state: RootReducerState) => state.db.classes)
 	const students = useSelector((state: RootReducerState) => state.db.students)
@@ -125,7 +127,7 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 			}
 
 			if (i === 0) {
-				if (Object.keys(localState[i].sections).includes('mis_temp')) {
+				if (Object.keys(localState[i].sections).includes(MIS_TEMP_SECTION_ID)) {
 					continue
 				}
 
@@ -144,12 +146,12 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 							...localState[i].sections[fromSectionId],
 							id: fromSectionId
 						},
-						toSection: { ...tempSection, id: 'mis_temp' },
+						toSection: { ...tempSection, id: MIS_TEMP_SECTION_ID },
 						promoted: false
 					}
 				}
 			} else {
-				if (Object.keys(localState[i].sections).includes('mis_temp')) {
+				if (Object.keys(localState[i].sections).includes(MIS_TEMP_SECTION_ID)) {
 					continue
 				}
 
@@ -271,8 +273,13 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 			return { ...agg, ...studentMap }
 		}, {})
 
-		if (!Object.keys(state.augmentedSections).includes('mis_temp')) {
-			const TempSection: MISClass['sections'] = { ['mis_temp']: { name: 'TEMPORARY' } }
+		if (
+			!Object.keys(state.augmentedSections).includes(MIS_TEMP_SECTION_ID) &&
+			Object.values(state.promotionData)[0].toSection.id === MIS_TEMP_SECTION_ID
+		) {
+			const TempSection: MISClass['sections'] = {
+				[MIS_TEMP_SECTION_ID]: { name: 'TEMPORARY' }
+			}
 
 			const tempClass: MISClass = {
 				...blankClass(),
@@ -553,7 +560,7 @@ const PromotionCard = ({
 						onChange={e => onToChange(e.target.value)}>
 						{Object.entries(currentClass.sections).map(([key, section]) => (
 							<option value={key}>
-								{key === 'mis_temp'
+								{key === MIS_TEMP_SECTION_ID
 									? section.name
 									: augmentedSections[key].namespaced_name}
 							</option>
@@ -661,8 +668,8 @@ const PromotableStudents = ({
 													{section.namespaced_name}
 												</option>
 											))}
-										{toSectionKey === 'mis_temp' && (
-											<option value="mis_temp">TEMPORARY</option>
+										{toSectionKey === MIS_TEMP_SECTION_ID && (
+											<option value={MIS_TEMP_SECTION_ID}>TEMPORARY</option>
 										)}
 									</select>
 								</div>
