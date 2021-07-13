@@ -13,6 +13,7 @@ import { isValidStudent } from 'utils'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
 import { createEditClass, promoteStudents } from 'actions'
+import { Link } from 'react-router-dom'
 
 type AugmentedClass = MISClass & {
 	fromSection?: Partial<ModifiedSection>
@@ -38,6 +39,7 @@ type State = {
 		[section_id: string]: MISStudent[]
 	}
 	augmentedSections: { [id: string]: ModifiedSection }
+	orderIncorrect: boolean
 }
 
 type ModifiedSection = AugmentedSection & {
@@ -79,13 +81,24 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 			.sort((a, b) => b.classYear - a.classYear)
 	}, [classes])
 
+	const checkClassOrders = () => {
+		const classesArray = Object.values(classes).sort((a, b) => b.classYear - a.classYear)
+		for (let i = 0; i < classesArray.length - 1; i++) {
+			if (classesArray[i].classYear - classesArray[i + 1].classYear !== 1) {
+				return true
+			}
+		}
+		return false
+	}
+
 	const initialState: State = {
 		displayWarning: true,
 		promotionData: {},
 		groupedStudents: calculateGroupedStudents(),
 		augmentedSections: getSectionsFromClasses(classes).reduce((agg, curr) => {
 			return { ...agg, [curr.id]: { ...curr, sectionPromoted: false } }
-		}, {})
+		}, {}),
+		orderIncorrect: checkClassOrders()
 	}
 
 	const [state, setState] = useState<State>(initialState)
@@ -330,6 +343,9 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 		})
 	}
 
+	if (state.orderIncorrect) {
+		return <ClassOrderErrorBanner />
+	}
 	return (
 		<AppLayout title="Promote Students" showHeaderTitle>
 			<div className="p-5 md:p-10 md:pt-5 md:pb-0 text-gray-700 relative">
@@ -727,6 +743,31 @@ const PromotionWarning = ({ onPress }: PromotionWarningProps) => {
 			<button onClick={() => onPress()} className=" tw-btn-blue font-semibold">
 				Ok, I understand
 			</button>
+		</div>
+	)
+}
+
+const ClassOrderErrorBanner = () => {
+	return (
+		<div className="w-full h-screen px-10 m-auto py-16 flex items-center justify-center bg-gradient-to-r from-gray-50 to-gray-100">
+			<div className="bg-white shadow-md overflow-hidden sm:rounded-lg pb-8">
+				<div className="border-t border-gray-200 text-center pt-8">
+					<h1 className="lg:text-4xl text-xl mb-5 font-bold text-red-brand">
+						Class Order Incorrect
+					</h1>
+					<p className="lg:text-2xl text-base pb-8 px-12 font-medium">
+						Please correct the order of your classes or contact support for more details
+					</p>
+					<div className="space-x-4">
+						<Link to="/home">
+							<button className="tw-btn-blue py-2 rounded-md">Go Home</button>
+						</Link>
+						<Link to="/contact-us">
+							<button className="tw-btn-red py-2 rounded-md">Contact Us</button>
+						</Link>
+					</div>
+				</div>
+			</div>
 		</div>
 	)
 }
