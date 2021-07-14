@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import toast from 'react-hot-toast'
 import Dynamic from '@cerp/dynamic'
 import { useDispatch, useSelector } from 'react-redux'
-import { RouteComponentProps } from 'react-router-dom'
+import { Link, RouteComponentProps } from 'react-router-dom'
 import { UserIcon, TrashIcon } from '@heroicons/react/solid'
 
 import toTitleCase from 'utils/toTitleCase'
@@ -422,7 +422,11 @@ const ListCard = ({ student, sections, removeStudent }: ListCardProps) => {
 					<UserIcon className="w-8 h-8 mr-2 text-blue-brand rounded-full" />
 				)}
 				<div className="flex flex-col">
-					<div className="text-sm">{toTitleCase(student.Name)}</div>
+					<Link
+						to={`students/${student.id}/profile`}
+						className="text-sm text-blue-brand hover:underline">
+						{toTitleCase(student.Name)}
+					</Link>
 					<div className="text-xs text-gray-500">{toTitleCase(student.ManName)}</div>
 				</div>
 			</div>
