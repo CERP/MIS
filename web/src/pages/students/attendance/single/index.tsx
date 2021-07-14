@@ -1,16 +1,15 @@
-import React, { Fragment, useEffect, useState, useRef, useMemo } from 'react'
+import React, { Fragment, useState, useRef, useMemo } from 'react'
 import clsx from 'clsx'
 import moment from 'moment'
-import toast from 'react-hot-toast'
 import { Transition } from '@headlessui/react'
 import { RouteComponentProps } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/outline'
-import { addSalaryExpense } from 'actions'
 import UserIconSvg from 'assets/svgs/user.svg'
 import toTitleCase from 'utils/toTitleCase'
 import { AttendanceStatsCard } from 'components/attendance'
 import { StudentAttendancePrint } from 'components/Printable/Student/StudentAttendancePrint'
+import months from 'constants/months'
 
 type StudentAttendanceProps = RouteComponentProps<{ id: string }>
 
@@ -46,14 +45,14 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 		totalLeaves: 0
 	})
 
-	const allDates: string[] = useMemo(() => {
-		const dates = Object.values(student.attendance)
+	const years: string[] = useMemo(() => {
+		const years = Object.values(student.attendance)
 			.sort((a, b) => b.time - a.time)
 			.reduce((agg, curr) => {
-				return [...agg, moment(curr.date).format('MMMM YYYY')]
+				return [...agg, moment(curr.date).format('YYYY')]
 			}, [] as string[])
 
-		return [...new Set(dates)]
+		return [...new Set(years)]
 	}, [student])
 
 	const lastSixMonthsAttendance: AttendanceHistory = useMemo(() => {
@@ -108,7 +107,7 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 	const filtered_attendance = useMemo(() => {
 		return Object.values(student.attendance ?? {})
 			.sort((a, b) => b.time - a.time)
-			.filter(att => getFilterCondition(att.time, localState.month, localState.year))
+			.filter(att => getFilterCondition(att.date, localState.month, localState.year))
 	}, [student, localState.month, localState.year])
 
 	const {
@@ -162,21 +161,28 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 							</div>
 						</button>
 					</div>
-					<div className="flex w-full items-center justify-center flex-col space-y-1 mb-4">
+					<div className="flex flex-row w-full items-center justify-center space-x-1 mb-4">
 						<select
-							className="tw-select"
+							className="w-full tw-select"
 							onChange={e => {
-								if (e.target.value === '') {
-									setLocalState({ ...localState, month: '', year: '' })
-									return
-								}
-								const [month, year] = e.target.value.split(' ')
-								setLocalState({ ...localState, month, year })
+								setLocalState({ ...localState, month: e.target.value })
 							}}>
 							<option value="">Select Month</option>
-							{allDates.map(date => (
-								<option key={date} value={date}>
-									{date}
+							{months.map(month => (
+								<option key={month} value={month}>
+									{month}
+								</option>
+							))}
+						</select>
+						<select
+							className="w-full tw-select"
+							onChange={e => {
+								setLocalState({ ...localState, year: e.target.value })
+							}}>
+							<option value="">Select Year</option>
+							{years.sort().map(year => (
+								<option key={year} value={year}>
+									{year}
 								</option>
 							))}
 						</select>
@@ -227,7 +233,7 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 								alt={student.Name}
 							/>
 						</div>
-						<div className=" md:block flex flex-col  text-center lg:text-left lg:ml-6 lg:flex-1 lg:flex ">
+						<div className=" md:block flex flex-col text-center lg:text-left lg:ml-6 lg:flex-1 lg:flex">
 							<p>{toTitleCase(student.Name)}</p>
 						</div>
 						<div className="flex flex-row items-center justify-center  text-center lg:text-left lg:flex-1 lg:flex ">
@@ -243,9 +249,8 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 						className="bg-white hidden font-medium  mx-3 rounded-t-2xl mt-4 lg:bg-white
                      lg:text-black lg:rounded-2xl lg:flex lg:p-5 lg:items-center lg:flex-1 flex-col lg:text-center lg:justify-center
                       lg:shadow-lg lg:border lg:border-gray-300">
-						<h1 className="lg:text-xl lg:font-medium hidden">View Past Payments</h1>
 						<div className="w-full flex flex-1 flex-col space-y-2  mt-2 overflow-y-auto max-h-96">
-							<p className="flex flex-1 justify-center items-center text-center">
+							<p className="flex flex-1 justify-center items-center text-center font-semibold">
 								Past 6 Months
 							</p>
 							<div className="flex flex-1 text-left ">
@@ -253,18 +258,22 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 								<p className="flex-1 text-center">Presents</p>
 								<p className="flex-1 text-center">Leaves</p>
 
-								<p className="flex-1 text-right">Absents</p>
+								<p className="flex-1 text-center">Absents</p>
 							</div>
 							{lastSixMonthsAttendance ? (
 								Object.entries(lastSixMonthsAttendance).map(([date, stats]) => (
-									<div key={date} className={'flex flex-1 text-left text-sm'}>
+									<div
+										key={date}
+										className={
+											'flex flex-1 text-left sm:text-sm  text-base font-normal'
+										}>
 										<p className="flex-1">{date}</p>
 										<p className="flex-1 text-center">{stats.presents ?? 0}</p>
 										<p className="flex-1 text-center">{stats.leaves ?? 0}</p>
 
 										<p
 											className={clsx(
-												'flex-1 text-right',
+												'flex-1 text-center',
 												(stats.absents ?? 0) > (stats.presents ?? 0)
 													? 'text-red-brand'
 													: ''
@@ -285,7 +294,7 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 							<p className="flex-1 font-semibold text-yellow-300 text-center">
 								{totalHistoryLeaves}
 							</p>
-							<p className="flex-1 font-semibold text-red-500 text-right">
+							<p className="flex-1 font-semibold text-red-500 text-center">
 								{totalHistoryAbsents}
 							</p>
 						</div>
@@ -335,8 +344,8 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 						<div className="flex flex-1 text-left text-sm ">
 							<p className="flex-1 font-medium">Month</p>
 							<p className="flex-1 font-medium text-center">Presents</p>
+							<p className="flex-1 font-medium text-center">Absents</p>
 							<p className="flex-1 font-medium text-center">Leaves</p>
-							<p className="flex-1 font-medium text-right">Absents</p>
 						</div>
 						{lastSixMonthsAttendance ? (
 							Object.entries(lastSixMonthsAttendance).map(([date, stats]) => {
@@ -351,8 +360,8 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 										)}>
 										<p className="flex-1">{date}</p>
 										<p className="flex-1 text-center">{stats.presents ?? 0}</p>
+										<p className="flex-1 text-center">{stats.absents ?? 0}</p>
 										<p className="flex-1 text-center">{stats.leaves ?? 0}</p>
-										<p className="flex-1 text-right">{stats.absents ?? 0}</p>
 									</div>
 								)
 							})
@@ -418,20 +427,20 @@ const DailyAttendanceCard = ({ date, status }: AttendanceCardProps) => {
 	)
 }
 
-const getFilterCondition = (time: number, month: string, year: string) => {
+const getFilterCondition = (date: string, month: string, year: string) => {
 	if (month === '' && year === '') {
 		return true
 	}
 
 	if (month === '' && year !== '') {
-		return moment(time).format('YYYY') === year
+		return moment(date).format('YYYY') === year
 	}
 
 	if (month !== '' && year === '') {
-		return moment(time).format('MMMM') === month
+		return moment(date).format('MMMM') === month
 	}
 
 	if (month !== '' && year !== '') {
-		return moment(time).format('MMMM') === month && moment(time).format('YYYY') === year
+		return moment(date).format('MMMM') === month && moment(date).format('YYYY') === year
 	}
 }
