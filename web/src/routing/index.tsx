@@ -62,6 +62,7 @@ import StaffPage from 'pages/staff'
 import PrintPreview from 'pages/school/fees/print-voucher/preview'
 import ClassFeeMenu from 'modules/Class/Single/ClassFeeMenu'
 import SingleClassResults from 'modules/Class/Single/ReportsMenu'
+import { ExamsMenu } from 'pages/exams/menu'
 import { PageNotFound } from 'pages/http_error/404'
 import { TermsOfService } from 'pages/terms/tos'
 
@@ -156,7 +157,7 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<PrivateRoute path="/exams/datesheet" component={Datesheet} />
 						<PrivateRoute path="/exams/marks" component={ExamsMarks} />
 						<PrivateRoute path="/exams/results" component={ExamsResults} />
-						<PrivateRoute path="/exams" component={Marks} />
+						<PrivateRoute path="/exams" component={ExamsMenu} />
 
 						<PrivateRoute path="/reports/:class_id/:section_id" component={ExamList} />
 						<PrivateRoute path="/reports" component={Marks} />

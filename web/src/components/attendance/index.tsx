@@ -6,12 +6,12 @@ export interface AttendanceStatsCard {
 		PRESENT: number
 		ABSENT: number
 		LEAVE: number
-		UNMARK: number
+		UNMARK?: number
 	}
 }
 
 export const AttendanceStatsCard = ({ attendance }: AttendanceStatsCard) => (
-	<div className="p-5 pt-2 border rounded-lg shadow-md sm:w-full md:pt-5 border-gray-50">
+	<div className="p-5 pt-2 border rounded-lg shadow-md sm:w-full md:pt-5 border-gray-50 bg-white">
 		<div></div>
 		<div className="flex flex-row justify-between text-sm md:text-base">
 			<div className="flex flex-col items-center justify-center text-teal-brand">
@@ -26,10 +26,12 @@ export const AttendanceStatsCard = ({ attendance }: AttendanceStatsCard) => (
 				<div className="text-lg font-semibold">{attendance.LEAVE}</div>
 				<div className="">Leave</div>
 			</div>
-			<div className="flex flex-col items-center justify-center text-gray-500">
-				<div className="text-lg font-semibold">{attendance.UNMARK}</div>
-				<div>Unmarked</div>
-			</div>
+			{attendance.UNMARK !== undefined && (
+				<div className="flex flex-col items-center justify-center text-gray-500">
+					<div className="text-lg font-semibold">{attendance.UNMARK}</div>
+					<div>Unmarked</div>
+				</div>
+			)}
 		</div>
 	</div>
 )

@@ -5,13 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [mischool-web@v1.1.0] - 2021-07-13
+## [mischool-web@v1.1.0] - 2021-07-15
 
 ### Added
 
--   Promote Students
--   Redesigning MIS activation page
--   Redesigning student attendance page
+-   Promote Students (#384)
+-   Redesigning MIS activation page (#387)
+-   Redesigning student attendance page (#391)
+-   Style tweaks
+-   Link to student profile
+
+### Fixes
+
+-   Fix checkPermission() validations
+-
 
 ### Fixes
 

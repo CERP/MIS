@@ -98,7 +98,7 @@ export const VoucherSettings = () => {
 		<AppLayout title={'Voucher Settings'} showHeaderTitle>
 			<div className="p-5 md:p-10 md:pt-5 md:pb-0 relative">
 				<div className="md:w-4/5 md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 pb-6 mb-4">
-					<div className="text-white text-center text-base my-5">
+					<div className="text-white text-center font-semibold my-5">
 						This will appear on student voucher
 					</div>
 					<form
