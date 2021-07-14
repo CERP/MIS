@@ -106,20 +106,22 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 	const [state, setState] = useState<State>(initialState)
 
 	//This methods takes the sorted and filtered classes, maps the key of a class against the object of the next class
-	const calculatePromotionData = (localState: MISClass[]) => {
+	const calculatePromotionData = (promotableClasses: MISClass[]) => {
 		let mapping: PromotionDataType
 
-		for (let i = 0; i < localState.length; i++) {
-			const fromSectionId = Object.keys(localState[i].sections)[0]
-
+		for (let i = 0; i < promotableClasses.length; i++) {
 			const sections = getSectionsFromClasses({
-				[localState[i].id]: localState[i]
+				[promotableClasses[i].id]: promotableClasses[i]
 			})
 
-			const sectionIds = sections.reduce((agg, curr) => [...agg, curr.id], [])
+			// let's say we have default section
+			const fromSectionId = sections[0].id
+
+			// class sections ids
+			const sectionIds = sections.map(section => section.id)
 
 			const totalStudents = [...Object.values(students ?? {})].filter(
-				s => isValidStudent(s) && s.Active && sectionIds.includes(s.section_id)
+				s => isValidStudent(s, { active: true }) && sectionIds.includes(s.section_id)
 			).length
 
 			if (totalStudents <= 0) {
@@ -127,23 +129,28 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 			}
 
 			if (i === 0) {
-				if (Object.keys(localState[i].sections).includes(MIS_TEMP_SECTION_ID)) {
+				if (
+					Object.keys(promotableClasses[i].sections ?? {}).includes(MIS_TEMP_SECTION_ID)
+				) {
 					continue
 				}
 
-				const tempSection: MISClass['sections'] = { mis_temp: { name: 'TEMPORARY' } }
+				const tempSection: MISClass['sections'] = {
+					[MIS_TEMP_SECTION_ID]: { name: 'TEMPORARY' }
+				}
+
 				mapping = {
 					...mapping,
-					[localState[i].id]: {
+					[promotableClasses[i].id]: {
 						...blankClass(),
 						name: 'Temporary',
-						classYear: localState[i].classYear + 1,
+						classYear: promotableClasses[i].classYear + 1,
 						sections: {
 							mis_temp: { name: 'TEMPORARY' }
 						},
 
 						fromSection: {
-							...localState[i].sections[fromSectionId],
+							...promotableClasses[i].sections[fromSectionId],
 							id: fromSectionId
 						},
 						toSection: { ...tempSection, id: MIS_TEMP_SECTION_ID },
@@ -151,22 +158,22 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 					}
 				}
 			} else {
-				if (Object.keys(localState[i].sections).includes(MIS_TEMP_SECTION_ID)) {
+				if (Object.keys(promotableClasses[i].sections).includes(MIS_TEMP_SECTION_ID)) {
 					continue
 				}
 
-				const toSectionId = Object.keys(localState[i - 1].sections)[0]
+				const toSectionId = Object.keys(promotableClasses[i - 1].sections)[0]
 
 				mapping = {
 					...mapping,
-					[localState[i].id]: {
-						...localState[i - 1],
+					[promotableClasses[i].id]: {
+						...promotableClasses[i - 1],
 						fromSection: {
-							...localState[i].sections[fromSectionId],
+							...promotableClasses[i].sections[fromSectionId],
 							id: fromSectionId
 						},
 						toSection: {
-							...localState[i - 1].sections[toSectionId],
+							...promotableClasses[i - 1].sections[toSectionId],
 							id: toSectionId
 						},
 						promoted: false
@@ -180,12 +187,12 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 
 	useEffect(() => {
 		calculatePromotionData(sortedClasses)
-	}, [])
+	}, [sortedClasses])
 
 	// This hook is fired Everytime there is a change in augmentedSections
 	// This is needed because of the nature of how state works in React
 	useEffect(() => {
-		if (Object.values(state.promotionData).length > 0) checkClassPromoted()
+		if (Object.values(state.promotionData ?? {}).length > 0) checkClassPromoted()
 	}, [state.augmentedSections])
 
 	// This Function checks if all sections of a class have been promoted and then sets the promoted field
@@ -350,52 +357,57 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 		})
 	}
 
-	if (state.orderIncorrect) {
-		return <ClassOrderErrorBanner />
-	}
 	return (
 		<AppLayout title="Promote Students" showHeaderTitle>
-			<div className="p-5 md:p-10 md:pt-5 md:pb-0 text-gray-700 relative">
-				{state.displayWarning ? (
-					<PromotionWarning
-						onPress={() => setState({ ...state, displayWarning: false })}
-					/>
-				) : (
-					<div className="space-y-4">
-						{Object.entries(state.promotionData ?? {}).map(
-							([key, val]: [key: string, val: AugmentedClass]) => {
-								return (
-									<div className="lg:mx-auto  lg:w-4/5">
-										<PromotionCard
-											undoSectionPromotion={undoSectionPromotion}
-											promotionData={state.promotionData}
-											groupedStudents={state.groupedStudents}
-											augmentedSections={state.augmentedSections}
-											classKey={key}
-											currentClass={val}
-											classes={classes}
-											promoteSection={promoteSectionStudents}
-											onToChange={(e: string) => onToChange(e, key)}
-											onFromChange={(e: string) => onFromChange(e, key)}
-										/>
-									</div>
-								)
-							}
-						)}
-						<div className="flex justify-center">
-							<button
-								onClick={() =>
-									checkEveryClassPromoted()
-										? setIsComponentVisible(true)
-										: toast.error('All sections are not promoted yet')
+			{state.orderIncorrect ? (
+				<ClassOrderErrorBanner />
+			) : (
+				<div className="p-5 md:p-10 md:pt-5 md:pb-0 text-gray-700 relative">
+					{state.displayWarning ? (
+						<PromotionWarning
+							onPress={() => setState({ ...state, displayWarning: false })}
+						/>
+					) : (
+						<div className="space-y-4">
+							{Object.entries(state.promotionData ?? {}).map(
+								([classId, val]: [classId: string, val: AugmentedClass], index) => {
+									return (
+										<div key={classId + index} className="lg:mx-auto  lg:w-4/5">
+											<PromotionCard
+												undoSectionPromotion={undoSectionPromotion}
+												promotionData={state.promotionData}
+												groupedStudents={state.groupedStudents}
+												augmentedSections={state.augmentedSections}
+												classKey={classId}
+												currentClass={val}
+												classes={classes}
+												promoteSection={promoteSectionStudents}
+												onToChange={(e: string) => onToChange(e, classId)}
+												onFromChange={(e: string) =>
+													onFromChange(e, classId)
+												}
+											/>
+										</div>
+									)
 								}
-								className="tw-btn md:w-2/5 w-full mx-auto  text-center rounded-md shadow-md transform  hover:scale-105 transition-all   bg-red-brand text-white mb-4 md:text-lg text-base font-semibold">
-								Finalise Promotions
-							</button>
+							)}
+
+							<div className="flex justify-center">
+								<button
+									onClick={() =>
+										checkEveryClassPromoted()
+											? setIsComponentVisible(true)
+											: toast.error('All sections are not promoted yet')
+									}
+									className="tw-btn md:w-2/5 w-full mx-auto  text-center rounded-md shadow-md transform  hover:scale-105 transition-all   bg-red-brand text-white mb-4 md:text-lg text-base font-semibold">
+									Save Promotions
+								</button>
+							</div>
 						</div>
-					</div>
-				)}
-			</div>
+					)}
+				</div>
+			)}
+
 			{isComponentVisible && (
 				<TModal>
 					<div ref={ref} className="bg-white pb-3">
@@ -756,14 +768,15 @@ const PromotionWarning = ({ onPress }: PromotionWarningProps) => {
 
 const ClassOrderErrorBanner = () => {
 	return (
-		<div className="w-full h-screen px-10 m-auto py-16 flex items-center justify-center bg-gradient-to-r from-gray-50 to-gray-100">
+		<div className="w-full px-10 py-16 m-auto flex items-center justify-center bg-gradient-to-r from-gray-50 to-gray-100">
 			<div className="bg-white shadow-md overflow-hidden sm:rounded-lg pb-8">
 				<div className="border-t border-gray-200 text-center pt-8">
-					<h1 className="lg:text-4xl text-xl mb-5 font-bold text-red-brand">
-						Class Order Incorrect
+					<h1 className="lg:text-3xl text-xl mb-5 font-bold text-red-brand">
+						One or more Classes Order is Incorrect
 					</h1>
 					<p className="lg:text-2xl text-base pb-8 px-12 font-medium">
-						Please correct the order of your classes or contact support for more details
+						Please correct the order/year of your classes or contact support for more
+						details
 					</p>
 					<div className="space-x-4">
 						<Link to="/home">
