@@ -60,7 +60,7 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 		let groupedStudents: { [id: string]: Array<MISStudent> } = Object.values(
 			students ?? {}
 		).reduce((agg, curr) => {
-			if (!curr.section_id || !isValidStudent(curr, { active: curr.Active })) {
+			if (!curr.section_id || isValidStudent(curr, { active: false })) {
 				return agg
 			}
 			if (agg[curr.section_id]) {
