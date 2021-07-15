@@ -305,7 +305,9 @@ export const Settings = () => {
 						</div>
 						<div className="flex flex-row justify-between">
 							<div>Max Students</div>
-							<div className="text-sm">{db.max_limit}</div>
+							<div className="text-sm">
+								{db.max_limit > 0 ? db.max_limit : 'Unlimited'}
+							</div>
 						</div>
 						<div className="flex flex-row justify-between">
 							<div>Expiring on</div>

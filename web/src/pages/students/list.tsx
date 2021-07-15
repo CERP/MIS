@@ -2,7 +2,12 @@ import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
 import { Link } from 'react-router-dom'
-import { CreditCardIcon, PrinterIcon, ViewListIcon } from '@heroicons/react/outline'
+import {
+	CreditCardIcon,
+	PrinterIcon,
+	ShieldExclamationIcon,
+	ViewListIcon
+} from '@heroicons/react/outline'
 import { Popover, Transition } from '@headlessui/react'
 
 import { AppLayout } from 'components/Layout/appLayout'
@@ -50,6 +55,7 @@ export const StudentList = ({
 	const classes = useSelector((state: RootReducerState) => state.db.classes, shallowEqual)
 	const settings = useSelector((state: RootReducerState) => state.db.settings, shallowEqual)
 	const assets = useSelector((state: RootReducerState) => state.db.assets, shallowEqual)
+	const maxStudentsLimit = useSelector((state: RootReducerState) => state.db.max_limit || -1)
 
 	const searchInputRef = useRef(null)
 
@@ -143,8 +149,6 @@ export const StudentList = ({
 	}, [students, settings])
 
 	// TODO: add options to cards
-	// TODO: add a check here for max_limit: state.db.max_limit
-	// to restrict adding students
 
 	const filteredStudents: AugmentedStudent[] = Object.values(students ?? {})
 		.filter(s => {
@@ -206,6 +210,12 @@ export const StudentList = ({
 		)
 	}
 
+	const currentActiveStudents = useMemo(() => {
+		return Object.values(students ?? {}).filter(student =>
+			isValidStudent(student, { active: true })
+		)
+	}, [students])
+
 	const onPrint = () => {
 		window.print()
 
@@ -214,15 +224,24 @@ export const StudentList = ({
 
 	const pageTitle = `Students${forwardTo ? ' ' + toTitleCase(forwardTo) : ''}`
 
+	const hasReachedMaxStudents =
+		maxStudentsLimit > 0 && currentActiveStudents.length >= maxStudentsLimit
+
 	const renderListPage = () => {
 		return (
 			<>
 				<div className="relative p-5 md:p-10 md:pt-5 mb-10 md:mb-0 print:hidden">
-					{!forwardTo && (
-						<Link to="/students/new/menu">
-							<AddStickyButton label="Add new Student" />
-						</Link>
-					)}
+					{!forwardTo &&
+						(hasReachedMaxStudents ? (
+							<div className="inline-flex items-center fixed z-50 bottom-4 right-4 md:right-8 rounded-full bg-red-brand md:w-1/4 text-white py-1 md:py-3 px-2 md:px-6 w-11/12 text-lg mr-0.5 shadow-md md:font-semibold">
+								<ShieldExclamationIcon className="w-6 mr-1 md:mr-4" />
+								<span>Upgrade package to add students</span>
+							</div>
+						) : (
+							<Link to="/students/new/menu">
+								<AddStickyButton label={'Add new Student'} />
+							</Link>
+						))}
 
 					<div className="flex flex-col items-center justify-between mt-4 mb-12 space-y-4 md:flex-row md:mb-20 md:space-y-0 md:space-x-60">
 						<div ref={searchInputRef} className="md:w-9/12 w-full">

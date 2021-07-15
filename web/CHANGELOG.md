@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Redesigning student attendance page (#391)
 -   Style tweaks
 -   Link to student profile
+-   Apply max students limit
 
 ### Fixes
 
