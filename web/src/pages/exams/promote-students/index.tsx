@@ -59,7 +59,7 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 		let groupedStudents: { [id: string]: Array<MISStudent> } = Object.values(
 			students ?? {}
 		).reduce((agg, curr) => {
-			if (!curr.section_id || !curr.Active || !isValidStudent(curr)) {
+			if (!curr.section_id || !isValidStudent(curr, { active: curr.Active })) {
 				return agg
 			}
 			if (agg[curr.section_id]) {
@@ -85,12 +85,18 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 
 	const checkClassOrders = () => {
 		const classesArray = Object.values(classes).sort((a, b) => b.classYear - a.classYear)
+		let orderIncorrect = false
 		for (let i = 0; i < classesArray.length - 1; i++) {
+			// The following check excludes mis_temp class from being counted among the classes for which
+			// order is being checked
+			if (Object.keys(classesArray[i].sections ?? {})[0] === MIS_TEMP_SECTION_ID) {
+				continue
+			}
 			if (classesArray[i].classYear - classesArray[i + 1].classYear !== 1) {
-				return true
+				orderIncorrect = true
 			}
 		}
-		return false
+		return orderIncorrect
 	}
 
 	const initialState: State = {
@@ -121,7 +127,7 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 			const sectionIds = sections.map(section => section.id)
 
 			const totalStudents = [...Object.values(students ?? {})].filter(
-				s => isValidStudent(s, { active: true }) && sectionIds.includes(s.section_id)
+				s => isValidStudent(s, { active: s.Active }) && sectionIds.includes(s.section_id)
 			).length
 
 			if (totalStudents <= 0) {
