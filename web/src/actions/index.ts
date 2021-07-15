@@ -487,7 +487,7 @@ export const passOutStudents = (Class: MISClass) => (
 	dispatch(
 		createDeletes([
 			{
-				path: ['db', 'classes', Class.id, 'mis_temp']
+				path: ['db', 'classes', Class.id, 'sections', 'mis_temp']
 			},
 			{
 				path: ['db', 'classes', Class.id]
