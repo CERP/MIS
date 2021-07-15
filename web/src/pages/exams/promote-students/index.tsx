@@ -526,6 +526,17 @@ const PromotionCard = ({
 		})
 	}
 
+	const checkRemainingSections = (classId: string) => {
+		const sections = Object.values(augmentedSections).filter(
+			section =>
+				section.class_id === classId &&
+				sectionHasStudents(section.id, Object.keys(groupedStudents))
+		)
+		const total = sections.length
+		const done = sections.filter(section => section.sectionPromoted).length
+		return `${done}/${total} Done`
+	}
+
 	return (
 		<>
 			<div
@@ -571,6 +582,7 @@ const PromotionCard = ({
 							className="font-light cursor-pointer underline text-red-brand mt-2 md:text-base text-sm">
 							Undo
 						</div>
+						<p className="text-xs font-light">{checkRemainingSections(classKey)}</p>
 					</div>
 				) : (
 					<div
@@ -586,6 +598,7 @@ const PromotionCard = ({
 							className="tw-btn-blue rounded-full w-full py-1  lg:w-1/2 text-center">
 							<ArrowNarrowRightIcon className="lg:h-12 md:h-10 h-6 mx-auto text-white" />
 						</button>
+						<p className="text-xs font-light">{checkRemainingSections(classKey)}</p>
 					</div>
 				)}
 				<div key={currentClass.id} className="flex items-end flex-col w-2/5 lg:w-2/6">
