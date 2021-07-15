@@ -1,4 +1,4 @@
-import { hash } from 'utils'
+import { hash, isValidStudent } from 'utils'
 import { createMerges, createDeletes, createLoginFail, analyticsEvent, uploadImages } from './core'
 import moment from 'moment'
 import { v4 } from 'node-uuid'
@@ -456,6 +456,43 @@ export const deleteClass = (Class: MISClass) => (
 	)
 }
 
+export const passOutStudents = (Class: MISClass) => (
+	dispatch: Function,
+	getState: () => RootReducerState
+) => {
+	const state = getState()
+
+	const students = Object.values(state.db.students)
+		.filter(student => Class.sections[student.section_id] !== undefined)
+		.reduce((agg, student) => {
+			return [
+				...agg,
+				{
+					path: ['db', 'students', student.id, 'section_id'],
+					value: ''
+				},
+				{
+					path: ['db', 'students', student.id, 'Active'],
+					value: false
+				},
+				{
+					path: ['db', 'students', student.id, 'tags', 'FINISHED_SCHOOL'],
+					value: true
+				}
+			]
+		}, [])
+
+	console.log(students)
+	dispatch(createMerges(students))
+
+	dispatch(
+		createDeletes([
+			{
+				path: ['db', 'classes', Class.id]
+			}
+		])
+	)
+}
 export const deleteSection = (classId: string, sectiondId: string) => (
 	dispatch: Function,
 	getState: () => RootReducerState
