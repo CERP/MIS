@@ -14,6 +14,7 @@ import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
 import { createEditClass, promoteStudents } from 'actions'
 import { Link } from 'react-router-dom'
+import clsx from 'clsx'
 
 type AugmentedClass = MISClass & {
 	fromSection?: Partial<ModifiedSection>
@@ -365,7 +366,9 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 
 	return (
 		<AppLayout title="Promote Students" showHeaderTitle>
-			{state.orderIncorrect ? (
+			{!state.promotionData ? (
+				<NoClassesToPromoteBanner />
+			) : state.orderIncorrect ? (
 				<ClassOrderErrorBanner />
 			) : (
 				<div className="p-5 md:p-10 md:pt-5 md:pb-0 text-gray-700 relative">
@@ -405,7 +408,12 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 											? setIsComponentVisible(true)
 											: toast.error('All sections are not promoted yet')
 									}
-									className="tw-btn md:w-2/5 w-full mx-auto  text-center rounded-md shadow-md transform  hover:scale-105 transition-all   bg-red-brand text-white mb-4 md:text-lg text-base font-semibold">
+									className={clsx(
+										'tw-btn-red md:w-2/5 w-full mx-auto mb-4 md:text-lg',
+										!checkEveryClassPromoted()
+											? 'bg-gray-brand text-gray-500 cursor-not-allowed hover:bg-gray-brand'
+											: 'transform  hover:scale-105 transition-transform '
+									)}>
 									Save Promotions
 								</button>
 							</div>
@@ -774,7 +782,7 @@ const PromotionWarning = ({ onPress }: PromotionWarningProps) => {
 
 const ClassOrderErrorBanner = () => {
 	return (
-		<div className="w-full px-10 py-16 m-auto flex items-center justify-center bg-gradient-to-r from-gray-50 to-gray-100">
+		<div className="w-full px-10 py-16 m-auto flex items-center justify-center">
 			<div className="bg-white shadow-md overflow-hidden sm:rounded-lg pb-8">
 				<div className="border-t border-gray-200 text-center pt-8">
 					<h1 className="lg:text-3xl text-xl mb-5 font-bold text-red-brand">
@@ -783,6 +791,34 @@ const ClassOrderErrorBanner = () => {
 					<p className="lg:text-2xl text-base pb-8 px-12 font-medium">
 						Please correct the order/year of your classes or contact support for more
 						details
+					</p>
+					<div className="space-x-4">
+						<Link to="/home">
+							<button className="tw-btn-blue py-2 rounded-md">Go Home</button>
+						</Link>
+						<Link to="/contact-us">
+							<button className="tw-btn-red py-2 rounded-md">Contact Us</button>
+						</Link>
+					</div>
+				</div>
+			</div>
+		</div>
+	)
+}
+
+const NoClassesToPromoteBanner = () => {
+	return (
+		<div className="w-full px-10 py-16 m-auto flex items-center justify-center">
+			<div className="bg-white shadow-md overflow-hidden sm:rounded-lg pb-8">
+				<div className="border-t border-gray-200 text-center pt-8">
+					<h1 className="lg:text-3xl text-xl mb-5 font-bold text-red-brand">
+						No Classses to Promote
+					</h1>
+					<p className="lg:text-2xl text-base pb-8 px-12 font-medium">
+						There are no classes to promote, or the classes exist and you do not have
+						students in them.
+						<br />
+						If you think this is an error, please contact us
 					</p>
 					<div className="space-x-4">
 						<Link to="/home">
