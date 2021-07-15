@@ -342,6 +342,11 @@ export const Settings = () => {
 								/>
 							</TModal>
 						)}
+						<Link to="/promote-students">
+							<button className="tw-btn bg-teal-brand mb-2 w-full">
+								Promote Students
+							</button>
+						</Link>
 						<button
 							onClick={exportToJSON}
 							className="mb-2 tw-btn bg-orange-brand text-white w-full">

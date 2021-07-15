@@ -14,6 +14,7 @@ import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
 import { createEditClass, promoteStudents } from 'actions'
 import { Link } from 'react-router-dom'
+import clsx from 'clsx'
 
 type AugmentedClass = MISClass & {
 	fromSection?: Partial<ModifiedSection>
@@ -59,7 +60,7 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 		let groupedStudents: { [id: string]: Array<MISStudent> } = Object.values(
 			students ?? {}
 		).reduce((agg, curr) => {
-			if (!curr.section_id || !curr.Active || !isValidStudent(curr)) {
+			if (!curr.section_id || isValidStudent(curr, { active: false })) {
 				return agg
 			}
 			if (agg[curr.section_id]) {
@@ -85,12 +86,18 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 
 	const checkClassOrders = () => {
 		const classesArray = Object.values(classes).sort((a, b) => b.classYear - a.classYear)
+		let orderIncorrect = false
 		for (let i = 0; i < classesArray.length - 1; i++) {
+			// The following check excludes mis_temp class from being counted among the classes for which
+			// order is being checked
+			if (Object.keys(classesArray[i].sections ?? {})[0] === MIS_TEMP_SECTION_ID) {
+				continue
+			}
 			if (classesArray[i].classYear - classesArray[i + 1].classYear !== 1) {
-				return true
+				orderIncorrect = true
 			}
 		}
-		return false
+		return orderIncorrect
 	}
 
 	const initialState: State = {
@@ -98,6 +105,9 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 		promotionData: {},
 		groupedStudents: calculateGroupedStudents(),
 		augmentedSections: getSectionsFromClasses(classes).reduce((agg, curr) => {
+			if (!sectionHasStudents(curr.id, Object.keys(orignalGroupedStudents))) {
+				return { ...agg, [curr.id]: { ...curr, sectionPromoted: true } }
+			}
 			return { ...agg, [curr.id]: { ...curr, sectionPromoted: false } }
 		}, {}),
 		orderIncorrect: checkClassOrders()
@@ -106,44 +116,53 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 	const [state, setState] = useState<State>(initialState)
 
 	//This methods takes the sorted and filtered classes, maps the key of a class against the object of the next class
-	const calculatePromotionData = (localState: MISClass[]) => {
+	const calculatePromotionData = (promotableClasses: MISClass[]) => {
 		let mapping: PromotionDataType
 
-		for (let i = 0; i < localState.length; i++) {
-			const fromSectionId = Object.keys(localState[i].sections)[0]
-
+		for (let i = 0; i < promotableClasses.length; i++) {
 			const sections = getSectionsFromClasses({
-				[localState[i].id]: localState[i]
-			})
+				[promotableClasses[i].id]: promotableClasses[i]
+			}).filter(section =>
+				sectionHasStudents(section?.id, Object.keys(orignalGroupedStudents))
+			)
 
-			const sectionIds = sections.reduce((agg, curr) => [...agg, curr.id], [])
+			// let's say we have default section
+
+			// class sections ids
+			const sectionIds = sections.map(section => section.id)
 
 			const totalStudents = [...Object.values(students ?? {})].filter(
-				s => isValidStudent(s) && s.Active && sectionIds.includes(s.section_id)
+				s => isValidStudent(s, { active: s.Active }) && sectionIds.includes(s.section_id)
 			).length
 
 			if (totalStudents <= 0) {
 				continue
 			}
+			const fromSectionId = sections[0].id
 
 			if (i === 0) {
-				if (Object.keys(localState[i].sections).includes(MIS_TEMP_SECTION_ID)) {
+				if (
+					Object.keys(promotableClasses[i].sections ?? {}).includes(MIS_TEMP_SECTION_ID)
+				) {
 					continue
 				}
 
-				const tempSection: MISClass['sections'] = { mis_temp: { name: 'TEMPORARY' } }
+				const tempSection: MISClass['sections'] = {
+					[MIS_TEMP_SECTION_ID]: { name: 'TEMPORARY' }
+				}
+
 				mapping = {
 					...mapping,
-					[localState[i].id]: {
+					[promotableClasses[i].id]: {
 						...blankClass(),
 						name: 'Temporary',
-						classYear: localState[i].classYear + 1,
+						classYear: promotableClasses[i].classYear + 1,
 						sections: {
 							mis_temp: { name: 'TEMPORARY' }
 						},
 
 						fromSection: {
-							...localState[i].sections[fromSectionId],
+							...promotableClasses[i].sections[fromSectionId],
 							id: fromSectionId
 						},
 						toSection: { ...tempSection, id: MIS_TEMP_SECTION_ID },
@@ -151,22 +170,22 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 					}
 				}
 			} else {
-				if (Object.keys(localState[i].sections).includes(MIS_TEMP_SECTION_ID)) {
+				if (Object.keys(promotableClasses[i].sections).includes(MIS_TEMP_SECTION_ID)) {
 					continue
 				}
 
-				const toSectionId = Object.keys(localState[i - 1].sections)[0]
+				const toSectionId = Object.keys(promotableClasses[i - 1].sections)[0]
 
 				mapping = {
 					...mapping,
-					[localState[i].id]: {
-						...localState[i - 1],
+					[promotableClasses[i].id]: {
+						...promotableClasses[i - 1],
 						fromSection: {
-							...localState[i].sections[fromSectionId],
+							...promotableClasses[i].sections[fromSectionId],
 							id: fromSectionId
 						},
 						toSection: {
-							...localState[i - 1].sections[toSectionId],
+							...promotableClasses[i - 1].sections[toSectionId],
 							id: toSectionId
 						},
 						promoted: false
@@ -180,12 +199,12 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 
 	useEffect(() => {
 		calculatePromotionData(sortedClasses)
-	}, [])
+	}, [sortedClasses])
 
 	// This hook is fired Everytime there is a change in augmentedSections
 	// This is needed because of the nature of how state works in React
 	useEffect(() => {
-		if (Object.values(state.promotionData).length > 0) checkClassPromoted()
+		if (Object.values(state.promotionData ?? {}).length > 0) checkClassPromoted()
 	}, [state.augmentedSections])
 
 	// This Function checks if all sections of a class have been promoted and then sets the promoted field
@@ -350,52 +369,64 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 		})
 	}
 
-	if (state.orderIncorrect) {
-		return <ClassOrderErrorBanner />
-	}
 	return (
 		<AppLayout title="Promote Students" showHeaderTitle>
-			<div className="p-5 md:p-10 md:pt-5 md:pb-0 text-gray-700 relative">
-				{state.displayWarning ? (
-					<PromotionWarning
-						onPress={() => setState({ ...state, displayWarning: false })}
-					/>
-				) : (
-					<div className="space-y-4">
-						{Object.entries(state.promotionData ?? {}).map(
-							([key, val]: [key: string, val: AugmentedClass]) => {
-								return (
-									<div className="lg:mx-auto  lg:w-4/5">
-										<PromotionCard
-											undoSectionPromotion={undoSectionPromotion}
-											promotionData={state.promotionData}
-											groupedStudents={state.groupedStudents}
-											augmentedSections={state.augmentedSections}
-											classKey={key}
-											currentClass={val}
-											classes={classes}
-											promoteSection={promoteSectionStudents}
-											onToChange={(e: string) => onToChange(e, key)}
-											onFromChange={(e: string) => onFromChange(e, key)}
-										/>
-									</div>
-								)
-							}
-						)}
-						<div className="flex justify-center">
-							<button
-								onClick={() =>
-									checkEveryClassPromoted()
-										? setIsComponentVisible(true)
-										: toast.error('All sections are not promoted yet')
+			{!state.promotionData ? (
+				<NoClassesToPromoteBanner />
+			) : state.orderIncorrect ? (
+				<ClassOrderErrorBanner />
+			) : (
+				<div className="p-5 md:p-10 md:pt-5 md:pb-0 text-gray-700 relative">
+					{state.displayWarning ? (
+						<PromotionWarning
+							onPress={() => setState({ ...state, displayWarning: false })}
+						/>
+					) : (
+						<div className="space-y-4">
+							{Object.entries(state.promotionData ?? {}).map(
+								([classId, val]: [classId: string, val: AugmentedClass], index) => {
+									return (
+										<div key={classId + index} className="lg:mx-auto  lg:w-4/5">
+											<PromotionCard
+												undoSectionPromotion={undoSectionPromotion}
+												promotionData={state.promotionData}
+												groupedStudents={state.groupedStudents}
+												augmentedSections={state.augmentedSections}
+												classKey={classId}
+												currentClass={val}
+												classes={classes}
+												promoteSection={promoteSectionStudents}
+												onToChange={(e: string) => onToChange(e, classId)}
+												onFromChange={(e: string) =>
+													onFromChange(e, classId)
+												}
+											/>
+										</div>
+									)
 								}
-								className="tw-btn md:w-2/5 w-full mx-auto  text-center rounded-md shadow-md transform  hover:scale-105 transition-all   bg-red-brand text-white mb-4 md:text-lg text-base font-semibold">
-								Finalise Promotions
-							</button>
+							)}
+
+							<div className="flex justify-center">
+								<button
+									onClick={() =>
+										checkEveryClassPromoted()
+											? setIsComponentVisible(true)
+											: toast.error('All sections are not promoted yet')
+									}
+									className={clsx(
+										'tw-btn-red md:w-2/5 w-full mx-auto mb-4 md:text-lg',
+										!checkEveryClassPromoted()
+											? 'bg-gray-brand text-gray-500 cursor-not-allowed hover:bg-gray-brand'
+											: 'transform  hover:scale-105 transition-transform '
+									)}>
+									Save Promotions
+								</button>
+							</div>
 						</div>
-					</div>
-				)}
-			</div>
+					)}
+				</div>
+			)}
+
 			{isComponentVisible && (
 				<TModal>
 					<div ref={ref} className="bg-white pb-3">
@@ -495,6 +526,17 @@ const PromotionCard = ({
 		})
 	}
 
+	const checkRemainingSections = (classId: string) => {
+		const sections = Object.values(augmentedSections).filter(
+			section =>
+				section.class_id === classId &&
+				sectionHasStudents(section.id, Object.keys(groupedStudents))
+		)
+		const total = sections.length
+		const done = sections.filter(section => section.sectionPromoted).length
+		return `${done}/${total} Done`
+	}
+
 	return (
 		<>
 			<div
@@ -505,13 +547,15 @@ const PromotionCard = ({
 					<select
 						className="w-full rounded shadow tw-select text-teal-brand"
 						onChange={e => onFromChange(e.target.value)}>
-						{Object.entries(classes[classKey].sections).map(([key, section]) => {
-							return (
+						{Object.entries(classes[classKey].sections)
+							.filter(([secId, sec]) =>
+								sectionHasStudents(secId, Object.keys(groupedStudents))
+							)
+							.map(([key, section]) => (
 								<option value={key}>
 									{augmentedSections[key].namespaced_name}
 								</option>
-							)
-						})}
+							))}
 					</select>
 				</div>
 				{augmentedSections[currentClass.fromSection.id].sectionPromoted ? (
@@ -536,6 +580,7 @@ const PromotionCard = ({
 							className="font-light cursor-pointer underline text-red-brand mt-2 md:text-base text-sm">
 							Undo
 						</div>
+						<p className="text-xs font-light">{checkRemainingSections(classKey)}</p>
 					</div>
 				) : (
 					<div
@@ -551,13 +596,17 @@ const PromotionCard = ({
 							className="tw-btn-blue rounded-full w-full py-1  lg:w-1/2 text-center">
 							<ArrowNarrowRightIcon className="lg:h-12 md:h-10 h-6 mx-auto text-white" />
 						</button>
+						<p className="text-xs font-light">{checkRemainingSections(classKey)}</p>
 					</div>
 				)}
 				<div key={currentClass.id} className="flex items-end flex-col w-2/5 lg:w-2/6">
 					<h1>{currentClass.name}</h1>
 					<select
 						className="w-full rounded shadow tw-select text-teal-brand"
-						onChange={e => onToChange(e.target.value)}>
+						onChange={e => {
+							setVisible(false)
+							onToChange(e.target.value)
+						}}>
 						{Object.entries(currentClass.sections).map(([key, section]) => (
 							<option value={key}>
 								{key === MIS_TEMP_SECTION_ID
@@ -756,14 +805,43 @@ const PromotionWarning = ({ onPress }: PromotionWarningProps) => {
 
 const ClassOrderErrorBanner = () => {
 	return (
-		<div className="w-full h-screen px-10 m-auto py-16 flex items-center justify-center bg-gradient-to-r from-gray-50 to-gray-100">
+		<div className="w-full px-10 py-16 m-auto flex items-center justify-center">
 			<div className="bg-white shadow-md overflow-hidden sm:rounded-lg pb-8">
 				<div className="border-t border-gray-200 text-center pt-8">
-					<h1 className="lg:text-4xl text-xl mb-5 font-bold text-red-brand">
-						Class Order Incorrect
+					<h1 className="lg:text-3xl text-xl mb-5 font-bold text-red-brand">
+						One or more Classes Order is Incorrect
 					</h1>
 					<p className="lg:text-2xl text-base pb-8 px-12 font-medium">
-						Please correct the order of your classes or contact support for more details
+						Please correct the order/year of your classes or contact support for more
+						details
+					</p>
+					<div className="space-x-4">
+						<Link to="/home">
+							<button className="tw-btn-blue py-2 rounded-md">Go Home</button>
+						</Link>
+						<Link to="/contact-us">
+							<button className="tw-btn-red py-2 rounded-md">Contact Us</button>
+						</Link>
+					</div>
+				</div>
+			</div>
+		</div>
+	)
+}
+
+const NoClassesToPromoteBanner = () => {
+	return (
+		<div className="w-full px-10 py-16 m-auto flex items-center justify-center">
+			<div className="bg-white shadow-md overflow-hidden sm:rounded-lg pb-8">
+				<div className="border-t border-gray-200 text-center pt-8">
+					<h1 className="lg:text-3xl text-xl mb-5 font-bold text-red-brand">
+						No Classses to Promote
+					</h1>
+					<p className="lg:text-2xl text-base pb-8 px-12 font-medium">
+						There are no classes to promote, or the classes exist and you do not have
+						students in them.
+						<br />
+						If you think this is an error, please contact us
 					</p>
 					<div className="space-x-4">
 						<Link to="/home">
@@ -821,4 +899,8 @@ function checkPermissionToUndo(promotionData: PromotionDataType, id: string) {
 	}
 
 	return true
+}
+
+const sectionHasStudents = (sectionId: string, allSectionIds: string[]): boolean => {
+	return allSectionIds.includes(sectionId)
 }
