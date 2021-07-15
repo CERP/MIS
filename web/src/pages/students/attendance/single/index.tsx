@@ -38,8 +38,8 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 	)
 	const [localState, setLocalState] = useState<localState>({
 		detailsExpanded: false,
-		month: '',
-		year: '',
+		month: moment().format('MMMM'),
+		year: moment().format('YYYY'),
 		totalAbsents: 0,
 		totalPresents: 0,
 		totalLeaves: 0
@@ -163,6 +163,7 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 					</div>
 					<div className="flex flex-row w-full items-center justify-center space-x-1 mb-4">
 						<select
+							value={localState.month}
 							className="w-full tw-select"
 							onChange={e => {
 								setLocalState({ ...localState, month: e.target.value })
@@ -175,6 +176,7 @@ export const SingleStudentAttendance = ({ match }: StudentAttendanceProps) => {
 							))}
 						</select>
 						<select
+							value={localState.year}
 							className="w-full tw-select"
 							onChange={e => {
 								setLocalState({ ...localState, year: e.target.value })
