@@ -551,13 +551,11 @@ const PromotionCard = ({
 							.filter(([secId, sec]) =>
 								sectionHasStudents(secId, Object.keys(groupedStudents))
 							)
-							.map(([key, section]) => {
-								return (
-									<option value={key}>
-										{augmentedSections[key].namespaced_name}
-									</option>
-								)
-							})}
+							.map(([key, section]) => (
+								<option value={key}>
+									{augmentedSections[key].namespaced_name}
+								</option>
+							))}
 					</select>
 				</div>
 				{augmentedSections[currentClass.fromSection.id].sectionPromoted ? (
