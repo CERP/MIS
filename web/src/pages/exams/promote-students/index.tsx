@@ -105,6 +105,9 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 		promotionData: {},
 		groupedStudents: calculateGroupedStudents(),
 		augmentedSections: getSectionsFromClasses(classes).reduce((agg, curr) => {
+			if (!sectionHasStudents(curr.id, Object.keys(orignalGroupedStudents))) {
+				return { ...agg, [curr.id]: { ...curr, sectionPromoted: true } }
+			}
 			return { ...agg, [curr.id]: { ...curr, sectionPromoted: false } }
 		}, {}),
 		orderIncorrect: checkClassOrders()
@@ -119,10 +122,11 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 		for (let i = 0; i < promotableClasses.length; i++) {
 			const sections = getSectionsFromClasses({
 				[promotableClasses[i].id]: promotableClasses[i]
-			})
+			}).filter(section =>
+				sectionHasStudents(section?.id, Object.keys(orignalGroupedStudents))
+			)
 
 			// let's say we have default section
-			const fromSectionId = sections[0].id
 
 			// class sections ids
 			const sectionIds = sections.map(section => section.id)
@@ -134,6 +138,7 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 			if (totalStudents <= 0) {
 				continue
 			}
+			const fromSectionId = sections[0].id
 
 			if (i === 0) {
 				if (
@@ -531,13 +536,17 @@ const PromotionCard = ({
 					<select
 						className="w-full rounded shadow tw-select text-teal-brand"
 						onChange={e => onFromChange(e.target.value)}>
-						{Object.entries(classes[classKey].sections).map(([key, section]) => {
-							return (
-								<option value={key}>
-									{augmentedSections[key].namespaced_name}
-								</option>
+						{Object.entries(classes[classKey].sections)
+							.filter(([secId, sec]) =>
+								sectionHasStudents(secId, Object.keys(groupedStudents))
 							)
-						})}
+							.map(([key, section]) => {
+								return (
+									<option value={key}>
+										{augmentedSections[key].namespaced_name}
+									</option>
+								)
+							})}
 					</select>
 				</div>
 				{augmentedSections[currentClass.fromSection.id].sectionPromoted ? (
@@ -876,4 +885,8 @@ function checkPermissionToUndo(promotionData: PromotionDataType, id: string) {
 	}
 
 	return true
+}
+
+const sectionHasStudents = (sectionId: string, allSectionIds: string[]): boolean => {
+	return allSectionIds.includes(sectionId)
 }
