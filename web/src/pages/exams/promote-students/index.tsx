@@ -592,7 +592,10 @@ const PromotionCard = ({
 					<h1>{currentClass.name}</h1>
 					<select
 						className="w-full rounded shadow tw-select text-teal-brand"
-						onChange={e => onToChange(e.target.value)}>
+						onChange={e => {
+							setVisible(false)
+							onToChange(e.target.value)
+						}}>
 						{Object.entries(currentClass.sections).map(([key, section]) => (
 							<option value={key}>
 								{key === MIS_TEMP_SECTION_ID
