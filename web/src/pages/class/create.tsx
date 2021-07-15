@@ -6,7 +6,7 @@ import { v4 } from 'node-uuid'
 import { Redirect, RouteComponentProps } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { createEditClass, deleteSection, deleteSubject } from 'actions'
+import { createEditClass, deleteSection, deleteSubject, passOutStudents } from 'actions'
 import { AppLayout } from 'components/Layout/appLayout'
 import { PlusButton } from 'components/Button/plus'
 import { blankClass, defaultClasses } from 'constants/form-defaults'
@@ -150,6 +150,30 @@ export const CreateOrUpdateClass: React.FC<RouteComponentProps<{ id: string }>> 
 
 	if (state.redirectTo) {
 		return <Redirect to={state.redirectTo} />
+	}
+
+	if (!isNewClass && state.class.name === 'Temporary' && state.class.classYear === 9999) {
+		return (
+			<AppLayout title="Finish School" showHeaderTitle>
+				<div className="p-5 md:p-10 md:pt-5 md:pb-0 relative">
+					<div className="md:w-4/5 text-white md:mx-auto flex flex-col items-center space-y-3 rounded-2xl bg-gray-700 py-5 my-4">
+						<h1 className="text-lg md:text-xl font-medium">Temporary Class</h1>
+						<p className="md:text-center p-2 leading-relaxed ">
+							This is a class which is automatically generated when you promote
+							students of your final class.
+							<br /> You can delete this class and pass out your students by clicking
+							the <span className="font-medium italic">Finish School</span> button
+							below
+						</p>
+						<button
+							onClick={() => dispatch(passOutStudents(classes[classId]))}
+							className="md:w-1/2 w-11/12 items-center tw-btn-red py-3 font-semibold ">
+							Finish School
+						</button>
+					</div>
+				</div>
+			</AppLayout>
+		)
 	}
 
 	return (
