@@ -482,11 +482,13 @@ export const passOutStudents = (Class: MISClass) => (
 			]
 		}, [])
 
-	console.log(students)
 	dispatch(createMerges(students))
 
 	dispatch(
 		createDeletes([
+			{
+				path: ['db', 'classes', Class.id, 'mis_temp']
+			},
 			{
 				path: ['db', 'classes', Class.id]
 			}
