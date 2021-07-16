@@ -305,7 +305,9 @@ export const Settings = () => {
 						</div>
 						<div className="flex flex-row justify-between">
 							<div>Max Students</div>
-							<div className="text-sm">{db.max_limit}</div>
+							<div className="text-sm">
+								{db.max_limit > 0 ? db.max_limit : 'Unlimited'}
+							</div>
 						</div>
 						<div className="flex flex-row justify-between">
 							<div>Expiring on</div>
@@ -340,6 +342,11 @@ export const Settings = () => {
 								/>
 							</TModal>
 						)}
+						<Link to="/promote-students">
+							<button className="tw-btn bg-teal-brand mb-2 w-full">
+								Promote Students
+							</button>
+						</Link>
 						<button
 							onClick={exportToJSON}
 							className="mb-2 tw-btn bg-orange-brand text-white w-full">

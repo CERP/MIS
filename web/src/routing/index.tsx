@@ -16,7 +16,7 @@ import TargetedInstruction from 'modules/TIP/Routing'
 import Help from 'modules/Help'
 import Diary from 'pages/school/diary'
 import ResetPassword from 'modules/Password/index'
-import MISActivation from 'modules/Activation'
+import { MISActivation } from 'pages/auth/mis-activation'
 import BulkExam from 'modules/Marks/BulkExam'
 
 import { Home } from 'pages/home'
@@ -62,6 +62,7 @@ import StaffPage from 'pages/staff'
 import PrintPreview from 'pages/school/fees/print-voucher/preview'
 import ClassFeeMenu from 'modules/Class/Single/ClassFeeMenu'
 import SingleClassResults from 'modules/Class/Single/ReportsMenu'
+import { ExamsMenu } from 'pages/exams/menu'
 import { PageNotFound } from 'pages/http_error/404'
 import { TermsOfService } from 'pages/terms/tos'
 
@@ -157,6 +158,7 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<PrivateRoute path="/exams/marks" component={ExamsMarks} />
 						<PrivateRoute path="/exams/results" component={ExamsResults} />
 						<PrivateRoute path="/exams" component={Marks} />
+						<PrivateRoute path="/promote-students" component={PromoteStudents} />
 
 						<PrivateRoute path="/reports/:class_id/:section_id" component={ExamList} />
 						<PrivateRoute path="/reports" component={Marks} />

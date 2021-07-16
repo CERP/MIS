@@ -144,17 +144,24 @@ export const checkPermission = (
 			flag = tipAccess ? false : subAdmin
 			break
 		}
-		case 'setup':
-		case 'dailyStats': {
-			flag = (permissions.dailyStats || permissions.setupPage) && subAdmin
+		case 'setup': {
+			flag = permissions.setupPage && subAdmin
 			break
 		}
-		case 'fees':
-		case 'expenses':
+		case 'dailyStats': {
+			flag = permissions.dailyStats && subAdmin
+			break
+		}
+		case 'fees': {
+			flag = tipAccess ? false : permissions.fee && subAdmin
+			break
+		}
+		case 'expenses': {
+			flag = tipAccess ? false : permissions.expense && subAdmin
+			break
+		}
 		case 'families': {
-			flag = tipAccess
-				? false
-				: (permissions.family || permissions.fee || permissions.expense) && subAdmin
+			flag = tipAccess ? false : permissions.family && subAdmin
 			break
 		}
 		default: {
