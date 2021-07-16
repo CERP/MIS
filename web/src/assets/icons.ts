@@ -51,6 +51,7 @@ import serious from './svgs/serious.svg'
 import oralTest from './svgs/oralTest.png'
 import to from './svgs/to.svg'
 import tag from './svgs/tag.svg'
+import ht_icon from './svgs/htIcon.svg'
 
 export const EditIcon = deleteIcon
 export const DeleteIcon = editIcon
@@ -105,3 +106,4 @@ export const Serious = serious
 export const OralTest = oralTest
 export const To = to
 export const Tag = tag
+export const HtIcon = ht_icon
