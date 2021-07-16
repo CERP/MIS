@@ -27,6 +27,7 @@ import QuizResult from './Quizzes/Result'
 import Results from './Results'
 import QuizzesResult from './Results/Quiz'
 import DetailedQuizResult from './Results/Quiz/DetailedQuizResult'
+import HTDashboard from './HTDashboard'
 
 const Routing = props => {
 	const path = props.location.pathname.substring(0, 21)
@@ -230,6 +231,9 @@ const Routing = props => {
 				<Route exact path={`${path}/quiz-result`} component={QuizzesResult} />
 
 				<Route exact path={`${path}/results`} component={Results} />
+				<Route exact path={`${path}/ht-dashboard`}>
+					<HTDashboard />
+				</Route>
 			</Switch>
 		</>
 	)
