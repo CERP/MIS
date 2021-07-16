@@ -73,12 +73,10 @@ type CardProps = {
 const Card = ({ family }: CardProps, { forwardTo }: FamilyProps) => {
 	return (
 		<div className="relative">
-			<div className="bg-white rounded-xl lg:h-48  text-center border border-gray-50 shadow-md px-3 py-4 md:p-5">
-				<Link
-					key={family.id}
-					to={
-						forwardTo ? `/families/${family.id}/${forwardTo}` : `/families/${family.id}`
-					}>
+			<Link
+				key={family.id}
+				to={forwardTo ? `/families/${family.id}/${forwardTo}` : `/families/${family.id}`}>
+				<div className="bg-white rounded-xl lg:h-48  text-center border border-gray-50 shadow-md px-3 py-4 md:p-5">
 					<div className="font-bold pt-4 truncate w-4/5 mx-auto">
 						{toTitleCase(family.id)}
 					</div>
@@ -88,8 +86,8 @@ const Card = ({ family }: CardProps, { forwardTo }: FamilyProps) => {
 						<CardItem title={'CNIC'} val={toTitleCase(family.ManCNIC)} />
 						<CardItem title={'Siblings'} val={Object.keys(family.students).length} />
 					</div>
-				</Link>
-			</div>
+				</div>
+			</Link>
 			<div className="absolute left-0 right-0 -top-6 md:-top-8 flex -space-x-2 overflow-hidden justify-center">
 				{Object.values(family.students ?? {}).map(
 					(s, index) =>

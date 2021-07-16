@@ -21,7 +21,7 @@ import { checkStudentDuesReturning } from 'utils/checkStudentDues'
 import { addMultiplePayments } from 'actions'
 
 import UserIconSvg from 'assets/svgs/user.svg'
-import UserGroupSvg from 'assets/svgs/user-group.svg'
+import { UserGroupIcon } from '@heroicons/react/solid'
 
 type State = {
 	searchText: string
@@ -463,10 +463,7 @@ const Card = ({ student, sections }: CardProps) => {
 		<div className="relative">
 			<div className="px-3 py-4 text-center bg-white border shadow-md rounded-xl lg:h-48 border-gray-50 md:p-5">
 				{student.FamilyID && (
-					<img
-						className="absolute top-0 right-0 m-3 rounded-full shadow-md bg-gray-500 w-10 h-10 sm:w-10 sm:h-10 md:w-5 md:h-5 lg:w-8 lg:h-8 xl:w-10 xl:h-10"
-						src={UserGroupSvg}
-					/>
+					<UserGroupIcon className="w-4 h-4 absolute top-0 right-0 m-3 rounded-full shadow-md w-10 h-10 sm:w-10 sm:h-10 md:w-5 md:h-5 lg:w-8 lg:h-8 xl:w-10 xl:h-10" />
 				)}
 				<div className="w-4/5 pt-8 mx-auto font-bold truncate">
 					{toTitleCase(student.Name)}

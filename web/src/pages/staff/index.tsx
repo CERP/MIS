@@ -7,7 +7,7 @@ import { AppLayout } from 'components/Layout/appLayout'
 import { CreateOrUpdateStaff } from './create'
 import { StaffMemberSalary } from 'pages/expense/salary/member'
 import { toTitleCase } from 'utils/toTitleCase'
-import Attendance from 'modules/Teacher/Single/Attendance'
+import { SingleStaffAttendance } from './attendance/single'
 import Certificates from 'modules/Teacher/Single/Certificates'
 import { checkPermission } from 'utils'
 
@@ -54,7 +54,7 @@ const StaffPage = ({ location }: RouteComponentProps) => {
 			<Route path="/staff/new" component={CreateOrUpdateStaff} />
 			<Route path="/staff/:id/profile" exact component={CreateOrUpdateStaff} />
 			<Route path="/staff/:id/salaries" exact component={StaffMemberSalary} />
-			<Route path="/staff/:id/attendance" exact component={Attendance} />
+			<Route path="/staff/:id/attendance" exact component={SingleStaffAttendance} />
 			<Route path="/staff/:id/certificates" exact component={Certificates} />
 		</AppLayout>
 	)
