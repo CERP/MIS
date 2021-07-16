@@ -162,7 +162,7 @@ const Result: React.FC<PropsType> = props => {
 				</div>
 			)}
 			<div
-				className={`flex flex-row ${type === Types.CHILD_VIEW ? 'justify-around' : 'justify-between px-8'
+				className={`flex flex-row ${type === Types.CHILD_VIEW ? 'justify-around px-8' : 'justify-between px-8'
 					} py-2 items-center text-white text-sm md:text-md lg:text-lg bg-blue-tip-brand w-full mb-1`}>
 				{type === Types.SKILL_VIEW && (
 					<>
@@ -199,8 +199,8 @@ const Result: React.FC<PropsType> = props => {
 					)}
 				{type === Types.CHILD_VIEW && test_type === 'Summative' && (
 					<>
-						<div className="font-bold">Name</div>
-						<div className="flex flex-row justify-between w-3/12 font-bold text-sm md:text-md lg:text-lg">
+						<div className="font-bold flex-1">Name</div>
+						<div className="flex flex-1 flex-row justify-around w-3/5 font-bold px-4 text-sm md:text-md lg:text-lg">
 							<div>Status</div>
 							<div>Score</div>
 						</div>
