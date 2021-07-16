@@ -27,7 +27,8 @@ enum ModalType {
 	ASSIGNED_GROUPS_INFO = 'assigned_groups-info',
 	TIP_GROUPS = 'tip_groups',
 	CHANGE_GROUP = 'change_group',
-	STUDENT_PROFILE = 'student_profile'
+	STUDENT_PROFILE = 'student_profile',
+	ERROR_ENTER_STUDENT_MARKS = 'error_enter_student_marks'
 }
 
 const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
@@ -106,6 +107,18 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 							/>
 						</div>
 					)}
+					{modal_type === ModalType.ERROR_ENTER_STUDENT_MARKS && (
+						<div
+							ref={ref}
+							className="bg-white p-4 flex flex-col items-center justify-center w-auto">
+							<div className="font-bold">Please Enter Student Marks</div>
+							<button
+								className="bg-blue-tip-brand text-white rounded-sm py-1 px-4"
+								onClick={() => setIsComponentVisible(false)}>
+								Ok
+							</button>
+						</div>
+					)}
 				</TModal>
 			)}
 			<div className="items-center text-xs w-full mt-4 flex flex-row justify-around shadow-lg">
@@ -138,12 +151,14 @@ const ClassViewCard: React.FC<P> = ({ std, setLearningLevel }) => {
 										'bg-gray-100': grade === undefined
 									})}
 									onClick={() => {
-										if (subject && grade) {
-											setIsComponentVisible(true)
-											setModalType(ModalType.ASSIGNED_GROUPS_INFO)
-										}
+										setIsComponentVisible(true)
+										setModalType(
+											subject && grade
+												? ModalType.ASSIGNED_GROUPS_INFO
+												: ModalType.ERROR_ENTER_STUDENT_MARKS
+										)
 									}}>
-									{grade === 'Remediation Not Needed' ? 'none' : 'grade'}
+									{grade === 'Remediation Not Needed' ? 'none' : grade ?? 'N/A'}
 								</div>
 							</div>
 						)
