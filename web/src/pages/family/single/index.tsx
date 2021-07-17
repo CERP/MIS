@@ -423,7 +423,7 @@ const ListCard = ({ student, sections, removeStudent }: ListCardProps) => {
 				)}
 				<div className="flex flex-col">
 					<Link
-						to={`students/${student.id}/profile`}
+						to={`/students/${student.id}/profile`}
 						className="text-sm text-blue-brand hover:underline">
 						{toTitleCase(student.Name)}
 					</Link>
