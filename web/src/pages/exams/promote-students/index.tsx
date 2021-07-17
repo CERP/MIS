@@ -1,10 +1,11 @@
 import React, { Fragment, useState, useEffect, useMemo } from 'react'
+import clsx from 'clsx'
+import toast from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux'
 import { ArrowNarrowRightIcon, TrashIcon } from '@heroicons/react/outline'
 import { Transition } from '@headlessui/react'
-import { RouteComponentProps, useHistory } from 'react-router'
+import { RouteComponentProps } from 'react-router'
 import { CheckIcon, ReplyIcon } from '@heroicons/react/solid'
-import toast from 'react-hot-toast'
 
 import { AppLayout } from 'components/Layout/appLayout'
 import { blankClass } from 'constants/form-defaults'
@@ -13,8 +14,9 @@ import { isValidStudent } from 'utils'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import { TModal } from 'components/Modal'
 import { createEditClass, promoteStudents } from 'actions'
-import { Link } from 'react-router-dom'
-import clsx from 'clsx'
+import { NoClassesToPromoteBanner } from './no-promotable-banner'
+import { ClassOrderErrorBanner } from './incorrect-order-banner'
+import { PromotionWarning } from './promotion-warning'
 
 type AugmentedClass = MISClass & {
 	fromSection?: Partial<ModifiedSection>
@@ -369,63 +371,71 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 		})
 	}
 
+	if (!state.promotionData) {
+		return (
+			<AppLayout title="Promote Students" showHeaderTitle>
+				<NoClassesToPromoteBanner />
+			</AppLayout>
+		)
+	}
+
+	if (state.orderIncorrect) {
+		return (
+			<AppLayout title="Promote Students" showHeaderTitle>
+				<ClassOrderErrorBanner />
+			</AppLayout>
+		)
+	}
+
+	if (state.displayWarning) {
+		return (
+			<AppLayout title="Promote Students" showHeaderTitle>
+				<PromotionWarning onPress={() => setState({ ...state, displayWarning: false })} />
+			</AppLayout>
+		)
+	}
+
 	return (
 		<AppLayout title="Promote Students" showHeaderTitle>
-			{!state.promotionData ? (
-				<NoClassesToPromoteBanner />
-			) : state.orderIncorrect ? (
-				<ClassOrderErrorBanner />
-			) : (
-				<div className="p-5 md:p-10 md:pt-5 md:pb-0 text-gray-700 relative">
-					{state.displayWarning ? (
-						<PromotionWarning
-							onPress={() => setState({ ...state, displayWarning: false })}
-						/>
-					) : (
-						<div className="space-y-4">
-							{Object.entries(state.promotionData ?? {}).map(
-								([classId, val]: [classId: string, val: AugmentedClass], index) => {
-									return (
-										<div key={classId + index} className="lg:mx-auto  lg:w-4/5">
-											<PromotionCard
-												undoSectionPromotion={undoSectionPromotion}
-												promotionData={state.promotionData}
-												groupedStudents={state.groupedStudents}
-												augmentedSections={state.augmentedSections}
-												classKey={classId}
-												currentClass={val}
-												classes={classes}
-												promoteSection={promoteSectionStudents}
-												onToChange={(e: string) => onToChange(e, classId)}
-												onFromChange={(e: string) =>
-													onFromChange(e, classId)
-												}
-											/>
-										</div>
-									)
-								}
-							)}
-
-							<div className="flex justify-center">
-								<button
-									onClick={() =>
-										checkEveryClassPromoted()
-											? setIsComponentVisible(true)
-											: toast.error('All sections are not promoted yet')
-									}
-									className={clsx(
-										'tw-btn-red md:w-2/5 w-full mx-auto mb-4 md:text-lg',
-										!checkEveryClassPromoted()
-											? 'bg-gray-brand text-gray-500 cursor-not-allowed hover:bg-gray-brand'
-											: 'transform  hover:scale-105 transition-transform '
-									)}>
-									Save Promotions
-								</button>
+			<div className="p-5 md:p-10 md:pt-5 md:pb-0 text-gray-700 relative">
+				<div className="space-y-4">
+					{Object.entries(state.promotionData ?? {}).map(([classId, val], index) => {
+						return (
+							<div key={classId + index} className="lg:mx-auto  lg:w-4/5">
+								<PromotionCard
+									undoSectionPromotion={undoSectionPromotion}
+									promotionData={state.promotionData}
+									groupedStudents={state.groupedStudents}
+									augmentedSections={state.augmentedSections}
+									classKey={classId}
+									currentClass={val}
+									classes={classes}
+									promoteSection={promoteSectionStudents}
+									onToChange={(e: string) => onToChange(e, classId)}
+									onFromChange={(e: string) => onFromChange(e, classId)}
+								/>
 							</div>
-						</div>
-					)}
+						)
+					})}
+
+					<div className="flex justify-center">
+						<button
+							onClick={() =>
+								checkEveryClassPromoted()
+									? setIsComponentVisible(true)
+									: toast.error('All sections are not promoted yet')
+							}
+							className={clsx(
+								'tw-btn-red md:w-2/5 w-full mx-auto mb-4 md:text-lg',
+								!checkEveryClassPromoted()
+									? 'bg-gray-brand text-gray-500 cursor-not-allowed hover:bg-gray-brand'
+									: 'transform  hover:scale-105 transition-transform '
+							)}>
+							Save Promotions
+						</button>
+					</div>
 				</div>
-			)}
+			</div>
 
 			{isComponentVisible && (
 				<TModal>
@@ -552,7 +562,7 @@ const PromotionCard = ({
 								sectionHasStudents(secId, Object.keys(groupedStudents))
 							)
 							.map(([key, section]) => (
-								<option value={key}>
+								<option key={key} value={key}>
 									{augmentedSections[key].namespaced_name}
 								</option>
 							))}
@@ -608,7 +618,7 @@ const PromotionCard = ({
 							onToChange(e.target.value)
 						}}>
 						{Object.entries(currentClass.sections).map(([key, section]) => (
-							<option value={key}>
+							<option key={key} value={key}>
 								{key === MIS_TEMP_SECTION_ID
 									? section.name
 									: augmentedSections[key].namespaced_name}
@@ -696,9 +706,11 @@ const PromotableStudents = ({
 					<h1>Promoted Section</h1>
 					<h1>Remove Promotion</h1>
 				</div>
-				{(state.students || []).map(student => {
+				{(state.students ?? []).map(student => {
 					return (
-						<div className="md:bg-gray-200 bg-gray-50  flex-col md:flex-row mb-3 items-center flex justify-between px-5 md:px-10 py-3 md:py-7 rounded-md border-gray-200 border shadow-md md:shadow-none md:rounded-sm font-medium">
+						<div
+							key={student.id}
+							className="md:bg-gray-200 bg-gray-50  flex-col md:flex-row mb-3 items-center flex justify-between px-5 md:px-10 py-3 md:py-7 rounded-md border-gray-200 border shadow-md md:shadow-none md:rounded-sm font-medium">
 							<div className="flex text-sm md:text-base self-start md:self-center md:w-1/3">
 								<h1>{student.Name}</h1>
 							</div>
@@ -713,7 +725,7 @@ const PromotableStudents = ({
 										{Object.entries(augmentedSections)
 											.filter(([secKey, sec]) => sec.class_id === classKey)
 											.map(([key, section]) => (
-												<option value={key}>
+												<option key={key} value={key}>
 													{section.namespaced_name}
 												</option>
 											))}
@@ -778,82 +790,6 @@ const PromotableStudents = ({
 				)}
 			</div>
 		</Transition>
-	)
-}
-
-type PromotionWarningProps = {
-	onPress: () => void
-}
-
-const PromotionWarning = ({ onPress }: PromotionWarningProps) => {
-	return (
-		<div className="flex-1 flex justify-center flex-col items-center ">
-			<p className="w-32 h-32 rounded-full items-center justify-center flex text-6xl bg-blue-brand text-center text-white mt-10">
-				!
-			</p>
-			<p className="font-bold mt-8 mb-4">You are going to </p>
-			<p className="font-semibold text-3xl text-blue-brand">Open Promotions</p>
-			<p className="font-normal my-4 text-lg text-center">
-				You can promote a class only once per academic year
-			</p>
-			<button onClick={() => onPress()} className=" tw-btn-blue font-semibold">
-				Ok, I understand
-			</button>
-		</div>
-	)
-}
-
-const ClassOrderErrorBanner = () => {
-	return (
-		<div className="w-full px-10 py-16 m-auto flex items-center justify-center">
-			<div className="bg-white shadow-md overflow-hidden sm:rounded-lg pb-8">
-				<div className="border-t border-gray-200 text-center pt-8">
-					<h1 className="lg:text-3xl text-xl mb-5 font-bold text-red-brand">
-						One or more Classes Order is Incorrect
-					</h1>
-					<p className="lg:text-2xl text-base pb-8 px-12 font-medium">
-						Please correct the order/year of your classes or contact support for more
-						details
-					</p>
-					<div className="space-x-4">
-						<Link to="/home">
-							<button className="tw-btn-blue py-2 rounded-md">Go Home</button>
-						</Link>
-						<Link to="/contact-us">
-							<button className="tw-btn-red py-2 rounded-md">Contact Us</button>
-						</Link>
-					</div>
-				</div>
-			</div>
-		</div>
-	)
-}
-
-const NoClassesToPromoteBanner = () => {
-	return (
-		<div className="w-full px-10 py-16 m-auto flex items-center justify-center">
-			<div className="bg-white shadow-md overflow-hidden sm:rounded-lg pb-8">
-				<div className="border-t border-gray-200 text-center pt-8">
-					<h1 className="lg:text-3xl text-xl mb-5 font-bold text-red-brand">
-						No Classses to Promote
-					</h1>
-					<p className="lg:text-2xl text-base pb-8 px-12 font-medium">
-						There are no classes to promote, or the classes exist and you do not have
-						students in them.
-						<br />
-						If you think this is an error, please contact us
-					</p>
-					<div className="space-x-4">
-						<Link to="/home">
-							<button className="tw-btn-blue py-2 rounded-md">Go Home</button>
-						</Link>
-						<Link to="/contact-us">
-							<button className="tw-btn-red py-2 rounded-md">Contact Us</button>
-						</Link>
-					</div>
-				</div>
-			</div>
-		</div>
 	)
 }
 
