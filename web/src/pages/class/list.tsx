@@ -64,7 +64,7 @@ const Card = ({ misClass, students }: CardProps) => {
 	const sectionIds = sections.reduce((agg, curr) => [...agg, curr.id], [])
 
 	const totalStudents = Object.values(students ?? {}).filter(
-		s => isValidStudent(s, { active: true }) && sectionIds.includes(s.section_id)
+		s => isValidStudent(s) && sectionIds.includes(s.section_id)
 	).length
 
 	const teachers = sections.reduce((agg, curr) => {

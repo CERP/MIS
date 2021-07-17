@@ -95,7 +95,7 @@ export const StudentList = ({
 		return [
 			...new Set(
 				Object.values(students ?? {})
-					.filter(s => isValidStudent(s, { active: true }) && s.Active === state.active)
+					.filter(s => isValidStudent(s, { active: s.Active === state.active }))
 					.reduce((tags, student) => {
 						return [
 							...tags,

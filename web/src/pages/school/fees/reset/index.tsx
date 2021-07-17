@@ -148,7 +148,7 @@ export const ResetFee = () => {
 									{Object.values(students)
 										.filter(
 											s =>
-												isValidStudent(s, { active: true }) &&
+												isValidStudent(s) &&
 												s.section_id === state.sectionId
 										)
 										.sort((a, b) => a.Name.localeCompare(b.Name))

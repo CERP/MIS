@@ -40,10 +40,7 @@ export const OnboardingCompletion = () => {
 					</div>
 					<div className="text-lg font-semibold">
 						Total Students:{' '}
-						{
-							Object.values(students).filter(s => isValidStudent(s, { active: true }))
-								.length
-						}
+						{Object.values(students).filter(s => isValidStudent(s)).length}
 					</div>
 				</div>
 				<div>

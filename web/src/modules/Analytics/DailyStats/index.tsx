@@ -52,7 +52,7 @@ class DailyStats extends Component<PropsType, S> {
 	getSiblings = (student: MISStudent): MISStudent[] => {
 		const famId = student?.FamilyID
 		return Object.values(this.props.students).filter(
-			s => isValidStudent(s, { active: true }) && s.FamilyID && s.FamilyID === famId
+			s => isValidStudent(s) && s.FamilyID && s.FamilyID === famId
 		)
 	}
 

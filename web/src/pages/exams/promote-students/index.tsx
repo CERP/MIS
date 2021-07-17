@@ -134,7 +134,7 @@ export const PromoteStudents: React.FC<RouteComponentProps> = ({ history }) => {
 			const sectionIds = sections.map(section => section.id)
 
 			const totalStudents = [...Object.values(students ?? {})].filter(
-				s => isValidStudent(s, { active: s.Active }) && sectionIds.includes(s.section_id)
+				s => isValidStudent(s) && sectionIds.includes(s.section_id)
 			).length
 
 			if (totalStudents <= 0) {

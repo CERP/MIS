@@ -151,7 +151,7 @@ interface FamilyDropdownProps {
 export const FamilyDropdown: React.FC<FamilyDropdownProps> = ({ students, setFamilyId }) => {
 	const family = new Set<string>()
 	Object.values(students).forEach(s => {
-		if (isValidStudent(s, { active: true }) && s.FamilyID) {
+		if (isValidStudent(s) && s.FamilyID) {
 			family.add(s.FamilyID)
 		}
 	})
@@ -227,7 +227,7 @@ export const StudentListSearch = ({ students, setStudentId, classes }: StudentLi
 	const sectionStudents = useMemo(() => {
 		const sections = getSectionsFromClasses(classes)
 		return Object.values(students)
-			.filter(s => isValidStudent(s, { active: true }))
+			.filter(s => isValidStudent(s))
 			.map(s => {
 				const section = sections.find(section => s.section_id === section.id)
 				return {
@@ -257,7 +257,7 @@ export const StudentListSearch = ({ students, setStudentId, classes }: StudentLi
 						{sectionStudents
 							.filter(
 								s =>
-									isValidStudent(s, { active: true }) &&
+									isValidStudent(s) &&
 									!s.FamilyID && // don't show family students in list to print voucher
 									(searchText
 										? s.Name.toLowerCase().includes(searchText.toLowerCase())

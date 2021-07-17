@@ -87,7 +87,7 @@ export const isValidStudent = (student: MISStudent, options?: Partial<FilterOpti
 		student &&
 		student.id &&
 		student.Name &&
-		student.Active === options?.active &&
+		(options?.active === undefined ? student.Active : student.Active === options.active) &&
 		(options?.includeFinishSchool ? true : !student?.tags?.['FINISHED_SCHOOL']) &&
 		(options?.includeSectionId ? true : student.section_id) &&
 		(options?.includePropspective

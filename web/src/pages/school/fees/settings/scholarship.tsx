@@ -48,7 +48,7 @@ const blankFee = (): MISStudentFee => ({
 
 const getFeeStudents = (students: MISStudent[]) => {
 	return students
-		.filter(s => isValidStudent(s, { active: true }))
+		.filter(s => isValidStudent(s))
 		.reduce<State['students']>((agg, curr) => {
 			const [id, scholarshipFee] = Object.entries(curr.fees ?? {})
 				.filter(([feeId, fee]) => !isMonthlyFee(fee))

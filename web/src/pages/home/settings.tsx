@@ -25,7 +25,7 @@ export const SettingsTab = ({ permissions, admin, subAdmin }: PropTypes) => {
 	const totalStaff = Object.values(faculty).filter(f => isValidTeacher(f) && f.Active).length
 
 	const { totalFamilies, totalStudents } = getStudentsFamilies(
-		Object.values(students).filter(s => isValidStudent(s, { active: true }))
+		Object.values(students).filter(s => isValidStudent(s))
 	)
 
 	return (

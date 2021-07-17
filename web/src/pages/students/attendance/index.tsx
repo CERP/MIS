@@ -33,9 +33,7 @@ enum AttendanceStatus {
 }
 
 const getStudentsForSection = (sectionId: string, students: RootDBState['students']) =>
-	Object.values(students).filter(
-		s => isValidStudent(s, { active: true }) && s.section_id === sectionId
-	)
+	Object.values(students).filter(s => isValidStudent(s) && s.section_id === sectionId)
 
 const deriveSelectedStudents = (sectionId: string, students: RootDBState['students']) =>
 	getStudentsForSection(sectionId, students).reduce(

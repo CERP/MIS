@@ -188,16 +188,13 @@ export const SMS = () => {
 
 		// if (state.sendTo === SendSmsOptions.TO_ALL_STUDENTS) {
 		// 	msgCounter = Object.values(students || {}).filter(
-		// 		s => isValidStudent(s, { active: true }) && s.Phone
+		// 		s => isValidStudent(s) && s.Phone
 		// 	).length
 		// }
 
 		if (state.sendTo === SendSmsOptions.TO_SINGLE_SECTION) {
 			msgCounter = Object.values(students || {}).filter(
-				s =>
-					isValidStudent(s, { active: true }) &&
-					s.Phone &&
-					s.section_id === state.sectionId
+				s => isValidStudent(s) && s.Phone && s.section_id === state.sectionId
 			).length
 		}
 
@@ -274,7 +271,7 @@ export const SMS = () => {
 			return Object.values(students ?? {})
 				.filter(
 					s =>
-						isValidStudent(s, { active: true }) &&
+						isValidStudent(s) &&
 						s.Phone &&
 						s.section_id === state.sectionId &&
 						isValidPhone(s.Phone)
