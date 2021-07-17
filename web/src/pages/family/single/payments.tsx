@@ -66,7 +66,7 @@ export const SingleFamilyPayments = ({ match }: SingleFamilyPaymentsProps) => {
 			sections: AugmentedSection[]
 		): AugmentedStudent[] => {
 			return Object.values(stds)
-				.filter(s => isValidStudent(s, { active: true }) && s?.FamilyID === famId)
+				.filter(s => isValidStudent(s) && s?.FamilyID === famId)
 				.map(s => {
 					const section = sections.find(sec => sec.id === s.section_id)
 					let classFee = {} as MISClassFee
@@ -372,7 +372,11 @@ const FeeBreakdownCard = ({ student }: FeeBreakdownCardProps) => {
 						}
 						alt={student.Name}
 					/>
-					<div>{toTitleCase(student.Name)}</div>
+					<Link
+						to={`/students/${student.id}/profile`}
+						className="hover:text-blue-brand hover:underline">
+						{toTitleCase(student.Name)}
+					</Link>
 				</div>
 				<div className="flex flex-end">
 					<div>{student.section.namespaced_name}</div>

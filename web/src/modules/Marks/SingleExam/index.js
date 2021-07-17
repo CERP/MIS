@@ -8,13 +8,13 @@ import checkCompulsoryFields from 'utils/checkCompulsoryFields'
 
 import { mergeExam, removeStudentFromExam, deleteExam } from 'actions'
 import Banner from 'components/Banner'
-import Layout from 'components/Layout'
 import Former from 'utils/former'
 import Dropdown from 'components/Dropdown'
 import calculateGrade from 'utils/calculateGrade'
 import { AppLayout } from 'components/Layout/appLayout'
 
 import './style.css'
+import { isValidStudent, rollNumberSorter } from 'utils'
 
 const blankExam = () => ({
 	id: v4(),
@@ -345,20 +345,18 @@ class SingleExam extends Component {
 							{
 								// Object.entries(this.props.students)
 								// 	.filter(([id, student]) => student.section_id === this.section_id())
-								Object.keys(this.state.exam.student_marks || {})
+								Object.keys(this.state.exam.student_marks ?? {})
 									.map(xid => this.props.students[xid])
-									.filter(s => s !== undefined && s.id !== undefined)
-									.sort((a, b) =>
-										a.RollNumber !== undefined && b.RollNumber !== undefined
-											? parseFloat(a.RollNumber) - parseFloat(b.RollNumber)
-											: -1
-									)
+									.filter(s => isValidStudent(s))
+									.sort(rollNumberSorter)
 									.map(student => (
 										<div className="section" key={student.id}>
 											<div className="remove row">
 												<label>
 													{student.RollNumber ? student.RollNumber : ''}{' '}
-													<Link to={`/students/${student.id}/profile`}>
+													<Link
+														className="text-blue-brand hover:underline"
+														to={`/students/${student.id}/profile`}>
 														{student.Name}
 													</Link>
 												</label>
