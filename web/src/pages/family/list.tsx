@@ -35,13 +35,7 @@ export const Family = ({ forwardTo, pageTitle }: FamilyProps) => {
 		.sort((a, b) => a.id.localeCompare(b.id))
 
 	const listItem = (fam: AugmentedFamily) => {
-		return (
-			<Link
-				key={fam.id}
-				to={forwardTo ? `/families/${fam.id}/${forwardTo}` : `/families/${fam.id}`}>
-				<Card family={fam} />
-			</Link>
-		)
+		return <Card family={fam} forwardTo={forwardTo} />
 	}
 	return (
 		<AppLayout
@@ -73,22 +67,27 @@ export const Family = ({ forwardTo, pageTitle }: FamilyProps) => {
 
 type CardProps = {
 	family: AugmentedFamily
+	forwardTo: string
 }
 
-const Card = ({ family }: CardProps) => {
+const Card = ({ family, forwardTo }: CardProps) => {
 	return (
 		<div className="relative">
-			<div className="bg-white rounded-xl lg:h-48  text-center border border-gray-50 shadow-md px-3 py-4 md:p-5">
-				<div className="font-bold pt-4 truncate w-4/5 mx-auto">
-					{toTitleCase(family.id)}
+			<Link
+				key={family.id}
+				to={forwardTo ? `/families/${family.id}/${forwardTo}` : `/families/${family.id}`}>
+				<div className="bg-white rounded-xl lg:h-48  text-center border border-gray-50 shadow-md px-3 py-4 md:p-5">
+					<div className="font-bold pt-4 truncate w-4/5 mx-auto">
+						{toTitleCase(family.id)}
+					</div>
+					<div className="mt-2 space-y-0 text-sm md:text-base">
+						<CardItem title={'Gaurdian'} val={toTitleCase(family.name)} />
+						<CardItem title={'Phone'} val={toTitleCase(family.phone)} />
+						<CardItem title={'CNIC'} val={toTitleCase(family.ManCNIC)} />
+						<CardItem title={'Siblings'} val={Object.keys(family.students).length} />
+					</div>
 				</div>
-				<div className="mt-2 space-y-0 text-sm md:text-base">
-					<CardItem title={'Gaurdian'} val={toTitleCase(family.name)} />
-					<CardItem title={'Phone'} val={toTitleCase(family.phone)} />
-					<CardItem title={'CNIC'} val={toTitleCase(family.ManCNIC)} />
-					<CardItem title={'Siblings'} val={Object.keys(family.students).length} />
-				</div>
-			</div>
+			</Link>
 			<div className="absolute left-0 right-0 -top-6 md:-top-8 flex -space-x-2 overflow-hidden justify-center">
 				{Object.values(family.students ?? {}).map(
 					(s, index) =>

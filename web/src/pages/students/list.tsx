@@ -26,6 +26,7 @@ import { checkStudentDuesReturning } from 'utils/checkStudentDues'
 import { addMultiplePayments } from 'actions'
 
 import UserIconSvg from 'assets/svgs/user.svg'
+import { UserGroupIcon } from '@heroicons/react/solid'
 
 type State = {
 	searchText: string
@@ -190,23 +191,21 @@ export const StudentList = ({
 		})
 
 	const listItem = (f: MISStudent) => {
-		const forwardToLink = forwardTo ?? 'profile'
 		return (
-			<Link key={f.id} to={`/students/${f.id}/${forwardToLink}`}>
-				<Card
-					schoolName={schoolName}
-					schoolSession={settings.schoolSession}
-					student={f}
-					sections={sections}
-					printSingleStudentCard={id => {
-						setFilter({ ...state, singleStudentPrintID: id, printCards: true })
+			<Card
+				schoolName={schoolName}
+				schoolSession={settings.schoolSession}
+				student={f}
+				sections={sections}
+				forwardTo={forwardTo ?? 'profile'}
+				printSingleStudentCard={id => {
+					setFilter({ ...state, singleStudentPrintID: id, printCards: true })
 
-						setTimeout(() => {
-							onPrint()
-						}, 200)
-					}}
-				/>
-			</Link>
+					setTimeout(() => {
+						onPrint()
+					}, 200)
+				}}
+			/>
 		)
 	}
 
@@ -470,42 +469,50 @@ type CardProps = {
 	student: MISStudent
 	sections: AugmentedSection[]
 	schoolName: string
+	forwardTo: string
 	schoolSession: MISSettings['schoolSession']
 	printSingleStudentCard: (id: string) => void
 }
 
-const Card = ({ student, sections }: CardProps) => {
+const Card = ({ student, sections, forwardTo }: CardProps) => {
 	const studentSection = sections.find(s => s.id === student.section_id)
 
 	return (
 		<div className="relative">
-			<div className="px-3 py-4 text-center bg-white border shadow-md rounded-xl lg:h-48 border-gray-50 md:p-5">
-				<div className="w-4/5 pt-8 mx-auto font-bold truncate">
-					{toTitleCase(student.Name)}
-				</div>
-				<div className="mt-2 space-y-0 text-sm text-gray-900">
-					<div className="flex flex-row items-center justify-between">
-						<div className="font-semibold">Father</div>
-						<div className="text-xs text-gray-500 truncate">
-							{toTitleCase(student.ManName)}
+			<Link key={student.id} to={`/students/${student.id}/${forwardTo}`} title="View Student">
+				<div className="px-3 py-4 text-center bg-white border shadow-md rounded-xl lg:h-48 border-gray-50 md:p-5">
+					{student.FamilyID && (
+						<div className="absolute right-2 top-2 z-10" title="Family Student">
+							<UserGroupIcon className="border-2 border-blue-brand p-px rounded-lg shadow-md text-blue-brand w-6 h-6 lg:w-8 lg:h-8" />
+						</div>
+					)}
+					<div className="w-4/5 pt-8 mx-auto font-bold truncate">
+						{toTitleCase(student.Name)}
+					</div>
+					<div className="mt-2 space-y-0 text-sm text-gray-900">
+						<div className="flex flex-row items-center justify-between">
+							<div className="font-semibold">Father</div>
+							<div className="text-xs text-gray-500 truncate">
+								{toTitleCase(student.ManName)}
+							</div>
+						</div>
+						<div className="flex flex-row items-center justify-between">
+							<div className="font-semibold">Class</div>
+							<div className="text-gray-500 truncate">
+								{toTitleCase(studentSection?.namespaced_name)}
+							</div>
+						</div>
+						<div className="flex flex-row items-center justify-between">
+							<div className="font-semibold">Roll #</div>
+							<div className="text-gray-500">{student.RollNumber}</div>
+						</div>
+						<div className="flex flex-row items-center justify-between">
+							<div className="font-semibold">Phone</div>
+							<div className="text-gray-500">{student.Phone}</div>
 						</div>
 					</div>
-					<div className="flex flex-row items-center justify-between">
-						<div className="font-semibold">Class</div>
-						<div className="text-gray-500 truncate">
-							{toTitleCase(studentSection?.namespaced_name)}
-						</div>
-					</div>
-					<div className="flex flex-row items-center justify-between">
-						<div className="font-semibold">Roll #</div>
-						<div className="text-gray-500">{student.RollNumber}</div>
-					</div>
-					<div className="flex flex-row items-center justify-between">
-						<div className="font-semibold">Phone</div>
-						<div className="text-gray-500">{student.Phone}</div>
-					</div>
 				</div>
-			</div>
+			</Link>
 			<div className="absolute left-0 right-0 -top-10">
 				<img
 					src={
