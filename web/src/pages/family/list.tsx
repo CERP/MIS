@@ -35,7 +35,7 @@ export const Family = ({ forwardTo, pageTitle }: FamilyProps) => {
 		.sort((a, b) => a.id.localeCompare(b.id))
 
 	const listItem = (fam: AugmentedFamily) => {
-		return <Card family={fam} props={{ forwardTo }} />
+		return <Card family={fam} forwardTo={forwardTo} />
 	}
 	return (
 		<AppLayout
@@ -67,10 +67,10 @@ export const Family = ({ forwardTo, pageTitle }: FamilyProps) => {
 
 type CardProps = {
 	family: AugmentedFamily
-	props: FamilyProps
+	forwardTo: string
 }
 
-const Card = ({ family }: CardProps, { forwardTo }: FamilyProps) => {
+const Card = ({ family, forwardTo }: CardProps) => {
 	return (
 		<div className="relative">
 			<Link
