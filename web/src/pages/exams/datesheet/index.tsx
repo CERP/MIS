@@ -4,6 +4,7 @@ import { AppLayout } from 'components/Layout/appLayout'
 import { FilterIcon } from '@heroicons/react/outline'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import { Popover, Transition } from '@headlessui/react'
+import { ExamCard } from 'components/cards/exams'
 
 //temporary variables to check functionlity
 const dataExists = true
@@ -37,7 +38,9 @@ export const Datesheet = () => {
 					</Transition>
 				</Popover>
 				{dataExists ? (
-					<h1>Display Cards</h1>
+					<div className="my-5 space-y-2">
+						<ExamCard></ExamCard>
+					</div>
 				) : (
 					<div className="h-96 md:text-lg w-full justify-center flex items-center">
 						<p className="mx-2 text-center">
