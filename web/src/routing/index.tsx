@@ -65,6 +65,7 @@ import SingleClassResults from 'modules/Class/Single/ReportsMenu'
 import { ExamsMenu } from 'pages/exams/menu'
 import { PageNotFound } from 'pages/http_error/404'
 import { TermsOfService } from 'pages/terms/tos'
+import { CreateOrUpdateDatesheet } from 'pages/exams/datesheet/create'
 
 interface RoutesProps {
 	store: Store<RootReducerState>
@@ -155,9 +156,14 @@ export class Routes extends React.Component<RoutesProps, State> {
 						<PrivateRoute path="/exams/grades" component={GradeSettings} />
 						<PrivateRoute path="/exams/promote-students" component={PromoteStudents} />
 						<PrivateRoute path="/exams/datesheet" component={Datesheet} />
+						<PrivateRoute
+							exact
+							path="/exams/create/datesheet"
+							component={CreateOrUpdateDatesheet}
+						/>
 						<PrivateRoute path="/exams/marks" component={ExamsMarks} />
 						<PrivateRoute path="/exams/results" component={ExamsResults} />
-						<PrivateRoute path="/exams" component={Marks} />
+						<PrivateRoute path="/exams" component={ExamsMenu} />
 						<PrivateRoute path="/promote-students" component={PromoteStudents} />
 
 						<PrivateRoute path="/reports/:class_id/:section_id" component={ExamList} />
