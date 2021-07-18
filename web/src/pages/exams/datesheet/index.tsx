@@ -5,6 +5,7 @@ import { FilterIcon } from '@heroicons/react/outline'
 import { useComponentVisible } from 'hooks/useComponentVisible'
 import { Popover, Transition } from '@headlessui/react'
 import { ExamCard } from 'components/cards/exams'
+import { Link } from 'react-router-dom'
 
 //temporary variables to check functionlity
 const dataExists = true
@@ -19,6 +20,7 @@ export const Datesheet = () => {
 					className="justify-between space-x-6 hidden lg:flex flex-row">
 					<ExamFilters />
 				</div>
+
 				{/* Visible on Mobile and Tablets Only, we will map options with the available data here to populate the filters */}
 				<Popover key="filtersMobile" className="relative ">
 					<Popover.Button className=" lg:hidden tw-btn focus:outline-none py-1 rounded-full shadow-md border-gray-400 border items-center font-medium flex flex-row mx-auto">
@@ -37,8 +39,12 @@ export const Datesheet = () => {
 						</Popover.Panel>
 					</Transition>
 				</Popover>
+
 				{dataExists ? (
-					<div className="my-5 space-y-2">
+					<div className="my-5 space-y-3">
+						<ExamCard></ExamCard>
+						<ExamCard></ExamCard>
+						<ExamCard></ExamCard>
 						<ExamCard></ExamCard>
 					</div>
 				) : (
@@ -51,9 +57,12 @@ export const Datesheet = () => {
 						</p>
 					</div>
 				)}
-				<button className="tw-btn-blue focus:outline-none block w-full md:w-2/5 m-auto font-medium">
+
+				<Link
+					to="/exams/create/datesheet"
+					className="tw-btn-blue text-center focus:outline-none block w-full md:w-2/5 m-auto font-medium">
 					Create New Test/Exam
-				</button>
+				</Link>
 			</div>
 		</AppLayout>
 	)
