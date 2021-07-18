@@ -63,26 +63,26 @@ const ExamFilters = () => {
 	return (
 		<>
 			{/* Had to use text-xl for symmetry purposes with the select */}
-			<div className="flex flex-row items-center lg:w-1/4 w-full space-x-2">
-				<p className="text-xl text-gray-700 w-1/3">Class</p>
+			<div className="flex flex-row items-center space-x-2 lg:w-1/4 w-full">
+				<p className="text-xl text-gray-700">Class</p>
 				<select className="tw-select text-teal-brand flex-1">
 					<option value="">Select</option>
 				</select>
 			</div>
-			<div className="flex flex-row items-center lg:w-1/4 w-full space-x-2">
-				<p className="text-xl text-gray-700 w-1/3">Section</p>
+			<div className="flex flex-row items-center space-x-2 lg:w-1/4 w-full">
+				<p className="text-xl text-gray-700">Section</p>
 				<select className="tw-select text-teal-brand flex-1">
 					<option value="">Select</option>
 				</select>
 			</div>
-			<div className="flex flex-row items-center lg:w-1/4 w-full space-x-2">
-				<p className="text-xl text-gray-700 w-1/3">Exam</p>
+			<div className="flex flex-row items-center space-x-2 lg:w-1/4 w-full">
+				<p className="text-xl text-gray-700">Exam</p>
 				<select className="tw-select text-teal-brand flex-1">
 					<option value="">Select</option>
 				</select>
 			</div>
-			<div className="flex flex-row items-center lg:w-1/4 w-full space-x-2">
-				<p className="text-xl text-gray-700 w-1/3">Year</p>
+			<div className="flex flex-row items-center space-x-2 lg:w-1/4 w-full">
+				<p className="text-xl text-gray-700">Year</p>
 				<select className="tw-select text-teal-brand flex-1">
 					<option value="">Select</option>
 				</select>
